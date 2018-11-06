@@ -5,9 +5,6 @@ import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.calculus.Function
 
 class Var<X : Field<X>>(private var name: String, override var value: X, val Prototype: FieldPrototype<X>) : Function<X>() {
-  override val isVariable: Boolean
-    get() = true
-
   override fun differentiate(arg: Var<X>) = if (this === arg) One(Prototype) else Zero(Prototype)
 
   override fun toString() = name

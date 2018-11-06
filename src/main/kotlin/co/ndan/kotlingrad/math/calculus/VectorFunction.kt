@@ -10,19 +10,19 @@ import java.util.*
 open class VectorFunction<X : Field<X>> : AbelianGroup<VectorFunction<X>>, Differentiable<X, VectorFunction<X>> { //, VectorDifferential<X, MatrixFunction<X>> {
   protected var Prototype: FieldPrototype<X>
   protected var vector: Vector<Function<X>>
+  private val size: Int
 
   constructor(fieldPrototype: FieldPrototype<X>, vararg fx: Function<X>) {
     Prototype = fieldPrototype
     vector = Vector(*fx)
+    size = vector.size
   }
 
   protected constructor(fieldPrototype: FieldPrototype<X>, vfx: Vector<Function<X>>) {
     Prototype = fieldPrototype
     vector = vfx
+    size = vector.size
   }
-
-  val size: Int
-    get() = vector.size
 
   open operator fun get(i: Int) = vector[i]
 

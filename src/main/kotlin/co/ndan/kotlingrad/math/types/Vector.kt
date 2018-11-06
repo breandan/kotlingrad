@@ -9,8 +9,7 @@ class Vector<X : Field<X>>(val vector: ArrayList<X>) : AbelianGroup<Vector<X>> {
   constructor(vector: Collection<X>) : this(ArrayList<X>(vector.size).apply { addAll(vector) })
   constructor(vararg vector: X) : this(arrayListOf(*vector))
 
-  val size: Int
-    get() = vector.size
+  val size = vector.size
 
   operator fun get(i: Int) = vector[i]
 
