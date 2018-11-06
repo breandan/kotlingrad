@@ -24,5 +24,5 @@ val `∂²_∂x∂y` = d(`∂z_∂x`) / d(y)
 
 * [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
-* [jalgebra](https://github.com/mdgeorge4153/jalgebra)
+* [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
