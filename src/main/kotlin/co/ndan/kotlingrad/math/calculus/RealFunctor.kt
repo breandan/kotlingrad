@@ -33,84 +33,75 @@ class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
 
   fun one() = One(rfc)
 
-  fun cos(fnx: Function<X>) =
-    object : UnaryFunction<X>(fnx) {
-      override val value: X
-        get() = rfc.cos(this.fnx.value)
+  fun cos(angle: Function<X>) = object : UnaryFunction<X>(angle) {
+    override val value: X
+      get() = rfc.cos(arg.value)
 
-      override fun differentiate(arg: Var<X>) = (sin(this.fnx) * this.fnx.differentiate(arg)).unaryMinus()
+    override fun differentiate(ind: Var<X>) = (sin(arg) * arg.differentiate(ind)).unaryMinus()
 
-      override fun toString() = "cos(${this.fnx})"
-    }
+    override fun toString() = "cos($arg)"
+  }
 
-  fun sin(fnx: Function<X>): Function<X> =
-    object : UnaryFunction<X>(fnx) {
-      override val value: X
-        get() = rfc.sin(this.fnx.value)
+  fun sin(angle: Function<X>): Function<X> = object : UnaryFunction<X>(angle) {
+    override val value: X
+      get() = rfc.sin(arg.value)
 
-      override fun differentiate(arg: Var<X>) = cos(this.fnx) * this.fnx.differentiate(arg)
+    override fun differentiate(ind: Var<X>) = cos(arg) * arg.differentiate(ind)
 
-      override fun toString(): String = "sin(${this.fnx})"
-    }
+    override fun toString(): String = "sin($arg)"
+  }
 
-  fun tan(fnx: Function<X>): Function<X> =
-    object : UnaryFunction<X>(fnx) {
-      override val value: X
-        get() = rfc.tan(this.fnx.value)
+  fun tan(angle: Function<X>): Function<X> = object : UnaryFunction<X>(angle) {
+    override val value: X
+      get() = rfc.tan(arg.value)
 
-      override fun differentiate(arg: Var<X>) = UnivariatePolynomialTerm(1, cos(this.fnx), -2) * this.fnx.differentiate(arg)
+    override fun differentiate(ind: Var<X>) = UnivariatePolynomialTerm(1, cos(arg), -2) * arg.differentiate(ind)
 
-      override fun toString(): String = "tan(${this.fnx})"
-    }
+    override fun toString(): String = "tan($arg)"
+  }
 
-  fun exp(fnx: Function<X>): Function<X> =
-    object : UnaryFunction<X>(fnx) {
-      override val value: X
-        get() = rfc.exp(this.fnx.value)
+  fun exp(exponent: Function<X>): Function<X> = object : UnaryFunction<X>(exponent) {
+    override val value: X
+      get() = rfc.exp(arg.value)
 
-      override fun differentiate(arg: Var<X>) = exp(this.fnx) * this.fnx.differentiate(arg)
+    override fun differentiate(ind: Var<X>) = exp(arg) * arg.differentiate(ind)
 
-      override fun toString(): String = "exp(${this.fnx})"
-    }
+    override fun toString(): String = "exp($arg)"
+  }
 
-  fun log(fnx: Function<X>) =
-    object : UnaryFunction<X>(fnx) {
+  fun log(logarithmand: Function<X>) = object : UnaryFunction<X>(logarithmand) {
+    override val value: X
+      get() = rfc.log(arg.value)
 
-      override val value: X
-        get() = rfc.log(this.fnx.value)
+    override fun differentiate(ind: Var<X>) = Inverse(arg) * arg.differentiate(ind)
 
-      override fun differentiate(arg: Var<X>) = Inverse(this.fnx).times(this.fnx.differentiate(arg))
+    override fun toString(): String = "log($arg)"
+  }
 
-      override fun toString(): String = "log(${this.fnx})"
-    }
+  fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object : BiFunction<X>(base, exponent) {
+    override val value: X
+      get() = rfc.pow(lfn.value, rfn.value)
 
-  fun pow(base: Function<X>, exponent: Const<X>): Function<X> =
-    object : BiFunction<X>(base, exponent) {
-      override val value: X
-        get() = rfc.pow(lfn.value, rfn.value)
+    override fun differentiate(ind: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn.value - rfc.one)) * lfn.differentiate(ind)
 
-      override fun differentiate(arg: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn.value - rfc.one)) * lfn.differentiate(arg)
+    override fun toString(): String = "pow($lfn, $rfn)"
+  }
 
-      override fun toString(): String = "pow($lfn, $rfn)"
-    }
+  fun sqrt(radicand: Function<X>): Function<X> = object : UnaryFunction<X>(radicand) {
+    override val value: X
+      get() = rfc.sqrt(arg.value)
 
-  fun sqrt(radicand: Function<X>): Function<X> =
-    object : UnaryFunction<X>(radicand) {
-      override val value: X
-        get() = rfc.sqrt(this.fnx.value)
+    override fun differentiate(ind: Var<X>) = sqrt(arg).inverse() / this@RealFunctor.value(rfc.one * 2L) * arg.differentiate(ind)
 
-      override fun differentiate(arg: Var<X>) = sqrt(this.fnx).inverse() / this@RealFunctor.value(rfc.one * 2L) * this.fnx.differentiate(arg)
+    override fun toString(): String = "sqrt($arg)"
+  }
 
-      override fun toString(): String = "sqrt(${this.fnx})"
-    }
+  fun square(base: Function<X>) = object : UnaryFunction<X>(base) {
+    override val value: X
+      get() = rfc.square(arg.value)
 
-  fun square(base: Function<X>) =
-    object : UnaryFunction<X>(base) {
-      override val value: X
-        get() = rfc.square(this.fnx.value)
+    override fun differentiate(ind: Var<X>) = arg * this@RealFunctor.value(rfc.one * 2L) * arg.differentiate(ind)
 
-      override fun differentiate(arg: Var<X>) = this.fnx * this@RealFunctor.value(rfc.one * 2L) * this.fnx.differentiate(arg)
-
-      override fun toString(): String = "square(${this.fnx})"
-    }
+    override fun toString(): String = "square($arg)"
+  }
 }

@@ -4,5 +4,5 @@ import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.types.Var
 
 interface Differentiable<X : Field<X>, D> {
-  fun differentiate(arg: Var<X>): D
+  fun differentiate(ind: Var<X>): D
 }

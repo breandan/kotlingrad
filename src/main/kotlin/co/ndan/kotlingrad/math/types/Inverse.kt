@@ -3,13 +3,13 @@ package co.ndan.kotlingrad.math.types
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.calculus.Function
 
-class Inverse<X : Field<X>>(override val fnx: Function<X>) : UnaryFunction<X>(fnx) {
+class Inverse<X : Field<X>>(override val arg: Function<X>) : UnaryFunction<X>(arg) {
   override val value: X
-    get() = fnx.value.inverse()
+    get() = arg.value.inverse()
 
-  override fun differentiate(arg: Var<X>) = UnivariatePolynomialTerm(-1L, fnx, -2) * fnx.differentiate(arg)
+  override fun differentiate(ind: Var<X>) = UnivariatePolynomialTerm(-1L, arg, -2) * arg.differentiate(ind)
 
-  override fun toString() = "($fnx)^(-1)"
+  override fun toString() = "($arg)^(-1)"
 
-  override fun inverse() = fnx
+  override fun inverse() = arg
 }

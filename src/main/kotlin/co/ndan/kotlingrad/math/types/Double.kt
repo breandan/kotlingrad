@@ -9,25 +9,19 @@ class Double(val dbl: kotlin.Double = 0.0) : Real<Double> {
 
   override fun unaryMinus() = Double(-dbl)
 
-  override fun plus(addend: Double) = Double(this.dbl + addend.dbl)
+  override fun plus(addend: Double) = Double(dbl + addend.dbl)
+  operator fun plus(addend: Number) = Double(dbl + addend.toDouble())
 
-  override fun minus(subtrahend: Double) = Double(this.dbl - subtrahend.dbl)
+  override fun minus(subtrahend: Double) = Double(dbl - subtrahend.dbl)
+  operator fun minus(subtrahend: Number) = Double(dbl - subtrahend.toDouble())
 
   override fun times(multiplicand: Double) = Double(dbl * multiplicand.dbl)
+  operator fun times(multiplicand: Number) = Double(dbl * multiplicand.toDouble())
+  override fun times(multiplicand: Long) = Double(dbl * multiplicand)
 
   override fun div(divisor: Double) = Double(dbl / divisor.dbl)
-
-  operator fun plus(addend: kotlin.Double) = Double(dbl + addend)
-
-  operator fun minus(subtrahend: kotlin.Double) = Double(dbl - subtrahend)
-
-  fun prod(multiplicand: kotlin.Double) = Double(dbl * multiplicand)
-
-  operator fun div(divisor: kotlin.Double) = Double(dbl / divisor)
-
-  fun pow(exponent: kotlin.Double) = Double(Math.pow(dbl, exponent))
+  operator fun div(divisor: Number) = Double(dbl / divisor.toDouble())
 
   override fun pow(exponent: Int) = Double(Math.pow(dbl, exponent.toDouble()))
-
-  override fun times(multiplicand: Long) = Double(dbl * multiplicand)
+  fun pow(exponent: Number) = Double(Math.pow(dbl, exponent.toDouble()))
 }

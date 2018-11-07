@@ -7,9 +7,9 @@ class Product<X : Field<X>>(multiplicator: Function<X>, multiplicand: Function<X
   override val value: X
     get() = lfn.value * rfn.value
 
-  override fun differentiate(arg: Var<X>) =
-    if (lfn === rfn) lfn.differentiate(arg) * rfn * 2L
-    else lfn.differentiate(arg) * rfn + lfn * rfn.differentiate(arg)
+  override fun differentiate(ind: Var<X>) =
+    if (lfn === rfn) lfn.differentiate(ind) * rfn * 2L
+    else lfn.differentiate(ind) * rfn + lfn * rfn.differentiate(ind)
 
   override fun toString() = "($lfn * $rfn)"
 }

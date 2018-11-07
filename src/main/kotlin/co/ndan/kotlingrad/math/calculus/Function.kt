@@ -9,15 +9,15 @@ abstract class Function<X : Field<X>> protected constructor() : Field<Function<X
 
   abstract override fun toString(): String
 
-  abstract override fun differentiate(arg: Var<X>): Function<X>
+  abstract override fun differentiate(ind: Var<X>): Function<X>
 
   override fun plus(addend: Function<X>): Function<X> = Sum(this, addend)
 
-  override fun minus(subtrahend: Function<X>): Function<X> = plus(subtrahend.unaryMinus())
+  override fun minus(subtrahend: Function<X>): Function<X> = this + subtrahend.unaryMinus()
 
   override fun times(multiplicand: Function<X>): Function<X> = Product(this, multiplicand)
 
-  override fun div(divisor: Function<X>): Function<X> = times(divisor.inverse())
+  override fun div(divisor: Function<X>): Function<X> = this * divisor.inverse()
 
   override fun inverse(): Function<X> = Inverse(this)
 

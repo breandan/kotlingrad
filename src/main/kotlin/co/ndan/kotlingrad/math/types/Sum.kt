@@ -7,9 +7,9 @@ class Sum<X : Field<X>>(augend: Function<X>, addend: Function<X>) : BiFunction<X
   override val value: X
     get() = lfn.value + rfn.value
 
-  override fun differentiate(arg: Var<X>) =
-    if (lfn === rfn) lfn.differentiate(arg) * 2L
-    else lfn.differentiate(arg) + rfn.differentiate(arg)
+  override fun differentiate(ind: Var<X>) =
+    if (lfn === rfn) lfn.differentiate(ind) * 2L
+    else lfn.differentiate(ind) + rfn.differentiate(ind)
 
   override fun toString() = "($lfn + $rfn)"
 }
