@@ -1,8 +1,11 @@
 package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Real
+import java.lang.Math.*
 
-class Double(val dbl: kotlin.Double = 0.0) : Real<Double> {
+class Double(number: Number = 0) : Real<Double> {
+  val dbl: kotlin.Double = number.toDouble()
+
   override fun toString() = dbl.toString()
 
   override fun inverse() = Double(1.0 / dbl)
@@ -22,6 +25,6 @@ class Double(val dbl: kotlin.Double = 0.0) : Real<Double> {
   override fun div(divisor: Double) = Double(dbl / divisor.dbl)
   operator fun div(divisor: Number) = Double(dbl / divisor.toDouble())
 
-  override fun pow(exponent: Int) = Double(Math.pow(dbl, exponent.toDouble()))
-  fun pow(exponent: Number) = Double(Math.pow(dbl, exponent.toDouble()))
+  override fun pow(exponent: Int) = Double(pow(dbl, exponent.toDouble()))
+  fun pow(exponent: Number) = Double(pow(dbl, exponent.toDouble()))
 }

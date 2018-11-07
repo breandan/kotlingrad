@@ -10,8 +10,8 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 
 ```kotlin
 val rft = RealFunctor(DoublePrototype)
-val x = rft.variable("x", Double(cx))
-val y = rft.variable("y", Double(cy))
+val x = rft.variable("x", Double(0))
+val y = rft.variable("y", Double(1))
 
 val h = 2 * x * (-sin(x * y) + y)
 val `∂z_∂x` = d(h) / d(x)
