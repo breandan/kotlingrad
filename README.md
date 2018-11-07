@@ -13,9 +13,9 @@ val rft = RealFunctor(DoublePrototype)
 val x = rft.variable("x", Double(0))
 val y = rft.variable("y", Double(1))
 
-val h = 2 * x * (-sin(x * y) + y)
-val `∂z_∂x` = d(h) / d(x)
-val `∂z_∂y` = d(h) / d(y)
+val z = 2 * x * (-sin(x * y) + y)
+val `∂z_∂x` = d(z) / d(x)
+val `∂z_∂y` = d(zh) / d(y)
 val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)
 val `∂²_∂x∂y` = d(`∂z_∂x`) / d(y)
 ```
