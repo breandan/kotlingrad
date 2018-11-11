@@ -13,11 +13,11 @@ val rft = RealFunctor(DoublePrototype)
 val x = rft.variable("x", Double(0))
 val y = rft.variable("y", Double(1))
 
-val z = 2 * x * (-sin(x * y) + y)
-val `∂z_∂x` = d(z) / d(x)
-val `∂z_∂y` = d(zh) / d(y)
-val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)
-val `∂²_∂x∂y` = d(`∂z_∂x`) / d(y)
+val z = 2 * x * (-sin(x * y) + y) // Operator overloading
+val `∂z_∂x` = d(z) / d(x)         // Leibniz notation
+val `∂z_∂y` = d(z) / d(y)         // Multiple variables
+val `∂²z_∂x²` = d(`∂z_∂x`) / d(x) // Higher order and
+val `∂²_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
 ```
 
 ## References
