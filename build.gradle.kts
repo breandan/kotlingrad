@@ -3,6 +3,10 @@ plugins {
   kotlin("jvm") version "1.3.0"
 }
 
+application {
+  mainClassName = "co.ndan.kotlingrad.math.samples.HelloKotlinGrad.kt"
+}
+
 group = "co.ndan"
 version = "0.1"
 
