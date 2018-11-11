@@ -1,6 +1,7 @@
 package co.ndan.kotlingrad.math.calculus
 
-import co.ndan.kotlingrad.math.algebra.*
+import co.ndan.kotlingrad.math.algebra.Real
+import co.ndan.kotlingrad.math.algebra.RealPrototype
 import co.ndan.kotlingrad.math.types.*
 import java.util.*
 
@@ -37,7 +38,7 @@ class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override val value: X
       get() = rfc.cos(arg.value)
 
-    override fun differentiate(ind: Var<X>) = (sin(arg) * arg.differentiate(ind)).unaryMinus()
+    override fun differentiate(ind: Var<X>) = -(sin(arg) * arg.differentiate(ind))
 
     override fun toString() = "cos($arg)"
   }
