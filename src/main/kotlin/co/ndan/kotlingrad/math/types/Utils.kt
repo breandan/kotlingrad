@@ -1,11 +1,6 @@
 package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Group
-import co.ndan.kotlingrad.math.calculus.Derivative
-import co.ndan.kotlingrad.math.calculus.Function
-
-fun d(function: Function<Double>) = Derivative(function)
-fun d(arg: Var<Double>) = arg
 
 operator fun Number.times(multiplicand: Group<*>) = multiplicand * toLong()
 operator fun Number.times(multiplicand: Double) = multiplicand * toDouble()
