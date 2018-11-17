@@ -1,4 +1,4 @@
-# Kotlin∇: A type-safe AD implementation for Kotlin
+# Kotlin𝛁: A type-safe AD implementation for Kotlin
 
 Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Tangent](https://github.com/google/tangent), et al.
 
