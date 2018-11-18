@@ -13,7 +13,7 @@ abstract class Function<X : Field<X>> protected constructor() : Field<Function<X
 
   override fun plus(addend: Function<X>): Function<X> = Sum(this, addend)
 
-  override fun minus(subtrahend: Function<X>): Function<X> = this + subtrahend.unaryMinus()
+  override fun minus(subtrahend: Function<X>): Function<X> = this + -subtrahend
 
   override fun times(multiplicand: Function<X>): Function<X> = Product(this, multiplicand)
 
