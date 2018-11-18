@@ -23,6 +23,13 @@ package co.ndan.kotlingrad.math.types.dependent
 @JvmName("4pT") operator fun <T> Vector<T, `4`>.plus(t: T): Vector<T, `5`> = Vector(contents + t)
 @JvmName("5pT") operator fun <T> Vector<T, `5`>.plus(t: T): Vector<T, `6`> = Vector(contents + t)
 
+@JvmName("Tp0") operator fun <T> T.plus(t: Vector<T, `0`>): Vector<T, `1`> = Vector(arrayListOf(this))
+@JvmName("Tp1") operator fun <T> T.plus(t: Vector<T, `1`>): Vector<T, `2`> = Vector(arrayListOf(this) + t.contents)
+@JvmName("Tp2") operator fun <T> T.plus(t: Vector<T, `2`>): Vector<T, `3`> = Vector(arrayListOf(this) + t.contents)
+@JvmName("Tp3") operator fun <T> T.plus(t: Vector<T, `3`>): Vector<T, `4`> = Vector(arrayListOf(this) + t.contents)
+@JvmName("Tp4") operator fun <T> T.plus(t: Vector<T, `4`>): Vector<T, `5`> = Vector(arrayListOf(this) + t.contents)
+@JvmName("Tp5") operator fun <T> T.plus(t: Vector<T, `5`>): Vector<T, `6`> = Vector(arrayListOf(this) + t.contents)
+
 @JvmName("0p0") operator fun <T> Vector<T, `0`>.plus(l: Vector<T, `0`>): Vector<T, `0`> = l
 @JvmName("0p1") operator fun <T> Vector<T, `0`>.plus(l: Vector<T, `1`>): Vector<T, `1`> = l
 @JvmName("0p2") operator fun <T> Vector<T, `0`>.plus(l: Vector<T, `2`>): Vector<T, `2`> = l
