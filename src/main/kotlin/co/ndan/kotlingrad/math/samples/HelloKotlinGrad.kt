@@ -5,6 +5,7 @@ import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.RealFunctor
 import co.ndan.kotlingrad.math.types.Double
 
+@Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
   val reft = RealFunctor(DoublePrototype)
   val x = reft.variable("x", Double(1))
