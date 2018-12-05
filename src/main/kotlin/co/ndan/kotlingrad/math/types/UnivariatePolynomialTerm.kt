@@ -11,7 +11,7 @@ class UnivariatePolynomialTerm<X: Field<X>>(protected var coefficient: Long,
 
   override fun differentiate(ind: Var<X>) = UnivariatePolynomialTerm(coefficient * exponent, arg, exponent - 1) * arg.differentiate(ind)
 
-  override fun toString() = "$coefficient$arg^${superscript(exponent)}"
+  override fun toString() = "$coefficient$arg${superscript(exponent)}"
 
   override fun inverse() = UnivariatePolynomialTerm(coefficient, arg, -exponent)
 
