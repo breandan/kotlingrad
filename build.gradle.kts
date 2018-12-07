@@ -15,7 +15,7 @@ repositories {
   maven("https://dl.bintray.com/spekframework/spek-dev")
 }
 
-val kotlinVersion = "1.3.0"
+val kotlinVersion = "1.3.11"
 val junitPlatformVersion = "1.1.0"
 val spekVersion = "2.0.0-rc.1"
 
