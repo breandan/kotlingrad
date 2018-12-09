@@ -22,15 +22,16 @@ val spekVersion = "2.0.0-rc.1"
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
 
-  testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.0-alpha.1") {
-    exclude(group = "org.jetbrains.kotlin")
-  }
-  testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.0-alpha.1") {
-    exclude(group = "org.junit.platform")
-    exclude(group = "org.jetbrains.kotlin")
-  }
+//  testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.0-alpha.1") {
+//    exclude(group = "org.jetbrains.kotlin")
+//  }
+//  testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.0-alpha.1") {
+//    exclude(group = "org.junit.platform")
+//    exclude(group = "org.jetbrains.kotlin")
+//  }
 
-  testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+  testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.10")
+//  testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 }
 
 tasks.withType<Test> {
