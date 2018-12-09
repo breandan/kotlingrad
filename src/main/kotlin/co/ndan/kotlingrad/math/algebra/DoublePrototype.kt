@@ -1,9 +1,10 @@
 package co.ndan.kotlingrad.math.algebra
 
 import co.ndan.kotlingrad.math.types.Double
+import co.ndan.kotlingrad.math.types.Var
 import java.lang.Math.*
 
-object DoublePrototype : RealPrototype<Double> {
+object DoublePrototype: RealPrototype<Double> {
   override val zero = Double(0.0)
   override val one = Double(1.0)
 
