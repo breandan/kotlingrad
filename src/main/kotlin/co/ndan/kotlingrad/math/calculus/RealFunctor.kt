@@ -5,7 +5,7 @@ import co.ndan.kotlingrad.math.algebra.RealPrototype
 import co.ndan.kotlingrad.math.types.*
 import java.util.*
 
-class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
+open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
   fun value(fnx: X) = Const(fnx, rfc)
 
   fun value(vararg fnx: X): ConstVector<X> {
