@@ -1,6 +1,6 @@
 plugins {
   application
-  kotlin("jvm") version "1.3.0"
+  kotlin("jvm") version "1.3.11"
 }
 
 application.mainClassName = "co.ndan.kotlingrad.math.samples.HelloKotlinGradKt"
