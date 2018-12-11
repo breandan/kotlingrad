@@ -19,8 +19,8 @@ fun main(args: Array<String>) {
 
   val p = "${x.value}, ${y.value}"
   print("z(x, y) \t\t\t= $z\n" +
-    "∂z($p)_∂x \t= " + `∂z_∂x` + "\n\t\t\t\t= " + `∂z_∂x`.value + "\n" +
-    "∂z($p)_∂y \t= " + `∂z_∂y` + "\n\t\t\t\t= " + `∂z_∂y`.value + "\n" +
-    "∂²z($p)_∂x² \t= " + `∂z_∂y` + "\n\t\t\t\t= " + `∂²z_∂x²`.value + "\n" +
-    "∂²z($p)_∂x∂y \t= " + `∂²z_∂x∂y` + "\n\t\t\t\t= " + `∂²z_∂x∂y`.value)
+    "∂z($p)_∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`.value + "\n" +
+    "∂z($p)_∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`.value + "\n" +
+    "∂²z($p)_∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`.value + "\n" +
+    "∂²z($p)_∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`.value)
 }
