@@ -16,13 +16,13 @@ class TestSimpleDerivatives: StringSpec({
   }
 
   "d(2x) / dx should be 2" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
+    assertAll(DoubleVarGenerator) { x: Var<Double> ->
       (d(x * 2) / d(x)).value.dbl shouldBe 2.0
     }
   }
 
   "d(x + x) / dx should be 2" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
+    assertAll(DoubleVarGenerator) { x: Var<Double> ->
       (d(x + x) / d(x)).value.dbl shouldBe 2.0
     }
   }
