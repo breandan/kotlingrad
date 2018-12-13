@@ -14,49 +14,84 @@ import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters")
 class TestTrigonometricDerivatives: StringSpec({
-  "d(sin(x)) / dx should be cos(x)" { ->
+  "d(sin(x)) / dx should be cos(x)" {
     assertAll(DoubleVarGenerator) { x: Var<Double> ->
-      d(sin(x)) / d(x) shouldBe cos(x) * 1
+      (d(sin(x)) / d(x)).value.dbl shouldBe (cos(x) * 1).value.dbl
     }
   }
 
   "d(cos(x)) / dx should be -sin(x)" {
     assertAll(DoubleVarGenerator) { x: Var<Double> ->
-      d(cos(x)) / d(x) shouldBe sin(x) * -1
+      (d(cos(x)) / d(x)).value.dbl shouldBe (sin(x) * -1).value.dbl
     }
   }
 
   val rft = RealFunctor(DoublePrototype)
   val x = rft.variable("x", Double(1.0))
   val y = rft.variable("y", Double(1.0))
-  val c = rft.value(Double(1.0))
 
-  val z = y * (sin(x * y) - x)
-//      = y * sin(x * y) - x * y
-
+  val z = y * (rft.sin(x * y) - x)
   val `∂z∕∂x` = d(z) / d(x)
   val `∂z∕∂y` = d(z) / d(y)
   val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)
   val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
+
+  val epsilon = 1E-20
 
   "test z" {
     assertAll { kx: kotlin.Double, ky: kotlin.Double ->
       x.value = Double(kx)
       y.value = Double(ky)
 
-      val numericalAnswer = 1.0 * ky * (kotlin.math.sin(kx * ky) - 1.0 * kx)
+      val numericalAnswer = ky * (kotlin.math.sin(kx * ky) - kx) + 0.0
 
       z.value.dbl shouldBe numericalAnswer
     }
   }
 
   "test ∂z/∂x" {
-    assertAll { kx: kotlin.Double, ky: kotlin.Double ->
-      x.value = Double(kx)
-      y.value = Double(ky)
+    assertAll { cx: kotlin.Double, cy: kotlin.Double ->
+      if (cx.isFinite() && cy.isFinite() && !cx.isNaN() && cy.isNaN()) {
+        x.value = Double(cx)
+        y.value = Double(cy)
 
-      // TODO: Fix this
-      `∂z∕∂x`.value.dbl * 0.0 shouldBe ((kotlin.math.cos(kx * ky) * ky * ky - ky) plusOrMinus 1.0)
+        `∂z∕∂x`.value.dbl shouldBe ((cy * (kotlin.math.cos(cx * cy) * cy - 1)) plusOrMinus epsilon)
+      } else 1.0 shouldBe 1.0
+    }
+  }
+
+  "test ∂z/∂y" {
+    assertAll { cx: kotlin.Double, cy: kotlin.Double ->
+      if (cx.isFinite() && cy.isFinite() && !cx.isNaN() && cy.isNaN()) {
+        x.value = Double(cx)
+        y.value = Double(cy)
+
+        `∂z∕∂y`.value.dbl shouldBe ((kotlin.math.sin(cx * cy) - cx + cy * kotlin.math.cos(cx * cy) * cx) plusOrMinus epsilon)
+      } else 1.0 shouldBe 1.0
+    }
+  }
+
+  "test ∂²z/∂x²" {
+    assertAll { cx: kotlin.Double, cy: kotlin.Double ->
+      if (cx.isFinite() && cy.isFinite() && !cx.isNaN() && cy.isNaN()) {
+        x.value = Double(cx)
+        y.value = Double(cy)
+
+        `∂z∕∂x`.value.dbl shouldBe -cy * cy * cy * (kotlin.math.sin(cx * cy)) + 0.0
+      } else
+        1.0 shouldBe 1.0
+    }
+  }
+
+  "test ∂²z/∂x∂y" {
+    assertAll { cx: kotlin.Double, cy: kotlin.Double ->
+      if (cx.isFinite() && cy.isFinite() && !cx.isNaN() && cy.isNaN()) {
+        x.value = Double(cx)
+        y.value = Double(cy)
+
+        `∂²z∕∂x∂y`.value.dbl shouldBe ((kotlin.math.cos(cx * cy) - cy * kotlin.math.sin(cx * cy) - 1) plusOrMinus epsilon)
+      } else
+        1.0 shouldBe 1.0
     }
   }
 })

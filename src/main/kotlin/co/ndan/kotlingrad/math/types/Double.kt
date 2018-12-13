@@ -4,7 +4,7 @@ import co.ndan.kotlingrad.math.algebra.Real
 import java.lang.Math.*
 
 class Double(number: Number = 0) : Real<Double> {
-  val dbl: kotlin.Double = number.toDouble()
+  val dbl: kotlin.Double = number.toDouble() + 0.0
 
   override fun toString() = dbl.toString()
 
