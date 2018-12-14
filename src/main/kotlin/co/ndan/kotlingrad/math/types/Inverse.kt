@@ -9,7 +9,7 @@ class Inverse<X : Field<X>>(override val arg: Function<X>) : UnaryFunction<X>(ar
 
   override fun differentiate(ind: Var<X>) = UnivariatePolynomialTerm(-1L, arg, -2) * arg.differentiate(ind)
 
-  override fun toString() = "($arg)^(-1)"
+  override fun toString() = "$arg⁻¹"
 
   override fun inverse() = arg
 }
