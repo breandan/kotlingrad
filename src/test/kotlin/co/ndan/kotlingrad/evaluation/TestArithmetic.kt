@@ -6,7 +6,7 @@ import co.ndan.kotlingrad.math.types.Var
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
-class TestArithmetic : StringSpec({
+class TestArithmetic: StringSpec({
   "test addition" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
       (x + y).value == x.value + y.value
@@ -21,7 +21,7 @@ class TestArithmetic : StringSpec({
 
   "test unary minus" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (-y + x).value == x.value - y.value
+      (-y + x).value == (x - y).value
     }
   }
 
@@ -46,6 +46,24 @@ class TestArithmetic : StringSpec({
   "test inverse" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
       (x * y.inverse()).value == (x / y).value
+    }
+  }
+
+  "test associativity" {
+    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double>, z: Var<Double> ->
+      (x * (y * z)).value == ((x * y) * z).value
+    }
+  }
+
+  "test commutativity" {
+    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double>, z: Var<Double> ->
+      (x * y * z).value == (z * y * x).value
+    }
+  }
+
+  "test distributivity" {
+    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double>, z: Var<Double> ->
+      (x * (y + z)).value == (x * y + x * z).value
     }
   }
 })
