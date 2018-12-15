@@ -27,4 +27,16 @@ class TestPartialDerivatives: StringSpec({
       (d(x + y + x) / d(x)).value.dbl shouldBe 2.0
     }
   }
+
+  "∂(yx) / ∂x should be y" {
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
+      (d(y * x) / d(x)).value.dbl shouldBe y.value.dbl
+    }
+  }
+
+  "∂(yx + xx + yy) / ∂x should be y + 2x" {
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
+      (d(y * x + x * x + y * y) / d(x)).value.dbl shouldBe (y + x * 2).value.dbl
+    }
+  }
 })
