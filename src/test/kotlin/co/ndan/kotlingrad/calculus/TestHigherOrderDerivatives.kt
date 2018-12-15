@@ -27,4 +27,10 @@ class TestHigherOrderDerivatives: StringSpec({
       (d(d(x * x + x * x) / d(x)) / d(x)).value.dbl shouldBe 4.0
     }
   }
+
+  "d³(x³) / dx² should be 6x" {
+    assertAll(DoubleVarGenerator) { x: Var<Double> ->
+      (d(d(x * x * x) / d(x)) / d(x)).value.dbl shouldBe (x * 6).value.dbl
+    }
+  }
 })
