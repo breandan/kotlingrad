@@ -4,7 +4,7 @@ import co.ndan.kotlingrad.math.algebra.DoublePrototype
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.cos
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
-import co.ndan.kotlingrad.math.calculus.RealFunctor
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import co.ndan.kotlingrad.math.types.Double
 import co.ndan.kotlingrad.math.types.Var
 import io.kotlintest.matchers.plusOrMinus
@@ -26,11 +26,10 @@ class TestTrigonometricDerivatives : StringSpec({
     }
   }
 
-  val rft = RealFunctor(DoublePrototype)
-  val x = rft.variable("x", Double(1.0))
-  val y = rft.variable("y", Double(1.0))
+  val x = variable("x", Double(1.0))
+  val y = variable("y", Double(1.0))
 
-  val z = y * (rft.sin(x * y) - x)
+  val z = y * (sin(x * y) - x)
   val `∂z∕∂x` = d(z) / d(x)
   val `∂z∕∂y` = d(z) / d(y)
   val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)
@@ -51,7 +50,7 @@ class TestTrigonometricDerivatives : StringSpec({
   }
 
   "test ∂z/∂x" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx: Var<Double>, cy: Var<Double> ->
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx, cy ->
       x.value = Double(cx.value.dbl)
       y.value = Double(cy.value.dbl)
 
@@ -60,7 +59,7 @@ class TestTrigonometricDerivatives : StringSpec({
   }
 
   "test ∂z/∂y" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx: Var<Double>, cy: Var<Double> ->
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx, cy ->
       x.value = Double(cx.value.dbl)
       y.value = Double(cy.value.dbl)
 
@@ -69,7 +68,7 @@ class TestTrigonometricDerivatives : StringSpec({
   }
 
   "test ∂²z/∂x²" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx: Var<Double>, cy: Var<Double> ->
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx, cy ->
       x.value = Double(cx.value.dbl)
       y.value = Double(cy.value.dbl)
 
@@ -78,7 +77,7 @@ class TestTrigonometricDerivatives : StringSpec({
   }
 
   "test ∂²z/∂x∂y" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx: Var<Double>, cy: Var<Double> ->
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { cx, cy ->
       x.value = Double(cx.value.dbl)
       y.value = Double(cy.value.dbl)
 
