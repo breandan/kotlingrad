@@ -3,8 +3,6 @@ package co.ndan.kotlingrad.calculus
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.cos
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
-import co.ndan.kotlingrad.math.types.Double
-import co.ndan.kotlingrad.math.types.Var
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
@@ -13,11 +11,11 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class TestFiniteDifferences: StringSpec({
-  val epsilon = 0.01
-  val dx = 0.001
+  val epsilon = 1E-6
+  val dx = 1E-8
 
   "test sin" {
-    assertAll(DoubleVarGenerator) { x: Var<Double> ->
+    assertAll(DoubleVarGenerator) { x ->
       val dblVal = x.value.dbl
       val fn = sin(x)
       (d(fn) / d(x)).value.dbl shouldBe
@@ -26,7 +24,7 @@ class TestFiniteDifferences: StringSpec({
   }
 
   "test cos" {
-    assertAll(DoubleVarGenerator) { x: Var<Double> ->
+    assertAll(DoubleVarGenerator) { x ->
       val dblVal = x.value.dbl
       val fn = cos(x)
       (d(fn) / d(x)).value.dbl shouldBe
@@ -35,7 +33,7 @@ class TestFiniteDifferences: StringSpec({
   }
 
   "test composition" {
-    assertAll(DoubleVarGenerator) { x: Var<Double> ->
+    assertAll(DoubleVarGenerator) { x ->
       val dblVal = x.value.dbl
       val fn = sin(x * x)
       val xdx = dblVal + dx

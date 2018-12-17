@@ -1,69 +1,79 @@
 package co.ndan.kotlingrad.evaluation
 
 import co.ndan.kotlingrad.calculus.DoubleVarGenerator
-import co.ndan.kotlingrad.math.types.Double
-import co.ndan.kotlingrad.math.types.Var
+import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
+import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
 class TestArithmetic: StringSpec({
+  val epsilon = 1E-10
+
   "test addition" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (x + y).value == x.value + y.value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+      (x + y).value.dbl shouldBe ((x.value + y.value).dbl plusOrMinus epsilon)
     }
   }
 
   "test subtraction" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (x - y).value == x.value - y.value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+      (x - y).value.dbl shouldBe ((x.value - y.value).dbl plusOrMinus epsilon)
     }
   }
 
   "test unary minus" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (-y + x).value == (x - y).value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+      (-y + x).value.dbl shouldBe ((x - y).value.dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (x * y).value == x.value * y.value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+      (x * y).value.dbl shouldBe ((x.value * y.value).dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication with numerical type" {
     assertAll(DoubleVarGenerator) {
-      (it * 2).value == it.value * 2
+      (it * 2).value.dbl shouldBe (it.value.dbl * 2 plusOrMinus epsilon)
     }
   }
 
-  "test division" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (x / y).value == x.value / y.value
-    }
-  }
-
-  "test inverse" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double> ->
-      (x * y.inverse()).value == (x / y).value
-    }
-  }
+//  "test division" {
+//    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+//      (x / y).value.dbl shouldBe ((x.value / y.value).dbl plusOrMinus epsilon)
+//    }
+//  }
+//
+//  "test inverse" {
+//    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+//      (x * y.inverse()).value.dbl shouldBe ((x / y).value.dbl plusOrMinus epsilon)
+//    }
+//  }
 
   "test associativity" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double>, z: Var<Double> ->
-      (x * (y * z)).value == ((x * y) * z).value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
+      (x * (y * z)).value.dbl shouldBe (((x * y) * z).value.dbl plusOrMinus epsilon)
     }
   }
 
   "test commutativity" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double>, z: Var<Double> ->
-      (x * y * z).value == (z * y * x).value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
+      (x * y * z).value.dbl shouldBe ((z * y * x).value.dbl plusOrMinus epsilon)
     }
   }
 
   "test distributivity" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x: Var<Double>, y: Var<Double>, z: Var<Double> ->
-      (x * (y + z)).value == (x * y + x * z).value
+    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
+      (x * (y + z)).value.dbl shouldBe ((x * y + x * z).value.dbl plusOrMinus epsilon)
     }
   }
+
+//  "test functional" {
+//    assertAll { x ->
+//      val f: Function<Double> = x * x
+//      val q = Var("c", Double(1.0), DoublePrototype)
+//      f.invoke(q.value)
+//    }
+//  }
 })

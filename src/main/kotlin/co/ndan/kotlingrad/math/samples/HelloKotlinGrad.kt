@@ -1,15 +1,14 @@
 package co.ndan.kotlingrad.math.samples
 
-import co.ndan.kotlingrad.math.algebra.DoublePrototype
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import co.ndan.kotlingrad.math.types.Double
-import co.ndan.kotlingrad.math.types.Var
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
-  val x = Var("x", Double(0), DoublePrototype)
-  val y = Var("y", Double(1), DoublePrototype)
+  val x = variable("x", Double(0))
+  val y = variable("y", Double(1))
 
   val z = x * (-sin(x * y) + y)      // Operator overloads
   val `∂z_∂x`    = d(   z   ) / d(x) // Leibniz notation
