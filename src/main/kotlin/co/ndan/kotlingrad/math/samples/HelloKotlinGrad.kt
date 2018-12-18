@@ -11,9 +11,9 @@ fun main(args: Array<String>) {
   val y = variable("y", Double(1))
 
   val z = x * (-sin(x * y) + y)      // Operator overloads
-  val `∂z_∂x` = d(z) / d(x) // Leibniz notation
-  val `∂z_∂y` = d(z) / d(y) // Multiple variables
-  val `∂²z_∂x²` = d(`∂z_∂x`) / d(x) // Higher order and
+  val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
+  val `∂z_∂y` = d(z) / d(y)          // Multiple variables
+  val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
   val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
 
   val p = "${x.value}, ${y.value}"
