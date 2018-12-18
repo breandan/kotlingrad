@@ -3,7 +3,7 @@ package co.ndan.kotlingrad.math.types
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.calculus.Function
 
-class Inverse<X : Field<X>>(override val arg: Function<X>) : UnaryFunction<X>(arg) {
+class Inverse<X: Field<X>>(override val arg: Function<X>): UnaryFunction<X>(arg) {
   override val value: X
     get() = arg.value.inverse()
 

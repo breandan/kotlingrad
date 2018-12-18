@@ -1,6 +1,6 @@
 package co.ndan.kotlingrad.math.algebra
 
-interface RealPrototype<X : Real<X>> : FieldPrototype<X> {
+interface RealPrototype<X: Real<X>>: FieldPrototype<X> {
   fun cos(x: X): X
 
   fun sin(x: X): X

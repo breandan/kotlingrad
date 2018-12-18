@@ -3,7 +3,7 @@ package co.ndan.kotlingrad.math.calculus
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.types.*
 
-abstract class Function<X : Field<X>> protected constructor() : Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
+abstract class Function<X: Field<X>> protected constructor(): Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
   abstract val value: X
   open val isConstant = false
 

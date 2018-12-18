@@ -5,7 +5,7 @@ import co.ndan.kotlingrad.math.algebra.RealPrototype
 import co.ndan.kotlingrad.math.types.*
 import java.util.*
 
-open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
+open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   fun value(fnx: X) = Const(fnx, rfc)
 
   fun value(vararg fnx: X): ConstVector<X> {
@@ -34,7 +34,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
 
   fun one() = One(rfc)
 
-  fun cos(angle: Function<X>) = object : UnaryFunction<X>(angle) {
+  fun cos(angle: Function<X>) = object: UnaryFunction<X>(angle) {
     override val value: X
       get() = rfc.cos(arg.value)
 
@@ -43,7 +43,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString() = "cos($arg)"
   }
 
-  fun sin(angle: Function<X>): Function<X> = object : UnaryFunction<X>(angle) {
+  fun sin(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
     override val value: X
       get() = rfc.sin(arg.value)
 
@@ -52,7 +52,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString(): String = "sin($arg)"
   }
 
-  fun tan(angle: Function<X>): Function<X> = object : UnaryFunction<X>(angle) {
+  fun tan(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
     override val value: X
       get() = rfc.tan(arg.value)
 
@@ -61,7 +61,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString(): String = "tan($arg)"
   }
 
-  fun exp(exponent: Function<X>): Function<X> = object : UnaryFunction<X>(exponent) {
+  fun exp(exponent: Function<X>): Function<X> = object: UnaryFunction<X>(exponent) {
     override val value: X
       get() = rfc.exp(arg.value)
 
@@ -70,7 +70,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString(): String = "exp($arg)"
   }
 
-  fun log(logarithmand: Function<X>) = object : UnaryFunction<X>(logarithmand) {
+  fun log(logarithmand: Function<X>) = object: UnaryFunction<X>(logarithmand) {
     override val value: X
       get() = rfc.log(arg.value)
 
@@ -79,7 +79,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString(): String = "log($arg)"
   }
 
-  fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object : BiFunction<X>(base, exponent) {
+  fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object: BinaryFunction<X>(base, exponent) {
     override val value: X
       get() = rfc.pow(lfn.value, rfn.value)
 
@@ -88,7 +88,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString(): String = "pow($lfn, $rfn)"
   }
 
-  fun sqrt(radicand: Function<X>): Function<X> = object : UnaryFunction<X>(radicand) {
+  fun sqrt(radicand: Function<X>): Function<X> = object: UnaryFunction<X>(radicand) {
     override val value: X
       get() = rfc.sqrt(arg.value)
 
@@ -97,7 +97,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
     override fun toString(): String = "sqrt($arg)"
   }
 
-  fun square(base: Function<X>) = object : UnaryFunction<X>(base) {
+  fun square(base: Function<X>) = object: UnaryFunction<X>(base) {
     override val value: X
       get() = rfc.square(arg.value)
 

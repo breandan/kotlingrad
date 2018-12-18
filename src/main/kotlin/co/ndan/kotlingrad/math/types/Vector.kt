@@ -2,12 +2,11 @@ package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.AbelianGroup
 import co.ndan.kotlingrad.math.algebra.Field
-import java.lang.IllegalArgumentException
-import java.util.ArrayList
+import java.util.*
 
-class Vector<X : Field<X>>(val vector: ArrayList<X>) : AbelianGroup<Vector<X>> {
-  constructor(vector: Collection<X>) : this(ArrayList<X>(vector.size).apply { addAll(vector) })
-  constructor(vararg vector: X) : this(arrayListOf(*vector))
+class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>> {
+  constructor(vector: Collection<X>): this(ArrayList<X>(vector.size).apply { addAll(vector) })
+  constructor(vararg vector: X): this(arrayListOf(*vector))
 
   val size = vector.size
 

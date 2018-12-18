@@ -12,7 +12,7 @@ import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
-@Suppress("NonAsciiCharacters")
+@Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestTrigonometricDerivatives : StringSpec({
   "d(sin(x)) / dx should be cos(x)" {
     assertAll(DoubleVarGenerator) {

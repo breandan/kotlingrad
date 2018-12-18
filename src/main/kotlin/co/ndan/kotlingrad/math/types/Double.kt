@@ -1,9 +1,9 @@
 package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Real
-import java.lang.Math.*
+import java.lang.Math.pow
 
-class Double(number: Number = 0) : Real<Double> {
+class Double(number: Number = 0): Real<Double> {
   val dbl: kotlin.Double = number.toDouble() + 0.0
 
   override fun toString() = dbl.toString()
