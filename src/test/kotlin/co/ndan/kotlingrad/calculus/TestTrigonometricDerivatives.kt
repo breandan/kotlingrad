@@ -1,12 +1,10 @@
 package co.ndan.kotlingrad.calculus
 
-import co.ndan.kotlingrad.math.algebra.DoublePrototype
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.cos
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import co.ndan.kotlingrad.math.types.Double
-import co.ndan.kotlingrad.math.types.Var
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
@@ -34,7 +32,7 @@ class TestTrigonometricDerivatives : StringSpec({
   val `∂z∕∂y` = d(z) / d(y)
   val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)
   val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
-  val one = Var("c", Double(1.0), DoublePrototype)
+  val one = variable("c", Double(1.0))
 
   val epsilon = 1E-10
 
