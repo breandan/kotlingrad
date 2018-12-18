@@ -1,13 +1,14 @@
 package co.ndan.kotlingrad.math.calculus
 
-import co.ndan.kotlingrad.math.algebra.*
-import co.ndan.kotlingrad.math.types.Vector
+import co.ndan.kotlingrad.math.algebra.AbelianGroup
+import co.ndan.kotlingrad.math.algebra.Field
+import co.ndan.kotlingrad.math.algebra.FieldPrototype
 import co.ndan.kotlingrad.math.types.Var
+import co.ndan.kotlingrad.math.types.Vector
 import co.ndan.kotlingrad.math.types.Zero
-import java.lang.IllegalArgumentException
 import java.util.*
 
-open class VectorFunction<X : Field<X>> : AbelianGroup<VectorFunction<X>>, Differentiable<X, VectorFunction<X>> { //, VectorDifferential<X, MatrixFunction<X>> {
+open class VectorFunction<X: Field<X>>: AbelianGroup<VectorFunction<X>>, Differentiable<X, VectorFunction<X>> { //, VectorDifferential<X, MatrixFunction<X>> {
   protected var prototype: FieldPrototype<X>
   protected var vector: Vector<Function<X>>
   private val size: Int

@@ -1,3 +1,3 @@
 package co.ndan.kotlingrad.math.algebra
 
-interface CommutativeRing<X> : Ring<X>
+interface CommutativeRing<X>: Ring<X>

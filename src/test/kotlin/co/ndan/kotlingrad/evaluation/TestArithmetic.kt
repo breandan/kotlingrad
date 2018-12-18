@@ -3,6 +3,9 @@ package co.ndan.kotlingrad.evaluation
 import co.ndan.kotlingrad.calculus.DoubleVarGenerator
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
+import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.types.Double
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -69,11 +72,13 @@ class TestArithmetic: StringSpec({
     }
   }
 
-//  "test functional" {
-//    assertAll { x ->
-//      val f: Function<Double> = x * x
-//      val q = Var("c", Double(1.0), DoublePrototype)
-//      f.invoke(q.value)
-//    }
-//  }
+  "test functional" {
+    assertAll(DoubleVarGenerator) { x ->
+      val f: Function<Double> = x * x
+      val q = variable("c", Double(1.0))
+//      f(q.value)
+      println(((q * f).inverse().value).dbl)
+
+    }
+  }
 })
