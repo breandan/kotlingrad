@@ -76,7 +76,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
 
     override fun differentiate(ind: Var<X>) = Inverse(arg) * arg.differentiate(ind)
 
-    override fun toString(): String = "log($arg)"
+    override fun toString(): String = "log₁₀($arg)"
   }
 
   fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object : BiFunction<X>(base, exponent) {
@@ -94,7 +94,7 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
 
     override fun differentiate(ind: Var<X>) = sqrt(arg).inverse() / this@RealFunctor.value(rfc.one * 2L) * arg.differentiate(ind)
 
-    override fun toString(): String = "sqrt($arg)"
+    override fun toString(): String = "√($arg)"
   }
 
   fun square(base: Function<X>) = object : UnaryFunction<X>(base) {
@@ -103,6 +103,6 @@ open class RealFunctor<X : Real<X>>(val rfc: RealPrototype<X>) {
 
     override fun differentiate(ind: Var<X>) = arg * this@RealFunctor.value(rfc.one * 2L) * arg.differentiate(ind)
 
-    override fun toString(): String = "square($arg)"
+    override fun toString(): String = "($arg)²"
   }
 }
