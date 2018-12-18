@@ -7,10 +7,6 @@ abstract class Function<X : Field<X>> protected constructor() : Field<Function<X
   abstract val value: X
   open val isConstant = false
 
-//  operator fun invoke(v: X) {
-//    value = v
-//  }
-
   abstract override fun toString(): String
 
   abstract override fun differentiate(ind: Var<X>): Function<X>
