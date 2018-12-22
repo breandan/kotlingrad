@@ -2,7 +2,7 @@ package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.algebra.FieldPrototype
-import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.functions.Function
 
 class Zero<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.zero, fieldPrototype) {
   override fun plus(addend: Function<X>) = addend

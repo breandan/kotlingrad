@@ -1,6 +1,7 @@
 package co.ndan.kotlingrad.math.calculus
 
 import co.ndan.kotlingrad.math.algebra.Field
+import co.ndan.kotlingrad.math.functions.Function
 import co.ndan.kotlingrad.math.types.Var
 
 open class Differential<X: Field<X>> private constructor(val function: Function<X>) {

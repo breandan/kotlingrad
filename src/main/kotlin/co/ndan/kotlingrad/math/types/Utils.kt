@@ -1,6 +1,7 @@
 package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Group
+import co.ndan.kotlingrad.math.numerical.Double
 
 operator fun Number.times(multiplicand: Group<*>) = multiplicand * toLong()
 operator fun Number.times(multiplicand: Double) = multiplicand * toDouble()

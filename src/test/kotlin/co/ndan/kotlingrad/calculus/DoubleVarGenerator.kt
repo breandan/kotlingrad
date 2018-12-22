@@ -1,7 +1,7 @@
 package co.ndan.kotlingrad.calculus
 
 import co.ndan.kotlingrad.math.algebra.DoublePrototype
-import co.ndan.kotlingrad.math.types.Double
+import co.ndan.kotlingrad.math.numerical.Double
 import co.ndan.kotlingrad.math.types.Var
 import io.kotlintest.properties.Gen
 

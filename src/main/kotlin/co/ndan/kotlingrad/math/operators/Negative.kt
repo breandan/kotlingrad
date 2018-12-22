@@ -1,7 +1,9 @@
-package co.ndan.kotlingrad.math.types
+package co.ndan.kotlingrad.math.operators
 
 import co.ndan.kotlingrad.math.algebra.Field
-import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.functions.UnaryFunction
+import co.ndan.kotlingrad.math.types.Var
 
 class Negative<X: Field<X>>(override val arg: Function<X>): UnaryFunction<X>(arg) {
   override val value: X

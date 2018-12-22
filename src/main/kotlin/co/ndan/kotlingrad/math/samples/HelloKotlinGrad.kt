@@ -3,7 +3,7 @@ package co.ndan.kotlingrad.math.samples
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
-import co.ndan.kotlingrad.math.types.Double
+import co.ndan.kotlingrad.math.numerical.Double
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
@@ -18,8 +18,8 @@ fun main(args: Array<String>) {
 
   val p = "${x.value}, ${y.value}"
   print("z(x, y) \t\t\t= $z\n" +
-    "∂z($p)_∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`.value + "\n" +
-    "∂z($p)_∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`.value + "\n" +
-    "∂²z($p)_∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`.value + "\n" +
-    "∂²z($p)_∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`.value)
+    "∂z($p)/∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`.value + "\n" +
+    "∂z($p)/∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`.value + "\n" +
+    "∂²z($p)/∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`.value + "\n" +
+    "∂²z($p)/∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`.value)
 }

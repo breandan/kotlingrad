@@ -4,8 +4,8 @@ import co.ndan.kotlingrad.calculus.DoubleVarGenerator
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
-import co.ndan.kotlingrad.math.calculus.Function
-import co.ndan.kotlingrad.math.types.Double
+import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.numerical.Double
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 

@@ -4,7 +4,7 @@ import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.cos
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
-import co.ndan.kotlingrad.math.types.Double
+import co.ndan.kotlingrad.math.numerical.Double
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
