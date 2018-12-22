@@ -2,7 +2,7 @@ package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.algebra.FieldPrototype
-import co.ndan.kotlingrad.math.calculus.VectorFunction
+import co.ndan.kotlingrad.math.functions.VectorFunction
 
 
 class ConstVector<X: Field<X>>: VectorFunction<X> {

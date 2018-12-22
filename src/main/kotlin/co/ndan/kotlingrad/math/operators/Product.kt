@@ -1,7 +1,9 @@
-package co.ndan.kotlingrad.math.types
+package co.ndan.kotlingrad.math.operators
 
 import co.ndan.kotlingrad.math.algebra.Field
-import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.functions.BinaryFunction
+import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.types.Var
 
 class Product<X: Field<X>>(multiplicator: Function<X>, multiplicand: Function<X>): BinaryFunction<X>(multiplicator, multiplicand) {
   override val value: X

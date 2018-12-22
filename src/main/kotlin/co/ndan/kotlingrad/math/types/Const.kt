@@ -3,7 +3,7 @@ package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.algebra.FieldPrototype
-import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.functions.Function
 
 open class Const<X: Field<X>>(override val value: X, val prototype: FieldPrototype<X>): Function<X>() {
   override val isConstant = true

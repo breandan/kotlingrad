@@ -1,7 +1,9 @@
-package co.ndan.kotlingrad.math.types
+package co.ndan.kotlingrad.math.operators
 
 import co.ndan.kotlingrad.math.algebra.Field
-import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.functions.BinaryFunction
+import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.types.Var
 
 class Sum<X: Field<X>>(augend: Function<X>, addend: Function<X>): BinaryFunction<X>(augend, addend) {
   // Some operations are inherently parallelizable. TODO: Explore how to parallelize these with FP...

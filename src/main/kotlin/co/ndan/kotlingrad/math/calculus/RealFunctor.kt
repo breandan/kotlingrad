@@ -2,6 +2,9 @@ package co.ndan.kotlingrad.math.calculus
 
 import co.ndan.kotlingrad.math.algebra.Real
 import co.ndan.kotlingrad.math.algebra.RealPrototype
+import co.ndan.kotlingrad.math.functions.*
+import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.operators.Inverse
 import co.ndan.kotlingrad.math.types.*
 import java.util.*
 

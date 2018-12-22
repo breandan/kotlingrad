@@ -1,7 +1,8 @@
 package co.ndan.kotlingrad.math.types
 
 import co.ndan.kotlingrad.math.algebra.Field
-import co.ndan.kotlingrad.math.calculus.Function
+import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.functions.UnaryFunction
 
 class UnivariatePolynomialTerm<X: Field<X>>(protected var coefficient: Long,
                                             override val arg: Function<X>,

@@ -1,11 +1,19 @@
-package co.ndan.kotlingrad.math.calculus
+package co.ndan.kotlingrad.math.functions
 
 import co.ndan.kotlingrad.math.algebra.Field
-import co.ndan.kotlingrad.math.types.*
+import co.ndan.kotlingrad.math.calculus.Differentiable
+import co.ndan.kotlingrad.math.operators.*
+import co.ndan.kotlingrad.math.types.UnivariatePolynomialTerm
+import co.ndan.kotlingrad.math.types.Var
 
 abstract class Function<X: Field<X>> protected constructor(): Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
   abstract val value: X
   open val isConstant = false
+
+  operator fun invoke(map: Map<*, X>): X =
+    if(value is Var<*> && value in map.keys) (value as Var<X>).value
+    else if(value is Function<*>) (value as Function<X>)(map)
+    else value
 
   abstract override fun toString(): String
 

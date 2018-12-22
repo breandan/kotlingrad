@@ -1,6 +1,6 @@
 package co.ndan.kotlingrad.math.algebra
 
-import co.ndan.kotlingrad.math.types.Double
+import co.ndan.kotlingrad.math.numerical.Double
 import java.lang.Math.*
 
 object DoublePrototype: RealPrototype<Double> {
