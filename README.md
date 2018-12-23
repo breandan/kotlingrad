@@ -48,6 +48,36 @@ z(x, y)             = ((y::1.0 + -sin((y::1.0 * x::0.0))) * x::0.0)
 
 To run the tests: `./gradlew test`
 
+## Ideal API (WIP)
+
+### Scalar functions
+
+```
+val x = Variable(1.0)              // x: Variable<Double> inferred type
+val y = Variable(1.0)              // x: Variable<Double> "
+val f = x * y + sin(2 * x + 3 * y) // f: BinaryFunction<Double> "
+val g = f(x to -1.0) // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
+val h = f(x to 0.0, y to 0.0) // h: Const<Double> == 0 + sin(0 + 0) == 0
+```
+
+### Vector functions
+
+```
+val x = VVariable(0.0, 0.0, 0.0)   // x: VVariable<Double, `3`>
+val y = VVariable(0.0, 3)          // x: VVariable<Double, `3`>
+val f = 2 * x + x / 2              // f: UnaryVFunction<Double>
+val g = f(-2.0, 0.0, 2.0)          // g: ConstVector<`3`> == [-3. 0. 5.]
+```
+
+### Matrix functions
+
+```
+val x = MVariable(0.0, 0.0, 0.0)   // x: MVariable<Double, `1`, `3`>
+val y = MVariable(0.0, 3, 3)       // y: MVariable<Double, `3`, `3`>
+val f = sin(2 * x) + log(x / 2)    // f: UnaryMFunction<Double> "
+val g = f(x) / d(x)                // g: UnaryMFunction<Double> "
+```
+
 ## References
 
 * [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
