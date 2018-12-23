@@ -1,7 +1,7 @@
 package co.ndan.kotlingrad.math.types.dependent
 
 // Supports vectors of up to length 6
-open class Vector<T, Size: `6`> constructor(val contents: List<T> = arrayListOf()) {
+open class Vector<T, MaxLength: `6`> constructor(val contents: List<T> = arrayListOf()) {
   companion object {
     operator fun <T> invoke(): Vector<T, `0`> = Vector(arrayListOf())
     operator fun <T> invoke(t: T): Vector<T, `1`> = Vector(arrayListOf(t))
