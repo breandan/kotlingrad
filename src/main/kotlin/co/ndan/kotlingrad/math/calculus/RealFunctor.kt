@@ -24,7 +24,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
     return ConstVector(rfc, list)
   }
 
-  fun variable(name: String, x: X) = Var(name, x, rfc)
+  open fun variable(name: String, x: X) = Var(name, x, rfc)
 
   fun function(vararg fnx: Function<X>): VectorFunction<X> {
     val size = fnx.size

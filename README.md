@@ -9,27 +9,26 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 # Usage
 
 ```kotlin
-import co.ndan.kotlingrad.math.algebra.DoublePrototype
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
-import co.ndan.kotlingrad.math.calculus.DoubleFunctor.sin
-import co.ndan.kotlingrad.math.types.Double
-import co.ndan.kotlingrad.math.types.Var
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor
 
-val x = Var("x", Double(0), DoublePrototype)
-val y = Var("y", Double(1), DoublePrototype)
+with(DoubleFunctor) {
+    val x = variable("x", 0)
+    val y = variable("y", 1)
 
-val z = x * (-sin(x * y) + y)      // Operator overloads
-val `∂z_∂x`    = d(   z   ) / d(x) // Leibniz notation
-val `∂z_∂y`    = d(   z   ) / d(y) // Multiple variables
-val `∂²z_∂x²`  = d(`∂z_∂x`) / d(x) // Higher order and
-val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
+    val z = x * (-sin(x * y) + y)      // Operator overloads
+    val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
+    val `∂z_∂y` = d(z) / d(y)          // Multiple variables
+    val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
+    val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
 
-val p = "${x.value}, ${y.value}"
-print("z(x, y) \t\t\t= $z\n" +
-  "∂z($p)_∂x \t= " + `∂z_∂x` + "\n\t\t\t\t\t= " + `∂z_∂x`.value + "\n" +
-  "∂z($p)_∂y \t= " + `∂z_∂y` + "\n\t\t\t\t\t= " + `∂z_∂y`.value + "\n" +
-  "∂²z($p)_∂x² \t= " + `∂z_∂y` + "\n\t\t\t\t\t= " + `∂²z_∂x²`.value + "\n" +
-  "∂²z($p)_∂x∂y \t= " + `∂²z_∂x∂y` + "\n\t\t\t\t\t= " + `∂²z_∂x∂y`.value)
+    val p = "${x.value}, ${y.value}"
+    print("z(x, y) \t\t\t= $z\n" +
+      "∂z($p)/∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`.value + "\n" +
+      "∂z($p)/∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`.value + "\n" +
+      "∂²z($p)/∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`.value + "\n" +
+      "∂²z($p)/∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`.value)
+}
 ```
 
 Running this (`./gradlew run`) should print:
@@ -88,3 +87,4 @@ val g = f(x) / d(x)                // g: UnaryMFunction<Double>
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
 * [A Size-Aware Type System with Algebraic Data Types](https://pdfs.semanticscholar.org/3a13/cf1599e212c089ccd6a2e05d944ec57c2f87.pdf)
 * [Backpropagation with Continuation Callbacks: Foundations for Efficient and Expressive Differentiable Programming](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)
+* [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
