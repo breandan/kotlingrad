@@ -21,187 +21,100 @@ Universit\'e de Montr\'eal \\
         \tableofcontents
     \end{frame}
 
-    \section{First Section}\label{sec:first-section}
+    \section{A Short History of Computing Derivatives}\label{sec:first-section}
 
-    %------------------------------------------------
+    %------------------------------------------------------------------------------------------------
 
     \begin{frame}
-        \frametitle{Numerical and symbolic differentiation}
+        \frametitle{Numerical differentiation}
         \begin{itemize}
-            \item Many mathematical formula have efficient numerical representations
+            \item Many mathematical formula have discrete, numerical representations
+            \item But numerical values can be an \textit{inexact} representation of math
             \item Long calculations on primitives are susceptible to rounding errors
-            \item Plenty of tricks for discrete approximation and numerical stability
+            \item Bag of tricks for discrete approximation and numerical stability:
             \begin{itemize}
                 \item Fourier, Chebyshev, Lagrange
                 \item Arbitrary precision arithmetic
                 \item Kahan summation algorithm
                 \item log-sum-exp trick
             \end{itemize}
-            \item Yet code can be an \textit{exact} symbolic representation of computation
-            \item To reason about code we need the ability to treat \textit{code as data}
-            \begin{itemize}
-                \item Metaprogramming
-                \item Reflection
-                \item Domain specific languages
-                \item First-class functions
-            \end{itemize}
-            \item Pearlmutter \& Siskind show us that AD is possible just by using FP
         \end{itemize}
     \end{frame}
 
-    %------------------------------------------------
+    %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Symbolic differentiation}
+        \begin{itemize}
+            \item What about evaluating functions symbolically?
+            \item Computer algebra systems for manipulate symbolic formulas
+        \end{itemize}
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
 
     \begin{frame}
         \frametitle{Automatic differentiation}
         \begin{itemize}
-            \item Algorithms for numerically calculating derivatives
-            \item Long calculations on primitives are susceptible to rounding errors
-            \item Yet code is an \textit{exact} symbolic representation of computation
-            \item To reason about code we need \textit{code as data} or compiler access
-            \item Pearlmutter and Siskind show us all this is possible using FP...
+            \item Derivatives can be calculated automatically? (Wengert, 1964)
+            \item Code as an \textit{exact} symbolic representation of functions
+            \item To reason about code we need the ability to treat \textit{code as data}:
+            \begin{itemize}
+                \item Reflection and metaprogramming
+                \item Domain specific languages
+                \item First-class functions
+            \end{itemize}
         \end{itemize}
     \end{frame}
 
-    %------------------------------------------------
+    %------------------------------------------------------------------------------------------------
+
     \begin{frame}
-        \frametitle{Symbolic differentiation}
+        \frametitle{Differentiable [functional] programming}
         \begin{itemize}
-            \item There are many numerical algorithms in scientific computing
-            \item Long calculations on primitives are susceptible to rounding errors
-            \item Yet code is an \textit{exact} symbolic representation of computation
-            \item To reason about code we need \textit{code as data} or compiler access
-            \item Pearlmutter and Siskind show us all this is possible using just FP
+            \item What is a program, but a series of arithmetic operations?
+            \item What are arithmetic operations but syntactic sugar for functions?
+            \item Functions can be composed of other functions or chained in sequence
+            \item High school calculus gives us rules for differentiating function chains
+            \item Pearlmutter \& Siskind teach us AD is possible just using FP (2016)
+            \item Wang, Rompf, et al. show us this is possible \textit{without a tape}! (2018)
         \end{itemize}
     \end{frame}
 
-    %------------------------------------------------
+    %------------------------------------------------------------------------------------------------
 
     \begin{frame}
-        \frametitle{Paragraphs of Text}
-        Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. \\~\\
-
-        Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero.
+        \frametitle{Differentiable programming with algebraic types}
+        \begin{itemize}
+            \item How do we get autocompletion and static analysis?
+            \item There is an abstract algebra for tensor manipulations
+            \item Allows us to preserve symmetries that are not obvious
+            \item Can be encoded using OOP and parametric polymorphism
+            \item \href{https://arxiv.org/pdf/1610.07690.pdf}{Operational Calculus for Differentiable Programming}
+        \end{itemize}
     \end{frame}
 
-    \section{Third Section}\label{sec:third-section}
-    \begin{frame}
-        \frametitle{Paragraphs of Text}
-        Sed iaculis dapibus gravida. Morbi sed tortor erat, nec interdum arcu. \\~\\
+    %------------------------------------------------------------------------------------------------
 
-        Sed diam enim, sagittis nec condimentum sit amet, ullamcorper sit amet libero.
+    \section{Architectural Overview}\label{sec:second-section}
+
+    \begin{frame}
+        \frametitle{Architecture}
+    \end{frame}
+
+    \section{Usage}\label{sec:third-section}
+
+    \begin{frame}
+        \frametitle{Usage}
+    \end{frame}
+
+    \section{Future Plans}\label{sec:fourth-section}
+
+    \begin{frame}
+        \frametitle{Roadmap}
     \end{frame}
 
 \end{document}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % Beamer Presentation
-% % LaTeX Template
-% % Version 1.0 (10/11/12)
-% %
-% % This template has been downloaded from:
-% % http://www.LaTeXTemplates.com
-% %
-% % License:
-% % CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-% %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% %----------------------------------------------------------------------------------------
-% %	PACKAGES AND THEMES
-% %----------------------------------------------------------------------------------------
-
-% \documentclass{beamer}
-
-% \mode<presentation> {
-
-% % The Beamer class comes with a number of default slide themes
-% % which change the colors and layouts of slides. Below this is a list
-% % of all the themes, uncomment each in turn to see what they look like.
-
-% %\usetheme{default}
-% %\usetheme{AnnArbor}
-% %\usetheme{Antibes}
-% %\usetheme{Bergen}
-% %\usetheme{Berkeley}
-% %\usetheme{Berlin}
-% %\usetheme{Boadilla}
-% %\usetheme{CambridgeUS}
-% %\usetheme{Copenhagen}
-% %\usetheme{Darmstadt}
-% %\usetheme{Dresden}
-% %\usetheme{Frankfurt}
-% %\usetheme{Goettingen}
-% %\usetheme{Hannover}
-% %\usetheme{Ilmenau}
-% %\usetheme{JuanLesPins}
-% %\usetheme{Luebeck}
-% \usetheme{Madrid}
-% %\usetheme{Malmoe}
-% %\usetheme{Marburg}
-% %\usetheme{Montpellier}
-% %\usetheme{PaloAlto}
-% %\usetheme{Pittsburgh}
-% %\usetheme{Rochester}
-% %\usetheme{Singapore}
-% %\usetheme{Szeged}
-% %\usetheme{Warsaw}
-
-% % As well as themes, the Beamer class has a number of color themes
-% % for any slide theme. Uncomment each of these in turn to see how it
-% % changes the colors of your current slide theme.
-
-% %\usecolortheme{albatross}
-% %\usecolortheme{beaver}
-% %\usecolortheme{beetle}
-% %\usecolortheme{crane}
-% %\usecolortheme{dolphin}
-% %\usecolortheme{dove}
-% %\usecolortheme{fly}
-% %\usecolortheme{lily}
-% %\usecolortheme{orchid}
-% %\usecolortheme{rose}
-% %\usecolortheme{seagull}
-% %\usecolortheme{seahorse}
-% %\usecolortheme{whale}
-% %\usecolortheme{wolverine}
-
-% %\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
-% %\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
-
-% %\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
-% }
-
-% \usepackage{graphicx} % Allows including images
-% \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
-
-% %----------------------------------------------------------------------------------------
-% %	TITLE PAGE
-% %----------------------------------------------------------------------------------------
-
-% \title[Short title]{Kotlin\nabla}
-% \subtitle{Differentiable}
-% % Differentiable functional programming with algebraic data types
-% % The short title appears at the bottom of every slide, the full title is only on the title page
-
-% \author{Breandan Considine} % Your name
-% \institute[Universit\'e de Montr\'eal] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
-% {
-% Universit\'e de Montr\'eal \\ % Your institution for the title page
-% \medskip
-% \textit{breandan.considine@umontreal.ca} % Your email address
-% }
-% \date{\today} % Date, can be changed to a custom date
-
-% \begin{document}
-
-% \begin{frame}
-% \titlepage % Print the title page as the first slide
-% \end{frame}
-
-% \begin{frame}
-% \frametitle{Overview} % Table of contents slide, comment this block out to remove it
-% \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
-% \end{frame}
 
 % %----------------------------------------------------------------------------------------
 % %	PRESENTATION SLIDES
@@ -354,5 +267,3 @@ Universit\'e de Montr\'eal \\
 % \end{frame}
 
 % %----------------------------------------------------------------------------------------
-
-% \end{document}
