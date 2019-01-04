@@ -9,19 +9,19 @@ import io.kotlintest.specs.StringSpec
 class TestSimpleDerivatives: StringSpec({
   "dx / dx should be 1" {
     assertAll(DoubleVarGenerator) { x ->
-      (d(x * 1) / d(x)).value.dbl shouldBe 1.0
+      (d(x * 1) / d(x))().dbl shouldBe 1.0
     }
   }
 
   "d(2x) / dx should be 2" {
     assertAll(DoubleVarGenerator) { x ->
-      (d(x * 2) / d(x)).value.dbl shouldBe 2.0
+      (d(x * 2) / d(x))().dbl shouldBe 2.0
     }
   }
 
   "d(x + x) / dx should be 2" {
     assertAll(DoubleVarGenerator) { x ->
-      (d(x + x) / d(x)).value.dbl shouldBe 2.0
+      (d(x + x) / d(x))().dbl shouldBe 2.0
     }
   }
 })

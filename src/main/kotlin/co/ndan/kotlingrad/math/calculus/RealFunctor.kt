@@ -38,8 +38,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   fun one() = One(rfc)
 
   fun cos(angle: Function<X>) = object: UnaryFunction<X>(angle) {
-    override val value: X
-      get() = rfc.cos(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.cos(arg(map))
 
     override fun differentiate(ind: Var<X>) = -(sin(arg) * arg.differentiate(ind))
 
@@ -47,8 +46,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   }
 
   fun sin(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
-    override val value: X
-      get() = rfc.sin(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.sin(arg(map))
 
     override fun differentiate(ind: Var<X>) = cos(arg) * arg.differentiate(ind)
 
@@ -56,8 +54,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   }
 
   fun tan(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
-    override val value: X
-      get() = rfc.tan(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.tan(arg(map))
 
     override fun differentiate(ind: Var<X>) = UnivariatePolynomialTerm(1, cos(arg), -2) * arg.differentiate(ind)
 
@@ -65,8 +62,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   }
 
   fun exp(exponent: Function<X>): Function<X> = object: UnaryFunction<X>(exponent) {
-    override val value: X
-      get() = rfc.exp(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.exp(arg(map))
 
     override fun differentiate(ind: Var<X>) = exp(arg) * arg.differentiate(ind)
 
@@ -74,26 +70,23 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   }
 
   fun log(logarithmand: Function<X>) = object: UnaryFunction<X>(logarithmand) {
-    override val value: X
-      get() = rfc.log(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.log(arg(map))
 
     override fun differentiate(ind: Var<X>) = Inverse(arg) * arg.differentiate(ind)
 
     override fun toString(): String = "log₁₀($arg)"
   }
 
-  fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object: BinaryFunction<X>(base, exponent) {
-    override val value: X
-      get() = rfc.pow(lfn.value, rfn.value)
-
-    override fun differentiate(ind: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn.value - rfc.one)) * lfn.differentiate(ind)
-
-    override fun toString(): String = "pow($lfn, $rfn)"
-  }
+//  fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object: BinaryFunction<X>(base, exponent) {
+//    override fun invoke(map: Map<Var<X>, X>): X = rfc.pow(lfn(map), rfn(map))
+//
+//    override fun differentiate(ind: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn.value - rfc.one)) * lfn.differentiate(ind)
+//
+//    override fun toString(): String = "pow($lfn, $rfn)"
+//  }
 
   fun sqrt(radicand: Function<X>): Function<X> = object: UnaryFunction<X>(radicand) {
-    override val value: X
-      get() = rfc.sqrt(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.sqrt(arg(map))
 
     override fun differentiate(ind: Var<X>) = sqrt(arg).inverse() / this@RealFunctor.value(rfc.one * 2L) * arg.differentiate(ind)
 
@@ -101,8 +94,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   }
 
   fun square(base: Function<X>) = object: UnaryFunction<X>(base) {
-    override val value: X
-      get() = rfc.square(arg.value)
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.square(arg(map))
 
     override fun differentiate(ind: Var<X>) = arg * this@RealFunctor.value(rfc.one * 2L) * arg.differentiate(ind)
 

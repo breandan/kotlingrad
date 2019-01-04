@@ -13,13 +13,13 @@ class TestTrigonometricDerivatives : StringSpec({
   with(DoubleFunctor) {
     "d(sin(x)) / dx should be cos(x)" {
       assertAll(DoubleVarGenerator) {
-        (d(sin(it)) / d(it)).value.dbl shouldBe cos(it).value.dbl
+        (d(sin(it)) / d(it))().dbl shouldBe cos(it)().dbl
       }
     }
 
     "d(cos(x)) / dx should be -sin(x)" {
       assertAll(DoubleVarGenerator) {
-        (d(cos(it)) / d(it)).value.dbl shouldBe (-sin(it)).value.dbl
+        (d(cos(it)) / d(it))().dbl shouldBe (-sin(it))().dbl
       }
     }
 
@@ -42,7 +42,7 @@ class TestTrigonometricDerivatives : StringSpec({
 
         val numericalAnswer = ky * (kotlin.math.sin(kx * ky) - kx) + 0.0
 
-        z.value.dbl shouldBe numericalAnswer
+        z().dbl shouldBe numericalAnswer
       }
     }
 
@@ -51,7 +51,7 @@ class TestTrigonometricDerivatives : StringSpec({
         x.value = Double(cx.value.dbl)
         y.value = Double(cy.value.dbl)
 
-        `∂z∕∂x`.value.dbl shouldBe ((cy * (cos(cx * cy) * cy - one)).value.dbl plusOrMinus epsilon)
+        `∂z∕∂x`().dbl shouldBe ((cy * (cos(cx * cy) * cy - one))().dbl plusOrMinus epsilon)
       }
     }
 
@@ -60,7 +60,7 @@ class TestTrigonometricDerivatives : StringSpec({
         x.value = Double(cx.value.dbl)
         y.value = Double(cy.value.dbl)
 
-        `∂z∕∂y`.value.dbl shouldBe ((sin(cx * cy) - cx + cy * cos(cx * cy) * cx).value.dbl plusOrMinus epsilon)
+        `∂z∕∂y`().dbl shouldBe ((sin(cx * cy) - cx + cy * cos(cx * cy) * cx)().dbl plusOrMinus epsilon)
       }
     }
 
@@ -69,7 +69,7 @@ class TestTrigonometricDerivatives : StringSpec({
         x.value = Double(cx.value.dbl)
         y.value = Double(cy.value.dbl)
 
-        `∂²z∕∂x²`.value.dbl shouldBe ((-cy * cy * cy * sin(cx * cy)).value.dbl plusOrMinus epsilon)
+        `∂²z∕∂x²`().dbl shouldBe ((-cy * cy * cy * sin(cx * cy))().dbl plusOrMinus epsilon)
       }
     }
 
@@ -78,7 +78,7 @@ class TestTrigonometricDerivatives : StringSpec({
         x.value = Double(cx.value.dbl)
         y.value = Double(cy.value.dbl)
 
-        `∂²z∕∂x∂y`.value.dbl shouldBe ((cos(cx * cy) * cy - one + cy * (cos(cx * cy) - cy * cx * sin(cx * cy))).value.dbl plusOrMinus epsilon)
+        `∂²z∕∂x∂y`().dbl shouldBe ((cos(cx * cy) * cy - one + cy * (cos(cx * cy) - cy * cx * sin(cx * cy)))().dbl plusOrMinus epsilon)
       }
     }
   }

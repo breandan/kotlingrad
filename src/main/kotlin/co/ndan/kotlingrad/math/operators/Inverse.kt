@@ -7,8 +7,7 @@ import co.ndan.kotlingrad.math.types.UnivariatePolynomialTerm
 import co.ndan.kotlingrad.math.types.Var
 
 class Inverse<X: Field<X>>(override val arg: Function<X>): UnaryFunction<X>(arg) {
-  override val value: X
-    get() = arg.value.inverse()
+  override fun invoke(map: Map<Var<X>, X>) = arg(map).inverse()
 
   override fun differentiate(ind: Var<X>) = UnivariatePolynomialTerm(-1L, arg, -2) * arg.differentiate(ind)
 

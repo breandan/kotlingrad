@@ -14,61 +14,61 @@ class TestArithmetic: StringSpec({
 
   "test addition" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (x + y).value.dbl shouldBe ((x.value + y.value).dbl plusOrMinus epsilon)
+      (x + y)().dbl shouldBe ((x() + y()).dbl plusOrMinus epsilon)
     }
   }
 
   "test subtraction" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (x - y).value.dbl shouldBe ((x.value - y.value).dbl plusOrMinus epsilon)
+      (x - y)().dbl shouldBe ((x() - y()).dbl plusOrMinus epsilon)
     }
   }
 
   "test unary minus" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (-y + x).value.dbl shouldBe ((x - y).value.dbl plusOrMinus epsilon)
+      (-y + x)().dbl shouldBe ((x - y)().dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (x * y).value.dbl shouldBe ((x.value * y.value).dbl plusOrMinus epsilon)
+      (x * y)().dbl shouldBe ((x() * y()).dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication with numerical type" {
     assertAll(DoubleVarGenerator) {
-      (it * 2).value.dbl shouldBe (it.value.dbl * 2 plusOrMinus epsilon)
+      (it * 2)().dbl shouldBe (it().dbl * 2 plusOrMinus epsilon)
     }
   }
 
 //  "test division" {
 //    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-//      (x / y).value.dbl shouldBe ((x.value / y.value).dbl plusOrMinus epsilon)
+//      (x / y)().dbl shouldBe ((x() / y()).dbl plusOrMinus epsilon)
 //    }
 //  }
 //
 //  "test inverse" {
 //    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-//      (x * y.inverse()).value.dbl shouldBe ((x / y).value.dbl plusOrMinus epsilon)
+//      (x * y.inverse())().dbl shouldBe ((x / y)().dbl plusOrMinus epsilon)
 //    }
 //  }
 
   "test associativity" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
-      (x * (y * z)).value.dbl shouldBe (((x * y) * z).value.dbl plusOrMinus epsilon)
+      (x * (y * z))().dbl shouldBe (((x * y) * z)().dbl plusOrMinus epsilon)
     }
   }
 
   "test commutativity" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
-      (x * y * z).value.dbl shouldBe ((z * y * x).value.dbl plusOrMinus epsilon)
+      (x * y * z)().dbl shouldBe ((z * y * x)().dbl plusOrMinus epsilon)
     }
   }
 
   "test distributivity" {
     assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
-      (x * (y + z)).value.dbl shouldBe ((x * y + x * z).value.dbl plusOrMinus epsilon)
+      (x * (y + z))().dbl shouldBe ((x * y + x * z)().dbl plusOrMinus epsilon)
     }
   }
 
@@ -77,8 +77,8 @@ class TestArithmetic: StringSpec({
       with(DoubleFunctor) {
         val f: Function<Double> = x * x
         val q = variable("c", 1)
-//      f(q.value)
-        println(((q * f).inverse().value).dbl)
+//      f(q())
+        println(((q * f).inverse()()).dbl)
 
       }
     }
