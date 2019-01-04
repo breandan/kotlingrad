@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_PARAMETER")
+
 package co.ndan.kotlingrad.math.types.dependent
 
 @JvmName("g1")
