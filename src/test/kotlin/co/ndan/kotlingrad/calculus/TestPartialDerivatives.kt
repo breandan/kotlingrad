@@ -9,8 +9,8 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
 class TestPartialDerivatives: StringSpec({
-  val x = Variable("x", Double(0))
-  val y = Variable("y", Double(0))
+  val x = Variable("x")
+  val y = Variable("y")
 
   with(DoubleFunctor) {
     "∂x / ∂y should be 0" {

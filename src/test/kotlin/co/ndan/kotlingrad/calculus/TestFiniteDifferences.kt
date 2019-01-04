@@ -15,7 +15,7 @@ import kotlin.math.sin
 class TestFiniteDifferences: StringSpec({
   val epsilon = 1E-6
   val dx = 1E-8
-  val x = Variable("x", Double(0))
+  val x = Variable("x")
 
   with(DoubleFunctor) {
     "test sin" {
