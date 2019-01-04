@@ -16,28 +16,28 @@ class TestFiniteDifferences: StringSpec({
   with(DoubleFunctor) {
     "test sin" {
       assertAll(DoubleVarGenerator) { x ->
-        val dblVal = x.value.dbl
+        val dblVal = x().dbl
         val fn = sin(x)
-        (d(fn) / d(x)).value.dbl shouldBe
+        (d(fn) / d(x))().dbl shouldBe
           (((sin(dblVal + dx) - sin(dblVal)) / dx) plusOrMinus epsilon)
       }
     }
 
     "test cos" {
       assertAll(DoubleVarGenerator) { x ->
-        val dblVal = x.value.dbl
+        val dblVal = x().dbl
         val fn = cos(x)
-        (d(fn) / d(x)).value.dbl shouldBe
+        (d(fn) / d(x))().dbl shouldBe
           (((cos(dblVal + dx) - cos(dblVal)) / dx) plusOrMinus epsilon)
       }
     }
 
     "test composition" {
       assertAll(DoubleVarGenerator) { x ->
-        val dblVal = x.value.dbl
+        val dblVal = x().dbl
         val fn = sin(x * x)
         val xdx = dblVal + dx
-        (d(fn) / d(x)).value.dbl shouldBe
+        (d(fn) / d(x))().dbl shouldBe
           (((sin(xdx * xdx) - sin(dblVal * dblVal)) / dx) plusOrMinus epsilon)
       }
     }

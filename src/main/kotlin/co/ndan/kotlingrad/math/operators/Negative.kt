@@ -6,8 +6,8 @@ import co.ndan.kotlingrad.math.functions.UnaryFunction
 import co.ndan.kotlingrad.math.types.Var
 
 class Negative<X: Field<X>>(override val arg: Function<X>): UnaryFunction<X>(arg) {
-  override val value: X
-    get() = -arg.value
+  override fun invoke(map: Map<Var<X>, X>) = -arg(map)
+
 
   override fun differentiate(ind: Var<X>) = -arg.differentiate(ind)
 
