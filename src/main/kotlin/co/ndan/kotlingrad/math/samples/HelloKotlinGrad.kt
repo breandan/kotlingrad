@@ -18,11 +18,12 @@ fun main(args: Array<String>) {
     val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
     val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
 
-    val p = "${x(x to Double(0))}, ${y(x to Double(1))}"
+    val v = mapOf(x to Double(0), y to Double(1))
+    val p = "${x(x to Double(0))}, ${y(y to Double(1))}"
     print("z(x, y) \t\t\t= $z\n" +
-        "∂z($p)/∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`(x to Double(0), y to Double(1)) + "\n" +
-        "∂z($p)/∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`(x to Double(0), y to Double(1)) + "\n" +
-        "∂²z($p)/∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`(x to Double(0), y to Double(1)) + "\n" +
-        "∂²z($p)/∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`(x to Double(0), y to Double(1)))
+        "∂z($p)/∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`(v) + "\n" +
+        "∂z($p)/∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`(v) + "\n" +
+        "∂²z($p)/∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`(v) + "\n" +
+        "∂²z($p)/∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`(v))
   }
 }
