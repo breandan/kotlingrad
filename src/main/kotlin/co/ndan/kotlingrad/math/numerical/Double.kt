@@ -3,6 +3,8 @@ package co.ndan.kotlingrad.math.numerical
 import co.ndan.kotlingrad.math.algebra.Real
 import java.lang.Math.pow
 
+// TODO: Is wrapping native numeric types really necessary?
+
 class Double(number: Number = 0): Real<Double> {
   val dbl: kotlin.Double = number.toDouble() + 0.0
 

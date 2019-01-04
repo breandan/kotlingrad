@@ -7,14 +7,13 @@ import co.ndan.kotlingrad.math.types.UnivariatePolynomialTerm
 import co.ndan.kotlingrad.math.types.Var
 
 interface Function<X: Field<X>>: Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
-//  abstract val value: X
-//  open val isConstant = false
+  operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
 
-  abstract operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
+  operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
 
-  abstract override fun toString(): String
+  override fun toString(): String
 
-  abstract override fun differentiate(ind: Var<X>): Function<X>
+  override fun differentiate(ind: Var<X>): Function<X>
 
   override fun plus(addend: Function<X>): Function<X> = Sum(this, addend)
 

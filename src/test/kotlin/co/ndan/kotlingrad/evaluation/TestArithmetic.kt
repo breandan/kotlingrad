@@ -1,7 +1,8 @@
 package co.ndan.kotlingrad.evaluation
 
-import co.ndan.kotlingrad.calculus.DoubleVarGenerator
+import co.ndan.kotlingrad.calculus.DoubleGenerator
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import co.ndan.kotlingrad.math.functions.Function
 import co.ndan.kotlingrad.math.numerical.Double
 import io.kotlintest.matchers.plusOrMinus
@@ -12,73 +13,76 @@ import io.kotlintest.specs.StringSpec
 class TestArithmetic: StringSpec({
   val epsilon = 1E-10
 
+  val x = variable("x", Double(1.0))
+  val y = variable("y", Double(1.0))
+  val z = variable("z", Double(1.0))
+
   "test addition" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (x + y)().dbl shouldBe ((x() + y()).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
+      (x + y)(x to xt, y to yt).dbl shouldBe ((yt + xt).dbl plusOrMinus epsilon)
     }
   }
 
   "test subtraction" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (x - y)().dbl shouldBe ((x() - y()).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
+      (x - y)(x to xt, y to yt).dbl shouldBe ((xt - yt).dbl plusOrMinus epsilon)
     }
   }
 
   "test unary minus" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (-y + x)().dbl shouldBe ((x - y)().dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
+      (-y + x)(x to xt, y to yt).dbl shouldBe ((xt - yt).dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
-      (x * y)().dbl shouldBe ((x() * y()).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
+      (x * y)(x to xt, y to yt).dbl shouldBe ((xt * yt).dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication with numerical type" {
-    assertAll(DoubleVarGenerator) {
-      (it * 2)().dbl shouldBe (it().dbl * 2 plusOrMinus epsilon)
+    assertAll(DoubleGenerator) { xt ->
+      (x * 2)(x to xt).dbl shouldBe (xt.dbl * 2 plusOrMinus epsilon)
     }
   }
 
 //  "test division" {
-//    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+//    assertAll(DoubleGenerator, DoubleGenerator) { x, y ->
 //      (x / y)().dbl shouldBe ((x() / y()).dbl plusOrMinus epsilon)
 //    }
 //  }
 //
 //  "test inverse" {
-//    assertAll(DoubleVarGenerator, DoubleVarGenerator) { x, y ->
+//    assertAll(DoubleGenerator, DoubleGenerator) { x, y ->
 //      (x * y.inverse())().dbl shouldBe ((x / y)().dbl plusOrMinus epsilon)
 //    }
 //  }
 
   "test associativity" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
-      (x * (y * z))().dbl shouldBe (((x * y) * z)().dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
+      (x * (y * z))(x to xt, y to yt, z to zt).dbl shouldBe (((x * y) * z)(x to xt, y to yt).dbl plusOrMinus epsilon)
     }
   }
 
   "test commutativity" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
-      (x * y * z)().dbl shouldBe ((z * y * x)().dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
+      (x * y * z)(x to xt, y to yt).dbl shouldBe ((z * y * x)(x to xt, y to yt).dbl plusOrMinus epsilon)
     }
   }
 
   "test distributivity" {
-    assertAll(DoubleVarGenerator, DoubleVarGenerator, DoubleVarGenerator) { x, y, z ->
-      (x * (y + z))().dbl shouldBe ((x * y + x * z)().dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
+      (x * (y + z))(x to xt, y to yt).dbl shouldBe ((x * y + x * z)(x to xt, y to yt).dbl plusOrMinus epsilon)
     }
   }
 
   "test functional" {
-    assertAll(DoubleVarGenerator) { x ->
+    assertAll(DoubleGenerator) { xt ->
       with(DoubleFunctor) {
-        val f: Function<Double> = x * x
+        val f = x * x
         val q = variable("c", 1)
 //      f(q())
-        println(((q * f).inverse()()).dbl)
 
       }
     }
