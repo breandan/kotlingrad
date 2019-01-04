@@ -9,8 +9,8 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
 class TestSimpleDerivatives: StringSpec({
-  val x = Variable("x", Double(0))
-  val y = Variable("y", Double(0))
+  val x = Variable("x")
+  val y = Variable("y")
 
   "dx / dx should be 1" {
     assertAll(DoubleGenerator) { xt ->

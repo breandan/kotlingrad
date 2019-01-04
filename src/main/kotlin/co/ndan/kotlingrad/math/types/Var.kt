@@ -6,7 +6,7 @@ import co.ndan.kotlingrad.math.algebra.FieldPrototype
 import co.ndan.kotlingrad.math.functions.Function
 import co.ndan.kotlingrad.math.numerical.Double
 
-open class Var<X: Field<X>>(private var name: String, var value: X, val prototype: FieldPrototype<X>): Function<X> {
+open class Var<X: Field<X>>(private var name: String, val prototype: FieldPrototype<X>, var value: X = prototype.zero): Function<X> {
   override fun invoke(map: Map<Var<X>, X>): X = if (map[this] != null) map[this]!! else value
 
   override fun differentiate(ind: Var<X>) = if (this === ind) One(prototype) else Zero(prototype)
@@ -17,6 +17,6 @@ open class Var<X: Field<X>>(private var name: String, var value: X, val prototyp
 }
 
 object Variable {
-  operator fun invoke(name: String, value: Double) = Var(name, value, DoublePrototype)
+  operator fun invoke(name: String) = Var(name, DoublePrototype)
   //...
 }

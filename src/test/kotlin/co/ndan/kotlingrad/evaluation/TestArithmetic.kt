@@ -3,7 +3,6 @@ package co.ndan.kotlingrad.evaluation
 import co.ndan.kotlingrad.calculus.DoubleGenerator
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
-import co.ndan.kotlingrad.math.functions.Function
 import co.ndan.kotlingrad.math.numerical.Double
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
@@ -61,19 +60,19 @@ class TestArithmetic: StringSpec({
 
   "test associativity" {
     assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
-      (x * (y * z))(x to xt, y to yt, z to zt).dbl shouldBe (((x * y) * z)(x to xt, y to yt).dbl plusOrMinus epsilon)
+      (x * (y * z))(x to xt, y to yt, z to zt).dbl shouldBe (((x * y) * z)(x to xt, y to yt, z to zt).dbl plusOrMinus epsilon)
     }
   }
 
   "test commutativity" {
     assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
-      (x * y * z)(x to xt, y to yt).dbl shouldBe ((z * y * x)(x to xt, y to yt).dbl plusOrMinus epsilon)
+      (x * y * z)(x to xt, y to yt, z to zt).dbl shouldBe ((z * y * x)(x to xt, y to yt, z to zt).dbl plusOrMinus epsilon)
     }
   }
 
   "test distributivity" {
     assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
-      (x * (y + z))(x to xt, y to yt).dbl shouldBe ((x * y + x * z)(x to xt, y to yt).dbl plusOrMinus epsilon)
+      (x * (y + z))(x to xt, y to yt, z to zt).dbl shouldBe ((x * y + x * z)(x to xt, y to yt, z to zt).dbl plusOrMinus epsilon)
     }
   }
 

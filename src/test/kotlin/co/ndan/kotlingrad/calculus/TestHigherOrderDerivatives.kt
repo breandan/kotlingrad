@@ -10,7 +10,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
 class TestHigherOrderDerivatives: StringSpec({
-  val x = Variable("x", Double(0))
+  val x = Variable("x")
 
   "d²x² / dx² should be 0" {
     assertAll(DoubleGenerator) { xt ->
@@ -40,7 +40,7 @@ class TestHigherOrderDerivatives: StringSpec({
     assertAll(DoubleGenerator) { xt ->
       val f = x * x * x
       val `d³f_dx²` = d(d(f) / d(x)) / d(x)
-      f(x to xt).dbl shouldBe (x * 6)(x to xt).dbl
+      `d³f_dx²`(x to xt).dbl shouldBe (x * 6)(x to xt).dbl
     }
   }
 })
