@@ -3,9 +3,9 @@ plugins {
   kotlin("jvm") version "1.3.11"
 }
 
-application.mainClassName = "co.ndan.kotlingrad.math.samples.HelloKotlinGradKt"
+application.mainClassName = "edu.umontreal.kotlingrad.math.samples.HelloKotlinGradKt"
 
-group = "co.ndan"
+group = "edu.umontreal"
 version = "0.1"
 repositories.jcenter()
 
