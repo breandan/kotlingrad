@@ -9,9 +9,9 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 # Usage
 
 ```kotlin
-import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
-import co.ndan.kotlingrad.math.calculus.DoubleFunctor
-import co.ndan.kotlingrad.math.numerical.DoubleReal
+import edu.umontreal.kotlingrad.math.calculus.Differential.Companion.d
+import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.math.numerical.DoubleReal
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
