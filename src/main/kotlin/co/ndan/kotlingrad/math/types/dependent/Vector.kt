@@ -14,4 +14,3 @@ open class Vector<T, MaxLength: `6`> constructor(val contents: List<T> = arrayLi
 
   override fun toString() = "$contents"
 }
-
