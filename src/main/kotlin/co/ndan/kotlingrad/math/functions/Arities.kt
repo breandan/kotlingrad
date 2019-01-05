@@ -4,9 +4,13 @@ import co.ndan.kotlingrad.math.algebra.Field
 
 abstract class NullaryFunction<X: Field<X>>: Function<X>
 
-abstract class UnaryFunction<X: Field<X>>(open val arg: Function<X>): Function<X>
+abstract class UnaryFunction<X: Field<X>>(open val arg: Function<X>): Function<X> {
+  override fun independentVariables() = arg.independentVariables()
+}
 
-abstract class BinaryFunction<X: Field<X>>(val rfn: Function<X>, val lfn: Function<X>): Function<X>
+abstract class BinaryFunction<X: Field<X>>(val rfn: Function<X>, val lfn: Function<X>): Function<X> {
+  override fun independentVariables() = rfn.independentVariables() + lfn.independentVariables()
+}
 
 abstract class TernaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>): Function<X>
 

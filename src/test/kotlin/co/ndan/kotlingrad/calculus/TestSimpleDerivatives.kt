@@ -2,15 +2,15 @@ package co.ndan.kotlingrad.calculus
 
 
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
-import co.ndan.kotlingrad.math.numerical.Double
-import co.ndan.kotlingrad.math.types.Variable
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
+@Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestSimpleDerivatives: StringSpec({
-  val x = Variable("x")
-  val y = Variable("y")
+  val x = variable("x")
+  val y = variable("y")
 
   "dx / dx should be 1" {
     assertAll(DoubleGenerator) { xt ->

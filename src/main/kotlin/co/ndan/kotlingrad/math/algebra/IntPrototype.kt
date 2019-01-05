@@ -1,25 +1,25 @@
 package co.ndan.kotlingrad.math.algebra
 
-import co.ndan.kotlingrad.math.numerical.Double
+import co.ndan.kotlingrad.math.numerical.DoubleReal
 import java.lang.Math.*
 
-object IntPrototype: RealPrototype<Double> {
-  override val zero = Double(0.0)
-  override val one = Double(1.0)
+object IntPrototype: RealPrototype<DoubleReal> {
+  override val zero = DoubleReal(0.0)
+  override val one = DoubleReal(1.0)
 
-  override fun cos(x: Double) = Double(cos(x.dbl))
+  override fun cos(x: DoubleReal) = DoubleReal(cos(x.dbl))
 
-  override fun sin(x: Double) = Double(sin(x.dbl))
+  override fun sin(x: DoubleReal) = DoubleReal(sin(x.dbl))
 
-  override fun tan(x: Double) = Double(tan(x.dbl))
+  override fun tan(x: DoubleReal) = DoubleReal(tan(x.dbl))
 
-  override fun exp(x: Double) = Double(exp(x.dbl))
+  override fun exp(x: DoubleReal) = DoubleReal(exp(x.dbl))
 
-  override fun log(x: Double) = Double(log(x.dbl))
+  override fun log(x: DoubleReal) = DoubleReal(log(x.dbl))
 
-  override fun pow(x: Double, y: Double) = Double(pow(x.dbl, y.dbl))
+  override fun pow(x: DoubleReal, y: DoubleReal) = DoubleReal(pow(x.dbl, y.dbl))
 
-  override fun sqrt(x: Double) = Double(sqrt(x.dbl))
+  override fun sqrt(x: DoubleReal) = DoubleReal(sqrt(x.dbl))
 
-  override fun square(x: Double) = x * x
+  override fun square(x: DoubleReal) = x * x
 }

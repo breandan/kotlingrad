@@ -2,15 +2,14 @@ package co.ndan.kotlingrad.calculus
 
 
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
-import co.ndan.kotlingrad.math.types.Variable
-import co.ndan.kotlingrad.math.numerical.Double
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import io.kotlintest.properties.assertAll
-
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
+@Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestHigherOrderDerivatives: StringSpec({
-  val x = Variable("x")
+  val x = variable("x")
 
   "d²x² / dx² should be 0" {
     assertAll(DoubleGenerator) { xt ->

@@ -3,7 +3,7 @@ package co.ndan.kotlingrad.evaluation
 import co.ndan.kotlingrad.calculus.DoubleGenerator
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
-import co.ndan.kotlingrad.math.numerical.Double
+import co.ndan.kotlingrad.math.numerical.DoubleReal
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
@@ -12,13 +12,13 @@ import io.kotlintest.specs.StringSpec
 class TestArithmetic: StringSpec({
   val epsilon = 1E-10
 
-  val x = variable("x", Double(1.0))
-  val y = variable("y", Double(1.0))
-  val z = variable("z", Double(1.0))
+  val x = variable("x", DoubleReal(1.0))
+  val y = variable("y", DoubleReal(1.0))
+  val z = variable("z", DoubleReal(1.0))
 
   "test addition" {
     assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-      (x + y)(x to xt, y to yt).dbl shouldBe ((yt + xt).dbl plusOrMinus epsilon)
+      (x + y).invoke(x to DoubleReal(1.0), y to yt).dbl shouldBe ((yt + xt).dbl plusOrMinus epsilon)
     }
   }
 
