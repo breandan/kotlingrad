@@ -2,11 +2,15 @@ package co.ndan.kotlingrad.math.calculus
 
 import co.ndan.kotlingrad.math.algebra.Real
 import co.ndan.kotlingrad.math.algebra.RealPrototype
-import co.ndan.kotlingrad.math.functions.*
 import co.ndan.kotlingrad.math.functions.Function
+import co.ndan.kotlingrad.math.functions.UnaryFunction
+import co.ndan.kotlingrad.math.functions.VectorFunction
 import co.ndan.kotlingrad.math.operators.Inverse
 import co.ndan.kotlingrad.math.types.*
-import java.util.*
+import java.util.UUID.randomUUID
+import kotlin.collections.ArrayList
+import kotlin.collections.Map
+import kotlin.collections.toTypedArray
 
 open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
   fun value(fnx: X) = Const(fnx, rfc)
@@ -24,7 +28,13 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>) {
     return ConstVector(rfc, list)
   }
 
-  open fun variable(name: String, default: X = rfc.zero) = Var(name, rfc, default)
+  open fun variable() = Var(rfc)
+
+  open fun variable(default: X) = Var(rfc, value = default)
+
+  open fun variable(name: String) = Var(rfc, name = name)
+
+  open fun variable(name: String, default: X) = Var(rfc, default, name)
 
   fun function(vararg fnx: Function<X>): VectorFunction<X> {
     val size = fnx.size

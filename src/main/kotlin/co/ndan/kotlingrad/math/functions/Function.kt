@@ -2,6 +2,8 @@ package co.ndan.kotlingrad.math.functions
 
 import co.ndan.kotlingrad.math.algebra.Field
 import co.ndan.kotlingrad.math.calculus.Differentiable
+import co.ndan.kotlingrad.math.calculus.Differential
+import co.ndan.kotlingrad.math.numerical.DoubleReal
 import co.ndan.kotlingrad.math.operators.*
 import co.ndan.kotlingrad.math.types.UnivariatePolynomialTerm
 import co.ndan.kotlingrad.math.types.Var
@@ -10,6 +12,8 @@ interface Function<X: Field<X>>: Field<Function<X>>, Differentiable<X, Function<
   operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
 
   operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
+
+  fun independentVariables(): Set<Var<X>> = emptySet()
 
   override fun toString(): String
 

@@ -2,8 +2,7 @@ package co.ndan.kotlingrad.calculus
 
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor
-import co.ndan.kotlingrad.math.numerical.Double
-import co.ndan.kotlingrad.math.types.Variable
+import co.ndan.kotlingrad.math.calculus.DoubleFunctor.variable
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
@@ -11,11 +10,11 @@ import io.kotlintest.specs.StringSpec
 import kotlin.math.cos
 import kotlin.math.sin
 
-
+@Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestFiniteDifferences: StringSpec({
   val epsilon = 1E-6
   val dx = 1E-8
-  val x = Variable("x")
+  val x = variable("x")
 
   with(DoubleFunctor) {
     "test sin" {

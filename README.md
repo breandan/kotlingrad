@@ -11,8 +11,7 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 ```kotlin
 import co.ndan.kotlingrad.math.calculus.Differential.Companion.d
 import co.ndan.kotlingrad.math.calculus.DoubleFunctor
-import co.ndan.kotlingrad.math.functions.Function
-import co.ndan.kotlingrad.math.numerical.Double
+import co.ndan.kotlingrad.math.numerical.DoubleReal
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
@@ -20,20 +19,19 @@ fun main(args: Array<String>) {
     val x = variable("x")
     val y = variable("y")
 
-    val d: Function<Double> = x + y
     val z = x * (-sin(x * y) + y)      // Operator overloads
     val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
     val `∂z_∂y` = d(z) / d(y)          // Multiple variables
     val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
     val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
 
-    val v = mapOf(x to Double(0), y to Double(1))
-    val p = "${x(x to Double(0))}, ${y(y to Double(1))}"
-    print("z(x, y) \t\t\t= $z\n" +
-        "∂z($p)/∂x \t= $`∂z_∂x` \n\t\t\t\t\t= " + `∂z_∂x`(v) + "\n" +
-        "∂z($p)/∂y \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂z_∂y`(v) + "\n" +
-        "∂²z($p)/∂x² \t= $`∂z_∂y` \n\t\t\t\t\t= " + `∂²z_∂x²`(v) + "\n" +
-        "∂²z($p)/∂x∂y \t= $`∂²z_∂x∂y` \n\t\t\t\t\t= " + `∂²z_∂x∂y`(v))
+    val values = mapOf(x to DoubleReal(0), y to DoubleReal(1))
+    val p = "${x(x to DoubleReal(0))}, ${y(y to DoubleReal(1))}"
+    print("z(${z.independentVariables().joinToString(", ")}) \t\t\t\t= $z\n" +
+        "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
+        "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
+        "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
+        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x∂y`(values))
   }
 }
 ```
@@ -41,15 +39,15 @@ fun main(args: Array<String>) {
 Running this (`./gradlew run`) should print:
 
 ```
-z(x, y) 			= ((y:0.0 + -sin((y:0.0 * x:0.0))) * x:0.0)
-∂z(0.0, 0.0)/∂x 	= ((1.0 * (y:0.0 + -sin((y:0.0 * x:0.0)))) + (x:0.0 * -((1.0 * y:0.0) * cos((y:0.0 * x:0.0))))) 
-					= 1.0
-∂z(0.0, 0.0)/∂y 	= ((0.0 * (y:0.0 + -sin((y:0.0 * x:0.0)))) + (x:0.0 * (-(((0.0 * y:0.0) + x:0.0) * cos((y:0.0 * x:0.0))) + 1.0))) 
-					= 0.0
-∂²z(0.0, 0.0)/∂x² 	= ((0.0 * (y:0.0 + -sin((y:0.0 * x:0.0)))) + (x:0.0 * (-(((0.0 * y:0.0) + x:0.0) * cos((y:0.0 * x:0.0))) + 1.0))) 
-					= -2.0
-∂²z(0.0, 0.0)/∂x∂y 	= ((-((-(((0.0 * y:0.0) + x:0.0) * sin((y:0.0 * x:0.0))) * (1.0 * y:0.0)) + cos((y:0.0 * x:0.0))) * x:0.0) + (-(((0.0 * y:0.0) + x:0.0) * cos((y:0.0 * x:0.0))) + 1.0)) 
-					= 1.0
+z(x, y) 				= ((y + -sin((y * x))) * x)
+∂z(0.0, 1.0)/∂x 		= ((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))) 
+						= 1.0
+∂z(0.0, 1.0)/∂y 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
+						= 0.0
+∂²z(0.0, 1.0)/∂x² 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
+						= -2.0
+∂²z(0.0, 1.0)/∂x∂y 		= ((-((-(((0.0 * y) + x) * sin((y * x))) * (1.0 * y)) + cos((y * x))) * x) + (-(((0.0 * y) + x) * cos((y * x))) + 1.0)) 
+						= 1.0
 ```
 
 To run the tests: `./gradlew test`
