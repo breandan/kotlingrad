@@ -17,32 +17,32 @@ class TestArithmetic: StringSpec({
   val z = variable("z", DoubleReal(1.0))
 
   "test addition" {
-    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-      (x + y).invoke(x to DoubleReal(1.0), y to yt).dbl shouldBe ((yt + xt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      (x + y).invoke(x to DoubleReal(1.0), y to yVal).dbl shouldBe ((yVal + xVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test subtraction" {
-    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-      (x - y)(x to xt, y to yt).dbl shouldBe ((xt - yt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      (x - y)(x to xVal, y to yVal).dbl shouldBe ((xVal - yVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test unary minus" {
-    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-      (-y + x)(x to xt, y to yt).dbl shouldBe ((xt - yt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      (-y + x)(x to xVal, y to yVal).dbl shouldBe ((xVal - yVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication" {
-    assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-      (x * y)(x to xt, y to yt).dbl shouldBe ((xt * yt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      (x * y)(x to xVal, y to yVal).dbl shouldBe ((xVal * yVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test multiplication with numerical type" {
-    assertAll(DoubleGenerator) { xt ->
-      (x * 2)(x to xt).dbl shouldBe (xt.dbl * 2 plusOrMinus epsilon)
+    assertAll(DoubleGenerator) { xVal ->
+      (x * 2)(x to xVal).dbl shouldBe (xVal.dbl * 2 plusOrMinus epsilon)
     }
   }
 
@@ -59,25 +59,25 @@ class TestArithmetic: StringSpec({
 //  }
 
   "test associativity" {
-    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
-      (x * (y * z))(x to xt, y to yt, z to zt).dbl shouldBe (((x * y) * z)(x to xt, y to yt, z to zt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xVal, yVal, zVal ->
+      (x * (y * z))(x to xVal, y to yVal, z to zVal).dbl shouldBe (((x * y) * z)(x to xVal, y to yVal, z to zVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test commutativity" {
-    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
-      (x * y * z)(x to xt, y to yt, z to zt).dbl shouldBe ((z * y * x)(x to xt, y to yt, z to zt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xVal, yVal, zVal ->
+      (x * y * z)(x to xVal, y to yVal, z to zVal).dbl shouldBe ((z * y * x)(x to xVal, y to yVal, z to zVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test distributivity" {
-    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xt, yt, zt ->
-      (x * (y + z))(x to xt, y to yt, z to zt).dbl shouldBe ((x * y + x * z)(x to xt, y to yt, z to zt).dbl plusOrMinus epsilon)
+    assertAll(DoubleGenerator, DoubleGenerator, DoubleGenerator) { xVal, yVal, zVal ->
+      (x * (y + z))(x to xVal, y to yVal, z to zVal).dbl shouldBe ((x * y + x * z)(x to xVal, y to yVal, z to zVal).dbl plusOrMinus epsilon)
     }
   }
 
   "test functional" {
-    assertAll(DoubleGenerator) { xt ->
+    assertAll(DoubleGenerator) { xVal ->
       with(DoubleFunctor) {
         val f = x * x
         val q = variable("c", 1)

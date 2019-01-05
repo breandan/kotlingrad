@@ -15,18 +15,18 @@ class TestTrigonometricDerivatives: StringSpec({
     val y = variable("y", DoubleReal(1.0))
 
     "d(sin(x)) / dx should be cos(x)" {
-      assertAll(DoubleGenerator) { xt ->
+      assertAll(DoubleGenerator) { xVal ->
         val f = sin(x)
         val df_dx = d(f) / d(x)
-        df_dx(x to xt).dbl shouldBe cos(x)(x to xt).dbl
+        df_dx(x to xVal).dbl shouldBe cos(x)(x to xVal).dbl
       }
     }
 
     "d(cos(x)) / dx should be -sin(x)" {
-      assertAll(DoubleGenerator) { xt ->
+      assertAll(DoubleGenerator) { xVal ->
         val f = cos(x)
         val df_dx = d(f) / d(x)
-        df_dx(x to xt).dbl shouldBe -sin(x)(x to xt).dbl + 0
+        df_dx(x to xVal).dbl shouldBe -sin(x)(x to xVal).dbl + 0
       }
     }
 
@@ -48,34 +48,34 @@ class TestTrigonometricDerivatives: StringSpec({
     }
 
     "test ∂z/∂x" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-        val cx = variable("cx", xt)
-        val cy = variable("cy", yt)
-        `∂z∕∂x`(x to xt, y to yt).dbl shouldBe ((cy * (cos(cx * cy) * cy - one))().dbl plusOrMinus epsilon)
+      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+        val cx = variable("cx", xVal)
+        val cy = variable("cy", yVal)
+        `∂z∕∂x`(x to xVal, y to yVal).dbl shouldBe ((cy * (cos(cx * cy) * cy - one))().dbl plusOrMinus epsilon)
       }
     }
 
     "test ∂z/∂y" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-        val cx = variable("cx", xt)
-        val cy = variable("cy", yt)
-        `∂z∕∂y`(x to xt, y to yt).dbl shouldBe ((sin(cx * cy) - cx + cy * cos(cx * cy) * cx)().dbl plusOrMinus epsilon)
+      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+        val cx = variable("cx", xVal)
+        val cy = variable("cy", yVal)
+        `∂z∕∂y`(x to xVal, y to yVal).dbl shouldBe ((sin(cx * cy) - cx + cy * cos(cx * cy) * cx)().dbl plusOrMinus epsilon)
       }
     }
 
     "test ∂²z/∂x²" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-        val cx = variable("cx", xt)
-        val cy = variable("cy", yt)
-        `∂²z∕∂x²`(x to xt, y to yt).dbl shouldBe ((-cy * cy * cy * sin(cx * cy))().dbl plusOrMinus epsilon)
+      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+        val cx = variable("cx", xVal)
+        val cy = variable("cy", yVal)
+        `∂²z∕∂x²`(x to xVal, y to yVal).dbl shouldBe ((-cy * cy * cy * sin(cx * cy))().dbl plusOrMinus epsilon)
       }
     }
 
     "test ∂²z/∂x∂y" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xt, yt ->
-        val cx = variable("cx", xt)
-        val cy = variable("cy", yt)
-        `∂²z∕∂x∂y`(x to xt, y to yt).dbl shouldBe ((cos(cx * cy) * cy - one + cy * (cos(cx * cy) - cy * cx * sin(cx * cy)))().dbl plusOrMinus epsilon)
+      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+        val cx = variable("cx", xVal)
+        val cy = variable("cy", yVal)
+        `∂²z∕∂x∂y`(x to xVal, y to yVal).dbl shouldBe ((cos(cx * cy) * cy - one + cy * (cos(cx * cy) - cy * cx * sin(cx * cy)))().dbl plusOrMinus epsilon)
       }
     }
   }
