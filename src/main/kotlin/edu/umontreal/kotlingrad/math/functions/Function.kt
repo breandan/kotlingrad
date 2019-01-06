@@ -24,11 +24,7 @@ interface Function<X: Field<X>>: Field<Function<X>>, Differentiable<X, Function<
 
   override fun plus(addend: Function<X>): Function<X> = Sum(this, addend)
 
-  override fun minus(subtrahend: Function<X>): Function<X> = this + -subtrahend
-
   override fun times(multiplicand: Function<X>): Function<X> = Product(this, multiplicand)
-
-  override fun div(divisor: Function<X>): Function<X> = this * divisor.inverse()
 
   override fun inverse(): Function<X> = Inverse(this)
 
