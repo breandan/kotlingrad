@@ -14,13 +14,16 @@ fun main(args: Array<String>) {
     val `∂z_∂y` = d(z) / d(y)          // Multiple variables
     val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
     val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
+    val `∇z` = z.grad()                // Gradient operator
 
     val values = mapOf(x to DoubleReal(0), y to DoubleReal(1))
+    val indVar = z.independentVariables().joinToString(", ")
     val p = "${x(x to DoubleReal(0))}, ${y(y to DoubleReal(1))}"
-    print("z(${z.independentVariables().joinToString(", ")}) \t\t\t\t= $z\n" +
+    print("z($indVar) \t\t\t\t= $z\n" +
         "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
         "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
         "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
-        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x∂y`(values))
+        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x∂y`(values) + "\n" +
+        "∇z($p) \t\t\t= $`∇z` \n\t\t\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
   }
 }

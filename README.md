@@ -1,6 +1,6 @@
 # Kotlin𝛁: A type-safe AD implementation for Kotlin
 
-Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Tangent](https://github.com/google/tangent), et al.
+Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Tangent](https://github.com/google/tangent), [Myia](https://github.com/mila-udem/myia) et al.
 
 AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning.
 
@@ -9,7 +9,6 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 # Usage
 
 ```kotlin
-import edu.umontreal.kotlingrad.math.calculus.Differential.Companion.d
 import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
 import edu.umontreal.kotlingrad.math.numerical.DoubleReal
 
@@ -24,14 +23,18 @@ fun main(args: Array<String>) {
     val `∂z_∂y` = d(z) / d(y)          // Multiple variables
     val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
     val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
+    val `∇z` = z.grad()                // Gradient operator
 
     val values = mapOf(x to DoubleReal(0), y to DoubleReal(1))
+    val indVar = z.independentVariables().joinToString(", ")
     val p = "${x(x to DoubleReal(0))}, ${y(y to DoubleReal(1))}"
-    print("z(${z.independentVariables().joinToString(", ")}) \t\t\t\t= $z\n" +
+    
+    print("z($indVar) \t\t\t\t= $z\n" +
         "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
         "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
         "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
-        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x∂y`(values))
+        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t\t\t= " + `∂²z_∂x∂y`(values) + "\n" +
+        "∇z($p) \t\t\t= $`∇z` \n\t\t\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
   }
 }
 ```
@@ -48,6 +51,8 @@ z(x, y) 				= ((y + -sin((y * x))) * x)
 						= -2.0
 ∂²z(0.0, 1.0)/∂x∂y 		= ((-((-(((0.0 * y) + x) * sin((y * x))) * (1.0 * y)) + cos((y * x))) * x) + (-(((0.0 * y) + x) * cos((y * x))) + 1.0)) 
 						= 1.0
+∇z(0.0, 1.0) 			= {x=((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))), y=((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0)))} 
+						= [1.0, 0.0]ᵀ
 ```
 
 To run the tests: `./gradlew test`
@@ -84,6 +89,8 @@ val g = f(x) / d(x)                // g: UnaryMFunction<Double>
 
 ## References
 
+The following are some excellent projects and publications that have inspired this work.
+
 ### Computer Algebra
 
 * [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
@@ -91,19 +98,36 @@ val g = f(x) / d(x)                // g: UnaryMFunction<Double>
 * [How to turn a scripting language into a domain specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
 * [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
 * [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
+* [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
+* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
 
 ### Automatic Differentiation
 
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
+* [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)
+* [Autograd](https://github.com/hips/autograd)
+* [DiffSharp](https://github.com/DiffSharp/DiffSharp)
+* [Tangent](https://github.com/google/tangent)
+* [Myia](https://github.com/mila-udem/myia)
+* [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
+
+
+### Differentiable Programming
+
+* [Neural Networks, Types, and Functional Programming](http://colah.github.io/posts/2015-09-NN-Types-FP/)
 * [Backpropagation with Continuation Callbacks: Foundations for Efficient and Expressive Differentiable Programming](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
-* [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
 
-### Numerical Computing
+### Computational Mathematics
 
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
+* [An introduction to context-oriented programming in Kotlin](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2)
 * [COJAC](https://github.com/Cojac/Cojac) - Numerical sniffing tool and Enriching number wrapper for Java
 * [chebfun](http://www.chebfun.org/) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
+
+### Vector, Matrix and Tensor Calculus
+
+* [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
