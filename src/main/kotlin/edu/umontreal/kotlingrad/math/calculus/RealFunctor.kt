@@ -12,19 +12,9 @@ import edu.umontreal.kotlingrad.math.types.*
 abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<X>() {
   fun value(fnx: X) = Const(fnx, rfc)
 
-  fun value(vararg fnx: X): ConstVector<X> {
-    val size = fnx.size
-    val list = ArrayList<Const<X>>(size)
-    for (i in 0 until size) list.add(value(fnx[i]))
-    return ConstVector(rfc, list)
-  }
+  fun value(vararg fnx: X) = ConstVector(*fnx.mapTo(ArrayList(fnx.size)) { value(it) }.toTypedArray())
 
-  fun zero(size: Int): ConstVector<X> {
-
-    val list = ArrayList<Const<X>>(size)
-    for (i in 0 until size) list.add(zero)
-    return ConstVector(rfc, list)
-  }
+  fun zero(size: Int) = ConstVector(*Array(size) { zero })
 
   open fun variable() = Var(rfc)
 
@@ -34,7 +24,7 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
 
   open fun variable(name: String, default: X) = Var(rfc, default, name)
 
-  fun function(vararg fns: Function<X>) = VectorFunction(rfc, Vector(*fns))
+  fun function(vararg fns: Function<X>) = VectorFunction(*fns)
 
   val zero = Zero(rfc)
 
@@ -106,7 +96,7 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
 
-  class Differential<X: Field<X>> (val function: Function<X>) {
+  class Differential<X: Field<X>>(val function: Function<X>) {
     operator fun div(arg: IndVar<X>) = function.diff(arg.variable)
   }
 

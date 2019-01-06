@@ -4,7 +4,7 @@ import edu.umontreal.kotlingrad.math.algebra.AbelianGroup
 import edu.umontreal.kotlingrad.math.algebra.Field
 import java.util.*
 
-class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>>, List<X> by vector {
+open class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>>, List<X> by vector {
   constructor(vector: Collection<X>): this(ArrayList<X>(vector.size).apply { addAll(vector) })
   constructor(vararg vector: X): this(arrayListOf(*vector))
 

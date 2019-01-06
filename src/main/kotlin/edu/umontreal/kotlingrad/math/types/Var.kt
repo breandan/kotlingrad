@@ -17,7 +17,7 @@ open class Var<X: Field<X>>(
 
   override fun toString() = name
 
-  override fun div(divisor: Function<X>) = if (divisor === this) One(prototype) else this * divisor.inverse()
+  override fun div(divisor: Function<X>) = if (divisor === this) One(prototype) else super.div(divisor)
 
   companion object {
     private fun randomDefaultName() = ('a'..'z').map { it }.shuffled().subList(0, 4).joinToString("")
