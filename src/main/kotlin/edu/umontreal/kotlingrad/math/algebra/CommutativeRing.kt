@@ -1,3 +1,3 @@
 package edu.umontreal.kotlingrad.math.algebra
 
-interface CommutativeRing<X>: Ring<X>
+interface CommutativeRing<X: CommutativeRing<X>>: Ring<X>

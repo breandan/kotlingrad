@@ -9,7 +9,7 @@ import edu.umontreal.kotlingrad.math.functions.VectorFunction
 import edu.umontreal.kotlingrad.math.operators.Inverse
 import edu.umontreal.kotlingrad.math.types.*
 
-open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<X>() {
+abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<X>() {
   fun value(fnx: X) = Const(fnx, rfc)
 
   fun value(vararg fnx: X): ConstVector<X> {
@@ -20,6 +20,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<X>()
   }
 
   fun zero(size: Int): ConstVector<X> {
+
     val list = ArrayList<Const<X>>(size)
     for (i in 0 until size) list.add(zero)
     return ConstVector(rfc, list)
@@ -33,12 +34,7 @@ open class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<X>()
 
   open fun variable(name: String, default: X) = Var(rfc, default, name)
 
-  fun function(vararg fnx: Function<X>): VectorFunction<X> {
-    val size = fnx.size
-    val list = ArrayList<Function<X>>(size)
-    for (i in 0 until size) list.add(fnx[i])
-    return VectorFunction(rfc, *list.toTypedArray())
-  }
+  fun function(vararg fns: Function<X>) = VectorFunction(rfc, Vector(*fns))
 
   val zero = Zero(rfc)
 

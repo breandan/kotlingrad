@@ -1,3 +1,3 @@
 package edu.umontreal.kotlingrad.math.algebra
 
-interface Real<X>: Field<X>
+interface Real<X: Real<X>>: Field<X>
