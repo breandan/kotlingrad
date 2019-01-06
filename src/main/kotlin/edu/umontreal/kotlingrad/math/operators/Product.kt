@@ -11,11 +11,8 @@ class Product<X: Field<X>>(
 ): BinaryFunction<X>(multiplicator, multiplicand) {
   override fun invoke(map: Map<Var<X>, X>) = lfn(map) * rfn(map)
 
-
   // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-  override fun diff(ind: Var<X>) =
-      if (lfn === rfn) lfn.diff(ind) * rfn * 2L
-      else lfn.diff(ind) * rfn + lfn * rfn.diff(ind)
+  override fun diff(ind: Var<X>) = if (lfn === rfn) lfn.diff(ind) * rfn * 2L else lfn.diff(ind) * rfn + lfn * rfn.diff(ind)
 
   override fun toString() = "($lfn * $rfn)"
 }

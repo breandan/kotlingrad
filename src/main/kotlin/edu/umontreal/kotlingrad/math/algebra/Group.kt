@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.math.algebra
 
-interface Group<X> {
+interface Group<X: Group<X>> {
   operator fun unaryMinus(): X
 
   operator fun plus(addend: X): X

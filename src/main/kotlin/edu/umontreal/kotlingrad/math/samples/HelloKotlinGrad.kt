@@ -9,11 +9,11 @@ fun main(args: Array<String>) {
     val x = variable("x")
     val y = variable("y")
 
-    val z = x * (-sin(x * y) + y)      // Operator overloads
+    val z = x * (-sin(x * y) + y)      // Polish notation
     val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
-    val `∂z_∂y` = d(z) / d(y)          // Multiple variables
-    val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order and
-    val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // partial derivatives
+    val `∂z_∂y` = d(z) / d(y)          // Partial derivatives
+    val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order derivatives
+    val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // Higher order partials
     val `∇z` = z.grad()                // Gradient operator
 
     val values = mapOf(x to DoubleReal(0), y to DoubleReal(1))
