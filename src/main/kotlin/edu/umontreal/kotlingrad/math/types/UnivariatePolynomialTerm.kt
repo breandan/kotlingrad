@@ -20,6 +20,7 @@ class UnivariatePolynomialTerm<X: Field<X>>(
   override fun unaryMinus() = UnivariatePolynomialTerm(-coefficient, arg, exponent)
 
   private fun superscript(exponent: Int) = exponent.toString()
+      .replace("-", "⁻")
       .replace("0", "⁰")
       .replace("1", "¹")
       .replace("2", "²")
