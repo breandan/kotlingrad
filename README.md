@@ -85,6 +85,7 @@ fun main(args: Array<String>) {
     val `d²y_dx²` = d(dy_dx) / d(x)
     val `d³y_dx³` = d(`d²y_dx²`) / d(x)
     val `d⁴y_dx⁴` = d(`d³y_dx³`) / d(x)
+    val `d⁵y_dx⁵` = d(`d⁴y_dx⁴`) / d(x)
 
     val xs = -10.0..10.0 step 0.09
 
@@ -93,6 +94,7 @@ fun main(args: Array<String>) {
         + xs.map { listOf(it, `d²y_dx²`(it), "d²y/x²") }
         + xs.map { listOf(it, `d³y_dx³`(it), "d³y/dx³") }
         + xs.map { listOf(it, `d⁴y_dx⁴`(it), "d⁴y/dx⁴") }
+        + xs.map { listOf(it, `d⁵y_dx⁵`(it), "d⁵y/dx⁵") }
         ).flatten()
 
     dataFrameOf("x", "y", "Function")(ys)
