@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 
     val values = mapOf(x to 0, y to 1)
     val indVar = z.independentVariables().joinToString(", ")
-    val p = "${x(x to 0)}, ${y(y to 1)}"
+    val p = "${x(0)}, ${y(1)}"
     print("z($indVar) \t\t\t= $z\n" +
         "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
         "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
