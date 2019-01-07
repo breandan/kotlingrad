@@ -33,12 +33,12 @@ fun main(args: Array<String>) {
     val values = mapOf(x to 0, y to 1)
     val indVar = z.independentVariables().joinToString(", ")
     val p = "${x(x to 0)}, ${y(y to 1)}"
-    print("z($indVar) \t\t\t= $z\n" +
-        "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
-        "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
-        "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
-        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t= " + `∂²z_∂x∂y`(values) + "\n" +
-        "∇z($p) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
+    print("z($indVar) \t\t= $z\n" +
+        "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t= " + `∂z_∂x`(values) + "\n" +
+        "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t= " + `∂z_∂y`(values) + "\n" +
+        "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
+        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t= " + `∂²z_∂x∂y`(values) + "\n" +
+        "∇z($p) \t\t= $`∇z` \n\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
   }
 }
 ```
@@ -46,17 +46,17 @@ fun main(args: Array<String>) {
 Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
-z(x, y) 			= ((y + -sin((y * x))) * x)
+z(x, y) 		= ((y + -sin((y * x))) * x)
 ∂z(0.0, 1.0)/∂x 		= ((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))) 
-				= 1.0
+			= 1.0
 ∂z(0.0, 1.0)/∂y 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
-				= 0.0
+			= 0.0
 ∂²z(0.0, 1.0)/∂x² 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
-				= -2.0
+			= -2.0
 ∂²z(0.0, 1.0)/∂x∂y 		= ((-((-(((0.0 * y) + x) * sin((y * x))) * (1.0 * y)) + cos((y * x))) * x) + (-(((0.0 * y) + x) * cos((y * x))) + 1.0)) 
-				= 1.0
-∇z(0.0, 1.0) 			= {x=((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))), y=((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0)))} 
-				= [1.0, 0.0]ᵀ
+			= 1.0
+∇z(0.0, 1.0) 		= {x=((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))), y=((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0)))} 
+			= [1.0, 0.0]ᵀ
 ```
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
