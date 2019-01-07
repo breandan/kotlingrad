@@ -1,12 +1,18 @@
 # Kotlin𝛁: A type-safe AD implementation for Kotlin
 
+Kotlin𝛁 is a framework for type safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in).
+
+# Introduction
+
 Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Tangent](https://github.com/google/tangent), [Myia](https://github.com/mila-udem/myia) et al.
 
 AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning.
 
-We aim to provide an algebraically sound implementation of AD for type safe tensor manipulations.
+We aim to provide an algebraically sound implementation of AD for type safe tensor operations.
 
 # Usage
+
+The following example should help you get started:
 
 ```kotlin
 import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
@@ -39,7 +45,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Running this (`./gradlew run`) should print:
+Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
 z(x, y) 				= ((y + -sin((y * x))) * x)
@@ -55,7 +61,21 @@ z(x, y) 				= ((y + -sin((y * x))) * x)
 						= [1.0, 0.0]ᵀ
 ```
 
-To run the tests: `./gradlew test`
+To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
+
+### Plotting
+
+To plot the charts, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
+
+```
+sudo apt-get install r-base && \
+sudo ln -s /usr/bin/R /usr/local/bin/R && \
+R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
+```
+
+Then run `./gradlew plot`. This should generate the following plot:
+
+![](src/main/resources/plot.png)
 
 ## Ideal API (WIP)
 
@@ -120,6 +140,7 @@ The following are some excellent projects and publications that have inspired th
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
+* [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
 
 ### Computational Mathematics
 
@@ -131,3 +152,7 @@ The following are some excellent projects and publications that have inspired th
 ### Vector, Matrix and Tensor Calculus
 
 * [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
+
+### Neural Networks
+
+* [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)

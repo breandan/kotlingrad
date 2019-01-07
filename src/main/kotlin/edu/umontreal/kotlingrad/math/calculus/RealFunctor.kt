@@ -3,6 +3,7 @@ package edu.umontreal.kotlingrad.math.calculus
 import edu.umontreal.kotlingrad.math.algebra.Field
 import edu.umontreal.kotlingrad.math.algebra.Real
 import edu.umontreal.kotlingrad.math.algebra.RealPrototype
+import edu.umontreal.kotlingrad.math.functions.BinaryFunction
 import edu.umontreal.kotlingrad.math.functions.Function
 import edu.umontreal.kotlingrad.math.functions.UnaryFunction
 import edu.umontreal.kotlingrad.math.functions.VectorFunction
@@ -70,13 +71,13 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
     override fun toString(): String = "log₁₀($arg)"
   }
 
-//  fun pow(base: Function<X>, exponent: Const<X>): Function<X> = object: BinaryFunction<X>(base, exponent) {
-//    override fun invoke(map: Map<Var<X>, X>): X = rfc.pow(lfn(map), rfn(map))
-//
-//    override fun diff(ind: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn.value - rfc.one)) * lfn.diff(ind)
-//
-//    override fun toString(): String = "pow($lfn, $rfn)"
-//  }
+  fun pow(base: Function<X>, exponent: Const<X>): BinaryFunction<X> = object: BinaryFunction<X>(base, exponent) {
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.pow(lfn(map), rfn(map))
+
+    override fun diff(ind: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn() - rfc.one)) * lfn.diff(ind)
+
+    override fun toString(): String = "pow($lfn, $rfn)"
+  }
 
   fun sqrt(radicand: Function<X>): Function<X> = object: UnaryFunction<X>(radicand) {
     override fun invoke(map: Map<Var<X>, X>): X = rfc.sqrt(arg(map))
