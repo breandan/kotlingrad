@@ -3,19 +3,36 @@ plugins {
   kotlin("jvm") version "1.3.11"
 }
 
-application.mainClassName = "edu.umontreal.kotlingrad.math.samples.HelloKotlinGradKt"
-
 group = "edu.umontreal"
 version = "0.1"
 repositories.jcenter()
 
 val kotlinVersion = "1.3.11"
 
-val test by tasks.getting(Test::class) {
-  useJUnitPlatform()
+tasks {
+  register("plot", JavaExec::class) {
+    main = "edu.umontreal.kotlingrad.math.samples.TestPlotKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    description = "Generates plots"
+  }
+
+  register("demo", JavaExec::class) {
+    main = "edu.umontreal.kotlingrad.math.samples.HelloKotlinGradKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    description = "Runs demo script"
+  }
+
+  val test by getting(Test::class) {
+    useJUnitPlatform()
+  }
+}
+
+repositories {
+  maven("https://jitpack.io")
 }
 
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.11")
+  compile("com.github.holgerbrandl:kravis:-SNAPSHOT")
 }
