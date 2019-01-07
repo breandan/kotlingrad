@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
     dataFrameOf("x", "y", "Function")(ys)
         .plot(x = "x", y = "y", color = "Function")
         .geomLine(size = 1.2)
-        .title("Derivatives of y=sin(x)/x")
+        .title("Derivatives of y=sin(sin(x))/x")
         .save(File("src/main/resources/plot.png"))
   }
 }
