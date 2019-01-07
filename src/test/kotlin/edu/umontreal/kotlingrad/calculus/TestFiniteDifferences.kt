@@ -17,7 +17,7 @@ class TestFiniteDifferences: StringSpec({
 
   with(DoubleFunctor) {
     "test sin" {
-      assertAll(DoubleGenerator) { xVal ->
+      assertAll(DoubleRealGenerator) { xVal ->
         val f = sin(x)
         val df_dx = d(f) / d(x)
         df_dx(x to xVal).dbl shouldBe (((sin(xVal.dbl + dx) - sin(xVal.dbl)) / dx) plusOrMinus ε)
@@ -25,7 +25,7 @@ class TestFiniteDifferences: StringSpec({
     }
 
     "test cos" {
-      assertAll(DoubleGenerator) { xVal ->
+      assertAll(DoubleRealGenerator) { xVal ->
         val f = cos(x)
         val df_dx = d(f) / d(x)
         df_dx(x to xVal).dbl shouldBe (((cos(xVal.dbl + dx) - cos(xVal.dbl)) / dx) plusOrMinus ε)
@@ -33,8 +33,8 @@ class TestFiniteDifferences: StringSpec({
     }
 
     "test composition" {
-      assertAll(DoubleGenerator) { xVal ->
-        val f = sin(x * x)
+      assertAll(DoubleRealGenerator) { xVal ->
+        val f = sin(pow(x, 2))
         val df_dx = d(f) / d(x)
 
         val xdx = xVal.dbl + dx

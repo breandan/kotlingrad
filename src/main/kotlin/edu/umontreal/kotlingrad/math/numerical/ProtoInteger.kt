@@ -3,6 +3,7 @@ package edu.umontreal.kotlingrad.math.numerical
 import edu.umontreal.kotlingrad.math.algebra.RealPrototype
 import java.lang.Math.*
 
+// TODO: Specialize to Ints
 object ProtoInteger: RealPrototype<DoubleReal> {
   override val zero = DoubleReal(0.0)
   override val one = DoubleReal(1.0)

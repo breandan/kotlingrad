@@ -13,7 +13,7 @@ class TestPartialDerivatives: StringSpec({
 
   with(DoubleFunctor) {
     "∂x / ∂y should be 0" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
         val f = cos(x)
         val `∂f_∂y` = d(f) / d(y)
         `∂f_∂y`(x to xVal, y to yVal).dbl + 0.0 shouldBe 0.0
@@ -21,7 +21,7 @@ class TestPartialDerivatives: StringSpec({
     }
 
     "∂(x + y) / ∂x should be 1" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
         val f = x + y
         val `∂f_∂x` = d(f) / d(x)
         `∂f_∂x`(x to xVal, y to yVal).dbl shouldBe 1.0
@@ -29,7 +29,7 @@ class TestPartialDerivatives: StringSpec({
     }
 
     "∂(x + y + x) / ∂x should be 2" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
         val f = x + y + x
         val `∂f_∂x` = d(f) / d(x)
         `∂f_∂x`(x to xVal, y to yVal).dbl shouldBe 2.0
@@ -37,7 +37,7 @@ class TestPartialDerivatives: StringSpec({
     }
 
     "∂(yx) / ∂x should be y" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
+      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
         val f = y * x
         val `∂f_∂x` = d(f) / d(x)
         `∂f_∂x`(x to xVal, y to yVal).dbl shouldBe yVal.dbl
@@ -45,8 +45,8 @@ class TestPartialDerivatives: StringSpec({
     }
 
     "∂(yx + xx + yy) / ∂x should be y + 2x" {
-      assertAll(DoubleGenerator, DoubleGenerator) { xVal, yVal ->
-        val f = y * x + x * x + y * y
+      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
+        val f = y * x + pow(x, 2) + pow(y, 2)
         val `∂f_∂x` = d(f) / d(x)
         `∂f_∂x`(x to xVal, y to yVal).dbl shouldBe (y + x * 2)(x to xVal, y to yVal).dbl
       }

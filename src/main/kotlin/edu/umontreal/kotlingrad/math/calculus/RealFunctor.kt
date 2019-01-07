@@ -15,84 +15,85 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
 
   fun value(vararg fnx: X) = ConstVector(*fnx.mapTo(ArrayList(fnx.size)) { value(it) }.toTypedArray())
 
-  fun zero(size: Int) = ConstVector(*Array(size) { zero })
+//  fun zero(size: Int) = ConstVector(*Array(size) { zero })
+//  fun function(vararg fns: Function<X>) = VectorFunction(*fns)
 
-  open fun variable() = Var(rfc)
+  fun variable() = Var(rfc)
 
-  open fun variable(default: X) = Var(rfc, value = default)
+  fun variable(default: X) = Var(rfc, value = default)
 
-  open fun variable(name: String) = Var(rfc, name = name)
+  fun variable(name: String) = Var(rfc, name = name)
 
-  open fun variable(name: String, default: X) = Var(rfc, default, name)
-
-  fun function(vararg fns: Function<X>) = VectorFunction(*fns)
+  fun variable(name: String, default: X) = Var(rfc, default, name)
 
   val zero = Zero(rfc)
 
   val one = One(rfc)
 
   fun cos(angle: Function<X>) = object: UnaryFunction<X>(angle) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.cos(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.cos(angle(map))
 
-    override fun diff(ind: Var<X>) = -(sin(arg) * arg.diff(ind))
+    override fun diff(ind: Var<X>) = -(sin(angle) * angle.diff(ind))
 
-    override fun toString() = "cos($arg)"
+    override fun toString() = "cos($angle)"
   }
 
   fun sin(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.sin(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.sin(angle(map))
 
-    override fun diff(ind: Var<X>) = cos(arg) * arg.diff(ind)
+    override fun diff(ind: Var<X>) = cos(angle) * angle.diff(ind)
 
-    override fun toString(): String = "sin($arg)"
+    override fun toString(): String = "sin($angle)"
   }
 
   fun tan(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.tan(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.tan(angle(map))
 
-    override fun diff(ind: Var<X>) = UnivariatePolynomialTerm(1, cos(arg), -2) * arg.diff(ind)
+    override fun diff(ind: Var<X>) = UnivariatePolynomialTerm(1, cos(angle), -2) * angle.diff(ind)
 
-    override fun toString(): String = "tan($arg)"
+    override fun toString(): String = "tan($angle)"
   }
 
   fun exp(exponent: Function<X>): Function<X> = object: UnaryFunction<X>(exponent) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.exp(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.exp(exponent(map))
 
-    override fun diff(ind: Var<X>) = exp(arg) * arg.diff(ind)
+    override fun diff(ind: Var<X>) = exp(exponent) * exponent.diff(ind)
 
-    override fun toString(): String = "exp($arg)"
+    override fun toString(): String = "exp($exponent)"
   }
 
   fun log(logarithmand: Function<X>) = object: UnaryFunction<X>(logarithmand) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.log(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.log(logarithmand(map))
 
-    override fun diff(ind: Var<X>) = Inverse(arg) * arg.diff(ind)
+    override fun diff(ind: Var<X>) = Inverse(logarithmand) * logarithmand.diff(ind)
 
-    override fun toString(): String = "log₁₀($arg)"
+    override fun toString(): String = "log₁₀($logarithmand)"
   }
 
+  // TODO: Allow functions in exponent
   fun pow(base: Function<X>, exponent: Const<X>): BinaryFunction<X> = object: BinaryFunction<X>(base, exponent) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.pow(lfn(map), rfn(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.pow(base(map), exponent(map))
 
-    override fun diff(ind: Var<X>) = rfn * this@RealFunctor.pow(lfn, this@RealFunctor.value(rfn() - rfc.one)) * lfn.diff(ind)
+    override fun diff(ind: Var<X>) =
+        exponent * this@RealFunctor.pow(base, this@RealFunctor.value(exponent() - rfc.one)) * base.diff(ind)
 
-    override fun toString(): String = "pow($lfn, $rfn)"
+    override fun toString(): String = "pow($base, $exponent)"
   }
 
   fun sqrt(radicand: Function<X>): Function<X> = object: UnaryFunction<X>(radicand) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.sqrt(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.sqrt(radicand(map))
 
-    override fun diff(ind: Var<X>) = sqrt(arg).inverse() / this@RealFunctor.value(rfc.one * 2L) * arg.diff(ind)
+    override fun diff(ind: Var<X>) = sqrt(radicand).inverse() / this@RealFunctor.value(rfc.one * 2L) * radicand.diff(ind)
 
-    override fun toString(): String = "√($arg)"
+    override fun toString(): String = "√($radicand)"
   }
 
   fun square(base: Function<X>) = object: UnaryFunction<X>(base) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.square(arg(map))
+    override fun invoke(map: Map<Var<X>, X>): X = rfc.square(base(map))
 
-    override fun diff(ind: Var<X>) = arg * this@RealFunctor.value(rfc.one * 2L) * arg.diff(ind)
+    override fun diff(ind: Var<X>) = base * this@RealFunctor.value(rfc.one * 2L) * base.diff(ind)
 
-    override fun toString(): String = "($arg)²"
+    override fun toString(): String = "($base)²"
   }
 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
