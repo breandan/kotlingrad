@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
   with(DoubleFunctor) {
     val x = variable()
 
-    val y = sin(x) / x
+    val y = sin(sin(x)) / x
     val `dy_dx` = d(y) / d(x)
     val `d²y_dx²` = d(dy_dx) / d(x)
     val `d³y_dx³` = d(`d²y_dx²`) / d(x)
@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
 
     val xs = -10.0..10.0 step 0.1
 
-    val ys = (xs.map { listOf(it, y(x to it), "y=sin(x)/x") } +
+    val ys = (xs.map { listOf(it, y(x to it), "y=sin(sin(x))/x") } +
         xs.map { listOf(it, dy_dx(x to it), "dy/dx") } +
         xs.map { listOf(it, `d²y_dx²`(x to it), "d²y/x²") } +
         xs.map { listOf(it, `d³y_dx³`(x to it), "d³y/dx³") } +
