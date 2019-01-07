@@ -65,7 +65,47 @@ To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradle
 
 ### Plotting
 
-To plot the charts, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
+![](src/main/resources/plot.png)
+
+This plot was generated with the following code:
+
+```kotlin
+import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.utils.step
+import krangl.dataFrameOf
+import kravis.geomLine
+import kravis.plot
+import java.io.File
+
+@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
+fun main(args: Array<String>) {
+  with(DoubleFunctor) {
+    val x = variable()
+
+    val y = sin(x) / x
+    val `dy_dx` = d(y) / d(x)
+    val `d²y_dx²` = d(dy_dx) / d(x)
+    val `d³y_dx³` = d(`d²y_dx²`) / d(x)
+    val `d⁴y_dx⁴` = d(`d³y_dx³`) / d(x)
+
+    val xs = -10.0..10.0 step 0.1
+
+    val ys = (xs.map { listOf(it, y(x to it), "y=sin(x)/x") } +
+        xs.map { listOf(it, dy_dx(x to it), "dy/dx") } +
+        xs.map { listOf(it, `d²y_dx²`(x to it), "d²y/x²") } +
+        xs.map { listOf(it, `d³y_dx³`(x to it), "d³y/dx³") } +
+        xs.map { listOf(it, `d⁴y_dx⁴`(x to it), "d⁴y/dx⁴") }).flatten()
+
+    dataFrameOf("x", "y", "Function")(ys)
+        .plot(x = "x", y = "y", color = "Function")
+        .geomLine(size = 1.2)
+        .title("Derivatives of y=sin(x)/x")
+        .save(File("src/main/resources/plot.png"))
+  }
+}
+```
+
+To generate the above plot, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
 
 ```
 sudo apt-get install r-base && \
@@ -73,9 +113,7 @@ sudo ln -s /usr/bin/R /usr/local/bin/R && \
 R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
 ```
 
-Then run `./gradlew plot`. This should generate the following plot:
-
-![](src/main/resources/plot.png)
+Then run `./gradlew plot`.
 
 ## Ideal API (WIP)
 
