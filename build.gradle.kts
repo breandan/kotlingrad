@@ -11,13 +11,13 @@ val kotlinVersion = "1.3.11"
 
 tasks {
   register("plot", JavaExec::class) {
-    main = "edu.umontreal.kotlingrad.math.samples.TestPlotKt"
+    main = "edu.umontreal.kotlingrad.samples.TestPlotKt"
     classpath = sourceSets["main"].runtimeClasspath
     description = "Generates plots"
   }
 
   register("demo", JavaExec::class) {
-    main = "edu.umontreal.kotlingrad.math.samples.HelloKotlinGradKt"
+    main = "edu.umontreal.kotlingrad.samples.HelloKotlinGradKt"
     classpath = sourceSets["main"].runtimeClasspath
     description = "Runs demo script"
   }

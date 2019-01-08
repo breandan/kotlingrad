@@ -1,7 +1,5 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor.variable
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
@@ -13,9 +11,10 @@ import kotlin.math.sin
 class TestFiniteDifferences: StringSpec({
   val ε = 1E-6
   val dx = 1E-8
-  val x = variable("x")
 
   with(DoubleFunctor) {
+    val x = variable("x")
+
     "test sin" {
       assertAll(DoubleRealGenerator) { xVal ->
         val f = sin(x)

@@ -1,7 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
 
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec

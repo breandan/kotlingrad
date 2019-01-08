@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.math.numerical.DoubleReal
+import edu.umontreal.kotlingrad.numerical.DoubleReal
 import io.kotlintest.properties.Gen
 
 object DoubleRealGenerator: Gen<DoubleReal> {

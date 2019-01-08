@@ -1,17 +1,15 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor.variable
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPartialDerivatives: StringSpec({
-  val x = variable("x")
-  val y = variable("y")
-
   with(DoubleFunctor) {
+    val x = variable("x")
+    val y = variable("y")
+
     "∂x / ∂y should be 0" {
       assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
         val f = cos(x)
