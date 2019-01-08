@@ -4,11 +4,17 @@ import edu.umontreal.kotlingrad.algebra.Real
 import java.lang.Math.pow
 
 class DoubleReal(number: Number = 0): Real<DoubleReal> {
-  val dbl: kotlin.Double = number.toDouble() + 0.0
+  val dbl: Double =
+      when {
+        number.toDouble().isNaN() -> 0.0
+        1E20 < number.toDouble() -> 1E20
+        -1E20 > number.toDouble() -> -1E20
+        else -> number.toDouble() + 0.0
+      }
 
   override fun toString() = dbl.toString()
 
-  override fun inverse() = DoubleReal(1.0 / dbl)
+  override fun inverse() = DoubleReal(1 / dbl)
 
   override fun unaryMinus() = DoubleReal(-dbl)
 
