@@ -4,7 +4,7 @@ import ch.obermuhlner.math.big.BigDecimalMath.*
 import edu.umontreal.kotlingrad.algebra.RealPrototype
 import java.math.MathContext
 
-object ProBigDecimal: RealPrototype<BigDecimalReal> {
+object ProtoBigDecimal: RealPrototype<BigDecimalReal> {
   override val zero = BigDecimalReal(0.0)
   override val one = BigDecimalReal(1.0)
   val mc = MathContext(10)
