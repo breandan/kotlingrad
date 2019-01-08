@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe
@@ -9,13 +8,11 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestGradient: StringSpec({
   with(DoubleFunctor) {
+    val ε = 1E-15
     val x = variable("x")
     val y = variable("x")
 
     val z = y * (sin(x * y) - x)
-
-    val ε = 1E-15
-
     val `∇z` = z.grad()
 
     "test ∇z" {

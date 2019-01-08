@@ -1,7 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
-import edu.umontreal.kotlingrad.math.numerical.DoubleReal
+import edu.umontreal.kotlingrad.numerical.DoubleReal
 import io.kotlintest.matchers.plusOrMinus
 import io.kotlintest.properties.assertAll
 import io.kotlintest.shouldBe

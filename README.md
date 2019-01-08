@@ -15,7 +15,7 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 The following example should help you get started:
 
 ```kotlin
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.calculus.DoubleFunctor
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
     val x = variable("x")
     val y = variable("y")
 
-    val z = x * (-sin(x * y) + y)      // Polish notation
+    val z = x * (-sin(x * y) + y)      // Infix notation
     val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
     val `∂z_∂y` = d(z) / d(y)          // Partial derivatives
     val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order derivatives
@@ -32,8 +32,9 @@ fun main(args: Array<String>) {
 
     val values = mapOf(x to 0, y to 1)
     val indVar = z.independentVariables().joinToString(", ")
-    val p = "${x(x to 0)}, ${y(y to 1)}"
+    val p = "${x(0)}, ${y(1)}"
     print("z($indVar) \t\t\t= $z\n" +
+        "z($p) \t\t\t= ${z(values)}\n" +
         "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
         "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
         "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
@@ -47,6 +48,7 @@ Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGra
 
 ```
 z(x, y) 			= ((y + -sin((y * x))) * x)
+z(0.0, 1.0) 			= 0.0
 ∂z(0.0, 1.0)/∂x 		= ((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))) 
 				= 1.0
 ∂z(0.0, 1.0)/∂y 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
@@ -68,7 +70,7 @@ To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradle
 This plot was generated with the following code:
 
 ```kotlin
-import edu.umontreal.kotlingrad.math.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.calculus.DoubleFunctor
 import edu.umontreal.kotlingrad.utils.step
 import krangl.dataFrameOf
 import kravis.geomLine
@@ -195,3 +197,4 @@ The following are some excellent projects and publications that have inspired th
 ### Neural Networks
 
 * [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)
+* [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
