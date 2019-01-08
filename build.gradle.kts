@@ -28,6 +28,7 @@ tasks {
 }
 
 repositories {
+  mavenCentral()
   maven("https://jitpack.io")
 }
 
@@ -35,4 +36,5 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.11")
   compile("com.github.holgerbrandl:kravis:-SNAPSHOT")
+  compile("ch.obermuhlner:kotlin-big-math:0.0.1")
 }
