@@ -1,90 +1,79 @@
 package edu.umontreal.kotlingrad.evaluation
 
 import edu.umontreal.kotlingrad.calculus.DoubleFunctor
-import edu.umontreal.kotlingrad.calculus.DoubleRealGenerator
-import io.kotlintest.matchers.plusOrMinus
+import edu.umontreal.kotlingrad.calculus.NumericalGenerator
+import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
-import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
 class TestArithmetic: StringSpec({
   with(DoubleFunctor) {
-    val ε = 1E-10
     val x = variable("x")
     val y = variable("y")
     val z = variable("z")
 
     "test addition" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
-        (x + y).invoke(x to xVal, y to yVal).dbl shouldBe ((yVal + xVal).dbl plusOrMinus ε)
+      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+        (x + y).invoke(x to xVal, y to yVal) shouldBeAbout yVal + xVal
       }
     }
 
     "test subtraction" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
-        (x - y)(x to xVal, y to yVal).dbl shouldBe ((xVal - yVal).dbl plusOrMinus ε)
+      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+        (x - y)(x to xVal, y to yVal) shouldBeAbout xVal - yVal
       }
     }
 
     "test unary minus" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
-        (-y + x)(x to xVal, y to yVal).dbl shouldBe ((xVal - yVal).dbl plusOrMinus ε)
+      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+        (-y + x)(x to xVal, y to yVal) shouldBeAbout xVal - yVal
       }
     }
 
     "test multiplication" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal ->
-        (x * y)(x to xVal, y to yVal).dbl shouldBe ((xVal * yVal).dbl plusOrMinus ε)
+      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+        (x * y)(x to xVal, y to yVal) shouldBeAbout xVal * yVal
       }
     }
 
     "test multiplication with numerical type" {
-      assertAll(DoubleRealGenerator) { xVal ->
-        (x * 2)(x to xVal).dbl shouldBe (xVal.dbl * 2 plusOrMinus ε)
+      assertAll(NumericalGenerator) { xVal: Double ->
+        (x * 2)(x to xVal) shouldBeAbout xVal * 2
       }
     }
 
-//  "test division" {
-//    assertAll(DoubleRealGenerator, DoubleRealGenerator) { x, y ->
-//      (x / y)().dbl shouldBe ((x() / y()).dbl plusOrMinus ε)
-//    }
-//  }
-//
-//  "test inverse" {
-//    assertAll(DoubleRealGenerator, DoubleRealGenerator) { x, y ->
-//      (x * y.inverse())().dbl shouldBe ((x / y)().dbl plusOrMinus ε)
-//    }
-//  }
+    "test division" {
+      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+        val values = mapOf(x to xVal, y to yVal)
+        (x / y)(values) shouldBeAbout x(values) / y(values)
+      }
+    }
+
+    "test inverse" {
+      assertAll(NumericalGenerator, NumericalGenerator(0)) { xVal, yVal ->
+        val values = mapOf(x to xVal, y to yVal)
+        (x * y.inverse())(values) shouldBeAbout (x / y)(values)
+      }
+    }
 
     "test associativity" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal, zVal ->
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { xVal, yVal, zVal ->
         val values = mapOf(x to xVal, y to yVal, z to zVal)
-        (x * (y * z))(values).dbl shouldBe (((x * y) * z)(values).dbl plusOrMinus ε)
+        (x * (y * z))(values) shouldBeAbout ((x * y) * z)(values)
       }
     }
 
     "test commutativity" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal, zVal ->
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { xVal, yVal, zVal ->
         val values = mapOf(x to xVal, y to yVal, z to zVal)
-        (x * y * z)(values).dbl shouldBe ((z * y * x)(values).dbl plusOrMinus ε)
+        (x * y * z)(values) shouldBeAbout (z * y * x)(values)
       }
     }
 
     "test distributivity" {
-      assertAll(DoubleRealGenerator, DoubleRealGenerator, DoubleRealGenerator) { xVal, yVal, zVal ->
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { xVal, yVal, zVal ->
         val values = mapOf(x to xVal, y to yVal, z to zVal)
-        (x * (y + z))(values).dbl shouldBe ((x * y + x * z)(values).dbl plusOrMinus ε)
-      }
-    }
-
-    "test functional" {
-      assertAll(DoubleRealGenerator) { xVal ->
-        with(DoubleFunctor) {
-          val f = pow(x, 2)
-          val q = variable("c", 1)
-//      f(q())
-
-        }
+        (x * (y + z))(values) shouldBeAbout (x * y + x * z)(values)
       }
     }
   }
