@@ -47,17 +47,17 @@ fun main(args: Array<String>) {
 Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
-z(x, y) 			= (4 * ((y + -sin((y * x))) * x))
+z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
 z({x=0, y=1}) 			= 0.0
-∂z({x=0, y=1})/∂x 		= (((1 * (y + -sin((y * x)))) + (x * (0 + -((1 * y) * cos((y * x)))))) * 4) 
+∂z({x=0, y=1})/∂x 		= (((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4) 
 				= 4.0
-∂z({x=0, y=1})/∂y 		= (((0 * (y + -sin((y * x)))) + (x * (1 + -(((0 * y) + x) * cos((y * x)))))) * 4) 
+∂z({x=0, y=1})/∂y 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
 				= 0.0
-∂²z({x=0, y=1})/∂x² 		= (((0 * (y + -sin((y * x)))) + (x * (1 + -(((0 * y) + x) * cos((y * x)))))) * 4) 
+∂²z({x=0, y=1})/∂x² 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
 				= -8.0
-∂²z({x=0, y=1})/∂x∂y 		= ((0 * ((1 * (y + -sin((y * x)))) + (x * (0 + -((1 * y) * cos((y * x))))))) + (4 * ((1 + -(((0 * y) + x) * cos((y * x)))) + ((0 + -((-(((0 * y) + x) * sin((y * x))) * (1 * y)) + cos((y * x)))) * x)))) 
+∂²z({x=0, y=1})/∂x∂y 		= (((-(cos((x * y)) * x) + 1) + (x * -((-(sin((x * y)) * x) * y) + cos((x * y))))) * 4) 
 				= 4.0
-∇z({x=0, y=1}) 			= {x=(((1 * (y + -sin((y * x)))) + (x * (0 + -((1 * y) * cos((y * x)))))) * 4), y=(((0 * (y + -sin((y * x)))) + (x * (1 + -(((0 * y) + x) * cos((y * x)))))) * 4)} 
+∇z({x=0, y=1}) 			= {x=(((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4), y=((x * (-(cos((x * y)) * x) + 1)) * 4)} 
 				= [4.0, 0.0]ᵀ
 ```
 
