@@ -6,14 +6,15 @@ import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.types.Var
 
 class Product<X: Field<X>>(
-    multiplicator: Function<X>,
-    multiplicand: Function<X>
+    val multiplicator: Function<X>,
+    val multiplicand: Function<X>
 ): BinaryFunction<X>(multiplicator, multiplicand) {
-  override fun invoke(map: Map<Var<X>, X>) = lfn(map) * rfn(map)
+  override fun invoke(map: Map<Var<X>, X>) = multiplicator(map) * multiplicand(map)
 
   // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
   override fun diff(ind: Var<X>) =
-      if (lfn === rfn) lfn.diff(ind) * rfn * (one + one) else lfn.diff(ind) * rfn + lfn * rfn.diff(ind)
+      if (multiplicator === multiplicand) multiplicator.diff(ind) * multiplicand * two
+      else multiplicator.diff(ind) * multiplicand + multiplicator * multiplicand.diff(ind)
 
-  override fun toString() = "($lfn * $rfn)"
+  override fun toString() = "($multiplicator * $multiplicand)"
 }

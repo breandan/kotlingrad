@@ -1,5 +1,7 @@
 package edu.umontreal.kotlingrad.algebra
 
+import edu.umontreal.kotlingrad.numerical.FieldPrototype
+
 interface RealPrototype<X: Real<X>>: FieldPrototype<X> {
   fun cos(x: X): X
 

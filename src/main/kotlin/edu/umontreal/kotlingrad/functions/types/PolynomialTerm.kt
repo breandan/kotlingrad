@@ -12,10 +12,9 @@ class PolynomialTerm<X: Field<X>>(
   override fun invoke(map: Map<Var<X>, X>): X = coefficient(map) * arg.invoke(map).pow(exponent(map))
 
   override fun diff(ind: Var<X>) = when {
-    coefficient is Zero -> Zero(variables.first().prototype)
-    exponent is One -> arg.diff(ind) * coefficient + coefficient.diff(ind) * arg
+    exponent is One -> (arg * coefficient).diff(ind)
     // TODO: Generalize this to true functions instead of constants...
-    else -> PolynomialTerm(coefficient * exponent, arg, Const((exponent - one)(), variables.first().prototype)) * arg.diff(ind)
+    else -> PolynomialTerm(coefficient * exponent, arg, Const((exponent - one)(/*TODO: ONLY WORKS FOR CONSTANTS! FIX THIS!*/), variables.first().prototype)) * arg.diff(ind)
   }
 
   override fun toString() = "($coefficient * $arg${superscript(exponent)})"
