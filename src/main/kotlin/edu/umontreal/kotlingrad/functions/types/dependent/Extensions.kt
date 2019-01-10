@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED_PARAMETER")
 
-package edu.umontreal.kotlingrad.types.dependent
+package edu.umontreal.kotlingrad.functions.types.dependent
 
 @JvmName("g1")
 operator fun <T> Vector<T, `1`>.get(i: `0`): T = contents[0]

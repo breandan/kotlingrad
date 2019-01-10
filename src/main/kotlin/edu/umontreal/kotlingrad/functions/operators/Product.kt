@@ -1,9 +1,9 @@
-package edu.umontreal.kotlingrad.operators
+package edu.umontreal.kotlingrad.functions.operators
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.functions.BinaryFunction
 import edu.umontreal.kotlingrad.functions.Function
-import edu.umontreal.kotlingrad.types.Var
+import edu.umontreal.kotlingrad.functions.types.Var
 
 class Product<X: Field<X>>(
     multiplicator: Function<X>,
@@ -13,7 +13,7 @@ class Product<X: Field<X>>(
 
   // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
   override fun diff(ind: Var<X>) =
-      if (lfn === rfn) lfn.diff(ind) * rfn * 2L else lfn.diff(ind) * rfn + lfn * rfn.diff(ind)
+      if (lfn === rfn) lfn.diff(ind) * rfn * (one + one) else lfn.diff(ind) * rfn + lfn * rfn.diff(ind)
 
   override fun toString() = "($lfn * $rfn)"
 }

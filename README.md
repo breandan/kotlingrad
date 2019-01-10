@@ -47,18 +47,18 @@ fun main(args: Array<String>) {
 Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
-z(x, y) 			= ((y + -sin((y * x))) * x)
+z(x, y) 			= (4 * ((y + -sin((y * x))) * x)¹)
 z(0.0, 1.0) 			= 0.0
-∂z(0.0, 1.0)/∂x 		= ((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))) 
-				= 1.0
-∂z(0.0, 1.0)/∂y 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
+∂z(0.0, 1.0)/∂x 		= (((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))) * (4 * ((y + -sin((y * x))) * x)⁰)) 
+				= 4.0
+∂z(0.0, 1.0)/∂y 		= (((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) * (4 * ((y + -sin((y * x))) * x)⁰)) 
 				= 0.0
-∂²z(0.0, 1.0)/∂x² 		= ((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) 
-				= -2.0
-∂²z(0.0, 1.0)/∂x∂y 		= ((-((-(((0.0 * y) + x) * sin((y * x))) * (1.0 * y)) + cos((y * x))) * x) + (-(((0.0 * y) + x) * cos((y * x))) + 1.0)) 
-				= 1.0
-∇z(0.0, 1.0) 			= {x=((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))), y=((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0)))} 
-				= [1.0, 0.0]ᵀ
+∂²z(0.0, 1.0)/∂x² 		= (((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) * (4 * ((y + -sin((y * x))) * x)⁰)) 
+				= -8.0
+∂²z(0.0, 1.0)/∂x∂y 		= (((((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) * (0 * ((y + -sin((y * x))) * x)⁻¹)) * ((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x)))))) + ((4 * ((y + -sin((y * x))) * x)⁰) * ((-((-(((0.0 * y) + x) * sin((y * x))) * (1.0 * y)) + cos((y * x))) * x) + (-(((0.0 * y) + x) * cos((y * x))) + 1.0)))) 
+				= 4.0
+∇z(0.0, 1.0) 			= {x=(((1.0 * (y + -sin((y * x)))) + (x * -((1.0 * y) * cos((y * x))))) * (4 * ((y + -sin((y * x))) * x)⁰)), y=(((0.0 * (y + -sin((y * x)))) + (x * (-(((0.0 * y) + x) * cos((y * x))) + 1.0))) * (4 * ((y + -sin((y * x))) * x)⁰))} 
+				= [4.0, 0.0]ᵀ
 ```
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`

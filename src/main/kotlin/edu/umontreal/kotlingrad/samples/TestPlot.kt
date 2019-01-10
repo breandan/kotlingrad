@@ -1,6 +1,8 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.functions.Function
+import edu.umontreal.kotlingrad.numerical.DoubleReal
 import edu.umontreal.kotlingrad.utils.step
 import krangl.dataFrameOf
 import kravis.geomLine
@@ -35,7 +37,7 @@ d⁴y/dx⁴=$`d⁴y_dx⁴`""")
         + xs.map { listOf(it, dy_dx(it), "dy/dx") }
         + xs.map { listOf(it, `d²y_dx²`(it), "d²y/x²") }
         + xs.map { listOf(it, `d³y_dx³`(it), "d³y/dx³") }
-        + xs.map { listOf(it, `d⁴y_dx⁴`(it), "d⁴y/dx⁴") }
+        + xs.map { listOf(it, `d⁴y_dx⁴`.invoke(it), "d⁴y/dx⁴") }
         + xs.map { listOf(it, `d⁵y_dx⁵`(it), "d⁵y/dx⁵") }
         ).flatten()
 

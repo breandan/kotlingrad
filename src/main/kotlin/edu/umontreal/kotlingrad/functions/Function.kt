@@ -2,23 +2,24 @@ package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.calculus.Differentiable
-import edu.umontreal.kotlingrad.operators.Inverse
-import edu.umontreal.kotlingrad.operators.Negative
-import edu.umontreal.kotlingrad.operators.Product
-import edu.umontreal.kotlingrad.operators.Sum
-import edu.umontreal.kotlingrad.types.UnivariatePolynomialTerm
-import edu.umontreal.kotlingrad.types.Var
+import edu.umontreal.kotlingrad.functions.operators.Inverse
+import edu.umontreal.kotlingrad.functions.operators.Negative
+import edu.umontreal.kotlingrad.functions.operators.Product
+import edu.umontreal.kotlingrad.functions.operators.Sum
+import edu.umontreal.kotlingrad.functions.types.Const
+import edu.umontreal.kotlingrad.functions.types.One
+import edu.umontreal.kotlingrad.functions.types.PolynomialTerm
+import edu.umontreal.kotlingrad.functions.types.Var
 
-interface Function<X: Field<X>>: Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
-  operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
+abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
+    Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
+  abstract operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
 
   operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
 
-  fun independentVariables(): Set<Var<X>> = emptySet()
+  abstract override fun toString(): String
 
-  override fun toString(): String
-
-  override fun grad(): Map<Var<X>, Function<X>> = independentVariables().associateWith { diff(it) }
+  override fun grad(): Map<Var<X>, Function<X>> = variables.associateWith { diff(it) }
 
   override fun diff(ind: Var<X>): Function<X> = grad()[ind]!!
 
@@ -30,7 +31,12 @@ interface Function<X: Field<X>>: Field<Function<X>>, Differentiable<X, Function<
 
   override fun unaryMinus(): Function<X> = Negative(this)
 
-  override fun times(multiplicand: Long): Function<X> = UnivariatePolynomialTerm(multiplicand, this, 1)
+  fun times(multiplicand: Const<X>): Function<X> =
+      PolynomialTerm(multiplicand, this, one)
 
-  override fun pow(exponent: Int): Function<X> = UnivariatePolynomialTerm(1L, this, exponent)
+  override fun pow(exponent: Function<X>): Function<X> =
+      PolynomialTerm(one, this, exponent)
+
+  val one: One<X>
+      get() = One(variables.first().prototype)
 }
