@@ -1,6 +1,6 @@
 # Kotlin𝛁: A type-safe AD for Kotlin
 
-Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in).
+Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows you perform computation over higher-dimensional structures and restricts operations which can be performed on them to those which are algebraically valid and that can be checked at compile-time. By doing so, it attempts to reduce the possible runtime errors that may occur during the execution of a differentiable program. It strives to be expressive, safe, and notationally similar to mathematics. This project is currently pre-release and the API provides no stability guarantees at this time.
 
 # Introduction
 
@@ -9,6 +9,22 @@ Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Aut
 AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning.
 
 We aim to provide an algebraically sound implementation of AD for type safe tensor operations.
+
+# Features
+
+Kotlin currently supports the following features:
+
+* Arithmetical operations on scalars, vectors and matrices
+* Partial and higher order differentiation on scalars
+* Property-based testing for numerical gradient checking
+* Recovery of symbolic derivatives from AD
+
+We hope to provide support for:
+
+* PyTorch-style define-by-run semantics
+* N-dimensional tensors and tensor algebraic 
+* Compiler plugin for instrumenting existing programs
+* Pure functional programming
 
 # Usage
 
