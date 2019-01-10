@@ -48,7 +48,7 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
   fun tan(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
     override fun invoke(map: Map<Var<X>, X>): X = rfc.tan(angle(map))
 
-    override fun diff(ind: Var<X>) = PolynomialTerm(one, cos(angle), -one - one) * angle.diff(ind)
+    override fun diff(ind: Var<X>) = PolynomialTerm(one, cos(angle), -two) * angle.diff(ind)
 
     override fun toString(): String = "tan($angle)"
   }

@@ -1,9 +1,6 @@
 package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.FieldPrototype
-import edu.umontreal.kotlingrad.functions.Function
+import edu.umontreal.kotlingrad.numerical.FieldPrototype
 
-class One<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.one, fieldPrototype) {
-  override fun times(multiplicand: Function<X>) = multiplicand
-}
+class One<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.one, fieldPrototype)

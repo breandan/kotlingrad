@@ -1,8 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.calculus.DoubleFunctor
-import edu.umontreal.kotlingrad.functions.Function
-import edu.umontreal.kotlingrad.numerical.DoubleReal
 import edu.umontreal.kotlingrad.utils.step
 import krangl.dataFrameOf
 import kravis.geomLine
