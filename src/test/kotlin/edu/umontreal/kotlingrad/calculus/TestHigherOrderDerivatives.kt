@@ -25,6 +25,7 @@ class TestHigherOrderDerivatives: StringSpec({
         val df_dx = d(f) / d(x)
         println(df_dx)
         val `d²f_dx²` = d(df_dx) / d(x)
+        println(`d²f_dx²`)
         `d²f_dx²`(x to xVal) shouldBeAbout 2.0
       }
     }

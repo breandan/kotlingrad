@@ -35,7 +35,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
         this is One -> multiplicand
         multiplicand is One -> this
         multiplicand is Zero -> multiplicand
-        this is Const && multiplicand is Const -> Const(value + multiplicand.value, prototype)
+        this is Const && multiplicand is Const -> Const(value * multiplicand.value, prototype)
         else -> Product(this, multiplicand)
       }
 
