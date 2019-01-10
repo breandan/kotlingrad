@@ -7,5 +7,5 @@ interface Group<X: Group<X>> {
 
   operator fun minus(subtrahend: X): X = this + -subtrahend
 
-  operator fun times(multiplicand: Long): X
+  operator fun times(multiplicand: X): X
 }

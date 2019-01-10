@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     val x = variable("x")
     val y = variable("y")
 
-    val z = x * (-sin(x * y) + y)      // Polish notation
+    val z = x * (-sin(x * y) + y) * 4  // Infix notation
     val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
     val `∂z_∂y` = d(z) / d(y)          // Partial derivatives
     val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order derivatives
@@ -16,8 +16,9 @@ fun main(args: Array<String>) {
     val `∇z` = z.grad()                // Gradient operator
 
     val values = mapOf(x to 0, y to 1)
-    val indVar = z.independentVariables().joinToString(", ")
-    val p = "${x(0)}, ${y(1)}"
+    val indVar = z.variables.joinToString(", ")
+
+    val p = "$values"
     print("z($indVar) \t\t\t= $z\n" +
         "z($p) \t\t\t= ${z(values)}\n" +
         "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t= " + `∂z_∂x`(values) + "\n" +

@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.calculus.Differentiable
-import edu.umontreal.kotlingrad.types.Var
-import edu.umontreal.kotlingrad.types.Vector
+import edu.umontreal.kotlingrad.functions.types.Var
+import edu.umontreal.kotlingrad.functions.types.Vector
 
 open class VectorFunction<X: Field<X>>(vararg vFuns: Function<X>):
     Vector<Function<X>>(*vFuns), Differentiable<X, VectorFunction<X>> {

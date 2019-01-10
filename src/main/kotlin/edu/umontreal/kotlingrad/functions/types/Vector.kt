@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.types
+package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.AbelianGroup
 import edu.umontreal.kotlingrad.algebra.Field
@@ -22,7 +22,7 @@ open class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>
       if (size != subtrahend.size) throw IllegalArgumentException("$size != ${subtrahend.size}")
       else Vector(mapIndexedTo(ArrayList(size)) { index, value -> value - subtrahend[index] } as ArrayList<X>)
 
-  override fun times(multiplicand: Long) = Vector(map { it * multiplicand })
+  override fun times(multiplicand: Vector<X>) = Vector(zip(multiplicand).map { it.first * it.second })
 
   operator fun times(multiplicand: X) = Vector(map { it * multiplicand })
 

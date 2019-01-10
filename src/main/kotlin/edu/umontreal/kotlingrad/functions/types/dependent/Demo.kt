@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.types.dependent
+package edu.umontreal.kotlingrad.functions.types.dependent
 
 fun main(args: kotlin.Array<String>) {
   val vectorOfNone = Vector<Int, `0`>().also { println("$it\n") }

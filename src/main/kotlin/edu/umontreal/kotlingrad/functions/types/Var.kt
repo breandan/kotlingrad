@@ -1,17 +1,17 @@
-package edu.umontreal.kotlingrad.types
+package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import edu.umontreal.kotlingrad.functions.Function
 
-open class Var<X: Field<X>>(
+class Var<X: Field<X>>(
     val prototype: FieldPrototype<X>,
     val value: X = prototype.zero,
     private var name: String = randomDefaultName()
-): Function<X> {
-  override fun invoke(map: Map<Var<X>, X>): X = if (map[this] != null) map[this]!! else value
+): Function<X>(emptySet()) {
+  override val variables: Set<Var<X>> = setOf(this)
 
-  override fun independentVariables() = setOf(this)
+  override fun invoke(map: Map<Var<X>, X>): X = if (map[this] != null) map[this]!! else value
 
   override fun diff(ind: Var<X>) = if (this === ind) One(prototype) else Zero(prototype)
 

@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.types
+package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.algebra.FieldPrototype
