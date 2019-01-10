@@ -1,6 +1,6 @@
-# Kotlin𝛁: A type-safe AD implementation for Kotlin
+# Kotlin𝛁: A type-safe AD for Kotlin
 
-Kotlin𝛁 is a framework for type safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in).
+Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in).
 
 # Introduction
 
