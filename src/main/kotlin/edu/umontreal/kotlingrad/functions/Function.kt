@@ -21,43 +21,39 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   override fun diff(ind: Var<X>): Function<X> = grad()[ind]!!
 
-  override fun plus(addend: Function<X>): Function<X> =
-      when {
-        this is Zero -> addend
-        addend is Zero -> this
-        this is Const && addend is Const -> Const(value + addend.value, prototype)
-        else -> Sum(this, addend)
-      }
+  override fun plus(addend: Function<X>): Function<X> = when {
+    this is Zero -> addend
+    addend is Zero -> this
+    this is Const && addend is Const -> Const(value + addend.value, prototype)
+    else -> Sum(this, addend)
+  }
 
-  override fun times(multiplicand: Function<X>): Function<X> =
-      when {
-        this is Zero -> this
-        this is One -> multiplicand
-        multiplicand is One -> this
-        multiplicand is Zero -> multiplicand
-        this is Const && multiplicand is Const -> Const(value * multiplicand.value, prototype)
-        else -> Product(this, multiplicand)
-      }
+  override fun times(multiplicand: Function<X>): Function<X> = when {
+    this is Zero -> this
+    this is One -> multiplicand
+    multiplicand is One -> this
+    multiplicand is Zero -> multiplicand
+    this is Const && multiplicand is Const -> Const(value * multiplicand.value, prototype)
+    else -> Product(this, multiplicand)
+  }
 
   override fun inverse(): Function<X> = Inverse(this)
 
-  override fun unaryMinus(): Function<X> = Negative(this)
+  override fun unaryMinus(): Function<X> = when {
+    this is Const -> Const(-value, prototype)
+    else -> Negative(this)
+  }
 
-  fun times(multiplicand: Const<X>): Function<X> =
-      PolynomialTerm(multiplicand, this, one)
+  override fun pow(exponent: Function<X>): Function<X> = when {
+    this is Const && exponent is Const -> Const(value.pow(exponent.value), prototype)
+    else -> PolynomialTerm(one, this, exponent)
+  }
 
-  override fun pow(exponent: Function<X>): Function<X> =
-      PolynomialTerm(one, this, exponent)
+  open val prototype: FieldPrototype<X> by lazy { variables.first().prototype }
 
-  open val prototype: FieldPrototype<X>
-      get() = variables.first().prototype
+  val one: One<X> by lazy { One(prototype) }
 
-  val one: One<X>
-    get() = One(prototype)
+  val zero: Zero<X> by lazy { Zero(prototype) }
 
-  val zero: Zero<X>
-    get() = Zero(prototype)
-
-  val two: Const<X>
-    get() = Const(one.value + one.value, prototype)
+  val two: Const<X> by lazy { Const(one.value + one.value, prototype) }
 }
