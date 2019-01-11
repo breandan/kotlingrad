@@ -12,7 +12,7 @@ object DoubleFunctor: RealFunctor<DoubleReal>(ProtoDouble) {
   fun variable(name: String, default: Number) =
       Var(rfc, DoubleReal(default.toDouble()), name)
 
-  fun pow(base: Function<DoubleReal>, number: Int): TernaryFunction<DoubleReal> =
+  fun pow(base: Function<DoubleReal>, number: Int) =
       pow(base, value(DoubleReal(number)))
 
   operator fun Function<DoubleReal>.invoke(pairs: Map<Var<DoubleReal>, Number>) =
@@ -26,10 +26,14 @@ object DoubleFunctor: RealFunctor<DoubleReal>(ProtoDouble) {
 
   // TODO: Lift these into RealFunctor, perhaps extending from Field?
   operator fun Function<DoubleReal>.plus(number: Number) = this + value(DoubleReal(number))
+  operator fun Number.plus(fn: Function<DoubleReal>) = fn + this
 
   operator fun Function<DoubleReal>.minus(number: Number) = this - value(DoubleReal(number))
+  operator fun Number.minus(fn: Function<DoubleReal>) = fn + -toDouble()
 
   operator fun Function<DoubleReal>.times(number: Number) = this * value(DoubleReal(number))
+  operator fun Number.times(fn: Function<DoubleReal>) = fn * this
 
   operator fun Function<DoubleReal>.div(number: Number) = this / value(DoubleReal(number))
+  operator fun Number.div(fn: Function<DoubleReal>): Function<DoubleReal> = this * fn.inverse()
 }

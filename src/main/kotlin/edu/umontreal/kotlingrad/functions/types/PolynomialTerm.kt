@@ -5,6 +5,7 @@ import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.TernaryFunction
 
 class PolynomialTerm<X: Field<X>>(
+    // TODO: turn this into pow, no need to represent this coefficient
     protected var coefficient: Function<X>,
     val arg: Function<X>,
     var exponent: Function<X>
