@@ -14,12 +14,13 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 
 Kotlin𝛁 relies on a few language features:
 
-* A restricted form of [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables a concise notation for arithmetic on algebraic structures, i.e. group, rings, and fields.
-* [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) supports functions as first-class citizens and shift-reset continuations for pure functional AD. (WIP)
-* [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows extending types with new fields and methods without requiring sub-classing or inheritance.
-* [Algebraic data types](https://kotlinlang.org/docs/reference/sealed-classes.html) - allows creating a closed set of subclasses for exhaustive control flow on the concrete type of an abstract class.
+* A restricted form of [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables a concise notation for arithmetic on abstract types, i.e. group, rings, and fields.
+* [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) support functions as first-class citizens for representing mathematical functions and programming functions with the same underlying abstractions (typed FP)
+* [Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
+* [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows consumers to extend classes with new fields and methods without requiring subclassing or inheritance.
+* [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) allows creating a closed set of subclasses for ensuring an exhaustive control flow over the concrete types of an abstract class.
 
-In addition, it uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) which is not an explicit language feature, but can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
+In addition, it uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38). While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
 
 # Features
 
@@ -30,12 +31,13 @@ Kotlin currently supports the following features:
 * Property-based testing for numerical gradient checking
 * Recovery of symbolic derivatives from AD
 
-We hope to provide support for:
+We plan to provide support for:
 
 * PyTorch-style define-by-run semantics
-* N-dimensional tensors and tensor algebraic 
-* Compiler plugin for instrumenting existing programs
-* Pure functional programming
+* N-dimensional tensors and tensor-algebraic operators
+* Compiler plugin to instrument existing programs for AD
+* Differentiation through general-purpose operators like loops, recursion, get- and set- assignment
+(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)) and other common operators
 
 # Usage
 
