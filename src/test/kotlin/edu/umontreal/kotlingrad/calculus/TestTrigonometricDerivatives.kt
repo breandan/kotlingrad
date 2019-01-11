@@ -32,37 +32,37 @@ class TestTrigonometricDerivatives: StringSpec({
     val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)
     val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
 
-    "test z" {
+    "z should be y * (sin(x * y) - x)" {
       assertAll(NumericalGenerator, NumericalGenerator) { kx, ky ->
         val numericalAnswer = ky * (kotlin.math.sin(kx * ky) - kx) + 0.0
         z(x to kx, y to ky) shouldBeAbout numericalAnswer
       }
     }
 
-    "test ∂z/∂x" {
+    "∂z/∂x should be y * (cos(x * y) * y - 1)" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
         val manualDerivative = y * (cos(x * y) * y - one)
         `∂z∕∂x`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
       }
     }
 
-    "test ∂z/∂y" {
+    "∂z/∂y should be sin(x * y) - x + y * cos(x * y) * x" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val manualDerivative = (sin(x * y) - x + y * cos(x * y) * x)
+        val manualDerivative = sin(x * y) - x + y * cos(x * y) * x
         `∂z∕∂y`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
       }
     }
 
-    "test ∂²z/∂x²" {
+    "∂²z/∂x² should be -y * y * y * sin(x * y)" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val manualDerivative = (-y * y * y * sin(x * y))
+        val manualDerivative = -pow(y, 3) * sin(x * y)
         `∂²z∕∂x²`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
       }
     }
 
-    "test ∂²z/∂x∂y" {
+    "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val manualDerivative = (cos(x * y) * y - one + y * (cos(x * y) - y * x * sin(x * y)))
+        val manualDerivative = cos(x * y) * y - one + y * (cos(x * y) - y * x * sin(x * y))
         `∂²z∕∂x∂y`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
       }
     }
