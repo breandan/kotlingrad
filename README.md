@@ -96,7 +96,7 @@ z({x=0, y=1}) 			= 0.0
 Kotlin𝛁 claims to eliminate certain runtime errors, but how can we be sure the proposed implementation is error-free? Kotlin𝛁 is evaluated using a property-based testing in the style of [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis). It uses two primary mechanisms to check the functional correctness of automatic differentiation:
 
 * Symbolic differentiation: manually find the derivative and compare the values returned on a subset of the domain with AD.
-* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of differentiable functions in the symbolic domain, and compare AD with FDM.
+* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, and compare results of AD with FD.
 
 However, there are many ways to independently verify the numerical gradient. One such way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
 
