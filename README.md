@@ -2,7 +2,7 @@
 
 Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs on higher-dimensional data structures and operands. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a correctly-typed program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
-# Introduction
+## Introduction
 
 Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Tangent](https://github.com/google/tangent), [Myia](https://github.com/mila-udem/myia) et al.
 
@@ -10,19 +10,19 @@ AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_desce
 
 We aim to provide an algebraically sound implementation of AD for type safe tensor operations.
 
-# How?
+## How?
 
 Kotlin𝛁 relies on a few language features:
 
-* A restricted form of [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables a concise notation for arithmetic on abstract types, i.e. group, rings, and fields.
+* A limited form of [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, e.g. group, ring, and field.
 * [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) support functions as first-class citizens for representing mathematical functions and programming functions with the same underlying abstractions (typed FP)
 * [Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
-* [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) support extending classes with new fields and methods without requiring subclassing or inheritance. Through [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without any extra boilerplate.
-* [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) allows creating a closed set of subclasses for ensuring an exhaustive control flow over the concrete types of an abstract class.
+* [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) support augmenting classes with new fields and methods. Through [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+* [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to ensure an exhaustive control flow over the concrete types of an abstract class.
 
 In addition, it uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38). While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
 
-# Features
+## Features
 
 Kotlin currently supports the following features:
 
@@ -41,7 +41,7 @@ We plan to provide support for:
 
 # Usage
 
-The following example should help you get started:
+The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
 
 ```kotlin
 import edu.umontreal.kotlingrad.calculus.DoubleFunctor
@@ -89,6 +89,16 @@ z({x=0, y=1}) 			= 0.0
 ∇z({x=0, y=1}) 			= {x=(((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4), y=((x * (-(cos((x * y)) * x) + 1)) * 4)} 
 				= [4.0, 0.0]ᵀ
 ```
+
+
+## Testing
+
+Kotlin𝛁 claims to eliminate certain runtime errors, but how can we be sure the proposed implementation is error-free? Kotlin𝛁 is evaluated using a property-based testing in the style of [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis). It uses two primary mechanisms to check the functional correctness of automatic differentiation:
+
+* Symbolic differentiation: manually find the derivative and compare the values returned on a subset of the domain with AD.
+* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of differentiable functions in the symbolic domain, and compare AD with FDM.
+
+However, there are many ways to independently verify the numerical gradient. One such way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
@@ -147,11 +157,13 @@ Then run `./gradlew plot`.
 
 ## Ideal API (WIP)
 
+The current API is experimental, but can be improved in many ways. Currently it uses default values for variable defaults when a function is invoked, but a variable is not bound (i.e. `z = x * y; z(x to 1) // y = ?`). This is similar to [broadcasting](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure that the shapes are compatible. We would like to be able to encode the dimensionality of the function into the type, instead of using default values, to enforce mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). When the shape is known at compile-time, we can use a restricted form of [dependent types](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure type-safe matrix operations.
+
 ### Scalar functions
 
 ```kotlin
-val x = Variable(1.0)              // x: Variable<Double> inferred type
-val y = Variable(1.0)              // x: Variable<Double> "
+val x = variable(1.0)              // x: Variable<Double> inferred type
+val y = variable(1.0)              // x: Variable<Double> "
 val f = x * y + sin(2 * x + 3 * y) // f: BinaryFunction<Double> "
 val g = f(x to -1.0)               // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)      // h: Const<Double> == 0 + sin(0 + 0) == 0
@@ -160,8 +172,8 @@ val h = f(x to 0.0, y to 0.0)      // h: Const<Double> == 0 + sin(0 + 0) == 0
 ### Vector functions
 
 ```kotlin
-val x = VVariable(0.0, 0.0, 0.0)   // x: VVariable<Double, `3`>
-val y = VVariable(0.0, `3`)        // x: VVariable<Double, `3`>
+val x = vvariable(0.0, 0.0, 0.0)   // x: VVariable<Double, `3`>
+val y = vvariable(0.0, `3`)        // x: VVariable<Double, `3`>
 val f = 2 * x + x / 2              // f: UnaryVFunction<Double>
 val g = f(-2.0, 0.0, 2.0)          // g: ConstVector<`3`> == [-3. 0. 5.]
 ```
@@ -169,8 +181,8 @@ val g = f(-2.0, 0.0, 2.0)          // g: ConstVector<`3`> == [-3. 0. 5.]
 ### Matrix functions
 
 ```kotlin
-val x = MVariable(0.0, 0.0, 0.0)   // x: MVariable<Double, `1`, `3`>
-val y = MVariable(0.0, `3`, `3`)   // y: MVariable<Double, `3`, `3`>
+val x = vvariable(0.0, 0.0, 0.0)   // x: MVariable<Double, `1`, `3`>
+val y = vvariable(0.0, `3`, `3`)   // y: MVariable<Double, `3`, `3`>
 val f = sin(2 * x) + log(x / 2)    // f: UnaryMFunction<Double>
 val g = f(x) / d(x)                // g: UnaryMFunction<Double>
 ```
@@ -199,7 +211,7 @@ The following are some excellent projects and publications that have inspired th
 * [Tangent](https://github.com/google/tangent)
 * [Myia](https://github.com/mila-udem/myia)
 * [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
-
+* [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
 
 ### Differentiable Programming
 
@@ -217,7 +229,7 @@ The following are some excellent projects and publications that have inspired th
 * [COJAC](https://github.com/Cojac/Cojac) - Numerical sniffing tool and Enriching number wrapper for Java
 * [chebfun](http://www.chebfun.org/) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
 
-### Vector, Matrix and Tensor Calculus
+### Calculus
 
 * [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
 
@@ -225,3 +237,8 @@ The following are some excellent projects and publications that have inspired th
 
 * [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)
 * [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
+
+### Automated Testing
+
+* [DeepTest: Automated Testing of Deep-Neural-Network-driven Autonomous Cars](https://arxiv.org/pdf/1708.08559.pdf)
+* [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
