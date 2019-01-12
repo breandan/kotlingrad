@@ -14,7 +14,7 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 
 Kotlin𝛁 relies on a few language features:
 
-* A limited form of [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, e.g. group, ring, and field.
+* [Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, e.g. group, ring, and field.
 * [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) support functions as first-class citizens for representing mathematical functions and programming functions with the same underlying abstractions (typed FP)
 * [Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
 * [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) support augmenting classes with new fields and methods. Through [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
