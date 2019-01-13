@@ -53,6 +53,7 @@ class TestTrigonometricDerivatives: StringSpec({
       }
     }
 
+    //TODO: fix this
     "∂²z/∂x² should be -y * y * y * sin(x * y)" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
         val manualDerivative = -pow(y, 3) * sin(x * y)
