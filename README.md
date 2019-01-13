@@ -48,7 +48,7 @@ import edu.umontreal.kotlingrad.calculus.DoubleFunctor
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
-  with(DoubleFunctor) {
+  with(DoubleFunctor) { 
     val x = variable("x")
     val y = variable("y")
 
@@ -73,7 +73,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
 z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
