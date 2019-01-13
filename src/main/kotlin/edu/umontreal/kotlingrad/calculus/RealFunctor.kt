@@ -2,7 +2,7 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.algebra.Real
-import edu.umontreal.kotlingrad.algebra.FieldPrototype
+import edu.umontreal.kotlingrad.numerical.FieldPrototype
 import edu.umontreal.kotlingrad.functions.BinaryFunction
 import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.UnaryFunction
@@ -56,7 +56,6 @@ abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor
 
     override fun toString(): String = "exp($exponent)"
   }
-
 
   // TODO: Allow functions in exponent
   fun pow(base: Function<X>, exponent: Const<X>): BinaryFunction<X> = Power(base, exponent)

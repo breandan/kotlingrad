@@ -13,18 +13,15 @@ class Power<X: Field<X>>(
 ): BinaryFunction<X>(base, exponent) {
   override fun invoke(map: Map<Var<X>, X>): X = base.invoke(map).pow(exponent(map))
 
-  override fun diff(ind: Var<X>) = when {
-    exponent is One -> base.diff(ind)
-    // TODO: Generalize this to true functions instead of constants...
-    else ->
-      exponent * Power(base, Const((exponent - one)(/*TODO: ONLY WORKS FOR CONSTANTS! FIX THIS!*/))) * base.diff(ind)
+  override fun diff(ind: Var<X>) = when (exponent) {
+    is One -> base.diff(ind)
+    is Const -> exponent * Power(base, Const((exponent - one)())) * base.diff(ind)
+    else -> this * (exponent * base.ln()).diff(ind)
   }
 
-  override fun toString() = "($base$exponent)"
+  override fun toString() = "($base${superscript(exponent)})"
 
   override fun inverse() = Power(base, -exponent)
-
-  override fun unaryMinus() = Power(base, exponent)
 
   private fun superscript(exponent: Function<X>) =
     if (exponent is Const)
@@ -42,5 +39,6 @@ class Power<X: Field<X>>(
         .replace("7", "⁷")
         .replace("8", "⁸")
         .replace("9", "⁹")
-    else "^($exponent)"
+    else
+      "^($exponent)"
 }
