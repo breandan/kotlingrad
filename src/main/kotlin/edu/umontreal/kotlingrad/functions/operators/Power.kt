@@ -17,7 +17,7 @@ class Power<X: Field<X>>(
     exponent is One -> base.diff(ind)
     // TODO: Generalize this to true functions instead of constants...
     else ->
-      exponent * Power(base, Const(prototype, (exponent - one)(/*TODO: ONLY WORKS FOR CONSTANTS! FIX THIS!*/))) * base.diff(ind)
+      exponent * Power(base, Const((exponent - one)(/*TODO: ONLY WORKS FOR CONSTANTS! FIX THIS!*/))) * base.diff(ind)
   }
 
   override fun toString() = "($base$exponent)"

@@ -13,7 +13,7 @@ class Var<X: Field<X>>(
 
   override fun invoke(map: Map<Var<X>, X>): X = if (map[this] != null) map[this]!! else value
 
-  override fun diff(ind: Var<X>) = Const(prototype, if (this == ind) prototype.one else prototype.zero)
+  override fun diff(ind: Var<X>) = Const(if (this == ind) prototype.one else prototype.zero)
 
   override fun toString() = name
 

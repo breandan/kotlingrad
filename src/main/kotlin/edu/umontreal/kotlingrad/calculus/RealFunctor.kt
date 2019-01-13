@@ -10,7 +10,7 @@ import edu.umontreal.kotlingrad.functions.operators.Power
 import edu.umontreal.kotlingrad.functions.types.*
 
 abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor<X>() {
-  fun value(fnx: X) = Const(rfc, fnx)
+  fun value(fnx: X) = Const(fnx)
 
   fun value(vararg fnx: X) = ConstVector(*fnx.mapTo(ArrayList(fnx.size)) { value(it) }.toTypedArray())
 
