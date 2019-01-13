@@ -1,10 +1,13 @@
 package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.functions.operators.*
-import edu.umontreal.kotlingrad.functions.types.*
+import edu.umontreal.kotlingrad.functions.types.Const
+import edu.umontreal.kotlingrad.functions.types.One
+import edu.umontreal.kotlingrad.functions.types.Var
+import edu.umontreal.kotlingrad.functions.types.Zero
 
 abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
@@ -21,7 +24,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   override fun plus(addend: Function<X>): Function<X> = when {
     this is Zero -> addend
     addend is Zero -> this
-    this is Const && addend is Const -> Const(value + addend.value, prototype)
+    this is Const && addend is Const -> Const(prototype, value + addend.value)
     this == addend -> two * this
     else -> Sum(this, addend)
   }
@@ -31,7 +34,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is One -> multiplicand
     multiplicand is One -> this
     multiplicand is Zero -> multiplicand
-    this is Const && multiplicand is Const -> Const(value * multiplicand.value, prototype)
+    this is Const && multiplicand is Const -> Const(prototype, value * multiplicand.value)
     this == multiplicand -> pow(two)
     else -> Product(this, multiplicand)
   }
@@ -41,8 +44,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is One -> this
     divisor is One -> divisor.inverse()
     divisor is Zero -> throw Exception("Cannot divide by $divisor")
-    this is Const && divisor is Const -> Const(value / divisor.value, prototype)
-    this is Const && divisor is Const -> Const(value / divisor.value, prototype)
+    this is Const && divisor is Const -> Const(prototype, value / divisor.value)
     this == divisor -> one
     else -> super.div(divisor)
   }
@@ -52,25 +54,25 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     //TODO implement tree comparison for semantic equals
     else super.equals(other)
 
-  fun ln(): Function<X> = Log(this, prototype)
+  fun ln(): Function<X> = Log(this)
 
   override fun inverse(): Function<X> = Inverse(this)
 
   override fun unaryMinus(): Function<X> = when {
-    this is Const -> Const(-value, prototype)
+    this is Const -> Const(prototype, -value)
     else -> Negative(this)
   }
 
   override fun pow(exponent: Function<X>): Function<X> = when {
-    this is Const && exponent is Const -> Const(value.pow(exponent.value), prototype)
+    this is Const && exponent is Const -> Const(prototype, value.pow(exponent.value))
     else -> Power(this, exponent)
   }
 
-  open val prototype: RealPrototype<X> by lazy { variables.first().prototype }
+  open val prototype: FieldPrototype<X> by lazy { variables.first().prototype }
 
   val one: One<X> by lazy { One(prototype) }
 
   val zero: Zero<X> by lazy { Zero(prototype) }
 
-  val two: Const<X> by lazy { Const(one.value + one.value, prototype) }
+  val two: Const<X> by lazy { Const(prototype, one.value + one.value) }
 }

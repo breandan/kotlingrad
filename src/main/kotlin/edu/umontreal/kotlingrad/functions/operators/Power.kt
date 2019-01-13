@@ -1,11 +1,14 @@
-package edu.umontreal.kotlingrad.functions.types
+package edu.umontreal.kotlingrad.functions.operators
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.functions.BinaryFunction
 import edu.umontreal.kotlingrad.functions.Function
+import edu.umontreal.kotlingrad.functions.types.Const
+import edu.umontreal.kotlingrad.functions.types.One
+import edu.umontreal.kotlingrad.functions.types.Var
 
 class Power<X: Field<X>>(
-  val base: Function<X>,
+  private val base: Function<X>,
   var exponent: Function<X>
 ): BinaryFunction<X>(base, exponent) {
   override fun invoke(map: Map<Var<X>, X>): X = base.invoke(map).pow(exponent(map))
@@ -14,7 +17,7 @@ class Power<X: Field<X>>(
     exponent is One -> base.diff(ind)
     // TODO: Generalize this to true functions instead of constants...
     else ->
-      exponent * Power(base, Const((exponent - one)(/*TODO: ONLY WORKS FOR CONSTANTS! FIX THIS!*/), variables.first().prototype)) * base.diff(ind)
+      exponent * Power(base, Const(prototype, (exponent - one)(/*TODO: ONLY WORKS FOR CONSTANTS! FIX THIS!*/))) * base.diff(ind)
   }
 
   override fun toString() = "($base$exponent)"

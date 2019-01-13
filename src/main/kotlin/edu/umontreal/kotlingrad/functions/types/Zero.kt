@@ -1,8 +1,8 @@
 package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 
-class Zero<X: Field<X>>(realPrototype: RealPrototype<X>): Const<X>(realPrototype.zero, realPrototype) {
+class Zero<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype, fieldPrototype.zero) {
   override fun unaryMinus() = this
 }

@@ -1,10 +1,10 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import java.lang.Math.*
 
 // TODO: Specialize to Ints
-object ProtoInteger: RealPrototype<DoubleReal> {
+object ProtoInteger: FieldPrototype<DoubleReal> {
   override val zero = DoubleReal(0.0)
   override val one = DoubleReal(1.0)
 

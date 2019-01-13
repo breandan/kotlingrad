@@ -6,10 +6,10 @@ import java.lang.Math.pow
 
 class DoubleReal(number: Number = 0): Real<DoubleReal> {
   val dbl: Double =
-      when (number) {
-        NaN -> 1E-100
-        else -> number.toDouble().coerceIn(-1E200..1E200)
-      }
+    when (number) {
+      NaN -> 1E-100
+      else -> number.toDouble().coerceIn(-1E200..1E200)
+    }
 
   override fun toString() = "${if (dbl % 1 == 0.0) dbl.toInt() else dbl}"
 
