@@ -11,10 +11,10 @@ class TestLogarithmicDerivatives: StringSpec({
 
     "dnⁿ / dn should be nⁿ * (ln(n) + 1)" {
       assertAll(NumericalGenerator(0)) { nVal: Double ->
-        val df_dn = d(n.pow(n)) / d(n)
-        println(df_dn)
+        val `df∕dn` = d(n.pow(n)) / d(n)
+        println(`df∕dn`)
         val manualDerivative = n.pow(n) * (n.ln() + 1)
-        df_dn(n to nVal).toDouble() shouldBeAbout manualDerivative(nVal).toDouble()
+        `df∕dn`(n to nVal).toDouble() shouldBeAbout manualDerivative(nVal).toDouble()
       }
     }
   }
@@ -24,9 +24,9 @@ class TestLogarithmicDerivatives: StringSpec({
 
     "dn³ / dn should be 3n²" {
       assertAll(NumericalGenerator(0)) { nVal: Double ->
-        val df_dn = d(pow(n, 3)) / d(n)
+        val `df∕dn` = d(pow(n, 3)) / d(n)
         val manualDerivative = 3 * pow(n, 2)
-        df_dn(n to nVal).toDouble() shouldBeAbout manualDerivative(nVal).toDouble()
+        `df∕dn`(n to nVal).toDouble() shouldBeAbout manualDerivative(nVal).toDouble()
       }
     }
   }
