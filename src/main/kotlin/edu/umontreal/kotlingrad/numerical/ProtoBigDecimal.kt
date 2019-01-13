@@ -22,6 +22,4 @@ object ProtoBigDecimal: RealPrototype<BigDecimalReal> {
   override fun pow(x: BigDecimalReal, y: BigDecimalReal) = BigDecimalReal(pow(x.bg, y.bg, mc))
 
   override fun sqrt(x: BigDecimalReal) = BigDecimalReal(sqrt(x.bg, mc))
-
-  override fun square(x: BigDecimalReal) = x * x
 }

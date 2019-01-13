@@ -11,3 +11,5 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
   }
   return sequence.asIterable()
 }
+
+fun <T> Iterable<T>.repeat(n: Int) = sequence { repeat(n) { yieldAll(this@repeat) } }

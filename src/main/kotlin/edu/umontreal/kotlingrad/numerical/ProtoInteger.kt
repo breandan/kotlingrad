@@ -21,6 +21,4 @@ object ProtoInteger: RealPrototype<DoubleReal> {
   override fun pow(x: DoubleReal, y: DoubleReal) = DoubleReal(pow(x.dbl, y.dbl))
 
   override fun sqrt(x: DoubleReal) = DoubleReal(sqrt(x.dbl))
-
-  override fun square(x: DoubleReal) = x * x
 }

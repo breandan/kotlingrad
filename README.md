@@ -12,15 +12,15 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 
 ## How?
 
-Kotlin𝛁 relies on a few language features:
+Kotlin𝛁 relies on a few language features, which together enable a concise, flexible and type-safe user interface:
 
 * [Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, e.g. group, ring, and field.
-* [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) support functions as first-class citizens for representing mathematical functions and programming functions with the same underlying abstractions (typed FP)
+* [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function) for representing mathematical functions and programming functions with the same underlying abstractions (typed FP)
 * [Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
 * [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
-* [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to ensure an exhaustive control flow over the concrete types of an abstract class.
+* [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class.
 
-In addition, it uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38). While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
+Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) to operand(s). While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
 
 ## Features
 
@@ -29,9 +29,9 @@ Kotlin currently supports the following features:
 * Arithmetical operations on scalars, vectors and matrices
 * Partial and higher order differentiation on scalars
 * Property-based testing for numerical gradient checking
-* Recovery of symbolic derivatives from AD
+* Recovery of symbolic derivatives from AD 
 
-We plan to provide support for:
+Additionally, it aims to support:
 
 * PyTorch-style define-by-run semantics
 * N-dimensional tensors and tensor-algebraic operators
@@ -205,13 +205,14 @@ The following are some excellent projects and publications that have inspired th
 
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
-* [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)
+* [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
 * [Autograd](https://github.com/hips/autograd)
 * [DiffSharp](https://github.com/DiffSharp/DiffSharp)
 * [Tangent](https://github.com/google/tangent)
 * [Myia](https://github.com/mila-udem/myia)
 * [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
 * [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
+* [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
 
 ### Differentiable Programming
 

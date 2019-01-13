@@ -32,16 +32,16 @@ fun main(args: Array<String>) {
 
     val xs = -10.0..10.0 step 0.09
     val ys = (xs.map { listOf(it, y(it), "y") }
-        + xs.map { listOf(it, dy_dx(it), "dy/dx") }
-        + xs.map { listOf(it, `d²y_dx²`(it), "d²y/x²") }
-        + xs.map { listOf(it, `d³y_dx³`(it), "d³y/dx³") }
-        + xs.map { listOf(it, `d⁴y_dx⁴`(it), "d⁴y/dx⁴") }
-        + xs.map { listOf(it, `d⁵y_dx⁵`(it), "d⁵y/dx⁵") }).flatten()
+            + xs.map { listOf(it, dy_dx(it), "dy/dx") }
+            + xs.map { listOf(it, `d²y_dx²`(it), "d²y/x²") }
+            + xs.map { listOf(it, `d³y_dx³`(it), "d³y/dx³") }
+            + xs.map { listOf(it, `d⁴y_dx⁴`(it), "d⁴y/dx⁴") }
+            + xs.map { listOf(it, `d⁵y_dx⁵`(it), "d⁵y/dx⁵") }).flatten()
 
     dataFrameOf("x", "y", "Function")(ys)
-        .plot(x = "x", y = "y", color = "Function")
-        .geomLine(size = 1.0)
-        .title("Derivatives of y=$y")
-        .save(File("src/main/resources/plot.png"))
+      .plot(x = "x", y = "y", color = "Function")
+      .geomLine(size = 1.0)
+      .title("Derivatives of y=$y")
+      .save(File("src/main/resources/plot.png"))
   }
 }

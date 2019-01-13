@@ -12,7 +12,7 @@ class Sum<X: Field<X>>(
   // Some operations are inherently parallelizable. TODO: Explore how to parallelize these with FP...
   override fun invoke(map: Map<Var<X>, X>) = augend(map) + addend(map)
 
-  override fun diff(ind: Var<X>) = if (augend === addend) augend.diff(ind) * two else augend.diff(ind) + addend.diff(ind)
+  override fun diff(ind: Var<X>) = if (augend == addend) augend.diff(ind) * two else augend.diff(ind) + addend.diff(ind)
 
   override fun toString() = "($augend + $addend)"
 }

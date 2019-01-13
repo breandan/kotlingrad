@@ -1,16 +1,13 @@
 package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
+import edu.umontreal.kotlingrad.algebra.RealPrototype
 import edu.umontreal.kotlingrad.calculus.Differentiable
-import edu.umontreal.kotlingrad.functions.operators.Inverse
-import edu.umontreal.kotlingrad.functions.operators.Negative
-import edu.umontreal.kotlingrad.functions.operators.Product
-import edu.umontreal.kotlingrad.functions.operators.Sum
+import edu.umontreal.kotlingrad.functions.operators.*
 import edu.umontreal.kotlingrad.functions.types.*
-import edu.umontreal.kotlingrad.numerical.FieldPrototype
 
 abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
-    Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
+  Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
   abstract operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
 
   operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
@@ -25,6 +22,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is Zero -> addend
     addend is Zero -> this
     this is Const && addend is Const -> Const(value + addend.value, prototype)
+    this == addend -> two * this
     else -> Sum(this, addend)
   }
 
@@ -34,8 +32,27 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     multiplicand is One -> this
     multiplicand is Zero -> multiplicand
     this is Const && multiplicand is Const -> Const(value * multiplicand.value, prototype)
+    this == multiplicand -> pow(two)
     else -> Product(this, multiplicand)
   }
+
+  override fun div(divisor: Function<X>): Function<X> = when {
+    this is Zero -> this
+    this is One -> this
+    divisor is One -> divisor.inverse()
+    divisor is Zero -> throw Exception("Cannot divide by $divisor")
+    this is Const && divisor is Const -> Const(value / divisor.value, prototype)
+    this is Const && divisor is Const -> Const(value / divisor.value, prototype)
+    this == divisor -> one
+    else -> super.div(divisor)
+  }
+
+  override fun equals(other: Any?) =
+    if (this is Var<*> || other is Var<*>) this === other
+    //TODO implement tree comparison for semantic equals
+    else super.equals(other)
+
+  fun ln(): Function<X> = Log(this, prototype)
 
   override fun inverse(): Function<X> = Inverse(this)
 
@@ -46,10 +63,10 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   override fun pow(exponent: Function<X>): Function<X> = when {
     this is Const && exponent is Const -> Const(value.pow(exponent.value), prototype)
-    else -> PolynomialTerm(one, this, exponent)
+    else -> Power(this, exponent)
   }
 
-  open val prototype: FieldPrototype<X> by lazy { variables.first().prototype }
+  open val prototype: RealPrototype<X> by lazy { variables.first().prototype }
 
   val one: One<X> by lazy { One(prototype) }
 
