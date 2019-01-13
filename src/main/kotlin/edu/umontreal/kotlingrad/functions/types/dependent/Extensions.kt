@@ -1,4 +1,4 @@
-@file:Suppress("UNUSED_PARAMETER")
+@file:Suppress("UNUSED∕PARAMETER")
 
 package edu.umontreal.kotlingrad.functions.types.dependent
 

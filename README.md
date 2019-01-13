@@ -52,23 +52,23 @@ fun main(args: Array<String>) {
     val x = variable("x")
     val y = variable("y")
 
-    val z = x * (-sin(x * y) + y)      // Infix notation
-    val `∂z_∂x` = d(z) / d(x)          // Leibniz notation
-    val `∂z_∂y` = d(z) / d(y)          // Partial derivatives
-    val `∂²z_∂x²` = d(`∂z_∂x`) / d(x)  // Higher order derivatives
-    val `∂²z_∂x∂y` = d(`∂z_∂x`) / d(y) // Higher order partials
+    val z = x * (-sin(x * y) + y) * 4  // Infix notation
+    val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation
+    val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
+    val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
+    val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
     val `∇z` = z.grad()                // Gradient operator
 
     val values = mapOf(x to 0, y to 1)
-    val indVar = z.independentVariables().joinToString(", ")
-    val p = "${x(0)}, ${y(1)}"
+    val indVar = z.variables.joinToString(", ")
+
     print("z($indVar) \t\t\t= $z\n" +
-        "z($p) \t\t\t= ${z(values)}\n" +
-        "∂z($p)/∂x \t\t= $`∂z_∂x` \n\t\t\t\t= " + `∂z_∂x`(values) + "\n" +
-        "∂z($p)/∂y \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂z_∂y`(values) + "\n" +
-        "∂²z($p)/∂x² \t\t= $`∂z_∂y` \n\t\t\t\t= " + `∂²z_∂x²`(values) + "\n" +
-        "∂²z($p)/∂x∂y \t\t= $`∂²z_∂x∂y` \n\t\t\t\t= " + `∂²z_∂x∂y`(values) + "\n" +
-        "∇z($p) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
+        "z($values) \t\t\t= ${z(values)}\n" +
+        "∂z($values)/∂x \t\t= $`∂z∕∂x` \n\t\t\t\t= " + `∂z∕∂x`(values) + "\n" +
+        "∂z($values)/∂y \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂z∕∂y`(values) + "\n" +
+        "∂²z($values)/∂x² \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂²z∕∂x²`(values) + "\n" +
+        "∂²z($values)/∂x∂y \t\t= $`∂²z∕∂x∂y` \n\t\t\t\t= " + `∂²z∕∂x∂y`(values) + "\n" +
+        "∇z($values) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
   }
 }
 ```
@@ -121,25 +121,25 @@ fun main(args: Array<String>) {
     val x = variable("x")
 
     val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
-    val `dy_dx` = d(y) / d(x)
-    val `d²y_dx²` = d(dy_dx) / d(x)
-    val `d³y_dx³` = d(`d²y_dx²`) / d(x)
-    val `d⁴y_dx⁴` = d(`d³y_dx³`) / d(x)
-    val `d⁵y_dx⁵` = d(`d⁴y_dx⁴`) / d(x)
+    val `dy∕dx` = d(y) / d(x)
+    val `d²y∕dx²` = d(`dy∕dx`) / d(x)
+    val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
+    val `d⁴y∕dx⁴` = d(`d³y∕dx³`) / d(x)
+    val `d⁵y∕dx⁵` = d(`d⁴y∕dx⁴`) / d(x)
 
     val xs = -10.0..10.0 step 0.09
     val ys = (xs.map { listOf(it, y(it), "y") }
-        + xs.map { listOf(it, dy_dx(it), "dy/dx") }
-        + xs.map { listOf(it, `d²y_dx²`(it), "d²y/x²") }
-        + xs.map { listOf(it, `d³y_dx³`(it), "d³y/dx³") }
-        + xs.map { listOf(it, `d⁴y_dx⁴`(it), "d⁴y/dx⁴") }
-        + xs.map { listOf(it, `d⁵y_dx⁵`(it), "d⁵y/dx⁵") }).flatten()
+            + xs.map { listOf(it, `dy∕dx`(it), "dy/dx") }
+            + xs.map { listOf(it, `d²y∕dx²`(it), "d²y/x²") }
+            + xs.map { listOf(it, `d³y∕dx³`(it), "d³y/dx³") }
+            + xs.map { listOf(it, `d⁴y∕dx⁴`(it), "d⁴y/dx⁴") }
+            + xs.map { listOf(it, `d⁵y∕dx⁵`(it), "d⁵y/dx⁵") }).flatten()
 
     dataFrameOf("x", "y", "Function")(ys)
-        .plot(x = "x", y = "y", color = "Function")
-        .geomLine(size = 1.0)
-        .title("Derivatives of y=$y")
-        .save(File("src/main/resources/plot.png"))
+      .plot(x = "x", y = "y", color = "Function")
+      .geomLine(size = 1.0)
+      .title("Derivatives of y=$y")
+      .save(File("src/main/resources/plot.png"))
   }
 }
 ```

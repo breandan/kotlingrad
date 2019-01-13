@@ -13,16 +13,16 @@ class TestTrigonometricDerivatives: StringSpec({
     "d(sin(x)) / dx should be cos(x)" {
       assertAll(NumericalGenerator) { xVal ->
         val f = sin(x)
-        val df_dx = d(f) / d(x)
-        df_dx(x to xVal) shouldBeAbout cos(x)(x to xVal)
+        val `df∕dx` = d(f) / d(x)
+        `df∕dx`(x to xVal) shouldBeAbout cos(x)(x to xVal)
       }
     }
 
     "d(cos(x)) / dx should be -sin(x)" {
       assertAll(NumericalGenerator) { xVal ->
         val f = cos(x)
-        val df_dx = d(f) / d(x)
-        df_dx(x to xVal) shouldBeAbout -sin(x)(x to xVal)
+        val `df∕dx` = d(f) / d(x)
+        `df∕dx`(x to xVal) shouldBeAbout -sin(x)(x to xVal)
       }
     }
 
