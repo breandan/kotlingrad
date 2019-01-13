@@ -1,4 +1,4 @@
-# Kotlin𝛁: A type-safe AD for Kotlin
+# Kotlin𝛁: Type-safe Automatic Differentiation for Kotlin
 
 Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs on higher-dimensional data structures and operands. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a correctly-typed program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
@@ -12,15 +12,82 @@ We aim to provide an algebraically sound implementation of AD for type safe tens
 
 ## How?
 
-Kotlin𝛁 relies on a few language features, which together enable a concise, flexible and type-safe user interface:
+Kotlin𝛁 relies on a few language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of this library:
 
-* [Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, e.g. group, ring, and field.
-* [Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function) for representing mathematical functions and programming functions with the same underlying abstractions (typed FP)
-* [Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
-* [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
-* [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class.
+#### Operator overloading
+ 
+[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt).
+ 
+#### First-class functions
 
-Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) to operand(s). While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
+[Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) treat [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function) for representing mathematical functions and programming functions with the same underlying abstractions (typed FP).
+
+#### Coroutines
+
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
+
+#### Extension Functions
+
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+
+```kotlin
+object Context {
+  fun Double.absRound() = Math.round(Math.abs(this))
+}
+
+// Consumer
+with(Context) {
+  val qPos: Long = (-2.3).absRound() // 2L
+}
+```
+
+#### Algebraic data types (ADTs)
+
+[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. For example, suppose we have the following classes:
+
+```kotlin
+sealed class Expr
+data class Const(val number: Double) : Expr()
+data class Prod(val e1: Expr, val e2: Expr) : Expr()
+data class Sum(val e1: Expr, val e2: Expr) : Expr()
+data class Var(var value: Double): Expr()
+object NotANumber : Expr()
+```
+
+At runtime, we can branch on the concrete type of the abstract class `Expr` by defining an extension:
+
+```kotlin
+fun Expr.eval(): Double = when(expr) {
+    is Const -> number
+    is Sum -> e1.eval() + e2.eval()
+    is Prod -> e1.eval() * e2.eval()
+    is Var -> value
+    NotANumber -> Double.NaN
+    // No `else` clause is required, compiler sees all cases are covered
+}
+```
+
+#### Multiple Dispatch
+
+In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
+
+Building on the previous example, we can simplify expressions based on the operand type and value. Smart casting allows us to access subclass members after checking the type without explicitly casting:
+
+```kotlin
+operator fun Expr.times(other: Expr): Double = when {
+    this is Const && other is Const -> Const(number * other.number)
+    this is Const && number == 0.0 -> Const(0.0)
+    this is Const && number == 1.0 -> other
+    other is Const && other.number == 0.0 -> other
+    other is Const && other.number == 1.0 -> this
+    this is Const && other is Sum -> Sum(Const(number) * other.e1, Const(number) * other.e2)
+    // Further simplification is possible using laws of distributivity
+    this is NotANumber || other is NotANumber -> Double.NaN
+    else -> Prod(this, other)
+}
+
+val result = Const(2.0) * Sum(Var(2.0), Const(3.0)) // Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
+```
 
 ## Features
 
@@ -39,7 +106,7 @@ Additionally, it aims to support:
 * Differentiation through general-purpose operators like loops, recursion, get- and set- assignment
 (via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)) and other common operators
 
-# Usage
+## Usage
 
 The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
 
@@ -101,7 +168,7 @@ However, there are many other ways to independently verify the numerical gradien
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
-### Plotting
+## Plotting
 
 ![](src/main/resources/plot.png)
 
