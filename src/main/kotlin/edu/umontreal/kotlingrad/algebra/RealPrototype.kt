@@ -1,8 +1,9 @@
 package edu.umontreal.kotlingrad.algebra
 
-import edu.umontreal.kotlingrad.numerical.FieldPrototype
+interface RealPrototype<X: Field<X>> {
+  val zero: X
+  val one: X
 
-interface RealPrototype<X: Real<X>>: FieldPrototype<X> {
   fun cos(x: X): X
 
   fun sin(x: X): X
@@ -16,6 +17,4 @@ interface RealPrototype<X: Real<X>>: FieldPrototype<X> {
   fun pow(x: X, y: X): X
 
   fun sqrt(x: X): X
-
-  fun square(x: X): X
 }

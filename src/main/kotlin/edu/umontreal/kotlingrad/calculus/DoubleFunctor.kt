@@ -3,6 +3,7 @@ package edu.umontreal.kotlingrad.calculus
 import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.TernaryFunction
 import edu.umontreal.kotlingrad.functions.types.Var
+import edu.umontreal.kotlingrad.numerical.BigDecimalReal
 import edu.umontreal.kotlingrad.numerical.DoubleReal
 import edu.umontreal.kotlingrad.numerical.ProtoDouble
 

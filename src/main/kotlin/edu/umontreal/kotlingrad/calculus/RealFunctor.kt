@@ -3,6 +3,7 @@ package edu.umontreal.kotlingrad.calculus
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.algebra.Real
 import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.functions.BinaryFunction
 import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.TernaryFunction
 import edu.umontreal.kotlingrad.functions.UnaryFunction
@@ -48,7 +49,7 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
   fun tan(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
     override fun invoke(map: Map<Var<X>, X>): X = rfc.tan(angle(map))
 
-    override fun diff(ind: Var<X>) = PolynomialTerm(one, cos(angle), -two) * angle.diff(ind)
+    override fun diff(ind: Var<X>) = Power(cos(angle), -two) * angle.diff(ind)
 
     override fun toString(): String = "tan($angle)"
   }
@@ -61,16 +62,9 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
     override fun toString(): String = "exp($exponent)"
   }
 
-  fun log(logarithmand: Function<X>) = object: UnaryFunction<X>(logarithmand) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.log(logarithmand(map))
-
-    override fun diff(ind: Var<X>) = Inverse(logarithmand) * logarithmand.diff(ind)
-
-    override fun toString(): String = "log₁₀($logarithmand)"
-  }
 
   // TODO: Allow functions in exponent
-  fun pow(base: Function<X>, exponent: Const<X>): TernaryFunction<X> = PolynomialTerm(one, base, exponent)
+  fun pow(base: Function<X>, exponent: Const<X>): BinaryFunction<X> = Power(base, exponent)
 
   fun sqrt(radicand: Function<X>): Function<X> = object: UnaryFunction<X>(radicand) {
     override fun invoke(map: Map<Var<X>, X>): X = rfc.sqrt(radicand(map))
@@ -78,14 +72,6 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
     override fun diff(ind: Var<X>) = sqrt(radicand).inverse() / this@RealFunctor.value(rfc.one + rfc.one) * radicand.diff(ind)
 
     override fun toString(): String = "√($radicand)"
-  }
-
-  fun square(base: Function<X>) = object: UnaryFunction<X>(base) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.square(base(map))
-
-    override fun diff(ind: Var<X>) = base * this@RealFunctor.value(rfc.one + rfc.one) * base.diff(ind)
-
-    override fun toString(): String = "($base)²"
   }
 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)

@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.algebra.RealPrototype
-import java.lang.Math.*
+import kotlin.math.*
 
 object ProtoDouble: RealPrototype<DoubleReal> {
   override val zero = DoubleReal(0.0)
@@ -15,11 +15,9 @@ object ProtoDouble: RealPrototype<DoubleReal> {
 
   override fun exp(x: DoubleReal) = DoubleReal(exp(x.dbl))
 
-  override fun log(x: DoubleReal) = DoubleReal(log(x.dbl))
+  override fun log(x: DoubleReal) = DoubleReal(ln(x.dbl))
 
-  override fun pow(x: DoubleReal, y: DoubleReal) = DoubleReal(pow(x.dbl, y.dbl))
+  override fun pow(x: DoubleReal, y: DoubleReal) = DoubleReal(x.dbl.pow(y.dbl))
 
   override fun sqrt(x: DoubleReal) = DoubleReal(sqrt(x.dbl))
-
-  override fun square(x: DoubleReal) = x * x
 }

@@ -86,7 +86,7 @@ Key to the design of Kotlin$\nabla$ is the notion of \textit{mathematical contex
     \item \texttt{val z = times(plus(x, y), times(x, y))}
 \end{itemize}
 
-While the first form is preferred, all three of these are interchangeable and equivalent ways to form the same symbolic expression. It should be noted that this expression by itself does not perform any computation - it simply constructs a DAG of function compositions which can be assigned to a variable and invoked lazily at a later point in execution.
+While the first form is preferred, all three of these are equivalent ways to construct the same symbolic expression. It should be noted that this expression by itself does not perform any computation - it simply constructs a DAG of function compositions which can be assigned to a variable and invoked lazily at a later point in execution.
 
 We can envision the AST for the expression in Fig. \ref{label:fig1} as follows:
 
@@ -105,7 +105,7 @@ val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
 \caption{Implicit AST using function composition}
 \end{figure}
 
-Since it is a function, to invoke this expression with a particularly value, we can simply pass a value to it and print the result like so: 
+Since the expression is also a function, invoking this expression with a particularly value will return a value. We can pass a value to it and print the result like so:
 
 \begin{minted}
 {kotlin}
