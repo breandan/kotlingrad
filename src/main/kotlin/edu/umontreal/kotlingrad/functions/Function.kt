@@ -24,7 +24,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   override fun plus(addend: Function<X>): Function<X> = when {
     this is Zero -> addend
     addend is Zero -> this
-    this is Const && addend is Const -> Const(prototype, value + addend.value)
+    this is Const && addend is Const -> Const(value + addend.value)
     this == addend -> two * this
     else -> Sum(this, addend)
   }
@@ -34,7 +34,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is One -> multiplicand
     multiplicand is One -> this
     multiplicand is Zero -> multiplicand
-    this is Const && multiplicand is Const -> Const(prototype, value * multiplicand.value)
+    this is Const && multiplicand is Const -> Const(value * multiplicand.value)
     this == multiplicand -> pow(two)
     else -> Product(this, multiplicand)
   }
@@ -44,7 +44,7 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is One -> this
     divisor is One -> divisor.inverse()
     divisor is Zero -> throw Exception("Cannot divide by $divisor")
-    this is Const && divisor is Const -> Const(prototype, value / divisor.value)
+    this is Const && divisor is Const -> Const(value / divisor.value)
     this == divisor -> one
     else -> super.div(divisor)
   }
@@ -59,12 +59,12 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   override fun inverse(): Function<X> = Inverse(this)
 
   override fun unaryMinus(): Function<X> = when {
-    this is Const -> Const(prototype, -value)
+    this is Const -> Const(-value)
     else -> Negative(this)
   }
 
   override fun pow(exponent: Function<X>): Function<X> = when {
-    this is Const && exponent is Const -> Const(prototype, value.pow(exponent.value))
+    this is Const && exponent is Const -> Const(value.pow(exponent.value))
     else -> Power(this, exponent)
   }
 
@@ -74,5 +74,5 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   val zero: Zero<X> by lazy { Zero(prototype) }
 
-  val two: Const<X> by lazy { Const(prototype, one.value + one.value) }
+  val two: Const<X> by lazy { Const(one.value + one.value) }
 }
