@@ -71,7 +71,9 @@ fun Expr.eval(): Double = when(expr) {
 
 In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
 
-Building on the previous example, we can simplify expressions based on the operand type and value. Smart casting allows us to access subclass members after checking the type without explicitly casting:
+Building on the previous example, we can simplify expressions based on [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access subclass members after checking the type without explicitly casting:
+
+[//]: # (Note: numerical stability is sensitive to the order of rewriting, cf. https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
 ```kotlin
 operator fun Expr.times(other: Expr): Double = when {
@@ -81,13 +83,15 @@ operator fun Expr.times(other: Expr): Double = when {
     other is Const && other.number == 0.0 -> other
     other is Const && other.number == 1.0 -> this
     this is Const && other is Sum -> Sum(Const(number) * other.e1, Const(number) * other.e2)
-    // Further simplification is possible using laws of distributivity
+    // Further simplification is possible using rules of replacement
     this is NotANumber || other is NotANumber -> Double.NaN
     else -> Prod(this, other)
 }
 
 val result = Const(2.0) * Sum(Var(2.0), Const(3.0)) // Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
 ```
+
+This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
 ## Features
 
