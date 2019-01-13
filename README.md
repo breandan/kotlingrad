@@ -24,7 +24,7 @@ Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_
 
 ## Features
 
-Kotlin currently supports the following features:
+Kotlin𝛁 currently supports the following features:
 
 * Arithmetical operations on scalars, vectors and matrices
 * Partial and higher order differentiation on scalars
@@ -90,15 +90,14 @@ z({x=0, y=1}) 			= 0.0
 				= [4.0, 0.0]ᵀ
 ```
 
-
 ## Testing
 
-Kotlin𝛁 claims to eliminate certain runtime errors, but how can we be sure the proposed implementation is error-free? Kotlin𝛁 is evaluated using a property-based testing in the style of [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis). It uses two primary mechanisms to check the functional correctness of automatic differentiation:
+Kotlin𝛁 claims to eliminate certain runtime errors, but how can we be sure the proposed implementation is error-free? One way is to use a property-based testing methodology in the style of [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis). It uses two primary mechanisms to check the functional correctness of automatic derivatives:
 
 * Symbolic differentiation: manually find the derivative and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, and compare results of AD with FD.
 
-However, there are many ways to independently verify the numerical gradient. One such way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
+However, there are many other ways to independently verify the numerical gradient. Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
@@ -157,9 +156,13 @@ Then run `./gradlew plot`.
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently it uses default values for variable defaults when a function is invoked, but a variable is not bound (i.e. `z = x * y; z(x to 1) // y = ?`). This is similar to [broadcasting](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure that the shapes are compatible. We would like to be able to encode the dimensionality of the function into the type, instead of using default values, to enforce mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). When the shape is known at compile-time, we can use a restricted form of [dependent types](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure type-safe matrix operations.
+The current API is experimental, but can be improved in many ways. Currently it uses default values for variables, so when a function is invoked with missing variable(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value will be applied. This is similar to [broadcasting in NumPy](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure shape compatibility. However we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). When the shape is known at compile-time, we can use a restricted form of [dependent types](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure type-safe matrix- and tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus)).
+
+Another such optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user explicitly specified them explicitly, we could perform a number of optimizations on specialized matrices.
 
 ### Scalar functions
+
+A function's type should encode arity, based on the number of variables:
 
 ```kotlin
 val x = variable(1.0)              // x: Variable<Double> inferred type
@@ -171,6 +174,8 @@ val h = f(x to 0.0, y to 0.0)      // h: Const<Double> == 0 + sin(0 + 0) == 0
 
 ### Vector functions
 
+Vector functions should have a size type, to ensure all values are set:
+
 ```kotlin
 val x = vvariable(0.0, 0.0, 0.0)   // x: VVariable<Double, `3`>
 val y = vvariable(0.0, `3`)        // x: VVariable<Double, `3`>
@@ -180,11 +185,12 @@ val g = f(-2.0, 0.0, 2.0)          // g: ConstVector<`3`> == [-3. 0. 5.]
 
 ### Matrix functions
 
+Multiplying matrices `x = N x M` and `y = M x P` should yield matrix `z` of type `N x P`:
+
 ```kotlin
-val x = vvariable(0.0, 0.0, 0.0)   // x: MVariable<Double, `1`, `3`>
-val y = vvariable(0.0, `3`, `3`)   // y: MVariable<Double, `3`, `3`>
-val f = sin(2 * x) + log(x / 2)    // f: UnaryMFunction<Double>
-val g = f(x) / d(x)                // g: UnaryMFunction<Double>
+val x = vvariable(0.0, `3`, `1`)   // y: MVariable<Double, `3`, `1`>
+val y = vvariable(0.0, 0.0)        // x: MVariable<Double, `1`, `2`>
+val z = x * y                      // z: MVariable<Double, `3`, `2`>
 ```
 
 ## References
@@ -206,10 +212,11 @@ The following are some excellent projects and publications that have inspired th
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
 * [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
-* [Autograd](https://github.com/hips/autograd)
-* [DiffSharp](https://github.com/DiffSharp/DiffSharp)
-* [Tangent](https://github.com/google/tangent)
-* [Myia](https://github.com/mila-udem/myia)
+* [Autograd](https://github.com/hips/autograd) - Efficiently computes derivatives of NumPy code
+* [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
+* [Myia](https://github.com/mila-udem/myia) - SCT based AD, adapted from Pearlmutter & Siskind's "Reverse Mode AD in a functional framework"
+* [Nexus](https://github.com/ctongfei/nexus) - Type-safe tensors, deep learning and probabilistic programming in Scala
+* [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
 * [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
 * [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
 * [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
