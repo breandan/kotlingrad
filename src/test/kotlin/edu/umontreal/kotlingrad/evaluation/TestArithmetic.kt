@@ -24,6 +24,12 @@ class TestArithmetic: StringSpec({
       }
     }
 
+    "test exponentiation" {
+      assertAll(NumericalGenerator) { xVal ->
+        pow(y, 3)(xVal) shouldBeAbout (y * y * y)(xVal)
+      }
+    }
+
     "test unary minus" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
         (-y + x)(x to xVal, y to yVal) shouldBeAbout xVal - yVal

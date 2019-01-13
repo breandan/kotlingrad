@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.FieldPrototype
+import edu.umontreal.kotlingrad.numerical.FieldPrototype
 import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.functions.operators.*
 import edu.umontreal.kotlingrad.functions.types.Const
@@ -75,4 +75,6 @@ abstract class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   val zero: Zero<X> by lazy { Zero(prototype) }
 
   val two: Const<X> by lazy { Const(one.value + one.value) }
+
+  val e: Const<X> by lazy { Const(prototype.one) }
 }

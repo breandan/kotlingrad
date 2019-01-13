@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.FieldPrototype
+import edu.umontreal.kotlingrad.numerical.FieldPrototype
 import edu.umontreal.kotlingrad.functions.Function
 
 class Var<X: Field<X>>(

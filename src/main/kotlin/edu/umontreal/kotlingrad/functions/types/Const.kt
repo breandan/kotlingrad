@@ -2,7 +2,6 @@ package edu.umontreal.kotlingrad.functions.types
 
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import edu.umontreal.kotlingrad.functions.NullaryFunction
 
 open class Const<X: Field<X>>(

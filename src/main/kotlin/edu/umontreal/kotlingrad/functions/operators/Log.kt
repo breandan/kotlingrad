@@ -1,7 +1,6 @@
 package edu.umontreal.kotlingrad.functions.operators
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.UnaryFunction
 import edu.umontreal.kotlingrad.functions.types.Var
@@ -13,5 +12,5 @@ class Log<X: Field<X>>(
 
   override fun diff(ind: Var<X>) = Inverse(logarithmand) * logarithmand.diff(ind)
 
-  override fun toString(): String = "log₁₀($logarithmand)"
+  override fun toString(): String = "ln($logarithmand)"
 }
