@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.algebra
 
-interface RealPrototype<X: Field<X>> {
+interface FieldPrototype<X: Field<X>> {
   val zero: X
   val one: X
 

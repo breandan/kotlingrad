@@ -2,16 +2,15 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.algebra.Real
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import edu.umontreal.kotlingrad.functions.BinaryFunction
 import edu.umontreal.kotlingrad.functions.Function
-import edu.umontreal.kotlingrad.functions.TernaryFunction
 import edu.umontreal.kotlingrad.functions.UnaryFunction
-import edu.umontreal.kotlingrad.functions.operators.Inverse
+import edu.umontreal.kotlingrad.functions.operators.Power
 import edu.umontreal.kotlingrad.functions.types.*
 
-abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<X>() {
-  fun value(fnx: X) = Const(fnx, rfc)
+abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor<X>() {
+  fun value(fnx: X) = Const(rfc, fnx)
 
   fun value(vararg fnx: X) = ConstVector(*fnx.mapTo(ArrayList(fnx.size)) { value(it) }.toTypedArray())
 
@@ -25,10 +24,6 @@ abstract class RealFunctor<X: Real<X>>(val rfc: RealPrototype<X>): FieldFunctor<
   fun variable(name: String) = Var(rfc, name = name)
 
   fun variable(name: String, default: X) = Var(rfc, default, name)
-
-  val zero = Zero(rfc)
-
-  val one = One(rfc)
 
   fun cos(angle: Function<X>) = object: UnaryFunction<X>(angle) {
     override fun invoke(map: Map<Var<X>, X>): X = rfc.cos(angle(map))

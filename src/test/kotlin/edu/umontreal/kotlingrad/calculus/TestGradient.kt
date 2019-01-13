@@ -18,7 +18,7 @@ class TestGradient: StringSpec({
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
         val vals = mapOf(x to xVal, y to yVal)
 
-        val `∂z∕∂x` = y * (cos(x * y) * y - one)
+        val `∂z∕∂x` = y * (cos(x * y) * y - 1)
         val `∂z∕∂y` = sin(x * y) - x + y * cos(x * y) * x
 
         `∇z`[x]!!(vals) shouldBeAbout `∂z∕∂x`(vals)

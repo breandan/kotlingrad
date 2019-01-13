@@ -6,12 +6,12 @@ import java.math.BigDecimal
 
 class BigDecimalReal(number: Number = 0): Real<BigDecimalReal> {
   val bg: BigDecimal =
-      when {
-        number.toDouble().isNaN() -> BigDecimal.ZERO
-        1E20 < number.toDouble() -> BigDecimal(1E20)
-        -1E20 > number.toDouble() -> BigDecimal(1E20)
-        else -> BigDecimal(number.toDouble() + 0.0)
-      }
+    when {
+      number.toDouble().isNaN() -> BigDecimal.ZERO
+      1E20 < number.toDouble() -> BigDecimal(1E20)
+      -1E20 > number.toDouble() -> BigDecimal(1E20)
+      else -> BigDecimal(number.toDouble() + 0.0)
+    }
 
   override fun toString() = bg.toString()
 

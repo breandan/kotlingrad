@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 
-class One<X: Field<X>>(realPrototype: RealPrototype<X>): Const<X>(realPrototype.one, realPrototype)
+class One<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype, fieldPrototype.one)

@@ -1,9 +1,9 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import kotlin.math.*
 
-object ProtoDouble: RealPrototype<DoubleReal> {
+object ProtoDouble: FieldPrototype<DoubleReal> {
   override val zero = DoubleReal(0.0)
   override val one = DoubleReal(1.0)
 

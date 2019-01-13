@@ -41,7 +41,7 @@ class TestTrigonometricDerivatives: StringSpec({
 
     "∂z/∂x should be y * (cos(x * y) * y - 1)" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val manualDerivative = y * (cos(x * y) * y - one)
+        val manualDerivative = y * (cos(x * y) * y - 1)
         `∂z∕∂x`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
       }
     }
@@ -62,7 +62,7 @@ class TestTrigonometricDerivatives: StringSpec({
 
     "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))" {
       assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val manualDerivative = cos(x * y) * y - one + y * (cos(x * y) - y * x * sin(x * y))
+        val manualDerivative = cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))
         `∂²z∕∂x∂y`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
       }
     }

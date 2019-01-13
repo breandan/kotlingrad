@@ -1,10 +1,10 @@
 package edu.umontreal.kotlingrad.numerical
 
 import ch.obermuhlner.math.big.BigDecimalMath.*
-import edu.umontreal.kotlingrad.algebra.RealPrototype
+import edu.umontreal.kotlingrad.algebra.FieldPrototype
 import java.math.MathContext
 
-object ProtoBigDecimal: RealPrototype<BigDecimalReal> {
+object ProtoBigDecimal: FieldPrototype<BigDecimalReal> {
   override val zero = BigDecimalReal(0.0)
   override val one = BigDecimalReal(1.0)
   val mc = MathContext(10)
