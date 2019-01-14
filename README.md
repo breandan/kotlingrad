@@ -13,6 +13,25 @@ This project relies on a few Kotlin-native language features, which together ena
 #### Operator overloading
  
 [Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+
+For example, suppose we have an interface `Field`, defined like so:
+
+```kotlin
+interface Field<T: Field<T>> {
+  // <T> is a recursive type bound (basically a self type)
+  operator fun plus(addend: T): T
+
+  operator fun times(multiplicand: T): T
+}
+```
+
+Now imagine we have a concrete class `Expr` which has implemented `Field`. It can be used as follows:
+
+```kotlin
+fun cube(expr: Expr): Expr = expr * expr * expr
+```
+
+Kotlin, like [Python](https://docs.python.org/3.4/library/operator.html), supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html).
  
 #### First-class functions
 
@@ -27,52 +46,72 @@ With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/
 [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
-object Context {
-  fun Double.absRound() = Math.round(Math.abs(this))
+data class Const<T: Field<T>>(val number: Double) : Expr()
+data class Sum<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Prod<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
+
+class Expr<T: Field<T>>: Field<Function<T>> {
+  operator fun plus(addend: Expr<T>) = Prod(this, multiplicand)
+  
+  operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
 
-// Consumer
-with(Context) {
-  val qPos: Long = (-2.3).absRound() // 2L
+object DoubleContext {
+  operator fun Number.times(expr: Expr<Double>) = Const(toDouble()) * expr
 }
 ```
+
+Now, we can use this context elsewhere in our code to define another extension function, `Expr.multiplyByTwo`, which performs the multiplication by calling our like so:
+
+```kotlin
+fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` operator in DoubleContext
+```
+
+Likewise, this extension can be defined in another file or context and imported on demand.
 
 #### Algebraic data types (ADTs)
 
-[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. For example, suppose we have the following classes:
+[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
 ```kotlin
-sealed class Expr
-data class Const(val number: Double) : Expr()
-data class Prod(val e1: Expr, val e2: Expr) : Expr()
-data class Sum(val e1: Expr, val e2: Expr) : Expr()
-data class Var(var value: Double): Expr()
-object NotANumber : Expr()
-```
-
-At runtime, we can branch on the concrete type of the abstract class `Expr` by defining an extension:
-
-```kotlin
-fun Expr.eval(): Double = when(expr) {
-    is Const -> number
-    is Sum -> e1.eval() + e2.eval()
-    is Prod -> e1.eval() * e2.eval()
-    is Var -> value
-    NotANumber -> Double.NaN
-    // No `else` clause is required, compiler sees all cases are covered
+sealed class Expr<T: Field<T>>: Field<Function<T>> {
+    fun diff() = when(expr) {
+        is Const -> Zero
+        // Smart casting allows us to access members of a checked typed without explicit casting
+        is Sum -> e1.diff() + e2.diff()
+        // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
+        is Prod -> e1.diff() * e2 + e1 * e2.diff()
+        is Var -> One
+        // Since the subclasses of Expr are a closed set, the compiler does not require an `else -> ...`
+    }
+    
+    operator fun plus(addend: Expr<T>) = Prod(this, multiplicand)
+      
+    operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
+
+data class Const<T: Field<T>>(val number: Double) : Expr()
+data class Sum<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Prod<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
+class Var<T: Field<T>>: Expr()
+class Zero<T: Field<T>>: Const<T>
+class One<T: Field<T>>: Const<T>
 ```
+
+Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile rather than fail silently at runtime.
+
+[Smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) allows us to treat the abstract type `Expr` as a concrete type, e.g. `Sum` after performing an `is Sum` check. Otherwise, we would need to write `(expr as Sum).e1` in order to access its field, `e1`. Performing a cast without checking would throw a runtime exception, if the type were incorrect. Using sealed classes helps avoid casting, thus avoiding `ClassCastException`s.
 
 #### Multiple Dispatch
 
-In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance and [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts).
+In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
 Building on the previous example, we can simplify expressions based on [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access subclass members after checking the type without explicitly casting:
 
 [//]: # (Note: numerical stability is sensitive to the order of rewriting, cf. https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
 ```kotlin
-operator fun Expr.times(other: Expr): Double = when {
+operator fun Expr.times(other: Expr) = when {
     this is Const && other is Const -> Const(number * other.number)
     this is Const && number == 0.0 -> Const(0.0)
     this is Const && number == 1.0 -> other
