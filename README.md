@@ -100,11 +100,13 @@ Kotlin𝛁 currently supports the following features:
 
 Additionally, it aims to support:
 
-* PyTorch-style define-by-run semantics
+* PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
 * N-dimensional tensors and tensor-algebraic operators
 * Compiler plugin to instrument existing programs for AD
-* Differentiation through general-purpose operators like loops, recursion, get- and set- assignment
-(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)) and other common operators
+* Fully-general AD over control flow, variable reassignment
+(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
+
+Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming and embedded DSLs as shown in [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
 
 ## Usage
 
@@ -159,12 +161,12 @@ z({x=0, y=1}) 			= 0.0
 
 ## Testing
 
-Kotlin𝛁 claims to eliminate certain runtime errors, but how can we be sure the proposed implementation is not incorrect? One way is to use a method borrowed from the Haskell community called property-based testing, closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis), and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). It uses algebraic properties to verify the result of an operation using semantically equivalent but syntactically distinct expressions, which in theory should produce the same answer. Kotlin𝛁 uses two such mechanisms to test its AD implementation:
+Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a  borrowed from the Haskell community called property-based testing, closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis), and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). It uses algebraic properties to verify the result of an operation using semantically equivalent but syntactically distinct expressions, which in theory should produce the same answer. Kotlin𝛁 uses two such mechanisms to validate its AD implementation:
 
-* Symbolic differentiation: manually find the derivative and compare the values returned on a subset of the domain with AD.
+* [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually find the derivative and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, and compare results of AD with FD.
 
-However, there are many other ways to independently verify the numerical gradient. Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
+However, there are many other ways to independently verify the numerical gradient, such as the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
