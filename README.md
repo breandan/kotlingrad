@@ -1,18 +1,14 @@
 # Kotlin𝛁: Type-safe Automatic Differentiation for Kotlin
 
-Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs on higher-dimensional data structures and operands. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a correctly-typed program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs on higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a correctly-typed program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
 ## Introduction
 
-Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Tangent](https://github.com/google/tangent), [Myia](https://github.com/mila-udem/myia) et al.
-
-Automatic Differentiation (AD) is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning.
-
-We aim to provide an algebraically sound implementation of AD for type safe tensor operations.
+Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), et al., Kotlin𝛁 attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. We aim to provide an algebraically-grounded implementation of AD for type safe tensor operations.
 
 ## How?
 
-Kotlin𝛁 relies on a few language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of this library:
+This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin𝛁:
 
 #### Operator overloading
  
@@ -104,11 +100,13 @@ Kotlin𝛁 currently supports the following features:
 
 Additionally, it aims to support:
 
-* PyTorch-style define-by-run semantics
+* PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
 * N-dimensional tensors and tensor-algebraic operators
 * Compiler plugin to instrument existing programs for AD
-* Differentiation through general-purpose operators like loops, recursion, get- and set- assignment
-(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)) and other common operators
+* Fully-general AD over control flow, variable reassignment
+(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
+
+Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) and embedded DSLs, cf. [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
 
 ## Usage
 
@@ -163,12 +161,12 @@ z({x=0, y=1}) 			= 0.0
 
 ## Testing
 
-Kotlin𝛁 claims to eliminate certain runtime errors, but how can we be sure the proposed implementation is error-free? One way is to use a property-based testing methodology in the style of [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis). It uses two primary mechanisms to check the functional correctness of automatic derivatives:
+Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a  borrowed from the Haskell community called property-based testing, closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis), and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). It uses algebraic properties to verify the result of an operation using semantically equivalent but syntactically distinct expressions, which in theory should produce the same answer. Kotlin𝛁 uses two such mechanisms to validate its AD implementation:
 
-* Symbolic differentiation: manually find the derivative and compare the values returned on a subset of the domain with AD.
+* [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually find the derivative and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, and compare results of AD with FD.
 
-However, there are many other ways to independently verify the numerical gradient. Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
+However, there are many other ways to independently verify the numerical gradient, such as the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
