@@ -2,11 +2,9 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.algebra.Real
-import edu.umontreal.kotlingrad.numerical.FieldPrototype
-import edu.umontreal.kotlingrad.functions.BinaryFunction
+import edu.umontreal.kotlingrad.functions.*
 import edu.umontreal.kotlingrad.functions.Function
-import edu.umontreal.kotlingrad.functions.UnaryFunction
-import edu.umontreal.kotlingrad.functions.operators.Power
+import edu.umontreal.kotlingrad.numerical.FieldPrototype
 import edu.umontreal.kotlingrad.functions.types.*
 
 abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor<X>() {
@@ -25,48 +23,17 @@ abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor
 
   fun variable(name: String, default: X) = Var(rfc, default, name)
 
-  fun cos(angle: Function<X>) = object: UnaryFunction<X>(angle) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.cos(angle(map))
+  fun cos(angle: Function<X>) = Cosine(angle)
 
-    override fun diff(ind: Var<X>) = -(sin(angle) * angle.diff(ind))
+  fun sin(angle: Function<X>) = Sine(angle)
 
-    override fun toString() = "cos($angle)"
-  }
+  fun tan(angle: Function<X>) = Tangent(angle)
 
-  fun sin(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.sin(angle(map))
+  fun exp(exponent: Function<X>) = Exp(exponent)
+  
+  fun pow(base: Function<X>, exponent: Function<X>) = Power(base, exponent)
 
-    override fun diff(ind: Var<X>) = cos(angle) * angle.diff(ind)
-
-    override fun toString(): String = "sin($angle)"
-  }
-
-  fun tan(angle: Function<X>): Function<X> = object: UnaryFunction<X>(angle) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.tan(angle(map))
-
-    override fun diff(ind: Var<X>) = Power(cos(angle), -two) * angle.diff(ind)
-
-    override fun toString(): String = "tan($angle)"
-  }
-
-  fun exp(exponent: Function<X>): Function<X> = object: UnaryFunction<X>(exponent) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.exp(exponent(map))
-
-    override fun diff(ind: Var<X>) = exp(exponent) * exponent.diff(ind)
-
-    override fun toString(): String = "exp($exponent)"
-  }
-
-  // TODO: Allow functions in exponent
-  fun pow(base: Function<X>, exponent: Const<X>): BinaryFunction<X> = Power(base, exponent)
-
-  fun sqrt(radicand: Function<X>): Function<X> = object: UnaryFunction<X>(radicand) {
-    override fun invoke(map: Map<Var<X>, X>): X = rfc.sqrt(radicand(map))
-
-    override fun diff(ind: Var<X>) = sqrt(radicand).inverse() / this@RealFunctor.value(rfc.one + rfc.one) * radicand.diff(ind)
-
-    override fun toString(): String = "√($radicand)"
-  }
+  fun sqrt(radicand: Function<X>): Function<X> = SquareRoot(radicand)
 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
 
