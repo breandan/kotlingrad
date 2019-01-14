@@ -6,6 +6,7 @@ import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
+@Suppress("NonAsciiCharacters")
 class TestArithmetic: StringSpec({
   with(DoubleFunctor) {
     val x = variable("x")
@@ -13,72 +14,72 @@ class TestArithmetic: StringSpec({
     val z = variable("z")
 
     "test addition" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        (x + y).invoke(x to xVal, y to yVal) shouldBeAbout yVal + xVal
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        (x + y).invoke(x to ẋ, y to ẏ) shouldBeAbout ẏ + ẋ
       }
     }
 
     "test subtraction" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        (x - y)(x to xVal, y to yVal) shouldBeAbout xVal - yVal
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        (x - y)(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
     "test exponentiation" {
-      assertAll(NumericalGenerator) { xVal ->
-        pow(y, 3)(xVal) shouldBeAbout (y * y * y)(xVal)
+      assertAll(NumericalGenerator) { ẋ ->
+        pow(y, 3)(ẋ) shouldBeAbout (y * y * y)(ẋ)
       }
     }
 
     "test unary minus" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        (-y + x)(x to xVal, y to yVal) shouldBeAbout xVal - yVal
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        (-y + x)(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
     "test multiplication" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        (x * y)(x to xVal, y to yVal) shouldBeAbout xVal * yVal
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        (x * y)(x to ẋ, y to ẏ) shouldBeAbout ẋ * ẏ
       }
     }
 
     "test multiplication with numerical type" {
-      assertAll(NumericalGenerator) { xVal: Double ->
-        (x * 2)(x to xVal) shouldBeAbout xVal * 2
+      assertAll(NumericalGenerator) { ẋ: Double ->
+        (x * 2)(x to ẋ) shouldBeAbout ẋ * 2
       }
     }
 
     "test division" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val values = mapOf(x to xVal, y to yVal)
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        val values = mapOf(x to ẋ, y to ẏ)
         (x / y)(values) shouldBeAbout x(values) / y(values)
       }
     }
 
     "test inverse" {
-      assertAll(NumericalGenerator, NumericalGenerator(0)) { xVal, yVal ->
-        val values = mapOf(x to xVal, y to yVal)
+      assertAll(NumericalGenerator, NumericalGenerator(0)) { ẋ, ẏ ->
+        val values = mapOf(x to ẋ, y to ẏ)
         (x * y.inverse())(values) shouldBeAbout (x / y)(values)
       }
     }
 
     "test associativity" {
-      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { xVal, yVal, zVal ->
-        val values = mapOf(x to xVal, y to yVal, z to zVal)
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, zVal ->
+        val values = mapOf(x to ẋ, y to ẏ, z to zVal)
         (x * (y * z))(values) shouldBeAbout ((x * y) * z)(values)
       }
     }
 
     "test commutativity" {
-      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { xVal, yVal, zVal ->
-        val values = mapOf(x to xVal, y to yVal, z to zVal)
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, zVal ->
+        val values = mapOf(x to ẋ, y to ẏ, z to zVal)
         (x * y * z)(values) shouldBeAbout (z * y * x)(values)
       }
     }
 
     "test distributivity" {
-      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { xVal, yVal, zVal ->
-        val values = mapOf(x to xVal, y to yVal, z to zVal)
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, zVal ->
+        val values = mapOf(x to ẋ, y to ẏ, z to zVal)
         (x * (y + z))(values) shouldBeAbout (x * y + x * z)(values)
       }
     }

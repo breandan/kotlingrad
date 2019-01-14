@@ -12,26 +12,26 @@ class TestSimpleDerivatives: StringSpec({
     val y = variable("y")
 
     "dx / dx should be 1" {
-      assertAll(NumericalGenerator) { xVal ->
+      assertAll(NumericalGenerator) { ẋ ->
         val f = x * 1
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to xVal) shouldBeAbout 1.0
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 1.0
       }
     }
 
     "d(2x) / dx should be 2" {
-      assertAll(NumericalGenerator) { xVal ->
+      assertAll(NumericalGenerator) { ẋ ->
         val f = x * 2
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to xVal) shouldBeAbout 2.0
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 2.0
       }
     }
 
     "d(x + x) / dx should be 2" {
-      assertAll(NumericalGenerator) { xVal ->
+      assertAll(NumericalGenerator) { ẋ ->
         val f = x + x
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to xVal) shouldBeAbout 2.0
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 2.0
       }
     }
   }

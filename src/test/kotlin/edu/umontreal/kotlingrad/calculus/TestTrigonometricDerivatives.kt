@@ -11,18 +11,18 @@ class TestTrigonometricDerivatives: StringSpec({
     val y = variable("y")
 
     "d(sin(x)) / dx should be cos(x)" {
-      assertAll(NumericalGenerator) { xVal ->
+      assertAll(NumericalGenerator) { ẋ ->
         val f = sin(x)
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(x to xVal) shouldBeAbout cos(x)(x to xVal)
+        `df∕dx`(x to ẋ) shouldBeAbout cos(x)(x to ẋ)
       }
     }
 
     "d(cos(x)) / dx should be -sin(x)" {
-      assertAll(NumericalGenerator) { xVal ->
+      assertAll(NumericalGenerator) { ẋ ->
         val f = cos(x)
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(x to xVal) shouldBeAbout -sin(x)(x to xVal)
+        `df∕dx`(x to ẋ) shouldBeAbout -sin(x)(x to ẋ)
       }
     }
 
@@ -40,30 +40,30 @@ class TestTrigonometricDerivatives: StringSpec({
     }
 
     "∂z/∂x should be y * (cos(x * y) * y - 1)" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val manualDerivative = y * (cos(x * y) * y - 1)
-        `∂z∕∂x`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
+        `∂z∕∂x`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
       }
     }
 
     "∂z/∂y should be sin(x * y) - x + y * cos(x * y) * x" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val manualDerivative = sin(x * y) - x + y * cos(x * y) * x
-        `∂z∕∂y`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
+        `∂z∕∂y`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
       }
     }
 
     "∂²z/∂x² should be -y * y * y * sin(x * y)" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val manualDerivative = -pow(y, 3) * sin(x * y)
-        `∂²z∕∂x²`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
+        `∂²z∕∂x²`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
       }
     }
 
     "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val manualDerivative = cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))
-        `∂²z∕∂x∂y`(x to xVal, y to yVal) shouldBeAbout manualDerivative(x to xVal, y to yVal)
+        `∂²z∕∂x∂y`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
       }
     }
   }

@@ -6,6 +6,179 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
 
 Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), et al., Kotlin𝛁 attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. We aim to provide an algebraically-grounded implementation of AD for type safe tensor operations.
 
+## Features
+
+Kotlin𝛁 currently supports the following features:
+
+* Arithmetical operations on scalars, vectors and matrices
+* Partial and higher order differentiation on scalars
+* Property-based testing for numerical gradient checking
+* Recovery of symbolic derivatives from AD 
+
+Additionally, it aims to support:
+
+* PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
+* N-dimensional tensors and tensor-algebraic operators
+* Compiler plugin to instrument existing programs for AD
+* Fully-general AD over control flow, variable reassignment
+(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
+
+Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) and embedded DSLs, cf. [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
+
+## Usage
+
+The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
+
+```kotlin
+import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+
+@Suppress("NonAsciiCharacters", "LocalVariableName")
+fun main(args: Array<String>) {
+  with(DoubleFunctor) { 
+    val x = variable("x")
+    val y = variable("y")
+
+    val z = x * (-sin(x * y) + y) * 4  // Infix notation
+    val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation
+    val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
+    val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
+    val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
+    val `∇z` = z.grad()                // Gradient operator
+
+    val values = mapOf(x to 0, y to 1)
+    val indVar = z.variables.joinToString(", ")
+
+    print("z($indVar) \t\t\t= $z\n" +
+        "z($values) \t\t\t= ${z(values)}\n" +
+        "∂z($values)/∂x \t\t= $`∂z∕∂x` \n\t\t\t\t= " + `∂z∕∂x`(values) + "\n" +
+        "∂z($values)/∂y \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂z∕∂y`(values) + "\n" +
+        "∂²z($values)/∂x² \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂²z∕∂x²`(values) + "\n" +
+        "∂²z($values)/∂x∂y \t\t= $`∂²z∕∂x∂y` \n\t\t\t\t= " + `∂²z∕∂x∂y`(values) + "\n" +
+        "∇z($values) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
+  }
+}
+```
+
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
+
+```
+z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
+z({x=0, y=1}) 			= 0.0
+∂z({x=0, y=1})/∂x 		= (((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4) 
+				= 4.0
+∂z({x=0, y=1})/∂y 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
+				= 0.0
+∂²z({x=0, y=1})/∂x² 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
+				= -8.0
+∂²z({x=0, y=1})/∂x∂y 		= (((-(cos((x * y)) * x) + 1) + (x * -((-(sin((x * y)) * x) * y) + cos((x * y))))) * 4) 
+				= 4.0
+∇z({x=0, y=1}) 			= {x=(((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4), y=((x * (-(cos((x * y)) * x) + 1)) * 4)} 
+				= [4.0, 0.0]ᵀ
+```
+
+## Testing
+
+To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
+
+Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a  technique borrowed from the Haskell community called property-based testing, closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis), and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). It uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which (in theory) should produce the same answer. Kotlin𝛁 uses two such mechanisms to validate its AD implementation:
+
+* [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
+* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
+
+For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to within the limits of numerical precision:
+
+```kotlin
+val x = variable("x")
+val y = variable("y")
+
+val z = y * (sin(x * y) - x)            // Function under test
+val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
+val manualDx = y * (cos(x * y) * y - 1) // Manual derivative 
+
+"∂z/∂x should be y * (cos(x * y) * y - 1)" {
+  assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+    // Evaluate the results at a given seed
+    val adEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
+    val manualEval = manualDx(x to ẋ, y to ẏ)
+    // Should pass if Δ(adEval, manualEval) < Ɛ
+    adEval shouldBeApproximately manualEval
+  }
+}
+```
+
+This test will sample the input space for two numerical values `ẋ` and `ẏ`, which violate the specification, then ["shrink"](http://hackage.haskell.org/package/QuickCheck-2.12.6.1/docs/Test-QuickCheck-Arbitrary.html#v:shrink) the results to find two values which are on the boundary of passing and failing. We can do perform a similar test using the finite difference method:
+
+```kotlin
+"d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
+  assertAll(NumericalGenerator) { ẋ ->
+    val f = sin(x)
+    
+    val `df∕dx` = d(f) / d(x)
+    val adEval = `df∕dx`(ẋ) 
+    
+    val dx = 1E-8
+    // Since ẋ is a raw numeric type, sin => kotlin.math.sin
+    val fdEval = (sin(ẋ + dx) - sin(ẋ)) / dx
+    adEval shouldBeApproximately fdEval
+  }
+}
+```
+
+However, there are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
+
+## Plotting
+
+![](src/main/resources/plot.png)
+
+This plot was generated with the following code:
+
+```kotlin
+import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.utils.step
+import krangl.dataFrameOf
+import kravis.geomLine
+import kravis.plot
+import java.io.File
+
+@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
+fun main(args: Array<String>) {
+  with(DoubleFunctor) {
+    val x = variable("x")
+
+    val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
+    val `dy∕dx` = d(y) / d(x)
+    val `d²y∕dx²` = d(`dy∕dx`) / d(x)
+    val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
+    val `d⁴y∕dx⁴` = d(`d³y∕dx³`) / d(x)
+    val `d⁵y∕dx⁵` = d(`d⁴y∕dx⁴`) / d(x)
+
+    val xs = -10.0..10.0 step 0.09
+    val ys = (xs.map { listOf(it, y(it), "y") }
+            + xs.map { listOf(it, `dy∕dx`(it), "dy/dx") }
+            + xs.map { listOf(it, `d²y∕dx²`(it), "d²y/x²") }
+            + xs.map { listOf(it, `d³y∕dx³`(it), "d³y/dx³") }
+            + xs.map { listOf(it, `d⁴y∕dx⁴`(it), "d⁴y/dx⁴") }
+            + xs.map { listOf(it, `d⁵y∕dx⁵`(it), "d⁵y/dx⁵") }).flatten()
+
+    dataFrameOf("x", "y", "Function")(ys)
+      .plot(x = "x", y = "y", color = "Function")
+      .geomLine(size = 1.0)
+      .title("Derivatives of y=$y")
+      .save(File("src/main/resources/plot.png"))
+  }
+}
+```
+
+To generate the above plot, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
+
+```
+sudo apt-get install r-base && \
+sudo ln -s /usr/bin/R /usr/local/bin/R && \
+R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
+```
+
+Then run `./gradlew plot`.
+
 ## How?
 
 This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin𝛁:
@@ -127,140 +300,6 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0)) // Sum(Prod(Const(2.0), Var(
 ```
 
 This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
-
-## Features
-
-Kotlin𝛁 currently supports the following features:
-
-* Arithmetical operations on scalars, vectors and matrices
-* Partial and higher order differentiation on scalars
-* Property-based testing for numerical gradient checking
-* Recovery of symbolic derivatives from AD 
-
-Additionally, it aims to support:
-
-* PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
-* N-dimensional tensors and tensor-algebraic operators
-* Compiler plugin to instrument existing programs for AD
-* Fully-general AD over control flow, variable reassignment
-(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
-
-Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) and embedded DSLs, cf. [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
-
-## Usage
-
-The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
-
-```kotlin
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
-
-@Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main(args: Array<String>) {
-  with(DoubleFunctor) { 
-    val x = variable("x")
-    val y = variable("y")
-
-    val z = x * (-sin(x * y) + y) * 4  // Infix notation
-    val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation
-    val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
-    val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
-    val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
-    val `∇z` = z.grad()                // Gradient operator
-
-    val values = mapOf(x to 0, y to 1)
-    val indVar = z.variables.joinToString(", ")
-
-    print("z($indVar) \t\t\t= $z\n" +
-        "z($values) \t\t\t= ${z(values)}\n" +
-        "∂z($values)/∂x \t\t= $`∂z∕∂x` \n\t\t\t\t= " + `∂z∕∂x`(values) + "\n" +
-        "∂z($values)/∂y \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂z∕∂y`(values) + "\n" +
-        "∂²z($values)/∂x² \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂²z∕∂x²`(values) + "\n" +
-        "∂²z($values)/∂x∂y \t\t= $`∂²z∕∂x∂y` \n\t\t\t\t= " + `∂²z∕∂x∂y`(values) + "\n" +
-        "∇z($values) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
-  }
-}
-```
-
-Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
-
-```
-z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
-z({x=0, y=1}) 			= 0.0
-∂z({x=0, y=1})/∂x 		= (((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4) 
-				= 4.0
-∂z({x=0, y=1})/∂y 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
-				= 0.0
-∂²z({x=0, y=1})/∂x² 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
-				= -8.0
-∂²z({x=0, y=1})/∂x∂y 		= (((-(cos((x * y)) * x) + 1) + (x * -((-(sin((x * y)) * x) * y) + cos((x * y))))) * 4) 
-				= 4.0
-∇z({x=0, y=1}) 			= {x=(((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4), y=((x * (-(cos((x * y)) * x) + 1)) * 4)} 
-				= [4.0, 0.0]ᵀ
-```
-
-## Testing
-
-Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a  technique borrowed from the Haskell community called property-based testing, closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck) and [Hypothesis](https://github.com/HypothesisWorks/hypothesis), and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). It uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which (in theory) should produce the same answer. Kotlin𝛁 uses two such mechanisms to validate its AD implementation:
-
-* [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually find the derivative and compare the values returned on a subset of the domain with AD.
-* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, and compare results of AD with FD.
-
-However, there are many other ways to independently verify the numerical gradient, such as the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another way is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to implement this capability in a future release.
-
-To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
-
-## Plotting
-
-![](src/main/resources/plot.png)
-
-This plot was generated with the following code:
-
-```kotlin
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
-import edu.umontreal.kotlingrad.utils.step
-import krangl.dataFrameOf
-import kravis.geomLine
-import kravis.plot
-import java.io.File
-
-@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
-fun main(args: Array<String>) {
-  with(DoubleFunctor) {
-    val x = variable("x")
-
-    val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
-    val `dy∕dx` = d(y) / d(x)
-    val `d²y∕dx²` = d(`dy∕dx`) / d(x)
-    val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
-    val `d⁴y∕dx⁴` = d(`d³y∕dx³`) / d(x)
-    val `d⁵y∕dx⁵` = d(`d⁴y∕dx⁴`) / d(x)
-
-    val xs = -10.0..10.0 step 0.09
-    val ys = (xs.map { listOf(it, y(it), "y") }
-            + xs.map { listOf(it, `dy∕dx`(it), "dy/dx") }
-            + xs.map { listOf(it, `d²y∕dx²`(it), "d²y/x²") }
-            + xs.map { listOf(it, `d³y∕dx³`(it), "d³y/dx³") }
-            + xs.map { listOf(it, `d⁴y∕dx⁴`(it), "d⁴y/dx⁴") }
-            + xs.map { listOf(it, `d⁵y∕dx⁵`(it), "d⁵y/dx⁵") }).flatten()
-
-    dataFrameOf("x", "y", "Function")(ys)
-      .plot(x = "x", y = "y", color = "Function")
-      .geomLine(size = 1.0)
-      .title("Derivatives of y=$y")
-      .save(File("src/main/resources/plot.png"))
-  }
-}
-```
-
-To generate the above plot, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
-
-```
-sudo apt-get install r-base && \
-sudo ln -s /usr/bin/R /usr/local/bin/R && \
-R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
-```
-
-Then run `./gradlew plot`.
 
 ## Ideal API (WIP)
 

@@ -15,8 +15,8 @@ class TestGradient: StringSpec({
     val `∇z` = z.grad()
 
     "test ∇z" {
-      assertAll(NumericalGenerator, NumericalGenerator) { xVal, yVal ->
-        val vals = mapOf(x to xVal, y to yVal)
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        val vals = mapOf(x to ẋ, y to ẏ)
 
         val `∂z∕∂x` = y * (cos(x * y) * y - 1)
         val `∂z∕∂y` = sin(x * y) - x + y * cos(x * y) * x

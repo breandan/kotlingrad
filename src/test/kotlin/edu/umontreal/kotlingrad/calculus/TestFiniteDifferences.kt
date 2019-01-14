@@ -13,30 +13,30 @@ class TestFiniteDifferences: StringSpec({
   with(DoubleFunctor) {
     val x = variable("x")
 
-    "test sin" {
-      assertAll(NumericalGenerator) { xVal ->
+    "sin should be (sin(x + dx) - sin(x)) / dx" {
+      assertAll(NumericalGenerator) { ẋ ->
         val f = sin(x)
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(x to xVal) shouldBeAbout (sin(xVal + dx) - sin(xVal)) / dx
+        `df∕dx`(ẋ) shouldBeAbout (sin(ẋ + dx) - sin(ẋ)) / dx
       }
     }
 
-    "test cos" {
-      assertAll(NumericalGenerator) { xVal ->
+    "cos should be (cos(x + dx) - cos(x)) / dx" {
+      assertAll(NumericalGenerator) { ẋ ->
         val f = cos(x)
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(x to xVal) shouldBeAbout ((cos(xVal + dx) - cos(xVal)) / dx)
+        `df∕dx`(ẋ) shouldBeAbout ((cos(ẋ + dx) - cos(ẋ)) / dx)
       }
     }
 
     "test composition" {
-      assertAll(NumericalGenerator) { xVal ->
+      assertAll(NumericalGenerator) { ẋ ->
         val f = sin(pow(x, 2))
         val `df∕dx` = d(f) / d(x)
 
-        val xdx = xVal + dx
+        val xdx = ẋ + dx
 
-        `df∕dx`(x to xVal) shouldBeAbout (sin(xdx * xdx) - sin(xVal * xVal)) / dx
+        `df∕dx`(ẋ) shouldBeAbout (sin(xdx * xdx) - sin(ẋ * ẋ)) / dx
       }
     }
   }
