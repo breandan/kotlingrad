@@ -106,7 +106,7 @@ Additionally, it aims to support:
 * Fully-general AD over control flow, variable reassignment
 (via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
 
-Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming and embedded DSLs as shown in [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
+Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) and embedded DSLs, cf. [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
 
 ## Usage
 
