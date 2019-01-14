@@ -1,10 +1,5 @@
 package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.functions.types.Var
+import edu.umontreal.kotlingrad.functions.Var
 
-interface Differentiable<X: Field<X>, D> {
-  fun diff(ind: Var<X>): D
-
-  fun grad(): Map<Var<X>, D>
-}

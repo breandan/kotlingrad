@@ -1,7 +1,8 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.functions.Const
 import edu.umontreal.kotlingrad.functions.Function
-import edu.umontreal.kotlingrad.functions.types.Var
+import edu.umontreal.kotlingrad.functions.Var
 import edu.umontreal.kotlingrad.numerical.DoubleReal
 import edu.umontreal.kotlingrad.numerical.ProtoDouble
 
@@ -10,9 +11,6 @@ object DoubleFunctor: RealFunctor<DoubleReal>(ProtoDouble) {
 
   fun variable(name: String, default: Number) =
     Var(rfc, DoubleReal(default.toDouble()), name)
-
-  fun pow(base: Function<DoubleReal>, number: Int) =
-    pow(base, value(DoubleReal(number)))
 
   operator fun Function<DoubleReal>.invoke(pairs: Map<Var<DoubleReal>, Number>) =
     this(pairs.map { (it.key to DoubleReal(it.value)) }.toMap()).dbl
@@ -25,6 +23,9 @@ object DoubleFunctor: RealFunctor<DoubleReal>(ProtoDouble) {
 
   // TODO: Lift these into RealFunctor, perhaps extending from Field?
   operator fun Function<DoubleReal>.plus(number: Number) = this + value(DoubleReal(number))
+
+  // TODO Make this an extension function?
+  fun pow(function: Function<DoubleReal>, number: Number) = pow(function, Const(DoubleReal(number)))
 
   operator fun Number.plus(fn: Function<DoubleReal>) = fn + this
 

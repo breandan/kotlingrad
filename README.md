@@ -12,15 +12,15 @@ This project relies on a few Kotlin-native language features, which together ena
 
 #### Operator overloading
  
-[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt).
+[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
  
 #### First-class functions
 
-[Higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) treat [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function) for representing mathematical functions and programming functions with the same underlying abstractions (typed FP).
+With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
 #### Coroutines
 
-[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) and shift-reset continuations for implementing reverse mode AD with operator overloading alone, inspired by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Also enables independent branches of an expression to be evaluated asynchronously. (WIP)
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset or delimited continuations is sufficient for implementing reverse mode AD just with operator overloading (without any additional data structures) as described by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Implementing this extension is currently a work in progress.
 
 #### Extension Functions
 

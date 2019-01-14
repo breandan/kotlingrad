@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.functions.Function
-import edu.umontreal.kotlingrad.functions.types.Var
+import edu.umontreal.kotlingrad.functions.Var
 import edu.umontreal.kotlingrad.numerical.BigDecimalReal
 import edu.umontreal.kotlingrad.numerical.ProtoBigDecimal
 
