@@ -187,7 +187,7 @@ This project relies on a few Kotlin-native language features, which together ena
  
 [Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
-For example, suppose we have an interface `Field`, defined like so:
+For example, suppose we have an interface `Field`, which overloads the operators `+` and `*`, and is defined like so:
 
 ```kotlin
 interface Field<T: Field<T>> {
@@ -198,17 +198,30 @@ interface Field<T: Field<T>> {
 }
 ```
 
-Now imagine we have a concrete class `Expr` which has implemented `Field`. It can be used as follows:
+Now imagine a concrete class `Expr` which has implemented `Field`. It can be used as follows:
 
 ```kotlin
 fun cube(expr: Expr): Expr = expr * expr * expr
 ```
 
-Kotlin, like [Python](https://docs.python.org/3.4/library/operator.html), supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html).
- 
+Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html), which are evaluated using a [fixed precendence](https://kotlinlang.org/docs/reference/grammar.html#precedence). In the current version of Kotlin𝛁, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
+
 #### First-class functions
 
 With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
+
+In Kotlin𝛁, all expressions can be treated as functions. For example:
+
+```kotlin
+fun <T: Field<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
+
+val x: Var<Double> = Var(1.0)
+val f: Function<Double> = makePoly(x, y)
+val z = f(1.0, 2.0) // Returns a value
+println(z) // Prints: 7
+```
+
+Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to implement support for functions with multiple input types and enforce types on both input and an output, using [covariant and contravariant](https://kotlinlang.org/docs/reference/generics.html) type bounds.
 
 #### Coroutines
 
