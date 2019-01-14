@@ -35,7 +35,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     is Exp -> exp(exponent) * exponent.diff(ind)
     is SquareRoot -> sqrt(radicand).inverse() / two * radicand.diff(ind)
     is Sine -> cos(angle) * angle.diff(ind)
-    is Cosine -> -(sin(angle) * angle.diff(ind))
+    is Cosine -> -sin(angle) * angle.diff(ind)
     is Tangent -> Power(cos(angle), -two) * angle.diff(ind)
   }
 
@@ -135,9 +135,7 @@ class Exp<X: Field<X>>(
   override fun toString(): String = "exp($exponent)"
 }
 
-class Log<X: Field<X>>(
-  val logarithmand: Function<X>
-): Function<X>(logarithmand.variables) {
+class Log<X: Field<X>>(val logarithmand: Function<X>): Function<X>(logarithmand.variables) {
   override fun invoke(map: Map<Var<X>, X>): X = prototype.log(logarithmand(map))
 
   override fun toString(): String = "ln($logarithmand)"
