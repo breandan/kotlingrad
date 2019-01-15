@@ -161,6 +161,167 @@ Universit\'e de Montr\'eal \\
         \end{lstlisting}
     \end{frame}
 
+
+    \section{Architectural Overview}\label{sec:third-section}
+
+    \begin{frame}[fragile]
+        \frametitle{Algebraic Data Types}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            class Var: Expr()
+            class Const(val num: Number): Expr()
+            class Sum(val e1: Expr, val e2: Expr): Expr()
+            class Prod(val e1: Expr, val e2: Expr): Expr()
+
+            sealed class Expr: Group {
+              fun diff() = when(expr) {
+                is Const -> Zero
+                is Sum -> e1.diff() + e2.diff()
+                is Prod -> e1.diff() * e2 + e1 * e2.diff()
+                is Var -> One
+              }
+
+              operator fun plus(e: Expr) = Sum(this, e)
+              operator fun times(e: Expr) = Prod(this, e)
+            }
+        \end{lstlisting}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Expression simplification}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            operator fun Expr.times(exp: Expr) = when {
+              this is Const && num == 0.0 -> Const(0.0)
+              this is Const && num == 1.0 -> exp
+              exp is Const && exp.num == 0.0 -> exp
+              exp is Const && exp.num == 1.0 -> this
+              this is Const && exp is Const -> Const(num*exp.num)
+              else -> Prod(this, e)
+            }
+
+            // Sum(Prod(Const(2.0), Var()), Const(6.0))
+            val q = Const(2.0) * Sum(Var(), Const(3.0))
+        \end{lstlisting}
+    \end{frame}
+
+
+    \begin{frame}[fragile]
+        \frametitle{Extension functions and contexts}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            class Expr<T: Group<T>>: Group<Expr<T>> {
+              //...
+              operator fun plus(exp: Expr<T>) = Sum(this, exp)
+              operator fun times(exp: Expr<T>) = Prod(this, exp)
+            }
+
+            object DoubleContext {
+              operator fun Number.times(exp: Expr<DoubleReal>) =
+                Const(toDouble()) * exp
+            }
+
+            // Uses `*` operator in DoubleContext
+            fun Expr<DoubleReal>.multiplyByTwo() =
+              with(DoubleContext) { 2 * this }
+        \end{lstlisting}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Automatic test case generation}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            val x = variable("x")
+            val y = variable("y")
+
+            val z = y * (sin(x * y) - x) // Function under test
+            val dz_dx = d(z) / d(x)      // Automatic derivative
+            val manualDx = y * (cos(x * y) * y - 1)
+
+            "dz/dx should be y * (cos(x * y) * y - 1)" {
+              assertAll (NumGen, NumGen) { cx, cy ->
+                // Evaluate the results at a given seed
+                val autoEval = dz_dx(x to cx, y to cy)
+                val manualEval = manualDx(x to cx, y to cy)
+                // Should pass if |adEval - manualEval| < eps
+                autoEval shouldBeApproximately manualEval
+              }
+            }
+        \end{lstlisting}
+    \end{frame}
+
+    \section{Usage}\label{sec:fourth-section}
+
+    \begin{frame}[fragile]
+        \frametitle{Usage: plotting higher derivatives of nested functions}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            with(DoubleFunctor) {// Use double-precision numerics
+             val x = variable()  // Declare an immutable variable
+             val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
+
+             // Lazily compute reverse-mode automatic derivatives
+             val dy_dx = d(y) / d(x)
+             val d2y_dx = d(dy_dx) / d(x)
+             val d3y_dx = d(d2y_dx2) / d(x)
+             val d4y_dx = d(d3y_dx3) / d(x)
+             val d5y_dx = d(d4y_dx4) / d(x)
+
+             plot(-10..10, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
+            }
+        \end{lstlisting}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{$y = \frac{\sin{\sin{\sin{x}}}}{x} + x \sin{x} + \cos{x} + x$, $\frac{dy}{dx}$, $\frac{d^{2}y}{dx^2}$, $\frac{d^{3}y}{dx^3}$, $\frac{d^{4}y}{dx^4}$, $\frac{d^{5}y}{dx^5}$}
+        \begin{center}
+            \includegraphics[scale=0.4]{plot.png}
+        \end{center}
+    \end{frame}
+
+    \section{Future exploration}\label{sec:fifth-section}
+
+    \begin{frame}
+        \frametitle{Further directions to explore}
+        \begin{itemize}
+            \item Theory Directions
+            \begin{itemize}
+                \item Generalization of types to higher order functions, vector spaces
+                \item Dependent types via code generation to type-check tensor dimensions
+                \item General programming operators and data structures
+                \item Imperative define-by-run array programming syntax
+                \item Parallelization and asynchrony (cf. HogWild, YellowFin)
+            \end{itemize}
+            \item Implementation Details
+            \begin{itemize}
+                \item Closer integration with Kotlin/Java standard library
+                \item Encode additional structure, i.e. function arity into type system
+                \item Vectorized optimizations for matrices with certain properties
+                \item Configurable forward and backward AD modes based on dimension
+                \item Automatic expression refactoring for numerical stability
+                \item \href{https://discuss.kotlinlang.org/t/primitive-type-specialization/11022}{Primitive type specialization}, i.e. \texttt{FloatVector <: Vector<T>}?
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \begin{center}
+            \Huge{Learn more at: \\~\\
+            \url{http://kg.ndan.co}}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Special thanks}
+        \begin{itemize}
+            \begin{center}
+                \huge{
+                Liam Paull \\
+                Michalis Famelis \\
+                Alexander Nozik \\
+                Hanneli Tavante \\~\\
+                }
+                \includegraphics[scale=0.1]{udem.png}
+                \includegraphics[scale=0.4]{mila.png}
+            \end{center}
+        \end{itemize}
+    \end{frame}
+\end{document}
     %    \section{A Short History of Computing Derivatives}\label{sec:second-section}
     %
     %    \begin{frame}
@@ -236,153 +397,3 @@ Universit\'e de Montr\'eal \\
 
     %------------------------------------------------------------------------------------------------
 
-    \section{Architectural Overview}\label{sec:third-section}
-
-    \begin{frame}[fragile]
-        \frametitle{Algebraic Data Types}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            class Var: Expr()
-            class Const(val num: Number): Expr()
-            class Sum(val e1: Expr, val e2: Expr): Expr()
-            class Prod(val e1: Expr, val e2: Expr): Expr()
-
-            sealed class Expr: Group {
-              fun diff() = when(expr) {
-                is Const -> Zero
-                is Sum -> e1.diff() + e2.diff()
-                is Prod -> e1.diff() * e2 + e1 * e2.diff()
-                is Var -> One
-              }
-
-              operator fun plus(e: Expr) = Sum(this, e)
-              operator fun times(e: Expr) = Prod(this, e)
-            }
-        \end{lstlisting}
-    \end{frame}
-
-    \begin{frame}[fragile]
-        \frametitle{Expression Simplification}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            operator fun Expr.times(exp: Expr) = when {
-              this is Const && num == 0.0 -> Const(0.0)
-              this is Const && num == 1.0 -> exp
-              exp is Const && exp.num == 0.0 -> exp
-              exp is Const && exp.num == 1.0 -> this
-              this is Const && exp is Const -> Const(num*exp.num)
-              else -> Prod(this, e)
-            }
-
-            // Sum(Prod(Const(2.0), Var()), Const(6.0))
-            val q = Const(2.0) * Sum(Var(), Const(3.0))
-        \end{lstlisting}
-    \end{frame}
-
-
-    \begin{frame}[fragile]
-        \frametitle{Extension functions}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            class Expr<T: Group<T>>: Group<Expr<T>> {
-              //...
-              operator fun plus(exp: Expr<T>) = Sum(this, exp)
-              operator fun times(exp: Expr<T>) = Prod(this, exp)
-            }
-
-            object DoubleContext {
-              operator fun Number.times(exp: Expr<DoubleReal>) =
-                Const(toDouble()) * exp
-            }
-
-            // Uses `*` operator in DoubleContext
-            fun Expr<DoubleReal>.multiplyByTwo() =
-              with(DoubleContext) { 2 * this }
-        \end{lstlisting}
-    \end{frame}
-
-    \begin{frame}[fragile]
-        \frametitle{Testing}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            val x = variable("x")
-            val y = variable("y")
-
-            val z = y * (sin(x * y) - x) // Function under test
-            val dz_dx = d(z) / d(x)      // Automatic derivative
-            val manualDx = y * (cos(x * y) * y - 1)
-
-            "dz/dx should be y * (cos(x * y) * y - 1)" {
-              assertAll (NumGen, NumGen) { cx, cy ->
-                // Evaluate the results at a given seed
-                val autoEval = dz_dx(x to cx, y to cy)
-                val manualEval = manualDx(x to cx, y to cy)
-                // Should pass if |adEval - manualEval| < eps
-                autoEval shouldBeApproximately manualEval
-              }
-            }
-        \end{lstlisting}
-    \end{frame}
-
-    \section{Usage}\label{sec:fourth-section}
-
-    \begin{frame}[fragile]
-        \frametitle{Usage: plotting higher derivatives of nested}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            with(DoubleFunctor) {// Use double-precision numerics
-             val x = variable()  // Declare an immutable variable
-             val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
-
-             // Lazily compute reverse-mode automatic derivatives
-             val dy_dx = d(y) / d(x)
-             val d2y_dx = d(dy_dx) / d(x)
-             val d3y_dx = d(d2y_dx2) / d(x)
-             val d4y_dx = d(d3y_dx3) / d(x)
-             val d5y_dx = d(d4y_dx4) / d(x)
-
-             plot(-10..10, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
-            }
-        \end{lstlisting}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{$y = \frac{\sin{\sin{\sin{x}}}}{x} + x \sin{x} + \cos{x} + x$, $\frac{dy}{dx}$, $\frac{d^{2}y}{dx^2}$, $\frac{d^{3}y}{dx^3}$, $\frac{d^{4}y}{dx^4}$, $\frac{d^{5}y}{dx^5}$}
-        \begin{center}
-            \includegraphics[scale=0.4]{plot.png}
-        \end{center}
-    \end{frame}
-
-    \section{Future Plans}\label{sec:fifth-section}
-
-    \begin{frame}
-        \frametitle{Further directions to explore}
-        \begin{itemize}
-            \item Closer integration with Kotlin/Java standard library
-            \item Dependent types via code generation to type-check tensor shapes
-            \item Encode additional structure like function arity into type system
-            \item Performance benchmarks and zero-cost un/boxing abstractions
-            \item Configurable forward and backward AD modes based on dimension
-            \item \href{https://discuss.kotlinlang.org/t/primitive-type-specialization/11022}{Primitive type specialization}, i.e. \texttt{FloatVector <: Vector<T>}?
-            \item Automatic expression refactoring for numerical stability
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}
-        \begin{center}
-            \Huge{Learn more at: \\~\\
-            \url{http://kg.ndan.co}}
-        \end{center}
-    \end{frame}
-
-    \begin{frame}
-        \frametitle{Special thanks}
-        \begin{itemize}
-            \begin{center}
-                \huge{
-                Liam Paull \\
-                Michalis Famelis \\
-                Alexander Nozik \\
-                Hanneli Tavante \\~\\
-                }
-                \includegraphics[scale=0.1]{udem.png}
-                \includegraphics[scale=0.4]{mila.png}
-            \end{center}
-        \end{itemize}
-    \end{frame}
-\end{document}
