@@ -85,7 +85,7 @@ Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we
 * [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
 
-For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to within the limits of numerical precision:
+For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
 
 ```kotlin
 val x = variable("x")
@@ -292,7 +292,7 @@ Users are forced to handle all subclasses when branching on the type of a sealed
 
 In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
-Building on the previous example, we can simplify expressions based on [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access subclass members after checking the type without explicitly casting:
+Building on the previous example, a common task in AD is to simplify an expression tree, to minimize the number of computations required to evaluate a function or improve numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 
 [//]: # (Note: numerical stability is sensitive to the order of rewriting, cf. https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
@@ -304,8 +304,8 @@ operator fun Expr.times(other: Expr) = when {
     other is Const && other.number == 0.0 -> other
     other is Const && other.number == 1.0 -> this
     this is Const && other is Sum -> Sum(Const(number) * other.e1, Const(number) * other.e2)
+    other is Const && this is Sum -> Sum(Const(other.number) * e1, Const(other.number) * e2)
     // Further simplification is possible using rules of replacement
-    this is NotANumber || other is NotANumber -> Double.NaN
     else -> Prod(this, other)
 }
 
