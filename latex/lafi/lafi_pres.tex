@@ -44,37 +44,10 @@ Universit\'e de Montr\'eal \\
 
     \section{Introduction and motivation}\label{sec:first-section}
 
-    \begin{frame}
-        \frametitle{Kotlin}
-        \begin{itemize}
-            \item Goal: To implement automatic differentiation in Kotlin
-            \item Kotlin is a JVM language with emphasis on type and null safety
-            \item Offers features for building domain specific languages (DSLs)
-            \item Supports first-class functions, higher order functions and FP
-            \item Has support for extension functions and algebraic data types
-            \item Operator overloading and other syntactic sugar (to be shown)
-        \end{itemize}
-    \end{frame}
-
-
-
-    \begin{frame}
-        \frametitle{Kotlin\texorpdfstring{$\nabla$}{}}
-        \begin{itemize}
-            \item
-            \item Type system from algebraic first principles (group, ring, field)
-            \item Automatic differentiation using a natural (infix) notation
-            \item Supports partials and higher order derivatives, gradients
-            \item Property-based testing using finite differences (Hypothesis, QuickCheck)
-        \end{itemize}
-    \end{frame}
-
-    \section{A Short History of Computing Derivatives}\label{sec:second-section}
-
-    %------------------------------------------------------------------------------------------------
+ %------------------------------------------------------------------------------------------------
 
         \begin{frame}
-        \frametitle{Automatic differentiation}
+        \frametitle{Type checking automatic differentiation}
         Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
         %
         \begin{equation}
@@ -86,10 +59,65 @@ Universit\'e de Montr\'eal \\
         \begin{equation}
             \frac{dP}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
         \end{equation}
+        %
+        In order for $P$ to type check, what is the type of $p_{0<i<n}$?
+        \begin{equation}
+            p_i: T_{out}(p_{i-1}) \rightarrow T_{in}(p_{i+1})
+        \end{equation}
+        %
+        What happens if we let $P: \mathbb{R}^c\rightarrow\mathbb{R}$, $P: \mathbb{R}^c\rightarrow\mathbb{C}^d$  or $P: \Psi^p\rightarrow\Omega^q$?
     \end{frame}
 
-
     %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Why Kotlin?}
+        \begin{itemize}
+            \item Goal: To implement automatic differentiation in Kotlin
+            \item Kotlin is a language with strong static typing and null safety
+            \item Supports first-class functions, higher order functions and lambdas
+            \item Has support for algebraic data types, via tuples & sealed classes
+            \item Extension functions, operator overloading & other syntax sugar
+            \item Offers features for embedding domain specific languages (DSLs)
+            \item Access to all libraries and frameworks in the JVM ecosystem
+            \item Multi-platform and cross-platform (JVM, Android, iOS, JS, native)
+        \end{itemize}
+        \begin{center}
+            \includegraphics[scale=0.05]{kotlin.png}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Kotlin\texorpdfstring{$\nabla$}{} Priorities}
+        \begin{itemize}
+            \item Type system requirements
+            \begin{itemize}
+                \item Strong type system based on algebraic principles
+                \item Compile time detection of most runtime errors
+                \item No implicit broadcasting or shape coercion
+                \item Parameterized numerical types and arbitary-precision
+            \end{itemize}
+            \item Design principles
+            \begin{itemize}
+                \item Functional programming and lazy numerical evaluation
+                \item Eager algebraic simplification of expression trees
+                \item Operator overloading and tapeless reverse mode AD
+            \end{itemize}
+            \item Usage desirata
+            \begin{itemize}
+                \item Generalized AD with imperative array programming
+                \item Automatic differentiation with infix and Polish notation
+                \item Partials and higher order derivatives and gradients
+            \end{itemize}
+            \item Testing and validation
+            \begin{itemize}
+                \item Numerical gradient checking and property-based testing
+                \item Performance benchmarks and thorough regression testing
+            \end{itemize}
+        \end{itemize}
+    \end{frame}
+
+    \section{A Short History of Computing Derivatives}\label{sec:second-section}
 
     \begin{frame}
         \frametitle{Numerical differentiation}
@@ -161,17 +189,6 @@ Universit\'e de Montr\'eal \\
     %            \item \href{https://arxiv.org/pdf/1610.07690.pdf}{Operational Calculus for Differentiable Programming}
     %        \end{itemize}
     %    \end{frame}
-
-    %------------------------------------------------------------------------------------------------
-
-
-    \begin{frame}
-        \frametitle{Not reinventing the wheel}
-        \begin{itemize}
-            \item Haskell already does this: Group
-            \item Parsing expressions in a FP
-        \end{itemize}
-    \end{frame}
 
     %------------------------------------------------------------------------------------------------
 
