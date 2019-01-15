@@ -163,7 +163,7 @@ Universit\'e de Montr\'eal \\
         \frametitle{Algebraic Data Types}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             class Var: Expr()
-            class Const: Expr()
+            class Const(val num: Number): Expr()
             class Sum(val e1: Expr, val e2: Expr): Expr()
             class Prod(val e1: Expr, val e2: Expr): Expr()
             sealed class Expr: Group {
@@ -180,23 +180,62 @@ Universit\'e de Montr\'eal \\
         \end{lstlisting}
     \end{frame}
 
+    \begin{frame}[fragile]
+        \frametitle{Expression Simplification}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            operator fun Expr.times(e: Expr) = when {
+              this is Const && num == 0.0 -> Const(0.0)
+              this is Const && num == 1.0 -> exp
+              exp is Const && exp.num == 0.0 -> exp
+              exp is Const && exp.num == 1.0 -> this
+              this is Const && exp is Const -> Const(num*exp.num)
+              else -> Prod(this, e)
+            }
+
+            // Sum(Prod(Const(2.0), Var()), Const(6.0))
+            val q = Const(2.0) * Sum(Var(), Const(3.0))
+        \end{lstlisting}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Testing}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            val x = variable("x")
+            val y = variable("y")
+
+            val z = y * (sin(x * y) - x) // Function under test
+            val dz_dx = d(z) / d(x)      // Automatic derivative
+            val manualDx = y * (cos(x * y) * y - 1)
+
+            "dz/dx should be y * (cos(x * y) * y - 1)" {
+              assertAll (NumGen, NumGen) { cx, cy ->
+                // Evaluate the results at a given seed
+                val autoEval = dz_dx(x to cx, y to cy)
+                val manualEval = manualDx(x to cx, y to cy)
+                // Should pass if |adEval - manualEval| < eps
+                autoEval shouldBeApproximately manualEval
+              }
+            }
+        \end{lstlisting}
+    \end{frame}
+
     \section{Usage}\label{sec:fourth-section}
 
     \begin{frame}[fragile]
         \frametitle{Usage}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             with(DoubleFunctor) {// Use double-precision numerics
-            val x = variable()  // Declare an immutable variable
-            val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
+             val x = variable()  // Declare an immutable variable
+             val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
 
-            // Lazily compute reverse-mode automatic derivatives
-            val dy_dx = d(y) / d(x)
-            val d2y_dx = d(dy_dx) / d(x)
-            val d3y_dx = d(d2y_dx2) / d(x)
-            val d4y_dx = d(d3y_dx3) / d(x)
-            val d5y_dx = d(d4y_dx4) / d(x)
+             // Lazily compute reverse-mode automatic derivatives
+             val dy_dx = d(y) / d(x)
+             val d2y_dx = d(dy_dx) / d(x)
+             val d3y_dx = d(d2y_dx2) / d(x)
+             val d4y_dx = d(d3y_dx3) / d(x)
+             val d5y_dx = d(d4y_dx4) / d(x)
 
-            plot(-10..10, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
+             plot(-10..10, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
             }
         \end{lstlisting}
     \end{frame}

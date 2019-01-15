@@ -98,10 +98,10 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 "∂z/∂x should be y * (cos(x * y) * y - 1)" {
   assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
     // Evaluate the results at a given seed
-    val adEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
+    val autoEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
     val manualEval = manualDx(x to ẋ, y to ẏ)
     // Should pass if Δ(adEval, manualEval) < Ɛ
-    adEval shouldBeApproximately manualEval
+    autoEval shouldBeApproximately manualEval
   }
 }
 ```
