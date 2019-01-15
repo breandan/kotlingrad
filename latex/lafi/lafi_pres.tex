@@ -93,7 +93,7 @@ Universit\'e de Montr\'eal \\
             \item Type system requirements
             \begin{itemize}
                 \item Strong type system based on algebraic principles
-                \item Compile time detection of most runtime errors
+                \item Leverage the compiler for static analysis
                 \item No implicit broadcasting or shape coercion
                 \item Parameterized numerical types and arbitary-precision
             \end{itemize}
@@ -128,10 +128,10 @@ Universit\'e de Montr\'eal \\
                 \begin{itemize}
                     \item Associativity: $\forall a, b, c \in F, a + (b + c) = (a + b) + c$
                     \item Commutivity: $\forall a, b \in F, a + b = b + a$ and $a\times b = b\times a$
+                    \item Distributivity: $\forall a, b, c \in F, a \times (b \times c) = (a \times b) \times c$
                     \item Identity: $\forall a \in F, \exists 0$, $ 1 \in F$ s.t. $a + 0 = a$ and $a\times 1= a$
                     \item $+$ inverse: $\forall a\in F, \exists -a$ s.t. $a + (-a) = 0$
-                    \item $\times$ inverse: $\forall a\neq 0 \in F, \exists a^{-1}$ s.t. $a + a^{-1} = 1$
-                    \item Distributivity: $\forall a, b, c \in F, a \times (b \times c) = (a \times b) \times c$
+                    \item $\times$ inverse: $\forall a\neq 0 \in F, \exists a^{-1}$ s.t. $a \times a^{-1} = 1$
                 \end{itemize}
             \end{itemize}
             \item Readily extensible to complex numbers, quaternions, dual numbers
@@ -159,33 +159,33 @@ Universit\'e de Montr\'eal \\
         \end{lstlisting}
     \end{frame}
 
-%    \section{A Short History of Computing Derivatives}\label{sec:second-section}
-%
-%    \begin{frame}
-%        \frametitle{Numerical differentiation}
-%        \begin{itemize}
-%            \item Many mathematical formula have discrete, numerical representations
-%            \item But numerical values can be an \textit{inexact} representation of math
-%            \item Long calculations on primitives are susceptible to rounding errors
-%            \item Bag of tricks for discrete approximation and numerical stability:
-%            \begin{itemize}
-%                \item Fourier, Chebyshev, Lagrange
-%                \item Arbitrary precision arithmetic
-%                \item Kahan summation algorithm
-%                \item log-sum-exp trick
-%            \end{itemize}
-%        \end{itemize}
-%    \end{frame}
+    %    \section{A Short History of Computing Derivatives}\label{sec:second-section}
+    %
+    %    \begin{frame}
+    %        \frametitle{Numerical differentiation}
+    %        \begin{itemize}
+    %            \item Many mathematical formula have discrete, numerical representations
+    %            \item But numerical values can be an \textit{inexact} representation of math
+    %            \item Long calculations on primitives are susceptible to rounding errors
+    %            \item Bag of tricks for discrete approximation and numerical stability:
+    %            \begin{itemize}
+    %                \item Fourier, Chebyshev, Lagrange
+    %                \item Arbitrary precision arithmetic
+    %                \item Kahan summation algorithm
+    %                \item log-sum-exp trick
+    %            \end{itemize}
+    %        \end{itemize}
+    %    \end{frame}
 
     %------------------------------------------------------------------------------------------------
 
-%    \begin{frame}
-%        \frametitle{Symbolic differentiation}
-%        \begin{itemize}
-%            \item What about evaluating functions symbolically?
-%            \item Computer algebra systems for manipulate symbolic formulas
-%        \end{itemize}
-%    \end{frame}
+    %    \begin{frame}
+    %        \frametitle{Symbolic differentiation}
+    %        \begin{itemize}
+    %            \item What about evaluating functions symbolically?
+    %            \item Computer algebra systems for manipulate symbolic formulas
+    %        \end{itemize}
+    %    \end{frame}
 
     %------------------------------------------------------------------------------------------------
 
@@ -260,7 +260,7 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Expression Simplification}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            operator fun Expr.times(e: Expr) = when {
+            operator fun Expr.times(exp: Expr) = when {
               this is Const && num == 0.0 -> Const(0.0)
               this is Const && num == 1.0 -> exp
               exp is Const && exp.num == 0.0 -> exp
@@ -327,20 +327,38 @@ Universit\'e de Montr\'eal \\
     \section{Future Plans}\label{sec:fifth-section}
 
     \begin{frame}
-        \frametitle{Roadmap}
-        \item TODO
-    \end{frame}
-
-    \begin{frame}
         \frametitle{Further directions to explore}
         \begin{itemize}
             \item Closer integration with Kotlin/Java standard library
             \item \href{https://discuss.kotlinlang.org/t/primitive-type-specialization/11022/4}{Primitive type specialization}
             \item Dependent types via code generation to type check tensor shapes
-            \item Encode additional structure like arity into the type system
+            \item Encode additional structure like function arity into type system
             \item Performance benchmarks and zero-cost un/boxing abstractions
-            \item Lazy evaluation and configurable forward/backward AD modes
+            \item Configurable forward and backward AD modes
             \item Automatic expression refactoring for numerical stability
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}
+        \begin{center}
+            \Huge{Learn more at: \\
+            kg.ndan.co}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}
+        \frametitle{Special thanks}
+        \begin{itemize}
+            \begin{center}
+                \huge{
+                Liam Paull \\
+                Michalis Famelis \\
+                Alexander Nozik \\
+                Hanneli Tavante \\~\\
+                }
+                \includegraphics[scale=0.1]{udem.png}
+                \includegraphics[scale=0.4]{mila.png}
+            \end{center}
         \end{itemize}
     \end{frame}
 \end{document}
