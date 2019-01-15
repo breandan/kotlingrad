@@ -187,10 +187,10 @@ This project relies on a few Kotlin-native language features, which together ena
  
 [Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
-For example, suppose we have an interface `Field`, which overloads the operators `+` and `*`, and is defined like so:
+For example, suppose we have an interface `Group`, which overloads the operators `+` and `*`, and is defined like so:
 
 ```kotlin
-interface Field<T: Field<T>> {
+interface Group<T: Group<T>> {
   // <T> is a recursive type bound (basically a self type)
   operator fun plus(addend: T): T
 
@@ -198,7 +198,7 @@ interface Field<T: Field<T>> {
 }
 ```
 
-Now imagine a concrete class `Expr` which has implemented `Field`. It can be used as follows:
+Now imagine a concrete class `Expr` which has implemented `Group`. It can be used as follows:
 
 ```kotlin
 fun cube(expr: Expr): Expr = expr * expr * expr
@@ -213,7 +213,7 @@ With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/
 In Kotlin𝛁, all expressions can be treated as functions. For example:
 
 ```kotlin
-fun <T: Field<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
+fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
 
 val x: Var<Double> = Var(1.0)
 val f: Function<Double> = makePoly(x, y)
@@ -232,11 +232,11 @@ Currently, it is only possible to represent functions where all inputs and outpu
 [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
-data class Const<T: Field<T>>(val number: Double) : Expr()
-data class Sum<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
-data class Prod<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Const<T: Group<T>>(val number: Double) : Expr()
+data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
 
-class Expr<T: Field<T>>: Field<Function<T>> {
+class Expr<T: Group<T>>: Group<Function<T>> {
   operator fun plus(addend: Expr<T>) = Prod(this, multiplicand)
   
   operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
@@ -260,7 +260,7 @@ Likewise, this extension can be defined in another file or context and imported 
 [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
 ```kotlin
-sealed class Expr<T: Field<T>>: Field<Function<T>> {
+sealed class Expr<T: Group<T>>: Group<Function<T>> {
     fun diff() = when(expr) {
         is Const -> Zero
         // Smart casting allows us to access members of a checked typed without explicit casting
@@ -276,12 +276,12 @@ sealed class Expr<T: Field<T>>: Field<Function<T>> {
     operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
 
-data class Const<T: Field<T>>(val number: Double) : Expr()
-data class Sum<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
-data class Prod<T: Field<T>>(val e1: Expr, val e2: Expr) : Expr()
-class Var<T: Field<T>>: Expr()
-class Zero<T: Field<T>>: Const<T>
-class One<T: Field<T>>: Const<T>
+data class Const<T: Group<T>>(val number: Double) : Expr()
+data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+class Var<T: Group<T>>: Expr()
+class Zero<T: Group<T>>: Const<T>
+class One<T: Group<T>>: Const<T>
 ```
 
 Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile rather than fail silently at runtime.
