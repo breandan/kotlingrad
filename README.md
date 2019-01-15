@@ -216,7 +216,7 @@ In Kotlin𝛁, all expressions can be treated as functions. For example:
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
 
 val x: Var<Double> = Var(1.0)
-val f: Function<Double> = makePoly(x, y)
+val f = makePoly(x, y)
 val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 ```
@@ -236,8 +236,8 @@ data class Const<T: Group<T>>(val number: Double) : Expr()
 data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
 data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
 
-class Expr<T: Group<T>>: Group<Function<T>> {
-  operator fun plus(addend: Expr<T>) = Prod(this, multiplicand)
+class Expr<T: Group<T>>: Group<Expr<T>> {
+  operator fun plus(addend: Expr<T>) = Sum(this, addend)
   
   operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
@@ -260,7 +260,7 @@ Likewise, this extension can be defined in another file or context and imported 
 [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
 ```kotlin
-sealed class Expr<T: Group<T>>: Group<Function<T>> {
+sealed class Expr<T: Group<T>>: Group<Expr<T>> {
     fun diff() = when(expr) {
         is Const -> Zero
         // Smart casting allows us to access members of a checked typed without explicit casting
@@ -271,7 +271,7 @@ sealed class Expr<T: Group<T>>: Group<Function<T>> {
         // Since the subclasses of Expr are a closed set, the compiler does not require an `else -> ...`
     }
     
-    operator fun plus(addend: Expr<T>) = Prod(this, multiplicand)
+    operator fun plus(addend: Expr<T>) = Sum(this, addend)
       
     operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
