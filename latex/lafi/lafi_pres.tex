@@ -90,7 +90,7 @@ Universit\'e de Montr\'eal \\
     \begin{frame}
         \frametitle{Kotlin\texorpdfstring{$\nabla$}{} Priorities}
         \begin{itemize}
-            \item Type system requirements
+            \item Type system
             \begin{itemize}
                 \item Strong type system based on algebraic principles
                 \item Leverage the compiler for static analysis
@@ -103,7 +103,7 @@ Universit\'e de Montr\'eal \\
                 \item Eager algebraic simplification of expression trees
                 \item Operator overloading and tapeless reverse mode AD
             \end{itemize}
-            \item Usage desirata
+            \item Usage desiderata
             \begin{itemize}
                 \item Generalized AD with imperative array programming
                 \item Automatic differentiation with infix and Polish notation
@@ -121,10 +121,10 @@ Universit\'e de Montr\'eal \\
         \frametitle{Algebraic types}
         \begin{itemize}
             \item Abstract algebra can be useful when generalizing to new structures
-            \item Helps us to easily translate between mathematics and code
+            \item Helps us to easily translate between mathematics and source code
             \item Most of the time in numerical computing, we are dealing with Fields
             \begin{itemize}
-                \item A set $F$ together with two operations $+$ and $\times$
+                \item A field is a set $F$ with two operations $+$ and $\times$, with the properties:
                 \begin{itemize}
                     \item Associativity: $\forall a, b, c \in F, a + (b + c) = (a + b) + c$
                     \item Commutivity: $\forall a, b \in F, a + b = b + a$ and $a\times b = b\times a$
@@ -135,7 +135,9 @@ Universit\'e de Montr\'eal \\
                 \end{itemize}
             \end{itemize}
             \item Readily extensible to complex numbers, quaternions, dual numbers
-            \item Can be implemented using parametric polymorphism a.k.a. generics
+            \item Field arithmetic can be implemented using parametric polymorphism
+            \item What is a program, but a series of arithmetic operations?
+            \item Sajovic \& Vuk, \href{https://arxiv.org/pdf/1610.07690.pdf}{Operational Calculus for Differentiable Programming}
         \end{itemize}
     \end{frame}
 
@@ -243,14 +245,15 @@ Universit\'e de Montr\'eal \\
             class Const(val num: Number): Expr()
             class Sum(val e1: Expr, val e2: Expr): Expr()
             class Prod(val e1: Expr, val e2: Expr): Expr()
+
             sealed class Expr: Group {
               fun diff() = when(expr) {
                 is Const -> Zero
                 is Sum -> e1.diff() + e2.diff()
-                // d(u*v)/dx = du/dx * v + u * dv/dx
                 is Prod -> e1.diff() * e2 + e1 * e2.diff()
                 is Var -> One
               }
+
               operator fun plus(e: Expr) = Sum(this, e)
               operator fun times(e: Expr) = Prod(this, e)
             }
@@ -271,6 +274,27 @@ Universit\'e de Montr\'eal \\
 
             // Sum(Prod(Const(2.0), Var()), Const(6.0))
             val q = Const(2.0) * Sum(Var(), Const(3.0))
+        \end{lstlisting}
+    \end{frame}
+
+
+    \begin{frame}[fragile]
+        \frametitle{Extension functions}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            class Expr<T: Group<T>>: Group<Expr<T>> {
+              //...
+              operator fun plus(exp: Expr<T>) = Sum(this, exp)
+              operator fun times(exp: Expr<T>) = Prod(this, exp)
+            }
+
+            object DoubleContext {
+              operator fun Number.times(exp: Expr<DoubleReal>) =
+                Const(toDouble()) * exp
+            }
+
+            // Uses `*` operator in DoubleContext
+            fun Expr<DoubleReal>.multiplyByTwo() =
+              with(DoubleContext) { 2 * this }
         \end{lstlisting}
     \end{frame}
 
@@ -299,7 +323,7 @@ Universit\'e de Montr\'eal \\
     \section{Usage}\label{sec:fourth-section}
 
     \begin{frame}[fragile]
-        \frametitle{Usage}
+        \frametitle{Usage: plotting higher derivatives of nested}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             with(DoubleFunctor) {// Use double-precision numerics
              val x = variable()  // Declare an immutable variable
@@ -330,19 +354,19 @@ Universit\'e de Montr\'eal \\
         \frametitle{Further directions to explore}
         \begin{itemize}
             \item Closer integration with Kotlin/Java standard library
-            \item \href{https://discuss.kotlinlang.org/t/primitive-type-specialization/11022/4}{Primitive type specialization}
-            \item Dependent types via code generation to type check tensor shapes
+            \item Dependent types via code generation to type-check tensor shapes
             \item Encode additional structure like function arity into type system
             \item Performance benchmarks and zero-cost un/boxing abstractions
-            \item Configurable forward and backward AD modes
+            \item Configurable forward and backward AD modes based on dimension
+            \item \href{https://discuss.kotlinlang.org/t/primitive-type-specialization/11022}{Primitive type specialization}, i.e. \texttt{FloatVector <: Vector<T>}?
             \item Automatic expression refactoring for numerical stability
         \end{itemize}
     \end{frame}
 
     \begin{frame}
         \begin{center}
-            \Huge{Learn more at: \\
-            kg.ndan.co}
+            \Huge{Learn more at: \\~\\
+            \url{http://kg.ndan.co}}
         \end{center}
     \end{frame}
 
