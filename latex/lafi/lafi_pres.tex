@@ -44,9 +44,9 @@ Universit\'e de Montr\'eal \\
 
     \section{Introduction and motivation}\label{sec:first-section}
 
- %------------------------------------------------------------------------------------------------
+    %------------------------------------------------------------------------------------------------
 
-        \begin{frame}
+    \begin{frame}
         \frametitle{Type checking automatic differentiation}
         Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
         %
@@ -117,33 +117,75 @@ Universit\'e de Montr\'eal \\
         \end{itemize}
     \end{frame}
 
-    \section{A Short History of Computing Derivatives}\label{sec:second-section}
-
     \begin{frame}
-        \frametitle{Numerical differentiation}
+        \frametitle{Algebraic types}
         \begin{itemize}
-            \item Many mathematical formula have discrete, numerical representations
-            \item But numerical values can be an \textit{inexact} representation of math
-            \item Long calculations on primitives are susceptible to rounding errors
-            \item Bag of tricks for discrete approximation and numerical stability:
+            \item Abstract algebra can be useful when generalizing to new structures
+            \item Helps us to easily translate between mathematics and code
+            \item Most of the time in numerical computing, we are dealing with Fields
             \begin{itemize}
-                \item Fourier, Chebyshev, Lagrange
-                \item Arbitrary precision arithmetic
-                \item Kahan summation algorithm
-                \item log-sum-exp trick
+                \item A set $F$ together with two operations $+$ and $\times$
+                \begin{itemize}
+                    \item Associativity: $\forall a, b, c \in F, a + (b + c) = (a + b) + c$
+                    \item Commutivity: $\forall a, b \in F, a + b = b + a$ and $a\times b = b\times a$
+                    \item Identity: $\forall a \in F, \exists 0$, $ 1 \in F$ s.t. $a + 0 = a$ and $a\times 1= a$
+                    \item $+$ inverse: $\forall a\in F, \exists -a$ s.t. $a + (-a) = 0$
+                    \item $\times$ inverse: $\forall a\neq 0 \in F, \exists a^{-1}$ s.t. $a + a^{-1} = 1$
+                    \item Distributivity: $\forall a, b, c \in F, a \times (b \times c) = (a \times b) \times c$
+                \end{itemize}
             \end{itemize}
+            \item Readily extensible to complex numbers, quaternions, dual numbers
+            \item Can be implemented using parametric polymorphism a.k.a. generics
         \end{itemize}
     \end{frame}
+
+
+    \begin{frame}[fragile]
+        \frametitle{How do we define algebraic types in Kotlin\texorpdfstring{$\nabla$}{}?}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            // T: Group<T> is effectively a self type
+            interface Group<T: Group<T>> {
+              operator fun plus(f: T): T
+              operator fun times(f: T): T
+            }
+
+            // Inherits from Group, default methods
+            interface Field<T: Field<T>>: Group<T> {
+              operator fun unaryMinus(): T
+              operator fun minus(f: T): T = this + -f
+              fun inverse(): T
+              operator fun div(f: T): T = this * f.inverse()
+            }
+        \end{lstlisting}
+    \end{frame}
+
+%    \section{A Short History of Computing Derivatives}\label{sec:second-section}
+%
+%    \begin{frame}
+%        \frametitle{Numerical differentiation}
+%        \begin{itemize}
+%            \item Many mathematical formula have discrete, numerical representations
+%            \item But numerical values can be an \textit{inexact} representation of math
+%            \item Long calculations on primitives are susceptible to rounding errors
+%            \item Bag of tricks for discrete approximation and numerical stability:
+%            \begin{itemize}
+%                \item Fourier, Chebyshev, Lagrange
+%                \item Arbitrary precision arithmetic
+%                \item Kahan summation algorithm
+%                \item log-sum-exp trick
+%            \end{itemize}
+%        \end{itemize}
+%    \end{frame}
 
     %------------------------------------------------------------------------------------------------
 
-    \begin{frame}
-        \frametitle{Symbolic differentiation}
-        \begin{itemize}
-            \item What about evaluating functions symbolically?
-            \item Computer algebra systems for manipulate symbolic formulas
-        \end{itemize}
-    \end{frame}
+%    \begin{frame}
+%        \frametitle{Symbolic differentiation}
+%        \begin{itemize}
+%            \item What about evaluating functions symbolically?
+%            \item Computer algebra systems for manipulate symbolic formulas
+%        \end{itemize}
+%    \end{frame}
 
     %------------------------------------------------------------------------------------------------
 
