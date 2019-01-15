@@ -221,11 +221,11 @@ val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 ```
 
-Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to implement support for functions with multiple input types and enforce types on both input and an output, using [covariant and contravariant](https://kotlinlang.org/docs/reference/generics.html) type bounds.
+Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with multiple input/output types and enforce constraints on both input and an output, using [covariant and contravariant](https://kotlinlang.org/docs/reference/generics.html) type bounds.
 
 #### Coroutines
 
-[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset or delimited continuations is sufficient for implementing reverse mode AD just with operator overloading (without any additional data structures) as described by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Implementing this extension is currently a work in progress.
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Coroutines are a first-class feature in the Kotlin language, and implementing this extension is currently a work in progress.
 
 #### Extension Functions
 
@@ -247,7 +247,7 @@ object DoubleContext {
 }
 ```
 
-Now, we can use this context elsewhere in our code to define another extension function, `Expr.multiplyByTwo`, which performs the multiplication by calling our like so:
+Now, we can use this context elsewhere in a project to define another extension, `Expr.multiplyByTwo`, which performs the multiplication inside a `DoubleContext`, using the operator overload we defined above:
 
 ```kotlin
 fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` operator in DoubleContext
@@ -318,7 +318,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 The current API is experimental, but can be improved in many ways. Currently it uses default values for variables, so when a function is invoked with missing variable(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value will be applied. This is similar to [broadcasting in NumPy](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure shape compatibility. However we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). When the shape is known at compile-time, we can use a restricted form of [dependent types](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure type-safe matrix- and tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus)).
 
-Another such optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user explicitly specified them explicitly, we could perform a number of optimizations on specialized matrices.
+Another such optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of optimizations on specialized matrices.
 
 ### Scalar functions
 
@@ -355,7 +355,7 @@ val z = x * y                      // z: MVariable<Double, `3`, `2`>
 
 ## References
 
-The following are some excellent projects and publications that have inspired this work.
+To the author's knowledge, Kotlin𝛁 is the first AD implementation in native Kotlin. While the particular synthesis and integration of these ideas is unique, it has been influenced by a huge amount of prior work in AD literature. Below is a list of projects and publications that helped inspire this work.
 
 ### Computer Algebra
 
