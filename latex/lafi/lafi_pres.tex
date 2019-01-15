@@ -73,6 +73,24 @@ Universit\'e de Montr\'eal \\
 
     %------------------------------------------------------------------------------------------------
 
+        \begin{frame}
+        \frametitle{Automatic differentiation}
+        Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
+        %
+        \begin{equation}
+            P(x)=p_n \circ p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0
+        \end{equation}
+        %
+        From the chain rule of calculus, we know that:
+        %
+        \begin{equation}
+            \frac{dP}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+        \end{equation}
+    \end{frame}
+
+
+    %------------------------------------------------------------------------------------------------
+
     \begin{frame}
         \frametitle{Numerical differentiation}
         \begin{itemize}
