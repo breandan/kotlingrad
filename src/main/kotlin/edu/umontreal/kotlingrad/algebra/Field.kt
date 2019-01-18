@@ -5,5 +5,5 @@ interface Field<X: Field<X>>: CommutativeRing<X> {
 
   operator fun div(divisor: X): X = this * divisor.inverse()
 
-  fun pow(exponent: X): X
+  fun pow(exp: X): X
 }
