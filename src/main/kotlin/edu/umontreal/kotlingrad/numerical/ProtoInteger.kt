@@ -4,11 +4,11 @@ import java.lang.Math.*
 
 // TODO: Specialize to Ints
 object ProtoInteger: FieldPrototype<DoubleReal> {
-  override fun invoke(number: Number) = DoubleReal(number)
-
   override val zero = DoubleReal(0.0)
   override val one = DoubleReal(1.0)
   override val e = DoubleReal(E)
+  
+  override fun invoke(number: Number) = DoubleReal(number)
 
   override fun cos(x: DoubleReal) = DoubleReal(cos(x.value))
 

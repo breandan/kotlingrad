@@ -5,15 +5,14 @@ import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
 
-class BigDecimalReal(val number: Number = ZERO): Real<BigDecimalReal, BigDecimal>() {
-  override val value: BigDecimal = when {
+class BigDecimalReal(number: Number = ZERO):
+  RealNumber<BigDecimalReal, BigDecimal>(when {
     number is BigDecimal -> number
     number.toDouble().isNaN() -> ZERO
     1E20 < number.toDouble() -> BigDecimal(1E20)
     -1E20 > number.toDouble() -> BigDecimal(1E20)
     else -> BigDecimal(number.toDouble() + 0.0)
-  }
-
+  }) {
   override fun toString() = value.toString()
 
   override fun inverse() = BigDecimalReal(ONE / value)

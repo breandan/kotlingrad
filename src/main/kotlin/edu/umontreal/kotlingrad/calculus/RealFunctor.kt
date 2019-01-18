@@ -4,9 +4,9 @@ import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.Function.*
 import edu.umontreal.kotlingrad.numerical.FieldPrototype
-import edu.umontreal.kotlingrad.numerical.Real
+import edu.umontreal.kotlingrad.numerical.RealNumber
 
-abstract class RealFunctor<X: Real<X, Y>, Y>(val rfc: FieldPrototype<X>): FieldFunctor<X>() where Y: Number, Y: Comparable<Y> {
+abstract class RealFunctor<X: RealNumber<X, Y>, Y>(val rfc: FieldPrototype<X>): FieldFunctor<X>() where Y: Number, Y: Comparable<Y> {
   fun variable() = Var(rfc)
 
   fun variable(default: X) = Var(rfc, value = default)
