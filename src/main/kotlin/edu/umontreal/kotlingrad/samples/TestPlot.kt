@@ -38,6 +38,7 @@ fun main(args: Array<String>) {
             + xs.map { listOf(it, `d⁴y∕dx⁴`(it), "d⁴y/dx⁴") }
             + xs.map { listOf(it, `d⁵y∕dx⁵`(it), "d⁵y/dx⁵") }).flatten()
 
+    // TODO: Migrate from Kravis to http://www.jzy3d.org
     dataFrameOf("x", "y", "Function")(ys)
       .plot(x = "x", y = "y", color = "Function")
       .geomLine(size = 1.0)

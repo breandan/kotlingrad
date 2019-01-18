@@ -95,7 +95,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     //TODO implement tree comparison for semantic equals
     else super.equals(other)
 
-  fun ln(): Function<X> = Log(this)
 
   override fun inverse(): Function<X> = when (this) {
     is Const -> Const(value.inverse())
@@ -118,14 +117,16 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   }
 
   companion object {
+    fun <T: Field<T>> ln(angle: Function<T>) = Log(angle)
     fun <T: Field<T>> sin(angle: Function<T>) = Sine(angle)
     fun <T: Field<T>> cos(angle: Function<T>) = Cosine(angle)
     fun <T: Field<T>> tan(angle: Function<T>) = Tangent(angle)
     fun <T: Field<T>> exp(exponent: Function<T>) = Exp(exponent)
-    fun <T: Field<T>> pow(base: Function<T>, exponent: Function<T>) = Power(base, exponent)
     fun <T: Field<T>> sqrt(radicand: Function<T>) = SquareRoot(radicand)
+    fun <T: Field<T>> pow(base: Function<T>, exponent: Function<T>) = Power(base, exponent)
   }
 
+  fun ln() = Log(this)
   fun sin() = Sine(this)
   fun cos() = Cosine(this)
   fun tan() = Tangent(this)

@@ -2,9 +2,8 @@ package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.algebra.Field
 
-abstract class Real<X: Real<X, Y>, Y>: Number(), Field<X>, Comparable<Y> where Y: Number, Y: Comparable<Y> {
-  abstract val value: Y
-
+abstract class RealNumber<X: RealNumber<X, Y>, Y>(val value: Y):
+  Number(), Field<X>, Comparable<Y> where Y: Number, Y: Comparable<Y> {
   override fun toByte() = value.toByte()
 
   override fun toChar() = value.toChar()
