@@ -33,5 +33,5 @@ class BigDecimalReal(val number: Number = ZERO): Real<BigDecimalReal, BigDecimal
   operator fun div(divisor: Number) = BigDecimalReal(value / BigDecimal(divisor.toDouble()))
 
   //TODO: Fix this
-  override fun pow(exponent: BigDecimalReal) = BigDecimalReal(pow(value, exponent.value, ProtoBigDecimal.mc))
+  override fun pow(exp: BigDecimalReal) = BigDecimalReal(pow(value, exp.value, ProtoBigDecimal.mc))
 }

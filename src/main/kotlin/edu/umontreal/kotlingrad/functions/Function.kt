@@ -11,7 +11,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X = when (this) {
     is Var -> if (map[this] != null) map[this]!! else value
-    is Inverse -> arg(map).inverse()
     is Exp -> prototype.exp(exponent(map))
     is Log -> prototype.log(logarithmand(map))
     is Negative -> -arg(map)
@@ -28,7 +27,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
 
   override fun toString(): String = when (this) {
-    is Inverse -> "$arg⁻¹"
     is Exp -> "exp($exponent)"
     is Log -> "ln($logarithmand)"
     is Negative -> "-$arg"
@@ -52,7 +50,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     is Product -> multiplicator.diff(ind) * multiplicand + multiplicator * multiplicand.diff(ind)
     is Var -> Const(if (this == ind) prototype.one else prototype.zero)
     is Log -> logarithmand.inverse() * logarithmand.diff(ind)
-    is Inverse -> -one * pow(arg, -two) * arg.diff(ind)
     is Negative -> -arg.diff(ind)
     is Power -> (this as Power).diff(ind)
     is Exp -> exp(exponent) * exponent.diff(ind)
@@ -75,8 +72,11 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is One -> multiplicand
     multiplicand is One -> this
     multiplicand is Zero -> multiplicand
-    this is Const && multiplicand is Const -> Const(value * multiplicand.value)
     this == multiplicand -> pow(two)
+    this is Const && multiplicand is Const -> Const(value * multiplicand.value)
+    this is Power && multiplicand is Power && base == multiplicand.base -> base.pow(exponent + multiplicand.exponent)
+    this is Power && multiplicand is Var && base == multiplicand -> base.pow(exponent + one)
+    this is Var && multiplicand is Power && this == multiplicand.base -> multiplicand.base.pow(multiplicand.exponent + one)
     else -> Product(this, multiplicand)
   }
 
@@ -100,9 +100,8 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   override fun inverse(): Function<X> = when (this) {
     is Const -> Const(value.inverse())
     is One -> this
-    is Inverse -> arg
-    is Power -> Power(base, -exponent)
-    else -> Inverse(this)
+    is Power -> base.pow(-exponent)
+    else -> pow(-one)
   }
 
   override fun unaryMinus(): Function<X> = when(this) {
@@ -112,9 +111,10 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     else -> Negative(this)
   }
 
-  override fun pow(exponent: Function<X>): Function<X> = when {
-    this is Const && exponent is Const -> Const(value.pow(exponent.value))
-    else -> Power(this, exponent)
+  override fun pow(exp: Function<X>): Function<X> = when {
+    this is Const && exp is Const -> Const(value.pow(exp.value))
+    this is Power && exp is Const -> base.pow(exponent * exp)
+    else -> Power(this, exp)
   }
 
   companion object {
@@ -142,6 +142,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   val e: Const<X> by lazy { Const(prototype.one) }
 
+  //TODO: Replace roots with fractional powers
   class SquareRoot<X: Field<X>>(val radicand: Function<X>): Function<X>(radicand.variables)
 
   class Sine<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables)
@@ -149,8 +150,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   class Cosine<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables)
 
   class Tangent<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables)
-
-  class Inverse<X: Field<X>>(val arg: Function<X>): Function<X>(arg.variables)
 
   class Exp<X: Field<X>>(val exponent: Function<X>): Function<X>(exponent.variables)
 
