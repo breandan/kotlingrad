@@ -2,19 +2,21 @@ package edu.umontreal.kotlingrad.numerical
 
 import ch.obermuhlner.math.big.BigDecimalMath.pow
 import java.math.BigDecimal
+import java.math.BigDecimal.ONE
+import java.math.BigDecimal.ZERO
 
-class BigDecimalReal(number: Number = 0): Real<BigDecimalReal, BigDecimal> {
-  override val value: BigDecimal =
-    when {
-      number.toDouble().isNaN() -> BigDecimal.ZERO
-      1E20 < number.toDouble() -> BigDecimal(1E20)
-      -1E20 > number.toDouble() -> BigDecimal(1E20)
-      else -> BigDecimal(number.toDouble() + 0.0)
-    }
+class BigDecimalReal(val number: Number = ZERO): Real<BigDecimalReal, BigDecimal>() {
+  override val value: BigDecimal = when {
+    number is BigDecimal -> number
+    number.toDouble().isNaN() -> ZERO
+    1E20 < number.toDouble() -> BigDecimal(1E20)
+    -1E20 > number.toDouble() -> BigDecimal(1E20)
+    else -> BigDecimal(number.toDouble() + 0.0)
+  }
 
   override fun toString() = value.toString()
 
-  override fun inverse() = BigDecimalReal(BigDecimal.ONE / value)
+  override fun inverse() = BigDecimalReal(ONE / value)
 
   override fun unaryMinus() = BigDecimalReal(-value)
 
@@ -32,5 +34,4 @@ class BigDecimalReal(number: Number = 0): Real<BigDecimalReal, BigDecimal> {
 
   //TODO: Fix this
   override fun pow(exponent: BigDecimalReal) = BigDecimalReal(pow(value, exponent.value, ProtoBigDecimal.mc))
-  fun pow(exponent: Int) = BigDecimalReal(value.pow(exponent))
 }

@@ -3,12 +3,12 @@ package edu.umontreal.kotlingrad.numerical
 import java.lang.Double.NaN
 import java.lang.Math.pow
 
-class DoubleReal(number: Number = 0): Real<DoubleReal, Double> {
-  override val value: Double =
-    when (number) {
-      NaN -> 1E-100
-      else -> number.toDouble().coerceIn(-1E200..1E200)
-    }
+class DoubleReal(val number: Number = 0): Real<DoubleReal, Double>(), Comparable<Double> {
+  override val value: Double = when (number) {
+    is Double -> number
+    NaN -> 1E-100
+    else -> number.toDouble().coerceIn(-1E200..1E200)
+  }
 
   override fun toString() = "${if (value % 1 == 0.0) value.toInt() else value}"
 
