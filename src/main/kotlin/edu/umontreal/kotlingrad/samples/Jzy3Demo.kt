@@ -25,14 +25,15 @@ class SurfaceDemo: AbstractAnalysis() {
           val f = sin(10 * (pow(x, 2) + pow(y, 2))) / 10
           val z = d(f)/d(x)
           val m = d(z)/d(y)
+          val n = d(d(z)/d(y))/d(x)
 
-          m(xc, yc)
+          n(xc, yc)
         }
     }
 
     // Define range and precision for the function to plot
     val range = Range(-1f, 1f)
-    val steps = 500
+    val steps = 200
 
     // Create the object to represent the function over the given range.
     val surface = Builder.buildOrthonormal(OrthonormalGrid(range, steps, range, steps), mapper)

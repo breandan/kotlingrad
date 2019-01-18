@@ -184,7 +184,7 @@ Plotting is also possible in higher dimensions, [for example](src/main/kotlin/ed
 ![](src/main/resources/ripple.png)
 ![](src/main/resources/pulsar.png)
 ![](src/main/resources/starquake.png)
-![](src/main/resources/forest_path.png)
+![](src/main/resources/novaflux.png)
 
 ## How?
 
