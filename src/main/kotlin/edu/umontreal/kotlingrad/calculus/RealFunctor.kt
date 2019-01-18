@@ -1,20 +1,12 @@
 package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.algebra.Real
-import edu.umontreal.kotlingrad.functions.*
 import edu.umontreal.kotlingrad.functions.Function
+import edu.umontreal.kotlingrad.functions.Function.*
 import edu.umontreal.kotlingrad.numerical.FieldPrototype
-import edu.umontreal.kotlingrad.functions.types.*
+import edu.umontreal.kotlingrad.numerical.Real
 
-abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor<X>() {
-  fun value(fnx: X) = Const(fnx)
-
-  fun value(vararg fnx: X) = ConstVector(*fnx.mapTo(ArrayList(fnx.size)) { value(it) }.toTypedArray())
-
-//  fun zero(size: Int) = ConstVector(*Array(size) { zero })
-//  fun function(vararg fns: Function<X>) = VectorFunction(*fns)
-
+abstract class RealFunctor<X: Real<X, Y>, Y: Number>(val rfc: FieldPrototype<X>): FieldFunctor<X>() {
   fun variable() = Var(rfc)
 
   fun variable(default: X) = Var(rfc, value = default)
@@ -23,17 +15,16 @@ abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor
 
   fun variable(name: String, default: X) = Var(rfc, default, name)
 
-  fun cos(angle: Function<X>) = Cosine(angle)
+  fun <T: Field<T>> sin(angle: Function<T>) = Sine(angle)
+  fun <T: Field<T>> cos(angle: Function<T>) = Cosine(angle)
+  fun <T: Field<T>> tan(angle: Function<T>) = Tangent(angle)
+  fun <T: Field<T>> exp(exponent: Function<T>) = Exp(exponent)
+  fun <T: Field<T>> sqrt(radicand: Function<T>) = SquareRoot(radicand)
 
-  fun sin(angle: Function<X>) = Sine(angle)
-
-  fun tan(angle: Function<X>) = Tangent(angle)
-
-  fun exp(exponent: Function<X>) = Exp(exponent)
-  
-  fun pow(base: Function<X>, exponent: Function<X>) = Power(base, exponent)
-
-  fun sqrt(radicand: Function<X>): Function<X> = SquareRoot(radicand)
+  private operator fun Function<X>.plus(addend: X) = this + Const(addend)
+  private operator fun Function<X>.minus(subtrahend: X) = this - Const(subtrahend)
+  private operator fun Function<X>.times(multiplicand: X) = this * Const(multiplicand)
+  private operator fun Function<X>.div(divisor: X) = this / Const(divisor)
 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
 
@@ -43,4 +34,33 @@ abstract class RealFunctor<X: Real<X>>(val rfc: FieldPrototype<X>): FieldFunctor
 
   fun <X: Field<X>> d(function: Function<X>) = Differential(function)
   fun <X: Field<X>> d(arg: Var<X>) = IndVar(arg)
+
+  operator fun Function<X>.plus(number: Number) = this + rfc(number)
+  operator fun Number.plus(fn: Function<X>) = fn + rfc(this)
+
+  operator fun Function<X>.minus(number: Number) = this - rfc(number)
+  operator fun Number.minus(fn: Function<X>) = fn - rfc(this)
+
+  operator fun Function<X>.times(number: Number) = this * rfc(number)
+  operator fun Number.times(fn: Function<X>) = fn * rfc(this)
+
+  operator fun Function<X>.div(number: Number) = this / rfc(number)
+  operator fun Number.div(fn: Function<X>) = fn.inverse() * rfc(this)
+
+  // TODO Make this an extension function?
+  fun pow(function: Function<X>, number: Number) = function.pow(Const(rfc(number)))
+//  fun Function<DoubleReal>.pow(number: Number) = pow(Const(DoubleReal(number)))
+
+  fun variable(default: Number) = Var(rfc, rfc(default))
+
+  fun variable(name: String, default: Number) = Var(rfc, rfc(default), name)
+
+  operator fun Function<X>.invoke(pairs: Map<Var<X>, Number>) =
+    this(pairs.map { (it.key to rfc(it.value)) }.toMap()).value
+
+  operator fun Function<X>.invoke(vararg pairs: Pair<Var<X>, Number>) =
+    this(pairs.map { (it.first to rfc(it.second)) }.toMap()).value
+
+  operator fun Function<X>.invoke(vararg number: Number) =
+    this(variables.zip(number).toMap())
 }

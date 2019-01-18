@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
@@ -10,7 +11,7 @@ import kotlin.math.sin
 class TestFiniteDifferences: StringSpec({
   val dx = 1E-8
 
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
 
     "sin should be (sin(x + dx) - sin(x)) / dx" {

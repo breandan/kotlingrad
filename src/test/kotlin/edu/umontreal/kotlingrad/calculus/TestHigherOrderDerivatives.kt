@@ -1,19 +1,20 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestHigherOrderDerivatives: StringSpec({
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
 
     "d²x² / dx² should be 0" {
       assertAll(NumericalGenerator) { ẋ: Double ->
         val f = x*x
         val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
-        `d²f∕dx²`(x to ẋ) shouldBeAbout 2.0
+        `d²f∕dx²`(x to ẋ) shouldBeAbout 2
       }
     }
 
@@ -25,7 +26,7 @@ class TestHigherOrderDerivatives: StringSpec({
         println(`df∕dx`)
         val `d²f∕dx²` = d(`df∕dx`) / d(x)
         println(`d²f∕dx²`)
-        `d²f∕dx²`(x to ẋ) shouldBeAbout 2.0
+        `d²f∕dx²`(x to ẋ) shouldBeAbout 2
       }
     }
 
@@ -33,7 +34,7 @@ class TestHigherOrderDerivatives: StringSpec({
       assertAll(NumericalGenerator) { ẋ: Double ->
         val f = pow(x, 2) + pow(x, 2)
         val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
-        `d²f∕dx²`(x to ẋ) shouldBeAbout 4.0
+        `d²f∕dx²`(x to ẋ) shouldBeAbout 4
       }
     }
 
