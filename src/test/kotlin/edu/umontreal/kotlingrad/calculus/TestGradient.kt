@@ -1,12 +1,13 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestGradient: StringSpec({
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val ε = 1E-15
     val x = variable("x")
     val y = variable("x")

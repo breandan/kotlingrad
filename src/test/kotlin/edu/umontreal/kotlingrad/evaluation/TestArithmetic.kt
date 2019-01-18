@@ -1,14 +1,14 @@
 package edu.umontreal.kotlingrad.evaluation
 
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
 import edu.umontreal.kotlingrad.calculus.NumericalGenerator
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters")
 class TestArithmetic: StringSpec({
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
     val y = variable("y")
     val z = variable("z")
@@ -45,7 +45,7 @@ class TestArithmetic: StringSpec({
 
     "test multiplication with numerical type" {
       assertAll(NumericalGenerator) { ẋ: Double ->
-        (x * 2)(x to ẋ) shouldBeAbout ẋ * 2
+        (x * 2)(ẋ) shouldBeAbout ẋ * 2
       }
     }
 

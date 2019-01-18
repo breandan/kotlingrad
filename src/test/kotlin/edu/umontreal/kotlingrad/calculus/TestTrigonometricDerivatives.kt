@@ -1,12 +1,13 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestTrigonometricDerivatives: StringSpec({
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
     val y = variable("y")
 
@@ -33,9 +34,9 @@ class TestTrigonometricDerivatives: StringSpec({
     val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
 
     "z should be y * (sin(x * y) - x)" {
-      assertAll(NumericalGenerator, NumericalGenerator) { kx, ky ->
-        val numericalAnswer = ky * (kotlin.math.sin(kx * ky) - kx) + 0.0
-        z(x to kx, y to ky) shouldBeAbout numericalAnswer
+      assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+        val numericalAnswer = ẏ * (kotlin.math.sin(ẋ * ẏ) - ẋ) + 0.0
+        z(x to ẋ, y to ẏ) shouldBeAbout numericalAnswer
       }
     }
 

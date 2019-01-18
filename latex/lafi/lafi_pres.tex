@@ -251,7 +251,7 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Usage: plotting higher derivatives of nested functions}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            with(DoubleFunctor) {// Use double-precision numerics
+            with(DoublePrecision) {// Use double-precision numerics
              val x = variable()  // Declare an immutable variable
              val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
 

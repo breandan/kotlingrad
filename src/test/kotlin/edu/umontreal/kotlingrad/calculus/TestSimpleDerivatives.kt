@@ -1,13 +1,14 @@
 package edu.umontreal.kotlingrad.calculus
 
 
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestSimpleDerivatives: StringSpec({
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
     val y = variable("y")
 
@@ -15,7 +16,7 @@ class TestSimpleDerivatives: StringSpec({
       assertAll(NumericalGenerator) { ẋ ->
         val f = x * 1
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ) shouldBeAbout 1.0
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 1
       }
     }
 
@@ -23,7 +24,7 @@ class TestSimpleDerivatives: StringSpec({
       assertAll(NumericalGenerator) { ẋ ->
         val f = x * 2
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ) shouldBeAbout 2.0
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 2
       }
     }
 
@@ -31,7 +32,7 @@ class TestSimpleDerivatives: StringSpec({
       assertAll(NumericalGenerator) { ẋ ->
         val f = x + x
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ) shouldBeAbout 2.0
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 2
       }
     }
   }

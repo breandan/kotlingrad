@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
 import krangl.dataFrameOf
 import kravis.geomLine
@@ -9,7 +9,7 @@ import java.io.File
 
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main(args: Array<String>) {
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
 
     val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x

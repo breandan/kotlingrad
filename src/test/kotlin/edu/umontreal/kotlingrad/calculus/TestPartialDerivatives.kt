@@ -1,12 +1,13 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPartialDerivatives: StringSpec({
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
     val y = variable("y")
 
@@ -14,7 +15,7 @@ class TestPartialDerivatives: StringSpec({
       assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val f = cos(x)
         val `∂f∕∂y` = d(f) / d(y)
-        `∂f∕∂y`(x to ẋ, y to ẏ) + 0.0 shouldBeAbout 0.0
+        `∂f∕∂y`(x to ẋ, y to ẏ) shouldBeAbout 0
       }
     }
 
@@ -22,7 +23,7 @@ class TestPartialDerivatives: StringSpec({
       assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val f = x + y
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout 1.0
+        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout 1
       }
     }
 
@@ -30,7 +31,7 @@ class TestPartialDerivatives: StringSpec({
       assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
         val f = x + y + x
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout 2.0
+        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout 2
       }
     }
 

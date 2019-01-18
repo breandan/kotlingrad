@@ -1,24 +1,47 @@
 package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
+import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.numerical.FieldPrototype
 import edu.umontreal.kotlingrad.utils.randomDefaultName
-
-interface Differentiable<X: Field<X>, D> {
-  fun diff(ind: Var<X>): D
-
-  fun grad(): Map<Var<X>, D>
-}
 
 sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
   open val name: String = randomDefaultName()
 
-  abstract operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X
+  operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X = when (this) {
+    is Var -> if (map[this] != null) map[this]!! else value
+    is Inverse -> arg(map).inverse()
+    is Exp -> prototype.exp(exponent(map))
+    is Log -> prototype.log(logarithmand(map))
+    is Negative -> -arg(map)
+    is Power -> base.invoke(map).pow(exponent(map))
+    is SquareRoot -> prototype.sqrt(radicand(map))
+    is Sine -> prototype.sin(angle(map))
+    is Cosine -> prototype.cos(angle(map))
+    is Tangent -> prototype.tan(angle(map))
+    is Product -> multiplicator(map) * multiplicand(map)
+    is Sum -> augend(map) + addend(map)
+    is Const -> value
+  }
 
   operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
 
-  abstract override fun toString(): String
+  override fun toString(): String = when (this) {
+    is Inverse -> "$arg⁻¹"
+    is Exp -> "exp($exponent)"
+    is Log -> "ln($logarithmand)"
+    is Negative -> "-$arg"
+    is Power -> "($base${superscript(exponent)})"
+    is SquareRoot -> "√($radicand)"
+    is Sine -> "sin($angle)"
+    is Cosine -> "cos($angle)"
+    is Tangent -> "tan($angle)"
+    is Product -> "($multiplicator * $multiplicand)"
+    is Sum -> "($augend + $addend)"
+    is Const -> value.toString()
+    is Var -> name
+  }
 
   override fun grad(): Map<Var<X>, Function<X>> = variables.associateWith { diff(it) }
 
@@ -28,15 +51,15 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
     is Product -> multiplicator.diff(ind) * multiplicand + multiplicator * multiplicand.diff(ind)
     is Var -> Const(if (this == ind) prototype.one else prototype.zero)
-    is Log -> Inverse(logarithmand) * logarithmand.diff(ind)
-    is Inverse -> -one * Power(arg, -two) * arg.diff(ind)
+    is Log -> logarithmand.inverse() * logarithmand.diff(ind)
+    is Inverse -> -one * pow(arg, -two) * arg.diff(ind)
     is Negative -> -arg.diff(ind)
     is Power -> (this as Power).diff(ind)
     is Exp -> exp(exponent) * exponent.diff(ind)
     is SquareRoot -> sqrt(radicand).inverse() / two * radicand.diff(ind)
     is Sine -> cos(angle) * angle.diff(ind)
     is Cosine -> -sin(angle) * angle.diff(ind)
-    is Tangent -> Power(cos(angle), -two) * angle.diff(ind)
+    is Tangent -> cos(angle).pow(-two) * angle.diff(ind)
   }
 
   override fun plus(addend: Function<X>): Function<X> = when {
@@ -74,10 +97,18 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   fun ln(): Function<X> = Log(this)
 
-  override fun inverse(): Function<X> = Inverse(this)
+  override fun inverse(): Function<X> = when (this) {
+    is Const -> Const(value.inverse())
+    is One -> this
+    is Inverse -> arg
+    is Power -> Power(base, -exponent)
+    else -> Inverse(this)
+  }
 
-  override fun unaryMinus(): Function<X> = when {
-    this is Const -> Const(-value)
+  override fun unaryMinus(): Function<X> = when(this) {
+    is Const -> Const(-value)
+    is Zero -> this
+    is Negative -> arg
     else -> Negative(this)
   }
 
@@ -86,15 +117,20 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     else -> Power(this, exponent)
   }
 
-  fun cos(angle: Function<X>) = Cosine(angle)
+  companion object {
+    fun <T: Field<T>> sin(angle: Function<T>) = Sine(angle)
+    fun <T: Field<T>> cos(angle: Function<T>) = Cosine(angle)
+    fun <T: Field<T>> tan(angle: Function<T>) = Tangent(angle)
+    fun <T: Field<T>> exp(exponent: Function<T>) = Exp(exponent)
+    fun <T: Field<T>> pow(base: Function<T>, exponent: Function<T>) = Power(base, exponent)
+    fun <T: Field<T>> sqrt(radicand: Function<T>) = SquareRoot(radicand)
+  }
 
-  fun sin(angle: Function<X>): Function<X> = Sine(angle)
-
-  fun tan(angle: Function<X>): Function<X> = Tangent(angle)
-
-  fun exp(exponent: Function<X>): Function<X> = Exp(exponent)
-
-  fun sqrt(radicand: Function<X>): Function<X> = SquareRoot(radicand)
+  fun sin() = Sine(this)
+  fun cos() = Cosine(this)
+  fun tan() = Tangent(this)
+  fun exp() = Exp(this)
+  fun sqrt() = SquareRoot(this)
 
   open val prototype: FieldPrototype<X> by lazy { variables.first().prototype }
 
@@ -105,143 +141,76 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   val two: Const<X> by lazy { Const(one.value + one.value) }
 
   val e: Const<X> by lazy { Const(prototype.one) }
-}
 
-class Var<X: Field<X>>(
-  override val prototype: FieldPrototype<X>,
-  val value: X = prototype.zero,
-  override val name: String = randomDefaultName()
-): Function<X>(emptySet()) {
-  override val variables: Set<Var<X>> = setOf(this)
+  class SquareRoot<X: Field<X>>(val radicand: Function<X>): Function<X>(radicand.variables)
 
-  override fun invoke(map: Map<Var<X>, X>): X = if (map[this] != null) map[this]!! else value
+  class Sine<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables)
 
-  override fun toString() = name
-}
+  class Cosine<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables)
 
-class Inverse<X: Field<X>>(val arg: Function<X>): Function<X>(arg.variables) {
-  override fun invoke(map: Map<Var<X>, X>) = arg(map).inverse()
+  class Tangent<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables)
 
-  override fun toString() = "$arg⁻¹"
+  class Inverse<X: Field<X>>(val arg: Function<X>): Function<X>(arg.variables)
 
-  override fun inverse() = arg
-}
+  class Exp<X: Field<X>>(val exponent: Function<X>): Function<X>(exponent.variables)
 
-class Exp<X: Field<X>>(
-  val exponent: Function<X>
-): Function<X>(exponent.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = prototype.exp(exponent(map))
+  class Log<X: Field<X>>(val logarithmand: Function<X>): Function<X>(logarithmand.variables)
 
-  override fun toString(): String = "exp($exponent)"
-}
+  class Negative<X: Field<X>>(val arg: Function<X>): Function<X>(arg.variables)
 
-class Log<X: Field<X>>(val logarithmand: Function<X>): Function<X>(logarithmand.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = prototype.log(logarithmand(map))
+  class Product<X: Field<X>>(
+    val multiplicator: Function<X>,
+    val multiplicand: Function<X>
+  ): Function<X>(multiplicator.variables + multiplicand.variables)
 
-  override fun toString(): String = "ln($logarithmand)"
-}
+  class Sum<X: Field<X>>(
+    val augend: Function<X>,
+    val addend: Function<X>
+  ): Function<X>(augend.variables + addend.variables)
 
-class Negative<X: Field<X>>(val arg: Function<X>): Function<X>(arg.variables) {
-  override fun invoke(map: Map<Var<X>, X>) = -arg(map)
+  class Power<X: Field<X>>(
+    val base: Function<X>,
+    var exponent: Function<X>
+  ): Function<X>(base.variables + exponent.variables) {
+    override fun diff(ind: Var<X>) = when (exponent) {
+      is One -> base.diff(ind)
+      is Const -> exponent * Power(base, Const((exponent - one)())) * base.diff(ind)
+      else -> this * (exponent * base.ln()).diff(ind)
+    }
 
-  override fun toString() = "-$arg"
-
-  override fun unaryMinus() = arg
-}
-
-class Power<X: Field<X>>(
-  private val base: Function<X>,
-  var exponent: Function<X>
-): Function<X>(base.variables + exponent.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = base.invoke(map).pow(exponent(map))
-
-  override fun diff(ind: Var<X>) = when (exponent) {
-    is One -> base.diff(ind)
-    is Const -> exponent * Power(base, Const((exponent - one)())) * base.diff(ind)
-    else -> this * (exponent * base.ln()).diff(ind)
+    fun superscript(exponent: Function<X>) =
+      if (exponent is Const)
+        if (exponent == one) ""
+        else exponent.toString()
+          .replace(".", "⋅")
+          .replace("-", "⁻")
+          .replace("0", "⁰")
+          .replace("1", "¹")
+          .replace("2", "²")
+          .replace("3", "³")
+          .replace("4", "⁴")
+          .replace("5", "⁵")
+          .replace("6", "⁶")
+          .replace("7", "⁷")
+          .replace("8", "⁸")
+          .replace("9", "⁹")
+      else
+        "^($exponent)"
   }
 
-  override fun toString() = "($base${superscript(exponent)})"
+  open class Const<X: Field<X>>(val value: X): Function<X>(emptySet())
 
-  override fun inverse() = Power(base, -exponent)
+  class One<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.one)
 
-  private fun superscript(exponent: Function<X>) =
-    if (exponent is Const)
-      if (exponent == one) ""
-      else exponent.toString()
-        .replace(".", "⋅")
-        .replace("-", "⁻")
-        .replace("0", "⁰")
-        .replace("1", "¹")
-        .replace("2", "²")
-        .replace("3", "³")
-        .replace("4", "⁴")
-        .replace("5", "⁵")
-        .replace("6", "⁶")
-        .replace("7", "⁷")
-        .replace("8", "⁸")
-        .replace("9", "⁹")
-    else
-      "^($exponent)"
-}
+  class Zero<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.zero)
 
-class SquareRoot<X: Field<X>>(val radicand: Function<X>): Function<X>(radicand.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = prototype.sqrt(radicand(map))
-
-  override fun toString(): String = "√($radicand)"
-}
-
-class Sine<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = prototype.sin(angle(map))
-
-  override fun toString(): String = "sin($angle)"
-}
-
-class Cosine<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = prototype.cos(angle(map))
-
-  override fun toString() = "cos($angle)"
-}
-
-class Tangent<X: Field<X>>(val angle: Function<X>): Function<X>(angle.variables) {
-  override fun invoke(map: Map<Var<X>, X>): X = prototype.tan(angle(map))
-
-  override fun toString(): String = "tan($angle)"
-}
-
-class Product<X: Field<X>>(
-  val multiplicator: Function<X>,
-  val multiplicand: Function<X>
-): Function<X>(multiplicator.variables + multiplicand.variables) {
-  override fun invoke(map: Map<Var<X>, X>) = multiplicator(map) * multiplicand(map)
-
-  override fun toString() = "($multiplicator * $multiplicand)"
-}
-
-class Sum<X: Field<X>>(
-  val augend: Function<X>,
-  val addend: Function<X>
-): Function<X>(augend.variables + addend.variables) {
-  // Some operations are inherently parallelizable. TODO: Explore how to parallelize these with FP...
-  override fun invoke(map: Map<Var<X>, X>) = augend(map) + addend(map)
-
-  override fun toString() = "($augend + $addend)"
-}
-
-open class Const<X: Field<X>>(val value: X): Function<X>(emptySet()) {
-  override fun invoke(map: Map<Var<X>, X>): X = value
-
-  override fun toString(): String = value.toString()
-
-  override fun inverse(): Const<X> = Const(value.inverse())
-
-  override fun unaryMinus(): Const<X> = Const(-value)
-}
-
-class One<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.one)
-
-class Zero<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.zero) {
-  override fun unaryMinus() = this
+  class Var<X: Field<X>>(
+    override val prototype: FieldPrototype<X>,
+    val value: X = prototype.zero,
+    override val name: String = randomDefaultName()
+  ): Function<X>(emptySet()) {
+    override val variables: Set<Var<X>> = setOf(this)
+  }
 }
 
 //abstract class NullaryFunction<X: Field<X>>: Function<X>(emptySet())

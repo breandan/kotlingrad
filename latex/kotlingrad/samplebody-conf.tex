@@ -17,9 +17,9 @@ For the purposes of automatic differentiation, we are mostly interested in algeb
 \section{Usage}
 % \begin{minted}
 % {kotlin}
-% import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+% import edu.umontreal.kotlingrad.calculus.DoublePrecision
 
-% with(DoubleFunctor) {   //  Double precision  numerics
+% with(DoublePrecision) {   //  Double precision  numerics
 %   val x = variable("x") //  Define immutable variables
 %   val y = variable("y") //  that take numerical values
 
@@ -47,9 +47,9 @@ For the purposes of automatic differentiation, we are mostly interested in algeb
 \begin{figure}[!htb]
 \begin{minted}
 {kotlin}
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.calculus.DoublePrecision
 
-with(DoubleFunctor) { // Use double-precision numerics
+with(DoublePrecision) { // Use double-precision numerics
   val x = variable()  // Declare an immutable variable
   val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
   

@@ -30,11 +30,11 @@ Much of this can be accomplished without access to bytecode or special compiler 
 The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
 
 ```kotlin
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
-  with(DoubleFunctor) { 
+  with(DoublePrecision) { 
     val x = variable("x")
     val y = variable("y")
 
@@ -133,7 +133,7 @@ However, there are many other ways to independently verify the numerical gradien
 This plot was generated with the following code:
 
 ```kotlin
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
 import krangl.dataFrameOf
 import kravis.geomLine
@@ -142,7 +142,7 @@ import java.io.File
 
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main(args: Array<String>) {
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
 
     val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
@@ -229,7 +229,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoubleFunctor](src/main/kotlin/edu/umontreal/kotlingrad/calculus/DoubleFunctor.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/DoublePrecision.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Expr()
@@ -316,7 +316,9 @@ This allows us to put all related control flow on a single abstract class which 
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently it uses default values for variables, so when a function is invoked with missing variable(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value will be applied. This is similar to [broadcasting in NumPy](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure shape compatibility. However we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). When the shape is known at compile-time, we can use a restricted form of [dependent types](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure type-safe matrix- and tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus)).
+The current API is experimental, but can be improved in many ways. Currently it uses default values for variables, so when a function is invoked with missing variable(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value will be applied. This is similar to [broadcasting in NumPy](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure shape compatibility. However we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). 
+
+When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure shape conforming tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
 Another such optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of optimizations on specialized matrices.
 

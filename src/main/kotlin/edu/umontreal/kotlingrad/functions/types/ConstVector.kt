@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.functions.types
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.functions.Const
+import edu.umontreal.kotlingrad.functions.Function.Const
 import edu.umontreal.kotlingrad.functions.VectorFunction
 
 //typealias ConstVector<X> = VectorFunction<Const<X>>

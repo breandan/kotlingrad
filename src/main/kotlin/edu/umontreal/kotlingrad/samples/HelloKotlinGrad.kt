@@ -1,10 +1,10 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.calculus.DoubleFunctor
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main(args: Array<String>) {
-  with(DoubleFunctor) {
+  with(DoublePrecision) {
     val x = variable("x")
     val y = variable("y")
 
