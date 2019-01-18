@@ -30,11 +30,13 @@ tasks {
 repositories {
   mavenCentral()
   maven("https://jitpack.io")
+  maven("http://maven.jzy3d.org/releases")
 }
 
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.11")
   compile("com.github.holgerbrandl:kravis:-SNAPSHOT")
+  compile("org.jzy3d:jzy3d-api:1.0.2")
   compile("ch.obermuhlner:kotlin-big-math:0.0.1")
 }

@@ -179,6 +179,13 @@ R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
 
 Then run `./gradlew plot`.
 
+Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Jzy3Demo.kt) in 3D:
+
+![](src/main/resources/ripple.png)
+![](src/main/resources/pulsar.png)
+![](src/main/resources/starquake.png)
+![](src/main/resources/forest_path.png)
+
 ## How?
 
 This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin𝛁:
