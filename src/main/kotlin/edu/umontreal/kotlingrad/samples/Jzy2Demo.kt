@@ -29,7 +29,7 @@ import javax.swing.JPanel
  * @author Martin Pernollet
  */
 
-object Chart2dDemo {
+object Jzy2Demo {
   var duration = 60f
   /** milisecond distance between two generated samples */
   var interval = 50

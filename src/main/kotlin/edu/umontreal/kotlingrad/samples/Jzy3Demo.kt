@@ -13,7 +13,7 @@ import org.jzy3d.plot3d.builder.Mapper
 import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid
 import org.jzy3d.plot3d.rendering.canvas.Quality.Advanced
 
-class SurfaceDemo: AbstractAnalysis() {
+object Jzy3Demo: AbstractAnalysis() {
   override fun init() {
     // Define a function to plot
     val mapper = object: Mapper() {
@@ -36,7 +36,8 @@ class SurfaceDemo: AbstractAnalysis() {
     val steps = 200
 
     // Create the object to represent the function over the given range.
-    val surface = Builder.buildOrthonormal(OrthonormalGrid(range, steps, range, steps), mapper)
+    val grid = OrthonormalGrid(range, steps, range, steps)
+    val surface = Builder.buildOrthonormal(grid, mapper)
     with(surface) {
       colorMapper = ColorMapper(ColorMapRainbow(),
         bounds.zmin.toDouble(),
@@ -44,13 +45,13 @@ class SurfaceDemo: AbstractAnalysis() {
         Color(1f, 1f, 1f, .5f))
 
       faceDisplayed = true
-      wireframeDisplayed = false
     }
 
     // Create a chart
     chart = AWTChartComponentFactory.chart(Advanced, getCanvasType())
     chart.scene.graph.add(surface)
   }
-}
 
-fun main(args: Array<String>) = AnalysisLauncher.open(SurfaceDemo())
+  @JvmStatic
+  fun main(args: Array<String>) = AnalysisLauncher.open(Jzy3Demo)
+}
