@@ -45,7 +45,7 @@ class TestPartialDerivatives: StringSpec({
 
     "∂(yx + xx + yy) / ∂x should be y + 2x" {
       assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
-        val f = y * x + pow(x, 2) + pow(y, 2)
+        val f = y * x + x * x + y * y
         val `∂f∕∂x` = d(f) / d(x)
         `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout (y + x * 2)(x to ẋ, y to ẏ)
       }
