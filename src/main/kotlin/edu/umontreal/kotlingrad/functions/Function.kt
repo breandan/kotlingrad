@@ -30,12 +30,12 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     is Exp -> "exp($exponent)"
     is Log -> "ln($logarithmand)"
     is Negative -> "-$arg"
-    is Power -> "($base${superscript(exponent)})"
+    is Power -> "$base${superscript(exponent)}"
     is SquareRoot -> "√($radicand)"
     is Sine -> "sin($angle)"
     is Cosine -> "cos($angle)"
     is Tangent -> "tan($angle)"
-    is Product -> "($multiplicator * $multiplicand)"
+    is Product -> "$multiplicator$multiplicand"
     is Sum -> "($augend + $addend)"
     is Const -> "$value"
     is Var -> name
@@ -70,8 +70,8 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   override fun times(multiplicand: Function<X>): Function<X> = when {
     // TODO: this (value-/value) is also an antipattern. Should be able to refer to one or zero directly...
     this is Zero || this is Const && value == Const(value - value).value -> this
-    this is One || (this is Const && value == Const(value / value).value) -> multiplicand
-    multiplicand is One || (multiplicand is Const && multiplicand.value.let { it == Const(it / it).value }) -> this
+    this is One || this is Const && value == Const(value / value).value -> multiplicand
+    multiplicand is One || multiplicand is Const && multiplicand.value.let { it == Const(it / it).value } -> this
     multiplicand is Zero || multiplicand is Const && multiplicand.value .let { it == Const(it - it).value } -> multiplicand
     this == multiplicand -> pow(two)
     this is Const && multiplicand is Const -> Const(value * multiplicand.value)
@@ -93,6 +93,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   override fun equals(other: Any?) =
     if (this is Var<*> || other is Var<*>) this === other
+    else if (this is Const<*> && other is Const<*>) value == other.value
     //TODO implement tree comparison for semantic equals
     else super.equals(other)
 
@@ -169,11 +170,12 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   class Power<X: Field<X>>(
     val base: Function<X>,
-    var exponent: Function<X>
+    val exponent: Function<X>
   ): Function<X>(base.variables + exponent.variables) {
-    override fun diff(ind: Var<X>) = when (exponent) {
-      is One -> base.diff(ind)
-      is Const -> exponent * Power(base, Const((exponent - one)())) * base.diff(ind)
+    override fun diff(ind: Var<X>) = when {
+      exponent is One || exponent is Const && exponent == one -> base.diff(ind)
+      exponent is Const && (exponent - one) == one -> exponent * base * base.diff(ind)
+      exponent is Const -> exponent * Power(base,  Const((exponent - one)())) * base.diff(ind)
       else -> this * (exponent * base.ln()).diff(ind)
     }
 
