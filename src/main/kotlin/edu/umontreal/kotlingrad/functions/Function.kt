@@ -37,7 +37,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     is Tangent -> "tan($angle)"
     is Product -> "($multiplicator * $multiplicand)"
     is Sum -> "($augend + $addend)"
-    is Const -> value.toString()
+    is Const -> "$value"
     is Var -> name
   }
 
@@ -60,18 +60,18 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   }
 
   override fun plus(addend: Function<X>): Function<X> = when {
-    this is Zero -> addend
-    addend is Zero -> this
+    this is Zero || this is Const && value == Const(value - value).value -> addend
+    addend is Zero || addend is Const && addend.value == Const(addend.value - addend.value).value -> this
     this is Const && addend is Const -> Const(value + addend.value)
     this == addend -> two * this
     else -> Sum(this, addend)
   }
 
   override fun times(multiplicand: Function<X>): Function<X> = when {
-    this is Zero -> this
-    this is One -> multiplicand
-    multiplicand is One -> this
-    multiplicand is Zero -> multiplicand
+    this is Zero || this is Const && value == Const(value - value).value -> this
+    this is One || (this is Const && value == Const(value / value).value) -> multiplicand
+    multiplicand is One || (multiplicand is Const && multiplicand.value.let { it == Const(it / it).value }) -> this
+    multiplicand is Zero || multiplicand is Const && multiplicand.value .let { it == Const(it - it).value } -> multiplicand
     this == multiplicand -> pow(two)
     this is Const && multiplicand is Const -> Const(value * multiplicand.value)
     this is Power && multiplicand is Power && base == multiplicand.base -> base.pow(exponent + multiplicand.exponent)
@@ -103,7 +103,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     else -> pow(-one)
   }
 
-  override fun unaryMinus(): Function<X> = when(this) {
+  override fun unaryMinus(): Function<X> = when (this) {
     is Const -> Const(-value)
     is Zero -> this
     is Negative -> arg
@@ -112,6 +112,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
 
   override fun pow(exp: Function<X>): Function<X> = when {
     this is Const && exp is Const -> Const(value.pow(exp.value))
+    exp is Const && exp.value == Const(exp.value - exp.value).value -> One(prototype)
     this is Power && exp is Const -> base.pow(exponent * exp)
     else -> Power(this, exp)
   }
@@ -133,14 +134,11 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   fun exp() = Exp(this)
   fun sqrt() = SquareRoot(this)
 
+  // TODO: Fix this antipattern!
   open val prototype: FieldPrototype<X> by lazy { variables.first().prototype }
-
   val one: One<X> by lazy { One(prototype) }
-
   val zero: Zero<X> by lazy { Zero(prototype) }
-
   val two: Const<X> by lazy { Const(one.value + one.value) }
-
   val e: Const<X> by lazy { Const(prototype.one) }
 
   //TODO: Replace roots with fractional powers
@@ -198,6 +196,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
         "^($exponent)"
   }
 
+  // TODO: Try to make RealNumber a subtype of Const
   open class Const<X: Field<X>>(val value: X): Function<X>(emptySet())
 
   class One<X: Field<X>>(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype.one)
