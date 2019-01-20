@@ -68,6 +68,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
   }
 
   override fun times(multiplicand: Function<X>): Function<X> = when {
+    // TODO: this (value-/value) is also an antipattern. Should be able to refer to one or zero directly...
     this is Zero || this is Const && value == Const(value - value).value -> this
     this is One || (this is Const && value == Const(value / value).value) -> multiplicand
     multiplicand is One || (multiplicand is Const && multiplicand.value.let { it == Const(it / it).value }) -> this
