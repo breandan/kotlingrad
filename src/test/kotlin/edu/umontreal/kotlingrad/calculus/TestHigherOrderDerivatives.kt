@@ -21,11 +21,8 @@ class TestHigherOrderDerivatives: StringSpec({
     "d²(x² + x) / dx² should be 2" {
       assertAll(NumericalGenerator) { ẋ: Double ->
         val f = pow(x, 2) + x
-        println(f)
         val `df∕dx` = d(f) / d(x)
-        println(`df∕dx`)
         val `d²f∕dx²` = d(`df∕dx`) / d(x)
-        println(`d²f∕dx²`)
         `d²f∕dx²`(x to ẋ) shouldBeAbout 2
       }
     }
