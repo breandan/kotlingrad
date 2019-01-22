@@ -21,31 +21,31 @@ abstract class RealFunctor<X: RealNumber<X, Y>, Y>(val rfc: FieldPrototype<X>): 
   fun <T: Field<T>> exp(exponent: Function<T>) = Exp(exponent)
   fun <T: Field<T>> sqrt(radicand: Function<T>) = SquareRoot(radicand)
 
-  private operator fun Function<X>.plus(addend: X) = this + Const(addend)
-  private operator fun Function<X>.minus(subtrahend: X) = this - Const(subtrahend)
-  private operator fun Function<X>.times(multiplicand: X) = this * Const(multiplicand)
-  private operator fun Function<X>.div(divisor: X) = this / Const(divisor)
+  private infix operator fun Function<X>.plus(addend: X) = this + Const(addend)
+  private infix operator fun Function<X>.minus(subtrahend: X) = this - Const(subtrahend)
+  private infix operator fun Function<X>.times(multiplicand: X) = this * Const(multiplicand)
+  private infix operator fun Function<X>.div(divisor: X) = this / Const(divisor)
 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
 
   class Differential<X: Field<X>>(val function: Function<X>) {
-    operator fun div(arg: IndVar<X>) = function.diff(arg.variable).also { println(it) }
+    infix operator fun div(arg: IndVar<X>) = function.diff(arg.variable).also { println(it) }
   }
 
   fun <X: Field<X>> d(function: Function<X>) = Differential(function)
   fun <X: Field<X>> d(arg: Var<X>) = IndVar(arg)
 
-  operator fun Function<X>.plus(number: Number) = this + rfc(number)
-  operator fun Number.plus(fn: Function<X>) = fn + rfc(this)
+  infix operator fun Function<X>.plus(number: Number) = this + rfc(number)
+  infix operator fun Number.plus(fn: Function<X>) = fn + rfc(this)
 
-  operator fun Function<X>.minus(number: Number) = this - rfc(number)
-  operator fun Number.minus(fn: Function<X>) = fn - rfc(this)
+  infix operator fun Function<X>.minus(number: Number) = this - rfc(number)
+  infix operator fun Number.minus(fn: Function<X>) = fn - rfc(this)
 
-  operator fun Function<X>.times(number: Number) = this * rfc(number)
-  operator fun Number.times(fn: Function<X>) = fn * rfc(this)
+  infix operator fun Function<X>.times(number: Number) = this * rfc(number)
+  infix operator fun Number.times(fn: Function<X>) = fn * rfc(this)
 
-  operator fun Function<X>.div(number: Number) = this / rfc(number)
-  operator fun Number.div(fn: Function<X>) = fn.inverse() * rfc(this)
+  infix operator fun Function<X>.div(number: Number) = this / rfc(number)
+  infix operator fun Number.div(fn: Function<X>) = fn.inverse() * rfc(this)
 
   // TODO Make this an extension function?
   fun pow(function: Function<X>, number: Number) = function.pow(Const(rfc(number)))
@@ -55,7 +55,7 @@ abstract class RealFunctor<X: RealNumber<X, Y>, Y>(val rfc: FieldPrototype<X>): 
 
   fun variable(name: String, default: Number) = Var(rfc, rfc(default), name)
 
-  operator fun Function<X>.invoke(pairs: Map<Var<X>, Number>) =
+  infix operator fun Function<X>.invoke(pairs: Map<Var<X>, Number>) =
     this(pairs.map { (it.key to rfc(it.value)) }.toMap()).value
 
   operator fun Function<X>.invoke(vararg pairs: Pair<Var<X>, Number>) =

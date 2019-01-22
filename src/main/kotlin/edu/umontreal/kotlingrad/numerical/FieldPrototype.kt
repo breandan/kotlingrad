@@ -7,7 +7,7 @@ interface FieldPrototype<X: Field<X>> {
   val one: X
   val e: X
 
-  operator fun invoke(number: Number): X
+  infix operator fun invoke(number: Number): X
 
   fun cos(x: X): X
 

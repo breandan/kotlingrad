@@ -5,7 +5,7 @@ import edu.umontreal.kotlingrad.functions.Function
 
 
 interface Differentiable<X: Field<X>, D> {
-  fun diff(ind: Function.Var<X>): D
+  infix fun diff(ind: Function.Var<X>): D
 
   fun grad(): Map<Function.Var<X>, D>
 }

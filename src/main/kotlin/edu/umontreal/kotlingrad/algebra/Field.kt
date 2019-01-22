@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.algebra
 interface Field<X: Field<X>>: CommutativeRing<X> {
   fun inverse(): X
 
-  operator fun div(divisor: X): X = this * divisor.inverse()
+  infix operator fun div(divisor: X): X = this * divisor.inverse()
 
-  fun pow(exp: X): X
+  infix fun pow(exp: X): X
 }

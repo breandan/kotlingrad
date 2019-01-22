@@ -29,24 +29,28 @@ Much of this can be accomplished without access to bytecode or special compiler 
 
 ### Notation
 
-The following mathematical operators are supported:
+|Math†                              | Infix                      | Prefix               | Postfix‡               |
+|:---------------------------------:|:--------------------------:|:--------------------:|:-----------------------:
+| **a + b**                         | `a + b`, `a.plus(b)`       | `plus(a, b)`         |                        |
+| **a - b**                         | `a - b`, `a.minus(b)`      | `minus(a, b)`        |                        |
+| **a * b**                         | `a * b`, `a.times(b)`      | `times(a, b)`        |                        |
+| **a / b**                         | `a / b`, `a.div(b)`        | `div(a, b)`          |                        |
+| **-a**                            | `neg(a)`                   | `-a`                 | `a.unaryMinus()`       |
+| *sin*(**a**)                      |                            | `sin(a)`             | `a.sin()`              |
+| *cos*(**a**)                      |                            | `cos(a)`             | `a.cos()`              |
+| *tan*(**a**)                      |                            | `tan(a)`             | `a.tan()`              |
+| *ln*(**a**)                       |                            | `ln(a)`              | `a.ln()`, `a.log()`    |
+| *log*<sub>b</sub>(**a**)          | `a.log(b)`                 | `log(a, b)`          |                        |
+| **a**<sup>b</sup>                 | `a.pow(b)`                 | `pow(a, b)`          |                        |
+| √**a**,  ∛**a**  ∜**a**           | `a.pow(1/n)`, `a.root(n)`  | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |
+| <sup>df</sup>&frasl;<sub>dx</sub> | `f.diff(x)`*               | `grad(f)[x]`*        | `d(f) / d(x)`*         |
+| ∇f                                |                            | `grad(f)`            | `f.grad()`             |
 
-|Math                               | Kotlin𝛁                                  | 
-|:---------------------------------:|:----------------------------------------:|
-| **a + b**                         | `a + b`, `a.plus(b)`, `plus(a, b)`       |
-| **a - b**                         | `a - b`, `a.minus(b)`, `minus(a, b)`     |
-| **a * b**                         | `a * b`, `a.times(b)`, `times(a, b)`     |
-| **a / b**                         | `a / b`, `a.div(b)`, `div(a, b)`         |
-| **-a**                            | `-a`, `a.unaryMinus()`                   |
-| *sin*(**a**)                      | `sin(a)`, `a.sin()`                      |
-| *cos*(**a**)                      | `cos(a)`, `a.cos()`                      |
-| *tan*(**a**)                      | `tan(a)`, `a.tan()`                      |
-| *ln*(**a**)                       | `ln(a)`, `a.ln()`                        |
-| *log*<sub>b</sub>(**a**)          | `log(a[, b])`                            | 
-| **a**<sup>b</sup>                 | `pow(a, b)`, `a.pow(b)`                  | 
-| √**a**,  ∛**a**  ∜**a**           | `sqrt(a)`, `cbrt(a)`, `a.pow(1/4)`       |
-| <sup>df</sup>&frasl;<sub>dx</sub> | `d(f) / d(x)`, `f.diff(x)`, `grad(f)[x]` |
-| ∇f                                | `f.grad()`, `grad(f)`                    |
+&dagger; Here, **a** and **b** are expressions.
+
+&Dagger; For infix notation, the `.` is optional and parentheses are optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
+
+&lowast; `x` *must* be a variable.
 
 ### Example
 
