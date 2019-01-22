@@ -72,7 +72,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     this is Zero || this is Const && value == Const(value - value).value -> this
     this is One || this is Const && value == Const(value / value).value -> multiplicand
     multiplicand is One || multiplicand is Const && multiplicand.value.let { it == Const(it / it).value } -> this
-    multiplicand is Zero || multiplicand is Const && multiplicand.value .let { it == Const(it - it).value } -> multiplicand
+    multiplicand is Zero || multiplicand is Const && multiplicand.value.let { it == Const(it - it).value } -> multiplicand
     this == multiplicand -> pow(two)
     this is Const && multiplicand is Const -> Const(value * multiplicand.value)
     this is Power && multiplicand is Power && base == multiplicand.base -> base.pow(exponent + multiplicand.exponent)
@@ -175,7 +175,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     override fun diff(ind: Var<X>) = when {
       exponent is One || exponent is Const && exponent == one -> base.diff(ind)
       exponent is Const && (exponent - one) == one -> exponent * base * base.diff(ind)
-      exponent is Const -> exponent * Power(base,  Const((exponent - one)())) * base.diff(ind)
+      exponent is Const -> exponent * Power(base, Const((exponent - one)())) * base.diff(ind)
       else -> this * (exponent * base.ln()).diff(ind)
     }
 
@@ -195,6 +195,33 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
           .replace("7", "⁷")
           .replace("8", "⁸")
           .replace("9", "⁹")
+      else if (exponent is Var && exponent.toString().matches(Regex("[a-pr-z]*")))
+        exponent.toString()
+          .replace("a", "ᵃ")
+          .replace("b", "ᵇ")
+          .replace("c", "ᶜ")
+          .replace("d", "ᵈ")
+          .replace("e", "ᵉ")
+          .replace("f", "ᶠ")
+          .replace("g", "ᵍ")
+          .replace("h", "ʰ")
+          .replace("i", "ⁱ")
+          .replace("j", "ʲ")
+          .replace("k", "ᵏ")
+          .replace("l", "ˡ")
+          .replace("m", "ᵐ")
+          .replace("n", "ⁿ")
+          .replace("o", "ᵒ")
+          .replace("p", "ᵖ")
+          .replace("r", "ʳ")
+          .replace("s", "ˢ")
+          .replace("t", "ᵗ")
+          .replace("u", "ᵘ")
+          .replace("v", "ᵛ")
+          .replace("w", "ʷ")
+          .replace("x", "ˣ")
+          .replace("y", "ʸ")
+          .replace("z", "ᶻ")
       else
         "^($exponent)"
   }
