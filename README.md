@@ -391,22 +391,25 @@ val z = x * y                      // z: MVariable<Double, `3`, `2`>
 
 ## Comparison
 
-|Framework                                                        | AD*                | FP†                | TS‡                |
-|:---------------------------------------------------------------:|:------------------:|:------------------:|:-------------------:
-| Kotlin𝛁                                                         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| [Deeplearning.scala](https://deeplearning.thoughtworks.school/) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| [DiffSharp](http://diffsharp.github.io/DiffSharp/)              | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| [Eclipse DL4J](https://deeplearning4j.org/)                     | :heavy_check_mark: | :x:                | :heavy_check_mark: |
-| [Myia](https://github.com/mila-udem/myia)                       | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
-| [AutoGrad](https://github.com/HIPS/autograd/)                   | :heavy_check_mark: | :heavy_check_mark: | :x: |
-| [Tangent](https://github.com/google/tangent)                    | :heavy_check_mark: | :x:                | :x: |
+|Framework                                                        | AD*                | FP†                | TS‡                | DP§                |
+|:---------------------------------------------------------------:|:------------------:|:------------------:|:------------------:|:------------------:|
+| Kotlin𝛁                                                         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :construction:     |
+| [Deeplearning.scala](https://deeplearning.thoughtworks.school/) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [DiffSharp](http://diffsharp.github.io/DiffSharp/)              | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [Myia](https://github.com/mila-udem/myia)                       | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [Nexus](http://tongfei.me/nexus/)                               | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:                |
+| [Eclipse DL4J](https://deeplearning4j.org/)                     | :heavy_check_mark: | :x:                | :heavy_check_mark: | :x:                |
+| [AutoGrad](https://github.com/HIPS/autograd/)                   | :heavy_check_mark: | :heavy_check_mark: | :x:                | :x:                |
+| [Tangent](https://github.com/google/tangent)                    | :heavy_check_mark: | :x:                | :x:                | :x:                |
 
-&lowast; Automatic differentiation,
+&lowast; Automatic differentiation
 
 &dagger; Functional programming
 
 &Dagger; Type safe
+
+&sect; Differentiable programming
 
 ## References
 
