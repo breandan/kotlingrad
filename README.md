@@ -27,6 +27,27 @@ Much of this can be accomplished without access to bytecode or special compiler 
 
 ## Usage
 
+### Notation
+
+The following mathematical operators are supported:
+
+|Math                       | Kotlin𝛁                                             |
+|:-------------------------:|:---------------------------------------------------:|
+| **a + b**                 | `a + b`, `a.plus(b)`, `plus(a, b)`                  |
+| **a - b**                 | `a - b`, `a.minus(b)`, `minus(a, b)`                |
+| **a * b**                 | `a * b`, `a.times(b)`, `times(a, b)`                |
+| **a / b**                 | `a / b`, `a.div(b)`, `div(a, b)`                    |
+| **-a**                    | `-a`, `a.unaryMinus()`                              |
+| *sin*(**a**)              | `sin(a)`, `a.sin()`                                 |
+| *cos*(**a**)              | `cos(a)`, `a.cos()`                                 |
+| *tan*(**a**)              | `tan(a)`, `a.tan()`                                 |
+| *ln*(**a**)               | `ln(a)`, `a.ln()`                                   |
+| *log*<sub>b</sub>(**a**)  | `log(a[, b])`                                       | 
+| **a**<sup>b</sup>         | `pow(a, b)`, `a.pow(b)`                             | 
+| √a̅  ∛a̅  ∜a̅                | `sqrt(a)`, `cbrt(a)`, `a.pow(1/4)`                  |
+
+### Example
+
 The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
 
 ```kotlin

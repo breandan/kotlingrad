@@ -180,7 +180,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     }
 
     fun superscript(exponent: Function<X>) =
-      if (exponent is Const)
+      if (exponent is Const || exponent is Var && exponent.toString().matches(Regex("[a-pr-z0-9]*")))
         if (exponent == one) ""
         else exponent.toString()
           .replace(".", "⋅")
@@ -195,8 +195,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
           .replace("7", "⁷")
           .replace("8", "⁸")
           .replace("9", "⁹")
-      else if (exponent is Var && exponent.toString().matches(Regex("[a-pr-z]*")))
-        exponent.toString()
           .replace("a", "ᵃ")
           .replace("b", "ᵇ")
           .replace("c", "ᶜ")
