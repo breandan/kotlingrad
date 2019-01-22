@@ -40,8 +40,8 @@ Much of this can be accomplished without access to bytecode or special compiler 
 | *cos*(**a**)                      |                           | `cos(a)`             | `a.cos()`              | a: ℝ → ℝ                                                 |
 | *tan*(**a**)                      |                           | `tan(a)`             | `a.tan()`              | a: ℝ → ℝ                                                 |
 | *ln*(**a**)                       |                           | `ln(a)`              | `a.ln()`, `a.log()`    | a: ℝ → ℝ                                                 |
-| *log*<sub>b</sub>(**a**)          | `a.log(b)`                | `log(a, b)`          |                        | a: ℝ → ℝ                                                 |
-| **a**<sup>b</sup>                 | `a.pow(b)`                | `pow(a, b)`          |                        | a: ℝ → ℝ                                                 |
+| *log*<sub>b</sub>(**a**)          | `a.log(b)`                | `log(a, b)`          |                        | a: ℝ, b: ℝ → ℝ                                                 |
+| **a**<sup>b</sup>                 | `a.pow(b)`                | `pow(a, b)`          |                        | a: ℝ, b: ℝ → ℝ                                                 |
 | √**a**,  ∛**a**  ∜**a**           | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` | a: ℝ → ℝ                                                 |
 | <sup>df</sup>&frasl;<sub>dx</sub> | `f.diff(x)`*              | `grad(f)[x]`*        | `d(f) / d(x)`*         | a: ℝ<sup>M</sup> → ℝ                                     |
 | ∇f                                |                           | `grad(f)`            | `f.grad()`             | a: ℝ<sup>M</sup> → ℝ<sup>M</sup>                         |
