@@ -29,22 +29,22 @@ Much of this can be accomplished without access to bytecode or special compiler 
 
 ### Notation
 
-|Math†                              | Infix                      | Prefix               | Postfix‡               |
-|:---------------------------------:|:--------------------------:|:--------------------:|:-----------------------:
-| **a + b**                         | `a + b`, `a.plus(b)`       | `plus(a, b)`         |                        |
-| **a - b**                         | `a - b`, `a.minus(b)`      | `minus(a, b)`        |                        |
-| **a * b**                         | `a * b`, `a.times(b)`      | `times(a, b)`        |                        |
-| **a / b**                         | `a / b`, `a.div(b)`        | `div(a, b)`          |                        |
-| **-a**                            | `neg(a)`                   | `-a`                 | `a.unaryMinus()`       |
-| *sin*(**a**)                      |                            | `sin(a)`             | `a.sin()`              |
-| *cos*(**a**)                      |                            | `cos(a)`             | `a.cos()`              |
-| *tan*(**a**)                      |                            | `tan(a)`             | `a.tan()`              |
-| *ln*(**a**)                       |                            | `ln(a)`              | `a.ln()`, `a.log()`    |
-| *log*<sub>b</sub>(**a**)          | `a.log(b)`                 | `log(a, b)`          |                        |
-| **a**<sup>b</sup>                 | `a.pow(b)`                 | `pow(a, b)`          |                        |
-| √**a**,  ∛**a**  ∜**a**           | `a.pow(1/n)`, `a.root(n)`  | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |
-| <sup>df</sup>&frasl;<sub>dx</sub> | `f.diff(x)`*               | `grad(f)[x]`*        | `d(f) / d(x)`*         |
-| ∇f                                |                            | `grad(f)`            | `f.grad()`             |
+|Math†                              | Infix                     | Prefix               | Postfix‡               | Type                                                  |
+|:---------------------------------:|:-------------------------:|:--------------------:|:----------------------:|:-----------------------------------------------------:|
+| **a + b**                         | `a + b`, `a.plus(b)`      | `plus(a, b)`         |                        | ℝ<sup>a×b</sup>, ℝ<sup>a×b</sup> → ℝ<sup>a×b</sup>    |
+| **a - b**                         | `a - b`, `a.minus(b)`     | `minus(a, b)`        |                        | ℝ<sup>a×b</sup>, ℝ<sup>a×b</sup> → ℝ<sup>a×b</sup>    |
+| **a * b**                         | `a * b`, `a.times(b)`     | `times(a, b)`        |                        | ℝ<sup>a×b</sup>, ℝ<sup>b×c</sup> → ℝ<sup>a×c</sup>    |
+| **a / b**                         | `a / b`, `a.div(b)`       | `div(a, b)`          |                        | ℝ<sup>a</sup>, ℝ<sup>a</sup> → ℝ<sup>a</sup>          |
+| **-a**                            | `neg(a)`                  | `-a`                 | `a.unaryMinus()`       | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
+| *sin*(**a**)                      |                           | `sin(a)`             | `a.sin()`              | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
+| *cos*(**a**)                      |                           | `cos(a)`             | `a.cos()`              | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         | 
+| *tan*(**a**)                      |                           | `tan(a)`             | `a.tan()`              | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
+| *ln*(**a**)                       |                           | `ln(a)`              | `a.ln()`, `a.log()`    | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
+| *log*<sub>b</sub>(**a**)          | `a.log(b)`                | `log(a, b)`          |                        | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
+| **a**<sup>b</sup>                 | `a.pow(b)`                | `pow(a, b)`          |                        | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
+| √**a**,  ∛**a**  ∜**a**           | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` | ℝ → ℝ                                                 |
+| <sup>df</sup>&frasl;<sub>dx</sub> | `f.diff(x)`*              | `grad(f)[x]`*        | `d(f) / d(x)`*         | ℝ<sup>a</sup> → ℝ                                     |
+| ∇f                                |                           | `grad(f)`            | `f.grad()`             | ℝ<sup>a</sup> → ℝ<sup>a</sup>                         |
 
 &dagger; Here, **a** and **b** are expressions.
 
