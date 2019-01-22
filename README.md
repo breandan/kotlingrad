@@ -31,20 +31,22 @@ Much of this can be accomplished without access to bytecode or special compiler 
 
 The following mathematical operators are supported:
 
-|Math                       | Kotlin𝛁                                             |
-|:-------------------------:|:---------------------------------------------------:|
-| **a + b**                 | `a + b`, `a.plus(b)`, `plus(a, b)`                  |
-| **a - b**                 | `a - b`, `a.minus(b)`, `minus(a, b)`                |
-| **a * b**                 | `a * b`, `a.times(b)`, `times(a, b)`                |
-| **a / b**                 | `a / b`, `a.div(b)`, `div(a, b)`                    |
-| **-a**                    | `-a`, `a.unaryMinus()`                              |
-| *sin*(**a**)              | `sin(a)`, `a.sin()`                                 |
-| *cos*(**a**)              | `cos(a)`, `a.cos()`                                 |
-| *tan*(**a**)              | `tan(a)`, `a.tan()`                                 |
-| *ln*(**a**)               | `ln(a)`, `a.ln()`                                   |
-| *log*<sub>b</sub>(**a**)  | `log(a[, b])`                                       | 
-| **a**<sup>b</sup>         | `pow(a, b)`, `a.pow(b)`                             | 
-| √a̅  ∛a̅  ∜a̅                | `sqrt(a)`, `cbrt(a)`, `a.pow(1/4)`                  |
+|Math                               | Kotlin𝛁                                  | 
+|:---------------------------------:|:----------------------------------------:|
+| **a + b**                         | `a + b`, `a.plus(b)`, `plus(a, b)`       |
+| **a - b**                         | `a - b`, `a.minus(b)`, `minus(a, b)`     |
+| **a * b**                         | `a * b`, `a.times(b)`, `times(a, b)`     |
+| **a / b**                         | `a / b`, `a.div(b)`, `div(a, b)`         |
+| **-a**                            | `-a`, `a.unaryMinus()`                   |
+| *sin*(**a**)                      | `sin(a)`, `a.sin()`                      |
+| *cos*(**a**)                      | `cos(a)`, `a.cos()`                      |
+| *tan*(**a**)                      | `tan(a)`, `a.tan()`                      |
+| *ln*(**a**)                       | `ln(a)`, `a.ln()`                        |
+| *log*<sub>b</sub>(**a**)          | `log(a[, b])`                            | 
+| **a**<sup>b</sup>                 | `pow(a, b)`, `a.pow(b)`                  | 
+| √**a**,  ∛**a**  ∜**a**           | `sqrt(a)`, `cbrt(a)`, `a.pow(1/4)`       |
+| <sup>df</sup>&frasl;<sub>dx</sub> | `d(f) / d(x)`, `f.diff(x)`, `grad(f)[x]` |
+| ∇f                                | `f.grad()`, `grad(f)`                    |
 
 ### Example
 
