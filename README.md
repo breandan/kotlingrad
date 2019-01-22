@@ -385,6 +385,25 @@ val y = vvariable(0.0, 0.0)        // x: MVariable<Double, `1`, `2`>
 val z = x * y                      // z: MVariable<Double, `3`, `2`>
 ```
 
+## Comparison
+
+|Framework                                                        | AD*                | FP†                | TS‡                |
+|:---------------------------------------------------------------:|:------------------:|:------------------:|:-------------------:
+| Kotlin𝛁                                                         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [Deeplearning.scala](https://deeplearning.thoughtworks.school/) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [DiffSharp](http://diffsharp.github.io/DiffSharp/)              | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [Eclipse DL4J](https://deeplearning4j.org/)                     | :heavy_check_mark: | :x:                | :heavy_check_mark: |
+| [Myia](https://github.com/mila-udem/myia)                       | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+| [AutoGrad](https://github.com/HIPS/autograd/)                   | :heavy_check_mark: | :heavy_check_mark: | :x: |
+| [Tangent](https://github.com/google/tangent)                    | :heavy_check_mark: | :x:                | :x: |
+
+&lowast; Automatic differentiation,
+
+&dagger; Functional programming
+
+&Dagger; Type safe
+
 ## References
 
 To the author's knowledge, Kotlin𝛁 is the first AD implementation in native Kotlin. While the particular synthesis and integration of these ideas is unique, it has been influenced by a huge amount of prior work in AD literature. Below is a list of projects and publications that helped inspire this work.
