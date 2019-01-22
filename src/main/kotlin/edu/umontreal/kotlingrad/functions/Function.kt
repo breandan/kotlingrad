@@ -14,7 +14,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>>):
     is Exp -> prototype.exp(exponent(map))
     is Log -> prototype.log(logarithmand(map))
     is Negative -> -arg(map)
-    is Power -> base.invoke(map).pow(exponent(map))
+    is Power -> base.invoke(map) pow exponent(map)
     is SquareRoot -> prototype.sqrt(radicand(map))
     is Sine -> prototype.sin(angle(map))
     is Cosine -> prototype.cos(angle(map))

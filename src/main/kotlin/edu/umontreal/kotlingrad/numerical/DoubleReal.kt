@@ -15,16 +15,16 @@ class DoubleReal(number: Number = 0): RealNumber<DoubleReal, Double>(when (numbe
   override fun unaryMinus() = DoubleReal(-value)
 
   override fun plus(addend: DoubleReal) = DoubleReal(value + addend.value)
-  operator fun plus(addend: Number) = DoubleReal(value + addend.toDouble())
+  infix operator fun plus(addend: Number) = DoubleReal(value + addend.toDouble())
 
   override fun minus(subtrahend: DoubleReal) = DoubleReal(value - subtrahend.value)
-  operator fun minus(subtrahend: Number) = DoubleReal(value - subtrahend.toDouble())
+  infix operator fun minus(subtrahend: Number) = DoubleReal(value - subtrahend.toDouble())
 
   override fun times(multiplicand: DoubleReal) = DoubleReal(value * multiplicand.value)
-  operator fun times(multiplicand: Number) = DoubleReal(value * multiplicand.toDouble())
+  infix operator fun times(multiplicand: Number) = DoubleReal(value * multiplicand.toDouble())
 
   override fun div(divisor: DoubleReal) = DoubleReal(value / divisor.value)
-  operator fun div(divisor: Number) = DoubleReal(value / divisor.toDouble())
+  infix operator fun div(divisor: Number) = DoubleReal(value / divisor.toDouble())
 
   override fun pow(exp: DoubleReal) = DoubleReal(pow(value, exp.value))
   fun pow(exponent: Number) = DoubleReal(pow(value, exponent.toDouble()))

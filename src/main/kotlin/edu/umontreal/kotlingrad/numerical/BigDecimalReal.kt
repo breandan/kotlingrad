@@ -20,16 +20,16 @@ class BigDecimalReal(number: Number = ZERO):
   override fun unaryMinus() = BigDecimalReal(-value)
 
   override fun plus(addend: BigDecimalReal) = BigDecimalReal(value + addend.value)
-  operator fun plus(addend: Number) = BigDecimalReal(value + BigDecimal(addend.toDouble()))
+  infix operator fun plus(addend: Number) = BigDecimalReal(value + BigDecimal(addend.toDouble()))
 
   override fun minus(subtrahend: BigDecimalReal) = BigDecimalReal(value - subtrahend.value)
-  operator fun minus(subtrahend: Number) = BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
+  infix operator fun minus(subtrahend: Number) = BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
 
   override fun times(multiplicand: BigDecimalReal) = BigDecimalReal(value * multiplicand.value)
-  operator fun times(multiplicand: Number) = BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
+  infix operator fun times(multiplicand: Number) = BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
 
   override fun div(divisor: BigDecimalReal) = BigDecimalReal(value / divisor.value)
-  operator fun div(divisor: Number) = BigDecimalReal(value / BigDecimal(divisor.toDouble()))
+  infix operator fun div(divisor: Number) = BigDecimalReal(value / BigDecimal(divisor.toDouble()))
 
   //TODO: Fix this
   override fun pow(exp: BigDecimalReal) = BigDecimalReal(pow(value, exp.value, ProtoBigDecimal.mc))

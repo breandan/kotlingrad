@@ -24,7 +24,7 @@ open class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>
 
   override fun times(multiplicand: Vector<X>) = Vector(zip(multiplicand).map { it.first * it.second })
 
-  operator fun times(multiplicand: X) = Vector(map { it * multiplicand })
+  infix operator fun times(multiplicand: X) = Vector(map { it * multiplicand })
 
-  operator fun div(divisor: X) = Vector(map { it / divisor })
+  infix operator fun div(divisor: X) = Vector(map { it / divisor })
 }
