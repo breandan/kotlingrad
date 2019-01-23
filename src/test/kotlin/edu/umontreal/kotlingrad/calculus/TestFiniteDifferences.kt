@@ -9,7 +9,7 @@ import kotlin.math.sin
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestFiniteDifferences: StringSpec({
-  val dx = 1E-8
+  val dx = 1E-20
 
   with(DoublePrecision) {
     val x = variable("x")
@@ -35,9 +35,9 @@ class TestFiniteDifferences: StringSpec({
         val f = sin(pow(x, 2))
         val `df∕dx` = d(f) / d(x)
 
-        val xdx = ẋ + dx
+        val eps = ẋ + dx
 
-        `df∕dx`(ẋ) shouldBeAbout (sin(xdx * xdx) - sin(ẋ * ẋ)) / dx
+        `df∕dx`(ẋ) shouldBeAbout (sin(eps * eps) - sin(ẋ * ẋ)) / dx
       }
     }
   }

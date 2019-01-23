@@ -29,7 +29,7 @@ abstract class RealFunctor<X: RealNumber<X, Y>, Y>(val rfc: FieldPrototype<X>): 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
 
   class Differential<X: Field<X>>(val function: Function<X>) {
-    infix operator fun div(arg: IndVar<X>) = function.diff(arg.variable).also { println(it) }
+    infix operator fun div(arg: IndVar<X>) = function.diff(arg.variable)
   }
 
   fun <X: Field<X>> d(function: Function<X>) = Differential(function)
