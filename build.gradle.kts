@@ -1,13 +1,13 @@
 plugins {
   application
-  kotlin("jvm") version "1.3.11"
+  kotlin("jvm") version "1.3.20"
 }
 
 group = "edu.umontreal"
 version = "0.1"
 repositories.jcenter()
 
-val kotlinVersion = "1.3.11"
+val kotlinVersion = "1.3.20"
 
 tasks {
   register("plot", JavaExec::class) {

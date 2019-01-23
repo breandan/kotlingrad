@@ -29,11 +29,11 @@ abstract class RealFunctor<X: RealNumber<X, Y>, Y>(val rfc: FieldPrototype<X>): 
   class IndVar<X: Field<X>> constructor(val variable: Var<X>)
 
   class Differential<X: Field<X>>(val function: Function<X>) {
-    infix operator fun div(arg: IndVar<X>) = function.diff(arg.variable)
+    // TODO: make sure this notation works for arbitrary nested functions using the Chain rule
+    infix operator fun div(arg: Differential<X>) = function.diff(arg.function.variables.first())
   }
 
   fun <X: Field<X>> d(function: Function<X>) = Differential(function)
-  fun <X: Field<X>> d(arg: Var<X>) = IndVar(arg)
 
   infix operator fun Function<X>.plus(number: Number) = this + rfc(number)
   infix operator fun Number.plus(fn: Function<X>) = fn + rfc(this)
@@ -63,4 +63,6 @@ abstract class RealFunctor<X: RealNumber<X, Y>, Y>(val rfc: FieldPrototype<X>): 
 
   operator fun Function<X>.invoke(vararg number: Number) =
     this(variables.zip(number).toMap())
+
+  operator fun Number.invoke(d: Double) = this
 }
