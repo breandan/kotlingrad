@@ -34,7 +34,7 @@ Much of this can be accomplished without access to bytecode or special compiler 
 | **a + b**                         | `a + b`, `a.plus(b)`      | `plus(a, b)`         |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
 | **a - b**                         | `a - b`, `a.minus(b)`     | `minus(a, b)`        |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
 | **a * b**                         | `a * b`, `a.times(b)`     | `times(a, b)`        |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup> → ℝ<sup>M×P</sup> |
-| **a / b**                         | `a / b`, `a.div(b)`       | `div(a, b)`          |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup> → ℝ<sup>M×P</sup> |
+| **a / b**                         | `a / b`, `a.div(b)`       | `div(a, b)`          |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×N</sup> → ℝ<sup>M×N</sup> |
 | **-a**                            | `neg(a)`                  | `-a`                 | `a.unaryMinus()`       | a: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>                     |
 | *sin*(**a**)                      |                           | `sin(a)`             | `a.sin()`              | a: ℝ → ℝ                                                 |
 | *cos*(**a**)                      |                           | `cos(a)`             | `a.cos()`              | a: ℝ → ℝ                                                 |
