@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.numerical.BigDecimalPrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
@@ -8,7 +7,7 @@ import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestLogarithmicDerivatives: StringSpec({
-  with(BigDecimalPrecision) {
+  with(DoublePrecision) {
     val n = variable("n")
 
     "dnⁿ / dn should be nⁿ * (ln(n) + 1)" {
@@ -18,10 +17,6 @@ class TestLogarithmicDerivatives: StringSpec({
         `df∕dn`(n to nVal) shouldBeAbout manualDerivative(nVal)
       }
     }
-  }
-
-  with(DoublePrecision) {
-    val n = variable("n")
 
     "dn³ / dn should be 3n²" {
       assertAll(NumericalGenerator(0)) { nVal: Double ->
