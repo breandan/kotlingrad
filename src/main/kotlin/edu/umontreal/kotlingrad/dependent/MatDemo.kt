@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.dependent
 
-fun main(args: Array<String>) {
+// M multiplication MxN for M∈[1, 3] N∈[1, 3]
+fun main() {
   // Inferred type: Mat<Double, `1`, `3`>
   val a = Mat(`1`, `3`, 1.0, 2.0, 3.0)
   // Inferred type: Mat<Double, `3`, `1`>
@@ -16,7 +17,7 @@ fun main(args: Array<String>) {
 //  val b_ = Mat(`3`, `1`, 1.0, 2.0)
 
 // Does not compile, incompatible shape
-//  val b_ = Mat(`2`, `1`, 1.0, 2.0, 3.0)
+//  val b_ = Mat(`2`, `1`, 1.0)
 
   // Inferred type: Mat<Double, `2`, `3`>
   val d = Mat(`2`, `3`,
