@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.functions.types.dependent
+package edu.umontreal.kotlingrad.dependent
 
 fun main(args: Array<String>) {
   // Inferred type: Mat<Double, `1`, `3`>

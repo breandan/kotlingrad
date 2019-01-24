@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.functions.types.dependent
+package edu.umontreal.kotlingrad.dependent
 
 open class Mat<T, MaxRows: `4`, MaxCols: `4`> internal constructor(val contents: List<Vec<T, MaxCols>> = arrayListOf()) {
   companion object {
