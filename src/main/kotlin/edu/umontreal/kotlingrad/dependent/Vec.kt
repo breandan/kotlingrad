@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.functions.types.dependent
+package edu.umontreal.kotlingrad.dependent
 
 // Supports vectors of up to length 6
 open class Vec<T, MaxLength: `4`> internal constructor(val contents: List<T> = arrayListOf()) {

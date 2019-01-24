@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.functions.types.dependent
+package edu.umontreal.kotlingrad.dependent
 
 abstract class `0`: `1`() {
   companion object: `0`()
