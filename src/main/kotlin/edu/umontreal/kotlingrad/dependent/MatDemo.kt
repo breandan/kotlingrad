@@ -35,12 +35,35 @@ fun main(args: Array<String>) {
   val f = d * e
 
 // Does not compile, inner dimension mismatch
-//  val g = e * b
-//  val h = f * b
+//  e * b
+//  f * b
 
 // Does not compile, incompatible size
 //  val d_: Mat<Double, `2`, `3`> = Mat(`2`, `3`,
 //    1.0, 2.0, 3.0,
 //    4.0, 5.0
 //  )
+
+  // Inferred type: Mat<Double, `3`, `3`>
+  val g = Mat(`3`, `3`,
+    1.0, 2.0, 3.0,
+    4.0, 5.0, 6.0,
+    7.0, 8.0, 9.0
+  )
+
+  // Inferred type: Mat<Double, `3`, `3`>
+  val h = Mat(`3`, `3`,
+    1.0, 2.0, 3.0,
+    4.0, 5.0, 6.0,
+    7.0, 8.0, 9.0
+  )
+
+  // Inferred type: Mat<Double, `3`, `3`>
+  val i = g * h
+  val j = i * i
+  val k = i * b
+
+// Does not compile, inner dimension mismatch
+//  i * f
+//  i * b
 }
