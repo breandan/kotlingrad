@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.dependent
 
-fun main(args: kotlin.Array<String>) {
+fun main() {
   val vectorOfNone = Vec<Int, `0`>().also { println("$it\n") }
 //  val firstValueOfNone = vectorOfNone[`0`] // Does not compile
 
@@ -19,7 +19,9 @@ fun main(args: kotlin.Array<String>) {
   val thirdValueOfThree = vectorOfThree[`2`].also { println("3nd value: $it\n") }
 //  val fourthValueOfThree = vectorOfThree[`3`] // Does not compile
 
-  val additionResult = (Vec(1.0, 2.0, 3.0) + Vec(3.0, 2.0, 1.0)).also { println("Addition result: $it\n") }
+  // Inferred type: Vec<Double, `3`>
+  val add0Result = (Vec(1.0, 2.0, 3.0) + Vec(3.0, 2.0, 1.0)).also { println("Addition result: $it\n") }
+//  val add1Result = (Vec(1.0, 2.0, 3.0, 4.0) + Vec(3.0, 2.0, 1.0)) // Does not compile
 
   val vectorOfFour = (vectorOfTwo cat vectorOfTwo).also { println(it) }
   val fourthValueOfFour = vectorOfFour[`3`].also { println("4th value: $it\n") }
