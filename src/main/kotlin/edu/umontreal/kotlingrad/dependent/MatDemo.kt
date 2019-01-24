@@ -65,5 +65,5 @@ fun main(args: Array<String>) {
 
 // Does not compile, inner dimension mismatch
 //  i * f
-//  i * b
+//  i * d
 }
