@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
 //  val b_ = Mat(`2`, `1`, 1.0, 2.0, 3.0)
 
   // Inferred type: Mat<Double, `2`, `3`>
-  val d: Mat<Double, `2`, `3`> = Mat(`2`, `3`,
+  val d = Mat(`2`, `3`,
     1.0, 2.0, 3.0,
     4.0, 5.0, 6.0
   )
