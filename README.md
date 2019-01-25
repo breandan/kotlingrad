@@ -52,6 +52,48 @@ Much of this can be accomplished without access to bytecode or special compiler 
 
 &lowast; `x` *must* be a variable.
 
+
+### Shape Safety
+
+Shape safety is an important concept in Kotlin𝛁. There are three broad strategies for handling shape errors:
+
+* Hide the error somehow by implicitly reshaping or [broadcasting](https://docs.scipy.org/doc/numpy-1.10.4/user/basics.broadcasting.html) arrays
+* Announce the error at runtime, with a relevant message, e.g. "[InvalidArgumentError](https://www.tensorflow.org/api_docs/python/tf/errors/InvalidArgumentError)"
+* Do not allow programs which can result in a shape error to compile
+
+In Kotlin𝛁, we use the last strategy to check the shape of tensor operations. Consider the following program:
+
+```kotlin
+// Inferred type: Vec<Int, `2`>
+val a = Vec(1.0, 2.0)
+// Inferred type: Vec<Int, `3`>
+val b = Vec(1.0, 2.0, 3.0)
+// Inferred type: Vec<Int, `3`>
+val c = b + b
+
+// Does not compile, shape mismatch
+// a + b
+```
+
+Attempting to sum two vectors whose shapes do not match will not compile, and they must be explicitly resized.
+
+```kotlin
+// Inferred type: Mat<Double, `1`, `4`>
+val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
+// Inferred type: Mat<Double, `3`, `1`>
+val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0)
+// Inferred type: Mat<Double, `1`, `1`>
+val c = a * b
+
+// Does not compile, inner dimension mismatch
+// a * a
+// b * b
+```
+
+Similarly, attempting to multiply two tensors whose inner dimensions do not match will not compile.
+
+In the project's current state, shape-safety is guaranteed up to rank-2 tensors, i.e. matrices.
+
 ### Example
 
 The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
