@@ -68,21 +68,21 @@ In Kotlin𝛁, we use the last strategy to check the shape of tensor operations.
 val a = Vec(1.0, 2.0)
 // Inferred type: Vec<Int, `3`>
 val b = Vec(1.0, 2.0, 3.0)
-// Inferred type: Vec<Int, `3`>
+
 val c = b + b
 
 // Does not compile, shape mismatch
 // a + b
 ```
 
-Attempting to sum two vectors whose shapes do not match will not compile, and they must be explicitly resized.
+Attempting to sum two vectors whose shapes do not match will fail to compile, and they must be explicitly resized.
 
 ```kotlin
 // Inferred type: Mat<Double, `1`, `4`>
 val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
-// Inferred type: Mat<Double, `3`, `1`>
+// Inferred type: Mat<Double, `4`, `1`>
 val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0)
-// Inferred type: Mat<Double, `1`, `1`>
+
 val c = a * b
 
 // Does not compile, inner dimension mismatch
@@ -90,9 +90,42 @@ val c = a * b
 // b * b
 ```
 
-Similarly, attempting to multiply two tensors whose inner dimensions do not match will not compile.
+Similarly, attempting to multiply two tensors whose inner dimensions do not match will fail to compile.
 
-In the project's current state, shape-safety is guaranteed up to rank-2 tensors, i.e. matrices.
+```kotlin
+val a = Mat(`2`, `4`, 
+  1.0, 2.0, 3.0, 4.0,
+  5.0, 6.0, 7.0, 8.0,
+)
+
+val b = Mat(`4`, `2`, 
+  1.0, 2.0,
+  3.0, 4.0,
+  5.0, 6.0,
+  7.0, 8.0,
+)
+
+// Types are optional, but encouraged
+val c: Mat<Double, `2`, `2`> = a * b 
+
+val d = Mat(`2`, `1`, 1.0, 2.0)
+
+val e = c * d
+
+val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
+
+// Does not compile, inner dimension mismatch
+// e * f
+```
+
+Explict types are optional but encouraged. Type inference lets us preserve shape information over long programs.
+
+```kotlin
+fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
+fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
+```
+
+When writing a function, it is required to declare the input types, but the return type is optional. Shape-safety is supported up to rank-2 tensors, i.e. matrices.
 
 ### Example
 
