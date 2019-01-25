@@ -44,5 +44,5 @@ open class Mat<T, MaxRows: `4`, MaxCols: `4`> internal constructor(val contents:
 
 infix operator fun <R: `4`, C: `4`, M: Mat<Double, R, C>> M.plus(v: M): Mat<Double, R, C> = add(v)
 
-// TODO: implement matrix multiplication
+// TODO: implement matrix multiplication semantics
 operator fun <M: `4`, N: `4`, P: `4`> Mat<Double, M, N>.times(m: Mat<Double, N, P>): Mat<Double, M, P> = Mat()
