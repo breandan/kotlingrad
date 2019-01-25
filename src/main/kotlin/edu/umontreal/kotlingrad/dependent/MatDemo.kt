@@ -14,7 +14,8 @@ fun main() {
 //  b * b
 
 // Does not compile, incompatible shape
-  val b_ = Mat.invoke(`3`, `1`, 1.0, 2.0, 3.0, 4.0)
+//  val b_ = Mat.invoke(`3`, `1`, 1.0, 2.0)
+//  val b_ = Mat.invoke(`3`, `1`, 1.0, 2.0, 3.0, 4.0)
 
 // Does not compile, incompatible shape
 //  val b_ = Mat(`2`, `1`, 1.0)
