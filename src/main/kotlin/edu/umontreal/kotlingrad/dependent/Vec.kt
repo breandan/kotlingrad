@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.dependent
 
 // Supports vectors of up to length 6
-open class Vec<T, MaxLength: `4`> internal constructor(val contents: List<T> = arrayListOf()) {
+open class Vec<S, MaxLength: `4`> internal constructor(val contents: List<S> = arrayListOf()) {
   companion object {
     operator fun <T> invoke(): Vec<T, `0`> = Vec(arrayListOf())
     operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(arrayListOf(t))
@@ -10,7 +10,12 @@ open class Vec<T, MaxLength: `4`> internal constructor(val contents: List<T> = a
     operator fun <T> invoke(t0: T, t1: T, t2: T, t3: T): Vec<T, `4`> = Vec(arrayListOf(t0, t1, t2, t3))
   }
 
-  infix fun <T: MaxLength, V: Vec<Number, T>> V.add(v: V) = Vec<Number, T>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("addLong") infix fun <S: MaxLength, V: Vec<Long, S>> V.add(v: V) = Vec<Long, S>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("addInt") infix fun <S: MaxLength, V: Vec<Int, S>> V.add(v: V) = Vec<Int, S>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("addShort") infix fun <S: MaxLength, V: Vec<Short, S>> V.add(v: V) = Vec<Short, S>(contents.zip(v.contents).map { (it.first + it.second).toShort() })
+  @JvmName("addByte") infix fun <S: MaxLength, V: Vec<Byte, S>> V.add(v: V) = Vec<Byte, S>(contents.zip(v.contents).map { (it.first + it.second).toByte() })
+  @JvmName("addDouble") infix fun <S: MaxLength, V: Vec<Double, S>> V.add(v: V) = Vec<Double, S>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("addFloat") infix fun <S: MaxLength, V: Vec<Float, S>> V.add(v: V) = Vec<Float, S>(contents.zip(v.contents).map { it.first + it.second })
 
   override fun toString() = "$contents"
 }
@@ -38,55 +43,14 @@ infix operator fun <T> Vec<T, `4`>.get(index: `3`): T =
     else -> contents[3]
   }
 
-operator fun Number.plus(other: Number): Number {
-  return when (this) {
-    is Long -> toLong() + other.toLong()
-    is Int -> toInt() + other.toInt()
-    is Short -> toShort() + other.toShort()
-    is Byte -> toByte() + other.toByte()
-    is Double -> toDouble() + other.toDouble()
-    is Float -> toFloat() + other.toFloat()
-    else -> throw RuntimeException("Unknown numeric type")
-  }
-}
+@JvmName("plusLong") infix operator fun <C: `4`, V: Vec<Long, C>> V.plus(v: V): Vec<Long, C> = add(v)
+@JvmName("plusInt") infix operator fun <C: `4`, V: Vec<Int, C>> V.plus(v: V): Vec<Int, C> = add(v)
+@JvmName("plusShort") infix operator fun <C: `4`, V: Vec<Short, C>> V.plus(v: V): Vec<Short, C> = add(v)
+@JvmName("plusByte") infix operator fun <C: `4`, V: Vec<Byte, C>> V.plus(v: V): Vec<Byte, C> = add(v)
+@JvmName("plusDouble") infix operator fun <C: `4`, V: Vec<Double, C>> V.plus(v: V): Vec<Double, C> = add(v)
+@JvmName("plusFloat") infix operator fun <C: `4`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = add(v)
 
-operator fun Number.minus(other: Number): Number {
-  return when (this) {
-    is Long -> toLong() - other.toLong()
-    is Int -> toInt() - other.toInt()
-    is Short -> toShort() - other.toShort()
-    is Byte -> toByte() - other.toByte()
-    is Double -> toDouble() - other.toDouble()
-    is Float -> toFloat() - other.toFloat()
-    else -> throw RuntimeException("Unknown numeric type")
-  }
-}
-
-operator fun Number.times(other: Number): Number {
-  return when (this) {
-    is Long -> toLong() * other.toLong()
-    is Int -> toInt() * other.toInt()
-    is Short -> toShort() * other.toShort()
-    is Byte -> toByte() * other.toByte()
-    is Double -> toDouble() * other.toDouble()
-    is Float -> toFloat() * other.toFloat()
-    else -> throw RuntimeException("Unknown numeric type")
-  }
-}
-
-operator fun Number.div(other: Number): Number {
-  return when (this) {
-    is Long -> toLong() / other.toLong()
-    is Int -> toInt() / other.toInt()
-    is Short -> toShort() / other.toShort()
-    is Byte -> toByte() / other.toByte()
-    is Double -> toDouble() / other.toDouble()
-    is Float -> toFloat() / other.toFloat()
-    else -> throw RuntimeException("Unknown numeric type")
-  }
-}
-
-infix operator fun <C: `4`, V: Vec<Number, C>> V.plus(v: V): Vec<Number, C> = add(v)
+//infix operator fun <T: Number, C: `4`, V: Vec<Number, C>> V.plus(v: V): Vec<Number, C> = add(v)
 
 @JvmName("v0cT") infix fun <T> Vec<T, `0`>.cat(t: T): Vec<T, `1`> = Vec(contents + t)
 

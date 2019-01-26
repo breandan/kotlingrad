@@ -37,12 +37,22 @@ open class Mat<T, MaxRows: `4`, MaxCols: `4`> internal constructor(val contents:
     @JvmName("mf4x4") operator fun <T> invoke(m: Nat<`4`>, n: Nat<`4`>, d0: T, d1: T, d2: T, d3: T, d4: T, d5: T, d6: T, d7: T, d8: T, d9: T, d10: T, d11: T, d12: T, d13: T, d14: T, d15: T) = Mat(Vec(d0, d1, d2, d3), Vec(d4, d5, d6, d7), Vec(d8, d9, d10, d11), Vec(d12, d13, d14, d15))
   }
 
-  infix fun <R: MaxRows, C: MaxCols, M: Mat<Number, R, C>> M.add(v: M) = Mat<Number, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("matAddLong") infix fun <R: MaxRows, C: MaxCols, M: Mat<Long, R, C>> M.add(v: M) = Mat<Long, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("matAddInt") infix fun <R: MaxRows, C: MaxCols, M: Mat<Int, R, C>> M.add(v: M) = Mat<Int, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("matAddShort") infix fun <R: MaxRows, C: MaxCols, M: Mat<Short, R, C>> M.add(v: M) = Mat<Short, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("matAddByte") infix fun <R: MaxRows, C: MaxCols, M: Mat<Byte, R, C>> M.add(v: M) = Mat<Byte, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("matAddDouble") infix fun <R: MaxRows, C: MaxCols, M: Mat<Double, R, C>> M.add(v: M) = Mat<Double, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("matAddFloat") infix fun <R: MaxRows, C: MaxCols, M: Mat<Float, R, C>> M.add(v: M) = Mat<Float, R, C>(contents.zip(v.contents).map { it.first + it.second })
 
   override fun toString() = "$contents"
 }
 
-infix operator fun <R: `4`, C: `4`, M: Mat<Number, R, C>> M.plus(v: M): Mat<Number, R, C> = add(v)
+@JvmName("matPlusLong") infix operator fun <R: `4`, C: `4`, M: Mat<Long, R, C>> M.plus(v: M): Mat<Long, R, C> = add(v)
+@JvmName("matPlusInt") infix operator fun <R: `4`, C: `4`, M: Mat<Int, R, C>> M.plus(v: M): Mat<Int, R, C> = add(v)
+@JvmName("matPlusShort") infix operator fun <R: `4`, C: `4`, M: Mat<Short, R, C>> M.plus(v: M): Mat<Short, R, C> = add(v)
+@JvmName("matPlusByte") infix operator fun <R: `4`, C: `4`, M: Mat<Byte, R, C>> M.plus(v: M): Mat<Byte, R, C> = add(v)
+@JvmName("matPlusDouble") infix operator fun <R: `4`, C: `4`, M: Mat<Double, R, C>> M.plus(v: M): Mat<Double, R, C> = add(v)
+@JvmName("matPlusFloat") infix operator fun <R: `4`, C: `4`, M: Mat<Float, R, C>> M.plus(v: M): Mat<Float, R, C> = add(v)
 
 // TODO: implement matrix multiplication semantics
-operator fun <M: `4`, N: `4`, P: `4`> Mat<Number, M, N>.times(m: Mat<Number, N, P>): Mat<Number, M, P> = Mat()
+operator fun <T: Number, M: `4`, N: `4`, P: `4`> Mat<T, M, N>.times(m: Mat<T, N, P>): Mat<T, M, P> = Mat()
