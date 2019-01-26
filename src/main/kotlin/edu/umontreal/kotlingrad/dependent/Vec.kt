@@ -10,7 +10,7 @@ open class Vec<T, MaxLength: `4`> internal constructor(val contents: List<T> = a
     operator fun <T> invoke(t0: T, t1: T, t2: T, t3: T): Vec<T, `4`> = Vec(arrayListOf(t0, t1, t2, t3))
   }
 
-  infix fun <T: MaxLength, V: Vec<Double, T>> V.add(v: V) = Vec<Double, T>(contents.zip(v.contents).map { it.first + it.second })
+  infix fun <T: MaxLength, V: Vec<Number, T>> V.add(v: V) = Vec<Number, T>(contents.zip(v.contents).map { it.first + it.second })
 
   override fun toString() = "$contents"
 }
@@ -38,7 +38,55 @@ infix operator fun <T> Vec<T, `4`>.get(index: `3`): T =
     else -> contents[3]
   }
 
-infix operator fun <C: `4`, V: Vec<Double, C>> V.plus(v: V): Vec<Double, C> = add(v)
+operator fun Number.plus(other: Number): Number {
+  return when (this) {
+    is Long -> toLong() + other.toLong()
+    is Int -> toInt() + other.toInt()
+    is Short -> toShort() + other.toShort()
+    is Byte -> toByte() + other.toByte()
+    is Double -> toDouble() + other.toDouble()
+    is Float -> toFloat() + other.toFloat()
+    else -> throw RuntimeException("Unknown numeric type")
+  }
+}
+
+operator fun Number.minus(other: Number): Number {
+  return when (this) {
+    is Long -> toLong() - other.toLong()
+    is Int -> toInt() - other.toInt()
+    is Short -> toShort() - other.toShort()
+    is Byte -> toByte() - other.toByte()
+    is Double -> toDouble() - other.toDouble()
+    is Float -> toFloat() - other.toFloat()
+    else -> throw RuntimeException("Unknown numeric type")
+  }
+}
+
+operator fun Number.times(other: Number): Number {
+  return when (this) {
+    is Long -> toLong() * other.toLong()
+    is Int -> toInt() * other.toInt()
+    is Short -> toShort() * other.toShort()
+    is Byte -> toByte() * other.toByte()
+    is Double -> toDouble() * other.toDouble()
+    is Float -> toFloat() * other.toFloat()
+    else -> throw RuntimeException("Unknown numeric type")
+  }
+}
+
+operator fun Number.div(other: Number): Number {
+  return when (this) {
+    is Long -> toLong() / other.toLong()
+    is Int -> toInt() / other.toInt()
+    is Short -> toShort() / other.toShort()
+    is Byte -> toByte() / other.toByte()
+    is Double -> toDouble() / other.toDouble()
+    is Float -> toFloat() / other.toFloat()
+    else -> throw RuntimeException("Unknown numeric type")
+  }
+}
+
+infix operator fun <C: `4`, V: Vec<Number, C>> V.plus(v: V): Vec<Number, C> = add(v)
 
 @JvmName("v0cT") infix fun <T> Vec<T, `0`>.cat(t: T): Vec<T, `1`> = Vec(contents + t)
 

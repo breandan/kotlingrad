@@ -37,12 +37,12 @@ open class Mat<T, MaxRows: `4`, MaxCols: `4`> internal constructor(val contents:
     @JvmName("mf4x4") operator fun <T> invoke(m: Nat<`4`>, n: Nat<`4`>, d0: T, d1: T, d2: T, d3: T, d4: T, d5: T, d6: T, d7: T, d8: T, d9: T, d10: T, d11: T, d12: T, d13: T, d14: T, d15: T) = Mat(Vec(d0, d1, d2, d3), Vec(d4, d5, d6, d7), Vec(d8, d9, d10, d11), Vec(d12, d13, d14, d15))
   }
 
-  infix fun <R: MaxRows, C: MaxCols, M: Mat<Double, R, C>> M.add(v: M) = Mat<Double, R, C>(contents.zip(v.contents).map { it.first + it.second })
+  infix fun <R: MaxRows, C: MaxCols, M: Mat<Number, R, C>> M.add(v: M) = Mat<Number, R, C>(contents.zip(v.contents).map { it.first + it.second })
 
   override fun toString() = "$contents"
 }
 
-infix operator fun <R: `4`, C: `4`, M: Mat<Double, R, C>> M.plus(v: M): Mat<Double, R, C> = add(v)
+infix operator fun <R: `4`, C: `4`, M: Mat<Number, R, C>> M.plus(v: M): Mat<Number, R, C> = add(v)
 
 // TODO: implement matrix multiplication semantics
-operator fun <M: `4`, N: `4`, P: `4`> Mat<Double, M, N>.times(m: Mat<Double, N, P>): Mat<Double, M, P> = Mat()
+operator fun <M: `4`, N: `4`, P: `4`> Mat<Number, M, N>.times(m: Mat<Number, N, P>): Mat<Number, M, P> = Mat()
