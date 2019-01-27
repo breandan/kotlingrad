@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.dependent
 
-open class Mat<T, MaxRows: `4`, MaxCols: `4`> internal constructor(/**TODO: Make contents a Vec<Vec<T, MaxCols>, MaxRows>**/val contents: List<Vec<T, MaxCols>> = arrayListOf(), val rows: Nat<MaxRows>, val cols: Nat<MaxCols>) {
+open class Mat<T, MaxRows: `4`, MaxCols: `4`> internal constructor(/**TODO: Make contents a Vec<Vec<T, MaxCols>, MaxRows>**/val contents: List<Vec<T, MaxCols>> = arrayListOf(), val rows: Nat<MaxRows>, val cols: Nat<MaxCols>) /**TODO: Maybe extend Vec? **/ {
   companion object {
     @JvmName("m1x1") private operator fun <T, V: Vec<T, `1`>> invoke(t: V): Mat<T, `1`, `1`> = Mat(arrayListOf(t), `1`, `1`)
     @JvmName("m1x2") private operator fun <T, V: Vec<T, `2`>> invoke(t: V): Mat<T, `1`, `2`> = Mat(arrayListOf(t), `1`, `2`)
