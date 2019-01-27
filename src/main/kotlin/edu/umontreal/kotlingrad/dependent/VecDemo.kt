@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.dependent
 
 fun main() {
-  val vectorOfNone = Vec<Int, `0`>().also { println("$it\n") }
+  val vectorOfNone = Vec<Int>().also { println("$it\n") }
 //  val firstValueOfNone = vectorOfNone[`0`] // Does not compile
 
   val vectorOfOne = Vec(1).also { println(it) }
