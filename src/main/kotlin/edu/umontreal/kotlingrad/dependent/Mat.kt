@@ -60,24 +60,24 @@ open class Mat<T, Rows: `4`, Cols: `4`> internal constructor(
         m1[i][j] = this[i][j]
 
     val m2 = Array(v.numRows) { DoubleArray(v.numCols) }
-    for (i in 0 until numRows)
-      for (j in 0 until numCols)
-        m1[i][j] = v[i][j]
+    for (i in 0 until v.numRows)
+      for (j in 0 until v.numCols)
+        m2[i][j] = v[i][j]
 
     val mat = Array(numRows) { DoubleArray(v.numCols) }
     for(i in 0 until numRows)
       for(j in 0 until v.numCols)
         for(k in 0 until v.numRows)
-          mat[i][j] = this[i][k] * m2[k][j]
+          mat[i][j] += this[i][k] * m2[k][j]
 
-    return Mat<Double, R1, C2>(rowT, v.colT, mat.map { Vec(v.colT, it.toList()) })
+    return Mat(rowT, v.colT, mat.map { Vec(v.colT, it.toList()) })
   }
 
-  override fun toString() = "$contents"
+  override fun toString() = "($numRows x $numCols) $contents"
 }
 
 @JvmName("doubleMatTranspose") fun <R: `4`, C: `4`, M: Mat<Double, R, C>> M.transpose() =
-  Mat<Double, C, R>(contents = (0 until contents.size).map { i -> Vec(contents = contents.map { it[i] }, length = rowT) }, rowT = colT, colT = rowT)
+  Mat<Double, C, R>(contents = (0 until numCols).map { i -> Vec(contents = contents.map { it[i] }, length = rowT) }, rowT = colT, colT = rowT)
 
 // TODO: implement matrix multiplication semanticslist of lists matrix product map flat
 operator fun <M: `4`, N: `4`, P: `4`> Mat<Double, M, N>.times(v: Mat<Double, N, P>): Mat<Double, M, P> = mult(v)
