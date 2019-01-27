@@ -9,8 +9,8 @@ fun main() {
   // Inferred type: Mat<Double, `1`, `1`>
   val c = a * b
 
-  // Inferred type: M
-  val n = c.transpose()
+  // Inferred type: Mat<Double, `1`, `3`>
+  val q = b.transpose()
 
 // Does not compile, inner dimension mismatch
 //  a * a
@@ -96,4 +96,6 @@ fun main() {
 // Does not compile, inner dimension mismatch
 //  n * f
 //  n * d
+
+  println("test")
 }
