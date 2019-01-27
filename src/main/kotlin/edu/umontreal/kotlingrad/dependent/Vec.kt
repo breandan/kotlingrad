@@ -1,21 +1,24 @@
 package edu.umontreal.kotlingrad.dependent
 
 // Supports vectors of up to length 6
-open class Vec<S, MaxLength: `4`> internal constructor(val contents: List<S> = arrayListOf(), val length: Nat<MaxLength>): ArrayList<S>(contents) {
+open class Vec<E, MaxLength: `4`> internal constructor(val length: Nat<MaxLength>, val contents: List<E> = listOf()) {
+  operator fun get(i: `4`): E = contents[i.i]
+  operator fun get(i: Int): E = contents[i]
+
   companion object {
-    operator fun <T> invoke(): Vec<T, `0`> = Vec(arrayListOf(), `0`)
-    operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(arrayListOf(t), `1`)
-    operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(arrayListOf(t0, t1), `2`)
-    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(arrayListOf(t0, t1, t2), `3`)
-    operator fun <T> invoke(t0: T, t1: T, t2: T, t3: T): Vec<T, `4`> = Vec(arrayListOf(t0, t1, t2, t3), `4`)
+    operator fun <T> invoke(): Vec<T, `0`> = Vec(`0`, arrayListOf())
+    operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
+    operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, arrayListOf(t0, t1))
+    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(`3`, arrayListOf(t0, t1, t2))
+    operator fun <T> invoke(t0: T, t1: T, t2: T, t3: T): Vec<T, `4`> = Vec(`4`, arrayListOf(t0, t1, t2, t3))
   }
 
-  @JvmName("longVecAdd") infix fun <S: MaxLength, V: Vec<Long, S>> V.add(v: V) = Vec<Long, S>(contents.zip(v.contents).map { it.first + it.second }, length)
-  @JvmName("intVecAdd") infix fun <S: MaxLength, V: Vec<Int, S>> V.add(v: V) = Vec<Int, S>(contents.zip(v.contents).map { it.first + it.second }, length)
-  @JvmName("shortVecAdd") infix fun <S: MaxLength, V: Vec<Short, S>> V.add(v: V) = Vec<Short, S>(contents.zip(v.contents).map { (it.first + it.second).toShort() }, length)
-  @JvmName("byteVecAdd") infix fun <S: MaxLength, V: Vec<Byte, S>> V.add(v: V) = Vec<Byte, S>(contents.zip(v.contents).map { (it.first + it.second).toByte() }, length)
-  @JvmName("doubleVecAdd") infix fun <S: MaxLength, V: Vec<Double, S>> V.add(v: V) = Vec<Double, S>(contents.zip(v.contents).map { it.first + it.second }, length)
-  @JvmName("floatVecAdd") infix fun <S: MaxLength, V: Vec<Float, S>> V.add(v: V) = Vec<Float, S>(contents.zip(v.contents).map { it.first + it.second }, length)
+  @JvmName("longVecAdd") infix fun <L: MaxLength, V: Vec<Long, L>> V.add(v: V) = Vec<Long, L>(length, contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("intVecAdd") infix fun <L: MaxLength, V: Vec<Int, L>> V.add(v: V) = Vec<Int, L>(length, contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("shortVecAdd") infix fun <L: MaxLength, V: Vec<Short, L>> V.add(v: V) = Vec<Short, L>(length, contents.zip(v.contents).map { (it.first + it.second).toShort() })
+  @JvmName("byteVecAdd") infix fun <L: MaxLength, V: Vec<Byte, L>> V.add(v: V) = Vec<Byte, L>(length, contents.zip(v.contents).map { (it.first + it.second).toByte() })
+  @JvmName("doubleVecAdd") infix fun <L: MaxLength, V: Vec<Double, L>> V.add(v: V) = Vec<Double, L>(length, contents.zip(v.contents).map { it.first + it.second })
+  @JvmName("floatVecAdd") infix fun <L: MaxLength, V: Vec<Float, L>> V.add(v: V) = Vec<Float, L>(length, contents.zip(v.contents).map { it.first + it.second })
 
   override fun toString() = "$contents"
 }
@@ -52,21 +55,21 @@ infix operator fun <T> Vec<T, `4`>.get(index: `3`): T =
 
 //infix operator fun <T: Number, C: `4`, V: Vec<Number, C>> V.plus(v: V): Vec<Number, C> = add(v)
 
-@JvmName("v0cT") infix fun <T> Vec<T, `0`>.cat(t: T): Vec<T, `1`> = Vec(contents + t, `1`)
+@JvmName("v0cT") infix fun <T> Vec<T, `0`>.cat(t: T): Vec<T, `1`> = Vec(`1`, contents + t)
 
-@JvmName("v1cT") infix fun <T> Vec<T, `1`>.cat(t: T): Vec<T, `2`> = Vec(contents + t, `2`)
+@JvmName("v1cT") infix fun <T> Vec<T, `1`>.cat(t: T): Vec<T, `2`> = Vec(`2`, contents + t)
 
-@JvmName("v2cT") infix fun <T> Vec<T, `2`>.cat(t: T): Vec<T, `3`> = Vec(contents + t, `3`)
+@JvmName("v2cT") infix fun <T> Vec<T, `2`>.cat(t: T): Vec<T, `3`> = Vec(`3`, contents + t)
 
-@JvmName("v3cT") infix fun <T> Vec<T, `3`>.cat(t: T): Vec<T, `4`> = Vec(contents + t, `4`)
+@JvmName("v3cT") infix fun <T> Vec<T, `3`>.cat(t: T): Vec<T, `4`> = Vec(`4`, contents + t)
 
-@JvmName("vTc0") infix fun <T> T.cat(t: Vec<T, `0`>): Vec<T, `1`> = Vec(arrayListOf(this), `1`)
+@JvmName("vTc0") infix fun <T> T.cat(t: Vec<T, `0`>): Vec<T, `1`> = Vec(`1`, arrayListOf(this))
 
-@JvmName("vTc1") infix fun <T> T.cat(t: Vec<T, `1`>): Vec<T, `2`> = Vec(arrayListOf(this) + t.contents, `2`)
+@JvmName("vTc1") infix fun <T> T.cat(t: Vec<T, `1`>): Vec<T, `2`> = Vec(`2`, arrayListOf(this) + t.contents)
 
-@JvmName("vTc2") infix fun <T> T.cat(t: Vec<T, `2`>): Vec<T, `3`> = Vec(arrayListOf(this) + t.contents, `3`)
+@JvmName("vTc2") infix fun <T> T.cat(t: Vec<T, `2`>): Vec<T, `3`> = Vec(`3`, arrayListOf(this) + t.contents)
 
-@JvmName("vTc3") infix fun <T> T.cat(t: Vec<T, `3`>): Vec<T, `4`> = Vec(arrayListOf(this) + t.contents, `4`)
+@JvmName("vTc3") infix fun <T> T.cat(t: Vec<T, `3`>): Vec<T, `4`> = Vec(`4`, arrayListOf(this) + t.contents)
 
 @JvmName("v0c0") infix fun <T> Vec<T, `0`>.cat(l: Vec<T, `0`>): Vec<T, `0`> = l
 
@@ -82,14 +85,14 @@ infix operator fun <T> Vec<T, `4`>.get(index: `3`): T =
 
 @JvmName("v3c0") infix fun <T> Vec<T, `3`>.cat(l: Vec<T, `0`>): Vec<T, `3`> = this
 
-@JvmName("v1c1") infix fun <T> Vec<T, `1`>.cat(l: Vec<T, `1`>): Vec<T, `2`> = Vec(contents + l.contents, `2`)
+@JvmName("v1c1") infix fun <T> Vec<T, `1`>.cat(l: Vec<T, `1`>): Vec<T, `2`> = Vec(`2`, contents + l.contents)
 
-@JvmName("v1c2") infix fun <T> Vec<T, `1`>.cat(l: Vec<T, `2`>): Vec<T, `3`> = Vec(contents + l.contents, `3`)
+@JvmName("v1c2") infix fun <T> Vec<T, `1`>.cat(l: Vec<T, `2`>): Vec<T, `3`> = Vec(`3`, contents + l.contents)
 
-@JvmName("v1c3") infix fun <T> Vec<T, `1`>.cat(l: Vec<T, `3`>): Vec<T, `4`> = Vec(contents + l.contents, `4`)
+@JvmName("v1c3") infix fun <T> Vec<T, `1`>.cat(l: Vec<T, `3`>): Vec<T, `4`> = Vec(`4`, contents + l.contents)
 
-@JvmName("v2c1") infix fun <T> Vec<T, `2`>.cat(l: Vec<T, `1`>): Vec<T, `3`> = Vec(contents + l.contents, `3`)
+@JvmName("v2c1") infix fun <T> Vec<T, `2`>.cat(l: Vec<T, `1`>): Vec<T, `3`> = Vec(`3`, contents + l.contents)
 
-@JvmName("v3c1") infix fun <T> Vec<T, `3`>.cat(l: Vec<T, `1`>): Vec<T, `4`> = Vec(contents + l.contents, `4`)
+@JvmName("v3c1") infix fun <T> Vec<T, `3`>.cat(l: Vec<T, `1`>): Vec<T, `4`> = Vec(`4`, contents + l.contents)
 
-@JvmName("v2c2") infix fun <T> Vec<T, `2`>.cat(l: Vec<T, `2`>): Vec<T, `4`> = Vec(contents + l.contents, `4`)
+@JvmName("v2c2") infix fun <T> Vec<T, `2`>.cat(l: Vec<T, `2`>): Vec<T, `4`> = Vec(`4`, contents + l.contents)

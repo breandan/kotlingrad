@@ -5,12 +5,11 @@ fun main() {
   // Inferred type: Mat<Double, `1`, `3`>
   val a = Mat(`1`, `3`, 1.0, 2.0, 3.0)
   // Inferred type: Mat<Double, `3`, `1`>
-  val b = Mat(`3`, `1`, 1.0, 2.0, 3.0)
+  val b = a.transpose()
   // Inferred type: Mat<Double, `1`, `1`>
   val c = a * b
 
-  // Inferred type: Mat<Double, `1`, `3`>
-  val q = b.transpose()
+  println(c)
 
 // Does not compile, inner dimension mismatch
 //  a * a
@@ -28,6 +27,8 @@ fun main() {
     1.0, 2.0, 3.0,
     4.0, 5.0, 6.0
   )
+
+  println(c)
 
   val p = d.transpose()
 
