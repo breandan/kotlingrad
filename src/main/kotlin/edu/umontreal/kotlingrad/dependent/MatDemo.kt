@@ -97,5 +97,5 @@ fun main() {
 //  n * f
 //  n * d
 
-  println("test")
+  println("Done.")
 }
