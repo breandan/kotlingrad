@@ -1,11 +1,18 @@
 package edu.umontreal.kotlingrad.dependent
 
-@JvmName("longVecPlus") infix operator fun <C: `15`, V: Vec<Long, C>> V.plus(v: V): Vec<Long, C> = add(v)
-@JvmName("intVecPlus") infix operator fun <C: `15`, V: Vec<Int, C>> V.plus(v: V): Vec<Int, C> = add(v)
-@JvmName("shortVecPlus") infix operator fun <C: `15`, V: Vec<Short, C>> V.plus(v: V): Vec<Short, C> = add(v)
-@JvmName("byteVecPlus") infix operator fun <C: `15`, V: Vec<Byte, C>> V.plus(v: V): Vec<Byte, C> = add(v)
-@JvmName("doubleVecPlus") infix operator fun <C: `15`, V: Vec<Double, C>> V.plus(v: V): Vec<Double, C> = add(v)
-@JvmName("floatVecPlus") infix operator fun <C: `15`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = add(v)
+@JvmName("longVecPlus") infix operator fun <C: `15`, V: Vec<Long, C>> V.plus(v: V): Vec<Long, C> = Vec<Long, C>(length, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("intVecPlus") infix operator fun <C: `15`, V: Vec<Int, C>> V.plus(v: V): Vec<Int, C> = Vec<Int, C>(length, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("shortVecPlus") infix operator fun <C: `15`, V: Vec<Short, C>> V.plus(v: V): Vec<Short, C> = Vec<Short, C>(length, contents.zip(v.contents).map { (it.first + it.second).toShort() })
+@JvmName("byteVecPlus") infix operator fun <C: `15`, V: Vec<Byte, C>> V.plus(v: V): Vec<Byte, C> = Vec<Byte, C>(length, contents.zip(v.contents).map { (it.first + it.second).toByte() })
+@JvmName("doubleVecPlus") infix operator fun <C: `15`, V: Vec<Double, C>> V.plus(v: V): Vec<Double, C> = Vec<Double, C>(length, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("floatVecPlus") infix operator fun <C: `15`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = Vec<Float, C>(length, contents.zip(v.contents).map { it.first + it.second })
+
+@JvmName("longVecMinus") infix operator fun <C: `15`, V: Vec<Long, C>> V.minus(v: V): Vec<Long, C> = Vec<Long, C>(length, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("intVecMinus") infix operator fun <C: `15`, V: Vec<Int, C>> V.minus(v: V): Vec<Int, C> = Vec<Int, C>(length, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("shortVecMinus") infix operator fun <C: `15`, V: Vec<Short, C>> V.minus(v: V): Vec<Short, C> = Vec<Short, C>(length, contents.zip(v.contents).map { (it.first - it.second).toShort() })
+@JvmName("byteVecMinus") infix operator fun <C: `15`, V: Vec<Byte, C>> V.minus(v: V): Vec<Byte, C> = Vec<Byte, C>(length, contents.zip(v.contents).map { (it.first - it.second).toByte() })
+@JvmName("doubleVecMinus") infix operator fun <C: `15`, V: Vec<Double, C>> V.minus(v: V): Vec<Double, C> = Vec<Double, C>(length, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("floatVecMinus") infix operator fun <C: `15`, V: Vec<Float, C>> V.minus(v: V): Vec<Float, C> = Vec<Float, C>(length, contents.zip(v.contents).map { it.first - it.second })
 
 //infix operator fun <T: Number, C: `4`, V: Vec<Number, C>> V.plus(v: V): Vec<Number, C> = add(v)
 

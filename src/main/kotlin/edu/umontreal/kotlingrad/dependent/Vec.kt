@@ -18,12 +18,6 @@ open class Vec<E, MaxLength: `15`> internal constructor(val length: Nat<MaxLengt
     operator fun <T> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T): Vec<T, `9`> = Vec(`9`, arrayListOf(t0, t1, t2, t3, t3, t4, t5, t6, t7, t8))
   }
 
-  @JvmName("longVecAdd") infix fun <L: MaxLength, V: Vec<Long, L>> V.add(v: V) = Vec<Long, L>(length, contents.zip(v.contents).map { it.first + it.second })
-  @JvmName("intVecAdd") infix fun <L: MaxLength, V: Vec<Int, L>> V.add(v: V) = Vec<Int, L>(length, contents.zip(v.contents).map { it.first + it.second })
-  @JvmName("shortVecAdd") infix fun <L: MaxLength, V: Vec<Short, L>> V.add(v: V) = Vec<Short, L>(length, contents.zip(v.contents).map { (it.first + it.second).toShort() })
-  @JvmName("byteVecAdd") infix fun <L: MaxLength, V: Vec<Byte, L>> V.add(v: V) = Vec<Byte, L>(length, contents.zip(v.contents).map { (it.first + it.second).toByte() })
-  @JvmName("doubleVecAdd") infix fun <L: MaxLength, V: Vec<Double, L>> V.add(v: V) = Vec<Double, L>(length, contents.zip(v.contents).map { it.first + it.second })
-  @JvmName("floatVecAdd") infix fun <L: MaxLength, V: Vec<Float, L>> V.add(v: V) = Vec<Float, L>(length, contents.zip(v.contents).map { it.first + it.second })
 
   override fun toString() = "$contents"
 }
