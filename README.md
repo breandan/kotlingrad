@@ -46,6 +46,8 @@ Much of this can be accomplished without access to bytecode or special compiler 
 | <sup>df</sup>&frasl;<sub>dx</sub> | `f.diff(x)`*              | `grad(f)[x]`*        | `d(f) / d(x)`*         | a: ℝ<sup>M</sup> → ℝ                                     |
 | ∇f                                |                           | `grad(f)`            | `f.grad()`             | a: ℝ<sup>M</sup> → ℝ<sup>M</sup>                         |
 
+More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`, and specialized versions are possible for subsets of the Reals, e.g. `Int`, `Short` or `BigInteger` for ℤ.
+
 &dagger; Here, **a** and **b** are expressions.
 
 &Dagger; For infix notation, the `.` is optional and parentheses are optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
