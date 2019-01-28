@@ -35,4 +35,10 @@ fun main() {
   willOnlyAcceptVectorsOfLength2(vectorOfTwo)
 //  willOnlyAcceptVectorsOfLength2(vectorOfThree) // Does not compile
 //  willOnlyAcceptVectorsOfLength2(vectorOfOne) // Does not compile
+
+  // Unsafe construction of long vectors is allowed
+  val v = Vec(`100`, listOf(1,1,1,1,1,1))
+  v + v
+  // Invalid operation: type safety is still enforced after unsafe construction
+  // v - Vec(1, 2, 3)
 }
