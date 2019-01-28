@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.dependent
 
-// Type safe multiplication of MxN matrices for (M, N) < 5
 fun main() {
   // Inferred type: Mat<Int, `1`, `3`>
   val a = Mat(`1`, `3`, 1, 2, 3)
