@@ -2,13 +2,13 @@ package edu.umontreal.kotlingrad.dependent
 
 // Type safe multiplication of MxN matrices for (M, N) < 5
 fun main() {
-  // Inferred type: Mat<Double, `1`, `3`>
-  val a = Mat(`1`, `3`, 1.0, 2.0, 3.0)
+  // Inferred type: Mat<Int, `1`, `3`>
+  val a = Mat(`1`, `3`, 1, 2, 3)
   println("a = $a")
-  // Inferred type: Mat<Double, `3`, `1`>
+  // Inferred type: Mat<Int, `3`, `1`>
   val b = a.transpose()
   println("b = $b")
-  // Inferred type: Mat<Double, `1`, `1`>
+  // Inferred type: Mat<Int, `1`, `1`>
   val c = a * b
   println("c = ab = $c")
 
@@ -17,28 +17,28 @@ fun main() {
 //  b * b
 
 // Does not compile, incompatible shape
-//  val b_ = Mat(`3`, `1`, 1.0, 2.0)
-//  val c_ = Mat(`3`, `1`, 1.0, 2.0, 3.0, 4.0)
+//  val b_ = Mat(`3`, `1`, 1, 2)
+//  val c_ = Mat(`3`, `1`, 1, 2, 3, 4)
 
 // Does not compile, incompatible shape
-//  val b_ = Mat(`2`, `1`, 1.0)
+//  val b_ = Mat(`2`, `1`, 1)
 
-  // Inferred type: Mat<Double, `2`, `3`>
+  // Inferred type: Mat<Int, `2`, `3`>
   val d = Mat(`2`, `3`,
-    1.0, 2.0, 3.0,
-    4.0, 5.0, 6.0
+    1, 2, 3,
+    4, 5, 6
   )
   println("d = $d")
 
-  // Inferred type: Mat<Double, `3`, `2`>
+  // Inferred type: Mat<Int, `3`, `2`>
   val e = Mat(`3`, `2`,
-    1.0, 2.0,
-    3.0, 4.0,
-    5.0, 6.0
+    1, 2,
+    3, 4,
+    5, 6
   )
   println("e = $e")
 
-  // Inferred type: Mat<Double, `2`, `2`>
+  // Inferred type: Mat<Int, `2`, `2`>
   val f = d * e
   println("f = de = $f")
 
@@ -47,28 +47,28 @@ fun main() {
 //  f * b
 
 // Does not compile, incompatible size
-//  val d_: Mat<Double, `2`, `3`> = Mat(`2`, `3`,
-//    1.0, 2.0, 3.0,
-//    4.0, 5.0
+//  val d_: Mat<Int, `2`, `3`> = Mat(`2`, `3`,
+//    1, 2, 3,
+//    4, 5
 //  )
 
-  // Inferred type: Mat<Double, `3`, `3`>
+  // Inferred type: Mat<Int, `3`, `3`>
   val g = Mat(`3`, `3`,
-    1.0, 2.0, 3.0,
-    4.0, 5.0, 6.0,
-    7.0, 8.0, 9.0
+    1, 2, 3,
+    4, 5, 6,
+    7, 8, 9
   )
   println("g = $g")
 
-  // Inferred type: Mat<Double, `3`, `3`>
+  // Inferred type: Mat<Int, `3`, `3`>
   val h = Mat(`3`, `3`,
-    1.0, 2.0, 3.0,
-    4.0, 5.0, 6.0,
-    7.0, 8.0, 9.0
+    1, 2, 3,
+    4, 5, 6,
+    7, 8, 9
   )
   println("h = $g")
 
-  // Inferred type: Mat<Double, `3`, `3`>
+  // Inferred type: Mat<Int, `3`, `3`>
   val i = g * h
   println("i = gh = $i")
   val j = i * i
@@ -80,25 +80,25 @@ fun main() {
 //  i * f
 //  i * d
 
- // Inferred type: Mat<Double, `4`, `3`>
+ // Inferred type: Mat<Int, `4`, `3`>
   val l = Mat(`4`, `4`,
-    1.0, 2.0, 3.0, 4.0,
-    5.0, 6.0, 7.0, 8.0,
-    9.0, 0.0, 0.0, 0.0,
-    9.0, 0.0, 0.0, 0.0
+    1, 2, 3, 4,
+    5, 6, 7, 8,
+    9, 0, 0, 0,
+    9, 0, 0, 0
   )
   println("l = $l")
 
-  // Inferred type: Mat<Double, `4`, `3`>
+  // Inferred type: Mat<Int, `4`, `3`>
   val m = Mat(`4`, `1`,
-    1.0,
-    2.0,
-    3.0,
-    4.0
+    1,
+    2,
+    3,
+    4
   )
   println("m = $m")
 
-  // Inferred type: Mat<Double, `4`, `1`>
+  // Inferred type: Mat<Int, `4`, `1`>
   val lm = l * m
   println("lm = $lm")
 
@@ -107,15 +107,15 @@ fun main() {
 //  n * d
 
   val o = Mat(`9`, `9`,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
-    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9,
+    1, 2, 3, 4, 5, 6, 7, 8, 9
   )
 
   println(o*o)
