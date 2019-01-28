@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.dependent
 
-// M multiplication MxN for M∈[1, 3] N∈[1, 3]
+// Type safe multiplication of MxN matrices for (M, N) < 5
 fun main() {
   // Inferred type: Mat<Double, `1`, `3`>
   val a = Mat(`1`, `3`, 1.0, 2.0, 3.0)
@@ -17,8 +17,8 @@ fun main() {
 //  b * b
 
 // Does not compile, incompatible shape
-//  val b_ = Mat.invoke(`3`, `1`, 1.0, 2.0)
-//  val b_ = Mat.invoke(`3`, `1`, 1.0, 2.0, 3.0, 4.0)
+//  val b_ = Mat(`3`, `1`, 1.0, 2.0)
+//  val c_ = Mat(`3`, `1`, 1.0, 2.0, 3.0, 4.0)
 
 // Does not compile, incompatible shape
 //  val b_ = Mat(`2`, `1`, 1.0)
@@ -80,7 +80,7 @@ fun main() {
 //  i * f
 //  i * d
 
-  // Inferred type: Mat<Double, `4`, `3`>
+ // Inferred type: Mat<Double, `4`, `3`>
   val l = Mat(`4`, `4`,
     1.0, 2.0, 3.0, 4.0,
     5.0, 6.0, 7.0, 8.0,
@@ -105,6 +105,20 @@ fun main() {
 // Does not compile, inner dimension mismatch
 //  n * f
 //  n * d
+
+  val o = Mat(`9`, `9`,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0,
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0
+  )
+
+  println(o*o)
 
   println("Done.")
 }

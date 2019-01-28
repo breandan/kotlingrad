@@ -23,8 +23,8 @@ fun main() {
   val add0Result = ((Vec(1.0, 2.0, 3.0) + Vec(3.0, 2.0, 1.0)) + Vec(0.0, 0.0, 0.0)).also { println("Addition result: $it\n") }
 //  val add1Result = (Vec(1.0, 2.0, 3.0, 4.0) + Vec(3.0, 2.0, 1.0)) // Does not compile
 
-  val vectorOfFour = (vectorOfTwo cat vectorOfTwo).also { println(it) }
-  val fourthValueOfFour = vectorOfFour[`3`].also { println("4th value: $it\n") }
+//  val vectorOfFour = (vectorOfTwo cat vectorOfTwo).also { println(it) }
+//  val fourthValueOfFour = vectorOfFour[`3`].also { println("4th value: $it\n") }
 //  val fifthValueOfFour = vectorOfFour[`4`] // Does not compile
 
 //  val vectorOfFive = (vectorOfTwo + vectorOfThree).also { println(it) }
