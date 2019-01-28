@@ -121,7 +121,7 @@ fun main() {
 
   // Unsafe construction of large matrices is possible
   val p = Mat(`1`, `100`, listOf(Vec(`100`, listOf(0))))
-  // Type-safe matrix operations are still possible after unsafe constructoin
+  // Type-safe matrix operations are still possible after unsafe construction
   val q: Mat<Int, `100`, `1`> = p.transpose()
 
   println("Done.")
