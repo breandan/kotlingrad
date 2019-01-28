@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.dependent
 
-open class Mat<T, Rows: `9`, Cols: `9`> internal constructor(
+open class Mat<T, Rows: `100`, Cols: `100`> constructor(
   val rowT: Nat<Rows>,
   val colT: Nat<Cols>,
   /**TODO: Make contents a Vec<Vec<T, MaxCols>, MaxRows>**/
