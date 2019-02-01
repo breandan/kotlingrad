@@ -22,10 +22,10 @@ object Jzy3Demo: AbstractAnalysis() {
           val x = variable()
           val y = variable()
 
-          val f = sin(10 * (pow(x, 2) + pow(y, 2))) / 10
-          val z = d(f)/d(x)
-          val m = d(z)/d(y)
-          val n = d(d(z)/d(y))/d(x)
+          val f = sin(10 * (x * x + pow(y, 2))) / 10
+          val z = d(f) / d(x)
+          val m = d(z) / d(y)
+          val n = d(d(z) / d(y)) /d(x)
 
           n(xc, yc)
         }
@@ -33,7 +33,7 @@ object Jzy3Demo: AbstractAnalysis() {
 
     // Define range and precision for the function to plot
     val range = Range(-1f, 1f)
-    val steps = 200
+    val steps = 400
 
     // Create the object to represent the function over the given range.
     val grid = OrthonormalGrid(range, steps, range, steps)
@@ -45,6 +45,7 @@ object Jzy3Demo: AbstractAnalysis() {
         Color(1f, 1f, 1f, .5f))
 
       faceDisplayed = true
+      wireframeDisplayed = false
     }
 
     // Create a chart
