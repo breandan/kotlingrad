@@ -514,6 +514,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Myia](https://github.com/mila-udem/myia) - SCT based AD, adapted from Pearlmutter & Siskind's "Reverse Mode AD in a functional framework"
 * [Nexus](https://github.com/ctongfei/nexus) - Type-safe tensors, deep learning and probabilistic programming in Scala
 * [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
+* [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
 * [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
 * [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
 * [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
@@ -522,9 +523,10 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [Neural Networks, Types, and Functional Programming](http://colah.github.io/posts/2015-09-NN-Types-FP/)
 * [Backpropagation with Continuation Callbacks: Foundations for Efficient and Expressive Differentiable Programming](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)
+* [Backprop as Functor: A compositional perspective on supervised learning](https://arxiv.org/pdf/1711.10455.pdf)
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
-* [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
+* [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
 * [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
 
 ### Computational Mathematics
@@ -542,6 +544,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)
 * [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
+* [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html)
 
 ### Automated Testing
 
