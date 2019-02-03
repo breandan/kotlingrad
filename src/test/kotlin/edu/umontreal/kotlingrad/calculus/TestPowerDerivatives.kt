@@ -51,7 +51,6 @@ class TestPowerDerivatives: StringSpec({
 
     "d(x⁰) / dx should be 0" {
       assertAll(NumericalGenerator) { ẋ ->
-        println(ẋ)
         val f1 = x / x
         val f2 = pow(x, 0)
         val manualDeriv = 0

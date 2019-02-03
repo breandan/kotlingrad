@@ -64,22 +64,22 @@ class TestArithmetic: StringSpec({
     }
 
     "test associativity" {
-      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, zVal ->
-        val values = mapOf(x to ẋ, y to ẏ, z to zVal)
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, ż ->
+        val values = mapOf(x to ẋ, y to ẏ, z to ż)
         (x * (y * z))(values) shouldBeAbout ((x * y) * z)(values)
       }
     }
 
     "test commutativity" {
-      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, zVal ->
-        val values = mapOf(x to ẋ, y to ẏ, z to zVal)
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, ż ->
+        val values = mapOf(x to ẋ, y to ẏ, z to ż)
         (x * y * z)(values) shouldBeAbout (z * y * x)(values)
       }
     }
 
     "test distributivity" {
-      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, zVal ->
-        val values = mapOf(x to ẋ, y to ẏ, z to zVal)
+      assertAll(NumericalGenerator, NumericalGenerator, NumericalGenerator) { ẋ, ẏ, ż ->
+        val values = mapOf(x to ẋ, y to ẏ, z to ż)
         (x * (y + z))(values) shouldBeAbout (x * y + x * z)(values)
       }
     }
