@@ -34,18 +34,5 @@ class TestSimpleDerivatives: StringSpec({
         `df∕dx`(ẋ) shouldBeAbout 2
       }
     }
-
-    "d(√x) / dx should be 1/(2√x)" {
-      assertAll(NumericalGenerator) { ẋ ->
-        val f1 = sqrt(x)
-        val f2 = pow(x, 0.5)
-        val manualDeriv = 1 / (2 * sqrt(x))
-        val `df1∕dx` = d(f1) / d(x)
-        val `df2∕dx` = d(f2) / d(x)
-        `df1∕dx`(ẋ) shouldBeAbout `df2∕dx`(ẋ)
-        `df1∕dx`(ẋ) shouldBeAbout manualDeriv(ẋ)
-        `df2∕dx`(ẋ) shouldBeAbout manualDeriv(ẋ)
-      }
-    }
   }
 })
