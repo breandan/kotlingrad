@@ -1,8 +1,11 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.calculus.RealFunctor
 import java.math.BigDecimal
 
-object BigDecimalPrecision: RealFunctor<BigDecimalReal, BigDecimal>(ProtoBigDecimal)
+object BigDecimalPrecision: Protocol<BigDecimalReal, BigDecimal>() {
+  override fun wrap(default: Number) = BigDecimalReal(BigDecimal(default.toDouble()))
+}
 
-object DoublePrecision: RealFunctor<DoubleReal, Double>(ProtoDouble)
+object DoublePrecision: Protocol<DoubleReal, Double>() {
+  override fun wrap(default: Number) = DoubleReal(default.toDouble())
+}

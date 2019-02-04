@@ -5,6 +5,11 @@ import edu.umontreal.kotlingrad.algebra.Field
 import java.util.*
 
 open class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>>, List<X> by vector {
+  override val one: Vector<X>
+    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+  override val zero: Vector<X>
+    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
   constructor(vector: Collection<X>): this(ArrayList<X>(vector.size).apply { addAll(vector) })
   constructor(vararg vector: X): this(arrayListOf(*vector))
 

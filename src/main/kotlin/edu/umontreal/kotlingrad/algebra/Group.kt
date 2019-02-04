@@ -8,4 +8,7 @@ interface Group<X: Group<X>> {
   infix operator fun minus(subtrahend: X): X = this + -subtrahend
 
   infix operator fun times(multiplicand: X): X
+
+  val one: X
+  val zero: X
 }

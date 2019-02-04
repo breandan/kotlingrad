@@ -2,27 +2,26 @@ package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.calculus.Differentiable
-import edu.umontreal.kotlingrad.numerical.FieldPrototype
 import edu.umontreal.kotlingrad.utils.randomDefaultName
 
-sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet(), open val prototype: FieldPrototype<X>):
+sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet()):
   Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
   open val name: String = randomDefaultName()
 
-  constructor(fn: Function<X>): this(fn.variables, fn.prototype)
-  constructor(vararg fns: Function<X>): this(fns.flatMap { it.variables }.toSet(), fns.first().prototype)
+  constructor(fn: Function<X>): this(fn.variables)
+  constructor(vararg fns: Function<X>): this(fns.flatMap { it.variables }.toSet())
 
   operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X = when (this) {
     is Const -> value
     is Var -> map.getOrElse(this) { value }
-    is Exp -> prototype.exp(exponent(map))
-    is Log -> prototype.log(logarithmand(map))
+    is Exp -> exponent(map).exp()
+    is Log -> logarithmand(map).log()
     is Negative -> -arg(map)
     is Power -> base.invoke(map) pow exponent(map)
-    is SquareRoot -> prototype.sqrt(radicand(map))
-    is Sine -> prototype.sin(angle(map))
-    is Cosine -> prototype.cos(angle(map))
-    is Tangent -> prototype.tan(angle(map))
+    is SquareRoot -> radicand(map).sqrt()
+    is Sine -> angle(map).sin()
+    is Cosine -> angle(map).cos()
+    is Tangent -> angle(map).tan()
     is Product -> multiplicator(map) * multiplicand(map)
     is Sum -> augend(map) + addend(map)
   }
@@ -51,7 +50,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet(),
     is Sum -> addend.diff(ind) + augend.diff(ind)
     // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
     is Product -> multiplicator.diff(ind) * multiplicand + multiplicator * multiplicand.diff(ind)
-    is Var -> const(if (this == ind) prototype.one else prototype.zero)
+    is Var -> if (this == ind) one else zero
     is Log -> logarithmand.inverse() * logarithmand.diff(ind)
     is Negative -> -arg.diff(ind)
     is Power -> (this as Power).diff(ind)
@@ -124,20 +123,21 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet(),
   fun const(value: X) = when (value) {
     zero.value -> zero
     one.value -> one
-    else -> Const(prototype, value)
+    else -> Const(value)
   }
 
   fun ln() = Log(this)
-  fun sin() = Sine(this)
-  fun cos() = Cosine(this)
-  fun tan() = Tangent(this)
-  fun exp() = Exp(this)
-  fun sqrt() = SquareRoot(this)
+  override fun log() = Log(this)
+  override fun sin() = Sine(this)
+  override fun cos() = Cosine(this)
+  override fun tan() = Tangent(this)
+  override fun exp() = Exp(this)
+  override fun sqrt() = SquareRoot(this)
 
-  val one: One<X> by lazy { One(prototype) }
-  val zero: Zero<X> by lazy { Zero(prototype) }
-  val two: Const<X> by lazy { Const(prototype, one.value + one.value) }
-  val e: Const<X> by lazy { Const(prototype, prototype.e) }
+  override val one: Const<X> by lazy { Const(this().one) }
+  override val zero: Const<X> by lazy { Const(this().zero) }
+  override val e: Const<X> by lazy { Const(this().e) }
+  val two: Const<X> by lazy { Const(one.value + one.value) }
 
   //TODO: Replace roots with fractional powers
   class SquareRoot<X: Field<X>> internal constructor(val radicand: Function<X>): Function<X>(radicand)
@@ -221,17 +221,16 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet(),
 
   // TODO: Try to make RealNumber a subtype of Const
 
-  open class Const<X: Field<X>> internal constructor(override val prototype: FieldPrototype<X>, val value: X): Function<X>(prototype = prototype)
+  open class Const<X: Field<X>> internal constructor(val value: X): Function<X>()
 
-  class One<X: Field<X>> internal constructor(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype, fieldPrototype.one)
-
-  class Zero<X: Field<X>> internal constructor(fieldPrototype: FieldPrototype<X>): Const<X>(fieldPrototype, fieldPrototype.zero)
+//  class One<X: Field<X>> internal constructor(): Const<X>(one)
+//
+//  class Zero<X: Field<X>> internal constructor(): Const<X>()
 
   class Var<X: Field<X>> internal constructor(
-    override val prototype: FieldPrototype<X>,
-    val value: X = prototype.zero,
+    val value: X,
     override val name: String = randomDefaultName()
-  ): Function<X>(prototype = prototype) {
+  ): Function<X>() {
     override val variables: Set<Var<X>> = setOf(this)
   }
 }
