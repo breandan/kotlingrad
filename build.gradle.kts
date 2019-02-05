@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   application
   kotlin("jvm") version "1.3.20"
@@ -20,6 +22,10 @@ tasks {
     main = "edu.umontreal.kotlingrad.samples.HelloKotlinGradKt"
     classpath = sourceSets["main"].runtimeClasspath
     description = "Runs demo script"
+  }
+
+  withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
   }
 
   val test by getting(Test::class) {
