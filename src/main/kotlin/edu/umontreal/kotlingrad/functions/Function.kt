@@ -17,7 +17,7 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet())
     is Exp -> exponent(map).exp()
     is Log -> logarithmand(map).log()
     is Negative -> -arg(map)
-    is Power -> base.invoke(map) pow exponent(map)
+    is Power -> base(map) pow exponent(map)
     is SquareRoot -> radicand(map).sqrt()
     is Sine -> angle(map).sin()
     is Cosine -> angle(map).cos()
@@ -223,10 +223,6 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet())
 
   open class Const<X: Field<X>> internal constructor(val value: X): Function<X>()
 
-//  class One<X: Field<X>> internal constructor(): Const<X>(one)
-//
-//  class Zero<X: Field<X>> internal constructor(): Const<X>()
-
   class Var<X: Field<X>> internal constructor(
     val value: X,
     override val name: String = randomDefaultName()
@@ -235,6 +231,11 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet())
   }
 }
 
+fun <F : (F, A) -> R, A, R> recur(f: F, arg: A): R = f(f, arg)
+
+fun main() {
+
+}
 //abstract class NullaryFunction<X: Field<X>>: Function<X>(emptySet())
 
 //abstract class UnaryFunction<X: Field<X>>(arg: Function<X>): Function<X>(arg.variables)

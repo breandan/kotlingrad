@@ -97,14 +97,14 @@ Similarly, attempting to multiply two tensors whose inner dimensions do not matc
 ```kotlin
 val a = Mat(`2`, `4`, 
   1.0, 2.0, 3.0, 4.0,
-  5.0, 6.0, 7.0, 8.0,
+  5.0, 6.0, 7.0, 8.0
 )
 
 val b = Mat(`4`, `2`, 
   1.0, 2.0,
   3.0, 4.0,
   5.0, 6.0,
-  7.0, 8.0,
+  7.0, 8.0
 )
 
 // Types are optional, but encouraged
@@ -163,7 +163,7 @@ fun main(args: Array<String>) {
 }
 ```
 
-Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/math/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
 z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
@@ -340,7 +340,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/DoublePrecision.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/Precision.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Expr()
@@ -429,7 +429,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 The current API is experimental, but can be improved in many ways. Currently it uses default values for variables, so when a function is invoked with missing variable(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value will be applied. This is similar to [broadcasting in NumPy](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure shape compatibility. However we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). 
 
-When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/functions/types/dependent) to ensure shape conforming tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
+When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
 Another such optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of optimizations on specialized matrices.
 
@@ -549,4 +549,4 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 ### Automated Testing
 
 * [DeepTest: Automated Testing of Deep-Neural-Network-driven Autonomous Cars](https://arxiv.org/pdf/1708.08559.pdf)
-* [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
+    * [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
