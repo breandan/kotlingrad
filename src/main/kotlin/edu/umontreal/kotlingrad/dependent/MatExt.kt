@@ -1,21 +1,21 @@
 package edu.umontreal.kotlingrad.dependent
 
 fun <T, R: `100`, C: `100`, M: Mat<T, R, C>> M.transpose() =
-  Mat<T, C, R>(contents = (0 until numCols).map { i -> Vec(contents = contents.map { it[i] }, length = rowT) }, rowT = colT, colT = rowT)
+  Mat(contents = (0 until numCols).map { i -> Vec(contents = contents.map { it[i] }, length = rowT) }, rowT = colT, colT = rowT)
 
-@JvmName("longMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Long, R, C>> M.plus(v: M): Mat<Long, R, C> = Mat<Long, R, C>(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
-@JvmName("intMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Int, R, C>> M.plus(v: M): Mat<Int, R, C> = Mat<Int, R, C>(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
-@JvmName("shortMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Short, R, C>> M.plus(v: M): Mat<Short, R, C> = Mat<Short, R, C>(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
-@JvmName("byteMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Byte, R, C>> M.plus(v: M): Mat<Byte, R, C> = Mat<Byte, R, C>(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
-@JvmName("doubleMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Double, R, C>> M.plus(v: M): Mat<Double, R, C> = Mat<Double, R, C>(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
-@JvmName("floatMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Float, R, C>> M.plus(v: M): Mat<Float, R, C> = Mat<Float, R, C>(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("longMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Long, R, C>> M.plus(v: M): Mat<Long, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("intMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Int, R, C>> M.plus(v: M): Mat<Int, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("shortMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Short, R, C>> M.plus(v: M): Mat<Short, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("byteMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Byte, R, C>> M.plus(v: M): Mat<Byte, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("doubleMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Double, R, C>> M.plus(v: M): Mat<Double, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("floatMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Float, R, C>> M.plus(v: M): Mat<Float, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
 
-@JvmName("longMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Long, R, C>> M.minus(v: M): Mat<Long, R, C> = Mat<Long, R, C>(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
-@JvmName("intMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Int, R, C>> M.minus(v: M): Mat<Int, R, C> = Mat<Int, R, C>(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
-@JvmName("shortMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Short, R, C>> M.minus(v: M): Mat<Short, R, C> = Mat<Short, R, C>(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
-@JvmName("byteMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Byte, R, C>> M.minus(v: M): Mat<Byte, R, C> = Mat<Byte, R, C>(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
-@JvmName("doubleMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Double, R, C>> M.minus(v: M): Mat<Double, R, C> = Mat<Double, R, C>(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
-@JvmName("floatMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Float, R, C>> M.minus(v: M): Mat<Float, R, C> = Mat<Float, R, C>(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("longMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Long, R, C>> M.minus(v: M): Mat<Long, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("intMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Int, R, C>> M.minus(v: M): Mat<Int, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("shortMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Short, R, C>> M.minus(v: M): Mat<Short, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("byteMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Byte, R, C>> M.minus(v: M): Mat<Byte, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("doubleMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Double, R, C>> M.minus(v: M): Mat<Double, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
+@JvmName("floatMatMinus") infix operator fun <R: `100`, C: `100`, M: Mat<Float, R, C>> M.minus(v: M): Mat<Float, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first - it.second })
 
 @JvmName("longMatMult") infix operator fun <R1: `100`, C1: `100`, C2: `100`> Mat<Long, R1, C1>.times(v: Mat<Long, C1, C2>): Mat<Long, R1, C2> {
   val m1 = Array(numRows) { LongArray(numCols) }

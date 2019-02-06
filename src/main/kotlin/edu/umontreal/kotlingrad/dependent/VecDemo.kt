@@ -23,14 +23,6 @@ fun main() {
   val add0Result = ((Vec(1.0, 2.0, 3.0) + Vec(3.0, 2.0, 1.0)) + Vec(0.0, 0.0, 0.0)).also { println("Addition result: $it\n") }
 //  val add1Result = (Vec(1.0, 2.0, 3.0, 4.0) + Vec(3.0, 2.0, 1.0)) // Does not compile
 
-//  val vectorOfFour = (vectorOfTwo cat vectorOfTwo).also { println(it) }
-//  val fourthValueOfFour = vectorOfFour[`3`].also { println("4th value: $it\n") }
-//  val fifthValueOfFour = vectorOfFour[`4`] // Does not compile
-
-//  val vectorOfFive = (vectorOfTwo + vectorOfThree).also { println(it) }
-//  val fifthValueOfFive = vectorOfFive[`4`].also { println("5th value: $it\n") }
-//  val sixthValueOfFive = vectorOfFive[`5`] // Does not compile
-
   fun willOnlyAcceptVectorsOfLength2(l: Vec<Int, `2`>) {}
   willOnlyAcceptVectorsOfLength2(vectorOfTwo)
 //  willOnlyAcceptVectorsOfLength2(vectorOfThree) // Does not compile
