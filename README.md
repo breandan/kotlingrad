@@ -428,7 +428,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are sufficient to perform arbitrary computation in the type system (e.g. concatenation and dynamic reshaping), it is not a necessary feature for shape checking.* If the shape of a tensor is known at compile time, it is possible to encode this information using less powerful type systems, as long as they support subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are sufficient for arbitrary shape safety (e.g. with concatenation and dynamic reshaping), they are not necessary for simple shape checking, such as checking for equality.* When the shape of a tensor is known at compile time, it is possible to encode this information in less powerful type systems, as long as they support subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where C is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking.
 
@@ -442,7 +442,7 @@ sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`
 interface Nat<T: `100`> { val i: Int } // Used for certain type bounds
 ```
 
-Kotlin𝛁 supports shape-shafe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For example, consider the rank-1 tensor, or vector, case:
+Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For example, consider the rank-1 tensor, or vector, case:
 
 ```kotlin
 @JvmName("floatVecPlus") infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = Vec(length, contents.zip(v.contents).map { it.first + it.second })
@@ -456,7 +456,6 @@ open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val 
   operator fun get(i: Int): E = contents[i]
 
   companion object {
-    operator fun <T> invoke(): Vec<T, `0`> = Vec(`0`, arrayListOf())
     operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
     operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, arrayListOf(t0, t1))
     operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(`3`, arrayListOf(t0, t1, t2))
@@ -465,7 +464,7 @@ open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val 
 }
 ```
 
-The initializer is optional syntactic sugar, and may be omitted in favor of dynamic construction (although this may fail at runtime). For example:
+The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
 
 ```
 val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)  // Always runs safely
@@ -474,7 +473,7 @@ val vec = Vec(`2`, 1, 2, 3)                      // Does not compile
 val sum = Vec(`2`, 1, 2) + add                   // Does not compile
 ```
 
-A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors.
+A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. [A demonstration](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) is provided for shape-safe matrix operations.
 
 &lowast; It is unknown whether first-class dependent types are required for types which depend on runtime values. Several less powerful type systems are able to perform arbitrary computation in the type checker. As specified, Java's type system is known to be [Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate dependent types Java by taking advantage of this fact, although it is unclear whether such an approach would be computationally tractable, considering the practical limitations noted by Grigore.
 
