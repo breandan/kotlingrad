@@ -428,7 +428,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are sufficient for arbitrary shape safety (e.g. with concatenation and dynamic reshaping), they are not necessary for simple shape checking, such as checking for equality.* When the shape of a tensor is known at compile time, it is possible to encode this information in less powerful type systems, as long as they support subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are sufficient for arbitrary shape safety (e.g. with concatenation and dynamic reshaping), they are unnecessary for simple equality checking.* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where C is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking.
 
@@ -442,7 +442,7 @@ sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`
 interface Nat<T: `100`> { val i: Int } // Used for certain type bounds
 ```
 
-Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For example, consider the rank-1 tensor, or vector, case:
+Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
 
 ```kotlin
 @JvmName("floatVecPlus") infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = Vec(length, contents.zip(v.contents).map { it.first + it.second })
