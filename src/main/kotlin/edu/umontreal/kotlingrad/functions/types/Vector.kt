@@ -21,11 +21,11 @@ open class Vector<X: Field<X>>(val vector: ArrayList<X>): AbelianGroup<Vector<X>
 
   override fun plus(addend: Vector<X>): Vector<X> =
       if (size != addend.size) throw IllegalArgumentException("$size != ${addend.size}")
-      else Vector(mapIndexedTo(ArrayList(size)) { index, value -> value + addend[index] } as ArrayList<X>)
+      else Vector(mapIndexedTo(ArrayList(size)) { index, value -> value + addend[index] })
 
   override fun minus(subtrahend: Vector<X>) =
       if (size != subtrahend.size) throw IllegalArgumentException("$size != ${subtrahend.size}")
-      else Vector(mapIndexedTo(ArrayList(size)) { index, value -> value - subtrahend[index] } as ArrayList<X>)
+      else Vector(mapIndexedTo(ArrayList(size)) { index, value -> value - subtrahend[index] })
 
   override fun times(multiplicand: Vector<X>) = Vector(zip(multiplicand).map { it.first * it.second })
 

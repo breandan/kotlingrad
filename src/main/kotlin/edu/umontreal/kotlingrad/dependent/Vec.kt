@@ -2,7 +2,7 @@ package edu.umontreal.kotlingrad.dependent
 
 // Supports vectors of up to length 6
 open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val contents: List<E> = listOf()) {
-  operator fun get(i: `9`): E = contents[i.i]
+//  operator fun get(i: `100`): E = contents[i.i]
   operator fun get(i: Int): E = contents[i]
 
   companion object {
