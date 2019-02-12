@@ -96,7 +96,7 @@ fun main() {
     4, 4, 4
   )
 
-  // Inferred type: Mat<Int, `4`, `2`>
+  // Inferred type: Mat<Int, `4`, `3`>
   val lm = l * m
   println("lm = $lm")
 
