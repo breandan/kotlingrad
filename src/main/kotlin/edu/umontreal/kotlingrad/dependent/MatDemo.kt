@@ -79,7 +79,7 @@ fun main() {
 //  i * f
 //  i * d
 
- // Inferred type: Mat<Int, `4`, `3`>
+ // Inferred type: Mat<Int, `4`, `4`>
   val l = Mat(`4`, `4`,
     1, 2, 3, 4,
     5, 6, 7, 8,
@@ -89,11 +89,11 @@ fun main() {
   println("l = $l")
 
   // Inferred type: Mat<Int, `4`, `3`>
-  val m = Mat(`4`, `2`,
-    1, 1,
-    2, 2,
-    3, 3,
-    4, 4
+  val m = Mat(`4`, `3`,
+    1, 1, 1,
+    2, 2, 2,
+    3, 3, 3,
+    4, 4, 4
   )
 
   // Inferred type: Mat<Int, `4`, `2`>
