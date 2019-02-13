@@ -4,26 +4,26 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
 
 ## Introduction
 
-Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), et al., Kotlin𝛁 attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. We aim to provide an algebraically-grounded implementation of AD for type safe tensor operations.
+Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), [Lantern](https://github.com/feiwang3311/Lantern) et al., Kotlin𝛁 attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. It also adds a number of novel ideas, including shape-safe tensor operations, algebraic expression rewriting and numerical stability checking with property-based testing. We aim to provide an algebraically-grounded implementation of AD for type safe tensor operations.
 
 ## Features
 
 Kotlin𝛁 currently supports the following features:
 
 * Arithmetical operations on scalars, vectors and matrices
+* Shape-safe vector and matrix algebra
 * Partial and higher order differentiation on scalars
 * Property-based testing for numerical gradient checking
-* Recovery of symbolic derivatives from AD 
+* Recovery of symbolic derivatives from AD
 
 Additionally, it aims to support:
 
 * PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
-* N-dimensional tensors and tensor-algebraic operators
-* Compiler plugin to instrument existing programs for AD
+* N-dimensional tensors and [higher order tensor operators](https://en.wikipedia.org/wiki/Tensor_contraction)
 * Fully-general AD over control flow, variable reassignment
 (via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
 
-Much of this can be accomplished without access to bytecode or special compiler tricks, just by using functional programming as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) and embedded DSLs, cf. [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf).
+All of these features are implemented without access to bytecode or special compiler tricks - just using [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf), embedded DSLs a la [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf), and [ordinary generics](https://kotlinlang.org/docs/reference/generics.html).
 
 ## Usage
 
@@ -120,14 +120,14 @@ val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
 // e * f
 ```
 
-Explict types are optional but encouraged. Type inference lets us preserve shape information over long programs.
+Explict types are optional but encouraged. [Type inference](https://www.youtube.com/watch?v=MyljSWm0Y_k) lets us preserve shape information over long programs.
 
 ```kotlin
 fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 ```
 
-When writing a function, it is required to declare the input types, but the return type is optional. Shape-safety is supported up to rank-2 tensors, i.e. matrices.
+When writing a function, it is required to declare the input types, but the return type [may be optional](https://kotlinlang.org/docs/reference/functions.html#explicit-return-types). Shape-safety is currently supported up to rank-2 tensors, i.e. matrices.
 
 ### Example
 
@@ -184,7 +184,7 @@ z({x=0, y=1}) 			= 0.0
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
-Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a  technique borrowed from the Haskell community called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which (in theory) should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
+Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a technique borrowed from the Haskell community called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which (in theory) should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
 
 * [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
