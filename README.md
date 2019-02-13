@@ -428,9 +428,9 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are sufficient for arbitrary shape safety (e.g. with concatenation and dynamic reshaping), they are unnecessary for simple equality checking.* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking.* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
-First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where C is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking.
+First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
 
 ```kotlin
 open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
@@ -448,7 +448,7 @@ Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a pa
 @JvmName("floatVecPlus") infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = Vec(length, contents.zip(v.contents).map { it.first + it.second })
 ```
 
-This technique may be trivially extended for additional operators and various primitives. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
+This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
 
 ```kotlin
 open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val contents: List<E> = listOf()) {
@@ -473,9 +473,33 @@ val vec = Vec(`2`, 1, 2, 3)                      // Does not compile
 val sum = Vec(`2`, 1, 2) + add                   // Does not compile
 ```
 
-A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. [A demonstration](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) is provided for shape-safe matrix operations.
+A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices:
 
-&lowast; It is unknown whether first-class dependent types are required for types which depend on runtime values. Several less powerful type systems are able to perform arbitrary computation in the type checker. As specified, Java's type system is known to be [Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate dependent types Java by taking advantage of this fact, although it is unclear whether such an approach would be computationally tractable, considering the practical limitations noted by Grigore.
+```kotlin
+ // Inferred type: Mat<Int, `4`, `4`>
+  val l = Mat(`4`, `4`,
+    1, 2, 3, 4,
+    5, 6, 7, 8,
+    9, 0, 0, 0,
+    9, 0, 0, 0
+  )
+
+  // Inferred type: Mat<Int, `4`, `3`>
+  val m = Mat(`4`, `3`,
+    1, 1, 1,
+    2, 2, 2,
+    3, 3, 3,
+    4, 4, 4
+  )
+
+  // Inferred type: Mat<Int, `4`, `3`>
+  val lm = l * m
+  // m * m // Does not compile
+```
+
+[Further examples](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+
+&lowast; A number of less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
 ## Ideal API (WIP)
 
@@ -560,13 +584,6 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
-* [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
-* [Autograd](https://github.com/hips/autograd) - Efficiently computes derivatives of NumPy code
-* [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
-* [Myia](https://github.com/mila-udem/myia) - SCT based AD, adapted from Pearlmutter & Siskind's "Reverse Mode AD in a functional framework"
-* [Nexus](https://github.com/ctongfei/nexus) - Type-safe tensors, deep learning and probabilistic programming in Scala
-* [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
-* [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
 * [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
 * [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
 * [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
@@ -602,3 +619,15 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [DeepTest: Automated Testing of Deep-Neural-Network-driven Autonomous Cars](https://arxiv.org/pdf/1708.08559.pdf)
 * [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
+
+### Libraries
+
+* [FM](https://github.com/fsprojects/TensorFlow.FSharp): An F# DSL for writing numeric models with support for interactive tensor shape-checking
+* [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
+* [Autograd](https://github.com/hips/autograd) - Efficiently computes derivatives of NumPy code
+* [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
+* [Myia](https://github.com/mila-udem/myia) - SCT based AD, adapted from Pearlmutter & Siskind's "Reverse Mode AD in a functional framework"
+* [Nexus](https://github.com/ctongfei/nexus) - Type-safe tensors, deep learning and probabilistic programming in Scala
+* [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
+* [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
+* [Lantern]() - Lantern is a machine learning framework in Scala, based on delimited continuations and multi-stage programming
