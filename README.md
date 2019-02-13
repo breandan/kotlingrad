@@ -630,4 +630,4 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Nexus](https://github.com/ctongfei/nexus) - Type-safe tensors, deep learning and probabilistic programming in Scala
 * [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
 * [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
-* [Lantern]() - Lantern is a machine learning framework in Scala, based on delimited continuations and multi-stage programming
+* [Lantern](https://feiwang3311.github.io/Lantern/) - a framework in Scala, based on delimited continuations and multi-stage programming
