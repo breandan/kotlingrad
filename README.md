@@ -337,7 +337,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Coroutines
 
-[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by [Wang et al.](https://arxiv.org/pdf/1803.10228.pdf). Coroutines are a first-class feature in the Kotlin language, and implementing this extension is currently a work in progress.
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. Delimited continuations [can be implemented](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
 
 #### Extension Functions
 
