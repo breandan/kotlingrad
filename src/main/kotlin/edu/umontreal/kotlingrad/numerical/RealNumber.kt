@@ -8,4 +8,7 @@ abstract class RealNumber<X: RealNumber<X, Y>, Y>(val value: Y):
   override fun compareTo(other: Y) = value.compareTo(value)
 
   override fun equals(other: Any?) = if (other is RealNumber<*, *>) value == other.value else super.equals(other)
+
+  override fun diff(ind: X): X = zero
+  override fun grad(): Map<X, X> = emptyMap()
 }

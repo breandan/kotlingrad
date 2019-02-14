@@ -29,22 +29,22 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Notation
 
-|Math†                              | Infix                     | Prefix               | Postfix‡               | Type                                                     |
+|               Math†               |           Infix           |        Prefix        |        Postfix‡        |                           Type                           |
 |:---------------------------------:|:-------------------------:|:--------------------:|:----------------------:|:--------------------------------------------------------:|
-| **a + b**                         | `a + b`, `a.plus(b)`      | `plus(a, b)`         |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
-| **a - b**                         | `a - b`, `a.minus(b)`     | `minus(a, b)`        |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
-| **a * b**                         | `a * b`, `a.times(b)`     | `times(a, b)`        |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup> → ℝ<sup>M×P</sup> |
-| **a / b**                         | `a / b`, `a.div(b)`       | `div(a, b)`          |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×N</sup> → ℝ<sup>M×N</sup> |
-| **-a**                            | `neg(a)`                  | `-a`                 | `a.unaryMinus()`       | a: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>                     |
-| *sin*(**a**)                      |                           | `sin(a)`             | `a.sin()`              | a: ℝ → ℝ                                                 |
-| *cos*(**a**)                      |                           | `cos(a)`             | `a.cos()`              | a: ℝ → ℝ                                                 |
-| *tan*(**a**)                      |                           | `tan(a)`             | `a.tan()`              | a: ℝ → ℝ                                                 |
-| *ln*(**a**)                       |                           | `ln(a)`              | `a.ln()`, `a.log()`    | a: ℝ → ℝ                                                 |
-| *log*<sub>b</sub>(**a**)          | `a.log(b)`                | `log(a, b)`          |                        | a: ℝ, b: ℝ → ℝ                                           |
-| **a**<sup>b</sup>                 | `a.pow(b)`                | `pow(a, b)`          |                        | a: ℝ, b: ℝ → ℝ                                           |
-| √**a**,  ∛**a**  ∜**a**           | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` | a: ℝ → ℝ                                                 |
-| <sup>df</sup>&frasl;<sub>dx</sub> | `f.diff(x)`*              | `grad(f)[x]`*        | `d(f) / d(x)`*         | a: ℝ<sup>M</sup> → ℝ                                     |
-| ∇f                                |                           | `grad(f)`            | `f.grad()`             | a: ℝ<sup>M</sup> → ℝ<sup>M</sup>                         |
+|             **a + b**             |   `a + b`, `a.plus(b)`    |     `plus(a, b)`     |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
+|             **a - b**             |   `a - b`, `a.minus(b)`   |    `minus(a, b)`     |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
+|             **a * b**             |   `a * b`, `a.times(b)`   |    `times(a, b)`     |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup> → ℝ<sup>M×P</sup> |
+|             **a / b**             |    `a / b`, `a.div(b)`    |     `div(a, b)`      |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×N</sup> → ℝ<sup>M×N</sup> |
+|              **-a**               |         `neg(a)`          |         `-a`         |    `a.unaryMinus()`    |           a: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
+|           *sin*(**a**)            |                           |       `sin(a)`       |       `a.sin()`        |                         a: ℝ → ℝ                         |
+|           *cos*(**a**)            |                           |       `cos(a)`       |       `a.cos()`        |                         a: ℝ → ℝ                         |
+|           *tan*(**a**)            |                           |       `tan(a)`       |       `a.tan()`        |                         a: ℝ → ℝ                         |
+|            *ln*(**a**)            |                           |       `ln(a)`        |  `a.ln()`, `a.log()`   |                         a: ℝ → ℝ                         |
+|     *log*<sub>b</sub>(**a**)      |        `a.log(b)`         |     `log(a, b)`      |                        |                      a: ℝ, b: ℝ → ℝ                      |
+|         **a**<sup>b</sup>         |        `a.pow(b)`         |     `pow(a, b)`      |                        |                      a: ℝ, b: ℝ → ℝ                      |
+|      √**a**,  ∛**a**  ∜**a**      | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |                         a: ℝ → ℝ                         |
+| <sup>df</sup>&frasl;<sub>dx</sub> |       `f.diff(x)`*        |    `grad(f)[x]`*     |     `d(f) / d(x)`*     |                   a: ℝ<sup>M</sup> → ℝ                   |
+|              ∇**f**               |                           |      `grad(f)`       |       `f.grad()`       |             a: ℝ<sup>M</sup> → ℝ<sup>M</sup>             |
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`, and specialized versions are possible for subsets of the Reals, e.g. `Int`, `Short` or `BigInteger` for ℤ.
 
@@ -402,7 +402,7 @@ Users are forced to handle all subclasses when branching on the type of a sealed
 
 #### Multiple Dispatch
 
-In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24:L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
+In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
 Building on the previous example, a common task in AD is to simplify an expression tree, to minimize the number of computations required to evaluate a function or improve numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 

@@ -1,15 +1,15 @@
 package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.utils.randomDefaultName
+import edu.umontreal.kotlingrad.utils.superscript
 
-sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet()):
-  Field<Function<X>>, Differentiable<X, Function<X>>, kotlin.Function<X> {
+sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()) :
+    Field<Function<X>>, kotlin.Function<X> {
   open val name: String = randomDefaultName()
 
-  constructor(fn: Function<X>): this(fn.variables)
-  constructor(vararg fns: Function<X>): this(fns.flatMap { it.variables }.toSet())
+  constructor(fn: Function<X>) : this(fn.variables)
+  constructor(vararg fns: Function<X>) : this(fns.flatMap { it.variables }.toSet())
 
   operator fun invoke(map: Map<Var<X>, X> = emptyMap()): X = when (this) {
     is Const -> value
@@ -43,22 +43,24 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet())
     is Var -> name
   }
 
-  override fun grad(): Map<Var<X>, Function<X>> = variables.associateWith { diff(it) }
+  override fun grad(): Map<Function<X>, Function<X>> = variables.associateWith { diff(it) }
 
-  override fun diff(ind: Var<X>): Function<X> = when (this) {
-    is Const -> zero // breaks TestSimpleDerivatives
-    is Sum -> addend.diff(ind) + augend.diff(ind)
+  override fun diff(ind: Function<X>): Function<X> = when {
+    this == ind -> one
+    this is Const -> zero // breaks TestSimpleDerivatives
+    this is Sum -> addend.diff(ind) + augend.diff(ind)
     // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-    is Product -> multiplicator.diff(ind) * multiplicand + multiplicator * multiplicand.diff(ind)
-    is Var -> if (this == ind) one else zero
-    is Log -> logarithmand.inverse() * logarithmand.diff(ind)
-    is Negative -> -arg.diff(ind)
-    is Power -> (this as Power).diff(ind)
-    is Exp -> exponent.exp() * exponent.diff(ind)
-    is SquareRoot -> radicand.sqrt().inverse() / two * radicand.diff(ind)
-    is Sine -> angle.cos() * angle.diff(ind)
-    is Cosine -> -angle.sin() * angle.diff(ind)
-    is Tangent -> angle.cos().pow(-two) * angle.diff(ind)
+    this is Product -> multiplicator.diff(ind) * multiplicand + multiplicator * multiplicand.diff(ind)
+    this is Var -> if (this in ind.variables) one * ind.inverse() else zero
+    this is Log -> logarithmand.inverse() * logarithmand.diff(ind)
+    this is Negative -> -arg.diff(ind)
+    this is Power -> (this as Power).diff(ind)
+    this is Exp -> exponent.exp() * exponent.diff(ind)
+    this is SquareRoot -> radicand.sqrt().inverse() / two * radicand.diff(ind)
+    this is Sine -> angle.cos() * angle.diff(ind)
+    this is Cosine -> -angle.sin() * angle.diff(ind)
+    this is Tangent -> angle.cos().pow(-two) * angle.diff(ind)
+    else -> zero
   }
 
   override fun plus(addend: Function<X>): Function<X> = when {
@@ -93,10 +95,10 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet())
   }
 
   override fun equals(other: Any?) =
-    if (this is Var<*> || other is Var<*>) this === other
-    else if (this is Const<*> && other is Const<*>) value == other.value
-    //TODO implement tree comparison for semantic equals
-    else super.equals(other)
+      if (this is Var<*> || other is Var<*>) this === other
+      else if (this is Const<*> && other is Const<*>) value == other.value
+      //TODO implement tree comparison for semantic equals
+      else super.equals(other)
 
 
   override fun inverse(): Function<X> = when {
@@ -140,102 +142,59 @@ sealed class Function<X: Field<X>>(open val variables: Set<Var<X>> = emptySet())
   val two: Const<X> by lazy { Const(one.value + one.value) }
 
   //TODO: Replace roots with fractional powers
-  class SquareRoot<X: Field<X>> internal constructor(val radicand: Function<X>): Function<X>(radicand)
+  class SquareRoot<X : Field<X>> internal constructor(val radicand: Function<X>) : Function<X>(radicand)
 
-  class Sine<X: Field<X>> internal constructor(val angle: Function<X>): Function<X>(angle)
+  class Sine<X : Field<X>> internal constructor(val angle: Function<X>) : Function<X>(angle)
 
-  class Cosine<X: Field<X>> internal constructor(val angle: Function<X>): Function<X>(angle)
+  class Cosine<X : Field<X>> internal constructor(val angle: Function<X>) : Function<X>(angle)
 
-  class Tangent<X: Field<X>> internal constructor(val angle: Function<X>): Function<X>(angle)
+  class Tangent<X : Field<X>> internal constructor(val angle: Function<X>) : Function<X>(angle)
 
-  class Exp<X: Field<X>> internal constructor(val exponent: Function<X>): Function<X>(exponent)
+  class Exp<X : Field<X>> internal constructor(val exponent: Function<X>) : Function<X>(exponent)
 
-  class Log<X: Field<X>> internal constructor(val logarithmand: Function<X>): Function<X>(logarithmand)
+  class Log<X : Field<X>> internal constructor(val logarithmand: Function<X>) : Function<X>(logarithmand)
 
-  class Negative<X: Field<X>> internal constructor(val arg: Function<X>): Function<X>(arg)
+  class Negative<X : Field<X>> internal constructor(val arg: Function<X>) : Function<X>(arg)
 
-  class Product<X: Field<X>> internal constructor(
-    val multiplicator: Function<X>,
-    val multiplicand: Function<X>
-  ): Function<X>(multiplicator, multiplicand)
+  class Product<X : Field<X>> internal constructor(
+      val multiplicator: Function<X>,
+      val multiplicand: Function<X>
+  ) : Function<X>(multiplicator, multiplicand)
 
-  class Sum<X: Field<X>> internal constructor(
-    val augend: Function<X>,
-    val addend: Function<X>
-  ): Function<X>(augend, addend)
+  class Sum<X : Field<X>> internal constructor(
+      val augend: Function<X>,
+      val addend: Function<X>
+  ) : Function<X>(augend, addend)
 
-  class Power<X: Field<X>> internal constructor(
-    val base: Function<X>,
-    val exponent: Function<X>
-  ): Function<X>(base, exponent) {
-    override fun diff(ind: Var<X>) = when (exponent) {
+  class Power<X : Field<X>> internal constructor(
+      val base: Function<X>,
+      val exponent: Function<X>
+  ) : Function<X>(base, exponent) {
+    override fun diff(ind: Function<X>) = when (exponent) {
       one -> base.diff(ind)
       is Const -> exponent * base.pow(exponent - one) * base.diff(ind)
       else -> this * (exponent * base.ln()).diff(ind)
     }
 
     fun superscript(exponent: Function<X>) =
-      if (exponent is Const || exponent is Var && exponent.toString().matches(Regex("[a-pr-z0-9]*")))
-        if (exponent == one) ""
-        else exponent.toString()
-          .replace(".", "⋅")
-          .replace("-", "⁻")
-          .replace("0", "⁰")
-          .replace("1", "¹")
-          .replace("2", "²")
-          .replace("3", "³")
-          .replace("4", "⁴")
-          .replace("5", "⁵")
-          .replace("6", "⁶")
-          .replace("7", "⁷")
-          .replace("8", "⁸")
-          .replace("9", "⁹")
-          .replace("a", "ᵃ")
-          .replace("b", "ᵇ")
-          .replace("c", "ᶜ")
-          .replace("d", "ᵈ")
-          .replace("e", "ᵉ")
-          .replace("f", "ᶠ")
-          .replace("g", "ᵍ")
-          .replace("h", "ʰ")
-          .replace("i", "ⁱ")
-          .replace("j", "ʲ")
-          .replace("k", "ᵏ")
-          .replace("l", "ˡ")
-          .replace("m", "ᵐ")
-          .replace("n", "ⁿ")
-          .replace("o", "ᵒ")
-          .replace("p", "ᵖ")
-          .replace("r", "ʳ")
-          .replace("s", "ˢ")
-          .replace("t", "ᵗ")
-          .replace("u", "ᵘ")
-          .replace("v", "ᵛ")
-          .replace("w", "ʷ")
-          .replace("x", "ˣ")
-          .replace("y", "ʸ")
-          .replace("z", "ᶻ")
-      else
-        "^($exponent)"
+        if (exponent is Const || exponent is Var && exponent.toString().matches(Regex("[a-pr-z0-9]*")))
+          if (exponent == one) "" else exponent.toString().superscript()
+        else
+          "^($exponent)"
   }
 
   // TODO: Try to make RealNumber a subtype of Const
 
-  open class Const<X: Field<X>> internal constructor(val value: X): Function<X>()
+  open class Const<X : Field<X>> internal constructor(val value: X) : Function<X>()
 
-  class Var<X: Field<X>> internal constructor(
-    val value: X,
-    override val name: String = randomDefaultName()
-  ): Function<X>() {
+  class Var<X : Field<X>> internal constructor(
+      val value: X,
+      override val name: String = randomDefaultName()
+  ) : Function<X>() {
     override val variables: Set<Var<X>> = setOf(this)
   }
 }
 
-fun <F : (F, A) -> R, A, R> recur(f: F, arg: A): R = f(f, arg)
-
-fun main() {
-
-}
 //abstract class NullaryFunction<X: Field<X>>: Function<X>(emptySet())
 
 //abstract class UnaryFunction<X: Field<X>>(arg: Function<X>): Function<X>(arg.variables)

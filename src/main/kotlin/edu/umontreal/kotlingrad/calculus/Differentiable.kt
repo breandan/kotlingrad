@@ -4,8 +4,8 @@ import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.functions.Function
 
 
-interface Differentiable<X: Field<X>, D> {
-  infix fun diff(ind: Function.Var<X>): D
+interface Differentiable<X: Field<X>> {
+  infix fun diff(ind: X): X
 
-  fun grad(): Map<Function.Var<X>, D>
+  fun grad(): Map<X, X>
 }

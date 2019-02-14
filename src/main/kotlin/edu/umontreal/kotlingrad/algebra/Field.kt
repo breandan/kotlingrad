@@ -1,6 +1,8 @@
 package edu.umontreal.kotlingrad.algebra
 
-interface Field<X: Field<X>>: CommutativeRing<X> {
+import edu.umontreal.kotlingrad.calculus.Differentiable
+
+interface Field<X: Field<X>>: CommutativeRing<X>, Differentiable<X> {
   val e: X
 
   fun inverse(): X
