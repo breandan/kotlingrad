@@ -30,7 +30,9 @@ interface DelimitedContinuation<T, R> {
 operator fun <T, R> DelimitedContinuation<T, R>.invoke(value: R): T = invokeWith(Result.success(value))
 
 @RestrictsSuspension
-abstract class DelimitedScope<T> { abstract suspend fun <R> shift(block: (DelimitedContinuation<T, R>) -> T): R }
+abstract class DelimitedScope<T> {
+  abstract suspend fun <R> shift(block: (DelimitedContinuation<T, R>) -> T): R
+}
 
 private class DelimitedScopeImpl<T> : DelimitedScope<T>(), Continuation<T>, DelimitedContinuation<T, Any?> {
   private var shifted: ((DelimitedContinuation<T, Any?>) -> T)? = null
