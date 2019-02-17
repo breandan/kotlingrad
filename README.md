@@ -165,7 +165,7 @@ fun main(args: Array<String>) {
 
 Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
-```
+```kotlin
 z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
 z({x=0, y=1}) 			= 0.0
 ∂z({x=0, y=1})/∂x 		= (((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4) 
@@ -275,7 +275,7 @@ fun main(args: Array<String>) {
 
 To generate the above plot, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
 
-```
+```sh
 sudo apt-get install r-base && \
 sudo ln -s /usr/bin/R /usr/local/bin/R && \
 R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
@@ -466,7 +466,7 @@ open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val 
 
 The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
 
-```
+```kotlin
 val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)  // Always runs safely
 val add = Vec(`3`, 1, 2, 3) + Vec(`3` listOf(t)) // May fail at runtime
 val vec = Vec(`2`, 1, 2, 3)                      // Does not compile
