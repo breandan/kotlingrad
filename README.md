@@ -31,29 +31,26 @@ All of these features are implemented without access to bytecode or special comp
 
 |               Math†               |           Infix           |        Prefix        |        Postfix‡        |                           Type                           |
 |:---------------------------------:|:-------------------------:|:--------------------:|:----------------------:|:--------------------------------------------------------:|
-|             **a + b**             |   `a + b`, `a.plus(b)`    |     `plus(a, b)`     |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
-|             **a - b**             |   `a - b`, `a.minus(b)`   |    `minus(a, b)`     |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup> |
-|             **a * b**             |   `a * b`, `a.times(b)`   |    `times(a, b)`     |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup> → ℝ<sup>M×P</sup> |
-|             **a / b**             |    `a / b`, `a.div(b)`    |     `div(a, b)`      |                        | a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×N</sup> → ℝ<sup>M×N</sup> |
-|              **-a**               |         `neg(a)`          |         `-a`         |    `a.unaryMinus()`    |           a: ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
-|           *sin*(**a**)            |                           |       `sin(a)`       |       `a.sin()`        |                         a: ℝ → ℝ                         |
-|           *cos*(**a**)            |                           |       `cos(a)`       |       `a.cos()`        |                         a: ℝ → ℝ                         |
-|           *tan*(**a**)            |                           |       `tan(a)`       |       `a.tan()`        |                         a: ℝ → ℝ                         |
-|            *ln*(**a**)            |                           |       `ln(a)`        |  `a.ln()`, `a.log()`   |                         a: ℝ → ℝ                         |
-|     *log*<sub>b</sub>(**a**)      |        `a.log(b)`         |     `log(a, b)`      |                        |                      a: ℝ, b: ℝ → ℝ                      |
-|         **a**<sup>b</sup>         |        `a.pow(b)`         |     `pow(a, b)`      |                        |                      a: ℝ, b: ℝ → ℝ                      |
-|      √**a**,  ∛**a**  ∜**a**      | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |                         a: ℝ → ℝ                         |
-| <sup>df</sup>&frasl;<sub>dx</sub> |       `f.diff(x)`*        |    `grad(f)[x]`*     |     `d(f) / d(x)`*     |                   a: ℝ<sup>M</sup> → ℝ                   |
-|              ∇**f**               |                           |      `grad(f)`       |       `f.grad()`       |             a: ℝ<sup>M</sup> → ℝ<sup>M</sup>             |
+|             **a + b**             |   `a + b`, `a.plus(b)`    |     `plus(a, b)`     |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup>) → ℝ<sup>M×N</sup> |
+|             **a - b**             |   `a - b`, `a.minus(b)`   |    `minus(a, b)`     |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup>) → ℝ<sup>M×N</sup> |
+|             **a * b**             |   `a * b`, `a.times(b)`   |    `times(a, b)`     |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup>) → ℝ<sup>M×P</sup> |
+|             **a / b**             |    `a / b`, `a.div(b)`    |     `div(a, b)`      |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×N</sup>) → ℝ<sup>M×N</sup> |
+|              **-a**               |         `neg(a)`          |         `-a`         |    `a.unaryMinus()`    |              ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
+|           *sin*(**a**)            |                           |       `sin(a)`       |       `a.sin()`        |                            ℝ → ℝ                         |
+|           *cos*(**a**)            |                           |       `cos(a)`       |       `a.cos()`        |                            ℝ → ℝ                         |
+|           *tan*(**a**)            |                           |       `tan(a)`       |       `a.tan()`        |                            ℝ → ℝ                         |
+|            *ln*(**a**)            |                           |       `ln(a)`        |  `a.ln()`, `a.log()`   |                            ℝ → ℝ                         |
+|     *log*<sub>b</sub>(**a**)      |        `a.log(b)`         |     `log(a, b)`      |                        |                     (a: ℝ, b: ℝ) → ℝ                     |
+|         **a**<sup>b</sup>         |        `a.pow(b)`         |     `pow(a, b)`      |                        |                      (a: ℝ, b: ℝ) → ℝ                    |
+|      √**a**,  ∛**a**  ∜**a**      | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |                            ℝ → ℝ                         |
+| <sup>da</sup>&frasl;<sub>db</sub>, *a'(b)* |       `a.diff(b)`         |    `grad(a)[b]`      |     `d(a) / d(b)`      |                  (a: ℝ<sup>M</sup>, b: ℝ) → ℝ                |
+|              ∇**a**               |                           |      `grad(a)`       |       `a.grad()`       |                ℝ<sup>M</sup> → ℝ<sup>M</sup>             |
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`, and specialized versions are possible for subsets of the Reals, e.g. `Int`, `Short` or `BigInteger` for ℤ.
 
 &dagger; Here, **a** and **b** are expressions.
 
 &Dagger; For infix notation, the `.` is optional and parentheses are optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
-
-&lowast; `x` *must* be a variable.
-
 
 ### Shape Safety
 
