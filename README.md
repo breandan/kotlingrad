@@ -34,16 +34,15 @@ All of these features are implemented without access to bytecode or special comp
 |             **a + b**             |   `a + b`, `a.plus(b)`    |     `plus(a, b)`     |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup>) → ℝ<sup>M×N</sup> |
 |             **a - b**             |   `a - b`, `a.minus(b)`   |    `minus(a, b)`     |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>M×N</sup>) → ℝ<sup>M×N</sup> |
 |             **a * b**             |   `a * b`, `a.times(b)`   |    `times(a, b)`     |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×P</sup>) → ℝ<sup>M×P</sup> |
-|             **a / b**             |    `a / b`, `a.div(b)`    |     `div(a, b)`      |                        | (a: ℝ<sup>M×N</sup>, b: ℝ<sup>N×N</sup>) → ℝ<sup>M×N</sup> |
+|             **a / b**             |    `a / b`, `a.div(b)`    |     `div(a, b)`      |                        | (a: ℝ<sup>M×N</sup>, b: ℝ) → ℝ<sup>M×N</sup> |
 |              **-a**               |         `neg(a)`          |         `-a`         |    `a.unaryMinus()`    |              ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
-|           *sin*(**a**)            |                           |       `sin(a)`       |       `a.sin()`        |                            ℝ → ℝ                         |
-|           *cos*(**a**)            |                           |       `cos(a)`       |       `a.cos()`        |                            ℝ → ℝ                         |
-|           *tan*(**a**)            |                           |       `tan(a)`       |       `a.tan()`        |                            ℝ → ℝ                         |
-|            *ln*(**a**)            |                           |       `ln(a)`        |  `a.ln()`, `a.log()`   |                            ℝ → ℝ                         |
-|     *log*<sub>b</sub>(**a**)      |        `a.log(b)`         |     `log(a, b)`      |                        |                     (a: ℝ, b: ℝ) → ℝ                     |
-|         **a**<sup>b</sup>         |        `a.pow(b)`         |     `pow(a, b)`      |                        |                      (a: ℝ, b: ℝ) → ℝ                    |
-|      √**a**,  ∛**a**  ∜**a**      | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |                            ℝ → ℝ                         |
-| <sup>da</sup>&frasl;<sub>db</sub>, *a'(b)* |       `a.diff(b)`         |    `grad(a)[b]`      |     `d(a) / d(b)`      |                  (a: ℝ<sup>M</sup>, b: ℝ) → ℝ                |
+|           *cos*(**a**)            |                           |       `cos(a)`       |       `a.cos()`        |              ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
+|           *tan*(**a**)            |                           |       `tan(a)`       |       `a.tan()`        |              ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
+|            *ln*(**a**)            |                           |       `ln(a)`        |  `a.ln()`, `a.log()`   |              ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
+|     *log*<sub>b</sub>(**a**)      |        `a.log(b)`         |     `log(a, b)`      |                        | (a: ℝ<sup>M×N</sup>, b: ℝ) → ℝ<sup>M×N</sup> |
+|         **a**<sup>b</sup>         |        `a.pow(b)`         |     `pow(a, b)`      |                        | (a: ℝ<sup>M×N</sup>, b: ℝ) → ℝ<sup>M×N</sup> |
+|      √**a**,  ∛**a**  ∜**a**      | `a.pow(1/n)`, `a.root(n)` | `sqrt(a)`, `cbrt(a)` | `a.sqrt()`, `a.cbrt()` |              ℝ<sup>M×N</sup> → ℝ<sup>M×N</sup>           |
+| <sup>da</sup>&frasl;<sub>db</sub>, ***a**'(***b***)* |       `a.diff(b)`         |    `grad(a)[b]`      |     `d(a) / d(b)`      |                  (a: ℝ<sup>M</sup>, b: ℝ) → ℝ                |
 |              ∇**a**               |                           |      `grad(a)`       |       `a.grad()`       |                ℝ<sup>M</sup> → ℝ<sup>M</sup>             |
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`, and specialized versions are possible for subsets of the Reals, e.g. `Int`, `Short` or `BigInteger` for ℤ.
