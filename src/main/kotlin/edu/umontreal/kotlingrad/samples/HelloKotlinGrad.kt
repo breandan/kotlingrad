@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main(args: Array<String>) {
+fun main() {
   with(DoublePrecision) {
     val x = variable("x")
     val y = variable("y")

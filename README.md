@@ -135,7 +135,7 @@ The following example shows how to derive higher-order partials of a function `z
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main(args: Array<String>) {
+fun main() {
   with(DoublePrecision) { 
     val x = variable("x")
     val y = variable("y")
@@ -231,7 +231,7 @@ R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
 
 Then run `./gradlew plot`.
 
-Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Jzy3Demo.kt) in 3D:
+Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Jzy3Demo.kt) in 3D via `./gradlew plot3D` (no other libraries requried):
 
 ![](src/main/resources/ripple.png)
 ![](src/main/resources/pulsar.png)
