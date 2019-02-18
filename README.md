@@ -29,13 +29,15 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Notation
 
+Kotlin𝛁 operators are [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take up to two inputs and return a single output, all of which are higher order functions with the same numerical type, and whose shape is denoted in superscript below. 
+
 |                        Math†                         |            Infix            |         Prefix         |         Postfix‡         |                                                  Type                                                  |
 |:----------------------------------------------------:|:---------------------------:|:----------------------:|:------------------------:|:------------------------------------------------------------------------------------------------------:|
 |                    **a** + **b**                     |   `a + b`<br>`a.plus(b)`    |      `plus(a, b)`      |                          |                  (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ ℝ*)                   |
 |                    **a** - **b**                     |   `a - b`<br>`a.minus(b)`   |     `minus(a, b)`      |                          |                   (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ℝ*)                   |
 |                    **a** * **b**                     |   `a * b`<br>`a.times(b)`   |     `times(a, b)`      |                          | (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>N×P</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>) |
 |           **a** / **b**<br>**a** ⊙ **b**⁻¹           |    `a / b`<br>`a.div(b)`    |      `div(a, b)`       |                          |                     (a: ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ*)                     |
-|                        -**a**                        |                             |          `-a`          |     `a.unaryMinus()`     |                               (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup> → ℝ*)                                |
+|                        -**a**                        |                             |          `-a`          |     `a.unaryMinus()`     |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
 |                     *cos*(**a**)                     |                             |        `cos(a)`        |        `a.cos()`         |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
 |                     *tan*(**a**)                     |                             |        `tan(a)`        |        `a.tan()`         |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
 |                     *ln*(**a**)                      |                             |        `ln(a)`         |  `a.ln()`<br>`a.log()`   |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
