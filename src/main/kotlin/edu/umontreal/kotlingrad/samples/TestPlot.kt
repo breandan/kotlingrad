@@ -8,7 +8,7 @@ import kravis.plot
 import java.io.File
 
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
-fun main(args: Array<String>) {
+fun main() {
   with(DoublePrecision) {
     val x = variable("x")
 

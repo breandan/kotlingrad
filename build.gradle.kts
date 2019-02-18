@@ -15,7 +15,13 @@ tasks {
   register("plot", JavaExec::class) {
     main = "edu.umontreal.kotlingrad.samples.TestPlotKt"
     classpath = sourceSets["main"].runtimeClasspath
-    description = "Generates plots"
+    description = "Generates 2D plots"
+  }
+
+  register("plot3D", JavaExec::class) {
+    main = "edu.umontreal.kotlingrad.samples.Jzy3DemoKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    description = "Generates 3D plots"
   }
 
   register("demo", JavaExec::class) {

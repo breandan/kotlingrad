@@ -52,7 +52,6 @@ object Jzy3Demo: AbstractAnalysis() {
     chart = AWTChartComponentFactory.chart(Advanced, getCanvasType())
     chart.scene.graph.add(surface)
   }
-
-  @JvmStatic
-  fun main(args: Array<String>) = AnalysisLauncher.open(Jzy3Demo)
 }
+
+fun main() = AnalysisLauncher.open(Jzy3Demo)
