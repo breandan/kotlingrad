@@ -29,7 +29,7 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Notation
 
-Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take up to two inputs and return a single output, all of which are higher-order functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
+Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
 |                        Math†                         |            Infix            |         Prefix         |         Postfix‡         |                                                  Type                                                  |
 |:----------------------------------------------------:|:---------------------------:|:----------------------:|:------------------------:|:------------------------------------------------------------------------------------------------------:|
@@ -178,56 +178,6 @@ z({x=0, y=1}) 			= 0.0
 				= [4.0, 0.0]ᵀ
 ```
 
-## Testing
-
-To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
-
-Kotlin𝛁 claims to eliminate certain runtime errors, but what assurances do we have the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
-
-* [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
-* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
-
-For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
-
-```kotlin
-val x = variable("x")
-val y = variable("y")
-
-val z = y * (sin(x * y) - x)            // Function under test
-val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
-val manualDx = y * (cos(x * y) * y - 1) // Manual derivative 
-
-"∂z/∂x should be y * (cos(x * y) * y - 1)" {
-  assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
-    // Evaluate the results at a given seed
-    val autoEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
-    val manualEval = manualDx(x to ẋ, y to ẏ)
-    // Should pass if Δ(adEval, manualEval) < Ɛ
-    autoEval shouldBeApproximately manualEval
-  }
-}
-```
-
-PBT will search the input space for two numerical values `ẋ` and `ẏ`, which violate the specification, then ["shrink"](http://hackage.haskell.org/package/QuickCheck-2.12.6.1/docs/Test-QuickCheck-Arbitrary.html#v:shrink) them to discover pass-fail boundary values. We can construct a similar test using finite differences:
-
-```kotlin
-"d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
-  assertAll(NumericalGenerator) { ẋ ->
-    val f = sin(x)
-    
-    val `df∕dx` = d(f) / d(x)
-    val adEval = `df∕dx`(ẋ) 
-    
-    val dx = 1E-8
-    // Since ẋ is a raw numeric type, sin => kotlin.math.sin
-    val fdEval = (sin(ẋ + dx) - sin(ẋ)) / dx
-    adEval shouldBeApproximately fdEval
-  }
-}
-```
-
-here are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
-
 ## Plotting
 
 ![](src/main/resources/plot.png)
@@ -287,6 +237,56 @@ Plotting is also possible in higher dimensions, [for example](src/main/kotlin/ed
 ![](src/main/resources/pulsar.png)
 ![](src/main/resources/starquake.png)
 ![](src/main/resources/novaflux.png)
+
+## Testing
+
+To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
+
+Kotlin𝛁 claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
+
+* [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
+* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
+
+For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
+
+```kotlin
+val x = variable("x")
+val y = variable("y")
+
+val z = y * (sin(x * y) - x)            // Function under test
+val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
+val manualDx = y * (cos(x * y) * y - 1) // Manual derivative 
+
+"∂z/∂x should be y * (cos(x * y) * y - 1)" {
+  assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+    // Evaluate the results at a given seed
+    val autoEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
+    val manualEval = manualDx(x to ẋ, y to ẏ)
+    // Should pass if Δ(adEval, manualEval) < Ɛ
+    autoEval shouldBeApproximately manualEval
+  }
+}
+```
+
+PBT will search the input space for two numerical values `ẋ` and `ẏ`, which violate the specification, then ["shrink"](http://hackage.haskell.org/package/QuickCheck-2.12.6.1/docs/Test-QuickCheck-Arbitrary.html#v:shrink) them to discover pass-fail boundary values. We can construct a similar test using finite differences:
+
+```kotlin
+"d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
+  assertAll(NumericalGenerator) { ẋ ->
+    val f = sin(x)
+    
+    val `df∕dx` = d(f) / d(x)
+    val adEval = `df∕dx`(ẋ) 
+    
+    val dx = 1E-8
+    // Since ẋ is a raw numeric type, sin => kotlin.math.sin
+    val fdEval = (sin(ẋ + dx) - sin(ẋ)) / dx
+    adEval shouldBeApproximately fdEval
+  }
+}
+```
+
+here are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
 ## How?
 
@@ -507,7 +507,7 @@ The current API is experimental, but can be improved in many ways. Currently var
 
 When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
-Another optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of optimizations on specialized matrices.
+Another optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of specialized optimizations on such matrices.
 
 ### Scalar functions
 
