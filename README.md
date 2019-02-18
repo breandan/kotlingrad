@@ -12,14 +12,14 @@ Kotlin𝛁 currently supports the following features:
 
 * Arithmetical operations on scalars, vectors and matrices
 * Shape-safe vector and matrix algebra
-* Partial and higher order differentiation on scalars
+* Partial and higher-order differentiation on scalars
 * Property-based testing for numerical gradient checking
 * Recovery of symbolic derivatives from AD
 
 Additionally, it aims to support:
 
 * PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
-* N-dimensional tensors and [higher order tensor operators](https://en.wikipedia.org/wiki/Tensor_contraction)
+* N-dimensional tensors and [higher-order tensor operators](https://en.wikipedia.org/wiki/Tensor_contraction)
 * Fully-general AD over control flow, variable reassignment
 (via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
 
@@ -29,7 +29,7 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Notation
 
-Kotlin𝛁 operators are [higher order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take up to two inputs and return a single output, all of which are higher order functions with the same numerical type, and whose shape is denoted in superscript below. 
+Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take up to two inputs and return a single output, all of which are higher-order functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
 |                        Math†                         |            Infix            |         Prefix         |         Postfix‡         |                                                  Type                                                  |
 |:----------------------------------------------------:|:---------------------------:|:----------------------:|:------------------------:|:------------------------------------------------------------------------------------------------------:|
@@ -47,11 +47,11 @@ Kotlin𝛁 operators are [higher order functions](https://en.wikipedia.org/wiki/
 | <sup>da</sup>&frasl;<sub>db</sub>, ***a**'(***b***)* |         `a.diff(b)`         |      `grad(a)[b]`      |      `d(a) / d(b)`       |                            (a: ℝ<sup>M</sup>→ℝ, b: ℝ→ℝ) → (ℝ<sup>M</sup>→ℝ)                            |
 |                        ∇**a**                        |                             |       `grad(a)`        |        `a.grad()`        |                                 (ℝ<sup>M</sup>→ℝ) → (ℝ<sup>M</sup>→ℝ)                                  |
 
-More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`, and specialized versions are possible for subsets of the Reals, e.g. `Int`, `Short` or `BigInteger` for ℤ.
+More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) on ℝ.
 
-&dagger; Here, **a** and **b** are expressions.
+&dagger; **a** and **b** are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `variable("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
-&Dagger; For infix notation, the `.` is optional and parentheses are optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
+&Dagger; For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
 ### Shape Safety
 
@@ -118,18 +118,18 @@ val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
 // e * f
 ```
 
-Explict types are optional but encouraged. [Type inference](https://www.youtube.com/watch?v=MyljSWm0Y_k) lets us preserve shape information over long programs.
+Explict types are optional but encouraged. [Type inference](https://www.youtube.com/watch?v=MyljSWm0Y_k) helps preserve shape information over long programs.
 
 ```kotlin
 fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 ```
 
-When writing a function, it is required to declare the input types, but the return type [may be optional](https://kotlinlang.org/docs/reference/functions.html#explicit-return-types). Shape-safety is currently supported up to rank-2 tensors, i.e. matrices.
+When writing a function, it is mandatory to declare the input type(s), but the return type [may be omitted](https://kotlinlang.org/docs/reference/functions.html#explicit-return-types). Shape-safety is currently supported up to rank-2 tensors, i.e. matrices.
 
 ### Example
 
-The following example shows how to derive higher-order partials of a function `z` with type ℝ²→ℝ:
+The following example shows how to derive higher-order partials of a function `z` of type ℝ²→ℝ:
 
 ```kotlin
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
@@ -182,7 +182,7 @@ z({x=0, y=1}) 			= 0.0
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
-Kotlin𝛁 claims to eliminate certain runtime errors, but what guarantees do we have the proposed implementation is not incorrect? One way is to use a technique borrowed from the Haskell community called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which (in theory) should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
+Kotlin𝛁 claims to eliminate certain runtime errors, but what assurances do we have the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
 
 * [Symbolic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
@@ -226,7 +226,7 @@ PBT will search the input space for two numerical values `ẋ` and `ẏ`, which 
 }
 ```
 
-However, there are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the output with a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough analysis of numerical accuracy and performance in a future release.
+here are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
 ## Plotting
 
@@ -331,7 +331,7 @@ val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 ```
 
-Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with multiple input/output types and enforce constraints on both input and an output, using [covariant and contravariant](https://kotlinlang.org/docs/reference/generics.html) type bounds.
+Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using [covariant and contravariant](https://kotlinlang.org/docs/reference/generics.html) type bounds.
 
 #### Coroutines
 
@@ -339,7 +339,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allows augmenting classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/Precision.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) augment external classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/Precision.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Expr()
@@ -357,13 +357,13 @@ object DoubleContext {
 }
 ```
 
-Now, we can use this context elsewhere in a project to define another extension, `Expr.multiplyByTwo`, which performs the multiplication inside a `DoubleContext`, using the operator overload we defined above:
+Now, we can use the context to define another extension, `Expr.multiplyByTwo`, which computes the product inside a `DoubleContext`, using the operator overload we defined above:
 
 ```kotlin
 fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` operator in DoubleContext
 ```
 
-Likewise, this extension can be defined in another file or context and imported on demand.
+Extensions can also be defined in another file or context and imported on demand.
 
 #### Algebraic data types (ADTs)
 
@@ -394,7 +394,7 @@ class Zero<T: Group<T>>: Const<T>
 class One<T: Group<T>>: Const<T>
 ```
 
-Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile rather than fail silently at runtime.
+Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of say, failing silently at runtime).
 
 [Smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) allows us to treat the abstract type `Expr` as a concrete type, e.g. `Sum` after performing an `is Sum` check. Otherwise, we would need to write `(expr as Sum).e1` in order to access its field, `e1`. Performing a cast without checking would throw a runtime exception, if the type were incorrect. Using sealed classes helps avoid casting, thus avoiding `ClassCastException`s.
 
@@ -402,7 +402,7 @@ Users are forced to handle all subclasses when branching on the type of a sealed
 
 In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
-Building on the previous example, a common task in AD is to simplify an expression tree, to minimize the number of computations required to evaluate a function or improve numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
+Building on the previous example, a common task in AD is to [simplify a graph](http://deeplearning.net/software/theano/extending/optimization.html). This is useful in order to minimize the number of calculations required, or to improve numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 
 [//]: # (Note: numerical stability is sensitive to the order of rewriting, cf. https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
@@ -426,7 +426,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking.* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
 
@@ -497,15 +497,17 @@ A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/k
 
 [Further examples](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
+A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
+
 &lowast; A number of less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently it uses default values for variables, so when a function is invoked with missing variable(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value will be applied. This is similar to [broadcasting in NumPy](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html), to ensure shape compatibility. However we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). 
+The current API is experimental, but can be improved in many ways. Currently variables are instantiated with default values, so when a function is invoked with missing values(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value is applied. This is similar to [NumPy broadcasting](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html). However, we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). 
 
-When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor- operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
+When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
-Another such optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of optimizations on specialized matrices.
+Another optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of optimizations on specialized matrices.
 
 ### Scalar functions
 
@@ -566,7 +568,7 @@ val z = x * y                      // z: MVariable<Double, `3`, `2`>
 
 ## References
 
-To the author's knowledge, Kotlin𝛁 is the first AD implementation in native Kotlin. While the particular synthesis and integration of these ideas is unique, it has been influenced by a huge amount of prior work in AD literature. Below is a list of projects and publications that helped inspire this work.
+To the author's knowledge, Kotlin𝛁 is the first AD implementation in native Kotlin. While the particular synthesis of these ideas (i.e. shape-safe, functional AD, using generic types) is unique, it has been influenced by a long list of prior work in AD. Below is a list of projects and publications that helped inspire this work.
 
 ### Computer Algebra
 
@@ -612,6 +614,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)
 * [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
 * [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html)
+* [A guide to convolutional arithmetic for deep learning](https://arxiv.org/pdf/1603.07285.pdf)
 
 ### Automated Testing
 
