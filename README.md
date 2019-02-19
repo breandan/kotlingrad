@@ -570,16 +570,6 @@ val z = x * y                      // z: MVariable<Double, `3`, `2`>
 
 To the author's knowledge, Kotlin𝛁 is the first AD implementation in native Kotlin. While the particular synthesis of these ideas (i.e. shape-safe, functional AD, using generic types) is unique, it has been influenced by a long list of prior work in AD. Below is a list of projects and publications that helped inspire this work.
 
-### Computer Algebra
-
-* [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
-* [On Using Generics for Implementing Algebraic Structures](http://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
-* [How to turn a scripting language into a domain specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
-* [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
-* [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
-* [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
-* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
-
 ### Automatic Differentiation
 
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
@@ -598,6 +588,20 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
 * [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
 
+### Calculus
+
+* [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
+
+### Computer Algebra
+
+* [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
+* [On Using Generics for Implementing Algebraic Structures](http://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
+* [How to turn a scripting language into a domain specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
+* [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
+* [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
+* [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
+* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
+
 ### Computational Mathematics
 
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
@@ -605,16 +609,17 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [COJAC](https://github.com/Cojac/Cojac) - Numerical sniffing tool and Enriching number wrapper for Java
 * [chebfun](http://www.chebfun.org/) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
 
-### Calculus
-
-* [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
-
 ### Neural Networks
 
 * [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)
 * [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
 * [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html)
 * [A guide to convolutional arithmetic for deep learning](https://arxiv.org/pdf/1603.07285.pdf)
+
+### Type Systems
+
+* [Dimension Types](https://link.springer.com/content/pdf/10.1007%2F3-540-57880-3_23.pdf)
+* [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145)
 
 ### Automated Testing
 
