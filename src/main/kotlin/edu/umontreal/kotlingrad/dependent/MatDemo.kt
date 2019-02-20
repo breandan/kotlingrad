@@ -45,7 +45,7 @@ fun main() {
 //  e * b
 //  f * b
 
-// Does not compile, incompatible size
+// Runtime failure, incompatible size
 //  val d_: Mat<Int, `2`, `3`> = Mat(`2`, `3`,
 //    1, 2, 3,
 //    4, 5
@@ -101,8 +101,8 @@ fun main() {
   println("lm = $lm")
 
 // Does not compile, inner dimension mismatch
-//  n * f
-//  n * d
+//  lm * f
+//  ln * d
 
   val o = Mat(`9`, `9`,
     1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -124,4 +124,6 @@ fun main() {
   val q: Mat<Int, `100`, `1`> = p.transpose() // Runtime failure: Index OOB
 // Does not compile, inner dimension mismatch
 //  q * f
+
+  val z = Mat(`11`, `11`, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) // Runtime failure, incompatible size
 }
