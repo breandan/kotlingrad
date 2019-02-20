@@ -5,8 +5,8 @@ import edu.umontreal.kotlingrad.numerical.DoublePrecision
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main() {
   with(DoublePrecision) {
-    val x = variable("x")
-    val y = variable("y")
+    val x = Var("x")
+    val y = Var("y")
 
     val z = x * (-sin(x * y) + y) * 4  // Infix notation
     val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation

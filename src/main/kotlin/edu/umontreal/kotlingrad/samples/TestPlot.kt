@@ -10,7 +10,7 @@ import java.io.File
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main() {
   with(DoublePrecision) {
-    val x = variable("x")
+    val x = Var("x")
 
     val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
     val `dy∕dx` = d(y) / d(x)

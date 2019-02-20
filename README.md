@@ -37,7 +37,8 @@ Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/
 |                    **a** - **b**                     |    `a - b`<br>`a.minus(b)`    |          `minus(a, b)`           |                                     |                   (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ℝ*)                   |
 |                    **a** * **b**                     |    `a * b`<br>`a.times(b)`    |          `times(a, b)`           |                                     | (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>N×P</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>) |
 |           **a** / **b**<br>**a** ⊙ **b**⁻¹           |     `a / b`<br>`a.div(b)`     |           `div(a, b)`            |                                     |                     (a: ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ*)                     |
-|                        -**a**                        |                               |               `-a`               |          `a.unaryMinus()`           |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
+|                   -**a**<br>+**a**                   |                               |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()  |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
+|            **a** + **1**<br>**a** - **1**            |      `a + 1`<br>`a - 1`       |          `++a`<br>`--a`          | `a++`,`a.inc()`<br>`a--`,`a.dec()`  |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ ℝ*)                                |
 |     *sin*(**a**)<br>*cos*(**a**)<br>*tan*(**a**)     |                               | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
 |                     *ln*(**a**)                      |                               |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
 |               *log*<sub>b</sub>(**a**)               |          `a.log(b)`           |           `log(a, b)`            |                                     |                     (a: ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ*)                     |
@@ -48,7 +49,7 @@ Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) on ℝ.
 
-&dagger; **a** and **b** are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `variable("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
+&dagger; **a** and **b** are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
 &Dagger; For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
@@ -136,8 +137,8 @@ import edu.umontreal.kotlingrad.numerical.DoublePrecision
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main() {
   with(DoublePrecision) { 
-    val x = variable("x")
-    val y = variable("y")
+    val x = Var("x")
+    val y = Var("y")
 
     val z = x * (-sin(x * y) + y) * 4  // Infix notation
     val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation
@@ -184,17 +185,9 @@ z({x=0, y=1}) 			= 0.0
 This plot was generated with the following code:
 
 ```kotlin
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
-import edu.umontreal.kotlingrad.utils.step
-import krangl.dataFrameOf
-import kravis.geomLine
-import kravis.plot
-import java.io.File
-
-@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main(args: Array<String>) {
   with(DoublePrecision) {
-    val x = variable("x")
+    val x = Var("x")
 
     val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
     val `dy∕dx` = d(y) / d(x)
@@ -249,8 +242,8 @@ Kotlin𝛁 claims to eliminate certain runtime errors, but how do we know the pr
 For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
 
 ```kotlin
-val x = variable("x")
-val y = variable("y")
+val x = Var("x")
+val y = Var("y")
 
 val z = y * (sin(x * y) - x)            // Function under test
 val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
@@ -406,16 +399,15 @@ Building on the previous example, a common task in AD is to [simplify a graph](h
 [//]: # (Note: numerical stability is sensitive to the order of rewriting, cf. https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
 ```kotlin
-operator fun Expr.times(other: Expr) = when {
-    this is Const && other is Const -> Const(number * other.number)
-    this is Const && number == 0.0 -> Const(0.0)
-    this is Const && number == 1.0 -> other
-    other is Const && other.number == 0.0 -> other
-    other is Const && other.number == 1.0 -> this
-    this is Const && other is Sum -> Sum(Const(number) * other.e1, Const(number) * other.e2)
-    other is Const && this is Sum -> Sum(Const(other.number) * e1, Const(other.number) * e2)
-    // Further simplification is possible using rules of replacement
-    else -> Prod(this, other)
+override fun times(multiplicand: Function<X>): Function<X> = when {
+  this == zero -> this
+  this == one -> multiplicand
+  multiplicand == one -> this
+  multiplicand == zero -> multiplicand
+  this == multiplicand -> pow(two)
+  this is Const && multiplicand is Const -> const(value * multiplicand.value)
+  // Further simplification is possible using rules of replacement
+  else -> Prod(this, multiplicand)
 }
 
 val result = Const(2.0) * Sum(Var(2.0), Const(3.0)) // Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
@@ -513,11 +505,21 @@ Another optimization is to encode some useful properties of matrices into a vari
 A function's type should encode arity, based on the number of variables:
 
 ```kotlin
-val x = variable(1.0)              // x: Variable<Double> inferred type
-val y = variable(1.0)              // x: Variable<Double> "
-val f = x * y + sin(2 * x + 3 * y) // f: BinaryFunction<Double> "
-val g = f(x to -1.0)               // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
-val h = f(x to 0.0, y to 0.0)      // h: Const<Double> == 0 + sin(0 + 0) == 0
+val x = Var(1.0)                                // x: Variable<Double> inferred type
+val y = Var(1.0)                                // x: Variable<Double> "
+val f = x * y + sin(2 * x + 3 * y)              // f: BinaryFunction<Double> "
+val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
+val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
+```
+
+However inferring arity for arbitrary expressions at compile time would be difficult in the Kotlin type system. Instead, we can have the user specify it directly.
+
+```kotlin
+val x = Var(1.0)                                // x: Variable<Double> inferred type
+val y = Var(1.0)                                // x: Variable<Double> "
+val f = Fun(`2`) { x * y + sin(2 * x + 3 * y) } // f: BinaryFunction<Double> "
+val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
+val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
 
 ### Vector functions
@@ -525,10 +527,10 @@ val h = f(x to 0.0, y to 0.0)      // h: Const<Double> == 0 + sin(0 + 0) == 0
 Vector functions should have a size type, to ensure all values are set:
 
 ```kotlin
-val x = vvariable(0.0, 0.0, 0.0)   // x: VVariable<Double, `3`>
-val y = vvariable(0.0, `3`)        // x: VVariable<Double, `3`>
-val f = 2 * x + x / 2              // f: UnaryVFunction<Double>
-val g = f(-2.0, 0.0, 2.0)          // g: ConstVector<`3`> == [-3. 0. 5.]
+val x = VVar(0.0, 0.0, 0.0) // x: VVariable<Double, `3`>
+val y = VVar(0.0, `3`)      // x: VVariable<Double, `3`>
+val f = 2 * x + x / 2       // f: UnaryVFunction<Double>
+val g = f(-2.0, 0.0, 2.0)   // g: ConstVector<`3`> == [-3. 0. 5.]
 ```
 
 ### Matrix functions
@@ -536,9 +538,9 @@ val g = f(-2.0, 0.0, 2.0)          // g: ConstVector<`3`> == [-3. 0. 5.]
 Multiplying matrices `x = N x M` and `y = M x P` should yield matrix `z` of type `N x P`:
 
 ```kotlin
-val x = vvariable(0.0, `3`, `1`)   // y: MVariable<Double, `3`, `1`>
-val y = vvariable(0.0, 0.0)        // x: MVariable<Double, `1`, `2`>
-val z = x * y                      // z: MVariable<Double, `3`, `2`>
+val x = VVar(0.0, `3`, `1`) // y: MVariable<Double, `3`, `1`>
+val y = VVar(0.0, 0.0)      // x: MVariable<Double, `1`, `2`>
+val z = x * y               // z: MVariable<Double, `3`, `2`>
 ```
 
 ## Comparison
@@ -576,6 +578,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
 * [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
 * [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
+* [Automatic differentiation in machine learning: a survey](http://jmlr.org/papers/volume18/17-468/17-468.pdf)
 
 ### Differentiable Programming
 
@@ -585,7 +588,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
-* [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
+* [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37Andy Davis	c35)
 
 ### Calculus
 

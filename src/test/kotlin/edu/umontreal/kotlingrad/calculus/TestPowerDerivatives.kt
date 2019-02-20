@@ -8,7 +8,7 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPowerDerivatives: StringSpec({
   with(DoublePrecision) {
-    val x = variable("x")
+    val x = Var("x")
 
     "d(1/x) / dx should be -1/x²" {
       assertAll(NumericalGenerator) { ẋ ->

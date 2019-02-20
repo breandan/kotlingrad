@@ -9,7 +9,7 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestSimpleDerivatives: StringSpec({
   with(DoublePrecision) {
-    val x = variable("x")
+    val x = Var("x")
 
     "dx / dx should be 1" {
       assertAll(NumericalGenerator) { ẋ ->

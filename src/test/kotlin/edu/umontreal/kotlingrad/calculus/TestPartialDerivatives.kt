@@ -8,8 +8,8 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPartialDerivatives: StringSpec({
   with(DoublePrecision) {
-    val x = variable("x")
-    val y = variable("y")
+    val x = Var("x")
+    val y = Var("y")
 
     "∂x / ∂y should be 0" {
       assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->

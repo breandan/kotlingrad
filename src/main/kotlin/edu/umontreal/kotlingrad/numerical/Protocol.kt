@@ -6,12 +6,12 @@ import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.Function.*
 
 abstract class Protocol<X: RealNumber<X, Y>, Y>: FieldFunctor<X>() where Y: Number, Y: Comparable<Y> {
-  fun variable() = Var(wrap(0))
-  fun variable(default: X) = Var(value = default)
-  fun variable(name: String) = Var(wrap(0), name = name)
-  fun variable(name: String, default: X) = Var(default, name)
-  fun variable(default: Number) = Var(wrap(default))
-  fun variable(name: String, default: Number) = Var(wrap(default), name)
+  fun Var() = Var(wrap(0))
+  fun Var(default: X) = Var(value = default)
+  fun Var(name: String) = Var(wrap(0), name = name)
+  fun Var(name: String, default: X) = Var(default, name)
+  fun Var(default: Number) = Var(wrap(default))
+  fun Var(name: String, default: Number) = Var(wrap(default), name)
 
   abstract fun wrap(default: Number): X
 

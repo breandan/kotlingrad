@@ -8,7 +8,7 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestLogarithmicDerivatives: StringSpec({
   with(DoublePrecision) {
-    val n = variable("n")
+    val n = Var("n")
 
     "dnⁿ / dn should be nⁿ * (ln(n) + 1)" {
       assertAll(NumericalGenerator(0)) { nVal: Double ->

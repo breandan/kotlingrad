@@ -12,7 +12,7 @@ class TestFiniteDifferences: StringSpec({
   val dx = 1E-20
 
   with(DoublePrecision) {
-    val x = variable("x")
+    val x = Var("x")
 
     "sin should be (sin(x + dx) - sin(x)) / dx" {
       assertAll(NumericalGenerator) { ẋ ->

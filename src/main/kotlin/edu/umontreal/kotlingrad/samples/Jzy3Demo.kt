@@ -19,8 +19,8 @@ object Jzy3Demo: AbstractAnalysis() {
     val mapper = object: Mapper() {
       override fun f(xc: Double, yc: Double) =
         with(DoublePrecision) {
-          val x = variable()
-          val y = variable()
+          val x = Var()
+          val y = Var()
 
           val f = sin(10 * (x * x + pow(y, 2))) / 10
           val z = d(f) / d(x)

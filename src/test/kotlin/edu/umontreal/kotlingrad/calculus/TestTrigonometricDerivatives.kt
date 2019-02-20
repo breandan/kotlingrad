@@ -8,8 +8,8 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestTrigonometricDerivatives: StringSpec({
   with(DoublePrecision) {
-    val x = variable("x")
-    val y = variable("y")
+    val x = Var("x")
+    val y = Var("y")
 
     "d(sin(x)) / dx should be cos(x)" {
       assertAll(NumericalGenerator) { ẋ ->
