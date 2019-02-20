@@ -1,11 +1,10 @@
 package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.calculus.FieldFunctor
 import edu.umontreal.kotlingrad.functions.Function
 import edu.umontreal.kotlingrad.functions.Function.*
 
-abstract class Protocol<X: RealNumber<X, Y>, Y>: FieldFunctor<X>() where Y: Number, Y: Comparable<Y> {
+abstract class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> {
   fun Var() = Var(wrap(0))
   fun Var(default: X) = Var(value = default)
   fun Var(name: String) = Var(wrap(0), name = name)

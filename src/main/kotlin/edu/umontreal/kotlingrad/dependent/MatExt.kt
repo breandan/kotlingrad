@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.dependent
 
 fun <T, R: `100`, C: `100`, M: Mat<T, R, C>> M.transpose() =
-  Mat(contents = (0 until numCols).map { i -> Vec(contents = contents.map { it[i] }, length = rowT) }, rowT = colT, colT = rowT)
+  Mat(contents = (0 until numCols).map { i -> Vec(contents = contents.map { it[i] }, length = rowT) }, m = colT, n = rowT)
 
 @JvmName("longMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Long, R, C>> M.plus(v: M): Mat<Long, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
 @JvmName("intMatPlus") infix operator fun <R: `100`, C: `100`, M: Mat<Int, R, C>> M.plus(v: M): Mat<Int, R, C> = Mat(rowT, colT, contents.zip(v.contents).map { it.first + it.second })
