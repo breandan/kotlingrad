@@ -8,7 +8,7 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestHigherOrderDerivatives: StringSpec({
   with(DoublePrecision) {
-    val x = variable("x")
+    val x = Var("x")
 
     "d²x² / dx² should be 0" {
       assertAll(NumericalGenerator) { ẋ: Double ->

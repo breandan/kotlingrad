@@ -9,9 +9,9 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters")
 class TestArithmetic: StringSpec({
   with(DoublePrecision) {
-    val x = variable("x")
-    val y = variable("y")
-    val z = variable("z")
+    val x = Var("x")
+    val y = Var("y")
+    val z = Var("z")
 
     "test addition" {
       assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
