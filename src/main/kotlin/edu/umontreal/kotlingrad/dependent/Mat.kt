@@ -19,17 +19,17 @@ open class Mat<T, Rows : `100`, Cols : `100`> : Vec<Vec<T, Cols>, Rows> {
   val numCols: Int
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: T) : this(rowT, colT,
-      Vec(rowT, (0 until rowT.i).map { Vec(colT, (0 until colT.i).map { filler } ) }))
+    Vec(rowT, (0 until rowT.i).map { Vec(colT, (0 until colT.i).map { filler }) }))
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: () -> T) : this(rowT, colT,
-      Vec(rowT, (0 until rowT.i).map { Vec(colT, (0 until colT.i).map { filler() } ) }))
+    Vec(rowT, (0 until rowT.i).map { Vec(colT, (0 until colT.i).map { filler() }) }))
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: (row: Int, col: Int) -> T) : this(rowT, colT,
-      Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler(row, col) } ) }))
+    Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler(row, col) }) }))
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, ts: List<T>) : this(rowT, colT,
-      if (ts.size == rowT.i * colT.i) Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> ts[col + row * colT.i] }) }.toList())
-      else throw Exception("Declared $rowT x $colT, but found ${ts.size}"))
+    if (ts.size == rowT.i * colT.i) Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> ts[col + row * colT.i] }) }.toList())
+    else throw IllegalArgumentException("Declared $rowT x $colT, but found ${ts.size}"))
 
   override fun toString() = "($numRows x $numCols)\n[${contents.joinToString("\n ") { it.contents.joinToString(" ") }}]"
 

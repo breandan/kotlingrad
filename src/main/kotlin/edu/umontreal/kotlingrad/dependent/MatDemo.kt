@@ -79,7 +79,7 @@ fun main() {
 //  i * f
 //  i * d
 
- // Inferred type: Mat<Int, `4`, `4`>
+  // Inferred type: Mat<Int, `4`, `4`>
   val l = Mat(`4`, `4`,
     1, 2, 3, 4,
     5, 6, 7, 8,
@@ -116,7 +116,7 @@ fun main() {
     1, 2, 3, 4, 5, 6, 7, 8, 9
   )
 
-  println(o*o - (o+o))
+  println(o * o - (o + o))
 
   val p = Mat(`1`, `100`, 0)
   // Type-checked matrix operations are still possible after unsafe construction
@@ -126,23 +126,30 @@ fun main() {
 //  q * f
 
   // Functional initializers
-  val r = Mat(`20`, `20`) { y, z -> if(y == z) 1 else 0 }
+  val r = Mat(`20`, `20`) { y, z -> if (y == z) 1 else 0 }
   println("r: $r")
   val s = Mat(`11`, `11`, listOf(
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-  )
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11))
 
   println("s: $s")
   val t = Mat(`1`, `1`, 1)
   println("t: $t")
+
+  // Unsafe construction with a list of the wrong size it will fail at runtime
+  try {
+    Mat(`2`, `2`, listOf(1, 2, 3))
+    assert(false)
+  } catch (e: IllegalArgumentException) {
+    println(e)
+  }
 }
