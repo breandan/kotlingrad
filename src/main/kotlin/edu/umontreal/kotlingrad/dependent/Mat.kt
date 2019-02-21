@@ -1,27 +1,37 @@
 package edu.umontreal.kotlingrad.dependent
 
 // TODO: Maybe extend Vec?
-open class Mat<T, Rows : `100`, Cols : `100`> private constructor(
-    /**TODO: Make contents a Vec<Vec<T, MaxCols>, MaxRows>**/
-    val rowT: Nat<Rows>, val colT: Nat<Cols>,
-    val list: Vec<Vec<T, Cols>, Rows>) : Vec<Vec<T, Cols>, Rows>(rowT, list.contents) {
-  val numRows = rowT.i
-  val numCols = colT.i
+open class Mat<T, Rows : `100`, Cols : `100`> : Vec<Vec<T, Cols>, Rows> {
+  /**TODO: Make contents a Vec<Vec<T, MaxCols>, MaxRows>**/
+  val rowT: Nat<Rows>
+  val colT: Nat<Cols>
+  val vec: Vec<Vec<T, Cols>, Rows>
 
-  constructor(rowT: Nat<Rows>, colT: Nat<Cols>, contents: List<Vec<T, Cols>>) : this(rowT, colT,
-      if (contents.size != rowT.i) throw Exception("Declared $rowT x $colT, but found ${contents.size}")
-      else Vec(rowT, contents))
+  constructor(rowT: Nat<Rows>, colT: Nat<Cols>, vec: Vec<Vec<T, Cols>, Rows>) : super(rowT, vec.contents) {
+    this.rowT = rowT
+    this.colT = colT
+    this.vec = vec
+    this.numRows = rowT.i
+    this.numCols = colT.i
+  }
 
-  constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: () -> T) : this(rowT, colT,
-      (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler() }) })
+  val numRows: Int
+  val numCols: Int
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: T) : this(rowT, colT,
-      (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler }) })
+      Vec(rowT, (0 until rowT.i).map { Vec(colT, (0 until colT.i).map { filler } ) }))
+
+  constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: () -> T) : this(rowT, colT,
+      Vec(rowT, (0 until rowT.i).map { Vec(colT, (0 until colT.i).map { filler() } ) }))
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, filler: (row: Int, col: Int) -> T) : this(rowT, colT,
-      (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler(row, col) }) })
+      Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler(row, col) } ) }))
 
-  override fun toString() = "($numRows x $numCols)\n[${contents.map { it.contents.joinToString(" ") }.joinToString("\n ")}]"
+  constructor(rowT: Nat<Rows>, colT: Nat<Cols>, ts: List<T>) : this(rowT, colT,
+      if (ts.size == rowT.i * colT.i) Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> ts[col + row * colT.i] }) }.toList())
+      else throw Exception("Declared $rowT x $colT, but found ${ts.size}"))
+
+  override fun toString() = "($numRows x $numCols)\n[${contents.joinToString("\n ") { it.contents.joinToString(" ") }}]"
 
   // Type-safe construction for matrix literals up to 9x9
   companion object {
@@ -107,7 +117,6 @@ open class Mat<T, Rows : `100`, Cols : `100`> private constructor(
     @JvmName("m9x8") private operator fun <T, V: Vec<T, `8`>> invoke(t0: V, t1: V, t2: V, t3: V, t4: V, t5: V, t6: V, t7: V, t8: V): Mat<T, `9`, `8`> = Mat(`9`, `8`, Vec(t0, t1, t2, t3, t4, t5, t6, t7, t8))
     @JvmName("m9x9") private operator fun <T, V: Vec<T, `9`>> invoke(t0: V, t1: V, t2: V, t3: V, t4: V, t5: V, t6: V, t7: V, t8: V): Mat<T, `9`, `9`> = Mat(`9`, `9`, Vec(t0, t1, t2, t3, t4, t5, t6, t7, t8))
 
-//    @JvmName("m1x1f") operator fun <T> invoke(m: Nat<`1`>, n: Nat<`1`>, t0: T) = Mat(Vec(t0))
     @JvmName("m1x2f") operator fun <T> invoke(m: Nat<`1`>, n: Nat<`2`>, t0: T, t1: T) = Mat(Vec(t0, t1))
     @JvmName("m1x3f") operator fun <T> invoke(m: Nat<`1`>, n: Nat<`3`>, t0: T, t1: T, t2: T) = Mat(Vec(t0, t1, t2))
     @JvmName("m1x4f") operator fun <T> invoke(m: Nat<`1`>, n: Nat<`4`>, t0: T, t1: T, t2: T, t3: T) = Mat(Vec(t0, t1, t2, t3))
@@ -188,8 +197,5 @@ open class Mat<T, Rows : `100`, Cols : `100`> private constructor(
     @JvmName("m9x7f") operator fun <T> invoke(m: Nat<`9`>, n: Nat<`7`>, t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T, t9: T, t10: T, t11: T, t12: T, t13: T, t14: T, t15: T, t16: T, t17: T, t18: T, t19: T, t20: T, t21: T, t22: T, t23: T, t24: T, t25: T, t26: T, t27: T, t28: T, t29: T, t30: T, t31: T, t32: T, t33: T, t34: T, t35: T, t36: T, t37: T, t38: T, t39: T, t40: T, t41: T, t42: T, t43: T, t44: T, t45: T, t46: T, t47: T, t48: T, t49: T, t50: T, t51: T, t52: T, t53: T, t54: T, t55: T, t56: T, t57: T, t58: T, t59: T, t60: T, t61: T, t62: T) = Mat(Vec(t0, t1, t2, t3, t4, t5, t6), Vec(t7, t8, t9, t10, t11, t12, t13), Vec(t14, t15, t16, t17, t18, t19, t20), Vec(t21, t22, t23, t24, t25, t26, t27), Vec(t28, t29, t30, t31, t32, t33, t34), Vec(t35, t36, t37, t38, t39, t40, t41), Vec(t42, t43, t44, t45, t46, t47, t48), Vec(t49, t50, t51, t52, t53, t54, t55), Vec(t56, t57, t58, t59, t60, t61, t62))
     @JvmName("m9x8f") operator fun <T> invoke(m: Nat<`9`>, n: Nat<`8`>, t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T, t9: T, t10: T, t11: T, t12: T, t13: T, t14: T, t15: T, t16: T, t17: T, t18: T, t19: T, t20: T, t21: T, t22: T, t23: T, t24: T, t25: T, t26: T, t27: T, t28: T, t29: T, t30: T, t31: T, t32: T, t33: T, t34: T, t35: T, t36: T, t37: T, t38: T, t39: T, t40: T, t41: T, t42: T, t43: T, t44: T, t45: T, t46: T, t47: T, t48: T, t49: T, t50: T, t51: T, t52: T, t53: T, t54: T, t55: T, t56: T, t57: T, t58: T, t59: T, t60: T, t61: T, t62: T, t63: T, t64: T, t65: T, t66: T, t67: T, t68: T, t69: T, t70: T, t71: T) = Mat(Vec(t0, t1, t2, t3, t4, t5, t6, t7), Vec(t8, t9, t10, t11, t12, t13, t14, t15), Vec(t16, t17, t18, t19, t20, t21, t22, t23), Vec(t24, t25, t26, t27, t28, t29, t30, t31), Vec(t32, t33, t34, t35, t36, t37, t38, t39), Vec(t40, t41, t42, t43, t44, t45, t46, t47), Vec(t48, t49, t50, t51, t52, t53, t54, t55), Vec(t56, t57, t58, t59, t60, t61, t62, t63), Vec(t64, t65, t66, t67, t68, t69, t70, t71))
     @JvmName("m9x9f") operator fun <T> invoke(m: Nat<`9`>, n: Nat<`9`>, t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T, t9: T, t10: T, t11: T, t12: T, t13: T, t14: T, t15: T, t16: T, t17: T, t18: T, t19: T, t20: T, t21: T, t22: T, t23: T, t24: T, t25: T, t26: T, t27: T, t28: T, t29: T, t30: T, t31: T, t32: T, t33: T, t34: T, t35: T, t36: T, t37: T, t38: T, t39: T, t40: T, t41: T, t42: T, t43: T, t44: T, t45: T, t46: T, t47: T, t48: T, t49: T, t50: T, t51: T, t52: T, t53: T, t54: T, t55: T, t56: T, t57: T, t58: T, t59: T, t60: T, t61: T, t62: T, t63: T, t64: T, t65: T, t66: T, t67: T, t68: T, t69: T, t70: T, t71: T, t72: T, t73: T, t74: T, t75: T, t76: T, t77: T, t78: T, t79: T, t80: T) = Mat(Vec(t0, t1, t2, t3, t4, t5, t6, t7, t8), Vec(t9, t10, t11, t12, t13, t14, t15, t16, t17), Vec(t18, t19, t20, t21, t22, t23, t24, t25, t26), Vec(t27, t28, t29, t30, t31, t32, t33, t34, t35), Vec(t36, t37, t38, t39, t40, t41, t42, t43, t44), Vec(t45, t46, t47, t48, t49, t50, t51, t52, t53), Vec(t54, t55, t56, t57, t58, t59, t60, t61, t62), Vec(t63, t64, t65, t66, t67, t68, t69, t70, t71), Vec(t72, t73, t74, t75, t76, t77, t78, t79, t80))
-    @JvmName("mnxnf") operator fun <T> invoke(rowT: Nat<`99`>, colT: Nat<`99`>, vararg ts: T) = Mat(rowT, colT,
-      if (ts.size != rowT.i * colT.i) throw Exception("Declared $rowT x $colT, but found ${ts.size}")
-      else Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> ts[row * (col + 1) + col] }) }.toList()))
   }
 }
