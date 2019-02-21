@@ -45,7 +45,7 @@ fun main() {
 //  e * b
 //  f * b
 
-// Runtime failure, incompatible size
+// Does not compile, incompatible size
 //  val d_: Mat<Int, `2`, `3`> = Mat(`2`, `3`,
 //    1, 2, 3,
 //    4, 5
@@ -118,16 +118,30 @@ fun main() {
 
   println(o*o - (o+o))
 
-  val p = Mat(`1`, `100`, listOf(Vec(`100`, IntArray(100) { 0 }.toList())))
+  val p = Mat(`1`, `100`, 0)
   // Type-checked matrix operations are still possible after unsafe construction
-  val q: Mat<Int, `100`, `1`> = p.transpose()
+  val q = p.transpose()
+  q * p
 // Does not compile, inner dimension mismatch
 //  q * f
 
-  // Functional intitializers
-  val r = Mat(`20`, `20`) { y, z -> if(y == z) 1 else 0}
+  // Functional initializers
+  val r = Mat(`20`, `20`) { y, z -> if(y == z) 1 else 0 }
   println("r: $r")
-  val s = Mat(`20`, `20`, 0)
+  val s = Mat(`11`, `11`, listOf(
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+  )
+
   println("s: $s")
   val t = Mat(`1`, `1`, 1)
   println("t: $t")
