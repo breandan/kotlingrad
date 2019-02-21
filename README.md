@@ -456,10 +456,10 @@ open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val 
 The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
 
 ```kotlin
-val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)  // Always runs safely
-val add = Vec(`3`, 1, 2, 3) + Vec(`3` listOf(t)) // May fail at runtime
-val vec = Vec(`2`, 1, 2, 3)                      // Does not compile
-val sum = Vec(`2`, 1, 2) + add                   // Does not compile
+val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
+val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
+val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
+val sum = Vec(`2`, 1, 2) + add                    // Does not compile
 ```
 
 A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices:
