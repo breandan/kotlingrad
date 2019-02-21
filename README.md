@@ -462,7 +462,7 @@ val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
 val sum = Vec(`2`, 1, 2) + add                    // Does not compile
 ```
 
-A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices:
+A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
  // Inferred type: Mat<Int, `4`, `4`>
@@ -490,7 +490,7 @@ A similar technique can be applied to [matrices](src/main/kotlin/edu/umontreal/k
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
-&lowast; A number of less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
+&lowast; Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
 ## Ideal API (WIP)
 
@@ -502,7 +502,7 @@ Another optimization is to encode some useful properties of matrices into a vari
 
 ### Scalar functions
 
-A function's type should encode arity, based on the number of variables:
+A function's type would ideally encode arity, based on the number of unique variables:
 
 ```kotlin
 val x = Var(1.0)                                // x: Variable<Double> inferred type
@@ -639,3 +639,13 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
 * [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
 * [Lantern](https://feiwang3311.github.io/Lantern/) - a framework in Scala, based on delimited continuations and multi-stage programming
+
+## Special Thanks
+
+The following individuals have helped shape this project through their enthusiasm and thoughtful feedback. Please check out their work.
+
+* [Liam Paull](http://liampaull.ca)
+* [Michalis Famelis](https://michalis.famelis.info/)
+* [Hanneli Tavante](https://twitter.com/hannelita)
+* [Alexander Nozik](https://scholar.google.com/citations?user=B-WJi4kAAAAJ)
+* [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
