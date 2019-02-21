@@ -118,12 +118,9 @@ fun main() {
 
   println(o*o - (o+o))
 
-  // Unsafe construction of large matrices is possible
-  val p = Mat(`1`, `100`, listOf(Vec(`100`, listOf(0))))
+  val p = Mat(`1`, `100`, listOf(Vec(`100`, IntArray(100) { 0 }.toList())))
   // Type-checked matrix operations are still possible after unsafe construction
   val q: Mat<Int, `100`, `1`> = p.transpose() // Runtime failure: Index OOB
 // Does not compile, inner dimension mismatch
 //  q * f
-
-  val z = Mat(`11`, `11`, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) // Runtime failure, incompatible size
 }

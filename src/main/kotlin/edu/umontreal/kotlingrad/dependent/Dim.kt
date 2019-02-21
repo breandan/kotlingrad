@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.dependent
 
+
 open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
 open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
 open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
@@ -100,5 +101,10 @@ open class `96`(override val i: Int = 96): `97`(i) { companion object: `96`(), N
 open class `97`(override val i: Int = 97): `98`(i) { companion object: `97`(), Nat<`97`> }
 open class `98`(override val i: Int = 98): `99`(i) { companion object: `98`(), Nat<`98`> }
 open class `99`(override val i: Int = 99): `100`(i) { companion object: `99`(), Nat<`99`> }
-sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`> }
+
+sealed class `100`(open val i: Int = 100) {
+  companion object: `100`(), Nat<`100`>
+  override fun toString() = "$i"
+}
+
 interface Nat<T: `100`> { val i: Int }

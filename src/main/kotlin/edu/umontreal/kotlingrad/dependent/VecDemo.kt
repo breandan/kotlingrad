@@ -5,19 +5,8 @@ fun main() {
 //  val firstValueOfNone = vectorOfNone[`0`] // Does not compile
 
   val vectorOfOne = Vec(1).also { println(it) }
-  val firstValueOfOne = vectorOfOne[`0`].also { println("1st value: $it\n") }
-//  val secondValueOfOne =  vectorOfOne[`1`] // Does not compile
-
   val vectorOfTwo = Vec(1, 2).also { println(it) }
-  val firstValueOfTwo = vectorOfTwo[`0`].also { println("1st value: $it") }
-  val secondValueOfTwo = vectorOfTwo[`1`].also { println("2nd value: $it\n") }
-//  val thirdValueOfTwo = vectorOfTwo[`2`] // Does not compile
-
   val vectorOfThree = Vec(1, 2, 3).also { println(it) }
-  val firstValueOfThree = vectorOfThree[`0`].also { println("1st value: $it") }
-  val secondValueOfThree = vectorOfThree[`1`].also { println("2nd value: $it") }
-  val thirdValueOfThree = vectorOfThree[`2`].also { println("3nd value: $it\n") }
-//  val fourthValueOfThree = vectorOfThree[`3`] // Does not compile
 
   // Inferred type: Vec<Double, `3`>List<Double>
   val add0Result = ((Vec(1.0, 2.0, 3.0) + Vec(3.0, 2.0, 1.0)) + Vec(0.0, 0.0, 0.0)).also { println("Addition result: $it\n") }
@@ -28,9 +17,8 @@ fun main() {
 //  willOnlyAcceptVectorsOfLength2(vectorOfThree) // Does not compile
 //  willOnlyAcceptVectorsOfLength2(vectorOfOne) // Does not compile
 
-  // Unsafe construction of long vectors is allowed
-  val v = Vec(`100`, listOf(1,1,1,1,1,1))
+  // Unsafe construction of vectors is allowed, but may fail at runtime
+  val v = Vec(`100`, IntArray(100) { 0 }.toList())
   v + v
-  // Invalid operation: type safety is still enforced after unsafe construction
-  // v - Vec(1, 2, 3)
+//  v - Vec(1, 2, 3) // Does not compile
 }
