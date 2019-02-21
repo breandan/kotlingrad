@@ -588,7 +588,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
-* [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37Andy Davis	c35)
+* [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
 
 ### Calculus
 
