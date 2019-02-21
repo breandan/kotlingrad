@@ -120,7 +120,15 @@ fun main() {
 
   val p = Mat(`1`, `100`, listOf(Vec(`100`, IntArray(100) { 0 }.toList())))
   // Type-checked matrix operations are still possible after unsafe construction
-  val q: Mat<Int, `100`, `1`> = p.transpose() // Runtime failure: Index OOB
+  val q: Mat<Int, `100`, `1`> = p.transpose()
 // Does not compile, inner dimension mismatch
 //  q * f
+
+  // Functional intitializers
+  val r = Mat(`20`, `20`) { y, z -> if(y == z) 1 else 0}
+  println("r: $r")
+  val s = Mat(`20`, `20`, 0)
+  println("s: $s")
+  val t = Mat(`1`, `1`, 1)
+  println("t: $t")
 }
