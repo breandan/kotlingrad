@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.dependent
 
-
 open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
 open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
 open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
