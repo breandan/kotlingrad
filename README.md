@@ -5,14 +5,14 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
 ## Table of contents
 
 * [Introduction](#introduction)
-* [Features](#features)
+* [Supported features](#features)
 * [Usage](#usage)
   * [Notation](#notation)
   * [Shape Safety](#shape-safety)
   * [Example](#shape-safety)
-* [Plotting](#plotting)
-* [Testing](#testing)
-* [How](#how)
+* [Plotting functions](#plotting)
+* [Testing and gradient checking](#testing)
+* [How does it work?](#how)
   * [Operator overloading](#operator-overloading)
   * [First-class functions](#first-class-functions)
   * [Coroutines](#coroutines)
@@ -20,8 +20,8 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
   * [Algebraic data types](#algebraic-data-types)
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
-* [Comparison](#comparison)
-* [Special Thanks](#special-thanks)
+* [Comparison to other frameworks](#comparison)
+* [Special thanks](#special-thanks)
 
 ## Introduction
 
@@ -44,7 +44,7 @@ Additionally, it aims to support:
 * Fully-general AD over control flow, variable reassignment
 (via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and imperative array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
 
-All of these features are implemented without access to bytecode or special compiler tricks - just using [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf), embedded DSLs a la [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf), and [ordinary generics](https://kotlinlang.org/docs/reference/generics.html).
+All of these features are implemented without access to bytecode or special compiler tricks - just using [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf), embedded DSLs a la [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf), and [ordinary generics](https://kotlinlang.org/docs/reference/generics.html). See below for a more detailed [feature comparison](#comparison).
 
 ## Usage
 
