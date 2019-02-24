@@ -31,27 +31,29 @@ All of these features are implemented without access to bytecode or special comp
 
 Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
-|                        Math†                         |             Infix             |              Prefix              |              Postfix‡               |                                                  Type                                                  |
-|:----------------------------------------------------:|:-----------------------------:|:--------------------------------:|:-----------------------------------:|:------------------------------------------------------------------------------------------------------:|
-|                    **a** + **b**                     |    `a + b`<br>`a.plus(b)`     |           `plus(a, b)`           |                                     |                  (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ ℝ*)                   |
-|                    **a** - **b**                     |    `a - b`<br>`a.minus(b)`    |          `minus(a, b)`           |                                     |                   (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ℝ*)                   |
-|                    **a** * **b**                     |    `a * b`<br>`a.times(b)`    |          `times(a, b)`           |                                     | (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>N×P</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>) |
-|           **a** / **b**<br>**a** ⊙ **b**⁻¹           |     `a / b`<br>`a.div(b)`     |           `div(a, b)`            |                                     |                     (a: ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ*)                     |
-|                   -**a**<br>+**a**                   |                               |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
-|            **a** + **1**<br>**a** - **1**            |      `a + 1`<br>`a - 1`       |          `++a`<br>`--a`          | `a++`,`a.inc()`<br>`a--`,`a.dec()`  |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ ℝ*)                                |
-|     *sin*(**a**)<br>*cos*(**a**)<br>*tan*(**a**)     |                               | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
-|                     *ln*(**a**)                      |                               |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
-|               *log*<sub>b</sub>(**a**)               |          `a.log(b)`           |           `log(a, b)`            |                                     |                     (a: ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ*)                     |
-|                  **a**<sup>b</sup>                   |          `a.pow(b)`           |           `pow(a, b)`            |                                     |                     (a: ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ*)                     |
-|                   √**a**<br>∛**a**                   | `a.pow(1.0/2)`<br>`a.root(3)` |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                                (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                 |
-| <sup>da</sup>&frasl;<sub>db</sub>, ***a**'(***b***)* |          `a.diff(b)`          |           `grad(a)[b]`           |            `d(a) / d(b)`            |                            (a: ℝ<sup>M</sup>→ℝ, b: ℝ→ℝ) → (ℝ<sup>M</sup>→ℝ)                            |
-|                        ∇**a**                        |                               |            `grad(a)`             |             `a.grad()`              |                                 (ℝ<sup>M</sup>→ℝ) → (ℝ<sup>M</sup>→ℝ)                                  |
+|                        Math†                         |             Infix             |              Prefix              |              Postfix‡               |                                                     Type                                                     |
+|:----------------------------------------------------:|:-----------------------------:|:--------------------------------:|:-----------------------------------:|:------------------------------------------------------------------------------------------------------------:|
+|                    **a** + **b**                     |    `a + b`<br>`a.plus(b)`     |           `plus(a, b)`           |                                     |                     (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ ℝ*)                      |
+|                    **a** - **b**                     |    `a - b`<br>`a.minus(b)`    |          `minus(a, b)`           |                                     |                      (a:  ℝ<sup>#</sup>→ℝ*, b: ℝ<sup>~</sup> → ℝ*) → (ℝ<sup>?</sup>→ℝ*)                      |
+|                    **a** * **b**                     |    `a * b`<br>`a.times(b)`    |          `times(a, b)`           |                                     |    (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>N×P</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>)    |
+|           **a** / **b**<br>**a** ⊙ **b**⁻¹           |     `a / b`<br>`a.div(b)`     |           `div(a, b)`            |                                     |   (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>P×N</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>)§    |
+|                   -**a**<br>+**a**                   |                               |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
+|            **a** + **1**<br>**a** - **1**            |      `a + 1`<br>`a - 1`       |          `++a`<br>`--a`          | `a++`,`a.inc()`<br>`a--`,`a.dec()`  |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
+|     *sin*(**a**)<br>*cos*(**a**)<br>*tan*(**a**)     |                               | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
+|                     *ln*(**a**)                      |                               |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |     (ℝ<sup>#</sup>→ℝ<sup>~</sup>→ℝ<sup>M<sup>N</sup></sup>) → (ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>)      |
+|               *log*<sub>b</sub>(**a**)               |          `a.log(b)`           |           `log(a, b)`            |                                     | (a: ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>, b: ℝ<sup>~</sup>→ℝ<sup>M<sup>N</sup></sup>) → (ℝ<sup>?</sup>→ℝ) |
+|                  **a**<sup>b</sup>                   |          `a.pow(b)`           |           `pow(a, b)`            |                                     | (a: ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>, b: ℝ<sup>~</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>M<sup>N</sup></sup>) |
+|                   √**a**<br>∛**a**                   | `a.pow(1.0/2)`<br>`a.root(3)` |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
+| <sup>da</sup>&frasl;<sub>db</sub>, ***a**'(***b***)* |          `a.diff(b)`          |           `grad(a)[b]`           |            `d(a) / d(b)`            |                               (a: ℝ<sup>M</sup>→ℝ, b: ℝ→ℝ) → (ℝ<sup>M</sup>→ℝ)                               |
+|                        ∇**a**                        |                               |            `grad(a)`             |             `a.grad()`              |                                    (ℝ<sup>M</sup>→ℝ) → (ℝ<sup>M</sup>→ℝ)                                     |
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) on ℝ.
 
 &dagger; **a** and **b** are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
 &Dagger; For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
+
+&sect; It is possible to define matrix division for any matrix in a manner consistent with the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse).
 
 ### Shape Safety
 
@@ -646,6 +648,6 @@ The following individuals have helped shape this project through their enthusias
 
 * [Liam Paull](http://liampaull.ca)
 * [Michalis Famelis](https://michalis.famelis.info/)
-* [Hanneli Tavante](https://twitter.com/hannelita)
+* [Hanneli Tavante](http://hannelita.com/)
 * [Alexander Nozik](https://scholar.google.com/citations?user=B-WJi4kAAAAJ)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
