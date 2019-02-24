@@ -549,19 +549,22 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 ## Comparison
 
-|Framework                                                        | AD*                | FP†                | TS‡                | DP§                | MP¶            |
-|:---------------------------------------------------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
-| Kotlin𝛁                                                         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :construction:     | :construction: |
-| [Deeplearning.scala](https://deeplearning.thoughtworks.school/) | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:            |
-| [DiffSharp](http://diffsharp.github.io/DiffSharp/)              | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:            |
-| [Myia](https://github.com/mila-udem/myia)                       | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:            |
-| [Nexus](http://tongfei.me/nexus/)                               | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:            |
-| [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :x:                | :x:            |
-| [Eclipse DL4J](https://deeplearning4j.org/)                     | :heavy_check_mark: | :x:                | :heavy_check_mark: | :x:                | :x:            |
-| [AutoGrad](https://github.com/HIPS/autograd/)                   | :heavy_check_mark: | :heavy_check_mark: | :x:                | :x:                | :x:            |
-| [Tangent](https://github.com/google/tangent)                    | :heavy_check_mark: | :x:                | :x:                | :x:                | :x:            |
+|                              Framework                               | Language |         AD         |        FP†         |        TS‡         |        SS*         |        DP§         |      MP¶       |
+|:--------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
+|                               Kotlin𝛁                               |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |   :construction:   | :construction: |
+|   [Deeplearning.scala](https://deeplearning.thoughtworks.school/)    |  Scala   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
+|          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |    F#    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
+| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |    F#    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
+|              [Myia](https://github.com/mila-udem/myia)               |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
+|                  [Nexus](http://tongfei.me/nexus/)                   |  Scala   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
+|          [Lantern](https://feiwang3311.github.io/Lantern/)           |  Scala   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
+|          [Grenade](https://github.com/HuwCampbell/grenade)           | Haskell  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
+|     [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)     |  Scheme  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
+|             [Eclipse DL4J](https://deeplearning4j.org/)              |   Java   | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
+|                  [Halide](http://halide-lang.org/)                   |   C++    | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
+|            [AutoGrad](https://github.com/HIPS/autograd/)             |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
+|             [Tangent](https://github.com/google/tangent)             |  Python  | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
 
-&lowast; Automatic differentiation
 
 &dagger; Functional programming
 
@@ -569,7 +572,9 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 &sect; Differentiable programming
 
-&para; Multiplatform
+&para; [Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
+
+&lowast; Shape safe (compile-time)
 
 ## References
 
@@ -592,6 +597,8 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
+* [Differentiable Functional Programming](http://www.robots.ox.ac.uk/~gunes/assets/pdf/baydin-2016-slides-functionallondoners.pdf)
+* [Differentiable Programming for Image Processing and Deep Learning in Halide](https://people.csail.mit.edu/tzumao/gradient_halide/gradient_halide.pdf)
 * [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
 
 ### Calculus
@@ -634,7 +641,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 ### Libraries
 
-* [FM](https://github.com/fsprojects/TensorFlow.FSharp): An F# DSL for writing numeric models with support for interactive tensor shape-checking
+* [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp): An TensorFlow DSL in F# for writing numeric models with support for interactive tensor shape-checking
 * [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
 * [Autograd](https://github.com/hips/autograd) - Efficiently computes derivatives of NumPy code
 * [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
