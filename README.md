@@ -284,7 +284,7 @@ PBT will search the input space for two numerical values `ẋ` and `ẏ`, which 
 }
 ```
 
-here are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
+There are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
 ## How?
 
@@ -551,32 +551,32 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 ## Comparison
 
-|                              Framework                               | Language |         AD         |        FP†         |        TS‡         |        SS*         |        DP§         |      MP¶       |
-|:--------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
-|                               Kotlin𝛁                               |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |   :construction:   | :construction: |
-|   [Deeplearning.scala](https://deeplearning.thoughtworks.school/)    |  Scala   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
-|          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |    F#    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
-| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |    F#    | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
-|              [Myia](https://github.com/mila-udem/myia)               |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
-|                  [Nexus](http://tongfei.me/nexus/)                   |  Scala   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
-|          [Lantern](https://feiwang3311.github.io/Lantern/)           |  Scala   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
-|          [Grenade](https://github.com/HuwCampbell/grenade)           | Haskell  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
-|     [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)     |  Scheme  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|             [Eclipse DL4J](https://deeplearning4j.org/)              |   Java   | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|                  [Halide](http://halide-lang.org/)                   |   C++    | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: |      :x:       |
-|            [AutoGrad](https://github.com/HIPS/autograd/)             |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|             [Tangent](https://github.com/google/tangent)             |  Python  | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
+|                              Framework                               | Language |         AD         | FP<sup>&dagger;</sup> | TS<sup>&Dagger;</sup> |        SS*         | DP<sup>&sect;</sup> |      MP¶       |
+|:--------------------------------------------------------------------:|:--------:|:------------------:|:---------------------:|:---------------------:|:------------------:|:-------------------:|:--------------:|
+|                               Kotlin𝛁                               |  Kotlin  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: |   :construction:    | :construction: |
+|          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |    F#    | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |      :x:       |
+| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |    F#    | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |      :x:       |
+|              [Myia](https://github.com/mila-udem/myia)               |  Python  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |      :x:       |
+|   [Deeplearning.scala](https://deeplearning.thoughtworks.school/)    |  Scala   | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |      :x:       |
+|                  [Nexus](http://tongfei.me/nexus/)                   |  Scala   | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |      :x:       |
+|          [Lantern](https://feiwang3311.github.io/Lantern/)           |  Scala   | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |      :x:       |
+|          [Grenade](https://github.com/HuwCampbell/grenade)           | Haskell  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: |         :x:         |      :x:       |
+|             [Eclipse DL4J](https://deeplearning4j.org/)              |   Java   | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         |         :x:         |      :x:       |
+|                  [Halide](http://halide-lang.org/)                   |   C++    | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |      :x:       |
+|     [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)     |  Scheme  | :heavy_check_mark: |  :heavy_check_mark:   |          :x:          |        :x:         |         :x:         |      :x:       |
+|            [Autograd](https://github.com/HIPS/autograd/)             |  Python  | :heavy_check_mark: |          :x:          |          :x:          |        :x:         |         :x:         |      :x:       |
+|             [Tangent](https://github.com/google/tangent)             |  Python  | :heavy_check_mark: |          :x:          |          :x:          |        :x:         |         :x:         |      :x:       |
 
 
-&dagger; Functional programming
+<sup>&dagger;</sup> Functional programming
 
-&Dagger; Type safe
+<sup>&Dagger;</sup> Type safe
 
-&sect; Differentiable programming
+<sup>&sect;</sup> Differentiable programming
 
-&para; [Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
+<sup>&para;</sup> [Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
 
-&lowast; Shape safe (compile-time)
+* Shape safe (compile-time)
 
 ## References
 
