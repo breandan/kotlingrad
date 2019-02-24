@@ -55,7 +55,7 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 
 <sup>&sect;</sup> Matrix division is defined iff **B** is invertible, although it could be possible to redefine this operator using the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse).
 
-<sup>&lowast;</sup> Where C(ℝ<sup>m</sup>→ℝ) is the space of all continuous functions 𝑓: ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
+<sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions 𝑓: ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
 <sup>τ, λ</sup> Arbitrarily shaped tensors.
 
