@@ -186,9 +186,7 @@ z({x=0, y=1}) 			= 0.0
 
 ## Plotting
 
-<img src="/breandan/kotlingrad/raw/master/src/main/resources/plot.png" width="450">
-
-![](src/main/resources/plot.png)
+<img src="https://github.com/breandan/kotlingrad/raw/master/src/main/resources/plot.png" width="450">
 
 This plot was generated with the following code:
 
