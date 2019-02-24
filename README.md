@@ -2,6 +2,27 @@
 
 Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs on higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a correctly-typed program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
+## Table of contents
+
+* [Introduction](#introduction)
+* [Features](#features)
+* [Usage](#usage)
+  * [Notation](#notation)
+  * [Shape Safety](#shape-safety)
+  * [Example](#shape-safety)
+* [Plotting](#plotting)
+* [Testing](#testing)
+* [How](#how)
+  * [Operator overloading](#operator-overloading)
+  * [First-class functions](#first-class-functions)
+  * [Coroutines](#coroutines)
+  * [Extension functions](#extension-functions)
+  * [Algebraic data types](#algebraic-data-types)
+  * [Multiple dispatch](#multiple-dispatch)
+  * [Shape-safe tensor operations](#shape-safe-tensor-operations)
+* [Comparison](#comparison)
+* [Special Thanks](#special-thanks)
+
 ## Introduction
 
 Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), [Lantern](https://github.com/feiwang3311/Lantern) et al., Kotlin𝛁 attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. It also adds a number of novel ideas, including shape-safety, algebraic expression rewriting and numerical stability checking with property-based testing. We aim to provide an algebraically-grounded implementation of AD for shape-safe tensor operations. Tensors in Kotlin𝛁 are represented as [multidimensional arrays](https://en.wikipedia.org/wiki/Tensor#As_multidimensional_arrays).
@@ -365,9 +386,9 @@ fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` 
 
 Extensions can also be defined in another file or context and imported on demand.
 
-#### Algebraic data types (ADTs)
+#### Algebraic data types
 
-[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
+[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
 ```kotlin
 sealed class Expr<T: Group<T>>: Group<Expr<T>> {
