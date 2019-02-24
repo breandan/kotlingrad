@@ -551,7 +551,7 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 ## Comparison
 
-|                              Framework                               | Language |         AD         | FP<sup>&dagger;</sup> | TS<sup>&Dagger;</sup> |        SS*         | DP<sup>&sect;</sup> | MP<sup>&para;</sup> |
+|                              Framework                               | Language |         AD         | FP<sup>&dagger;</sup> | TS<sup>&Dagger;</sup> |   SS<sup>*</sup>   | DP<sup>&sect;</sup> | MP<sup>&para;</sup> |
 |:--------------------------------------------------------------------:|:--------:|:------------------:|:---------------------:|:---------------------:|:------------------:|:-------------------:|:-------------------:|
 |                               Kotlin𝛁                               |  Kotlin  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: |   :construction:    |   :construction:    |
 |          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |    F#    | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
@@ -576,7 +576,7 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 <sup>&para;</sup> [Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
 
-* Shape safe (compile-time)
+<sup>*</sup> Shape safe (compile-time)
 
 ## References
 
