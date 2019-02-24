@@ -38,7 +38,7 @@ Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/
 |                    **a** * **b**                     |    `a * b`<br>`a.times(b)`    |          `times(a, b)`           |                                     |    (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>N×P</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>)    |
 |           **a** / **b**<br>**a** ⊙ **b**⁻¹           |     `a / b`<br>`a.div(b)`     |           `div(a, b)`            |                                     |   (a: ℝ<sup>#</sup>→ℝ<sup>M×N</sup>, b: ℝ<sup>~</sup>→ℝ<sup>P×N</sup>) → (ℝ<sup>?</sup>→ℝ<sup>M×P</sup>)§    |
 |                   -**a**<br>+**a**                   |                               |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
-|            **a** + **1**<br>**a** - **1**            |      `a + 1`<br>`a - 1`       |          `++a`<br>`--a`          | `a++`,`a.inc()`<br>`a--`,`a.dec()`  |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
+|            **a** + **1**<br>**a** - **1**            |      `a + 1`<br>`a - 1`       |          `++a`<br>`--a`          | `a++`,`a.inc()`<br>`a--`,`a.dec()`  |            (ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>) → (ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>)             |
 |     *sin*(**a**)<br>*cos*(**a**)<br>*tan*(**a**)     |                               | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                   (ℝ<sup>#</sup>→ℝ*) → (ℝ<sup>#</sup>→ℝ*)                                    |
 |                     *ln*(**a**)                      |                               |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |     (ℝ<sup>#</sup>→ℝ<sup>~</sup>→ℝ<sup>M<sup>N</sup></sup>) → (ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>)      |
 |               *log*<sub>b</sub>(**a**)               |          `a.log(b)`           |           `log(a, b)`            |                                     | (a: ℝ<sup>#</sup>→ℝ<sup>M<sup>N</sup></sup>, b: ℝ<sup>~</sup>→ℝ<sup>M<sup>N</sup></sup>) → (ℝ<sup>?</sup>→ℝ) |
@@ -53,7 +53,7 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 
 &Dagger; For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
-&sect; It is possible to define matrix division for any matrix in a manner consistent with the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse).
+&sect; Matrix division is defined iff **b** is invertible, however it may be possible to define this operator in a manner consistent with the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse).
 
 ### Shape Safety
 
