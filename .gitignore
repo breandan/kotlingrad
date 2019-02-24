@@ -2,3 +2,8 @@ build
 .idea
 .gradle
 *.iml
+.attach_*
+out
+.kotlintest
+data
+*.swp
