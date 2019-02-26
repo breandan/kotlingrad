@@ -76,7 +76,7 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 
 <sup>&sect;</sup> Matrix division is defined iff **B** is invertible, although it could be possible to redefine this operator using the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse).
 
-<sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions 𝑓: ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
+<sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions 𝑓 : ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
 <sup>?</sup> While it would be nice to infer a combined input type for binary functions, it likely impossible using the Kotlin type system. Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
 
@@ -193,18 +193,18 @@ fun main() {
 Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```kotlin
-z(x, y) 			= ((x * (-sin((x * y)) + y)) * 4)
-z({x=0, y=1}) 			= 0.0
-∂z({x=0, y=1})/∂x 		= (((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4) 
-				= 4.0
-∂z({x=0, y=1})/∂y 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
-				= 0.0
-∂²z({x=0, y=1})/∂x² 		= ((x * (-(cos((x * y)) * x) + 1)) * 4) 
-				= -8.0
-∂²z({x=0, y=1})/∂x∂y 		= (((-(cos((x * y)) * x) + 1) + (x * -((-(sin((x * y)) * x) * y) + cos((x * y))))) * 4) 
-				= 4.0
-∇z({x=0, y=1}) 			= {x=(((-sin((x * y)) + y) + (x * -(cos((x * y)) * y))) * 4), y=((x * (-(cos((x * y)) * x) + 1)) * 4)} 
-				= [4.0, 0.0]ᵀ
+z(x, y)                         = x⋅(-sin(x⋅y) + y)⋅4
+z({x=0, y=1})                   = 0.0
+∂z({x=0, y=1})/∂x               = (-sin(x⋅y) + y - x⋅cos(x⋅y)⋅y)⋅4 
+                                = 4.0
+∂z({x=0, y=1})/∂y               = x⋅(1 - cos(x⋅y)⋅x)⋅4 
+                                = 0.0
+∂²z({x=0, y=1})/∂x²             = x⋅(1 - cos(x⋅y)⋅x)⋅4 
+                                = -8.0
+∂²z({x=0, y=1})/∂x∂y            = (-x⋅(-sin(x⋅y)⋅x⋅y + cos(x⋅y)) + 1 - cos(x⋅y)⋅x)⋅4 
+                                = 4.0
+∇z({x=0, y=1})                  = {x=(-sin(x⋅y) + y - x⋅cos(x⋅y)⋅y)⋅4, y=x⋅(1 - cos(x⋅y)⋅x)⋅4} 
+                                = [4.0, 0.0]ᵀ
 ```
 
 ## Plotting
@@ -494,25 +494,25 @@ val sum = Vec(`2`, 1, 2) + add                    // Does not compile
 A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
- // Inferred type: Mat<Int, `4`, `4`>
-  val l = Mat(`4`, `4`,
-    1, 2, 3, 4,
-    5, 6, 7, 8,
-    9, 0, 0, 0,
-    9, 0, 0, 0
-  )
+// Inferred type: Mat<Int, `4`, `4`>
+val l = Mat(`4`, `4`,
+  1, 2, 3, 4,
+  5, 6, 7, 8,
+  9, 0, 0, 0,
+  9, 0, 0, 0
+)
 
-  // Inferred type: Mat<Int, `4`, `3`>
-  val m = Mat(`4`, `3`,
-    1, 1, 1,
-    2, 2, 2,
-    3, 3, 3,
-    4, 4, 4
-  )
+// Inferred type: Mat<Int, `4`, `3`>
+val m = Mat(`4`, `3`,
+  1, 1, 1,
+  2, 2, 2,
+  3, 3, 3,
+  4, 4, 4
+)
 
-  // Inferred type: Mat<Int, `4`, `3`>
-  val lm = l * m
-  // m * m // Does not compile
+// Inferred type: Mat<Int, `4`, `3`>
+val lm = l * m
+// m * m // Does not compile
 ```
 
 [Further examples](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.

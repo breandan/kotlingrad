@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.numerical
 
-import ch.obermuhlner.math.big.BigDecimalMath
 import ch.obermuhlner.math.big.BigDecimalMath.*
 import java.lang.Math.E
 import java.math.BigDecimal

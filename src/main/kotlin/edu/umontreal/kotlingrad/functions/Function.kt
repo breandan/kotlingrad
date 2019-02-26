@@ -28,19 +28,23 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
 
   operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
 
-  override fun toString(): String = when (this) {
-    is Exp -> "exp($exponent)"
-    is Log -> "ln($logarithmand)"
-    is Negative -> "-$arg"
-    is Power -> "$base${superscript(exponent)}"
-    is SquareRoot -> "√($radicand)"
-    is Sine -> "sin($angle)"
-    is Cosine -> "cos($angle)"
-    is Tangent -> "tan($angle)"
-    is Product -> "$multiplicator$multiplicand"
-    is Sum -> "($augend + $addend)"
-    is Const -> "$value"
-    is Var -> name
+  override fun toString(): String = when {
+    this is Exp -> "exp($exponent)"
+    this is Log -> "ln($logarithmand)"
+    this is Negative -> "-$arg"
+    this is Power -> "$base${superscript(exponent)}"
+    this is SquareRoot -> "√($radicand)"
+    this is Sine -> "sin($angle)"
+    this is Cosine -> "cos($angle)"
+    this is Tangent -> "tan($angle)"
+    this is Product && multiplicand  is Sum -> "$multiplicator⋅($multiplicand)"
+    this is Product && multiplicator is Sum -> "($multiplicator)⋅$multiplicand"
+    this is Product -> "$multiplicator⋅$multiplicand"
+    this is Sum && addend is Negative -> "$augend - ${addend.arg}"
+    this is Sum -> "$augend + $addend"
+    this is Const -> "$value"
+    this is Var -> name
+    else -> "UNKNOWN"
   }
 
   override fun grad(): Map<Function<X>, Function<X>> = variables.associateWith { diff(it) }
@@ -81,6 +85,9 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
     this is Power && multiplicand is Power && base == multiplicand.base -> base.pow(exponent + multiplicand.exponent)
     this is Power && multiplicand is Var && base == multiplicand -> base.pow(exponent + one)
     this is Var && multiplicand is Power && this == multiplicand.base -> multiplicand.base.pow(multiplicand.exponent + one)
+    this is Negative && multiplicand is Negative -> Product(arg, multiplicand.arg)
+    multiplicand is Negative -> -Product(this, multiplicand.arg)
+    this is Negative -> -Product(arg, multiplicand)
     else -> Product(this, multiplicand)
   }
 
