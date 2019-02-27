@@ -3,9 +3,10 @@ package edu.umontreal.kotlingrad.functions
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.utils.randomDefaultName
 import edu.umontreal.kotlingrad.utils.superscript
+import org.apache.commons.math3.analysis.function.Sqrt
 
 sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()) :
-    Field<Function<X>>, kotlin.Function<X> {
+  Field<Function<X>>, kotlin.Function<X> {
   open val name: String = randomDefaultName()
 
   constructor(fn: Function<X>) : this(fn.variables)
@@ -33,11 +34,12 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
     this is Log -> "ln($logarithmand)"
     this is Negative -> "-$arg"
     this is Power -> "$base${superscript(exponent)}"
+    this is SquareRoot && (radicand is Const || radicand is Var) -> "√$radicand"
     this is SquareRoot -> "√($radicand)"
     this is Sine -> "sin($angle)"
     this is Cosine -> "cos($angle)"
     this is Tangent -> "tan($angle)"
-    this is Product && multiplicand  is Sum -> "$multiplicator⋅($multiplicand)"
+    this is Product && multiplicand is Sum -> "$multiplicator⋅($multiplicand)"
     this is Product && multiplicator is Sum -> "($multiplicator)⋅$multiplicand"
     this is Product -> "$multiplicator⋅$multiplicand"
     this is Sum && addend is Negative -> "$augend - ${addend.arg}"
@@ -63,7 +65,7 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
     this is SquareRoot -> radicand.sqrt().inverse() / two * radicand.diff(ind)
     this is Sine -> angle.cos() * angle.diff(ind)
     this is Cosine -> -angle.sin() * angle.diff(ind)
-    this is Tangent -> angle.cos().pow(-two) * angle.diff(ind)
+    this is Tangent -> (angle.cos() pow -two) * angle.diff(ind)
     else -> zero
   }
 
@@ -96,16 +98,16 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
     this == one -> divisor.inverse()
     divisor == one -> this
     divisor == zero -> throw Exception("Cannot divide by $divisor")
-    this is Const && divisor is Const -> const(value / divisor.value)
     this == divisor -> one
+    this is Const && divisor is Const -> const(value / divisor.value)
     else -> super.div(divisor)
   }
 
   override fun equals(other: Any?) =
-      if (this is Var<*> || other is Var<*>) this === other
-      else if (this is Const<*> && other is Const<*>) value == other.value
-      //TODO implement tree comparison for semantic equals
-      else super.equals(other)
+    if (this is Var<*> || other is Var<*>) this === other
+    else if (this is Const<*> && other is Const<*>) value == other.value
+    //TODO implement tree comparison for semantic equals
+    else super.equals(other)
 
 
   override fun inverse(): Function<X> = when {
@@ -123,9 +125,10 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
   }
 
   override fun pow(exp: Function<X>): Function<X> = when {
-    this is Const && exp is Const -> const(value.pow(exp.value))
+    this is Const && exp is Const -> const(value pow exp.value)
     exp == zero -> one
-    this is Power && exp is Const -> base.pow(exponent * exp)
+    exp is Const && exp == (one / two) -> sqrt()
+    this is Power && exp is Const -> base pow exponent * exp
     else -> Power(this, exp)
   }
 
@@ -164,18 +167,18 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
   class Negative<X : Field<X>> internal constructor(val arg: Function<X>) : Function<X>(arg)
 
   class Product<X : Field<X>> internal constructor(
-      val multiplicator: Function<X>,
-      val multiplicand: Function<X>
+    val multiplicator: Function<X>,
+    val multiplicand: Function<X>
   ) : Function<X>(multiplicator, multiplicand)
 
   class Sum<X : Field<X>> internal constructor(
-      val augend: Function<X>,
-      val addend: Function<X>
+    val augend: Function<X>,
+    val addend: Function<X>
   ) : Function<X>(augend, addend)
 
   class Power<X : Field<X>> internal constructor(
-      val base: Function<X>,
-      val exponent: Function<X>
+    val base: Function<X>,
+    val exponent: Function<X>
   ) : Function<X>(base, exponent) {
     override fun diff(ind: Function<X>) = when (exponent) {
       one -> base.diff(ind)
@@ -183,43 +186,28 @@ sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()
       else -> this * (exponent * base.ln()).diff(ind)
     }
 
-    fun superscript(exponent: Function<X>) =
-        if (exponent is Const || exponent is Var && exponent.toString().matches(Regex("[a-pr-z0-9]*")))
-          if (exponent == one) "" else exponent.toString().superscript()
-        else
-          "^($exponent)"
+    fun superscript(exponent: Function<X>) = when {
+      exponent == one -> ""
+      "$exponent".matches(Regex("[() a-pr-z0-9⋅+-]*")) -> "$exponent".superscript()
+      else -> "^($exponent)"
+    }
   }
 
   // TODO: Try to make RealNumber a subtype of Const
 
   open class Const<X : Field<X>> internal constructor(val value: X) : Function<X>()
 
-  class Var<X : Field<X>> internal constructor(
-      val value: X,
-      override val name: String = randomDefaultName()
-  ) : Function<X>() {
-    override val variables: Set<Var<X>> = setOf(this)
+  class Var<X : Field<X>> : Function<X> {
+    val value: X
+    override val name: String
+
+    internal constructor(value: X, name: String = randomDefaultName()) : super() {
+      if (name.contains(' ')) throw IllegalArgumentException("Variable name must not contain spaces")
+      this.value = value
+      this.name = name.replace(" ", "")
+      this.variables = setOf(this)
+    }
+
+    override val variables: Set<Var<X>>
   }
 }
-
-//abstract class NullaryFunction<X: Field<X>>: Function<X>(emptySet())
-
-//abstract class UnaryFunction<X: Field<X>>(arg: Function<X>): Function<X>(arg.variables)
-
-//abstract class BinaryFunction<X: Field<X>>(rfn: Function<X>, lfn: Function<X>): Function<X>(rfn.variables + lfn.variables)
-
-//abstract class TernaryFunction<X: Field<X>>(fn1: Function<X>, fn2: Function<X>, fn3: Function<X>): Function<X>(fn1.variables + fn2.variables + fn3.variables)
-//
-//abstract class QuaternaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>): Function<X>
-//
-//abstract class QuinaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>, val fn5: Function<X>): Function<X>
-//
-//abstract class SenaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>, val fn5: Function<X>, val fn6: Function<X>): Function<X>
-//
-//abstract class SeptenaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>, val fn5: Function<X>, val fn6: Function<X>, val fn7: Function<X>): Function<X>
-//
-//abstract class OctonaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>, val fn5: Function<X>, val fn6: Function<X>, val fn7: Function<X>, val fn8: Function<X>): Function<X>
-//
-//abstract class NovenaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>, val fn5: Function<X>, val fn6: Function<X>, val fn7: Function<X>, val fn8: Function<X>, val fn9: Function<X>): Function<X>
-//
-//abstract class DenaryFunction<X: Field<X>>(val fn1: Function<X>, val fn2: Function<X>, val fn3: Function<X>, val fn4: Function<X>, val fn5: Function<X>, val fn6: Function<X>, val fn7: Function<X>, val fn8: Function<X>, val fn9: Function<X>, val fn10: Function<X>): Function<X>
