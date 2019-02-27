@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.dependent
 
-// TODO: Maybe extend Vec?
 open class Mat<T, Rows : `100`, Cols : `100`> : Vec<Vec<T, Cols>, Rows> {
   /**TODO: Make contents a Vec<Vec<T, MaxCols>, MaxRows>**/
   val rowT: Nat<Rows>

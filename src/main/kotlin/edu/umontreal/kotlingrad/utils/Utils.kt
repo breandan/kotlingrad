@@ -17,9 +17,13 @@ fun <T> Iterable<T>.repeat(n: Int) = sequence { repeat(n) { yieldAll(this@repeat
 fun randomDefaultName() = (('a'..'z') - 'q').map { it }.shuffled().subList(0, 4).joinToString("")
 
 fun String.superscript() = this
+    .replace(" ", "")
     .replace(".", "⋅")
     .replace("-", "⁻")
     .replace("+", "⁺")
+    .replace("⋅", "˙")
+    .replace("(", "⁽")
+    .replace(")", "⁾")
     .replace("0", "⁰")
     .replace("1", "¹")
     .replace("2", "²")

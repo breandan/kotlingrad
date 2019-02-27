@@ -7,7 +7,7 @@ fun main() {
 
   for (i in 1..maxDim)
     for (j in 1..maxDim)
-      s += "    @JvmName(\"m${i}x${j}\") private operator fun <T, V: Vec<T, `$j`>> invoke(${(0 until i).joinToString(", ") { "t$it: V" }}): Mat<T, `$i`, `$j`> = Mat(`$i`, `$j`, Vec(${(0 until i).joinToString(", ") { "t$it" }}))\n"
+      s += "    @JvmName(\"m${i}x$j\") private operator fun <T, V: Vec<T, `$j`>> invoke(${(0 until i).joinToString(", ") { "t$it: V" }}): Mat<T, `$i`, `$j`> = Mat(`$i`, `$j`, Vec(${(0 until i).joinToString(", ") { "t$it" }}))\n"
 
   s += "\n"
 
