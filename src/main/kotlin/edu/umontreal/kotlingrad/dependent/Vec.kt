@@ -1,7 +1,9 @@
 package edu.umontreal.kotlingrad.dependent
 
+import edu.umontreal.kotlingrad.algebra.Field
+
 // Vec should not be a List or the concatenation operator + will conflict with vector addition
-open class Vec<E, MaxLength : `100`>(val length: Nat<MaxLength>, val contents: List<E> = arrayListOf()) {
+open class Vec<E: Field<E>, MaxLength : `100`>(val length: Nat<MaxLength>, val contents: List<E> = arrayListOf()) {
   init {
     if (length.i != contents.size) throw IllegalArgumentException("Declared $length, but found ${contents.size}")
   }

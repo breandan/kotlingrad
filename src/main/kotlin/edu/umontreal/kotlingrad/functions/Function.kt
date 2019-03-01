@@ -3,7 +3,6 @@ package edu.umontreal.kotlingrad.functions
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.utils.randomDefaultName
 import edu.umontreal.kotlingrad.utils.superscript
-import org.apache.commons.math3.analysis.function.Sqrt
 
 sealed class Function<X : Field<X>>(open val variables: Set<Var<X>> = emptySet()) :
   Field<Function<X>>, kotlin.Function<X> {
