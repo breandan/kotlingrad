@@ -15,7 +15,7 @@ class TestFiniteDifferences: StringSpec({
     val x = Var("x")
 
     "sin should be (sin(x + dx) - sin(x)) / dx" {
-      assertAll(NumericalGenerator) { ẋ ->
+      NumericalGenerator.assertAll { ẋ ->
         val f = sin(x)
         val `df∕dx` = d(f) / d(x)
         `df∕dx`(ẋ) shouldBeAbout (sin(ẋ + dx) - sin(ẋ)) / dx
@@ -23,7 +23,7 @@ class TestFiniteDifferences: StringSpec({
     }
 
     "cos should be (cos(x + dx) - cos(x)) / dx" {
-      assertAll(NumericalGenerator) { ẋ ->
+      NumericalGenerator.assertAll { ẋ ->
         val f = cos(x)
         val `df∕dx` = d(f) / d(x)
         `df∕dx`(ẋ) shouldBeAbout ((cos(ẋ + dx) - cos(ẋ)) / dx)
@@ -31,7 +31,7 @@ class TestFiniteDifferences: StringSpec({
     }
 
     "test composition" {
-      assertAll(NumericalGenerator) { ẋ ->
+      NumericalGenerator.assertAll { ẋ ->
         val f = sin(pow(x, 2))
         val `df∕dx` = d(f) / d(x)
 
