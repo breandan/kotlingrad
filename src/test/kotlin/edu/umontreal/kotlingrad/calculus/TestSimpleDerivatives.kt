@@ -12,7 +12,7 @@ class TestSimpleDerivatives: StringSpec({
     val x = Var("x")
 
     "dx / dx should be 1" {
-      assertAll(NumericalGenerator) { ẋ ->
+      NumericalGenerator.assertAll { ẋ ->
         val f = x * 1
         val `∂f∕∂x` = d(f) / d(x)
         `∂f∕∂x`(ẋ) shouldBeAbout 1
@@ -20,7 +20,7 @@ class TestSimpleDerivatives: StringSpec({
     }
 
     "d(2x) / dx should be 2" {
-      assertAll(NumericalGenerator) { ẋ ->
+      NumericalGenerator.assertAll { ẋ ->
         val f = x * 2
         val `df∕dx` = d(f) / d(x)
         `df∕dx`(ẋ) shouldBeAbout 2
@@ -28,7 +28,7 @@ class TestSimpleDerivatives: StringSpec({
     }
 
     "d(x + x) / dx should be 2" {
-      assertAll(NumericalGenerator) { ẋ ->
+      NumericalGenerator.assertAll { ẋ ->
         val f = x + x
         val `df∕dx` = d(f) / d(x)
         `df∕dx`(ẋ) shouldBeAbout 2
