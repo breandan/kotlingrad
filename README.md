@@ -629,6 +629,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 ### Calculus
 
 * [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
+* [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf)
 
 ### Computer Algebra
 
