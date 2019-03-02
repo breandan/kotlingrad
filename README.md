@@ -527,7 +527,7 @@ The current API is experimental, but can be improved in many ways. Currently var
 
 When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
-Another optimization is to encode some useful properties of matrices into a variable's type, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`). Although it would be difficult to infer such properties using the JVM type system, if the user specified them explicitly, we could perform a number of specialized optimizations on such matrices.
+Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
 ### Scalar functions
 
@@ -630,6 +630,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
 * [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf)
+* [Matrix derivatives](http://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#derivatives), from the Matrix Cookbook
 
 ### Computer Algebra
 
