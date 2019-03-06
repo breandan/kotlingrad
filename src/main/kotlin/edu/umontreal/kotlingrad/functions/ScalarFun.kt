@@ -4,14 +4,13 @@ import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.utils.randomDefaultName
 import edu.umontreal.kotlingrad.utils.superscript
-import edu.umontreal.kotlingrad.dependent.*
 
-sealed class ScalarFun<X : Field<X>>(open val variables: Set<ScalarVar<X>> = emptySet()) :
+sealed class ScalarFun<X: Field<X>>(open val variables: Set<ScalarVar<X>> = emptySet()):
   Field<ScalarFun<X>>, Function<X>, Differentiable<ScalarFun<X>> {
   open val name: String = randomDefaultName()
 
-  constructor(fn: ScalarFun<X>) : this(fn.variables)
-  constructor(vararg fns: ScalarFun<X>) : this(fns.flatMap { it.variables }.toSet())
+  constructor(fn: ScalarFun<X>): this(fn.variables)
+  constructor(vararg fns: ScalarFun<X>): this(fns.flatMap { it.variables }.toSet())
 
   override operator fun invoke(map: Map<Var<X>, X>): X = when (this) {
     is Exp -> exponent(map).exp()
@@ -74,8 +73,6 @@ sealed class ScalarFun<X : Field<X>>(open val variables: Set<ScalarVar<X>> = emp
     this == addend -> two * this
     else -> ScalarSum(this, addend)
   }
-
-//  operator fun <Y: `100`> times(multiplicand: VectorFun<X, Y>): VectorFun<X, Y> = multiplicand * this
 
   override fun times(multiplicand: ScalarFun<X>): ScalarFun<X> = when {
     this == zero -> this
@@ -150,63 +147,69 @@ sealed class ScalarFun<X : Field<X>>(open val variables: Set<ScalarVar<X>> = emp
   override val e: ScalarConst<X> by lazy { ScalarConst(this().e) }
   val two: ScalarConst<X> by lazy { ScalarConst(one.value + one.value) }
 
-  //TODO: Replace roots with fractional powers
-  class SquareRoot<X : Field<X>> internal constructor(val radicand: ScalarFun<X>) : ScalarFun<X>(radicand)
+  infix operator fun plus(addend: X) = this + const(addend)
+  infix operator fun minus(subtrahend: X) = this - const(subtrahend)
+  infix operator fun times(multiplicand: X) = this * const(multiplicand)
+  infix operator fun div(divisor: X) = this / const(divisor)
+  infix fun pow(exponent: X) = this pow const(exponent)
+}
 
-  class Sine<X : Field<X>> internal constructor(val angle: ScalarFun<X>) : ScalarFun<X>(angle)
+//TODO: Replace roots with fractional powers
+class SquareRoot<X: Field<X>> internal constructor(val radicand: ScalarFun<X>): ScalarFun<X>(radicand)
 
-  class Cosine<X : Field<X>> internal constructor(val angle: ScalarFun<X>) : ScalarFun<X>(angle)
+class Sine<X: Field<X>> internal constructor(val angle: ScalarFun<X>): ScalarFun<X>(angle)
 
-  class Tangent<X : Field<X>> internal constructor(val angle: ScalarFun<X>) : ScalarFun<X>(angle)
+class Cosine<X: Field<X>> internal constructor(val angle: ScalarFun<X>): ScalarFun<X>(angle)
 
-  class Exp<X : Field<X>> internal constructor(val exponent: ScalarFun<X>) : ScalarFun<X>(exponent)
+class Tangent<X: Field<X>> internal constructor(val angle: ScalarFun<X>): ScalarFun<X>(angle)
 
-  class Log<X : Field<X>> internal constructor(val logarithmand: ScalarFun<X>) : ScalarFun<X>(logarithmand)
+class Exp<X: Field<X>> internal constructor(val exponent: ScalarFun<X>): ScalarFun<X>(exponent)
 
-  class Negative<X : Field<X>> internal constructor(val arg: ScalarFun<X>) : ScalarFun<X>(arg)
+class Log<X: Field<X>> internal constructor(val logarithmand: ScalarFun<X>): ScalarFun<X>(logarithmand)
 
-  class ScalarProduct<X : Field<X>> internal constructor(
-    override val multiplicator: ScalarFun<X>,
-    override val multiplicand: ScalarFun<X>
-  ) : ScalarFun<X>(multiplicator, multiplicand), Product<X>, Function<X>
+class Negative<X: Field<X>> internal constructor(val arg: ScalarFun<X>): ScalarFun<X>(arg)
 
-  class ScalarSum<X : Field<X>> internal constructor(
-    override val augend: ScalarFun<X>,
-    override val addend: ScalarFun<X>
-  ) : ScalarFun<X>(augend, addend), Sum<X>
+class ScalarProduct<X: Field<X>> internal constructor(
+  override val multiplicator: ScalarFun<X>,
+  override val multiplicand: ScalarFun<X>
+): ScalarFun<X>(multiplicator, multiplicand), Product<X>, Function<X>
 
-  class Power<X : Field<X>> internal constructor(
-    val base: ScalarFun<X>,
-    val exponent: ScalarFun<X>
-  ) : ScalarFun<X>(base, exponent) {
-    override fun diff(ind: ScalarFun<X>) = when (exponent) {
-      one -> base.diff(ind)
-      is ScalarConst -> exponent * base.pow(exponent - one) * base.diff(ind)
-      else -> this * (exponent * base.ln()).diff(ind)
-    }
+class ScalarSum<X: Field<X>> internal constructor(
+  override val augend: ScalarFun<X>,
+  override val addend: ScalarFun<X>
+): ScalarFun<X>(augend, addend), Sum<X>
 
-    fun superscript(exponent: ScalarFun<X>) = when {
-      exponent == one -> ""
-      "$exponent".matches(Regex("[() a-pr-z0-9⋅+-]*")) -> "$exponent".superscript()
-      else -> "^($exponent)"
-    }
+class Power<X: Field<X>> internal constructor(
+  val base: ScalarFun<X>,
+  val exponent: ScalarFun<X>
+): ScalarFun<X>(base, exponent) {
+  override fun diff(ind: ScalarFun<X>) = when (exponent) {
+    one -> base.diff(ind)
+    is ScalarConst -> exponent * base.pow(exponent - one) * base.diff(ind)
+    else -> this * (exponent * base.ln()).diff(ind)
   }
 
-  // TODO: Try to make RealNumber a subtype of ScalarConst
-
-  open class ScalarConst<X : Field<X>> internal constructor(override val value: X) : ScalarFun<X>(), Const<X>
-
-  class ScalarVar<X : Field<X>> : ScalarFun<X>, Var<X> {
-    override val value: X
-    override val name: String
-
-    internal constructor(value: X, name: String = randomDefaultName()) : super() {
-      if (name.contains(' ')) throw IllegalArgumentException("Variable name must not contain spaces")
-      this.value = value
-      this.name = name.replace(" ", "")
-      this.variables = setOf(this)
-    }
-
-    override val variables: Set<ScalarVar<X>>
+  fun superscript(exponent: ScalarFun<X>) = when {
+    exponent == one -> ""
+    "$exponent".matches(Regex("[() a-pr-z0-9⋅+-]*")) -> "$exponent".superscript()
+    else -> "^($exponent)"
   }
+}
+
+// TODO: Try to make RealNumber a subtype of ScalarConst
+
+open class ScalarConst<X: Field<X>> internal constructor(override val value: X): ScalarFun<X>(), Const<X>
+
+class ScalarVar<X: Field<X>>: ScalarFun<X>, Var<X> {
+  override val value: X
+  override val name: String
+
+  internal constructor(value: X, name: String = randomDefaultName()): super() {
+    if (name.contains(' ')) throw IllegalArgumentException("Variable name must not contain spaces")
+    this.value = value
+    this.name = name.replace(" ", "")
+    this.variables = setOf(this)
+  }
+
+  override val variables: Set<ScalarVar<X>>
 }

@@ -6,15 +6,10 @@ import edu.umontreal.kotlingrad.dependent.*
 import java.util.*
 
 // VFun should not be a List or the concatenation operator + will conflict with vector addition
-open class VectorFun<X: Field<X>, MaxLength : `100`>(open val length: Nat<MaxLength>, val contents: ArrayList<X>): AbelianGroup<VectorFun<X, MaxLength>>, List<X> by contents {
+open class VectorFun<X: Field<X>, MaxLength: `100`>(open val length: Nat<MaxLength>, val contents: ArrayList<X>): AbelianGroup<VectorFun<X, MaxLength>>, List<X> by contents {
   init {
     if (length.i != contents.size) throw IllegalArgumentException("Declared $length, but found ${contents.size}")
   }
-
-//  val size
-//    get() = length.i
-
-//  operator fun get(i: Int): E = contents[i]
 
   companion object {
     operator fun <T: Field<T>> invoke(): VectorFun<T, `0`> = VectorFun(`0`, arrayListOf())
@@ -31,34 +26,33 @@ open class VectorFun<X: Field<X>, MaxLength : `100`>(open val length: Nat<MaxLen
 
   override fun toString() = "$contents"
   override val one: VectorFun<X, MaxLength>
-    get() = TODO("not implemented")
+    get() = VectorFun(length, mapTo(ArrayList(size)) { contents.first().one })
   override val zero: VectorFun<X, MaxLength>
-    get() = TODO("not implemented")
+    get() = VectorFun(length, mapTo(ArrayList(size)) { contents.first().zero })
 
-  constructor(length: Nat<MaxLength>, vector: Collection<X>): this(length, ArrayList<X>(vector.size).apply { addAll(vector) })
+  constructor(length: Nat<MaxLength>, vector: Collection<X>): this(length, vector.mapTo(ArrayList<X>(vector.size)) { ScalarConst(it) as X })
   constructor(length: Nat<MaxLength>, vararg vector: X): this(length, arrayListOf(*vector))
 
   fun dot(vx: VectorFun<X, MaxLength>) =
-      if (size != vx.size && size > 0) throw IllegalArgumentException("$size != ${vx.size}")
-      else zip(vx).map { it.first * it.second }.reduce { acc, it -> acc + it }
+    if (size != vx.size && size > 0) throw IllegalArgumentException("$size != ${vx.size}")
+    else zip(vx).map { it.first * it.second }.reduce { acc, it -> acc + it }
 
   override fun unaryMinus() = VectorFun(length, map { -it })
 
   override fun plus(addend: VectorFun<X, MaxLength>): VectorFun<X, MaxLength> =
-      if (size != addend.size) throw IllegalArgumentException("$size != ${addend.size}")
-      else VectorFun(length, mapIndexedTo(ArrayList(size)) { index, value -> value + addend[index] })
+    VectorFun(length, zip(addend).map { it.first + it.second })
 
   override fun minus(subtrahend: VectorFun<X, MaxLength>) =
-      if (size != subtrahend.size) throw IllegalArgumentException("$size != ${subtrahend.size}")
-      else VectorFun(length, mapIndexedTo(ArrayList(size)) { index, value -> value - subtrahend[index] })
+    VectorFun(length, zip(subtrahend).map { it.first + it.second })
 
-  override fun times(multiplicand: VectorFun<X, MaxLength>) = VectorFun(length, zip(multiplicand).map { it.first * it.second })
+  override fun times(multiplicand: VectorFun<X, MaxLength>) =
+    VectorFun(length, zip(multiplicand).map { it.first * it.second })
 
-  infix operator fun times(multiplicand: X) = VectorFun(length, map { it * multiplicand })
+//  infix operator fun times(multiplicand: ScalarConst<X>): VectorFun<X, MaxLength> = VectorFun(length, contents.map { it * multiplicand }) as VectorFun<X, MaxLength>
 
-  infix operator fun div(divisor: X) = VectorFun(length, map { it / divisor })
+  infix operator fun div(divisor: X): VectorFun<X, MaxLength> = VectorFun(length, contents.map { it / divisor })
 
-//  operator fun times(scalarFun: ScalarFun<X>): VectorFun<X, MaxLength> = VectorFun(contents.map { it * scalarFun })
+  infix operator fun times(multiplicand: X): VectorFun<X, MaxLength> = VectorFun(length, contents.map { multiplicand * it })
 
-//  class VConst<X : Field<X>, MaxLength: `100`>(override val length: Nat<MaxLength>, vararg contents: ScalarFun.ScalarConst<X>) : VFun<X, MaxLength>(length, *contents)
+//  class VConst<X : Field<X>, MaxLength: `100`>(override val length: Nat<MaxLength>, vararg contents: ScalarConst<X>) : VFun<X, MaxLength>(length, *contents)
 }
