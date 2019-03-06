@@ -164,7 +164,7 @@ class `2`(open val value: Int = 2) // Greatest literal
 // <L: `2`> will accept L <= 2 via Liskov substitution
 class Vec<E, L: `2`>(len: L, cts: List<E> = listOf())
 // Define addition for two vectors of type Vec<Int, L>
-operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) =
+operator scalarFun <L: `2`, V: Vec<Int, L>> V.plus(v: V) =
   Vec<Int, L>(len, cts.zip(v.cts).map { it.l + it.r })
 // Type-checked vector addition with shape inference
 val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
