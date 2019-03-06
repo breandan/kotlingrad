@@ -8,7 +8,7 @@ commentstyle={\color{gray}\ttfamily},
 emph={delegate, filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
 emphstyle={\color{red}},
 identifierstyle=\color{black},
-keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, scalarFun, get, if, import, in, interface, internal, is, null, object, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
 keywordstyle={\color{blue}\bfseries},
 morecomment=[s]{/*}{*/},
 morestring=[b]",
@@ -147,16 +147,16 @@ Universit\'e de Montr\'eal \\
         \begin{lstlisting}[language=Kotlin, gobble=12]
             // T: Group<T> is effectively a self type
             interface Group<T: Group<T>> {
-              operator scalarFun plus(f: T): T
-              operator scalarFun times(f: T): T
+              operator fun plus(f: T): T
+              operator fun times(f: T): T
             }
 
             // Inherits from Group, default methods
             interface Field<T: Field<T>>: Group<T> {
-              operator scalarFun unaryMinus(): T
-              operator scalarFun minus(f: T): T = this + -f
-              scalarFun inverse(): T
-              operator scalarFun div(f: T): T = this * f.inverse()
+              operator fun unaryMinus(): T
+              operator fun minus(f: T): T = this + -f
+              fun inverse(): T
+              operator fun div(f: T): T = this * f.inverse()
             }
         \end{lstlisting}
     \end{frame}
@@ -173,15 +173,15 @@ Universit\'e de Montr\'eal \\
             class Prod(val e1: Expr, val e2: Expr): Expr()
 
             sealed class Expr: Group {
-              scalarFun diff() = when(expr) {
+              fun diff() = when(expr) {
                 is Const -> Zero
                 is Sum -> e1.diff() + e2.diff()
                 is Prod -> e1.diff() * e2 + e1 * e2.diff()
                 is Var -> One
               }
 
-              operator scalarFun plus(e: Expr) = Sum(this, e)
-              operator scalarFun times(e: Expr) = Prod(this, e)
+              operator fun plus(e: Expr) = Sum(this, e)
+              operator fun times(e: Expr) = Prod(this, e)
             }
         \end{lstlisting}
     \end{frame}
@@ -189,7 +189,7 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Expression simplification}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            operator scalarFun Expr.times(exp: Expr) = when {
+            operator fun Expr.times(exp: Expr) = when {
               this is Const && num == 0.0 -> Const(0.0)
               this is Const && num == 1.0 -> exp
               exp is Const && exp.num == 0.0 -> exp
@@ -209,17 +209,17 @@ Universit\'e de Montr\'eal \\
         \begin{lstlisting}[language=Kotlin, gobble=12]
             class Expr<T: Group<T>>: Group<Expr<T>> {
               //...
-              operator scalarFun plus(exp: Expr<T>) = Sum(this, exp)
-              operator scalarFun times(exp: Expr<T>) = Prod(this, exp)
+              operator fun plus(exp: Expr<T>) = Sum(this, exp)
+              operator fun times(exp: Expr<T>) = Prod(this, exp)
             }
 
             object DoubleContext {
-              operator scalarFun Number.times(exp: Expr<DoubleReal>) =
+              operator fun Number.times(exp: Expr<DoubleReal>) =
                 Const(toDouble()) * exp
             }
 
             // Uses `*` operator in DoubleContext
-            scalarFun Expr<DoubleReal>.multiplyByTwo() =
+            fun Expr<DoubleReal>.multiplyByTwo() =
               with(DoubleContext) { 2 * this }
         \end{lstlisting}
     \end{frame}
