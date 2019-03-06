@@ -30,7 +30,7 @@ open class VectorFun<X: Field<X>, MaxLength: `100`>(open val length: Nat<MaxLeng
   override val zero: VectorFun<X, MaxLength>
     get() = VectorFun(length, mapTo(ArrayList(size)) { contents.first().zero })
 
-  constructor(length: Nat<MaxLength>, vector: Collection<X>): this(length, vector.mapTo(ArrayList<X>(vector.size)) { ScalarConst(it) as X })
+  constructor(length: Nat<MaxLength>, vector: Collection<X>): this(length, vector.mapTo(ArrayList<X>(vector.size)) { it })
   constructor(length: Nat<MaxLength>, vararg vector: X): this(length, arrayListOf(*vector))
 
   fun dot(vx: VectorFun<X, MaxLength>) =

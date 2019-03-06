@@ -13,6 +13,8 @@ fun main() {
     val z = VectorFun(1 * y, 2 * y, 3 * y)
     val m = t * z * y
     val q = z * 3
-    val r = 3 * z
+    val r = q * 3
+
+    println(r)
   }
 }

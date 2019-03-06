@@ -54,7 +54,7 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   infix operator fun Number.div(fn: ScalarFun<X>) = fn.const(wrap(this)) / fn
 
   infix operator fun <Y: `100`> VectorFun<ScalarFun<X>, Y>.times(number: Number) = this * ScalarConst(wrap(number))
-  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>): VectorFun<ScalarFun<X>, Y> = vector * ScalarConst(wrap(this))
+  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>)= vector * ScalarConst(wrap(this))
 
   @JvmName("prefixNumPowFun") fun pow(scalarFun: ScalarFun<X>, number: Number) = scalarFun.run { pow(const(wrap(number))) }
   @JvmName("prefixFunPowNum") fun pow(number: Number, scalarFun: ScalarFun<X>) = scalarFun.run { const(wrap(number)).pow(this) }
