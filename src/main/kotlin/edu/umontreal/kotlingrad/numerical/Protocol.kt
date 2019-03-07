@@ -54,7 +54,12 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   infix operator fun Number.div(fn: ScalarFun<X>) = fn.const(wrap(this)) / fn
 
   infix operator fun <Y: `100`> VectorFun<ScalarFun<X>, Y>.times(number: Number) = this * ScalarConst(wrap(number))
-  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>)= vector * ScalarConst(wrap(this))
+  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>) = vector * ScalarConst(wrap(this))
+
+  infix operator fun <F: `100`> ScalarFun<X>.plus(addend: VectorFun<ScalarFun<X>, F>) = addend.broadcast { this + it }
+  infix operator fun <F: `100`> ScalarFun<X>.minus(subtrahend: VectorFun<ScalarFun<X>, F>) = subtrahend.broadcast { this - it }
+  infix operator fun <F: `100`> ScalarFun<X>.times(multiplicand: VectorFun<ScalarFun<X>, F>) = multiplicand.broadcast { this * it }
+  infix operator fun <F: `100`> ScalarFun<X>.div(divisor: VectorFun<ScalarFun<X>, F>) = divisor.broadcast { this / it }
 
   @JvmName("prefixNumPowFun") fun pow(scalarFun: ScalarFun<X>, number: Number) = scalarFun.run { pow(const(wrap(number))) }
   @JvmName("prefixFunPowNum") fun pow(number: Number, scalarFun: ScalarFun<X>) = scalarFun.run { const(wrap(number)).pow(this) }
@@ -65,4 +70,8 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   operator fun ScalarFun<X>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
   operator fun ScalarFun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
   operator fun Number.invoke(n: Number) = this
+
+//  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
+  operator fun <F: `100`> VectorFun<X, F>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
+  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
 }
