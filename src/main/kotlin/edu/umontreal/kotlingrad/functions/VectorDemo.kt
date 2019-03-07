@@ -1,20 +1,25 @@
 package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
-
-//infix operator fun <Y: `100`, X: Field<X>> Number.times(fn: VectorFun<X, Y>): VectorFun<X, Y> = fn * ScalarConst(wrap(this))
-//infix fun <Y: `100`, X: Field<X>> ScalarFun<X>.mult(fn: VectorFun<X, Y>): VectorFun<X, Y> = fn * this
+import edu.umontreal.kotlingrad.numerical.DoubleReal
 
 fun main() {
   with(DoublePrecision) {
     val y = Var("y")
-
+    val c = VectorFun(DoubleReal(1), DoubleReal(2), DoubleReal(3))
+    val d = VectorFun(DoubleReal(1), DoubleReal(2), DoubleReal(3))
+    val f = c dot d
+    println("f = $f")
+//    val d = c * 1
     val t = VectorFun(1 * y, 2 * y, 3 * y)
     val z = VectorFun(1 * y, 2 * y, 3 * y)
+    val l = t dot z
+    println("l = $l")
     val m = t * z * y
     val q = z * 3
-    val r = q * 3
-
-    println(r)
+    val r = 3 * q
+    val p = y * y * q
+    println("p = $p")
+//    p.invoke(y to 1)
   }
 }

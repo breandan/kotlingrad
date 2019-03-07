@@ -10,6 +10,9 @@ interface Function<X: Group<X>> {
     is Sum -> augend(map) + addend(map)
     else -> throw Exception("Unknown")
   }
+
+  val variables: Set<Var<X>>
+  operator fun invoke(vararg pair: Pair<Var<X>, X>) = invoke(pair.toMap())
 }
 
 interface Const<X: Group<X>>: Function<X> {

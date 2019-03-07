@@ -5,7 +5,7 @@ import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.utils.randomDefaultName
 import edu.umontreal.kotlingrad.utils.superscript
 
-sealed class ScalarFun<X: Field<X>>(open val variables: Set<ScalarVar<X>> = emptySet()):
+sealed class ScalarFun<X: Field<X>>(override val variables: Set<ScalarVar<X>> = emptySet()):
   Field<ScalarFun<X>>, Function<X>, Differentiable<ScalarFun<X>> {
   open val name: String = randomDefaultName()
 
@@ -23,8 +23,6 @@ sealed class ScalarFun<X: Field<X>>(open val variables: Set<ScalarVar<X>> = empt
     is Tangent -> angle(map).tan()
     else -> super.invoke(map)
   }
-
-  operator fun invoke(vararg pair: Pair<ScalarVar<X>, X>) = invoke(pair.toMap())
 
   override fun toString(): String = when {
     this is Exp -> "exp($exponent)"
