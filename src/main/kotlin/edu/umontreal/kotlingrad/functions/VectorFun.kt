@@ -8,7 +8,7 @@ import java.util.*
 // VFun should not be a List or the concatenation operator + will conflict with vector addition
 open class VectorFun<X: Field<X>, MaxLength: `100`>(
   open val length: Nat<MaxLength>,
-  val contents: ArrayList<X>,
+  private val contents: ArrayList<X>,
   override val variables: Set<Var<X>> = emptySet()):
   AbelianGroup<VectorFun<X, MaxLength>>, Function<X>, List<X> by contents {
 
@@ -42,12 +42,16 @@ open class VectorFun<X: Field<X>, MaxLength: `100`>(
   constructor(length: Nat<MaxLength>, vector: Collection<X>): this(length, vector.mapTo(ArrayList<X>(vector.size)) { it })
   constructor(length: Nat<MaxLength>, vararg vector: X): this(length, arrayListOf(*vector))
 
-//  override operator fun invoke(map: Map<Var<X>, X>): X = when (this) { else-> TODO() }
+//  override operator fun invoke(map: Map<Var<X>, X>) = when (this) {
+//    is VectorProduct -> merge(multiplicand) { it.first(map) * it.second(map) }
+//    is VectorSum -> merge(addend) { it.first(map) + it.second(map) }
+//    else -> throw Exception("Unknown")
+//  }
 
   override fun unaryMinus() = broadcast { -it }
-  override fun plus(addend: VectorFun<X, MaxLength>) = merge(addend) { it.first + it.second }
+  override fun plus(addend: VectorFun<X, MaxLength>) = VectorSum(this, addend)
   override fun minus(subtrahend: VectorFun<X, MaxLength>) = merge(subtrahend) { it.first - it.second }
-  override fun times(multiplicand: VectorFun<X, MaxLength>) = merge(multiplicand) { it.first * it.second }
+  override fun times(multiplicand: VectorFun<X, MaxLength>) = VectorProduct(this, multiplicand)
   infix fun dot(vx: VectorFun<X, MaxLength>) = (this * vx).reduce { acc, it -> acc + it }
 
   fun broadcast(operation: (X) -> X): VectorFun<X, MaxLength> = VectorFun(length, contents.map(operation))
