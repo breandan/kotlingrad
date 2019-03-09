@@ -7,7 +7,7 @@ import java.util.*
 
 // VFun should not be a List or the concatenation operator + will conflict with vector addition
 open class VectorFun<X: Field<X>, MaxLength: `100`>(
-  open val length: Nat<MaxLength>,
+  val length: Nat<MaxLength>,
   private val contents: ArrayList<X>,
   override val variables: Set<Var<X>> = emptySet()):
   AbelianGroup<VectorFun<X, MaxLength>>, Function<X>, List<X> by contents {

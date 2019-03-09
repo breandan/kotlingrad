@@ -1,6 +1,12 @@
 package edu.umontreal.kotlingrad.samples
 
 
+import edu.umontreal.kotlingrad.samples.Jzy2Demo.PitchAmpliControlCharts
+import edu.umontreal.kotlingrad.samples.Jzy2Demo.TimeChartWindow
+import edu.umontreal.kotlingrad.samples.Jzy2Demo.duration
+import edu.umontreal.kotlingrad.samples.Jzy2Demo.generateSamplesInTime
+import edu.umontreal.kotlingrad.samples.Jzy2Demo.maxfreq
+import edu.umontreal.kotlingrad.samples.Jzy2Demo.nOctave
 import net.miginfocom.swing.MigLayout
 import org.jzy3d.chart.Chart
 import org.jzy3d.chart2d.Chart2d
@@ -30,23 +36,15 @@ import javax.swing.JPanel
  */
 
 object Jzy2Demo {
-  var duration = 60f
+  const val duration = 60f
   /** milisecond distance between two generated samples */
-  var interval = 50
-  var maxfreq = 880
-  var nOctave = 5
+  const val interval = 50
+  const val maxfreq = 880
+  const val nOctave = 5
 
   /** Simple timer  */
   internal var start: Long = 0
 
-  @JvmStatic
-  fun main(args: Array<String>) {
-    val log = PitchAmpliControlCharts(duration, maxfreq, nOctave)
-    TimeChartWindow(log.charts)
-
-    generateSamplesInTime(log)
-    // generateSamples(log, 500000);
-  }
 
   @Throws(InterruptedException::class)
   fun generateSamples(log: PitchAmpliControlCharts, n: Int) {
@@ -63,9 +61,8 @@ object Jzy2Demo {
     }
   }
 
-  fun time(n: Int, i: Int) = i.toDouble() / n * duration
+  private fun time(n: Int, i: Int) = i.toDouble() / n * duration
 
-  @Throws(InterruptedException::class)
   fun generateSamplesInTime(log: PitchAmpliControlCharts) {
     println("will generate approx. " + duration * 1000 / interval + " samples")
 
@@ -147,7 +144,7 @@ object Jzy2Demo {
       add(chartPanel, "cell 0 $id, grow")
     }
 
-    fun windowExitListener() {
+    private fun windowExitListener() {
       addWindowListener(object: WindowAdapter() {
         override fun windowClosing(e: WindowEvent?) {
           this@TimeChartWindow.dispose()
@@ -157,5 +154,13 @@ object Jzy2Demo {
     }
   }
 
-  fun elapsed() = (System.nanoTime() - start) / 1000000000.0
+  private fun elapsed() = (System.nanoTime() - start) / 1000000000.0
+}
+
+fun main() {
+  val log = PitchAmpliControlCharts(duration, maxfreq, nOctave)
+  TimeChartWindow(log.charts)
+
+  generateSamplesInTime(log)
+  // generateSamples(log, 500000);
 }
