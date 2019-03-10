@@ -1,12 +1,9 @@
 package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.algebra.Field
-import edu.umontreal.kotlingrad.functions.ScalarFun
-import edu.umontreal.kotlingrad.functions.ScalarVar
-import edu.umontreal.kotlingrad.functions.VectorFun
 import java.math.BigDecimal
 import edu.umontreal.kotlingrad.dependent.*
-import edu.umontreal.kotlingrad.functions.ScalarConst
+import edu.umontreal.kotlingrad.functions.*
 
 object BigDecimalPrecision: Protocol<BigDecimalReal, BigDecimal>() {
   override fun wrap(default: Number) = BigDecimalReal(BigDecimal(default.toDouble()))
@@ -16,6 +13,7 @@ object DoublePrecision: Protocol<DoubleReal, Double>() {
   override fun wrap(default: Number) = DoubleReal(default.toDouble())
 }
 
+@Suppress("FunctionName")
 sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> {
   fun Var() = Var(wrap(0))
   fun Var(default: X) = ScalarVar(value = default)
@@ -53,13 +51,15 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   infix operator fun ScalarFun<X>.div(number: Number) = this / wrap(number)
   infix operator fun Number.div(fn: ScalarFun<X>) = fn.const(wrap(this)) / fn
 
-  infix operator fun <Y: `100`> VectorFun<ScalarFun<X>, Y>.times(number: Number) = this * ScalarConst(wrap(number))
-  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>) = vector * ScalarConst(wrap(this))
+  fun <Y: `100`> fill(length: Nat<Y>, n: Number) = VectorConst(length, (0 until length.i).map { ScalarConst(wrap(n)) })
 
-  infix operator fun <F: `100`> ScalarFun<X>.plus(addend: VectorFun<ScalarFun<X>, F>) = addend.broadcast { this + it }
-  infix operator fun <F: `100`> ScalarFun<X>.minus(subtrahend: VectorFun<ScalarFun<X>, F>) = subtrahend.broadcast { this - it }
-  infix operator fun <F: `100`> ScalarFun<X>.times(multiplicand: VectorFun<ScalarFun<X>, F>) = multiplicand.broadcast { this * it }
-  infix operator fun <F: `100`> ScalarFun<X>.div(divisor: VectorFun<ScalarFun<X>, F>) = divisor.broadcast { this / it }
+  infix operator fun <Y: `100`> VectorFun<ScalarFun<X>, Y>.times(number: Number) = this * fill(length, number)
+  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>) = fill(vector.length, this) * vector
+
+  fun <Y: `100`> fill(length: Nat<Y>, s: ScalarFun<X>) = VectorConst(length, (0 until length.i).map { s })
+  infix operator fun <F: `100`> ScalarFun<X>.plus(addend: VectorFun<ScalarFun<X>, F>) = fill(addend.length, this) + addend
+  infix operator fun <F: `100`> ScalarFun<X>.minus(subtrahend: VectorFun<ScalarFun<X>, F>) = fill(subtrahend.length, this) - subtrahend
+  infix operator fun <F: `100`> ScalarFun<X>.times(multiplicand: VectorFun<ScalarFun<X>, F>) = fill(multiplicand.length, this) * multiplicand
 
   @JvmName("prefixNumPowFun") fun pow(scalarFun: ScalarFun<X>, number: Number) = scalarFun.run { pow(const(wrap(number))) }
   @JvmName("prefixFunPowNum") fun pow(number: Number, scalarFun: ScalarFun<X>) = scalarFun.run { const(wrap(number)).pow(this) }
@@ -72,6 +72,6 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   operator fun Number.invoke(n: Number) = this
 
 //  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
-  operator fun <F: `100`> VectorFun<X, F>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
-  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
+//  operator fun <F: `100`> VectorFun<X, F>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
+//  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
 }
