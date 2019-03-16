@@ -613,6 +613,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
 * [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
 * [Automatic differentiation in machine learning: a survey](http://jmlr.org/papers/volume18/17-468/17-468.pdf)
+* [The (JAX) Autodiff Cookbook](https://colab.research.google.com/github/google/jax/blob/master/notebooks/autodiff_cookbook.ipynb)
 
 ### Differentiable Programming
 
