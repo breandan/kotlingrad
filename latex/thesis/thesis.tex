@@ -171,33 +171,49 @@
 
 \chapter{Introduction}
 
-\section{Landmarks in the software development lifecycle}
+Intelligent system: A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation or design of the system.
 
-Tranditional software engineering has followed a rigorous process model and testing methodology.
+\section{Stages in the software development lifecycle}
+
+Tranditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a reimagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an *error* or *loss* which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
+
+For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
+
+Often it is not possible, or desirable to summarize the function of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
 
 \subsection{Requirements}
+
+When building intelligent system developers must first ask, what are the requirements of the system? This process is often the most troublesome part, because the requirements must not be fuzzy specifications like traditional software engineering, but precise, programmable directives. "I would like the system to be fast," is not sufficiently precise. These kinds of requirements must be translated into statistical loss functions, so we must be very precise about how we specify our requirements. If we simply say, "The system must produce a valid response as quickly as possible, in less than 100ms," is better, but leaves open the possibility of returning an empty response.
+
+In traditional software engineering, it is reasonable to assume the people who are implementing the system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversary. If we are to give it an optimization metric, it will take every conceivable shortcut to achieve that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
+
+In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g. declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
+
 \subsection{Design}
+
+When designing intelligent systems, we need to iterate between requirements and design constraints. It is not sufficient for requirements engineers to hand an objective to the design team, or the design team to hand a design to the implementors. Rather, they must work in concert to produce a system that has the desired properties. Sometimes this means compromising, or redesigning the performance metrics to become more flexible.
+
+"Human in the loop" is an emerging idea that tries to encompass this phenomenon.
+
 \subsection{Implementation}
+
+When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing backpropogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineeering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementatoins is even more pressing.
+
 \subsection{Verification}
-\subsection{Maitenance}
 
-\section{Developers, Operations, and the DevOps toolchain}
+Because the space of many problems is intractably large, it is difficult to prove the correctness of a given solution. Instead, we need tools to verify the properties of a system under a given budget. In self-driving vehicles, human drivers average one fatality per hundred million miles (cite), this is incredibly difficult to test given our current methodology. Instead, we need better ways to probe the effectiveness of a candidate solution.
 
-Recently, software engineers have started to realize the importance of bespoke tools that facilitate the process of shipping software, in addition to the software itself.
+\subsection{Maintenance}
 
-Teams building software are cybernetic systems, and require meta-programs for building code and organizational processes which enable them to ship code more efficiently.
+Maintenance of systems is radically different in machine learning. Often it is not possible to manually update the parameters of a model without starting from scratch. While there are some methods for transfer learning, if we are
 
-\section{Continuous Delivery and Continual Learning}
+\chapter{Requirements engineering in intelligent systems}
 
-In CI/CD, software artifacts are "continously" updated. Similarly, intelligent systems continously adapt to their environment and will continue to accelerate this process.
+Work on multi-objective optimization.
 
-Incremenental updates will grow increasingly smaller, until the program starts to after every input it processes.
+\chapter{Design: Programming tools for robotics systems}
 
-We need tools to more effectively harness the stochasticity of these learning systems.
-
-\chapter{Programming tools for robotics systems}
-
-Programming tools are a bicycle for the mind. Complex interconnected systems need better tools for developers.
+Programming tools are a bicycle for the mind. Complex systems need better tools for developers.
 
 \section{Software architecture of a robotics application}
 
@@ -260,13 +276,13 @@ While containerization considerably simplifies the process of building and deplo
 
 One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host OS for build purposes. In this case, while submissions may be reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts also has the benefit of reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker environment periodically, copying sources into the image.
 
-\chapter{Languages and compilers}
+\chapter{Implementing intelligent systems: languages and compilers}
 
 \section{Static and dynamic languages}
 
-Most machine learning and scientific computing is written in dynamic languages, like Python. In contrast, most of the industry uses statically typed languages.
+Most machine learning and scientific computing today is done in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages for putting models into production (citation).
 
-Dynamically typed languages are mostly for experimentation and prototyping. But is it scaleable to production systems?
+Dynamically typed languages are mostly for experimentation and prototyping. But are they scaleable to production systems?
 
 Strong, static types are critical for reasoning about the behavior of complex programs. It provides an additional layer of safety against runtime errors.
 
@@ -528,5 +544,21 @@ Verified using property-based testing.
 Deployed and CI-tested using Docker.
 
 \chapter{Conclusion}
+
+    \section{Future work}
+
+    \section{Continuous Delivery and Continual Learning}
+
+    In CI/CD, software artifacts are "continously" updated. Similarly, intelligent systems must continously adapt to their environment and this trend will only accelerate.
+
+    Incremenental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
+
+    We need tools to more effectively harness the stochasticity of these learning systems.
+
+    \section{Developers, Operations, and the DevOps toolchain}
+
+    Software engineers have begun to realize the value of bespoke tools that facilitate the process of shipping software, in addition to the software itself.
+
+    Teams building software are cybernetic systems, and require meta-programs for building code and organizational processes which enable them to ship code more efficiently.
 
 \end{document}
