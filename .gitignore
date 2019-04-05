@@ -6,4 +6,13 @@ build
 out
 .kotlintest
 data
+*.lot
+*.lof
+*.log
+*.pyg
+*.gz
+*.toc
+*.aux
+*.bbl
+*.blg
 *.swp

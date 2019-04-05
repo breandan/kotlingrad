@@ -136,7 +136,7 @@
 % \anglais. Noter qu'il faut une permission
 % pour écrire son mémoire en anglais.
 %%\anglais
-\francais
+\anglais
 % \cleardoublepage termine la page actuel et force TeX
 % a poussé les éléments flottant (fig., tables, etc.) sur
 % la page (normalement TeX les garde en suspend jusqu'à ce
@@ -159,12 +159,6 @@
 \phantomsection
 \listoffigures
 
-%
-% Fin des pages liminaires.  À partir d'ici, les
-% premières pages des chapitres ne doivent pas
-% être numérotées
-%
-
 \NoChapterPageNumber
 \cleardoublepage
 \pagenumbering{arabic}
@@ -175,25 +169,11 @@ Intelligent system: A computer system that uses techniques derived from artifici
 
 \section{Stages in the software development lifecycle}
 
-Tranditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a reimagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an *error* or *loss* which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
-
-For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
-
-Often it is not possible, or desirable to summarize the function of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
-
-\subsection{Requirements}
-
-When building intelligent system developers must first ask, what are the requirements of the system? This process is often the most troublesome part, because the requirements must not be fuzzy specifications like traditional software engineering, but precise, programmable directives. "I would like the system to be fast," is not sufficiently precise. These kinds of requirements must be translated into statistical loss functions, so we must be very precise about how we specify our requirements. If we simply say, "The system must produce a valid response as quickly as possible, in less than 100ms," is better, but leaves open the possibility of returning an empty response.
-
-In traditional software engineering, it is reasonable to assume the people who are implementing the system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversary. If we are to give it an optimization metric, it will take every conceivable shortcut to achieve that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
-
-In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g. declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
+The Waterfall Method comprises of five stages, but our contributions are limited to four.
 
 \subsection{Design}
 
 When designing intelligent systems, we need to iterate between requirements and design constraints. It is not sufficient for requirements engineers to hand an objective to the design team, or the design team to hand a design to the implementors. Rather, they must work in concert to produce a system that has the desired properties. Sometimes this means compromising, or redesigning the performance metrics to become more flexible.
-
-"Human in the loop" is an emerging idea that tries to encompass this phenomenon.
 
 \subsection{Implementation}
 
@@ -206,10 +186,6 @@ Because the space of many problems is intractably large, it is difficult to prov
 \subsection{Maintenance}
 
 Maintenance of systems is radically different in machine learning. Often it is not possible to manually update the parameters of a model without starting from scratch. While there are some methods for transfer learning, if we are
-
-\chapter{Requirements engineering in intelligent systems}
-
-Work on multi-objective optimization.
 
 \chapter{Design: Programming tools for robotics systems}
 
@@ -243,40 +219,7 @@ Assistance for running ROS applications.
 
 Detecting and managing ROS installations.
 
-\chapter{Software reproducibility}
-
-\section{Operating systems and virtualization}
-
-Operating systems are a source of variability. Filesystems are complicated.
-
-\section{Dependency management}
-
-Packages are a source of variability. Dependency hell is NP Complete: https://research.swtch.com/version-sat
-
-\section{Containerization}
-
-One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well documented codebase can be a considerable challenge, especially in a robotics setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
-
-In order to address the issue of software reproducibility, we developed a set of tools and development workflows that draw on best practices in software engineering. These tools are primarily built around containerization, a widely adopted virtualization technology in the software industry. In order to lower the barrier of entry for participants and minimize variability across platforms (e.g. simulators, robotariums, Duckiebots), we provide a state-of-the-art container infrastructure based on Docker, a popular container engine. Docker allows us to construct versioned deployment artifacts that represent the entire filesystem and to manage resource constraints via a sandboxed runtime environment.
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.45\textwidth]{docker_stack_1.png}
-    \includegraphics[width=0.45\textwidth]{docker_stack_2.png}
-    \includegraphics[width=0.35\textwidth]{network_infra.png}
-    \caption{AI-DO container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are typically trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their specific architecture, may be run on an ARM device using an Intel NCS.}
-    \label{fig:docker}
-\end{figure}
-
-The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
-
-Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and a separate Linux namespace for each container, isolating the network, users, and file system mounts. Unlike virtual machines, container-based virtualization like Docker only requires a lightweight kernel, and can support running many simultaneous containers with close to zero overhead. A single Raspberry Pi is capable of supporting hundreds of running containers.
-
-While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier in Sec.~\ref{sec:dev-pipeline}.
-
-One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host OS for build purposes. In this case, while submissions may be reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts also has the benefit of reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker environment periodically, copying sources into the image.
-
-\chapter{Implementing intelligent systems: languages and compilers}
+\chapter{Implementation: languages and compilers}
 
 \section{Static and dynamic languages}
 
@@ -294,15 +237,13 @@ Kotlin is a strong, statically typed language. It is well suited for building cr
 
 Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface} \cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete \cite{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types. We use \textit{Kotlin}, whose type system is less expressive, but fully compatible with Java.
 
-Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{DBLP:journalscorrBaydinPS15} and recently Swift \cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{baydin-diffsharp} and recently Swift \cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
-Existing AD implementations for the JVM include Lantern \cite{DBLP:journalscorrabs-1803-10228}, Nexus \cite{chen2017typesafe} and DeepLearning.scala \cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
+Existing AD implementations for the JVM include Lantern \cite{DBLP:journals-corr-abs-1803-10228}, Nexus \cite{chen2017typesafe} and DeepLearning.scala \cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
 
-\begin{enumerate}[itemsep=-0.5ex]
-    \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
-    \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \cite{pearlmutter2008reverse} and \cite{DBLP:journalscorrabs-1803-10228}.
-    \item \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
-\end{enumerate}
+\textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
+\textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \cite{pearlmutter2008reverse} and \cite{DBLP:journals-corr-abs-1803-10228}.
+\textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
 %  Finally, we notice two things about the nature of Kotlin langauge in respect
 
 \section{Usage}
@@ -384,20 +325,20 @@ Describing the Kotlin$\nabla$ type system (formally).
 \begin{table}[H]
     \begin{tabular}{|c|c|c|c|l|}
         \hline
-        \multicolumn{1}{|c|}{Math}                            &  Infix                                                                         & Prefix                                                                                   & Postfix                                                                                   & Type                                                                                                                                                                                    \\ \hline
-                 $A + B$                                      &  \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}       &           \texttt{plus(a, b)}                                                            &                                                                                           & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A - B$                                      &  \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}      &           \texttt{minus(a, b)}                                                           &                                                                                           & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
-                 $A   B$                                      &  \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\end{tabular}      &           \texttt{times(a, b)}                                                           &                                                                                           & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n*p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*p})  $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a / b}\\\texttt{a.div(b)}\end{tabular}        &           \texttt{div(a, b)}                                                             &                                                                                           & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p*n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*p})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}               &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                           & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}      & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
-\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}               & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                         & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}         & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}   &                                                                                &   \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular} & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
-                $\ln(A)$                                      &                                                                                & \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                     & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                    & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                              $ \\ \hline
-             $\log_b A$                                       &          \texttt{a.log(b)}                                                     &          \texttt{log(a, b)}                                                              &                                                                                           & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
-                $A^{b}$                                       &          \texttt{a.pow(b)}                                                     &          \texttt{pow(a, b)}                                                              &                                                                                           & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*m})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$sqrt[3](a)$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &   \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         &   \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}               & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m*m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular} &          \texttt{a.diff(b)}                                                    &           \texttt{grad(a)[b]}                                                            &            \texttt{d(a) / d(b)}                                                           & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
-               $\nabla a$                                     &                                                                                &            \texttt{grad(a)}                                                              &             \texttt{a.grad()}                                                             & $                   (\texttt{a}: C(\mathbb{R}^{m})^{*}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
+        \multicolumn{1}{|c|}{Math}                            &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                     \\ \hline
+                 $A + B$                                      & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}        &  \texttt{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A - B$                                      & \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}       &  \texttt{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
+                 $A   B$                                      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\end{tabular}       &  \texttt{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n*p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*p})  $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a / b}\\\texttt{a.div(b)}\end{tabular}         &  \texttt{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p*n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*p})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}               &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
+\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}               & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}   &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
+                $\ln(A)$                                      &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                              $ \\ \hline
+               $\log_b A$                                     & \texttt{a.log(b)}                                                              &  \texttt{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
+                $A^{b}$                                       & \texttt{a.pow(b)}                                                              &  \tettt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*m})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$sqrt[3](a)$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m*m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular} & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
+               $\nabla a$                                     &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})^{*}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
     \end{tabular}
 \end{table}
 }
@@ -408,15 +349,15 @@ The renaissance of modern deep learning is widely credited to progress in three 
 
 In deep learning, research primarily focuses on differentiable representations. In contrast, many problems we would like to solve are non-differentiable in their natural domain. For example, the structure of character-based representations are not easily differentiable as small changes to a word's symbolic representation can cause large differences to its semantic meaning. A key insight from deep learning research is that many problems require posing a good representation. For example, if we can represent words as a vector of real numbers, so that relations between words are spatially preserved by the vector representation, then we can perform gradient descent on such a space. Many classes of discrete problems can be relaxed to continuous surrogates by introducing a good representation.
 
-As more domains found efficient representations, researchers observed neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \it{differentiable programming} was born.
+As more domains found efficient representations, researchers observed neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \textit{differentiable programming} was born.
 
-\chapter{Testing and validation}
+\chapter{Verification and validation}
 
 How do we test a machine that learns?
 
 \section{Adversarial test case generation}
 
-Neural networks and differentiable programming has given us a powerful new set of optimization tools for training learning algorithms. However these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
+Neural networks and differentiable programming has provided a powerful new set of optimization tools for training learning algorithms. However these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
 \section{Background}
 
@@ -435,7 +376,7 @@ From the chain rule of calculus, we know that:
 %
 % Imagine a set of tests $\mathrm{T}: \mathbb{R} \rightarrow \mathbb{B}$ where $\mathrm{T}={\tau_1, ...\tau_m}$.  For example,
 %
-Imagine a single test $T: \mathbb{R} \rightarrow \mathbb{B}$. Consider for example:
+Imagine a single test $T: \mathbb{R} \rightarrow \mathbb{B}$. Consider the following example::
 %
 \begin{equation}
     T: \forall x \in (0, 1), P(x) < C
@@ -513,7 +454,6 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     evalCount++; i++\;
     }
 
-
     \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g. uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of G.D. steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each G.D. trajectory will terminate before exhausting our budget.}
 \end{algorithm}
 
@@ -543,22 +483,71 @@ Verified using property-based testing.
 
 Deployed and CI-tested using Docker.
 
+\chapter{Software reproducibility}
+
+\section{Operating systems and virtualization}
+
+Operating systems are a source of variability. Filesystems are complicated.
+
+\section{Dependency management}
+
+Packages are a source of variability. Dependency hell is NP Complete: https://research.swtch.com/version-sat
+
+\section{Containerization}
+
+One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well documented codebase can be a considerable challenge, especially in a robotics setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
+
+In order to address the issue of software reproducibility, we developed a set of tools and development workflows that draw on best practices in software engineering. These tools are primarily built around containerization, a widely adopted virtualization technology in the software industry. In order to lower the barrier of entry for participants and minimize variability across platforms (e.g. simulators, robotariums, Duckiebots), we provide a state-of-the-art container infrastructure based on Docker, a popular container engine. Docker allows us to construct versioned deployment artifacts that represent the entire filesystem and to manage resource constraints via a sandboxed runtime environment.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.45\textwidth]{docker_stack_1.png}
+    \includegraphics[width=0.45\textwidth]{docker_stack_2.png}
+    \includegraphics[width=0.35\textwidth]{network_infra.png}
+    \caption{AI-DO container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are typically trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their specific architecture, may be run on an ARM device using an Intel NCS.}
+    \label{fig:docker}
+\end{figure}
+
+The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
+
+Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and a separate Linux namespace for each container, isolating the network, users, and file system mounts. Unlike virtual machines, container-based virtualization like Docker only requires a lightweight kernel, and can support running many simultaneous containers with close to zero overhead. A single Raspberry Pi is capable of supporting hundreds of running containers.
+
+While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier in Sec.~\ref{sec:dev-pipeline}.
+
+One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host OS for build purposes. In this case, while submissions may be reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts also has the benefit of reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker environment periodically, copying sources into the image.
+
 \chapter{Conclusion}
 
-    \section{Future work}
+\section{Future work}
 
-    \section{Continuous Delivery and Continual Learning}
+\subsection{Requirements Engineering}
 
-    In CI/CD, software artifacts are "continously" updated. Similarly, intelligent systems must continously adapt to their environment and this trend will only accelerate.
+Often it is not possible, or desirable to summarize the function of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
 
-    Incremenental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
+Tranditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a reimagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
 
-    We need tools to more effectively harness the stochasticity of these learning systems.
+For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any singly criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
 
-    \section{Developers, Operations, and the DevOps toolchain}
+When building intelligent system developers must first ask, what are the requirements of the system? This process is often the most troublesome part, because the requirements must not be fuzzy specifications like traditional software engineering, but precise, programmable directives. "I would like the system to be fast," is not sufficiently precise. These kinds of requirements must be translated into statistical loss functions, so we must be very precise about how we specify our requirements. If we simply say, "The system must produce a valid response as quickly as possible, in less than 100ms," is better, but leaves open the possibility of returning an empty response.
 
-    Software engineers have begun to realize the value of bespoke tools that facilitate the process of shipping software, in addition to the software itself.
+In traditional software engineering, it is reasonable to assume the people who are implementing the system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversary. If we are to give it an optimization metric, it will take every conceivable shortcut to achieve that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
 
-    Teams building software are cybernetic systems, and require meta-programs for building code and organizational processes which enable them to ship code more efficiently.
+In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g. declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
 
+\subsection{Continuous Delivery and Continual Learning}
+
+In CI/CD, software artifacts are "continously" updated. Similarly, intelligent systems must continously adapt to their environment and this trend will only accelerate.
+
+Incremenental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
+
+We need tools to more effectively harness the stochasticity of these learning systems.
+
+\subsection{Developers, Operations, and the DevOps toolchain}
+
+Software engineers have begun to realize the value of bespoke tools that facilitate the process of shipping software, in addition to the software itself.
+
+Teams building software are cybernetic systems, and require meta-programs for building code and organizational processes which enable them to ship code more efficiently.
+
+\bibliography{ref}
+\bibliographystyle{plain}
 \end{document}
