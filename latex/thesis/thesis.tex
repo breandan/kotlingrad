@@ -3,6 +3,7 @@
 \usepackage[T1]{fontenc}    %
 \usepackage{minted}
 \usepackage{array}
+\usepackage{epigraph}
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 \usepackage[options ]{algorithm2e}
@@ -114,18 +115,9 @@
 %%\maketitle
 
 %%------------------------------------------------- %
-%%              pages iii                           %
-%%------------------------------------------------- %
-
-\francais
-
-\chapter*{Sommaire}
-
-%%------------------------------------------------- %
 %%              pages iv                            %
 %%------------------------------------------------- %
 
-\anglais
 \chapter*{Summary}
 
 %%------------------------------------------------- %
@@ -135,7 +127,6 @@
 % Pour un mémoire en anglais, changer pour
 % \anglais. Noter qu'il faut une permission
 % pour écrire son mémoire en anglais.
-%%\anglais
 \anglais
 % \cleardoublepage termine la page actuel et force TeX
 % a poussé les éléments flottant (fig., tables, etc.) sur
@@ -167,9 +158,13 @@
 
 Intelligent system: A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation or design of the system.
 
+In computer science, we are mostly concerned with algorithmic complexity. Computer scientists have developed numerous ways of describing complexity using tools from analysis and information theory, like Kolmogorov complexity and big-O notation. In contrast, the field of software engineering is mostly interested in a different kind of complexity - namely complexity of building software. One sort of complexity is the mental effort required to understand a program. There have been various efforts to measure this complexity, such as McCabe's cyclomatic complexity or Halstead complexity. Essentially, they all try to characterize the mental effort required to work with a program's concrete textual representation. Our objective is to reduce the mental effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and containers.
+
+The goal of this thesis is show it is possible to develop tools that reduce the mental complexity of building intelligent software systems. First, we demonstrate an integrated development environment that assists users with the manual task of writing robotics applications. This project was created to reduce the complexity of working with robotics code as raw text. Next, we demonstrate a type-safe domain specific language for differentiable programming, one form of machine learning. To test this application, we use a set of techniques borrowed from Property Based Testing. Then we use Docker containers to automate the process of building, testing and deploying reproducible robotics applications to various hardware platforms. Finally, we demonstrate a functional intelligent system built using the above tools which is comprised of a mobile autonomous vehicle and an Android mobile application.
+
 \section{Stages in the software development lifecycle}
 
-The Waterfall Method comprises of five stages, but our contributions are limited to four.
+In traditional software engineering, the Waterfall Method is a classic engineering design process model that comprises of five stages. We propose contributions to four: design, implementation, verification and maintenance.
 
 \subsection{Design}
 
@@ -221,17 +216,21 @@ Detecting and managing ROS installations.
 
 \chapter{Implementation: languages and compilers}
 
+\epiggraph{Programs must be written for people to read, and only incidentally for machines to execute.}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
+
 \section{Static and dynamic languages}
 
-Most machine learning and scientific computing today is done in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages for putting models into production (citation).
+Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages \cite{github}.
 
 Dynamically typed languages are mostly for experimentation and prototyping. But are they scaleable to production systems?
 
-Strong, static types are critical for reasoning about the behavior of complex programs. It provides an additional layer of safety against runtime errors.
+According to some studies, type errors account for over 15\% of bugs. \cite{gao2017type} While the causal connections between statically typed languages in general and fewer is not widely established, types are often necessary to build more powerful static analyses and tools for program understanding.
+
+Strong, static types are critical for reasoning about the behavior of complex programs. It provides an additional layer of safety against runtime errors,
 
 \section{Kotlin}
 
-Kotlin is a strong, statically typed language. It is well suited for building cross-platform systems.
+Kotlin is a strong, statically typed language. It is well suited for building cross-platform applications, with implementations in native, JVM, and JavaScript.
 
 \section{Kotlin$\nabla$}
 
@@ -522,7 +521,7 @@ One issue encountered is the matter of whether to package source code directly i
 
 \subsection{Requirements Engineering}
 
-Often it is not possible, or desirable to summarize the function of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
+Often it is not possible, or desirable to summarize the performance of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
 
 Tranditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a reimagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
 
