@@ -158,14 +158,13 @@
 
 \epiggraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
 
-
-In computer science, we are mostly concerned with algorithmic complexity. Computer scientists have developed numerous ways of describing complexity using analysis and information theory, like Kolmogorov complexity and big-O notation. The field of software engineering is mostly interested in a different kind of complexity - the complexity of building software. One sort of software complexity is the mental effort required to understand a program, and can be approximated by metrics like cyclomatic complexity or Halstead complexity, which try to characterize the mental effort required to work with code.
+In computer science, we are mostly concerned with algorithmic complexity. Computer scientists have developed numerous tools for describing complexity using analysis and information theory, such as Kolmogorov complexity and big-O notation. The field of software engineering is primarily interested in a different kind of complexity - the complexity of building software. One sort of software complexity is the mental effort required to understand a program, and can be approximated by metrics like cyclomatic complexity or Halstead complexity, which try to characterize the mental effort required to work with code.
 
 Our objective is to reduce the mental effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and containers.
 
-The goal of this thesis is show it is possible to develop tools that reduce the mental complexity of building intelligent software systems. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code as raw text. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from Property Based Testing. Then we use Docker containers to automate the process of building, testing and deploying reproducible robotics applications to various hardware platforms. Finally, we demonstrate a functional intelligent system built using the above tools which is comprised of a mobile autonomous vehicle and an Android mobile application.
+The goal of this thesis is show it is possible to develop tools that reduce the mental burden of building intelligent software systems. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code as raw text. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. We then use Docker containers~\cite{white2017ros}to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. Finally, we demonstrate a functional intelligent system built using the above tools which is comprised of a mobile autonomous vehicle and an Android mobile application.
 
-\section{Stages in the software development lifecycle}
+\section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
 In traditional software engineering, the Waterfall Method is a classic engineering design process model that comprises of five stages. We propose contributions to four: design, implementation, verification and maintenance.
 
@@ -185,7 +184,7 @@ Because the space of many problems is intractably large, it is difficult to prov
 
 Maintenance of systems is radically different in machine learning. Often it is not possible to manually update the parameters of a model without starting from scratch. While there are some methods for transfer learning, if we are
 
-\chapter{Design: Programming tools for robotics systems}
+\chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}
 
 Programming tools are a bicycle for the mind. Complex systems need better tools for developers.
 
@@ -217,17 +216,17 @@ Assistance for running ROS applications.
 
 Detecting and managing ROS installations.
 
-\chapter{Implementation: languages and compilers}
+\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}
 
 \epiggraph{Programs must be written for people to read, and only incidentally for machines to execute.}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
 
 \section{Static and dynamic languages}
 
-Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages \cite{github}.
+Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\cite{github}.
 
 Dynamically typed languages are mostly for experimentation and prototyping. But are they scaleable to production systems?
 
-According to some studies, type errors account for over 15\% of bugs. \cite{gao2017type} While the causal connections between statically typed languages in general and fewer is not widely established, types are often necessary to build more powerful static analyses and tools for program understanding.
+According to some studies, type errors account for over 15\% of bugs.~\cite{gao2017type} While the causal connections between statically typed languages in general and fewer is not widely established, types are often necessary to build more powerful static analyses and tools for program understanding.
 
 Strong, static types are critical for reasoning about the behavior of complex programs. It provides an additional layer of safety against runtime errors,
 
@@ -237,14 +236,14 @@ Kotlin is a strong, statically typed language. It is well suited for building cr
 
 \section{Kotlin$\nabla$}
 
-Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface} \cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete \cite{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types. We use \textit{Kotlin}, whose type system is less expressive, but fully compatible with Java.
+Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface}~\cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete~\cite{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types. We use \textit{Kotlin}, whose type system is less expressive, but fully compatible with Java.
 
-Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{baydin-diffsharp} and recently Swift \cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\cite{pearlmutter2008using}, DiffSharp in F\#~\cite{baydin-diffsharp} and recently Swift~\cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
-Existing AD implementations for the JVM include Lantern \cite{DBLP:journals-corr-abs-1803-10228}, Nexus \cite{chen2017typesafe} and DeepLearning.scala \cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
+Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr-abs-1803-10228}, Nexus~\cite{chen2017typesafe} and DeepLearning.scala~\cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
 
 \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
-\textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \cite{pearlmutter2008reverse} and \cite{DBLP:journals-corr-abs-1803-10228}.
+\textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following~\cite{pearlmutter2008reverse} and~\cite{DBLP:journals-corr-abs-1803-10228}.
 \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
 %  Finally, we notice two things about the nature of Kotlin langauge in respect
 
@@ -353,7 +352,7 @@ In deep learning, research primarily focuses on differentiable representations. 
 
 As more domains found efficient representations, researchers observed neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \textit{differentiable programming} was born.
 
-\chapter{Verification and validation}
+\chapter{Verification and validation}\label{ch:difftest}
 
 How do we test a machine that learns?
 
@@ -518,7 +517,7 @@ While containerization considerably simplifies the process of building and deplo
 
 One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host OS for build purposes. In this case, while submissions may be reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts also has the benefit of reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker environment periodically, copying sources into the image.
 
-\chapter{Conclusion}
+\chapter{Conclusion}\label{ch:conclusion}
 
 \section{Future work}
 
@@ -550,6 +549,6 @@ Software engineers have begun to realize the value of bespoke tools that facilit
 
 Teams building software are cybernetic systems, and require meta-programs for building code and organizational processes which enable them to ship code more efficiently.
 
-\bibliography{ref}
+\bibliography{thesis}
 \bibliographystyle{plain}
 \end{document}
