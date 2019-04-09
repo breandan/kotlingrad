@@ -207,7 +207,10 @@ Because the space of many problems is intractably large, it is difficult to prov
 
 \subsection{Maintenance}
 
-Maintenance of systems is radically different in machine learning. Often it is not possible to manually update the parameters of a model without starting from scratch. While there are some methods for transfer learning, if we are
+In many ways, machine learning shares the same fundamental issues as traditional software maintenance, with dependency management, source code management, documentation and so forth. We can imagine the current process of training a deep learning model as a very long compilation step that requires a great deal of trial-and-error. However, it differs in that the user-facing code for the program is a very high level meta-language that does not directly correspond to the computational performed in a particular instance, but rather configures a directed acyclic graph with randomly initialized edge weights for further optimization. With emerging techniques in meta-learning, even the structure of this computation graph is not directly specified by the user so much as loosely parameterized, and optimized by a search procedure.
+
+Yet deep learning, unlike application programming, is a fundamentally homogeneous and portable computation model. As long as a computer can add and multiply, it has all the capabilities necessary to train and run a deep neural network. However many machine learning models can be frustratingly hard to reproduce on different hardware, even when using the same source code and dependencies. While there are some emerging methods for a truly portable model format, if we are not careful about how we design our models, they may simply not run, or produce very different results when run on different hardware. This disconnect is at the heart of machine learning software development, as most open source software libraries are produced by competing industry vendors, with competing standards. These include ONNX, NNEF,OpenVINO, ... Others have tried to leverage existing compiler frameworks such as Haskell and LLVM. While these are typically not optimized for running on GPUs, it allows them to take advantage of existing optimizations without directly
+
 
 \chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}
 
