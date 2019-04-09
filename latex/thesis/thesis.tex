@@ -1,4 +1,4 @@
-    \documentclass[12pt,initial,twoside,maitrise]{dms}
+\documentclass[12pt,initial,twoside,maitrise]{dms}
 \usepackage[utf8]{inputenc} %Obligatoires
 %\usepackage[T1]{fontenc}    %
 \usepackage[dvipsnames]{xcolor}
@@ -491,7 +491,8 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 \end{lstlisting}
 
 This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
-Shape-safe Tensor Operations
+
+\section{Shape-safe Tensor Operations}
 
 While first-class dependent types are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
 
