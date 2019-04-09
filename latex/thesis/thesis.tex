@@ -199,7 +199,7 @@ When designing intelligent systems, we need to iterate between requirements and 
 
 \subsection{Implementation}
 
-When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing backpropogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineeering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementatoins is even more pressing.
+When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing back-propogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementations is even more pressing.
 
 \subsection{Verification}
 
@@ -766,7 +766,7 @@ Prior work in Dockerization of ROS \cite{white2017ros-docker}
 
 Often it is not possible, or desirable to summarize the performance of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
 
-Tranditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a reimagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
+Traditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a re-imagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
 
 For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any singly criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
 
@@ -778,9 +778,9 @@ In the strictest sense, designing a good set of requirements is indistinguishabl
 
 \subsection{Continuous Delivery and Continual Learning}
 
-In CI/CD, software artifacts are "continously" updated. Similarly, intelligent systems must continously adapt to their environment and this trend will only accelerate.
+In CI/CD, software artifacts are "continuously" updated. Similarly, intelligent systems must continuously adapt to their environment and this trend will only accelerate.
 
-Incremenental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
+Incremental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
 
 We need tools to more effectively harness the stochasticity of these learning systems.
 
