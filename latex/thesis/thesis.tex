@@ -1,12 +1,37 @@
-\documentclass[12pt,initial,twoside,maitrise]{dms}
+    \documentclass[12pt,initial,twoside,maitrise]{dms}
 \usepackage[utf8]{inputenc} %Obligatoires
-\usepackage[T1]{fontenc}    %
-\usepackage{minted}
+%\usepackage[T1]{fontenc}    %
+\usepackage[dvipsnames]{xcolor}
+\usepackage[scaled]{beramono}
+\usepackage{ocr}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
 \usepackage{array}
 \usepackage{epigraph}
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 \usepackage[options ]{algorithm2e}
+
+
+\lstdefinelanguage{Kotlin}{
+comment=[l]{//},
+commentstyle={\color{gray}\ttfamily},
+emph={delegate, filter, firstOrNull, forEach, it, lazy, map, mapNotNull, println, return@},
+emphstyle={\color{OrangeRed}},
+identifierstyle=\color{black},
+keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+keywordstyle={\color{NavyBlue}\bfseries},
+morecomment=[s]{/*}{*/},
+morestring=[b]",
+morestring=[s]{"""*}{*"""},
+ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
+ndkeywordstyle={\color{BurntOrange}\bfseries},
+sensitive=true,
+stringstyle={\color{ForestGreen}\ttfamily},
+}
+
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true}
+%\renewcommand*{\ttdefault}{qcr}
 
 \def\sloppy{%
 \tolerance 500%  %9999 dans LaTeX ordinaire, mauvaise idée.
@@ -162,7 +187,7 @@ In computer science, we are mostly concerned with algorithmic complexity. Comput
 
 Our objective is to reduce the mental effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and containers.
 
-The goal of this thesis is show it is possible to develop tools that reduce the mental burden of building intelligent software systems. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code as raw text. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. We then use Docker containers~\cite{white2017ros}to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. Finally, we demonstrate a functional intelligent system built using the above tools which is comprised of a mobile autonomous vehicle and an Android mobile application.
+The goal of this thesis is show it is possible to develop tools that reduce the mental burden of building intelligent software systems. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code as raw text. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. We then use Docker containers~\cite{merkel2014docker}to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. Finally, we demonstrate a functional intelligent system built using the above tools which is comprised of a mobile autonomous vehicle and an Android mobile application.
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -218,17 +243,19 @@ Detecting and managing ROS installations.
 
 \chapter{Implementation: languages and compilers}\label{ch:kotlingrad}
 
-\epiggraph{Programs must be written for people to read, and only incidentally for machines to execute.}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
+\epigraph{`` Programs must be written for people to read, and only incidentally for machines to execute. ''}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
+
+In
 
 \section{Static and dynamic languages}
 
 Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\cite{github}.
 
-Dynamically typed languages are mostly for experimentation and prototyping. But are they scaleable to production systems?
+Dynamically typed languages are commonly used for experimentation and prototyping. But are they scalable to production systems?
 
-According to some studies, type errors account for over 15\% of bugs.~\cite{gao2017type} While the causal connections between statically typed languages in general and fewer is not widely established, types are often necessary to build more powerful static analyses and tools for program understanding.
+According to some studies, type errors account for over 15\% of bugs~\cite{gao2017type}. While the causal connections between statically typed languages in general and fewer is not widely established, types are often necessary to build more powerful static analyses and tools for program understanding.
 
-Strong, static types are critical for reasoning about the behavior of complex programs. It provides an additional layer of safety against runtime errors,
+Strong, static types are important for reasoning about the behavior of complex programs, and guiding users . Statically typed languages offer a number of benefits to users, such as eliminating of a broad class of runtime errors by virtue of the language alone. Furthermore, a carefully designed statically typed API can eliminate the potential for incorrect API usages by enforcing certain usage patterns. Statically typed languages also provide several benefits for static code analysis, as tools can offer more relevant autocompletion suggestions, and provide early warnings for compile and probable runtime errors.
 
 \section{Kotlin}
 
@@ -252,38 +279,38 @@ Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr
 Kotlin$\nabla$ allows users to implement differentiable programs by composing operations on fields to form algebraic expressions. Expressions are lazily evaluated inside a numerical context, which may imported on a per-file basis or lexically scoped for finer-grained control over the runtime behavior.
 
 \begin{figure}[!htb]
-    \begin{minted}{kotlin}
-        import edu.umontreal.kotlingrad.numerics.DoublePrecision
+    \begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+         import edu.umontreal.kotlingrad.numerics.DoublePrecision
 
-        with(DoublePrecision) { // Use double-precision protocol
-          val x = variable("x") // Declare immutable vars (these
-          val y = variable("y") // are just symbolic constructs)
-          val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazy exp
-          val dz_dx = d(z) / d(x) // Leibniz derivative notation
-          val d2z_dxdy = d(dz_dx) / d(y) // Mixed higher partial
-          val d3z_d2xdy = grad(d2z_dxdy)[x] // Indexing gradient
-          plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in -1 < x,y,z < 1
-        }
-    \end{minted}
+         with(DoublePrecision) { // Use double-precision protocol
+           val x = variable("x") // Declare immutable vars (these
+           val y = variable("y") // are just symbolic constructs)
+           val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazy exp
+           val dz_dx = d(z) / d(x) // Leibniz derivative notation
+           val d2z_dxdy = d(dz_dx) / d(y) // Mixed higher partial
+           val d3z_d2xdy = grad(d2z_dxdy)[x] // Indexing gradient
+           plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in -1 < x,y,z < 1
+         }
+    \end{lstlisting}
 
     \caption{A basic Kotlin$\nabla$ program with two inputs and one output.}
     \label{label:fig1}
 \end{figure}
 
-Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. We can also plot higher dimensional manifolds (e.g. the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time. To demonstrate, a display is required for animation purposes.
+Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. We can also plot higher dimensional manifolds (e.g. the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
 
 \begin{figure}[!htb]
-    \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big(\frac{\partial^3z}{\partial{x^2}\partial{y}}\Big)$
+    \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big\left(\frac{\partial^{3z}}{\partial{x^2}\partial{y}}\Big\right)$ \\
     \includegraphics[scale=0.43]{plot_result.png}
-    \caption{Output generated by the program shown in Figure \ref{label:fig1}.}
+    \caption{Output generated by the program shown in Figure~\ref{label:fig1}.}
 \end{figure}
 
 Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed recursively to form a data-flow graph (DFG). An expression is simply a \texttt{Function}, which is only evaluated once invoked with numerical values, e.g. \texttt{z(0, 0)}.
 
 \begin{figure}[!htb]
-    \begin{minted}[fontsize=\footnotesize]{kotlin}
+    \begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
         val z = sin(10 * (x * x + pow(y, 2))) / 10
-    \end{minted}
+    \end{lstlisting}
     \centering
     \begin{tikzpicture}[grow=left]
         \tikzset{level distance=45pt,sibling distance=-3pt}
@@ -294,23 +321,20 @@ Kotlin$\nabla$ treats mathematical functions and programming functions with the 
 
 Kotlin$\nabla$ supports shape-shafe tensor operations by encoding tensor rank as a parameter of the operand's type signature. By enumerating type-level integer literals, we can define tensor operations just once using the highest literal, and rely on Liskov substitution to preserve shape safety for subtypes.
 
-\begin{figure}[!htb]
-    \begin{minted}[fontsize=\scriptsize]{kotlin}
-        // Literals have reified values for runtime comparison
-        open class `0`(override val value: Int = 0): `1`(0)
-        open class `1`(override val value: Int = 1): `2`(1)
-        class `2`(open val value: Int = 2) // Greatest literal
-        // <L: `2`> will accept L <= 2 via Liskov substitution
-        class Vec<E, L: `2`>(len: L, cts: List<E> = listOf())
-        // Define addition for two vectors of type Vec<Int, L>
-        operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) =
-        Vec<Int, L>(len, cts.zip(v.cts).map { it.l + it.r })
-        // Type-checked vector addition with shape inference
-        val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
-        val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
-    \end{minted}
-    \caption{Shape safe tensor addition for rank-1 tensors, $\forall L\leq2.$}
-\end{figure}
+\begin{lstlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall L\leq2.$}, language=Kotlin]
+            // Literals have reified values for runtime comparison
+            open class `0`(override val value: Int = 0): `1`(0)
+            open class `1`(override val value: Int = 1): `2`(1)
+            class `2`(open val value: Int = 2) // Greatest literal
+            // <L: `2`> will accept L <= 2 via Liskov substitution
+            class Vec<E, L: `2`>(len: L, cts: List<E> = listOf())
+            // Define addition for two vectors of type Vec<Int, L>
+            operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) =
+            Vec<Int, L>(len, cts.zip(v.cts).map { it.l + it.r })
+            // Type-checked vector addition with shape inference
+            val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
+            val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
+\end{lstlisting}
 
 It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. A similar pattern can be applied to matrices and higher rank tensors, where the type signature encodes the shape of the operand at runtime.
 
@@ -318,7 +342,7 @@ With these basic ingredients, we have almost all the features necessary to build
 
 In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
 
-\section{Type system}
+\section{Type system}\label{sec:type-system}
 
 Describing the Kotlin$\nabla$ type system (formally).
 
@@ -343,6 +367,210 @@ Describing the Kotlin$\nabla$ type system (formally).
     \end{tabular}
 \end{table}
 }
+
+\section{Operator overloading}
+
+Operator overloading enables concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. Group, Ring, and Field. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+
+For example, suppose we have an interface Group, which overloads the operators + and *, and is defined like so:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+interface Group<T: Group<T>> {
+    operator fun plus(addend: T): T
+    operator fun times(multiplicand: T): T
+}
+\end{lstlisting}
+
+Here, we specify a recursive type bound using a method known as F-bounded quantification to ensure that operations return the concrete type variable T, rather than something more generic like \texttt{Group}. Imagine a class \texttt{Expr} which has implemented \texttt{Group}. It can be used as follows:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+fun <T: Group<T>> cubed(t: T): T = t * t * t
+fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
+\end{lstlisting}
+
+Like Python, Kotlin supports overloading a limited set of operators, which are evaluated using a fixed precedence. In the current version of Kotlin𝛁, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
+First-class functions
+
+With higher-order functions and lambdas, Kotlin treats functions as first-class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of recent papers have demonstrated the expressiveness of this paradigm for automatic differentiation.
+
+In Kotlin$\nabla$, all expressions can be treated as functions. For example:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
+
+val x: Var<Double> = Var(1.0)
+val f = makePoly(x, y)
+val z = f(1.0, 2.0) // Returns a value
+println(z) // Prints: 7
+\end{lstlisting}
+
+Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds.
+Coroutines
+
+Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in Shift/Reset the Penultimate Backpropagator and later in Backpropagation with Continuation Callbacks. Delimited continuations can be implemented using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
+Extension Functions
+
+Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin𝛁 can expose its custom extensions (e.g. in DoublePrecision) to consumers without requiring subclasses or inheritance.
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+data class Const<T: Group<T>>(val number: Double) : Expr()
+data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+
+class Expr<T: Group<T>>: Group<Expr<T>> {
+    operator fun plus(addend: Expr<T>) = Sum(this, addend)
+    operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
+}
+
+object DoubleContext {
+    operator fun Number.times(expr: Expr<Double>) = Const(toDouble()) * expr
+}
+\end{lstlisting}
+
+Now, we can use the context to define another extension, Expr.multiplyByTwo, which computes the product inside a DoubleContext, using the operator overload we defined above:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
+\end{lstlisting}
+
+Extensions can also be defined in another file or context and imported on demand.
+
+
+\section{Algebraic data types}
+
+Algebraic data types (ADTs) in the form of sealed classes (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+sealed class Expr<T: Group<T>>: Group<Expr<T>> {
+   fun diff() = when(expr) {
+       is Const -> Zero
+       // Smart casting allows us to access members of a checked typed without explicit casting
+       is Sum -> e1.diff() + e2.diff()
+       // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
+       is Prod -> e1.diff() * e2 + e1 * e2.diff()
+       is Var -> One
+       // Since the subclasses of Expr are a closed set, no `else -> ...` is required.
+    }
+
+    operator fun plus(addend: Expr<T>) = Sum(this, addend)
+    operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
+}
+
+data class Const<T: Group<T>>(val number: Double) : Expr()
+data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+class Var<T: Group<T>>: Expr()
+class Zero<T: Group<T>>: Const<T>
+class One<T: Group<T>>: Const<T>
+\end{lstlisting}
+
+Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of say, failing silently at runtime).
+
+Smart-casting allows us to treat the abstract type Expr as a concrete type, e.g. Sum after performing an is Sum check. Otherwise, we would need to write (expr as Sum).e1 in order to access its field, e1. Performing a cast without checking would throw a runtime exception, if the type were incorrect. Using sealed classes helps avoid casting, thus avoiding ClassCastExceptions.
+Multiple Dispatch
+
+In conjunction with ADTs, Kotlin𝛁 also uses multiple dispatch to instantiate the most specific result type of applying an operator based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
+
+Building on the previous example, a common task in AD is to simplify a graph. This is useful in order to minimize the number of calculations required, or to improve numerical stability. We can eagerly simplify expressions based on algebraic rules of replacement. Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+override fun times(multiplicand: Function<X>): Function<X> =
+    when {
+        this == zero -> this
+        this == one -> multiplicand
+        multiplicand == one -> this
+        multiplicand == zero -> multiplicand
+        this == multiplicand -> pow(two)
+        this is Const && multiplicand is Const -> const(value * multiplicand.value)
+        // Further simplification is possible using rules of replacement
+        else -> Prod(this, multiplicand)
+    }
+
+val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
+//         = Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
+\end{lstlisting}
+
+This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
+Shape-safe Tensor Operations
+
+While first-class dependent types are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
+
+First, we enumerate a list of integer type literals as a chain of subtypes, so that 0 <: 1 <: 2 <: 3 <: ... <: C, where C is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. C can be specified by the user, but they will need to rebuild this project from scratch.
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
+open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
+open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
+open class `3`(override val i: Int = 3): `4`(i) { companion object: `3`(), Nat<`3`> }
+//...This is generated
+sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`> }
+interface Nat<T: `100`> { val i: Int } // Used for certain type bounds
+\end{lstlisting}
+
+Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
+    Vec(length, contents.zip(v.contents).map { it.first + it.second })
+\end{lstlisting}
+
+This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+open class Vec<E, MaxLength: `100`> constructor(
+    val length: Nat<MaxLength>,
+    val contents: List<E> = listOf()
+) {
+    operator fun get(i: `100`): E = contents[i.i]
+    operator fun get(i: Int): E = contents[i]
+
+    companion object {
+        operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
+        operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, arrayListOf(t0, t1))
+        operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(`3`, arrayListOf(t0, t1, t2))
+        //...
+    }
+}
+\end{lstlisting}
+
+The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
+val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
+val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
+val sum = Vec(`2`, 1, 2) + add                    // Does not compile
+\end{lstlisting}
+
+A similar syntax is possible for matrices and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+
+\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+// Inferred type: Mat<Int, `4`, `4`>
+val l = Mat(`4`, `4`,
+    1, 2, 3, 4,
+    5, 6, 7, 8,
+    9, 0, 0, 0,
+    9, 0, 0, 0
+)
+
+// Inferred type: Mat<Int, `4`, `3`>
+val m = Mat(`4`, `3`,
+    1, 1, 1,
+    2, 2, 2,
+    3, 3, 3,
+    4, 4, 4
+)
+
+// Inferred type: Mat<Int, `4`, `3`>
+val lm = l * m
+// m * m // Does not compile
+\end{lstlisting}
+
+Further examples are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+
+A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, type arithmetic. Type arithmetic makes it easy to express convolutional arithmetic and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
+
+∗ Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
 \section{Differentiable programming}
 
@@ -383,7 +611,7 @@ Imagine a single test $T: \mathbb{R} \rightarrow \mathbb{B}$. Consider the follo
     T: \forall x \in (0, 1), P(x) < C
 \end{equation}
 %
-How can we find a set of inputs that break the test under a fixed computational budget (i.e. constant number of program evaluations)? In other words:
+How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
 %
 \begin{equation}
     D_T: \{ x^i \sim \mathbb{R}(0, 1) \mid P(x^i) \implies \neg T \}, maximize |D_T|
@@ -417,7 +645,6 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
 %     (\forall i \in I^\dagger, p(i) \implies \neg T) \implies \lim_{|x|\to \infty}Prob(\hat{T}=False) = 1
 % \end{equation}
 %
-
 
 \begin{algorithm}
     \SetKwInOut{Input}{Input}
@@ -486,13 +713,19 @@ Deployed and CI-tested using Docker.
 
 \chapter{Software reproducibility}
 
+In this chapter, we will discuss the challenges of software reproducibility and how containers and continuous integration can help researchers remove this source of variability. Docker~\cite{merkel2014docker} is one technical container solution we will address.
+
+Part of the challenge of building intelligent systems and scientific programming more broadly is the issue of reproducibility. We would like to leverage the work of prior researchers, but while the mental effort of reimplementing their work can be sometimes be worthwhile, it can also be quite tedious and detrimental towards progress. Often it is unnecessary to reinvent the wheel, and would be convenient to have baselines for comparison and incremental improvement.
+
+Fortunately, software engineers have been working on this problem for a number of years.
+
 \section{Operating systems and virtualization}
 
-Operating systems are a source of variability. Filesystems are complicated.
+In 2006, Linux introduced a kernel feature called cgroups. This enabled a kind of lightweight virtualization for containers, where a fully virtualized machine was no longer necessary to get many of the benefits of VMs. This paved the way for the tools that are now known as containers. Unlike VMs, containers do not run their own operating systems, but rather share resources with the host operating system, while remaining isolated from the host and sibling containers. While VMs heavy resource requirements often limits their deployment to server-class hardware, containers' lightweight footprint enabled them to run on a far broader class of mobile and embedded platforms.
 
 \section{Dependency management}
 
-Packages are a source of variability. Dependency hell is NP Complete: https://research.swtch.com/version-sat
+Packages are one source of variability. Dependency hell is NP Complete: https://research.swtch.com/version-sat
 
 \section{Containerization}
 
@@ -516,6 +749,10 @@ Docker containers are sandboxed runtime environments that are portable, reproduc
 While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier in Sec.~\ref{sec:dev-pipeline}.
 
 One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host OS for build purposes. In this case, while submissions may be reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts also has the benefit of reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker environment periodically, copying sources into the image.
+
+\section{Docker and ROS}
+
+Prior work in Dockerization of ROS \cite{white2017ros-docker}
 
 \chapter{Conclusion}\label{ch:conclusion}
 
