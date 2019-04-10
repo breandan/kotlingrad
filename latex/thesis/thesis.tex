@@ -438,8 +438,7 @@ fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 
 Extensions can also be defined in another file or context and imported on demand.
 
-
-\section{Algebraic data types}
+\section{Algebraic data types}\label{sec:algebraic-data-types}
 
 Algebraic data types (ADTs) in the form of sealed classes (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
@@ -495,7 +494,7 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 
 This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
-\section{Shape-safe Tensor Operations}
+\section{Shape-safe Tensor Operations}\label{sec:shape-safe-tensor-operations}
 
 While first-class dependent types are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
 
@@ -576,7 +575,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 ∗ Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
-\section{Differentiable programming}
+\section{Differentiable programming}\label{sec:differentiable-programming}
 
 The renaissance of modern deep learning is widely credited to progress in three research areas: algorithms, data and hardware. Among algorithms, most research has focused on deep learning architectures and representation learning. Equally important, arguably, is the role that automatic differentiation (AD) has played in facilitating the implementation of these ideas. Prior to the adoption of general-purpose AD libraries like Theano, PyTorch and TensorFlow, gradients needed to be programmed manually. The emergence of these and other libraries specifically tailored to deep learning simplified and accelerated the pace of machine learning, allowing researchers to focus on gradient-based optimization, network architectures and learning representations. Some of these ideas in turn, formed the basis for new methods in automatic differentiation, which continues to be an active area of research.
 
@@ -621,7 +620,10 @@ How can we find a set of inputs that break the test under a fixed computational 
     D_T: \{ x^i \sim \mathbb{R}(0, 1) \mid P(x^i) \implies \neg T \}, maximize |D_T|
 \end{equation}
 %
-If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search (cf. no free lunch). However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program already works on most common inputs (e.g. from a training set), we might want to sample $x \sim \frac{1}{D_P}$ for inputs that are infrequent, although this strategy is not guaranteed to yield any additional failures. If we knew how $P$ were implemented, we might be able prioritize our search in input regions leading towards internal discontinuities (e.g. edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient. Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
+
+If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search (cf. no free lunch). However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we might consider sampling $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could prioritize our search in input regions leading towards internal discontinuities (e.g.\ edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient.
+
+% Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
 Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. For example in (3) we could have a loss function:
 %
@@ -641,7 +643,7 @@ Where the vanilla gradient update step is defined as:
     x_{n+1}^i=x_{n}^i - \alpha\frac{dP}{dx}
 \end{equation}
 %
-We hypothesize that if the implementation of $P$ were flawed and a counterexample to (3) existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification. How would such a search procedure look in practice? Consider the following:
+We hypothesize that if the implementation of $P$ were flawed and a counterexample to (3) existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification. How would such a search procedure look in practice? Consider the following algorithm:
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
 %
@@ -695,27 +697,7 @@ An endemic problem in modern deep learning is the problem of forgetting. In orde
 
 Regular regression testing gives clear diagnostics about the behavior of these systems.
 
-\chapter{Case study: application for autonomous robotics}
-
-Here, we implement a mobile application using the above toolchain.
-
-\section{Design}
-
-Designed with Hatchery.
-
-\section{Implementation}
-
-Implementation includes Kotlin$\nabla$
-
-\section{Verification}
-
-Verified using property-based testing.
-
-\section{Maintenance}
-
-Deployed and CI-tested using Docker.
-
-\chapter{Software reproducibility}
+\chapter{Software reproducibility}\label{ch:software-reproducibility}
 
 In this chapter, we will discuss the challenges of software reproducibility and how containers and continuous integration can help researchers remove this source of variability. Docker~\cite{merkel2014docker} is one technical container solution we will address.
 
@@ -723,15 +705,15 @@ Part of the challenge of building intelligent systems and scientific programming
 
 Fortunately, software engineers have been working on this problem for a number of years.
 
-\section{Operating systems and virtualization}
+\section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
 In 2006, Linux introduced a kernel feature called cgroups. This enabled a kind of lightweight virtualization for containers, where a fully virtualized machine was no longer necessary to get many of the benefits of VMs. This paved the way for the tools that are now known as containers. Unlike VMs, containers do not run their own operating systems, but rather share resources with the host operating system, while remaining isolated from the host and sibling containers. While VMs heavy resource requirements often limits their deployment to server-class hardware, containers' lightweight footprint enabled them to run on a far broader class of mobile and embedded platforms.
 
-\section{Dependency management}
+\section{Dependency management}\label{sec:dependency-management}
 
 Packages are one source of variability. Dependency hell is NP Complete: https://research.swtch.com/version-sat
 
-\section{Containerization}
+\section{Containerization}\label{sec:containerization}
 
 One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well documented codebase can be a considerable challenge, especially in a robotics setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
 
@@ -758,6 +740,26 @@ One issue encountered is the matter of whether to package source code directly i
 
 Prior work in Dockerization of ROS \cite{white2017ros-docker}
 
+\chapter{Case study: application for autonomous robotics}
+
+As a case study in the feasibility of these tools, we implement a case study in building a mobile application using ROS, Docker, Android and sHere, we implement a mobile application using the above toolchain.
+
+\section{Design}
+
+Designed with Hatchery.
+
+\section{Implementation}
+
+Implementation includes Kotlin$\nabla$
+
+\section{Verification}
+
+Verified using property-based testing.
+
+\section{Maintenance}
+
+Deployed and CI-tested using Docker.
+
 \chapter{Conclusion}\label{ch:conclusion}
 
 \section{Future work}
@@ -778,7 +780,7 @@ In the strictest sense, designing a good set of requirements is indistinguishabl
 
 \subsection{Continuous Delivery and Continual Learning}
 
-In CI/CD, software artifacts are "continuously" updated. Similarly, intelligent systems must continuously adapt to their environment and this trend will only accelerate.
+An overall trend in software and systems engineering is the transition away from long development cycles towards continuous integration and deployment. Development teams in the industry are encouraged to iterate in a series of short sprints between feature development and deployment. In some cases, software is shipped to users on a nightly basis, with automated testing and deployment. Similarly, intelligent systems have a need to continuously adapt to their environment, and will change their code on an even shorter basis.
 
 Incremental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
 
