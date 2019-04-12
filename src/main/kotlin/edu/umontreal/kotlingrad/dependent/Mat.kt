@@ -33,6 +33,7 @@ open class Mat<T, Rows : `100`, Cols : `100`> : Vec<Vec<T, Cols>, Rows> {
   override fun toString() = "($numRows x $numCols)\n[${contents.joinToString("\n ") { it.contents.joinToString(" ") }}]"
 
   // Type-safe construction for matrix literals up to 9x9
+  @Suppress("UNUSED_PARAMETER")
   companion object {
     @JvmName("m1x1") private operator fun <T, V: Vec<T, `1`>> invoke(t0: V): Mat<T, `1`, `1`> = Mat(`1`, `1`, Vec(t0))
     @JvmName("m1x2") private operator fun <T, V: Vec<T, `2`>> invoke(t0: V): Mat<T, `1`, `2`> = Mat(`1`, `2`, Vec(t0))
