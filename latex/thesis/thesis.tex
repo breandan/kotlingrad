@@ -209,8 +209,7 @@ Because the space of many problems is intractably large, it is difficult to prov
 
 In many ways, machine learning shares the same fundamental issues as traditional software maintenance, with dependency management, source code management, documentation and so forth. We can imagine the current process of training a deep learning model as a very long compilation step that requires a great deal of trial-and-error. However, it differs in that the user-facing code for the program is a very high level meta-language that does not directly correspond to the computational performed in a particular instance, but rather configures a directed acyclic graph with randomly initialized edge weights for further optimization. With emerging techniques in meta-learning, even the structure of this computation graph is not directly specified by the user so much as loosely parameterized, and optimized by a search procedure.
 
-Yet deep learning, unlike application programming, is a fundamentally homogeneous and portable computation model. As long as a computer can add and multiply, it has all the capabilities necessary to train and run a deep neural network. However many machine learning models can be frustratingly hard to reproduce on different hardware, even when using the same source code and dependencies. While there are some emerging methods for a truly portable model format, if we are not careful about how we design our models, they may simply not run, or produce very different results when run on different hardware. This disconnect is at the heart of machine learning software development, as most open source software libraries are produced by competing industry vendors, with competing standards. These include ONNX, NNEF,OpenVINO, ... Others have tried to leverage existing compiler frameworks such as Haskell and LLVM. While these are typically not optimized for running on GPUs, it allows them to take advantage of existing optimizations without directly
-
+While deep learning has many specialty software, unlike general purpose programming, is a fundamentally hardware-agnostic model of computation. As long as a computer can add and multiply, it has all the necessary capabilities to train and run a deep neural network. But many machine learning models can be frustratingly hard to reproduce on different hardware, even when using the same source code and dependencies. While there are some emerging methods for a truly portable model format, if we are not careful about how we design our models, they may simply not run, or produce very different results when run on different hardware. This disconnect is at the heart of machine learning software development, as most open source software libraries are produced by competing industry vendors, with competing standards. These include ONNX, NNEF, OpenVINO, ... Others have tried to leverage existing compiler frameworks such as Haskell and LLVM. While these are typically not optimized for running on GPUs, it allows them to take advantage of existing optimizations without directly.
 
 \chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}
 
@@ -222,11 +221,9 @@ https://github.com/duckietown/hatchery
 
 \section{Structure of a ROS application}
 
-The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure distributed messaging, shared memory and inter-process communcation, but more broadly refers to a community-developed set of programming libraries and graphical plugins which collectively form the ROS ecosystem. While it is not an operating system in the traditional sense, it provides certain features similar to operating systems. Unlike pure protcols like DDS and ZMQ, in addition to the decentralized protocol itself it provides domain-specific features for building decentralized systems, particularly those which are capable of mobility unlike similar IoT frameworks, like Android Things, Eclipse Kura, and others,
+The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but more broadly encompasses a set of community-developed libraries and graphical plugins for building robotics applications. While ROS is not an operating system in the traditional sense, it extends certain operating systems features like shared memory and inter-process communication for robotics development. Unlike pure message-oriented middleware like DDS and ZMQ, in addition to the message broker, ROS provides specific features for building decentralized robotic systems, particularly those which are capable of mobility.
 
-According to an open source census in 2018, 55\% of ROS applications on GitHub are written in C/C++~\cite{Areserio54:online}, followed by Python at around 25\%. This
-
-ROS is a
+According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\% ~\cite{Areserio54:online}.
 
 \section{Foundations of a modern IDE}
 
@@ -692,22 +689,24 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     evalCount++; i++\;
     }
 
-    \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g. uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of G.D. steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each G.D. trajectory will terminate before exhausting our budget.}
+    \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of G.D. steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each G.D. trajectory will terminate before exhausting our budget.}
 \end{algorithm}
 
 \section{Regression testing: a tool to prevent catastrophic forgetting}
 
 An endemic problem in modern deep learning is the problem of forgetting. In order to combat this issue, we turn to a classic software testing tool: regression testing.
 
-Regular regression testing gives clear diagnostics about the behavior of these systems.
+Regular regression testing gives clear diagnostics about the behavior of intelligent systems.
 
 \chapter{Software reproducibility}\label{ch:software-reproducibility}
 
-In this chapter, we will discuss the challenges of software reproducibility and how containers and continuous integration can help researchers remove this source of variability. Docker~\cite{merkel2014docker} is one technical container solution we will address.
+In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering like continuous integration and delivery can help researchers remove some variability associated with building and running software. Docker~\cite{merkel2014docker} is one technical solution we will address.
 
-Part of the challenge of building intelligent systems and scientific programming more broadly is the issue of reproducibility. We would like to leverage the work of prior researchers, but while the mental effort of reimplementing their work can be sometimes be worthwhile, it can also be quite tedious and detrimental towards progress. Often it is unnecessary to reinvent the wheel, and would be convenient to have baselines for comparison and incremental improvement.
+Part of the challenge of building intelligent systems and programming at large, is the issue of reproducibility. Software reproducibility has a number of subtle aspects, including hardware compatibility, operating systems, file systems, build reproducibility, and determinism. While at one point in the history of computing, it may have been sufficient to write down a computer program in its entirety, the source code of today's programs are meaningless abstractions on their own - built by programs, interpreted by programs, and which communicate with other programs, they are essentially pebbles sitting on a pyramid of transitive dependencies. As software is updated and rebuilt, important details about the original development environment can be misplaced in the process.
 
-Fortunately, software engineers have been working on this problem for a number of years.
+The total information required to implement an program in a modern programming language requires gigabytes of data. Part of that data includes training data and experimental reproducibility, which we do not consider in this work. A significant portion of that data pertains to the software for building and running programs, including the operating system, software dependencies, drivers and development tools. These are the types of data which software reproducibility considers.
+
+We would often like to reproduce the work of fellow researchers, but the mental effort of re-implementing their abstractions can be tedious and detrimental towards scientific progress. Similarly in programming, it is often unnecessary to reinvent the wheel, and would be convenient if we had tools for reproducibility and incremental development. This is the same challenge which software engineers have been cultivating for many years, via source code management and the open source community. But version control tools alone are insufficient, as they primarily deal with text. Programs are built and run on heterogenous platforms running all manner of software. To these sources of variability must be specifically considered when reproducing a software system.
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
