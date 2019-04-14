@@ -10,7 +10,7 @@ class TestGradient: StringSpec({
   with(DoublePrecision) {
     val ε = 1E-15
     val x = Var("x")
-    val y = Var("x")
+    val y = Var("y")
 
     val z = y * (sin(x * y) - x)
     val `∇z` = z.grad()
