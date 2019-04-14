@@ -67,6 +67,7 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   @JvmName("infixFunPowNum") infix fun ScalarFun<X>.pow(number: Number) = pow(wrap(number))
 
   operator fun ScalarFun<X>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
+  operator fun ScalarFun<X>.invoke(vararg number: X) = this(variables.zip(number).toMap())
   operator fun ScalarFun<X>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
   operator fun ScalarFun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
   operator fun Number.invoke(n: Number) = this
