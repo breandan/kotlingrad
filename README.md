@@ -78,7 +78,7 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions 𝑓 : ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> While it would be nice to infer a combined input type for binary functions, it is likely impossible using the Kotlin type system. Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
+<sup>?</sup> While it would be nice to infer a combined input type λ∪τ for binary functions, it is likely impossible using the Kotlin type system. Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
 
 <sup>τ, λ</sup> Arbitrarily shaped tensors.
 
@@ -614,6 +614,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
 * [Automatic differentiation in machine learning: a survey](http://jmlr.org/papers/volume18/17-468/17-468.pdf)
 * [The (JAX) Autodiff Cookbook](https://colab.research.google.com/github/google/jax/blob/master/notebooks/autodiff_cookbook.ipynb)
+* [Automatic differentiation in ML: Where we are and where we should be going](https://papers.nips.cc/paper/8092-automatic-differentiation-in-ml-where-we-are-and-where-we-should-be-going.pdf)
 
 ### Differentiable Programming
 
