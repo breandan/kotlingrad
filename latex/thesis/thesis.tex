@@ -247,9 +247,43 @@ Detecting and managing ROS installations.
 
 \chapter{Implementation: languages and compilers}\label{ch:kotlingrad}
 
-\epigraph{`` Programs must be written for people to read, and only incidentally for machines to execute. ''}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
+\epigraph{``Programs must be written for people to read, and only incidentally for machines to execute. ''}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
 
-In
+In this chapter, we will discuss the theory and implementation of a type safe domain specific langauge for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is simple. All computable functions are composed of a small set of primitive operations, which form the basis for modern computers: addition, subtraction, multiplication and division. By composing these simple operations over the real numbers in an orderly fashion, one can compute any computable function.
+
+Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
+
+%
+\begin{equation}
+    P(p_0)=p_n \circ p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0
+\end{equation}
+%
+
+\noindent From the chain rule of calculus, we know that:
+
+%
+\begin{equation}
+    \frac{dP}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+\end{equation}
+
+\noindent Likewise, if we have a function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
+
+\begin{equation}
+    \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_n}\right)
+\end{equation}
+
+\noindent More generally, if we have a function $\mathbf{f}:  \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian $\mathbf J$ is defined like so:
+
+\begin{equation}
+\mathbf J = \begin{bmatrix}
+                       \dfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \dfrac{\partial \mathbf{f}}{\partial x_n} \end{bmatrix}
+= \begin{bmatrix}
+      \dfrac{\partial f_1}{\partial x_1} & \cdots & \dfrac{\partial f_1}{\partial x_n}\\
+      \vdots & \ddots & \vdots\\
+      \dfrac{\partial f_m}{\partial x_1} & \cdots & \dfrac{\partial f_m}{\partial x_n} \end{bmatrix}
+\end{equation}
+
+\noindent With these tools, we can compute the direction in which to update the inputs, in order to maximially change any computable function's output.
 
 \section{Static and dynamic languages}
 
@@ -259,7 +293,11 @@ Dynamically typed languages are commonly used for experimentation and prototypin
 
 According to some studies, type errors account for over 15\% of bugs~\cite{gao2017type}. While the causal connections between statically typed languages in general and fewer is not widely established, types are often necessary to build more powerful static analyses and tools for program understanding.
 
-Strong, static types are important for reasoning about the behavior of complex programs, and guiding users . Statically typed languages offer a number of benefits to users, such as eliminating of a broad class of runtime errors by virtue of the language alone. Furthermore, a carefully designed statically typed API can eliminate the potential for incorrect API usages by enforcing certain usage patterns. Statically typed languages also provide several benefits for static code analysis, as tools can offer more relevant autocompletion suggestions, and provide early warnings for compile and probable runtime errors.
+Strong, static types are important for reasoning about the behavior of complex programs. Statically typed languages offer a number of benefits to users, such as eliminating of a broad class of runtime errors by virtue of the language alone. Furthermore, a carefully designed statically typed API can eliminate the potential for incorrect API usages by enforcing certain usage patterns. Statically typed languages also provide several benefits for static code analysis, as tools can offer more relevant autocompletion suggestions, and provide early warnings for compile and probable runtime errors.
+
+\section{Imperative and functional languages}
+
+Most programs are written in procedural langauges, due in part to the prevalence of the Von Neumann architecture. Lambda calculus provides an equivalent formalism for computing, and one which is more amenable to the automatic calculation of derivatives.
 
 \section{Kotlin}
 
@@ -409,10 +447,12 @@ println(z) // Prints: 7
 \end{lstlisting}
 
 Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds.
-Coroutines
+
+\section{Coroutines}
 
 Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in Shift/Reset the Penultimate Backpropagator and later in Backpropagation with Continuation Callbacks. Delimited continuations can be implemented using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
-Extension Functions
+
+\section{Extension Functions}
 
 Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin𝛁 can expose its custom extensions (e.g. in DoublePrecision) to consumers without requiring subclasses or inheritance.
 
