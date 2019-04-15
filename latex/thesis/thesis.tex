@@ -249,7 +249,7 @@ Detecting and managing ROS installations.
 
 \epigraph{``Programs must be written for people to read, and only incidentally for machines to execute. ''}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
 
-In this chapter, we will discuss the theory and implementation of a type safe domain specific langauge for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is simple. All computable functions are composed of a small set of primitive operations, which form the basis for modern computers: addition, subtraction, multiplication and division. By composing these simple operations over the real numbers in an orderly fashion, one can compute any computable function.
+In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, i.e.\ a program\footnote{n.b.\ Not all programs are computable, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly. Or perhaps the function was implemented properly, but was not fed the correct inputs - had it been, then the program would have produced a better answer. Regardless of how the function were implemented, we would like to determine how to change the input slightly, so as to produce a more suitable output.
 
 Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
 
@@ -283,7 +283,30 @@ Given some input to a function, AD tells us how to change the input by a minimal
       \dfrac{\partial f_m}{\partial x_1} & \cdots & \dfrac{\partial f_m}{\partial x_n} \end{bmatrix}
 \end{equation}
 
-\noindent With these tools, we can compute the direction in which to update the inputs, in order to maximially change any computable function's output.
+\noindent With these tools, we can compute the direction in which to update the inputs of a computable function, in order to maximally change the function's output.
+
+For many computable functions, every tiny change to certain inputs produce no change in the function's output. We say that such functions have zero gradient for that input.
+
+\begin{equation}
+    \frac{dP}{dp_0} = 0
+\end{equation}
+
+For some classes of computable functions, small changes to the input can produce a sudden large change in output. We say that such functions are non-differentiable.
+
+\begin{equation}
+    \frac{dP}{dp_0} = \infty
+\end{equation}
+
+It is an open question whether non-differentiable functions exist in the real world\cite{buniy2005hilbert}. At the current physical and temporal scale of modern computing (approximately 10nm and 10ns), they do not, but most modern computers are not equipped with the capability to accurately report the true gradient of their approximately discrete function, so for all intents and purposes, many programs implemented by physical computers are non-differentiable, very much by design. Nevertheless, modern computers are capable of approximating continuous functions on $\bathbb{R}^n$ to arbitrary precision given enough time. For most intents and purposes, a fixed precision approximation is sufficient.
+
+There exists a theorem at the heart of machine learning which states that a simple class of functions, composed of a sum, non-linear activation, and linear function can approximate any computable function to arbitrary precision. More precisely, the universal approximation theorem states:
+
+\begin{equation}
+F(x) = \sum_{i=1}^{N} \beta_i \varphi \left( \alpha_i^T x\right) \\
+\forall x\in I_p, \ | F( x ) - f ( x ) | < \varepsilon
+\end{equation}
+
+However this theorem does not place an upper limit on N. For empirical reasons which are not yet fully clear, one can approximate most naturally-arising statistical functions precisely, in a tractable amount of time by composing these simple functions and updating $w$ using gradient descent.
 
 \section{Static and dynamic languages}
 
