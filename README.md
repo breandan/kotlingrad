@@ -311,6 +311,8 @@ There are many other ways to independently verify the numerical gradient, such a
 
 ## How?
 
+To understand the core of Kotlin𝛁's AD implementation, please refer to the [toy example](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyExample.kt).
+
 This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin𝛁:
 
 #### Operator overloading
