@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 fun main() {
-  with(DoubleProtocol) {
+  with(DoublePrecision) {
     val x = Var("x", DoubleReal(0.0))
     val y = Var("y", DoubleReal(0.0))
 
@@ -32,13 +32,10 @@ interface Group<X: Group<X>> {
 }
 
 interface Field<X: Field<X>>: Group<X> {
-  val e: X
-
-  operator fun div(dividend: X): X = this * dividend.inverse()
-  fun inverse(): X
-
+  operator fun div(dividend: X): X = this * dividend.pow(-one)
   infix fun pow(exp: X): X
-  fun log(): X
+  fun ln(): X
+  val e: X
 }
 
 abstract class RealNumber<X: Field<X>>: Field<X>
@@ -51,9 +48,8 @@ class DoubleReal(val value: Double): RealNumber<DoubleReal>() {
   override fun plus(addend: DoubleReal) = DoubleReal(value + addend.value)
   override fun unaryMinus() = DoubleReal(-value)
   override fun times(multiplicand: DoubleReal) = DoubleReal(value * multiplicand.value)
-  override fun inverse() = DoubleReal(1.0 / value)
   override fun pow(exp: DoubleReal) = DoubleReal(Math.pow(value, exp.value))
-  override fun log() = DoubleReal(Math.log(value))
+  override fun ln() = DoubleReal(Math.log(value))
   override fun toString() = value.toString()
 }
 
@@ -71,7 +67,7 @@ sealed class Fun<X: Field<X>>(open val variables: Set<Var<X>> = emptySet()): Fie
     is Sum -> left(map) + right(map)
     is Power -> base(map) pow exponent(map)
     is Negative -> -value(map)
-    is Log -> logarithmand(map).log()
+    is Log -> logarithmand(map).ln()
   }
 
   open fun diff(variable: Var<X>): Fun<X> = when (this) {
@@ -81,11 +77,10 @@ sealed class Fun<X: Field<X>>(open val variables: Set<Var<X>> = emptySet()): Fie
     is Prod -> left.diff(variable) * right + left * right.diff(variable)
     is Power -> this * (exponent * Log(base)).diff(variable)
     is Negative -> -value.diff(variable)
-    is Log -> logarithmand.inverse() * logarithmand.diff(variable)
+    is Log -> logarithmand.pow(-one) * logarithmand.diff(variable)
   }
 
-  override fun inverse() = pow(-one)
-  override fun log() = Log(this)
+  override fun ln() = Log(this)
 
   override fun pow(exp: Fun<X>) = Power(this, exp)
 
@@ -133,6 +128,6 @@ sealed class Protocol<X: RealNumber<X>> {
   infix fun Fun<X>.pow(exp: Number) = this pow Const(wrap(exp))
 }
 
-object DoubleProtocol: Protocol<DoubleReal>() {
+object DoublePrecision: Protocol<DoubleReal>() {
   override fun wrap(default: Number): DoubleReal = DoubleReal(default.toDouble())
 }
