@@ -10,7 +10,7 @@
 \usepackage{epigraph}
 \usepackage{tikz}
 \usepackage{tikz-qtree}
-\usepackage[options ]{algorithm2e}
+\usepackage{algorithm2e}
 
 
 \lstdefinelanguage{Kotlin}{
@@ -191,25 +191,29 @@ The goal of this thesis is show it is possible to develop tools that reduce the 
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
-In traditional software engineering, the Waterfall Method is a classic engineering design process model that comprises of five stages. We propose contributions to four: design, implementation, verification and maintenance.
+In traditional software engineering, the Waterfall Method is a classic engineering design process model that comprises of five stages. We propose contributions to four: design, implementation, testing and maintenance.
 
-\subsection{Design}
+\subsection{Designing intelligent systems}
 
-When designing intelligent systems, we need to iterate between requirements and design constraints. It is not sufficient for requirements engineers to hand an objective to the design team, or the design team to hand a design to the implementors. Rather, they must work in concert to produce a system that has the desired properties. Sometimes this means compromising, or redesigning the performance metrics to become more flexible.
+When designing intelligent systems, design, requirements, and engineering must work in concert to produce a system that is well-designed, meets the needs of the users, and highly performant. Sometimes this means compromising requirements, or redesigning the system to become more flexible. Sometimes this means changing the requirements to accommodate for engineering challenges, or refactoring the solution to remove technical debt. Software engineering is a multi-objective optimization process, and in order to produce software that approximates the criteria of all the stakeholders, engineers must be able to iterate on their ideas rapidly. Yet today's software systems are larger and more unwieldy than ever. Some of that complexity can be managed by abstraction, but often the complexity which developers face cannot be solved my abstraction alone.
 
-\subsection{Implementation}
+Integrated development environments can assist developers building complex software applications by automating certain repetitive tasks in programming. For example, tools can perform static analyses and code inspections for detecting certain bugs. They can provide code completion and refactoring support for editing code. And they can automate the process of building, running and debugging code. While these tasks may seem like trivial, their automation leaves less room for clerical errors, and frees the developer's attention from menial tasks. Instead of being forced to concentrate on the structure of the text representing the program, developers are able manipulate a program's structure at a semantic level, they will be more productive.
+
+\subsection{Implementation: Languages and compilers}
 
 When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing back-propogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementations is even more pressing.
 
-\subsection{Verification}
+\subsection{Testing: Verification and validation}
 
 Because the space of many problems is intractably large, it is difficult to prove the correctness of a given solution. Instead, we need tools to verify the properties of a system under a given budget. In self-driving vehicles, human drivers average one fatality per hundred million miles (cite), this is incredibly difficult to test given our current methodology. Instead, we need better ways to probe the effectiveness of a candidate solution.
 
-\subsection{Maintenance}
+\subsection{Software maintenance and reproducibility}
 
 In many ways, machine learning shares the same fundamental issues as traditional software maintenance, with dependency management, source code management, documentation and so forth. We can imagine the current process of training a deep learning model as a very long compilation step that requires a great deal of trial-and-error. However, it differs in that the user-facing code for the program is a very high level meta-language that does not directly correspond to the computational performed in a particular instance, but rather configures a directed acyclic graph with randomly initialized edge weights for further optimization. With emerging techniques in meta-learning, even the structure of this computation graph is not directly specified by the user so much as loosely parameterized, and optimized by a search procedure.
 
-While deep learning has many specialty software, unlike general purpose programming, is a fundamentally hardware-agnostic model of computation. As long as a computer can add and multiply, it has all the necessary capabilities to train and run a deep neural network. But many machine learning models can be frustratingly hard to reproduce on different hardware, even when using the same source code and dependencies. While there are some emerging methods for a truly portable model format, if we are not careful about how we design our models, they may simply not run, or produce very different results when run on different hardware. This disconnect is at the heart of machine learning software development, as most open source software libraries are produced by competing industry vendors, with competing standards. These include ONNX, NNEF, OpenVINO, ... Others have tried to leverage existing compiler frameworks such as Haskell and LLVM. While these are typically not optimized for running on GPUs, it allows them to take advantage of existing optimizations without directly.
+While hardware manufacturers have been producing a variety of custom silicon, unlike general purpose programming, deep-learning is a fundamentally hardware-agnostic model of computation. As long as a computer can add and multiply, it has the capability to train and run a deep neural network. However due to the variety of hardware platforms and associated software churn, many machine learning models can be frustratingly to reproduce on different hardware, even when using the same source code and dependencies. While there are some emerging methods for a truly portable model format, if we are not careful about how we design our models, they may simply not run, or produce very different results when run on different hardware. Most open source software libraries are produced by competing industry vendors, with competing hardware platforms and incompatible standards. These include ONNX, NNEF, OpenVINO. While some have tried to leverage existing compiler frameworks such as Haskell and LLVM, there appears to be little convergence in the community.
+
+At the same time, we need to ship software, and while there may be issues with
 
 \chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}
 
@@ -247,9 +251,13 @@ Detecting and managing ROS installations.
 
 \chapter{Implementation: languages and compilers}\label{ch:kotlingrad}
 
+\vspace{-30}
+
 \epigraph{``Programs must be written for people to read, and only incidentally for machines to execute. ''}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
 
-In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, i.e.\ a program\footnote{n.b.\ Not all programs are computable, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly. Or perhaps implementation was correct, but the function was not given the right set of inputs - had it been, then the program may have produced a better answer. Regardless of the implementation, we would like to determine how to change the input slightly, so as to produce a more suitable output.
+\vspace{20}
+
+In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, i.e.\ a program\footnote{n.b.\ Not all programs are computable functions, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly. Or perhaps implementation was correct, but the function was not given the right set of inputs - had it been, then the program may have produced a better answer. Regardless of the implementation, we would like to determine how to change the input slightly, so as to produce a more suitable output.
 
 Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
 
@@ -297,7 +305,7 @@ For some classes of computable functions, small changes to the input can produce
     |\nabla F| = \pm \infty
 \end{equation}
 
-It is an open question whether non-differentiable functions exist in the real world\cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their discrete approximations, so for all intents and purposes, programs implemented by most physical computers are discrete functions. Nevertheless, computers are capable of approximating bounded subsets of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most ordinary applications, a fixed precision approximation is sufficient.
+It is an open question whether non-differentiable functions exist in the real world \cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their discrete approximations, so for all intents and purposes, programs implemented by most physical computers are discrete functions. Nevertheless, computers are capable of approximating bounded subsets of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most ordinary applications, a fixed precision approximation is sufficient.
 
 There exists at the heart of machine learning a theorem which states a simple class of functions, which compute a weighted sum of non-linear functions composed with a linear function, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem\cite{hornik1989multilayer} states that for all continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $F$, parameterized by constants $n \in \mathbb{N}, \beta, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $W \in \mathbb{R}^{m \times n}$:
 
@@ -765,7 +773,7 @@ An endemic problem in modern deep learning is the problem of forgetting. In orde
 
 Regular regression testing gives clear diagnostics about the behavior of intelligent systems.
 
-\chapter{Software reproducibility}\label{ch:software-reproducibility}
+\chapter{Software Maitenance and Reproducibility}\label{ch:software-reproducibility}
 
 In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering like continuous integration and delivery can help researchers mitigate the variability associated with building and running software. Docker~\cite{merkel2014docker} is one technical solution we will discuss. Our work is roughly related to determinism, and does not consider the variability associated with training data and statistical variability.
 
@@ -818,15 +826,15 @@ As a case study in the feasibility of these tools, we implement a case study in 
 
 Designed with Hatchery.
 
-\section{Implementation}
+\section{Implementation: Languages and }
 
 Implementation includes Kotlin$\nabla$
 
-\section{Verification}
+\section{Verification and validation}
 
 Verified using property-based testing.
 
-\section{Maintenance}
+\section{Containerization}
 
 Deployed and CI-tested using Docker.
 
