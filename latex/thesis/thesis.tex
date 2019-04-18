@@ -201,11 +201,11 @@ Integrated development environments can assist developers building complex softw
 
 \subsection{Implementation: Languages and compilers}
 
-When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing back-propogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementations is even more pressing.
+When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing backpropogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementations is even more pressing.
 
 \subsection{Testing: Verification and validation}
 
-Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the "curse of dimensionality". Our physical universe is populated by problems which are simple to pose, but impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^120$, more than the number of atoms in the universe by approximately 40 orders of magnitude\cite{shannon1950xxii}. At the time, it was believed that such problems would be insurmountable without a fundamental change in algorithms or computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before problems with the same order of complexity, first approximated in the Cambrian explosion 541 million years ago, were approximately solved to within a competitive margin in modern computers.
+Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the "curse of dimensionality". Our physical universe is populated by problems which are simple to pose, but impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^{120}$, more than the number of atoms in the universe by approximately 40 orders of magnitude\cite{shannon1950xxii}. At the time, it was believed that such problems would be insurmountable without a fundamental change in algorithms or computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before problems with the same order of complexity, first approximated in the Cambrian explosion 541 million years ago, were approximately solved to within a competitive margin in modern computers.
 
 While computer science has made enormous strides at solving the common cases, the curse of dimensionality still haunts the corners of modern machine learning, particularly for distributions that are highly disperse. Because the dimensionality of many real world problems we would like to solve is intractably large, it is difficult to be certain about the behavior of a candidate solution in any exhaustive way. According to some studies, a human driver averages 1.09 fatalities per hundred million miles~\cite{kalra2016driving}. A new software build for an autonomous vehicle would need to accumulate 8.8 billion miles of real world driving in order to approximate the fatality rate of a human driver to within \%20 with a 95\% confidence interval. Deploying such a scheme in the real world would be logistically, not to mention ethically problematic.
 
@@ -239,7 +239,7 @@ According to one community census in 2018, 55\% of ROS applications on GitHub ar
 
 \section{Foundations of a modern IDE}
 
-IDEs are more than just a souped-up text editor.
+To build an IDE, you need a few primary ingredients.
 
 \subsection{The parser}
 
@@ -382,7 +382,7 @@ Kotlin$\nabla$ allows users to implement differentiable programs by composing op
     \label{label:fig1}
 \end{figure}
 
-Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. We can also plot higher dimensional manifolds (e.g. the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
+Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
 
 \begin{figure}[!htb]
     \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big\left(\frac{\partial^{3z}}{\partial{x^2}\partial{y}}\Big\right)$ \\
@@ -455,9 +455,9 @@ Describing the Kotlin$\nabla$ type system (formally).
 
 \section{Operator overloading}
 
-Operator overloading enables concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. Group, Ring, and Field. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+Operator overloading enables concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g.\ texttt{Group}, \texttt{Ring}, and \texttt{Field}. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
-For example, suppose we have an interface Group, which overloads the operators + and *, and is defined like so:
+For example, suppose we have an interface \texttt{Group}, which overloads the operators $+$ and $\times$, and is defined like so:
 
 \begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
 interface Group<T: Group<T>> {
@@ -474,7 +474,8 @@ fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
 \end{lstlisting}
 
 Like Python, Kotlin supports overloading a limited set of operators, which are evaluated using a fixed precedence. In the current version of Kotlin𝛁, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
-First-class functions
+
+\section{First-class functions}
 
 With higher-order functions and lambdas, Kotlin treats functions as first-class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of recent papers have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
@@ -493,13 +494,13 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 \section{Coroutines}
 
-Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in Shift/Reset the Penultimate Backpropagator and later in Backpropagation with Continuation Callbacks. Delimited continuations can be implemented using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
+Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in Shift/Reset the Penultimate Backpropagator\cite{wang2018demystifying} and later in Backpropagation with Continuation Callbacks\cite{wang2018backpropagation}. Delimited continuations can be implemented using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
 
 \section{Extension Functions}
 
-Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin𝛁 can expose its custom extensions (e.g. in DoublePrecision) to consumers without requiring subclasses or inheritance.
+Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin𝛁 can expose its custom extensions (e.g.\ in \textt{DoublePrecision}) to consumers without requiring subclasses or inheritance.
 
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+\begin{lstlisting}[caption={Using extension functions we can provide numerical conversions for common data types, wrapped by a Context.}, language=Kotlin]
 data class Const<T: Group<T>>(val number: Double) : Expr()
 data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
 data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
@@ -520,13 +521,13 @@ Now, we can use the context to define another extension, Expr.multiplyByTwo, whi
 fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{lstlisting}
 
-Extensions can also be defined in another file or context and imported on demand.
+Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath \cite{nozik2019acat}, another mathematics library for Kotlin.
 
 \section{Algebraic data types}\label{sec:algebraic-data-types}
 
 Algebraic data types (ADTs) in the form of sealed classes (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+\begin{lstlisting}[caption={Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of say, failing silently at runtime).}, language=Kotlin]
 sealed class Expr<T: Group<T>>: Group<Expr<T>> {
    fun diff() = when(expr) {
        is Const -> Zero
@@ -550,16 +551,15 @@ class Zero<T: Group<T>>: Const<T>
 class One<T: Group<T>>: Const<T>
 \end{lstlisting}
 
-Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of say, failing silently at runtime).
-
 Smart-casting allows us to treat the abstract type Expr as a concrete type, e.g. Sum after performing an is Sum check. Otherwise, we would need to write (expr as Sum).e1 in order to access its field, e1. Performing a cast without checking would throw a runtime exception, if the type were incorrect. Using sealed classes helps avoid casting, thus avoiding ClassCastExceptions.
-Multiple Dispatch
+
+\section{Multiple Dispatch}
 
 In conjunction with ADTs, Kotlin𝛁 also uses multiple dispatch to instantiate the most specific result type of applying an operator based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
 Building on the previous example, a common task in AD is to simplify a graph. This is useful in order to minimize the number of calculations required, or to improve numerical stability. We can eagerly simplify expressions based on algebraic rules of replacement. Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+\begin{lstlisting}[caption={Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.}, language=Kotlin]
 override fun times(multiplicand: Function<X>): Function<X> =
     when {
         this == zero -> this
@@ -575,8 +575,6 @@ override fun times(multiplicand: Function<X>): Function<X> =
 val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 //         = Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
 \end{lstlisting}
-
-This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
 \section{Shape-safe Tensor Operations}\label{sec:shape-safe-tensor-operations}
 
@@ -631,7 +629,7 @@ val sum = Vec(`2`, 1, 2) + add                    // Does not compile
 
 A similar syntax is possible for matrices and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+\begin{lstlisting}[caption={Further examples are provided for shape-safe matrix operations such as addition, subtraction and transposition.}, language=Kotlin]
 // Inferred type: Mat<Int, `4`, `4`>
 val l = Mat(`4`, `4`,
     1, 2, 3, 4,
@@ -653,19 +651,17 @@ val lm = l * m
 // m * m // Does not compile
 \end{lstlisting}
 
-Further examples are provided for shape-safe matrix operations such as addition, subtraction and transposition.
-
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, type arithmetic. Type arithmetic makes it easy to express convolutional arithmetic and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
 ∗ Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
 \section{Differentiable programming}\label{sec:differentiable-programming}
 
-The renaissance of modern deep learning is widely credited to progress in three research areas: algorithms, data and hardware. Among algorithms, most research has focused on deep learning architectures and representation learning. Equally important, arguably, is the role that automatic differentiation (AD) has played in facilitating the implementation of these ideas. Prior to the adoption of general-purpose AD libraries like Theano, PyTorch and TensorFlow, gradients needed to be programmed manually. The emergence of these and other libraries specifically tailored to deep learning simplified and accelerated the pace of machine learning, allowing researchers to focus on gradient-based optimization, network architectures and learning representations. Some of these ideas in turn, formed the basis for new methods in automatic differentiation, which continues to be an active area of research.
+The renaissance of modern deep learning is widely credited to progress in three research areas: algorithms, data and hardware. Among algorithms, most research has focused on deep learning architectures and representation learning. Equally important, arguably, is the role that automatic differentiation (AD) has played in facilitating the implementation of these ideas. Prior to the adoption of general-purpose AD libraries such as Theano, PyTorch and TensorFlow, manual derivation was required. The emergence of these and similar libraries specifically tailored to deep learning simplified and accelerated the pace of gradient-based machine learning, allowing researchers to focus on network architectures and learning representations. Some of these ideas in turn, formed the basis for new methods in automatic differentiation, which continues to be an active area of research.
 
-In deep learning, research primarily focuses on differentiable representations. In contrast, many problems we would like to solve are non-differentiable in their natural domain. For example, the structure of character-based representations are not easily differentiable as small changes to a word's symbolic representation can cause large differences to its semantic meaning. A key insight from deep learning research is that many problems require posing a good representation. For example, if we can represent words as a vector of real numbers, so that relations between words are spatially preserved by the vector representation, then we can perform gradient descent on such a space. Many classes of discrete problems can be relaxed to continuous surrogates by introducing a good representation.
+An key aspect of deep learning is learning representations via gradient descent. For gradient descent to work, the representation must be differentiable almost everywhere. However many representations are non-differentiable in their natural domain. For example, the structure of language in its written form is not easily differentiable as small changes to a word's symbolic representation can cause large shifts to its semantic meaning. A key insight from deep learning is that many discrete problem domains can be mapped to a smoother space. For example, if we imagine words as a vector of real numbers, then we can learn a mapping from their discrete, character-based form to their vector-based representation such that the semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space\cite{pennington2014glove}. Many classes of discrete problems can be relaxed to continuous surrogates by introducing a good representation.
 
-As more domains found efficient representations, researchers observed neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \textit{differentiable programming} was born.
+As more domains found efficient vector representations, researchers observed that neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \textit{differentiable programming} was born. Today, differentiable programing has found applications in a wide range of domains, including protein folding\cite{alquraishi2018end}, to physics engines\cite{de2018end} and graphics rendering\cite{loper2014opendr} to meta-learning\cite{liu2018darts}. These domains have well-studied models for characterizing the dynamics of various systems, with unknown parameters that must be learned. Traditionally, handcrafted optimization algorithms were required to tune the parameters to a given dataset, but differentiable programming promises to do this, more or less automatically.
 
 \chapter{Verification and validation}\label{ch:difftest}
 
@@ -705,7 +701,7 @@ How can we find a set of inputs that break the test under a fixed computational 
 \end{equation}
 %
 
-If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search (cf. no free lunch). However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we might consider sampling $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could prioritize our search in input regions leading towards internal discontinuities (e.g.\ edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient.
+If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search \cite{wolpert1997no}. However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we might consider sampling $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could prioritize our search in input regions leading towards internal discontinuities (e.g.\ edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
@@ -772,7 +768,7 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     evalCount++; i++\;
     }
 
-    \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of G.D. steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each G.D. trajectory will terminate before exhausting our budget.}
+    \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each gradient descent trajectory will terminate before exhausting our budget.}
 \end{algorithm}
 
 \section{Regression testing: a tool to prevent catastrophic forgetting}
@@ -793,7 +789,7 @@ Researchers would often like to reproduce the work of other researchers, but the
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
-In 2006, Linux introduced a kernel feature called cgroups. This enabled a kind of lightweight virtualization for containers, where a fully virtualized machine was no longer necessary to get many of the benefits of VMs. This paved the way for the tools that are now known as containers. Unlike VMs, containers do not run their own operating systems, but rather share resources with the host operating system, while remaining isolated from the host and sibling containers. While VMs heavy resource requirements often limits their deployment to server-class hardware, containers' lightweight footprint enabled them to run on a far broader class of mobile and embedded platforms.
+In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}\cite{menage2007adding}. Collectively, these features supported a kind of lightweight virtualization, where a fully virtual machine was no longer necessary to get many of the benefits of VMs, namely resource control and namespace isolation. These features paved the way for the set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from the host OS and sibling containers. While the overhead of running VMs often limits their deployment to server-class hardware, containers' comparatively lightweight footprint enables them to run on a far broader class of mobile and embedded platforms.
 
 \section{Dependency management}\label{sec:dependency-management}
 
@@ -862,7 +858,7 @@ When building intelligent system developers must first ask, what are the require
 
 In traditional software engineering, it is reasonable to assume the people who are implementing the system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversary. If we are to give it an optimization metric, it will take every conceivable shortcut to achieve that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
 
-In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g. declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
+In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g.\ declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
 
 \subsection{Continuous Delivery and Continual Learning}
 
