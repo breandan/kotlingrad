@@ -183,25 +183,41 @@ stringstyle={\color{ForestGreen}\ttfamily},
 
 \epiggraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
 
-In computer science, we are mostly concerned with algorithmic complexity. Computer scientists have developed numerous tools for describing complexity using analysis and information theory, such as Kolmogorov complexity and big-O notation. The field of software engineering is primarily interested in a different kind of complexity - the complexity of building software. One sort of software complexity is the mental effort required to understand a program, and can be approximated by metrics like cyclomatic complexity or Halstead complexity, which try to characterize the mental effort required to work with code.
+In computer science, we are chiefly concerned with algorithmic complexity. Computer scientists have developed powerful tools for describing algorithmic complexity using function analysis and information theory, such as big-O notation, Kolmogorov complexity and entropy. The field of software engineering is primarily interested in a different measure of complexity - the complexity of building software, the digital manifestation of algorithms on physical hardware. One sort of software complexity is the mental effort required to understand a program's source code, and which can be approximated by metrics such as cyclomatic complexity or Halstead complexity. By any measure of complexity, today's software is more intelligent than ever before, but shows few signs of becoming any more easily intelligible. As software becomes more intelligent and unpredictable, we need better tools for understanding the complexity of software systems.
 
 Our objective is to reduce the mental effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and containers.
 
-The goal of this thesis is show it is possible to develop tools that reduce the mental burden of building intelligent software systems. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code as raw text. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. We then use Docker containers~\cite{merkel2014docker}to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. Finally, we demonstrate a functional intelligent system built using the above tools which is comprised of a mobile autonomous vehicle and an Android mobile application.
+One may ask, what is an intelligent system, and how is it different from ordinary software? Let us provide the following loose definition to guide our discussion:
+
+An intelligent system is a software system which is capable of solving tasks for which it was not explicitly programmed, and which human experts were previously incapable of solving by hard-coding domain-specific rules. Typically, although not always these systems have the following properties:
+
+\begin{enumerate}
+    \item learn generalizable rules by processing large amounts of data
+    \item possess a large number of flexible parameters (thousands to billions)
+    \item are able to meet or exceed the performance of a well-trained human.
+\end{enumerate}
+
+In recent years, computer science and software engineering has made large strides in building such systems. These breakthroughs were the direct result of fundamental progress in neural network algorithms and representation learning. Also key to this whole endeavor was the adoption of open source methods, largely to the credit of the software engineering community, who pioneered the development of software libraries for automatic differentiation like Theano, Torch and Caffe, and who democratized many popular simulators, benchmarks and datasets through platforms like GitHub, Kaggle and OpenAI.
+
+The goal of this thesis is to show it is possible to build unintelligent software tools that facilitate the process of programming intelligent systems, and which reduce the mental effort required to understand a intelligent program. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. Finally, we use Docker containers~\cite{merkel2014docker} to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. To demonstrate the usefulness of our toolset, we create an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application.
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
-In traditional software engineering, the Waterfall Method is a classic engineering design process model that comprises of five stages. We propose contributions to four: design, implementation, testing and maintenance.
+In traditional software engineering, the Waterfall Method is a classical software process model that comprises of five stages. We propose contributions to four: design, implementation, testing and maintenance.
 
 \subsection{Designing intelligent systems}
 
-When designing intelligent systems, design, requirements, and engineering must work in concert to produce a system that is well-designed, meets the needs of the users, and highly performant. Sometimes this means compromising requirements, or redesigning the system to become more flexible. Sometimes this means changing the requirements to accommodate for engineering challenges, or refactoring the solution to remove technical debt. Software engineering is a multi-objective optimization process, and in order to produce software that approximates the criteria of all the stakeholders, engineers must be able to iterate on their ideas rapidly, and integrate feedback from uses. Yet today's software systems are larger and more unwieldy than ever. Some of that complexity can be managed by abstraction, but often the complexity which developers face cannot be solved my abstraction alone.
+In software design, designers, requirements engineers and developers must work in concert to produce a system that is well-designed, meets the needs of its users, and is highly performant. Sometimes this means compromising requirements, or redesigning a system to become more flexible. Sometimes this means changing the requirements to accommodate engineering challenges, or refactoring the solution to remove technical debt. Software engineering is a multi-objective optimization process, and in order to produce software that approximates the criteria of all stakeholders, developers must be able to iterate on their ideas rapidly, and integrate feedback from users. Yet today's software systems are larger and more unwieldy than ever before. Some of that complexity can be managed by abstraction, but some of the complexity which developers face cannot be solved by abstraction alone.
 
-Integrated development environments can assist developers building complex software applications by automating certain repetitive tasks in programming. For example, tools can perform static analyses and inspections for detecting certain bugs. They can provide code completion and refactoring support for editing source code. And they can automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation leaves less room for clerical errors, and frees the developer's attention from menial labor. If instead of being forced to concentrate on the structure and organization of text, developers are able manipulate programs at a semantic level, they will be much happier and more productive.
+Let us consider the mechanical process of writing software with a keyboard and a computer screen.
+
+Integrated development environments (IDEs) can assist developers building complex software applications by automating certain repetitive programming tasks. For example, IDEs perform static analyses and inspections for catching bugs quickly. They can provide completion, refactoring and source code navigation. And they can automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation promises increased developer productivity by delivering earlier feedback, detecting clerical errors, and freeing the developer's attention from menial tasks. Rather than being forced to concentrate on the structure and organization of text, if developers are able manipulate code at a semantic level, they will be much happier and more productive. By automating common tasks in software development, these purely mechanical tools allow developers to focus on the fundamentals of writing and understanding programs.
+
+In some ways, developing intelligent systems is no different than classical software engineering. The same key principles and best-practices in software engineering are also applicable to intelligent systems. The same activities that guide for software engineering, from analysis, design, implementation, verification and maintenance will continue to play an important role when building intelligent systems. But in other ways, the generic tools we use for developing handwritten software will require domain-specific extensions in order for machine learning to become a truly first-class citizen in the next generation of intelligent software systems. Towards that end, we propose Hatchery, a plugin for building applications for the Robot Operating System (ROS), a popular robotics middleware. At the time of its release, Hatchery was the first ROS plugin for the IntelliJ Platform, a popular IDE for C/C++, Python and Android. While the idea is simple, its prior absence and subsequent adoption in the community suggests these kinds of tools fill a much needed gap in the development of a complex software framework, particularly for robotics applications.
 
 \subsection{Implementation: Languages and compilers}
 
-When implementing intelligent systems, we need to think carefully about languages and abstractions we use. If developers are implementing backpropogation, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineering - we need to use the right abstractions for the job. With machine learning, the necessity of choosing appropriate implementations is even more pressing.
+When implementing intelligent systems, we need to think carefully about languages and abstractions. If developers are implementing backpropogation by hand, they will have little time to think about the high-level characteristics of these systems. This is no different from traditional software engineering - we need to choose the right abstractions for the task at hand. With machine learning, the necessity of choosing appropriate abstractions for reasoning is even more pressing.
 
 \subsection{Testing: Verification and validation}
 
@@ -820,17 +836,17 @@ One issue encountered is the matter of whether to package source code directly i
 
 \section{Docker and ROS}
 
-Prior work in Dockerization of ROS \cite{white2017ros-docker}
+Prior work has explored the Dockerization of ROS containers\cite{white2017ros-docker}. This work forms the basis for our workflow, which is extended for Duckietown in particular.
 
 \chapter{Case study: application for autonomous robotics}
 
-As a case study in the feasibility of these tools, we implement a case study in building a mobile application using ROS, Docker, Android and sHere, we implement a mobile application using the above toolchain.
+As a case implement a case study in building a mobile application using ROS, Docker, Android and sHere, we implement a mobile application using the above toolchain.
 
 \section{Design}
 
-Designed with Hatchery.
+Designed with Hatchery. This tool allows us to
 
-\section{Implementation: Languages and }
+\section{Implementation}
 
 Implementation includes Kotlin$\nabla$
 
