@@ -342,8 +342,6 @@ There exists at the heart of machine learning a theorem which states a simple cl
 
 This theorem does not put an upper bound on the constant $n$, or how to find $w$, somewhat limiting its practical applicability. But for reasons which are not yet fully understood, empirical results suggest it is possible to obtain reasonably precise approximations to many naturally-arising functions, once thought to be intractable, in a comparatively short time by composing these non-linear and linear functions in an alternating fashion and iteratively updating $w$ in the direction suggested by $\nabla_w F(x)$.
 
-
-
 \section{Static and dynamic languages}
 
 Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\cite{github}.
@@ -356,7 +354,39 @@ Strong, static types are important for reasoning about the behavior of complex p
 
 \section{Imperative and functional languages}
 
-Most programs are written in procedural langauges, due in part to the prevalence of the Von Neumann architecture. Lambda calculus provides an equivalent formalism for computing, and one which is more amenable to the automatic calculation of derivatives.
+Most programs are written in procedural languages, due in part to the prevalence of the Turing Machine and Von Neumann architecture. Lambda calculus provides an equivalent language for computing, and one which is more amenable to the automatic calculation of derivatives. In pure procedural programming, the sole purpose of a function is to pass it values, but we have no way of referring to the function itself. Furthermore, variables are frequently overwritten, making it more difficult to calculate their derivatives.
+
+For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in\ref{tab:1}.
+
+\begin{table*}[t]
+    \centering
+    \begin{tabular}{ll}
+        Imperative & Functional \\
+        \begin{lstlisting}[language=Kotlin]
+fun dot(l1, l2) {
+  if (len(l1) != len(l2))
+    return error
+  var sum = 0
+  for(i in 0 to len(l1))
+    sum += l1[i] * l2[i]
+  return sum
+}
+        \end{lstlisting}
+         &
+        \begin{lstlisting}[language=Kotlin]
+fun dot(l1, l2) {
+  return if (len(l1) != len(l2))
+    error
+  else if (len(l1) == 0) 0
+  else
+    head(l1) * head(l2) +
+    dot(tail(l1) + tail(l2))
+}
+        \end{lstlisting}
+    \end{tabular}
+    \caption{Two programs, implementing the function $f(l_1, l_2) = l_1 \cdot l_2$.}
+    \label{tab:1}
+\end{table*}
 
 \section{Kotlin}
 
