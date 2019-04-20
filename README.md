@@ -664,6 +664,11 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [Dimension Types](https://link.springer.com/content/pdf/10.1007%2F3-540-57880-3_23.pdf)
 * [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145)
+* [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf)
+
+### Domain Specific Languages
+
+* [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf)
 
 ### Automated Testing
 

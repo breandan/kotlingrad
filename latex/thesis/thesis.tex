@@ -412,9 +412,11 @@ Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr
 \begin{figure}
     \centering
     \includegraphics[width=0.70\textwidth]{kotlingrad_diagram.png}
-    \caption{Kotlin$\nabla$}
+    \caption{Kotlin$\nabla$ models are data structures, which are evaluated at runtime.}
     \label{fig:kotlingrad_digram}
 \end{figure}
+
+Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially just data structures masquerading as code. These structures look and act like code in the host language, but are really just a chain of function compositions in disguise, which can be evaluated eagerly or lazily depending on the users needs. While typically simple state machines, you can also use them to implement a programming langauge without writing a lexer or parser. Popular examples include SQL/LINQ\cite{meijer2006linq}, OptiML\cite{sujeeth2011optiml} and other fluent interfaces\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any other language as a simple library. If the implementor is careful about typing the API, EDSL users will receive code completion and static analysis for free, when using their favorite developer tools. For host langauges, many have observed that typed functional languages tend to fit the bill nicely\cite{elliott2003compiling,rompf2010lightweight}.
 
 \section{Usage}
 
