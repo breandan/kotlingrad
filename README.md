@@ -147,7 +147,7 @@ val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
 // e * f
 ```
 
-Explict types are optional but encouraged. [Type inference](https://www.youtube.com/watch?v=MyljSWm0Y_k) helps preserve shape information over long programs.
+Explicit types are optional but encouraged. [Type inference](https://www.youtube.com/watch?v=MyljSWm0Y_k) helps preserve shape information over long programs.
 
 ```kotlin
 fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
