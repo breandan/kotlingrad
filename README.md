@@ -279,7 +279,7 @@ val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
 val manualDx = y * (cos(x * y) * y - 1) // Manual derivative 
 
 "∂z/∂x should be y * (cos(x * y) * y - 1)" {
-  assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
+  NumericalGenerator.assertAll { ẋ, ẏ ->
     // Evaluate the results at a given seed
     val autoEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
     val manualEval = manualDx(x to ẋ, y to ẏ)
@@ -293,7 +293,7 @@ PBT will search the input space for two numerical values `ẋ` and `ẏ`, which 
 
 ```kotlin
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
-  assertAll(NumericalGenerator) { ẋ ->
+  NumericalGenerator.assertAll { ẋ ->
     val f = sin(x)
     
     val `df∕dx` = d(f) / d(x)

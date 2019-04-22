@@ -30,7 +30,25 @@ sensitive=true,
 stringstyle={\color{ForestGreen}\ttfamily},
 }
 
-\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true}
+\lstset{
+language=kotlin, %% Troque para PHP, C, Java, etc... bash é o padrão
+basicstyle=\ttfamily\scriptsize,
+numberstyle=\footnotesize,
+%numbers=left,
+%backgroundcolor=\color{gray!10},
+%frame=single,
+%tabsize=2,
+%rulecolor=\color{black!30},
+%title=\lstname,
+%escapeinside={\%*}{*)},
+breaklines=true,
+%breakatwhitespace=true,
+%framextopmargin=2pt,
+%framexbottommargin=2pt,
+%extendedchars=false,
+%inputencoding=utf8
+}
+
 %\renewcommand*{\ttdefault}{qcr}
 
 \def\sloppy{%
@@ -545,35 +563,33 @@ Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know th
 
 For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
 
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+\begin{lstlisting}[language=Kotlin, showstringspaces=false]
 val x = Var("x")
 val y = Var("y")
 
 val z = y * (sin(x * y) - x)            // Function under test
-val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
+val dz_dx = d(z) / d(x)                 // Automatic derivative
 val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 
 "∂z/∂x should be y * (cos(x * y) * y - 1)" {
-    assertAll(NumericalGenerator, NumericalGenerator) { ẋ, ẏ ->
-    // Evaluate the results at a given seed
-    val autoEval = `∂z∕∂x`(x to ẋ, y to ẏ)
-    val manualEval = manualDx(x to ẋ, y to ẏ)
-    // Should pass if Δ(adEval, manualEval) < Ɛ
-    autoEval shouldBeApproximately manualEval
+    NumericalGenerator.assertAll { ẋ, ẏ ->
+        // Evaluate the results at a given seed
+        val autoEval = dz_dx(x to %*ẋ, y to ẏ*)
+        val manualEval = manualDx(x to ẋ, y to ẏ)
+        // Should pass if diff(adEval, manualEval) < eps
+        autoEval shouldBeApproximately manualEval
     }
 }
 \end{lstlisting}
 
 PBT will search the input space for two numerical values ẋ and ẏ, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
 
-\begin{lstlisting}[language=Kotlin]
+\begin{lstlisting}[language=Kotlin, showstringspaces=false]
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
-    assertAll(NumericalGenerator) { ẋ ->
+    NumericalGenerator.assertAll { ẋ ->
         val f = sin(x)
-
-        val `df∕dx` = d(f) / d(x)
+        val df_dx = d(f) / d(x)
         val adEval = `df∕dx`(ẋ)
-
         val dx = 1E-8
         // Since ẋ is a raw numeric type, sin => kotlin.math.sin
         val fdEval = (sin(ẋ + dx) - sin(ẋ)) / dx
@@ -601,7 +617,6 @@ In Kotlin$\nabla$, we use the last strategy to check the shape of tensor operati
 val a = Vec(1.0, 2.0)
 // Inferred type: Vec<Int, `3`>
 val b = Vec(1.0, 2.0, 3.0)
-
 val c = b + b
 // Does not compile, shape mismatch
 // a + b
@@ -614,7 +629,6 @@ Attempting to sum two vectors whose shapes do not match will fail to compile, an
 val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
 // Inferred type: Mat<Double, `4`, `1`>
 val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0)
-
 val c = a * b
 // Does not compile, inner dimension mismatch
 // a * a
@@ -634,7 +648,6 @@ val b = Mat(`4`, `2`,
     5.0, 6.0,
     7.0, 8.0
 )
-
 // Types are optional, but encouraged
 val c: Mat<Double, `2`, `2`> = a * b
 val d = Mat(`2`, `1`, 1.0, 2.0)
@@ -706,17 +719,17 @@ A similar syntax is possible for matrices and higher-rank tensors. For example, 
 \begin{lstlisting}[language=Kotlin]
 // Inferred type: Mat<Int, `4`, `4`>
 val l = Mat(`4`, `4`,
-1, 2, 3, 4,
-5, 6, 7, 8,
-9, 0, 0, 0,
-9, 0, 0, 0
+    1, 2, 3, 4,
+    5, 6, 7, 8,
+    9, 0, 0, 0,
+    9, 0, 0, 0
 )
 // Inferred type: Mat<Int, `4`, `3`>
 val m = Mat(`4`, `3`,
-1, 1, 1,
-2, 2, 2,
-3, 3, 3,
-4, 4, 4
+    1, 1, 1,
+    2, 2, 2,
+    3, 3, 3,
+    4, 4, 4
 )
 
 // Inferred type: Mat<Int, `4`, `3`>
@@ -930,7 +943,6 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert Weiner, \textit{Some moral and technical consequences of automation}~\cite{wiener1960some}\end{flushright}}
 
-
 \section{Adversarial test case generation}
 
 Neural networks and differentiable programming has provided a powerful new set of optimization tools for training learning algorithms. However these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
@@ -1057,8 +1069,7 @@ In 2006, Linux began introducing a variety of new kernel features for controllin
 
 \section{Dependency management}\label{sec:dependency-management}
 
-One common source of software variability are dependencies and the dependency solving problem. In fact, operating systems have struggled with this issue for a number of years before it was realized that dependency resolution was NP-complete. \cite{abate2012dependency}
-Dependency hell is NP Complete: https://research.swtch.com/version-sat
+One common source of software variability are dependencies and the dependency solving problem. In fact, operating systems have struggled with this issue for a number of years before it was realized that dependency resolution was NP-complete~\cite{abate2012dependency}.
 
 \section{Containerization}\label{sec:containerization}
 
