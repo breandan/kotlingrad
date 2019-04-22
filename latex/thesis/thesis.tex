@@ -8,10 +8,10 @@
 \usepackage{listings}
 \usepackage{array}
 \usepackage{epigraph}
+\renewcommand{\textflush}{flushepinormal}
 \usepackage{tikz}
 \usepackage{tikz-qtree}
 \usepackage{algorithm2e}
-
 
 \lstdefinelanguage{Kotlin}{
 comment=[l]{//},
@@ -181,7 +181,8 @@ stringstyle={\color{ForestGreen}\ttfamily},
 
 \chapter{Introduction}\label{ch:introduction}
 
-\epiggraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
+\setlength{\epigraphwidth}{\textwidth}
+\epigraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
 
 In computer science, we are chiefly concerned with algorithmic complexity. Computer scientists have developed powerful tools for describing algorithmic complexity using function analysis and information theory, such as big-O notation, Kolmogorov complexity and entropy. The field of software engineering is primarily interested in a different measure of complexity - the complexity of building software, the digital manifestation of algorithms on physical hardware. One sort of software complexity is the mental effort required to understand a program's source code, and which can be approximated by metrics such as cyclomatic complexity or Halstead complexity. By any measure of complexity, today's software is more intelligent than ever before, but shows few signs of becoming any more easily intelligible. As software becomes more intelligent and unpredictable, we need better tools for understanding the complexity of software systems.
 
@@ -197,7 +198,7 @@ An intelligent system is a software system which is capable of solving tasks for
     \item are able to meet or exceed the performance of a well-trained human.
 \end{enumerate}
 
-In recent years, computer science and software engineering has made large strides in building such systems. These breakthroughs were the direct result of fundamental progress in neural network algorithms and representation learning. Also key to this whole endeavor was the adoption of open source methods, largely to the credit of the software engineering community, who pioneered the development of software libraries for automatic differentiation like Theano\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch\cite{collobert2002torch} and Caffe\cite{jia2014caffe}, and who democratized many popular simulators, benchmarks and datasets through platforms like GitHub, Kaggle and OpenAI.
+In recent years, computer science and software engineering has made large strides in building such systems. These breakthroughs were the direct result of fundamental progress in neural network algorithms and representation learning. Also key to this whole endeavor was the adoption of open source methods, largely to the credit of the software engineering community, who pioneered the development of software libraries for automatic differentiation like Theano~\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch~\cite{collobert2002torch} and Caffe~\cite{jia2014caffe}, and who democratized many popular simulators, benchmarks and datasets through platforms like GitHub, Kaggle and OpenAI.
 
 The goal of this thesis is to show it is possible to build unintelligent software tools that facilitate the process of programming intelligent systems, and which reduce the mental effort required to understand a intelligent program. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. Finally, we use Docker containers~\cite{merkel2014docker} to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. To demonstrate the usefulness of our toolset, we create an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application.
 
@@ -221,7 +222,7 @@ When implementing intelligent systems, we need to think carefully about language
 
 \subsection{Testing: Verification and validation}
 
-Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the "curse of dimensionality". Our physical universe is populated by problems which are simple to pose, but impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^{120}$, more than the number of atoms in the universe by approximately 40 orders of magnitude\cite{shannon1950xxii}. At the time, it was believed that such problems would be insurmountable without a fundamental change in algorithms or computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before solutions to problems with the same order of complexity, first approximated in the Cambrian explosion 541 million years ago, were solved to a competitive margin in modern computers.
+Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the "curse of dimensionality". Our physical universe is populated by problems which are simple to pose, but impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^{120}$, more than the number of atoms in the universe by approximately 40 orders of magnitude~\cite{shannon1950xxii}. At the time, it was believed that such problems would be insurmountable without a fundamental change in algorithms or computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before solutions to problems with the same order of complexity, first approximated in the Cambrian explosion 541 million years ago, were solved to a competitive margin in modern computers.
 
 While computer science has made enormous strides in solving the common cases, Bellman's curse of dimensionality still haunts the corners of modern machine learning, particularly for distributions that are highly disperse. Because the dimensionality of many real world problems we would like to solve is intractably large, it is difficult to be certain about the behavior of a candidate solution. According to some studies, a human driver averages 1.09 fatalities per hundred million miles~\cite{kalra2016driving}. A new software build for an autonomous vehicle would need to accumulate 8.8 billion miles of real world driving in order to approximate the fatality rate of a human driver to within \%20 with a 95\% confidence interval. Deploying such a scheme in the real world would be logistically, not to mention ethically problematic.
 
@@ -241,7 +242,8 @@ Ideally, it is best when the users' interests and the engineers' interest are we
 
 \chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}
 
-\epigraph{The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.}{\begin{flushright}--Licklider, \textit{Man-Computer Symbiosis}\cite{licklider1960man}\end{flushright}}
+\setlength{\epigraphwidth}{0.78\textwidth}
+\epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J. C. R. Licklider, \textit{Man-Computer Symbiosis} \cite{licklider1960man}\end{flushright}}
 
 Programming tools are a bicycle for the mind. Complex systems need better tools for developers.
 
@@ -283,7 +285,8 @@ Detecting and managing ROS installations.
 
 \vspace{-30}
 
-\epigraph{``Programs must be written for people to read, and only incidentally for machines to execute. ''}{\begin{flushright}--Abelson \& Sussman, \textit{Structure and Interpretation of Computer Programs}\end{flushright}}
+\setlength{\epigraphwidth}{0.5\textwidth}
+\epigraph{``Programs must be written for people to read, and only incidentally for machines to execute.''}{\begin{flushright}--Harold Abelson and Gerald Jay Sussman, \textit{Structure and Interpretation of Computer Programs, Preface to the First Edition \cite{abelson1996structure}}\end{flushright}}
 
 \vspace{20}
 
@@ -339,7 +342,7 @@ For some classes of computable functions, small changes to the input can produce
 
 It is an open question whether non-differentiable functions exist in the real world \cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their discrete approximations, so for all intents and purposes, programs implemented by most physical computers are discrete functions. Nevertheless, computers are capable of approximating bounded subsets of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most ordinary applications, a fixed precision approximation is sufficient.
 
-There exists at the heart of machine learning a theorem which states a simple class of functions, which compute a weighted sum of non-linear functions composed with a linear function, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem\cite{hornik1989multilayer} states that for all continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $F$, parameterized by constants $n \in \mathbb{N}, \beta, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $W \in \mathbb{R}^{m \times n}$:
+There exists at the heart of machine learning a theorem which states a simple class of functions, which compute a weighted sum of non-linear functions composed with a linear function, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\cite{hornik1989multilayer} states that for all continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $F$, parameterized by constants $n \in \mathbb{N}, \beta, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $W \in \mathbb{R}^{m \times n}$:
 
 \begin{equation}
     \begin{split}
@@ -354,9 +357,9 @@ This theorem does not put an upper bound on the constant $n$, or how to find $w$
 
 The renaissance of modern deep learning is widely credited to progress in three research areas: algorithms, data and hardware. Among algorithms, most research has focused on deep learning architectures and representation learning. Equally important, arguably, is the role that automatic differentiation (AD) has played in facilitating the implementation of these ideas. Prior to the adoption of general-purpose AD libraries such as Theano, PyTorch and TensorFlow, manual derivation was required. The emergence of these and similar libraries simplified and accelerated the pace of gradient-based machine learning, allowing researchers to focus on network architectures and learning representations. Some of these ideas in turn, formed the basis for new methods in automatic differentiation, which continues to be an active area of research.
 
-An key aspect of deep learning is learning representations via gradient descent. For gradient descent to work, the representation must be differentiable almost everywhere. However many representations are non-differentiable in their natural domain. For example, the structure of language in its written form is not easily differentiable as small changes to a word's symbolic representation can cause large shifts to its semantic meaning. A key insight from deep learning is that many discrete problem domains can be mapped to a smoother latent space. For example, if we imagine words as a vector of real numbers, then we can learn a mapping from their discrete, character-based form to their vector-based representation such that the semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space\cite{pennington2014glove}. Many classes of discrete problems can be relaxed to continuous surrogates by introducing a good representation.
+An key aspect of deep learning is learning representations via gradient descent. For gradient descent to work, the representation must be differentiable almost everywhere. However many representations are non-differentiable in their natural domain. For example, the structure of language in its written form is not easily differentiable as small changes to a word's symbolic representation can cause large shifts to its semantic meaning. A key insight from deep learning is that many discrete problem domains can be mapped to a smoother latent space. For example, if we imagine words as a vector of real numbers, then we can learn a mapping from their discrete, character-based form to their vector-based representation such that the semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space~\cite{pennington2014glove}. Many classes of discrete problems can be relaxed to continuous surrogates by introducing a good representation.
 
-As more domains found efficient vector representations, researchers observed that neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \textit{differentiable programming} was born. Today, differentiable programing has found applications in a wide range of domains, including protein folding\cite{alquraishi2018end}, to physics engines\cite{de2018end,DBLP:journals_corr_DegraveHDW16} and from graphics rendering\cite{loper2014opendr} to meta-learning\cite{liu2018darts}. These domains have well-studied models for characterizing the dynamics of various systems, with unknown parameters that can be learned via gradient descent. Traditionally, handcrafted optimization algorithms were required to tune these parameters, but differentiable programming promises to do this, more or less automatically.
+As more domains found efficient vector representations, researchers observed that neural networks were part of a broader class of differentiable architectures that could be built and interpreted in a manner not unlike computer programming [1], [2]. Hence the term \textit{differentiable programming} was born. Today, differentiable programing has found applications in a wide range of domains, including protein folding~\cite{alquraishi2018end}, to physics engines~\cite{de2018end,DBLP:journals_corr_DegraveHDW16} and from graphics rendering~\cite{loper2014opendr} to meta-learning~\cite{liu2018darts}. These domains have well-studied models for characterizing the dynamics of various systems, with unknown parameters that can be learned via gradient descent. Traditionally, handcrafted optimization algorithms were required to tune these parameters, but differentiable programming promises to do this, more or less automatically.
 
 \section{Static and dynamic languages}
 
@@ -418,7 +421,7 @@ Kotlin is a strong, statically typed language. It is well suited for building cr
 
 Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface}~\cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete~\cite{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types. We use \textit{Kotlin}, whose type system is less expressive, but fully compatible with Java.
 
-Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch\cite{collobert2002torch}, and TensorFlow\cite{abadi2016tensorflow}. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\cite{pearlmutter2008using}, DiffSharp in F\#~\cite{baydin-diffsharp} and recently Swift~\cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano~\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch~\cite{collobert2002torch}, and TensorFlow~\cite{abadi2016tensorflow}. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\cite{pearlmutter2008using}, DiffSharp in F\#~\cite{baydin-diffsharp} and recently Swift~\cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
 Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr-abs-1803-10228}, Nexus~\cite{chen2017typesafe} and DeepLearning.scala~\cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
 
@@ -435,7 +438,7 @@ Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr
     \label{fig:kotlingrad_digram}
 \end{figure}
 
-Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially just data structures masquerading as code. These structures may look and act like code, but are really just functions building an abstract sytax tree (AST), which can be evaluated eagerly or lazily depending on the developer's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fleged programming langauge. Popular examples include SQL/LINQ\cite{meijer2006linq}, OptiML\cite{sujeeth2011optiml} and other fluent interfaces\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages\cite{elliott2003compiling,rompf2010lightweight}, perhaps due to the concept of code as data and data as code\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}.
+Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially just data structures masquerading as code. These structures may look and act like code, but are really just functions building an abstract sytax tree (AST), which can be evaluated eagerly or lazily depending on the developer's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fleged programming langauge. Popular examples include SQL/LINQ~\cite{meijer2006linq}, OptiML~\cite{sujeeth2011optiml} and other fluent interfaces~\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages~\cite{elliott2003compiling,rompf2010lightweight}, perhaps due to the concept of code as data and data as code\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}.
 
 \section{Usage}
 
@@ -650,7 +653,7 @@ fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 
 When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape-safety is currently supported up to rank-2 tensors, i.e.\ matrices.
 
-While first-class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore\cite{Grigore:2017:JGT:3009837.3009871}.}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
+While first-class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore~\cite{Grigore:2017:JGT:3009837.3009871}.}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that \texttt{0 <: 1 <: 2 <: 3 <: ... <: C}, where \texttt{C} is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. C can be specified by the user, but they will need to rebuild this project from scratch.
 
@@ -764,7 +767,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 \section{Coroutines}\label{sec:coroutines}
 
-Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in Shift/Reset the Penultimate Backpropagator\cite{wang2018demystifying} and later in Backpropagation with Continuation Callbacks\cite{wang2018backpropagation}. Delimited continuations can be implemented using Kotlin coroutines and they are currently a work in progress.
+Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in Shift/Reset the Penultimate Backpropagator~\cite{wang2018demystifying} and later in Backpropagation with Continuation Callbacks~\cite{wang2018backpropagation}. Delimited continuations can be implemented using Kotlin coroutines and they are currently a work in progress.
 
 \section{Extension Functions}\label{sec:extension-functions}
 
@@ -791,7 +794,7 @@ Now, we can use the context to define another extension, Expr.multiplyByTwo, whi
 fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{lstlisting}
 
-Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath\cite{nozik2019acat}, another mathematical library for Kotlin.
+Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\cite{nozik2019acat}, another mathematical library for Kotlin.
 
 \section{Algebraic data types}\label{sec:adts}
 
@@ -924,9 +927,9 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 \chapter{Verification and validation}\label{ch:difftest}
 
-\epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot interfere...\ldots we had better be sure the purpose put into the machine is the purpose we really desire.''}{\begin{flushright}--Norbert Weiner, \textit{Some moral and technical consequences of automation}\cite{wiener1960some}\end{flushright}}
+\setlength{\epigraphwidth}{0.78\textwidth}
+\epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert Weiner, \textit{Some moral and technical consequences of automation}~\cite{wiener1960some}\end{flushright}}
 
-How do we test a machine that learns?
 
 \section{Adversarial test case generation}
 
@@ -962,7 +965,7 @@ How can we find a set of inputs that break the test under a fixed computational 
 \end{equation}
 %
 
-If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search\cite{wolpert1997no}. However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we might consider sampling $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could prioritize our search in input regions leading towards internal discontinuities (e.g.\ edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient.
+If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search~\cite{wolpert1997no}. However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we might consider sampling $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could prioritize our search in input regions leading towards internal discontinuities (e.g.\ edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
@@ -1050,11 +1053,12 @@ Researchers would often like to reproduce the work of other researchers, but the
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
-In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}\cite{menage2007adding}. Collectively, these features supported a kind of lightweight virtualization, where a fully virtual machine was no longer necessary to get many of the benefits of VMs, primarily resource control and namespace isolation. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from the host OS and sibling containers. While the overhead of running VMs often limits their deployment to server-class hardware, container's are comparatively lightweight, which enables them to run on a far broader class of mobile and embedded platforms.
+In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features supported a kind of lightweight virtualization, where a fully virtual machine was no longer necessary to get many of the benefits of VMs, primarily resource control and namespace isolation. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from the host OS and sibling containers. While the overhead of running VMs often limits their deployment to server-class hardware, container's are comparatively lightweight, which enables them to run on a far broader class of mobile and embedded platforms.
 
 \section{Dependency management}\label{sec:dependency-management}
 
-One common source of software variability are packages. In fact, operating systems have dealt with this is Dependency hell is NP Complete: https://research.swtch.com/version-sat
+One common source of software variability are dependencies and the dependency solving problem. In fact, operating systems have struggled with this issue for a number of years before it was realized that dependency resolution was NP-complete. \cite{abate2012dependency}
+Dependency hell is NP Complete: https://research.swtch.com/version-sat
 
 \section{Containerization}\label{sec:containerization}
 
@@ -1081,7 +1085,7 @@ One issue encountered is the matter of whether to package source code directly i
 
 \section{Docker and ROS}
 
-Prior work has explored the Dockerization of ROS containers\cite{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform\cite{paull2017duckietown}.
+Prior work has explored the Dockerization of ROS containers~\cite{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform~\cite{paull2017duckietown}.
 
 \chapter{Case study: application for autonomous robotics}
 
