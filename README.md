@@ -283,7 +283,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
     // Evaluate the results at a given seed
     val autoEval = `∂z∕∂x`(x to ẋ, y to ẏ) 
     val manualEval = manualDx(x to ẋ, y to ẏ)
-    // Should pass if Δ(adEval, manualEval) < Ɛ
+    // Should pass iff Δ(adEval, manualEval) < Ɛ
     autoEval shouldBeApproximately manualEval
   }
 }

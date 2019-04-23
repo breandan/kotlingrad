@@ -22,28 +22,25 @@ fun main() {
   }
 }
 
-interface Group<X: Group<X>> {
-  operator fun unaryMinus(): X
-  infix operator fun minus(subtrahend: X): X = this + -subtrahend
-  operator fun plus(addend: X): X
-  operator fun times(multiplicand: X): X
+interface Field<X: Field<X>> {
+  val e: X
   val one: X
   val zero: X
-}
-
-interface Field<X: Field<X>>: Group<X> {
+  operator fun unaryMinus(): X
+  operator fun plus(addend: X): X
+  operator fun minus(subtrahend: X): X = this + -subtrahend
+  operator fun times(multiplicand: X): X
   operator fun div(dividend: X): X = this * dividend.pow(-one)
   infix fun pow(exp: X): X
   fun ln(): X
-  val e: X
 }
 
 abstract class RealNumber<X: Field<X>>: Field<X>
 
 class DoubleReal(val value: Double): RealNumber<DoubleReal>() {
+  override val e by lazy { DoubleReal(Math.E) }
   override val one by lazy { DoubleReal(1.0) }
   override val zero by lazy { DoubleReal(0.0) }
-  override val e by lazy { DoubleReal(Math.E) }
 
   override fun plus(addend: DoubleReal) = DoubleReal(value + addend.value)
   override fun unaryMinus() = DoubleReal(-value)
