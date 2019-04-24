@@ -242,7 +242,7 @@ The goal of this thesis is to show it is possible to build unintelligent softwar
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
-In traditional software engineering, the Waterfall Method is a classical software process model that comprises of five stages. We propose contributions to four: design, implementation, testing and maintenance.
+In traditional software engineering, the Waterfall Method is a classical software process model that comprises of five stages. We propose contributions to four: design in Chap.~\ref{ch:hatchery}, implementation in Chap.~\ref{ch:kotlingrad}, testing in Chap.~\ref{ch:difftest} and maintenance in Chap.~\ref{ch:software-reproducibility}.
 
 \subsection{Designing intelligent systems}
 
@@ -406,7 +406,7 @@ Strong, static types are important for reasoning about the behavior of complex p
 
 \section{Imperative and functional languages}
 
-Most programs written today are written in imperative languages, due in part to the prevalence of the Turing Machine and Von Neumann architecture. $\lambda$-calculus provides an equivalent \footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more natural way to express mathematical functions and calculate their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, but we have no way to refer to the function itself, or for example, to write a function which takes another function as input. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which is not the case in mathematics, and which requires taking extra precautions when calculating mathematical derivatives.
+Most programs written today are written in the imperative style, due in part to the prevalence of the Turing Machine and von Neumann architecture. $\lambda$-calculus provides an equivalent \footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more natural way to express mathematical functions and calculate their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, but we have no way to refer to the function itself, for example, to write a function which transforms another function. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which is not the case in mathematics, and which requires taking extra precautions when calculating mathematical derivatives.
 
 In functional programming, function composition is a very natural pattern. To take the derivative of a function composed by another function, we simply apply the chain rule. Since there is no mutable state, we do not require any exotic data structures or compiler tricks to keep track of the state.
 
@@ -571,7 +571,7 @@ Describing the Kotlin$\nabla$ type system (formally).
 \end{table}
 }
 
-\section{Testing}
+\section{Testing}\label{sec:testing}
 
 Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to metamorphic testing. Notable implementations include QuickCheck, Hypothesis and ScalaTest (ported to Kotlin in KotlinTest). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation:
 
@@ -600,7 +600,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 }
 \end{lstlisting}
 
-PBT will search the input space for two numerical values ẋ and ẏ, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
+PBT will search the input space for two numerical values \texttt{x0} and \texttt{y0}, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
 
 \begin{lstlisting}[language=Kotlin, showstringspaces=false]
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
@@ -1036,7 +1036,7 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
 %    \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each gradient descent trajectory will terminate before exhausting our budget.}
 %\end{algorithm}
 
-\section{Regression testing: a tool to prevent catastrophic forgetting}
+\section{Regression testing and forgetting}
 
 An endemic problem in modern deep learning is the problem of forgetting. In order to combat this issue, we turn to a classic software testing tool: regression testing.
 
