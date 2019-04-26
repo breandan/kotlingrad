@@ -27,6 +27,11 @@
 \newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}}
 \newcommand{\xmark}{\textcolor{red}{\ding{55}}}
 
+\newcommand{\mediumwell}[1]{\textcolor{green}{#1}}
+\newcommand{\medium}[1]{\textcolor{yellow}{#1}}
+\newcommand{\mediumrare}[1]{\textcolor{orange}{#1}}
+\newcommand{\rare}[1]{\textcolor{red}{#1}}
+
 % Table
 \newcommand*\rot{\rotatebox{90}}
 
@@ -215,7 +220,7 @@
 \cleardoublepage
 \pagenumbering{arabic}
 
-\chapter{Introduction}\label{ch:introduction}
+\mediumwell{\chapter{Introduction}\label{ch:introduction}}
 
 \setlength{\epigraphwidth}{0.9\textwidth}
 \epigraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
@@ -238,7 +243,7 @@ Typically, although not always, these systems have the following properties:
 
 In recent years, computer science and software engineering has made large strides in building such systems. These breakthroughs were the direct result of fundamental progress in neural network algorithms and representation learning. Also key to this progress was the adoption of open source techniques, largely to the credit of the software engineering community, who pioneered the development of software libraries for automatic differentiation like Theano~\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch~\cite{collobert2002torch} and Caffe~\cite{jia2014caffe}, and who built many popular simulators, benchmarks and datasets via GitHub, Kaggle and OpenAI.
 
-The goal of this thesis is to show it is possible to build unintelligent software tools that facilitate the process of programming intelligent systems, and which reduce the mental effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. Finally, we use Docker containers~\cite{merkel2014docker} to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. To demonstrate the effectiveness of our toolset, we create an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools we developed.
+The goal of this thesis is to show it is possible to build software tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users when writing robotics applications. This project was created to reduce the complexity of working with robotics code. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. Finally, we use Docker containers~\cite{merkel2014docker} to automate the process of building, testing and deploying reproducible robotics applications to heterogeneous hardware platforms. To demonstrate the effectiveness of our toolset, we create an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools we developed.
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -246,13 +251,17 @@ In traditional software engineering, the Waterfall Method is a classical softwar
 
 \section{Designing intelligent systems}
 
-In software engineering, designers, requirements engineers and developers must work in concert to produce a system that is well-designed, meets the needs of its users, and is highly performant. Sometimes this means compromising requirements, or redesigning a system to become more flexible. Sometimes this means changing the requirements to accommodate engineering challenges, or refactoring the solution to remove technical debt. Software engineering is a multi-objective optimization process, and in order to produce software that approximates the criteria of all stakeholders, developers must be able to iterate on their ideas rapidly, and integrate feedback from users. Yet today's software systems are larger and more unwieldy than ever before. Some of that complexity can be managed by abstraction, but some of the complexity which developers face cannot be solved by abstraction alone.
+Today's software systems are deeply complex entities. Gone are the days where a solitary programmer, even a very skilled one, can maintain a large software system. To effectively scale software systems, programmers must pool their mental capacity to form a robust knowledge graph. Software projects which rely on a small set of maintainers tend to perish due to the so-called \textit{bus factor}~\cite{cosentino2015assessing} - large portions of the graph are locked inside someone's head. Successful software projects learn how to distribute this graph and form new connections to the outside world. The knowledge graph which accumulates around a large software project contains facts, but it also contains workflows - programming workflows, debugging workflows, delivery workflows - well-traveled pathways through the labyrinth of software development. Components of this graph can be committed to writing in the form of documentation, but documentation is time-consuming and grows stale over time. How can we get the benefits of documentation without the burdens of maintenance?
+
+The development of software systems has a second component, the social graph. The social graph of a successful software development team contains product designers, managers and software engineers. They work together to create a product that is well-designed, meets the users' needs, and performant. Sometimes this means redesigning a system to become more flexible. Sometimes this means  revising the specification to accommodate certain engineering challenges, or rewriting source code to remove technical debt. Software design is a multi-objective optimization process and works best when it has contributors with multiple backgrounds and overlapping goals. In order to produce software that approximates the criteria of its stakeholders, developers must be able to rapidly iterate on prototypes, and continuously integrate user feedback. Yet today's software systems are larger and more unwieldy than ever before. How can we enable developers to work together more efficiently?
 
 Let us consider the mechanical process of writing software with a keyboard and a computer screen.
 
-Integrated development environments (IDEs) can assist developers building complex software applications by automating certain repetitive programming tasks. For example, IDEs perform static analyses and inspections for catching bugs quickly. They can provide completion, refactoring and source code navigation. And they can automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation promises increased developer productivity by delivering earlier feedback, detecting clerical errors, and freeing the developer's attention to focus on higher-level design tasks. Rather than being forced to concentrate on the structure and organization of text, if developers are able manipulate code at a semantic level, they will be much happier and more productive. By automating common tasks in software development, these purely mechanical tools allow developers to focus on the fundamentals of writing and understanding programs.
+Integrated development environments (IDEs) can assist developers building complex software applications by automating certain repetitive programming tasks. For example, IDEs perform static analyses and inspections for catching bugs quickly. They can provide completion, refactoring and source code navigation. And they can automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation promises increased developer productivity by delivering earlier feedback, detecting clerical errors, and freeing developer's attention to focus on fundamental design tasks. Rather than being forced to concentrate on the structure and organization of text, if developers are able manipulate code at a semantic level, they will be much happier and more productive. By automating common tasks in software development, these purely mechanical tools allow developers to focus on the fundamentals of writing and understanding programs.
 
-In some ways, the development of intelligent systems is no different than classical software engineering. The same key principles and best-practices in software engineering are also applicable to intelligent systems. The same activities that guide software engineering, from analysis, design, implementation, verification and maintenance will continue to play an important role when building intelligent systems. But in other ways, the generic tools we use for developing handwritten software will require domain-specific adaptations in order for machine learning to become a truly first-class citizen in the next generation of intelligent software. Towards that end, we propose Hatchery, a custom plugin for building applications for the Robot Operating System (ROS), one popular robotics middleware. At the time of its release, Hatchery was the first ROS plugin for the IntelliJ Platform, a popular IDE for C/C++, Python and Android, and remains the most popular plugin with over 8,000 downloads. While the idea is simple, its prior absence and subsequent adoption in the community suggests these kinds of tools fill a much-needed gap in the development of a complex software framework, particularly for robotics applications.
+But what are IDEs really doing? They are doing graph traversal - guiding developers through common workflows across the knowledge graph of a software project. Consider what a new programmer must learn to become an effective project contributor: in addition to learning the language, developers must learn to use libraries and frameworks - arguably languages in their own right. They must become familiar with programming tools to facilitate software development, from build tools to version control and continuous integration. They need to become familiar with the software ecosystem and common patterns of development. And they must learn how to collaborate with a distributed team of developers. By automating common workflows in an interactive programming environment and making the implicit graph connectivity in a project explicit through document markup~\cite{goldfarb1981generalized} and projectional editing~\cite{voelter2014towards}, a well-designed IDE will help with all of these tasks. It should come as no surprise that at their core, IDEs are graph databases.
+
+In some aspects, the development of intelligent systems is no different than classical software engineering. While the former requires more human intervention, both are living, breathing systems. The same key principles and best-practices which guide software engineering are also applicable to intelligent systems. The same activities, from analysis, design, implementation, verification and maintenance will continue to play an important role in building intelligent systems. But in other aspects, the generic programming tools we use for developing handwritten software will require domain-specific adaptations for machine learning to become a truly first-class citizen in the next generation of software systems, particularly for embodied agents. Towards that end, we propose \href{https://github.com/duckietown/hatchery}{Hatchery}, an IDE for the Robot Operating System (ROS), one popular robotics middleware.
 
 \section{Implementation: Languages and compilers}
 
@@ -272,7 +281,7 @@ One of the challenges of building intelligent systems and programming at large, 
 
 As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions executed by a computer during the execution of a program were not written or intended to be read by the programmer, and in most cases, have long since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. And for most programs, such as those found in a typical GitHub repository, a vanishingly small fraction corresponds to the handwritten program itself.
 
-Applied machine learning shares many of the same programming challenges as traditional software development, with source code, dependency and release management. We can imagine the current state of training a deep learning model as particularly long compilation step. Crucially, it differs in that the "source code" is a high level language which does not directly correspond to the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\cite{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
+Applied machine learning shares many of the same programming challenges as traditional software development, with source code and, dependency management. We can imagine the current process of training a deep learning model as particularly long compilation step. Crucially, it differs in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\cite{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
 Hardware manufacturers have developed a variety of custom silicon to train and run these programs rapidly. But unlike most programming, deep learning is a much simpler model of computation, based on linear algebra - so long as a computer can add and multiply, it has the ability to run a deep neural network. Yet due to the variety of hardware platforms which exist and the software churn associated with them, reproducing deep learning models can be painstakingly difficult on new hardware, even with the same source code and dependencies. Many graph formats, or \textit{intermediate representations} (IRs) in compiler parlance, promise hardware portability. But despite of these promises, if developers are not careful, their models may not converge during training, or produce different results on different hardware. Complicating the problem, IRs are produced by competing vendors, with competing chips and incompatible standards (e.g.~MLIR, ONNX, NNEF, OpenVINO, et al.). While some have tried to leverage existing compilers such as GHC~\cite{elliott2018simple} or LLVM~\cite{wei2017dlvm}, there are few signs of convergence.
 
@@ -282,20 +291,17 @@ In order to mitigate the effects of software variability and assist the developm
 
 While today's simulators have become increasingly realistic, most roboticists agree that simulation alone will never be enough to capture the full distribution of real world data. In this view, while simulation can be a useful tool in detecting errors, it cannot fully reproduce all the subtleties of the real world, and must never be used as a surrogate for training on real-world data. Others have suggested a middle road~\cite{bousmalis2018using}, where judicious use of simulator training, alongside domain adaption is a sufficiently rigorous setting for training intelligent systems. Regardless of which view prevails, it is our goal to provide rapid feedback to developers, and make this process as reproducible as possible.
 
-
 \subsection{Case Study}\label{subsec:case-study}
 
-Ideally, it is best when the users' interests and the engineers' interest are well-aligned, because the product tends to be much higher quality. In the best case scenario, a system's engineers are a true subset of the users (either by choice or necessity), which leads to a virtuous cycle of improvement. Termed "dogfooding"~\cite{harrison2006eating}, this practice was first publicized in the dog food industry, and later adopted in the software industry due to its success. While engineers must often create products for a fundamentally different audience, or species, it is possible to create systems where both overlap.
+Ideally, it is best when the users' interests and the engineers' interest are well-aligned, because the product tends to be much higher quality. In the best case scenario, a system's engineers are a true subset of the users (either by choice or necessity), which leads to a virtuous cycle of improvement. Termed "dogfooding"~\cite{harrison2006eating}, this practice was first publicized in the dog food business, and perhaps owing to its success, later adopted in the software industry. While engineers must often create products for a fundamentally different audience, or species, it is possible to create systems where both overlap.
 
-\chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}
+\rare{\chapter{Design: Programming tools for robotics systems}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J. C. R. Licklider, \textit{Man-Computer Symbiosis}~\cite{licklider1960man}\end{flushright}}
 
-Programming tools are a bicycle for the mind. Complex systems need better tools for developers.
-
 \section{Software architecture of a robotics application}
 
-https://github.com/duckietown/hatchery
+At the time of its release, \href{https://github.com/duckietown/hatchery}{Hatchery} was the first ROS plugin for the IntelliJ Platform, a popular IDE for C/C++, Python and Android, and a year later, is the most popular plugin with close to 10,000 downloads. While the idea is simple, its prior absence and subsequent adoption in the community suggests these kinds of tools fill a much-needed gap in the development of a complex software framework, particularly for robotics applications.
 
 \section{Structure of a ROS application}
 
@@ -327,7 +333,7 @@ Assistance for running ROS applications.
 
 Detecting and managing ROS installations.
 
-\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}
+\mediumwell{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
 \setlength{\epigraphwidth}{0.5\textwidth}
 \epigraph{``Programs must be written for people to read, and only incidentally for machines to execute.''}{\begin{flushright}--Harold Abelson and Gerald Jay Sussman, \textit{Structure and Interpretation of Computer Programs, Preface to the First Edition~\cite{abelson1996structure}}\end{flushright}}
@@ -936,7 +942,7 @@ Stalin$\naba$         & Scheme   & \cmark & \cmark & \xmark & \xmark & \xmark & 
 \end{tabular}
 \end{center}
 
-\chapter{Verification and validation}\label{ch:difftest}
+\rare{\chapter{Verification and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert Weiner, \textit{Some moral and technical consequences of automation}~\cite{wiener1960some}\end{flushright}}
@@ -1051,7 +1057,7 @@ An endemic problem in modern deep learning is the problem of forgetting. In orde
 
 Regular regression testing gives clear diagnostics about the behavior of intelligent systems.
 
-\chapter{Software Maitenance and Reproducibility}\label{ch:software-reproducibility}
+\mediumrare{\chapter{Software Maitenance and Reproducibility}\label{ch:software-reproducibility}}
 
 In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering like continuous integration and delivery can help researchers mitigate the variability associated with building and running software. Docker~\cite{merkel2014docker} is one technical solution we will discuss. Our work is roughly related to computational determinism, and does not consider the variability of distributional shift or related statistical notions of variation.
 
@@ -1090,7 +1096,7 @@ One issue encountered is the matter of whether to package source code directly i
 
 Prior work has explored the Dockerization of ROS containers~\cite{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform~\cite{paull2017duckietown}.
 
-\chapter{Case study: application for autonomous robotics}
+\rare{\chapter{Case study: application for autonomous robotics}}
 
 As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the proposed toolchain.
 
@@ -1110,7 +1116,7 @@ Verified using property-based testing.
 
 Deployed and CI-tested using Docker.
 
-\chapter{Conclusion}\label{ch:conclusion}
+\rare{\chapter{Conclusion}\label{ch:conclusion}}
 
 \section{Future work}
 
