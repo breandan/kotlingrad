@@ -2,14 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   application
-  kotlin("jvm") version "1.3.30"
+  kotlin("jvm") version "1.3.31"
 }
 
 group = "edu.umontreal"
 version = "0.1"
 repositories.jcenter()
 
-val kotlinVersion = "1.3.30"
+val kotlinVersion = "1.3.31"
 
 tasks {
   register("plot", JavaExec::class) {
