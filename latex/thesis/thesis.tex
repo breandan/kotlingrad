@@ -226,13 +226,11 @@
 \setlength{\epigraphwidth}{0.9\textwidth}
 \epigraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
 
-In computer science, we are chiefly concerned with computational complexity. Computer scientists have developed powerful tools for describing complexity using function analysis and information theory. The field of software engineering is primarily interested in a different measure of complexity - the complexity of building software, the digital manifestation of algorithms on physical hardware. One sort of software complexity is the cognitive effort required to understand a program's source code, and which can be approximated by metrics such as cyclomatic or Halstead complexity. By any measure of complexity, today's software more complex than ever before. To properly work with these software systems, we need better tools for managing the inherent complexity of building software.
+Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it using tools from function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software - the digital manifestation of algorithms on physical hardware. One type of software complexity is the cognitive effort required to understand a program’s source code, which can be approximated by metrics such as cyclomatic or Halstead complexity.  While today’s software is more intelligent than ever before, it shows few signs of becoming more intelligible, and better tools are needed for managing the complexity inherent in building it.
 
-\textit{Our objective is to reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and containers.}
+\textit{The objective of writing this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and container-based virtualization.}
 
-One may ask, what is an intelligent system, and how is it different from ordinary software? Let us use the following loose definition to guide our discussion:
-
-An intelligent system is a software system which is capable of solving tasks that it was not programmed to solve, and which human experts were previously incapable of solving by hard-coding explicit rules. Typically, these systems have the following properties:
+Broadly speaking, intelligent systems differ from ordinary software systems in that they enable machines to detect patterns, perform tasks, and solve problems which they are not explicitly programmed to solve and which human experts were previously incapable of solving by hard-coding explicit rules. Typically, these systems have the following properties:
 
 \begin{enumerate}
     \item learn generalizable rules by processing large amounts of data
@@ -240,9 +238,11 @@ An intelligent system is a software system which is capable of solving tasks tha
     \item are able to exceed the performance of a well-trained human
 \end{enumerate}
 
-In recent years, computer science and software engineering has made large strides in building such systems. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch~\cite{collobert2002torch} and Caffe~\cite{jia2014caffe}, and helped build many popular simulators, benchmarks and datasets for machine learning.
+While the idea of intelligent systems has been around for decades, three critical developments have made the development of these systems possible. First, computer processing power has become faster, cheaper, and much more readily available. Similarly, the digitalization of new datasets has made vast amounts of information available, and data storage costs have plummeted dramatically. (A \$5 thumb drive today has 200 times more storage capacity than a 2,000 pound, 5 MB, IBM hard drive that leased for \$3,000/mo. in 1956.) Most importantly, has been the development of more efficient learning algorithms.
 
-The goal of this thesis is to show it is possible to build software tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users when writing robotics software~\ref{ch:hatchery}. Next, we demonstrate a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning~\ref{ch:kotlingrad}. To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property}. Finally, we use Docker containers~\cite{merkel2014docker} to automate the process of building, testing and deploying reproducible robotics applications on heterogeneous hardware platforms~\ref{ch:ducker}. As a proof of concept, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools developed.
+In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\cite{DBLP:journals-corr-Al-RfouAAa16}, Torch~\cite{collobert2002torch} and Caffe~\cite{jia2014caffe}, and built many popular simulators for machine learning.
+
+In this thesis, we explore various tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (Chapter~\ref{ch:hatchery}). Next, we show a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning (Chapter~\ref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property} and adversarial learning~\cite{lowd2005adversarial} (Chapter~\ref{ch:difftest}). Docker containers~\cite{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (Chapter~\ref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools developed (Chapter~\ref{ch:case-study}).
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -271,9 +271,9 @@ In some aspects, the development of intelligent systems is no different than cla
 
 \section{Implementation: Languages and compilers}
 
-Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have little time to think about the high-level characteristics of these systems. Similarly, if the abstractions we use have too many assumptions baked in, small variations will require costly reimplementation. This is no different from traditional software engineering - as engineers, need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details, too abstract and the details are lost completely. With machine learning, the necessity of choosing appropriate abstractions is even more important, as the tenuous connection to interpretability we have between runtime behavior and source code is already stretched quite thin.
+Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have little time to think about the high-level characteristics of these systems. Similarly, if the abstractions we use have too many assumptions baked in, small variations will require costly reimplementation. This is no different from traditional software engineering - as engineers, need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details, too abstract and the details are lost completely. With machine learning, the necessity of choosing good abstractions is even more important, as the connection of between runtime behavior and source code is already stretched quite thin.
 
-The development of modern machine learning can be credited to progress in automatic differentiation.
+The development of modern machine learning can be partly credited to progress in automatic differentiation.
 
 \section{Testing: Verification and validation}
 
@@ -1121,7 +1121,7 @@ One issue encountered is the matter of whether to package source code directly i
 
 Prior work has explored the Dockerization of ROS containers~\cite{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform~\cite{paull2017duckietown}.
 
-\rare{\chapter{Case study: application for autonomous robotics}}
+\rare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
 
 As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the proposed toolchain.
 
