@@ -992,7 +992,7 @@ Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
 From the chain rule of calculus, we know that:
 %
 \begin{equation}
-    \frac{dP}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+    \nabla p_i(p_0) = \frac{dp_{i+1}}{dp_{i}} \cdot \frac{dp_{i}}{dp_{i-1}}, \forall i \in (0, n)
 \end{equation}
 %
 More broadly, if $P: \mathbb{R}^n\rightarrow\mathbb{R}^k$, and $p_{i}: \mathbb{R}^{dim_{\mathbb{R}}(p_{i-1})}\rightarrow \mathbb{R}^{dim_{\mathbb{R}}(p_{i+1})} \forall i \in (0, n)$:
