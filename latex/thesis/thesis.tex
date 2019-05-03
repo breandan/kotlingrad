@@ -73,6 +73,10 @@
     inputencoding=utf8
 }
 
+% Bulleted lists
+
+%\setlist[enumerate]{topsep=30pt,itemsep=-1ex,partopsep=1ex,parsep=30ex}
+
 %\renewcommand*{\ttdefault}{qcr}
 
 \def\sloppy{%
@@ -267,7 +271,7 @@ Integrated development environments (IDEs) can assist developers building comple
 
 But what are IDEs really doing? They are guiding developers through the knowledge graph of a software project. Consider what a new developer must learn to get up to speed: in addition to learning the language, developers must learn to use libraries and frameworks (arguably languages in their own right). They must become familiar with command line tools for software development, from build tools to version control and continuous integration. They must become familiar with the software ecosystem, programming styles, conventions and development workflows. And they must learn how to collaborate on a distributed team of developers. By automating common tasks in an interactive programming environment and making the graph connectivity explicit through document markup~\cite{goldfarb1981generalized} and projectional editing~\cite{voelter2014towards}, a well-designed IDE is a tool for graph traversal. It should come as no surprise IDEs are really graph databases.
 
-In some aspects, the development of intelligent systems is no different than classical software engineering. While the former requires more human intervention, the same principles and best-practices which guide software engineering are also applicable to intelligent systems. And the same activities, from analysis, design, implementation, verification and maintenance will continue to play an important role in building intelligent systems. But in other aspects, the generic programming tools we use for developing traditional software will require domain-specific adaptations for machine learning to become a truly first-class citizen in the next generation of software systems, particularly in the case of physically embodied agents. Towards that end, we propose \href{https://github.com/duckietown/hatchery}{Hatchery}, an IDE for the Robot Operating System (ROS), a popular robotics middleware.
+In some aspects, the development of intelligent systems is no different than classical software engineering. While the former requires more human intervention, the same principles and best-practices which guide software engineering are also applicable to intelligent systems. And the same activities, from analysis, design, implementation, verification and maintenance will continue to play an important role in building intelligent systems. But in other aspects, the generic programming tools we use for developing traditional software will require domain-specific adaptations for machine learning to become a truly first class citizen in the next generation of software systems, particularly in the case of physically embodied agents. Towards that end, we propose \href{https://github.com/duckietown/hatchery}{Hatchery}, an IDE for the Robot Operating System (ROS), a popular robotics middleware.
 
 \section{Implementation: Languages and compilers}
 
@@ -352,33 +356,36 @@ Detecting and managing ROS installations.
 \setlength{\epigraphwidth}{0.5\textwidth}
 \epigraph{``Programs must be written for people to read, and only incidentally for machines to execute.''}{\begin{flushright}--Harold Abelson and Gerald Jay Sussman, \textit{Structure and Interpretation of Computer Programs, Preface to the First Edition~\cite{abelson1996structure}}\end{flushright}}
 
-In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program\footnote{n.b.\ Not all programs are computable functions, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly. Or perhaps the implementation was correct, but the function was not given the right set of inputs - had it been, then the program would have produced a better answer. Regardless of the implementation, we would like to determine how to change the input slightly, so as to produce a more suitable output.
+In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program\footnote{Not all programs are computable functions, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly, or maybe the implementation was correct, but the function was not given the right set of inputs - had it been, then the program would have produced a better answer. Regardless of the implementation, we would like to determine how to change the input slightly, so as to produce a more suitable output.
 
 \section{Automatic differentiation}\label{sec:automatic-differentiation}
 
-Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
+Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $p_n: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
 
 %
 \begin{equation}
-    P(p_0)=p_n \circ p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0
+    p_n(p_0)= p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0
 \end{equation}
 %
-
-\noindent From the chain rule of calculus, we know that:
-
+\noindent From the chain rule of calculus, we recall that:
 %
 \begin{equation}
-    \frac{dP}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+    \frac{dp_n}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
 
-
-\noindent Likewise, if we have a function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
+\noindent Likewise, for a scalar functions $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
 
 \begin{equation}
     \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_n}\right)
 \end{equation}
 
-\noindent More generally, if we have a function $\mathbf{f}:  \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian $\mathbf J$ is defined like so:
+\noindent Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the Hessian, $\mathbf{H}$:
+
+\begin{equation}
+\mathbf{H} = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{n}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{n}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{n}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{n}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{n}^{2}}}\end{bmatrix}
+\end{equation}
+
+\noindent More generally, for a vector function $\mathbf{f}:  \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian $\mathbf J$ is defined as:
 
 \begin{equation}
 \mathbf J = \begin{bmatrix}
@@ -387,17 +394,35 @@ Given some input to a function, AD tells us how to change the input by a minimal
       \dfrac{\partial f_1}{\partial x_1} & \cdots & \dfrac{\partial f_1}{\partial x_n}\\
       \vdots & \ddots & \vdots\\
       \dfrac{\partial f_m}{\partial x_1} & \cdots & \dfrac{\partial f_m}{\partial x_n} \end{bmatrix}
+    = \begin{bmatrix}
+          \nabla f_1 \\
+          \vdots \\
+          \nabla f_n \end{bmatrix}
+\end{equation}
+
+\noindent For completeness, but rarely used in practice is the second-order partials for vector functions:
+
+\begin{equation}
+\mathbf{H} (\mathbf {f} )=[\mathbf {H} (f_{1}),\mathbf {H} (f_{2}),\dots ,\mathbf {H} (f_{m})]
 \end{equation}
 
 \noindent We can use these tools to compute the direction to adjust the inputs of a computable function, in order to maximally change that function's output, i.e.\ the direction of steepest descent.
 
-Sometimes a function has the property that given an input $x$, no matter how we update $x$, the output stays the same. We say that such functions have zero gradient for that input.
+Sometimes a function has the property that given an input $a$, no matter $a$ is changed, the output stays the same. We say that such functions have zero gradient for that input.
 
 \begin{equation}
-    (\nabla F)(x) \approx \mathbf{0}
+    (\nabla F)(a) \approx \mathbf{0}
 \end{equation}
 
-For some classes of computable functions, small changes to the input will produce a sudden large change in output. We say that such functions are non-differentiable.
+The cost of calculating the Hessian, $\mathbf{H}$ is approximately quadratic \cite{griewank1993some} with respect to the number of independent variables under differentiation. If $\mathbf{H}(a)$ is tractable to compute and invertible, for such points we could use the second-partial derivate test to determine that:\\
+
+\begin{enumerate}
+    \item If all eigenvalues of $\mathbf{H}(a)$ are positive, $a$ is a local minimum
+    \item If all eigenvalues of $\mathbf{H}(a)$ are negative, $a$ is a local maximum
+    \item If $\mathbf{H}$ contains a mixture of positive and negative eigenvalues, $a$ is a saddle point\\
+\end{enumerate}
+
+For some classes of computable functions, small changes to the input will produce a sudden large change in the output. We say that such functions are non-differentiable.
 
 \begin{equation}
     ||\nabla F|| \approx \pm \infty
@@ -414,7 +439,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 
-    This theorem does not put an upper bound on the constant $n$, or how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing these linear and non-linear functions in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = [f(x^{(1)}), \dots, f(x^{(k)})]$, which we try to obtain in as large a quantity as possible and run the following procedure:
+    This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing these linear and non-linear functions in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = [f(x^{(1)}), \dots, f(x^{(k)})]$, which we try to obtain in as large a quantity as possible and run the following procedure:
 
 \begin{equation}\label{eq:grad_descent}
     \begin{split}
@@ -435,7 +460,7 @@ For most common $\mathcal{L}$, the complexity of this procedure is linear with $
 
 The renaissance of modern deep learning is widely attributed to progress in three research areas: algorithms, data and hardware. Among algorithms, most research has focused on deep learning architectures and representation learning. Equally important, arguably, is the role that automatic differentiation (AD) has played in facilitating the implementation of these ideas. Prior to the adoption of general-purpose AD libraries such as Theano, PyTorch and TensorFlow, gradients had to be derived manually. The widespread adoption of AD software simplified and accelerated the pace of gradient-based machine learning, allowing researchers to build deeper network architectures and new learning representations. Some of these ideas in turn, formed the basis for new methods in AD, which continues to be an active area of research in the programming language community.
 
-An key aspect of the connectionist paradigm is learning neural representations via gradient descent. According to theory, for gradient descent to work, the representation must be differentiable almost everywhere. However many representations are non-differentiable in their natural domain. For example, the structure of language in its written form is not easily differentiable, as small changes to a word's symbolic representation can cause sudden changes to its semantic meaning. A key insight from deep learning is that many discrete data types can be mapped to a smoother latent space. For example, if we represent words as a vector of real numbers, then it is possible to define a mapping from the textual domain to their vector-based representation so that the semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space~\cite{pennington2014glove}. It so happens that many classes of discrete problems can be relaxed to continuous surrogates by using a good representation.
+A key aspect of the connectionist paradigm is learning neural representations via gradient descent. According to theory, for gradient descent to work, the representation must be differentiable almost everywhere. However many representations are non-differentiable in their natural domain. For example, the structure of language in its written form is not easily differentiable, as small changes to a word's symbolic representation can cause sudden changes to its semantic meaning. A key insight from deep learning is that many discrete data types can be mapped to a smoother latent space. For example, if we represent words as a vector of real numbers, then it is possible to define a mapping from the textual domain to their vector-based representation so that the semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space~\cite{pennington2014glove}. It so happens that many classes of discrete problems can be relaxed to continuous surrogates by using a good representation.
 
 Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using low-precision arithmetic such as 8-bit floating point ~\cite{wang2018training} and integer~\cite{jacob2018quantization} quantization are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\Beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should not have come as a big surprise, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, neural network training is surprisingly resilient to quantization.
 
@@ -449,11 +474,11 @@ Dynamically typed languages are commonly used for experimentation and prototypin
 
 According to some studies, type errors account for over 15\% of bugs~\cite{gao2017type}. While the causality between statically typed languages and fewer bugs is not widely established, types are necessary to build more powerful static analyses and tools for program understanding.
 
-Strong, static types are important for reasoning about the behavior of complex programs. Statically typed languages offer a number of benefits to users, such as eliminating of a broad class of runtime errors by virtue of the type system alone. Furthermore, a well-typed API can eliminate the potential for incorrect API usages by enforcing certain usage patterns. Statically typed languages also provide several benefits for static code analysis, as tools can offer more relevant autocompletion suggestions, and provide early warnings for compile and probable runtime errors.
+Strong, static types are important for reasoning about the behavior of complex programs. Statically typed languages offer a number of benefits to users, such as eliminating a broad class of runtime errors by virtue of the type system alone. Furthermore, a well-typed API can eliminate the potential for incorrect API usages by enforcing certain usage patterns. Statically typed languages also provide several benefits for static code analysis, as tools can offer more relevant autocompletion suggestions, and provide early warnings for compile and probable runtime errors.
 
 \section{Imperative and functional languages}
 
-Most programs written today are written in the imperative style, due in part to the prevalence of the Turing Machine and von Neumann architecture. $\lambda$-calculus provides an equivalent \footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more natural way to express mathematical functions and calculate their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, but we have no way to refer to the function itself, for example, to write a function which transforms another function. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which is not the case in mathematics, and which requires taking extra precautions when calculating mathematical derivatives.
+Most programs written today are written in the imperative style, due in part to the prevalence of the Turing Machine and von Neumann architecture. $\lambda$-calculus provides an equivalent\footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more natural way to express mathematical functions and calculate their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, but we have no way to refer to the function itself, for example, to write a function which transforms another function. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which is not the case in mathematics, and which requires taking extra precautions when calculating mathematical derivatives.
 
 In functional programming, function composition is a very natural pattern. To take the derivative of a function composed by another function, we simply apply the chain rule~\ref{sec:automatic-differentiation}. Since there is no mutable state, we do not require any exotic data structures or compiler tricks to keep track of the state.
 
@@ -497,7 +522,7 @@ fun dot(l1, l2) {
 
 Kotlin is a strong, statically typed language, that is well-suited for building cross-platform applications, with implementations in native, JVM, and JavaScript.
 
-When programming in a statically-typed language, one common question is, "Given a value, \texttt{x}, can \texttt{x} be assigned to a variable of type \texttt{Y}?" (e.g. \texttt{x instanceof Y}) In Java, this question is both unsound~\cite{amin2016java} and undecidable~\cite{Grigore:2017:JGT:3009837.3009871} in the general case. It possible to construct a Java program for which the answer is "yes" regardless of \texttt{Y}, or which the answer cannot be determined in a finite amount of time.
+When programming in a statically typed language, one common question is, "Given a value, \texttt{x}, can \texttt{x} be assigned to a variable of type \texttt{Y}?" (e.g. \texttt{x instanceof Y}) In Java, this question is both unsound~\cite{amin2016java} and undecidable~\cite{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program for which the answer is "yes" regardless of \texttt{Y}, or which the answer cannot be determined in a finite amount of time.
 
 Kotlin's type system~\cite{tate2013mixed} is strictly less expressive, but fully compatible with Java.
 
@@ -522,11 +547,11 @@ Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr
     \label{fig:kotlingrad_digram}
 \end{figure}
 
-Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially just data structures masquerading as code. These structures may look and act like code, but are really just functions building an abstract syntax tree (AST), which can be evaluated eagerly or lazily depending on the developer's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fledged programming language. Popular examples include SQL/LINQ~\cite{meijer2006linq}, OptiML~\cite{sujeeth2011optiml} and other fluent interfaces~\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages~\cite{elliott2003compiling,rompf2010lightweight}, perhaps due to the concept of code as data and data as code\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}.
+Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really just functions building an abstract syntax tree (AST), which can be evaluated eagerly or lazily depending on the developer's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fledged programming language. Popular examples include SQL/LINQ~\cite{meijer2006linq}, OptiML~\cite{sujeeth2011optiml} and other fluent interfaces~\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages~\cite{elliott2003compiling,rompf2010lightweight}, perhaps due to the concept of code as data and data as code\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}.
 
 \section{Usage}
 
-Kotlin$\nabla$ allows users to implement differentiable programs by composing operations on numerical fields to form algebraic expressions. Expressions are lazily evaluated inside a numerical context, which may imported on a per-file basis or lexically scoped for finer-grained control over the runtime behavior.
+Kotlin$\nabla$ allows users to implement differentiable programs by composing operations on numerical fields to form algebraic expressions. Expressions are lazily evaluated inside a numerical context, which may be imported on a per file basis or lexically scoped for finer-grained control over the runtime behavior.
 
 \begin{figure}[!htb]
 \begin{lstlisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output.},label={lst:basic_kotlingrad}, language=Kotlin]
@@ -587,7 +612,7 @@ val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
 
 It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. A similar pattern can be applied to matrices and higher rank tensors, where the type signature encodes the shape of the operand at runtime.
 
-With these basic ingredients, we have almost all the features necessary to build an expressive shape-safe AD, but unlike prior implementations using Scala or Haskell, in a language that is fully interoperable with Java, while also capable of compiling to JVM bytecode, JavaScript, and native code.
+With these basic ingredients, we have almost all the features necessary to build an expressive shape-safe AD, but unlike prior implementations using Scala or Haskell, in a language fully interoperable with Java, and which compiles to JVM bytecode, JavaScript, and native code.
 
 In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
 
@@ -727,9 +752,9 @@ fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 \end{lstlisting}
 
-When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape-safety is currently supported up to rank-2 tensors, i.e.\ matrices.
+When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices.
 
-While first-class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore~\cite{Grigore:2017:JGT:3009837.3009871}.}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C\# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
+While first class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore~\cite{Grigore:2017:JGT:3009837.3009871}.}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C\# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that \texttt{0 <: 1 <: 2 <: 3 <: ... <: C}, where \texttt{C} is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. C can be specified by the user, but they will need to rebuild this project from scratch.
 
@@ -824,9 +849,9 @@ fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
 
 Like Python, Kotlin supports overloading a limited set of operators, which are evaluated using a fixed precedence. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
 
-\section{First-class functions}\label{sec:first-class-functions}
+\section{First class functions}\label{sec:first-class-functions}
 
-With higher-order functions and lambdas, Kotlin treats functions as first-class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of recent papers have demonstrated the expressiveness of this paradigm for automatic differentiation.
+With higher-order functions and lambdas, Kotlin treats functions as first class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of recent papers have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
 In Kotlin$\nabla$, all expressions can be treated as functions. For example:
 
@@ -864,7 +889,7 @@ object DoubleContext {
 }
 \end{lstlisting}
 
-Now, we can use the context to define another extension, Expr.multiplyByTwo, which computes the product inside a DoubleContext, using the operator overload we defined above:
+Now, we can use the context to define another extension, \texttt{Expr.multiplyByTwo}, which computes the product inside a \texttt{DoubleContext}, using the operator overload we defined above:
 
 \begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
 fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
@@ -900,7 +925,7 @@ class Zero<T: Group<T>>: Const<T>
 class One<T: Group<T>>: Const<T>
 \end{lstlisting}
 
-Smart-casting allows us to treat the abstract type Expr as a concrete type, e.g. Sum after performing an is Sum check. Otherwise, we would need to write (expr as Sum).e1 in order to access its field, e1. Performing a cast without checking would throw a runtime exception, if the type were incorrect. Using sealed classes helps avoid casting, thus avoiding ClassCastExceptions.
+Smart-casting allows us to treat the abstract type \texttt{Expr} as a concrete type, e.g. \texttt{Sum} after performing an \texttt{is Sum} check. Otherwise, we would need to write \texttt{(expr as Sum).e1} in order to access its field, \texttt{e1}. Performing a cast without checking would throw a runtime exception, if the type were incorrect, so using sealed classes helps avoid casting, thus avoiding \texttt{ClassCastExceptions}.
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
@@ -980,7 +1005,7 @@ Stalin$\naba$         & Scheme   & \cmark & \cmark & \xmark & \xmark & \xmark & 
 
 Roughly speaking, in backpropogation we perform gradient descent on the parameters of a program for a given input. In adversarial testing, we do gradient ascent on the input, at a given parameter setting.
 
-Neural networks and differentiable programming has provided a powerful set of optimization tools for training learning algorithms. However these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
+Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
 \section{Background}
 
@@ -1083,17 +1108,17 @@ An endemic problem in modern deep learning is the problem of forgetting. In orde
 
 Regular regression testing gives clear diagnostics about the behavior of intelligent systems.
 
-\mediumrare{\chapter{Software Maitenance and Reproducibility}\label{ch:ducker}}
+\mediumrare{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
 
 In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering like continuous integration and delivery can help researchers mitigate the variability associated with building and running software. Docker~\cite{merkel2014docker} is one technical solution we will discuss. Our work is roughly related to computational determinism, and does not consider the variability of distributional shift or related statistical notions of variation.
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
-In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features supported a kind of lightweight virtualization, where a fully virtual machine was no longer necessary to get many of the benefits of VMs, primarily resource control and namespace isolation. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from the host OS and sibling containers. While the overhead of running VMs often limits their deployment to server-class hardware, container's are comparatively lightweight, which enables them to run on a far broader class of mobile and embedded platforms.
+In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features supported a kind of lightweight virtualization, where a fully virtual machine was no longer necessary to get many of the benefits of VMs, primarily resource control and namespace isolation. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from the host OS and sibling containers. While the overhead of running VMs often limits their deployment to server-class hardware, containers are comparatively lightweight, which enables them to run on a far broader class of mobile and embedded platforms.
 
 \section{Dependency management}\label{sec:dependency-management}
 
-One common source of software variability are dependencies and the dependency solving problem. In fact, operating systems have struggled with this issue for a number of years before it was realized that dependency resolution was NP-complete~\cite{abate2012dependency}.
+One common source of software variability are software dependencies and the dependency solving problem. In fact, operating systems have struggled with this issue for a number of years before it was realized that dependency resolution was NP-complete~\cite{abate2012dependency}.
 
 \section{Containerization}\label{sec:containerization}
 
@@ -1114,7 +1139,7 @@ The Duckietown platform supports two primary instruction set architectures: x86 
 
 Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and a separate Linux namespace for each container, isolating the network, users, and file system mounts. Unlike virtual machines, container-based virtualization like Docker only requires a lightweight kernel, and can support running many simultaneous containers with close to zero overhead. A single Raspberry Pi is capable of supporting hundreds of running containers.
 
-While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier in Sec.~\ref{sec:dev-pipeline}.
+While containerization simplifies the process of building and deploying applications considerably, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier in Sec.~\ref{sec:dev-pipeline}.
 
 One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host to build the artifacts. In this case, while build artifacts images may be standalone reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts has the benefit of improved reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when the source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker image periodically, copying sources into the image.
 
