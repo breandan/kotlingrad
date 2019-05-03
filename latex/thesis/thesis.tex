@@ -70,6 +70,8 @@
     framextopmargin=2pt,
     framexbottommargin=2pt,
     %extendedchars=false,
+    %keepspaces=true,
+    %moredelim=**[is]{@}{@},
     inputencoding=utf8
 }
 
@@ -325,7 +327,7 @@ Our tool, called Hatchery, is designed to assist programmers writing robotics ap
 
 The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but also encompasses a set of community-developed libraries and graphical tools for building robotics applications. While ROS is not an operating system (OS) in the traditional sense, it does implement specific OS-like features like shared memory and inter-process communication for robotics development. Unlike pure message-oriented middleware like DDS and ZMQ, in addition to the message broker, ROS provides specific features for building decentralized robotic systems, particularly those which are capable of mobility.
 
-According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\% ~\cite{Areserio54:online}.
+According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\cite{Areserio54:online}.
 
 \section{Foundations of a modern IDE}
 
@@ -373,7 +375,7 @@ Given some input to a function, AD tells us how to change the input by a minimal
     \frac{dp_n}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
 
-\noindent Likewise, for a scalar functions $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
+\noindent Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
 
 \begin{equation}
     \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_n}\right)
@@ -400,10 +402,10 @@ Given some input to a function, AD tells us how to change the input by a minimal
           \nabla f_n \end{bmatrix}
 \end{equation}
 
-\noindent For completeness, but rarely used in practice is the second-order partials for vector functions:
+\noindent For completeness, but rarely used in practice, is the second-order partials for vector functions:
 
 \begin{equation}
-\mathbf{H} (\mathbf {f} )=[\mathbf {H} (f_{1}),\mathbf {H} (f_{2}),\dots ,\mathbf {H} (f_{m})]
+\mathbf{H} (\mathbf {f} )=[\mathbf {H} (f_{1}), \mathbf {H} (f_{2}), \dots, \mathbf {H} (f_{m})]
 \end{equation}
 
 \noindent We can use these tools to compute the direction to adjust the inputs of a computable function, in order to maximally change that function's output, i.e.\ the direction of steepest descent.
@@ -414,12 +416,12 @@ Sometimes a function has the property that given an input $a$, no matter $a$ is 
     (\nabla F)(a) \approx \mathbf{0}
 \end{equation}
 
-The cost of calculating the Hessian, $\mathbf{H}$ is approximately quadratic \cite{griewank1993some} with respect to the number of independent variables under differentiation. If $\mathbf{H}(a)$ is tractable to compute and invertible, for such points we could use the second-partial derivate test to determine that:\\
+The cost of calculating the Hessian, $\mathbf{H}$ is approximately quadratic~\cite{griewank1993some} with respect to the number of independent variables under differentiation. If $\mathbf{H}(a)$ is tractable to compute and invertible, we could use the second-partial derivative test to determine that:\\
 
 \begin{enumerate}
     \item If all eigenvalues of $\mathbf{H}(a)$ are positive, $a$ is a local minimum
     \item If all eigenvalues of $\mathbf{H}(a)$ are negative, $a$ is a local maximum
-    \item If $\mathbf{H}$ contains a mixture of positive and negative eigenvalues, $a$ is a saddle point\\
+    \item If $\mathbf{H}$ contains a mixture of positive and negative eigenvalues, $a$ is a "saddle point"\\
 \end{enumerate}
 
 For some classes of computable functions, small changes to the input will produce a sudden large change in the output. We say that such functions are non-differentiable.
@@ -428,7 +430,7 @@ For some classes of computable functions, small changes to the input will produc
     ||\nabla F|| \approx \pm \infty
 \end{equation}
 
-It is an open question whether non-differentiable functions exist in the real world~\cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their discrete approximations, so for all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, computers are capable of approximating bounded functions of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a fixed precision approximation is sufficient.
+It is an open question whether non-differentiable functions exist in the real world~\cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their binary-valued functions, so for all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, computers are capable of approximating bounded functions of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a fixed precision approximation is sufficient.
 
 There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: R \rightarrow R$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\cite{hornik1989multilayer} states that for all real-valued continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $\hat{f}$, parameterized by constants $n \in \mathbb{N}, \beta \in \mathbb{R}^n, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $\theta \in \mathbb{R}^{m \times n}$:
 
@@ -447,7 +449,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 
-For most common $\mathcal{L}$, the complexity of this procedure is linear with $k$. Since $k$ tends to be large, a single iteration of this procedure can take a very long time on a computer. Since obtaining an exact gradient is not too important in practice, we use a stochastic variant by sampling a \textit{minibatch} of rows $X', Y'$, from $X, Y$, which is able to approximate the exact gradient with some extra noise, but runs considerably more quickly.
+For most common $\mathcal{L}$, the complexity of this procedure is linear with $k$. Since $k$ tends to be large, a single iteration of this procedure can take a long time on a computer. Since obtaining the exact gradient is not important in practice, we use a stochastic variant by sampling a \textit{minibatch} of rows $X', Y'$, from $X, Y$, which is slightly noisier, but runs considerably more quickly.
 
 \section{Differentiable programming}\label{sec:differentiable-programming}
 
@@ -464,7 +466,7 @@ A key aspect of the connectionist paradigm is learning neural representations vi
 
 Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using low-precision arithmetic such as 8-bit floating point ~\cite{wang2018training} and integer~\cite{jacob2018quantization} quantization are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\Beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should not have come as a big surprise, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, neural network training is surprisingly resilient to quantization.
 
-As deep learning spread across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming} was born. Today, differentiable programing has found a wide range of applications, from protein folding~\cite{alquraishi2018end}, to physics engines~\cite{de2018end,DBLP:journals_corr_DegraveHDW16} and graphics rendering~\cite{loper2014opendr} to meta-learning~\cite{liu2018darts}. These domains have well-studied dynamics models, with parameters that can be tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required to learn these parameters, but given a suitable metric, differentiable programming promises to do this for a broad class of applications, more or less automatically.
+As deep learning solved problems across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming} was born. Today, differentiable programing has found a wide range of applications, from protein folding~\cite{alquraishi2018end}, to physics engines~\cite{de2018end,DBLP:journals_corr_DegraveHDW16} and graphics rendering~\cite{loper2014opendr} to meta-learning~\cite{liu2018darts}. These domains have well-studied dynamics models, with parameters that can be tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required to learn these parameters, but given a suitable metric, differentiable programming promises to do this for a broad class of applications, more or less automatically.
 
 \section{Static and dynamic languages}
 
@@ -610,7 +612,7 @@ val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
 val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
 \end{lstlisting}
 
-It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. A similar pattern can be applied to matrices and higher rank tensors, where the type signature encodes the shape of the operand at runtime.
+It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. A similar pattern can be applied to matrices and tensors, where the type signature encodes the shape of the operand at runtime.
 
 With these basic ingredients, we have almost all the features necessary to build an expressive shape-safe AD, but unlike prior implementations using Scala or Haskell, in a language fully interoperable with Java, and which compiles to JVM bytecode, JavaScript, and native code.
 
@@ -701,48 +703,37 @@ There are many other ways to independently verify the numerical gradient, such a
 \noindent In Kotlin$\nabla$, we use the third strategy. Consider the following program:
 
 \begin{lstlisting}[language=Kotlin]
-// Inferred type: Vec<Int, `2`>
-val a = Vec(1.0, 2.0)
-// Inferred type: Vec<Int, `3`>
-val b = Vec(1.0, 2.0, 3.0)
+val a = Vec(1.0, 2.0) // Inferred type: Vec<Int, `2`>
+val b = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, `3`>
 val c = b + b
-// Does not compile, shape mismatch
-// a + b
+val d = a + b // Does not compile, shape mismatch
 \end{lstlisting}
 
-\noindent Attempting to sum two vectors whose shapes do not match will fail to compile:
+\noindent Attempting to sum two vectors whose shapes do not match will fail to compile.
 
 \begin{lstlisting}[language=Kotlin]
-// Inferred type: Mat<Double, `1`, `4`>
-val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
-// Inferred type: Mat<Double, `4`, `1`>
-val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0)
+val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
+val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
 val c = a * b
-// Does not compile, inner dimension mismatch
-// a * a
-// b * b
+val d = a * a // Does not compile, inner dimension mismatch
 \end{lstlisting}
 
-\noindent Similarly, multiplying two tensors whose inner dimensions do not match will not compile:
+\noindent Similarly, multiplying two tensors whose inner dimensions do not match will not compile.
 
 \begin{lstlisting}[language=Kotlin]
 val a = Mat(`2`, `4`,
-    1.0, 2.0, 3.0, 4.0,
-    5.0, 6.0, 7.0, 8.0
-)
+            1.0, 2.0, 3.0, 4.0,
+            5.0, 6.0, 7.0, 8.0)
 val b = Mat(`4`, `2`,
-    1.0, 2.0,
-    3.0, 4.0,
-    5.0, 6.0,
-    7.0, 8.0
-)
-// Types are optional, but encouraged
-val c: Mat<Double, `2`, `2`> = a * b
+            1.0, 2.0,
+            3.0, 4.0,
+            5.0, 6.0,
+            7.0, 8.0)
+val c: Mat<Double, `2`, `2`> = a * b // Types are optional, but encouraged
 val d = Mat(`2`, `1`, 1.0, 2.0)
 val e = c * d
 val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
-// Does not compile, inner dimension mismatch
-// e * f
+val g = e * f // Does not compile, inner dimension mismatch
 \end{lstlisting}
 
 Explicit types are optional but encouraged. Type inference helps preserve shape information over long programs.
@@ -767,16 +758,16 @@ open class `3`(override val i: Int = 3): `4`(i) { companion object: `3`(), Nat<`
 sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`> }
 interface Nat<T: `100`> { val i: Int } // Used for certain type bounds
 \end{lstlisting}
-
+%
 Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. Let us consider the rank-1 tensor (i.e.\ vector) case:
-
+%
 \begin{lstlisting}[language=Kotlin]
 infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
     Vec(length, contents.zip(v.contents).map { it.first + it.second })
 \end{lstlisting}
-
-\noindent This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
-
+%
+This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
+%
 \begin{lstlisting}[language=Kotlin]
 open class Vec<E, MaxLength: `100`> constructor(
     val length: Nat<MaxLength>,
@@ -792,39 +783,33 @@ open class Vec<E, MaxLength: `100`> constructor(
     }
 }
 \end{lstlisting}
-
-The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
-
+%
+Dynamic construction is also possible, although this may fail at runtime. For example:
+%
 \begin{lstlisting}[language=Kotlin]
 val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
 val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
 val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
 val sum = Vec(`2`, 1, 2) + add                    // Does not compile
 \end{lstlisting}
-
-A similar syntax is possible for matrices and higher-rank tensors. For example, Kotlin$\nabla$ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
-
+%
+A similar syntax is possible for matrices and higher-rank tensors. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if their inner dimensions differ:
+%
 \begin{lstlisting}[language=Kotlin]
-// Inferred type: Mat<Int, `4`, `4`>
-val l = Mat(`4`, `4`,
-    1, 2, 3, 4,
-    5, 6, 7, 8,
-    9, 0, 0, 0,
-    9, 0, 0, 0
-)
-// Inferred type: Mat<Int, `4`, `3`>
-val m = Mat(`4`, `3`,
-    1, 1, 1,
-    2, 2, 2,
-    3, 3, 3,
-    4, 4, 4
-)
-
-// Inferred type: Mat<Int, `4`, `3`>
-val lm = l * m
-// m * m // Does not compile
+val l = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
+             1, 2, 3, 4,
+             5, 6, 7, 8,
+             9, 0, 0, 0,
+             9, 0, 0, 0)
+val m = Mat(`4`, `3`, // Inferred type: Mat<Int, `4`, `3`>
+             1, 1, 1,
+             2, 2, 2,
+             3, 3, 3,
+             4, 4, 4)
+val lm = l * m // Inferred type: Mat<Int, `4`, `3`>
+val mm = m * m // Does not compile
 \end{lstlisting}
-
+%
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation \textit{type arithmetic}. Type arithmetic makes it easy to express convolutional arithmetic and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
 \section{Operator overloading}\label{sec:operator-overloading}
@@ -1175,13 +1160,13 @@ Deployed and CI-tested using Docker.
 
 Often it is not possible, or desirable to summarize the performance of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
 
-Traditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a re-imagining of these ideas to build systems that adapts to its environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
+Traditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a re-imagining of these ideas to build systems that adapt to their environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
 
-For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any singly criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
+For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any single criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
 
-When building intelligent system developers must first ask, what are the requirements of the system? This process is often the most troublesome part, because the requirements must not be fuzzy specifications like traditional software engineering, but precise, programmable directives. "I would like the system to be fast," is not sufficiently precise. These kinds of requirements must be translated into statistical loss functions, so we must be very precise about how we specify our requirements. If we simply say, "The system must produce a valid response as quickly as possible, in less than 100ms," is better, but leaves open the possibility of returning an empty response.
+When building an intelligent system developers must first ask, "What are the requirements of the system?" This question is often the most troublesome part, because the requirements must not be fuzzy specifications like traditional software engineering, but precise, programmable directives. "The system must be fast," is not sufficiently precise. These kinds of requirements must be translated into statistical loss functions, so intelligent systems engineers must be very precise when specifying requirements. If we simply say, "The system must produce a valid response as quickly as possible, in less than 100ms," is better, but leaves open the possibility of returning an empty response.
 
-In traditional software engineering, it is reasonable to assume the people who are implementing the system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversary. If we are to give it an optimization metric, it will take every conceivable shortcut to achieve that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
+In traditional software engineering, it is reasonable to assume the people who are implementing a system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversarial one. When given an optimization metric, it will take every available shortcut to meet that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
 
 In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g.\ declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
 
