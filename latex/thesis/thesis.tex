@@ -695,11 +695,11 @@ There are many other ways to independently verify the numerical gradient, such a
 
 \section{Shape safety}\label{sec:shape-safety}
 
-There are three broad strategies for handling shape errors in numerical programming: \\
+\noindent There are three broad strategies for handling shape errors in numerical programming: \\
 %
 \begin{enumerate}
     \item Hide the error somehow by implicitly reshaping or broadcasting arrays
-    \item Announce the error at runtime, with a relevant message, e.g.~\inline{InvalidArgumentError}
+    \item Announce the error at runtime, with a relevant message, e.g. "InvalidArgument"
     \item Do not allow programs which can result in a shape error to compile \\
 \end{enumerate}
 %
