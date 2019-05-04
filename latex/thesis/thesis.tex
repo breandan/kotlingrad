@@ -75,6 +75,8 @@
     inputencoding=utf8
 }
 
+\def\inline{\lstinline[basicstyle=\ttfamily]}
+
 % Bulleted lists
 
 %\setlist[enumerate]{topsep=30pt,itemsep=-1ex,partopsep=1ex,parsep=30ex}
@@ -355,10 +357,14 @@ Detecting and managing ROS installations.
 
 \mediumwell{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
-\setlength{\epigraphwidth}{0.5\textwidth}
-\epigraph{``Programs must be written for people to read, and only incidentally for machines to execute.''}{\begin{flushright}--Harold Abelson and Gerald Jay Sussman, \textit{Structure and Interpretation of Computer Programs, Preface to the First Edition~\cite{abelson1996structure}}\end{flushright}}
+\setlength{\epigraphwidth}{\textwidth}
+\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.
+''}{\begin{flushright}--Alonzo Church, 1941, \textit{The Calculi of Lambda Conversion
+~\cite{church1985calculi}}\end{flushright}}
 
-In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program\footnote{Not all programs are computable functions, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly, or maybe the implementation was correct, but the function was not given the right set of inputs - had it been, then the program would have produced a better answer. Regardless of the implementation, we would like to determine how to change the input slightly, so as to produce a more suitable output.
+In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD). AD is useful for gradient descent and has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers: addition, subtraction, multiplication and division - by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program\footnote{Not all programs are computable functions, but all computable functions are programs.}, that does not work properly. Perhaps the function was implemented poorly, or maybe the implementation was correct, but the function was not given the right set of inputs - had it been, then the program would have produced a better answer. Regardless of the implementation, we would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
+
+In 1964, the seed of such an algorithm was first conceived by Robert Wengert~\cite{wengert1964simple}. This method is known today as forward-mode AD. Not long after, a certain Richard Bellman et al. reproduced Wengert's algorithm to numerically estimate the orbital dynamics of a two body system, and recognized its potential for, "the treatment of large systems of differential equations which might not otherwise be undertaken"~\cite{bellman1965wengert}. Around the same time, key details of the backpropogation algorithm for neural networks first emerged~\cite{dreyfus1990artificial}. In 1976, Seppo Linnainmaa~\cite{linnainmaa1970representation}, conceived the idea of calculating partial derivatives over programs as a graph. Linnaimaa's algorithm was especially important for the development of neural networks, and is today known as reverse-mode AD. But it was not until 2010 when standard software tools~\cite{bergstra2010theano, torch} for AD became widely available in the machine learning community. It is here where our journey begins.
 
 \section{Automatic differentiation}\label{sec:automatic-differentiation}
 
@@ -524,7 +530,7 @@ fun dot(l1, l2) {
 
 Kotlin is a strong, statically typed language, that is well-suited for building cross-platform applications, with implementations in native, JVM, and JavaScript.
 
-When programming in a statically typed language, one common question is, "Given a value, \texttt{x}, can \texttt{x} be assigned to a variable of type \texttt{Y}?" (e.g. \texttt{x instanceof Y}) In Java, this question is both unsound~\cite{amin2016java} and undecidable~\cite{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program for which the answer is "yes" regardless of \texttt{Y}, or which the answer cannot be determined in a finite amount of time.
+When programming in a statically typed language, one common question is, "Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?" (e.g. \inline{x instanceof Y}) In Java, this question is both unsound~\cite{amin2016java} and undecidable~\cite{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program for which the answer is "yes" regardless of \inline{Y}, or which the answer cannot be determined in a finite amount of time.
 
 Kotlin's type system~\cite{tate2013mixed} is strictly less expressive, but fully compatible with Java.
 
@@ -580,7 +586,7 @@ In Listing~\ref{lst:basic_kotlingrad}, we define a function with two variables a
     \caption{Output generated by the program shown in Figure~\ref{label:fig1}.}
 \end{figure}
 
-Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed to form a data-flow graph (DFG). An expression is simply a \texttt{Function}, which is only evaluated once invoked with numerical values, e.g. \texttt{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph based approaches like TensorFlow and Theano.
+Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed to form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated once invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph based approaches like TensorFlow and Theano.
 
 
 \begin{figure}[!htb]
@@ -612,11 +618,11 @@ val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
 val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
 \end{lstlisting}
 
-It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. A similar pattern can be applied to matrices and tensors, where the type signature encodes the shape of the operand at runtime.
+It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. This pattern can also be applied to matrices and tensors, where the type signature encodes the shape of the operand at runtime.
 
 With these basic ingredients, we have almost all the features necessary to build an expressive shape-safe AD, but unlike prior implementations using Scala or Haskell, in a language fully interoperable with Java, and which compiles to JVM bytecode, JavaScript, and native code.
 
-In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
+%In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
 
 \section{Type system}\label{sec:type-system}
 
@@ -673,7 +679,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 }
 \end{lstlisting}
 
-PBT will search the input space for two numerical values \texttt{x0} and \texttt{y0}, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
+PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
 
 \begin{lstlisting}[language=Kotlin, showstringspaces=false]
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
@@ -692,34 +698,34 @@ There are many other ways to independently verify the numerical gradient, such a
 
 \section{Shape safety}\label{sec:shape-safety}
 
-\noindent There are three broad strategies for handling shape errors in numerical programming: \\
-
+There are three broad strategies for handling shape errors in numerical programming: \\
+%
 \begin{enumerate}
     \item Hide the error somehow by implicitly reshaping or broadcasting arrays
-    \item Announce the error at runtime, with a relevant message, e.g.~\texttt{InvalidArgumentError}
+    \item Announce the error at runtime, with a relevant message, e.g.~\inline{InvalidArgumentError}
     \item Do not allow programs which can result in a shape error to compile \\
 \end{enumerate}
-
-\noindent In Kotlin$\nabla$, we use the third strategy. Consider the following program:
-
+%
+In Kotlin$\nabla$, we use the third strategy. Consider the following program:
+%
 \begin{lstlisting}[language=Kotlin]
 val a = Vec(1.0, 2.0) // Inferred type: Vec<Int, `2`>
 val b = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, `3`>
 val c = b + b
 val d = a + b // Does not compile, shape mismatch
 \end{lstlisting}
-
-\noindent Attempting to sum two vectors whose shapes do not match will fail to compile.
-
+%
+Attempting to sum two vectors whose shapes do not match will fail to compile.
+%
 \begin{lstlisting}[language=Kotlin]
 val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
 val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
 val c = a * b
 val d = a * a // Does not compile, inner dimension mismatch
 \end{lstlisting}
-
-\noindent Similarly, multiplying two tensors whose inner dimensions do not match will not compile.
-
+%
+Similarly, multiplying two tensors whose inner dimensions do not match will not compile.
+%
 \begin{lstlisting}[language=Kotlin]
 val a = Mat(`2`, `4`,
             1.0, 2.0, 3.0, 4.0,
@@ -745,9 +751,9 @@ fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 
 When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices.
 
-While first class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore~\cite{Grigore:2017:JGT:3009837.3009871}.}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C\# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
+First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), but they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\cite{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C\# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
 
-First, we enumerate a list of integer type literals as a chain of subtypes, so that \texttt{0 <: 1 <: 2 <: 3 <: ... <: C}, where \texttt{C} is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. C can be specified by the user, but they will need to rebuild this project from scratch.
+First, we enumerate a list of integer type literals as a chain of subtypes, so that $0 <: 1 <: 2 <: 3 <: \dots <: C$, where $C$ is the largest fixed-length dimension. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, but in order to do so the code will need to be regenerated.
 
 \begin{lstlisting}[language=Kotlin]
 open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
@@ -769,12 +775,7 @@ infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
 %
 \begin{lstlisting}[language=Kotlin]
-open class Vec<E, MaxLength: `100`> constructor(
-    val length: Nat<MaxLength>,
-    val contents: List<E> = listOf()
-) {
-    operator fun get(i: `100`): E = contents[i.i]
-    operator fun get(i: Int): E = contents[i]
+open class Vec<E, MaxLen: `100`> constructor(val len: Nat<MaxLen>, val contents: List<E>) {
     companion object {
         operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, listOf(t))
         operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, listOf(t0, t1))
@@ -784,7 +785,7 @@ open class Vec<E, MaxLength: `100`> constructor(
 }
 \end{lstlisting}
 %
-Dynamic construction is also possible, although this may fail at runtime. For example:
+Dynamic length construction is also possible, although this may fail at runtime. For example:
 %
 \begin{lstlisting}[language=Kotlin]
 val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
@@ -793,7 +794,7 @@ val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
 val sum = Vec(`2`, 1, 2) + add                    // Does not compile
 \end{lstlisting}
 %
-A similar syntax is possible for matrices and higher-rank tensors. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if their inner dimensions differ:
+A similar syntax is used for matrices and tensors. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if their inner dimensions disagree:
 %
 \begin{lstlisting}[language=Kotlin]
 val l = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
@@ -810,37 +811,37 @@ val lm = l * m // Inferred type: Mat<Int, `4`, `3`>
 val mm = m * m // Does not compile
 \end{lstlisting}
 %
-A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation \textit{type arithmetic}. Type arithmetic makes it easy to express convolutional arithmetic and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
+This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\cite{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\cite{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or would require enumerating every possible combination of type literals.
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
-Operator overloading enables concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. \texttt{Group}, \texttt{Ring}, and \texttt{Field}. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+\noindent Operator overloading enables concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. \inline{Group}, \inline{Ring}, and \inline{Field}. These abstractions are extensible to other mathematical structures, such as complex numbers and quaternions.
 
-For example, suppose we have an interface \texttt{Group}, which overloads the operators $+$ and $\times$, and is defined like so:
-
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+For example, we have an interface \inline{Group} which overloads the operators $+$ and $\times$:
+%
+\begin{lstlisting}[language=Kotlin]
 interface Group<T: Group<T>> {
     operator fun plus(addend: T): T
     operator fun times(multiplicand: T): T
 }
 \end{lstlisting}
-
-Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\cite{canning1989f} to ensure that operations return the concrete type variable T, rather than something more generic like \texttt{Group} (effectively, \texttt{T} is a \texttt{self} type). Imagine a class \texttt{Expr} which has implemented \texttt{Group}. It can be used as follows:
-
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+%
+Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\cite{canning1989f} to ensure that operations return the concrete type variable T, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Expr} which has implemented \inline{Group}. It can be used as follows:
+%
+\begin{lstlisting}[language=Kotlin]
 fun <T: Group<T>> cubed(t: T): T = t * t * t
 fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
 \end{lstlisting}
-
+%
 Like Python, Kotlin supports overloading a limited set of operators, which are evaluated using a fixed precedence. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
 
 \section{First class functions}\label{sec:first-class-functions}
 
-With higher-order functions and lambdas, Kotlin treats functions as first class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of recent papers have demonstrated the expressiveness of this paradigm for automatic differentiation.
+With higher-order functions and lambdas, Kotlin treats functions as first class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of recent papers~\cite{pearlmutter2008reverse,wang2018backpropagation} have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
-In Kotlin$\nabla$, all expressions can be treated as functions. For example:
+In Kotlin$\nabla$, all expressions are treated as functions. For example:
 
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+\begin{lstlisting}[language=Kotlin]
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
 
 val x: Var<Double> = Var(1.0)
@@ -849,7 +850,7 @@ val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 \end{lstlisting}
 
-Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds.
+%Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds.
 
 \section{Coroutines}\label{sec:coroutines}
 
@@ -857,8 +858,8 @@ Coroutines are a generalization of subroutines for non-preemptive multitasking, 
 
 \section{Extension Functions}\label{sec:extension-functions}
 
-Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin$\nabla$ can expose its custom extensions (e.g.\ in \texttt{DoublePrecision}) to consumers without requiring subclasses or inheritance.
-
+Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin$\nabla$ can expose its custom extensions (e.g.\ in \inline{DoublePrecision}) to consumers without requiring subclasses or inheritance.
+%
 \begin{lstlisting}[caption={Using extension functions we can provide numerical conversions for common data types, wrapped by a Context.}, language=Kotlin]
 data class Const<T: Group<T>>(val number: Double) : Expr()
 data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
@@ -873,19 +874,28 @@ object DoubleContext {
     operator fun Number.times(expr: Expr<Double>) = Const(toDouble()) * expr
 }
 \end{lstlisting}
-
-Now, we can use the context to define another extension, \texttt{Expr.multiplyByTwo}, which computes the product inside a \texttt{DoubleContext}, using the operator overload we defined above:
-
-\begin{lstlisting}[caption={Simple code listing.}, language=Kotlin]
+%
+Now, we can use the context to define another extension, \inline{Expr.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload we defined above:
+%
+\begin{lstlisting}[language=Kotlin]
 fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{lstlisting}
-
+%
 Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\cite{nozik2019acat}, another mathematical library for Kotlin.
 
 \section{Algebraic data types}\label{sec:adts}
 
 Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
-
+%
+\begin{lstlisting}
+   class Const<T: Group<T>>(val number: Double) : Expr()
+   class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+   class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+   class Var<T: Group<T>>: Expr()
+   class Zero<T: Group<T>>: Const<T>
+   class One<T: Group<T>>: Const<T>
+\end{lstlisting}
+%
 \begin{lstlisting}[caption={Users must handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of failing silently at runtime).}, language=Kotlin]
 sealed class Expr<T: Group<T>>: Group<Expr<T>> {
     fun diff() = when(expr) {
@@ -897,36 +907,29 @@ sealed class Expr<T: Group<T>>: Group<Expr<T>> {
        is Var -> One
        // Since the subclasses of Expr are a closed set, no `else -> ...` is required.
     }
-
     operator fun plus(addend: Expr<T>) = Sum(this, addend)
     operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
-
-data class Const<T: Group<T>>(val number: Double) : Expr()
-data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-class Var<T: Group<T>>: Expr()
-class Zero<T: Group<T>>: Const<T>
-class One<T: Group<T>>: Const<T>
 \end{lstlisting}
-
-Smart-casting allows us to treat the abstract type \texttt{Expr} as a concrete type, e.g. \texttt{Sum} after performing an \texttt{is Sum} check. Otherwise, we would need to write \texttt{(expr as Sum).e1} in order to access its field, \texttt{e1}. Performing a cast without checking would throw a runtime exception, if the type were incorrect, so using sealed classes helps avoid casting, thus avoiding \texttt{ClassCastExceptions}.
+%
+Smart-casting allows us to treat the abstract type \inline{Expr} as a concrete type, e.g. \inline{Sum} after performing an \inline{is Sum} check. Otherwise, we would need to write \inline{(expr as Sum).e1} in order to access its field, \inline{e1}. If the type were incorrect, performing a cast without checking would throw a \inline{ClassCastException}, which sealed classes prevent.
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
 In conjunction with ADTs, Kotlin$\nabla$ also uses multiple dispatch to instantiate the most specific result type of applying an operator based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
-Building on the previous example, a common task in AD is to simplify a graph. This is useful in order to minimize the number of calculations required, or to improve numerical stability. We can eagerly simplify expressions based on algebraic rules of replacement. Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
+Building on the previous example, suppose we would like to perform algebraic simplification. This can be useful for reducing expression swell and improving numerical stability. We can use multiple dispatch to branch on a the type of a subexpression at runtime. \textit{Smart casting} lets us access class members after first checking their type, as it if were casted:
 
 \begin{lstlisting}[caption={Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.}, language=Kotlin]
-override fun times(multiplicand: Function<X>): Function<X> =
+override fun times(multiplicand: Expr<X>): Expr<X> =
     when {
         this == zero -> this
         this == one -> multiplicand
         multiplicand == one -> this
         multiplicand == zero -> multiplicand
         this == multiplicand -> pow(two)
-        this is Const && multiplicand is Const -> const(value * multiplicand.value)
+        // Without Smart Casting: const((this as Const).number * (multiplicand as Const).number)
+        this is Const && multiplicand is Const -> const(number * multiplicand.number) // With SC
         // Further simplification is possible using rules of replacement
         else -> Prod(this, multiplicand)
     }
@@ -937,7 +940,7 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\cite{st2012typing}. First pioneered in Scheme\cite{sperber2009revised}, this strategy is well-suited to object oriented programming~\cite{niculescu2003design, niculescu2011using} and is widely used in other mathematical libraries such as KMath~\cite{nozik2019acat} and Apache Commons Math~\cite{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
+Kotlin$\nabla$ uses a numeric tower~\cite{st2012typing}. First pioneered in Scheme\cite{sperber2009revised}, this strategy is highly-suited to object oriented programming~\cite{niculescu2003design, niculescu2011using} and widely used in other mathematical libraries such as KMath~\cite{nozik2019acat} and Apache Commons Math~\cite{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
 
 \begin{lstlisting}[caption={Many common mathematical operations can be defined in simpler terms.}, language=Kotlin]
 interface Field<X: Field<X>> {
@@ -956,12 +959,19 @@ interface Field<X: Field<X>> {
 
 Furthermore, if we need to later define a field over the quaternions (suppose for backpropogating through a quaternion neural network~\cite{isokawa2003quaternion}), these abstractions are easy to extend, since we only need to implement a very small set of primitive operations.
 
+\section{Symbolic and Automatic Differentiation}
+
+It has long been claimed that automatic differentiation is not symbolic differentiation~\cite{baydin-survey}. Many, including the author, have suspected this claim to be misleading. Recent literature has questioned~\cite{wang2018demystifying} and refuted~\cite{laue2019equivalence} this claim. It is our view the distinction is a minor semantic one. While it may be true that certain implementations of automatic differentiation do interleave numerical and symbolic differentiation during a program's execution, it is certainly not a prerequisite for a library to be considered automatic differentiation, especially considering that prior AD implementations, including Theano, have taken a different approach. Furthermore, we consider symbolic differentiation to be a type of automatic differentiation.
+
 \section{Comparison}\label{sec:comparison}
 
+Kotlin$\nabla$ is a symbolic graph-based autograd.
+
 \begin{center}
-\begin{tabular}{llllllll}
+\begin{tabular}{lllllllll}
     Framework &
     Language &
+    \rot{Symbolic Differentiation} &
     \rot{Automatic Differentiation} &
     \rot{Functional Programming} &
     \rot{Type Safe} &
@@ -969,17 +979,17 @@ Furthermore, if we need to later define a field over the quaternions (suppose fo
     \rot{Differentiable Programming} &
     \rot{Multiplatform}
     \\ \hline
-Kotlin$\nabla$                                                                 & Kotlin   & \cmark & \cmark                                                 & \cmark                                                 & \cmark                                         & \wmark                                                     & \wmark                                                     \\
-DiffSharp                   & F\#      & \cmark & \cmark                                                 & \cmark                                                 & \xmark                                                          & \cmark                                               & \xmark                                                                \\
-TensorFlow.FSharp & F\#      & \cmark & \cmark                                                 & \cmark                                                 & \cmark                                         & \cmark                                               & \xmark                                                                \\
-Myia                            & Python   & \cmark & \cmark                                                 & \cmark                                                 & \cmark                                         & \cmark                                               & \xmark                                                                \\
-Deeplearning.scala      & Scala    & \cmark & \cmark                                                 & \cmark                                                 & \xmark                                                          & \cmark                                               & \xmark                                                                \\
-Nexus                                    & Scala    & \cmark & \cmark                                                 & \cmark                                                 & \cmark                                         & \cmark                                               & \xmark                                                                \\
-Lantern                    & Scala    & \cmark & \cmark                                                 & \cmark                                                 & \xmark                                                          & \cmark                                               & \xmark                                                                \\
-Grenade                    & Haskell  & \cmark & \cmark                                                 & \cmark                                                 & \cmark                                         & \xmark                                                                & \xmark                                                                \\
-Eclipse DL4J                          & Java     & \cmark & \xmark                                                                  & \cmark                                                 & \xmark                                                          & \xmark                                                                & \xmark                                                                \\
-Halide                                    & C++      & \cmark & \xmark                                                                  & \cmark                                                 & \xmark                                                          & \cmark                                               & \xmark                                                                \\
-Stalin$\naba$         & Scheme   & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+Kotlin$\nabla$     & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
+DiffSharp          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+TensorFlow.FSharp  & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+Myia               & Python  & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+Deeplearning.scala & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+Nexus              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+Lantern            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+Grenade            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+Eclipse DL4J       & Java    & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
+Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
 \end{tabular}
 \end{center}
 
