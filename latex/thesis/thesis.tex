@@ -369,32 +369,31 @@ In 1964, the seed of such an algorithm was first conceived by Robert Wengert~\ci
 \section{Automatic differentiation}\label{sec:automatic-differentiation}
 
 Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $p_n: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
-
 %
 \begin{equation}
     p_n(p_0)= p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0
 \end{equation}
 %
-\noindent From the chain rule of calculus, we recall that:
+From the chain rule of calculus, we recall that:
 %
 \begin{equation}
     \frac{dp_n}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
-
-\noindent Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
-
+%
+Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
+%
 \begin{equation}
     \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_n}\right)
 \end{equation}
-
-\noindent Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the Hessian, $\mathbf{H}$:
-
+%
+Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the Hessian, $\mathbf{H}$:
+%
 \begin{equation}
 \mathbf{H} = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{n}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{n}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{n}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{n}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{n}^{2}}}\end{bmatrix}
 \end{equation}
-
-\noindent More generally, for a vector function $\mathbf{f}:  \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian $\mathbf J$ is defined as:
-
+%
+More generally, for a vector function $\mathbf{f}:  \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian $\mathbf J$ is defined as:
+%
 \begin{equation}
 \mathbf J = \begin{bmatrix}
                        \dfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \dfrac{\partial \mathbf{f}}{\partial x_n} \end{bmatrix}
@@ -407,55 +406,55 @@ Given some input to a function, AD tells us how to change the input by a minimal
           \vdots \\
           \nabla f_n \end{bmatrix}
 \end{equation}
-
-\noindent For completeness, but rarely used in practice, is the second-order partials for vector functions:
-
+%
+For completeness, but rarely used in practice, is the second-order partials for vector functions:
+%
 \begin{equation}
 \mathbf{H} (\mathbf {f} )=[\mathbf {H} (f_{1}), \mathbf {H} (f_{2}), \dots, \mathbf {H} (f_{m})]
 \end{equation}
-
-\noindent We can use these tools to compute the direction to adjust the inputs of a computable function, in order to maximally change that function's output, i.e.\ the direction of steepest descent.
+%
+We can use these tools to compute the direction to adjust the inputs of a computable function, in order to maximally change that function's output, i.e.\ the direction of steepest descent.
 
 Sometimes a function has the property that given an input $a$, no matter $a$ is changed, the output stays the same. We say that such functions have zero gradient for that input.
-
+%
 \begin{equation}
     (\nabla F)(a) \approx \mathbf{0}
 \end{equation}
-
+%
 The cost of calculating the Hessian, $\mathbf{H}$ is approximately quadratic~\cite{griewank1993some} with respect to the number of independent variables under differentiation. If $\mathbf{H}(a)$ is tractable to compute and invertible, we could use the second-partial derivative test to determine that:\\
-
+%
 \begin{enumerate}
     \item If all eigenvalues of $\mathbf{H}(a)$ are positive, $a$ is a local minimum
     \item If all eigenvalues of $\mathbf{H}(a)$ are negative, $a$ is a local maximum
     \item If $\mathbf{H}$ contains a mixture of positive and negative eigenvalues, $a$ is a "saddle point"\\
 \end{enumerate}
-
+%
 For some classes of computable functions, small changes to the input will produce a sudden large change in the output. We say that such functions are non-differentiable.
-
+%
 \begin{equation}
     ||\nabla F|| \approx \pm \infty
 \end{equation}
-
+%
 It is an open question whether non-differentiable functions exist in the real world~\cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their binary-valued functions, so for all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, computers are capable of approximating bounded functions of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a fixed precision approximation is sufficient.
 
 There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: R \rightarrow R$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\cite{hornik1989multilayer} states that for all real-valued continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $\hat{f}$, parameterized by constants $n \in \mathbb{N}, \beta \in \mathbb{R}^n, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $\theta \in \mathbb{R}^{m \times n}$:
-
+%
 \begin{equation}
     \begin{split}
         \hat{f}(x) = \beta^\intercal \varphi \left(\theta^\intercal x\right + b) \\
         \forall x\in I_m, \ | \hat{f}( x ) - f ( x ) | < \varepsilon
     \end{split}
 \end{equation}
-
-    This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing these linear and non-linear functions in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = [f(x^{(1)}), \dots, f(x^{(k)})]$, which we try to obtain in as large a quantity as possible and run the following procedure:
-
+%
+This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing these linear and non-linear functions in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = [f(x^{(1)}), \dots, f(x^{(k)})]$, which we try to obtain in as large a quantity as possible and run the following procedure:
+%
 \begin{equation}\label{eq:grad_descent}
     \begin{split}
         \theta \leftarrow \theta - \alpha\nabla_\theta\mathcal{L}(\hat{f}(X;\theta), Y)
     \end{split}
 \end{equation}
-
-For most common $\mathcal{L}$, the complexity of this procedure is linear with $k$. Since $k$ tends to be large, a single iteration of this procedure can take a long time on a computer. Since obtaining the exact gradient is not important in practice, we use a stochastic variant by sampling a \textit{minibatch} of rows $X', Y'$, from $X, Y$, which is slightly noisier, but runs considerably more quickly.
+%
+For most common $\mathcal{L}$, the complexity of this procedure is linear with $k$. As $k$ can be quite large in practice, a single iteration of this procedure can take prohibitively long. Since obtaining the exact gradient is not very important, we use a stochastic variant by sampling a \textit{minibatch} of rows $X', Y'$, from $X, Y$, which is slightly noisier, but runs considerably more quickly.
 
 \section{Differentiable programming}\label{sec:differentiable-programming}
 
@@ -555,7 +554,7 @@ Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals-corr
     \label{fig:kotlingrad_digram}
 \end{figure}
 
-Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really just functions building an abstract syntax tree (AST), which can be evaluated eagerly or lazily depending on the developer's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fledged programming language. Popular examples include SQL/LINQ~\cite{meijer2006linq}, OptiML~\cite{sujeeth2011optiml} and other fluent interfaces~\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages~\cite{elliott2003compiling,rompf2010lightweight}, perhaps due to the concept of code as data and data as code\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}.
+Kotlin$\nabla$ models are embedded domain specific languages (EDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really just functions building an abstract syntax tree (AST), which can be evaluated eagerly or lazily depending on the developer's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fledged programming language. Popular examples include SQL/LINQ~\cite{meijer2006linq}, OptiML~\cite{sujeeth2011optiml} and other fluent interfaces~\cite{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages~\cite{elliott2003compiling,rompf2010lightweight}, perhaps owing to the notion of code as data \footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}.
 
 \section{Usage}
 
@@ -583,14 +582,13 @@ In Listing~\ref{lst:basic_kotlingrad}, we define a function with two variables a
 \begin{figure}[!htb]
     \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big\left(\frac{\partial^{3z}}{\partial{x^2}\partial{y}}\Big\right)$ \\
     \includegraphics[scale=0.43]{plot_result.png}
-    \caption{Output generated by the program shown in Figure~\ref{label:fig1}.}
 \end{figure}
 
 Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed to form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated once invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph based approaches like TensorFlow and Theano.
 
 
 \begin{figure}[!htb]
-\begin{lstlisting}[caption={The equation below is an EDSL, and does not perform any computation.}, language=Kotlin]
+\begin{lstlisting}[caption={The following equation is an eDSL, and does not perform any computation.}, language=Kotlin]
 val z = sin(10 * (x * x + pow(y, 2))) / 10
 \end{lstlisting}
     \centering
@@ -618,9 +616,9 @@ val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
 val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
 \end{lstlisting}
 
-It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. This pattern can also be applied to matrices and tensors, where the type signature encodes the shape of the operand at runtime.
+It is possible to enforce shape-safe vector construction and checked vector arithmetic up to a fixed \texttt{L}. A similar pattern may be used to represent matrix and tensor data types, whose type signature will encode the operand's shape at runtime.
 
-With these basic ingredients, we have almost all the features necessary to build an expressive shape-safe AD, but unlike prior implementations using Scala or Haskell, in a language fully interoperable with Java, and which compiles to JVM bytecode, JavaScript, and native code.
+With these basic ingredients, we have almost all the features needed to build an expressive shape-safe AD, but unlike prior work using Scala or Haskell, in a language fully interoperable with Java, and which compiles to JVM bytecode, JavaScript, and native code.
 
 %In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
 
@@ -632,35 +630,35 @@ Describing the Kotlin$\nabla$ type system (formally).
 \begin{table}
     \begin{tabular}{|c|c|c|c|l|}
         \hline
-        \multicolumn{1}{|c|}{Math}                            &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                     \\ \hline
-                 $A + B$                                      & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}        &  \texttt{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A - B$                                      & \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}       &  \texttt{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
+        \multicolumn{1}{|c|}{Math}                            &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                   \\ \hline
+                 $A + B$                                      & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}        &  \texttt{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})       $ \\ \hline
+                 $A - B$                                      & \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}       &  \texttt{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})        $ \\ \hline
                  $A   B$                                      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\end{tabular}       &  \texttt{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n*p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*p})  $ \\ \hline
 \begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a / b}\\\texttt{a.div(b)}\end{tabular}         &  \texttt{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p*n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*p})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}               &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
-\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}               & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}   &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
-                $\ln(A)$                                      &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                              $ \\ \hline
+\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}               &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                    $ \\ \hline
+\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}               & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                  $ \\ \hline
+\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}   &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                           $ \\ \hline
+                $\ln(A)$                                      &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m})                                 $ \\ \hline
                $\log_b A$                                     & \texttt{a.log(b)}                                                              &  \texttt{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
                 $A^{b}$                                       & \texttt{a.pow(b)}                                                              &  \tettt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m*m})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$sqrt[3](a)$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m*m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular} & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
-               $\nabla a$                                     &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})^{*}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
+\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$sqrt[3](a)$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m*m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m*m})                               $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular} & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})            $ \\ \hline
+               $\nabla a$                                          &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})^{*}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                        $ \\ \hline
     \end{tabular}
 \end{table}
 }
 
 \section{Testing}\label{sec:testing}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to metamorphic testing. Notable implementations include QuickCheck, Hypothesis and ScalaTest (ported to Kotlin in KotlinTest). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation:
-
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to metamorphic testing. Notable implementations include QuickCheck~\cite{claessen2011quickcheck}, Hypothesis~\cite{Hypothesis} and KotlinTest~\cite{kotlintest}. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
+%
 \begin{enumerate}
     \item \textbf{Symbolic differentiation}: manually differentiate and compare the values returned on a subset of the domain with AD.
-    \item \textbf{Finite difference approximation}: sample space of symbolic (differentiable) functions, comparing results of AD to FD.
+    \item \textbf{Finite difference approximation}: sample space of symbolic (differentiable) functions, comparing results of AD to FD. \\
 \end{enumerate}
-
-\noindent For example, the following test checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
-
+%
+For example, the following test checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
+%
 \begin{lstlisting}[language=Kotlin, showstringspaces=false]
 val x = Var("x")
 val y = Var("y")
@@ -673,14 +671,13 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
         // Evaluate the results at a given seed
         val autoEval = dz_dx(x to x0, y to y0)
         val manualEval = manualDx(x to x0, y to y0)
-        // Should pass iff |adEval - manualEval| < eps
-        autoEval shouldBeApproximately manualEval
+        autoEval shouldBeApproximately manualEval // Should pass iff |adEval - manualEval| < eps
     }
 }
 \end{lstlisting}
-
+%
 PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
-
+%
 \begin{lstlisting}[language=Kotlin, showstringspaces=false]
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
     NumericalGenerator.assertAll { x0 ->
@@ -693,7 +690,7 @@ PBT will search the input space for two numerical values \inline{x0} and \inline
     }
 }
 \end{lstlisting}
-
+%
 There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
 \section{Shape safety}\label{sec:shape-safety}
@@ -741,20 +738,20 @@ val e = c * d
 val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
 val g = e * f // Does not compile, inner dimension mismatch
 \end{lstlisting}
-
+%
 Explicit types are optional but encouraged. Type inference helps preserve shape information over long programs.
-
+%
 \begin{lstlisting}[language=Kotlin]
 fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 \end{lstlisting}
-
+%
 When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices.
 
 First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), but they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\cite{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C\# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that $0 <: 1 <: 2 <: 3 <: \dots <: C$, where $C$ is the largest fixed-length dimension. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, but in order to do so the code will need to be regenerated.
-
+%
 \begin{lstlisting}[language=Kotlin]
 open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
 open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
