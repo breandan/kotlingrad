@@ -1102,7 +1102,7 @@ In this chapter, we will discuss the challenges of software reproducibility and 
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
-In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features supported a kind of lightweight virtualization, where a fully virtual machine (VM) was no longer necessary to get many of the benefits of VMs, primarily resource control and namespace isolation. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from the host OS and sibling containers. While the overhead of running VMs often limits their deployment to server-class hardware, containers are comparatively lightweight, which enables them to run on a far broader class of mobile and embedded platforms.
+In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features provide a form of lightweight virtualization, offering many benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a broader class of mobile and embedded platforms.
 
 \section{Dependency management}\label{sec:dependency-management}
 
