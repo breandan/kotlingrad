@@ -1102,7 +1102,15 @@ In this chapter, we will discuss the challenges of software reproducibility and 
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
-In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features provide a form of lightweight virtualization, offering many benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a broader class of mobile and embedded platforms.
+In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features provide a form of lightweight virtualization, offering many benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead. These features also paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a broader class of mobile and embedded platforms.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{vms_containers_emulators.png}
+    \caption{Virtualization is very expensive resource wise. Containerization is cheaper, as it shares a kernel with the host OS. Emulation allows us to emulate hardware as software.\vspace{-10}}
+    \label{fig:vms_containers_emulators}
+\end{figure}
 
 \section{Dependency management}\label{sec:dependency-management}
 
