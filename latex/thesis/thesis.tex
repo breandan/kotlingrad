@@ -1100,6 +1100,14 @@ Consider Algorithm~\ref{alg:test_algo}.
 
 In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering like continuous integration and delivery can help researchers mitigate the variability associated with building and running software. Docker~\cite{merkel2014docker} is one technical solution we will discuss. Our work is roughly related to computational determinism, and does not consider the variability of distributional shift or related statistical notions of variation.
 
+\section{Dependency management}\label{sec:dependency-management}
+
+One common source of variability in software development are software dependencies. For many years, developers struggled with dependency management before it was discovered the full dependency resolution problem was NP-complete~\cite{abate2012dependency}. If we assume that no two versions of the same package can be installed simultaneously, then for some set of software packages which need to be installed, and dependencies required to install them, determining the latest version of the dependencies which satisfy all requirements is as hard as the hardest problems in NP. Informally, this problem is known as "dependency hell" and grows increasingly troublesome as software projects grow and introduce new dependencies.
+
+Dependency hell does not just occur inside individual software projects, but across projects and development environments. Hundreds of package managers have been developed for various operating systems, programming languages, and development frameworks. Ubuntu has the Advanced Package Tool (\texttt{apt}), macOS has Homebrew (\texttt{brew}), Windows has Chocolatey (\textit{choco}). Most programming language ecosystems have their own bespoke package managers; Conan for C/C++, Maven for Java, and Cabal for Haskell. Python has developed several roughly similar solutions for package management, including pip, Anaconda, PyEnv, Virtualenv, and others. Some of these install system-wide packages, and others provide command line environments. Over the course of a systems development, as more packages are introduced it becomes more complicated to keep track these dependencies and their cascading effects.
+
+The problem s
+
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
 In 2006, Linux began introducing a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\cite{menage2007adding}. Collectively, these features provide a form of lightweight virtualization, offering many benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead. These features also paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a broader class of mobile and embedded platforms.
@@ -1112,10 +1120,6 @@ In 2006, Linux began introducing a variety of new kernel features for controllin
     \label{fig:vms_containers_emulators}
 \end{figure}
 
-\section{Dependency management}\label{sec:dependency-management}
-
-One common source of software variability are software dependencies. Operating systems have struggled with managing software dependencies for many years before it was discovered that the complexity of dependency resolution was NP-complete~\cite{abate2012dependency}. If we assume that no two version of the same package can be installed at the same time, then for some set of software packages a user wishes to install, and dependencies which are required to install them, determining the latest version of the dependencies which satisfy all packages can be reduced to 3-SAT and is as hard as the hardest problems in NP. This problem is known informally as "dependency hell".
-
 \section{Containerization}\label{sec:containerization}
 
 One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well documented codebase can be a considerable challenge, especially in a robotics setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
@@ -1124,11 +1128,9 @@ In order to address the issue of software reproducibility, we developed a set of
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.45\textwidth]{docker_stack_1.png}
-    \includegraphics[width=0.45\textwidth]{docker_stack_2.png}
-    \includegraphics[width=0.35\textwidth]{network_infra.png}
-    \caption{AI-DO container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are typically trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their specific architecture, may be run on an ARM device using an Intel NCS.}
-    \label{fig:docker}
+    \includegraphics[width=0.65\textwidth]{user_kernel_hardware.png}
+    \caption{Containers live in user space. By default they are sandboxed from the host OS and sibling containers, but unlike VMs, share a common kernel with each other and the host operating system. All system calls are passed through host kernel.}
+    \label{fig:user_kernel_hardware}
 \end{figure}
 
 The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
@@ -1139,9 +1141,20 @@ While containerization simplifies the process of building and deploying applicat
 
 One issue encountered is the matter of whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host to build the artifacts. In this case, while build artifacts images may be standalone reproducible, they are not easily modified or inspected. The second method is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts has the benefit of improved reproducibility and diagnostics. If a competitor requires assistance, troubleshooting becomes much easier when the source code is directly accessible. However doing so adds some friction during development, which has caused competitors to struggle with environment setup. One solution is to store all sources on the local development environment and rebuild the Docker image periodically, copying sources into the image.
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.45\textwidth]{docker_stack_1.png}
+    \includegraphics[width=0.45\textwidth]{docker_stack_2.png}
+    \includegraphics[width=0.35\textwidth]{network_infra.png}
+    \caption{AI-DO container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are typically trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their specific architecture, may be run on an ARM device using an Intel NCS.}
+    \label{fig:docker}
+\end{figure}
+
 \section{Docker and ROS}
 
 Prior work has explored the Dockerization of ROS containers~\cite{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform~\cite{paull2017duckietown}.
+
+
 
 \rare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
 
