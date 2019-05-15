@@ -82,22 +82,6 @@
 
 \def\inline{\lstinline[basicstyle=\ttfamily]}
 
-% Bulleted lists
-
-%\setlist[enumerate]{topsep=30pt,itemsep=-1ex,partopsep=1ex,parsep=30ex}
-
-%\renewcommand*{\ttdefault}{qcr}
-
-\setlength\parindent{0pt}
-
-\def\sloppy{%
-\tolerance 500%  %9999 dans LaTeX ordinaire, mauvaise idée.
-\emergencystretch 3em%
-\hfuzz .5pt
-\vfuzz\hfuzz}
-\sloppy   %appel de \sloppy pour le document
-%%\fussy  %ou \fussy
-
 %% Packages utiles.
 \usepackage{graphicx,amssymb,subfigure,icomma}
 %% icomma       permet d'écrire les nombres décimaux en
@@ -150,7 +134,7 @@
 
 \author{Breandan Considine}
 
-\copyrightyear{Ann\'ee de la th\'ese}
+\copyrightyear{2019}
 
 \department{D\'epartement d'informatique et de recherche op\'erationnelle}
 
@@ -241,7 +225,7 @@
 \setlength{\epigraphwidth}{0.9\textwidth}
 \epigraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
 
-Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it using tools from function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software - the digital manifestation of algorithms on physical hardware. One type of software complexity is the cognitive effort required to understand a program’s source code, which can be approximated by metrics such as cyclomatic or Halstead complexity.  While today’s software is more intelligent than ever before, it shows few signs of becoming more intelligible, and better tools are needed for managing the complexity inherent in building it.
+Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software - the digital manifestation of algorithms on physical hardware. One type of software complexity is the cognitive effort required to understand a program’s source code, which can be approximated by metrics such as cyclomatic or Halstead complexity.  While today’s software is more intelligent than ever before, it shows few signs of becoming more intelligible, and better tools are needed for managing the inherent complexity in building software systems.
 
 \textit{The objective of writing this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and container-based virtualization.}
 
@@ -253,11 +237,11 @@ Broadly speaking, intelligent systems differ from ordinary software systems in t
     \item outperform well-trained humans in domain specific tasks
 \end{enumerate}
 
-While the idea of intelligent systems has been around for decades, three critical developments have made modern intelligent systems possible. First, computer processing power has become faster, cheaper, and much more readily available. Similarly, the digitalization of new datasets has made vast amounts of information available, and data storage costs have plummeted dramatically. (A \$5 thumb drive today has 200 times more storage capacity than a 2,000 pound, 5 MB, IBM hard drive that leased for \$3,000/mo. in 1956.) Most importantly, has been the development of more efficient learning algorithms.
+While the idea of intelligent systems has been around for decades, three critical developments made modern intelligent systems ultimately successful. First, computer processing power has become faster, cheaper, and much more readily available. Similarly, the digitalization of new datasets has made vast amounts of information available, and data storage costs have plummeted dramatically. (A \$5 thumb drive today has 200 times more storage capacity than a 2,000 pound, 5 MB, IBM hard drive that leased for \$3,000/mo. in 1956.) Most importantly, has been the development of more efficient learning algorithms.
 
-In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\cite{theano}, Torch~\cite{collobert2002torch} and Caffe~\cite{jia2014caffe}, and built many popular simulators for machine learning.
+In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\cite{theano}, Torch~\cite{collobert2002torch} and Caffe~\cite{jia2014caffe}, and built many popular simulators for reinforcement learning, the ease of use and availability of which was crucial for popularizing these techniques.
 
-In this thesis, we explore various tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (Chapter~\ref{ch:hatchery}). Next, we show a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning (Chapter~\ref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property} and adversarial learning~\cite{lowd2005adversarial} (Chapter~\ref{ch:difftest}). Docker containers~\cite{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (Chapter~\ref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools developed (Chapter~\ref{ch:case-study}).
+In this thesis, we explore several tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (Chapter~\ref{ch:hatchery}). Next, we show a type-safe domain specific language for differentiable programming, an emerging paradigm in deep learning (Chapter~\ref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\cite{fink1997property} and adversarial learning~\cite{lowd2005adversarial} (Chapter~\ref{ch:difftest}). Docker containers~\cite{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (Chapter~\ref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools developed (Chapter~\ref{ch:case-study}).
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -292,7 +276,7 @@ What did finally work, is the idea of connectionist learning. By nesting random 
 
 While it took fundamental research in deep learning to realize the connectionist blueprint, the success of modern deep learning can be at least partly attributed to software tools for calculating derivatives, which are essential for the backpropagation. Although it has not been established if or how derivatives might be calculated in biological circuits, derivatives are essential for ANN training. For many years, the symbolic form of these derivatives had to be calculated manually when prototyping a new neural network architecture, a time-consuming and error-prone process. There is a well-known algorithm in the scientific computing community, called \textit{automatic differentiation} (A.D.)~\cite{linnainmaa1970representation, griewank1989automatic}, which is able to calculate derivatives for arbitrary differentiable functions. But surprisingly, it was not until much later, after the development of \textit{Theano}~\cite{theano} when AD became widely adopted in the machine learning community. This library alone greatly accelerated the pace of deep learning research and spurred the development of others like TensorFlow~\cite{abadi2016tensorflow} and PyTorch~\cite{paszke2017automatic}.
 
-Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have little time to think about the high-level characteristics of these systems. Similarly, if the abstractions we use have too many assumptions baked in, small variations will require costly reimplementation. This is no different from traditional software engineering - as engineers, need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details, too abstract and the details are lost completely. With deep learning, the necessity of choosing good abstractions is even more important, as the connection of between source code and runtime behavior is already quite difficult to grasp, due to the nature of neural networks.
+Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have little time to think about the high-level characteristics of these systems. Similarly, if programming abstractions are too specific, small variations will require costly reimplementation. This is no different from traditional software engineering - as engineers, we need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details, too abstract and the details are lost completely. With deep learning, the necessity of choosing good abstractions is even more important, as the connection of between source code and runtime behavior is already difficult to grasp, due to the nature of neural networks.
 
 \section{Testing: Verification and validation}
 
@@ -310,7 +294,7 @@ As necessary in any good schematic, much of the information required to build a 
 
 Applied machine learning shares many of the same practical challenges as traditional software development, with source code, release and dependency management. The current process of training a deep learning model can be seen as particularly long compilation step, but it differs significantly in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\cite{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
-Hardware manufacturers have developed a variety of custom silicon to train and run these programs rapidly. But unlike most programming, deep learning is a much simpler model of computation - so long as a computer can add and multiply, it has the ability to run a deep neural network. Yet due to the variety of hardware platforms which exist and the software churn associated with them, reproducing deep learning models can be painstakingly difficult on new hardware, even with the same source code and dependencies. Many graph formats, or \textit{intermediate representations} (IRs) in compiler parlance, promise hardware portability but if developers are not careful their models may not converge during training, or produce different results on different hardware. Complicating the problem, IRs are produced by competing vendors, with competing chips and incompatible standards (e.g.~MLIR, ONNX, NNEF, OpenVINO, et al.). While some have tried to leverage existing compilers such as GHC~\cite{elliott2018simple} or LLVM~\cite{wei2017dlvm}, there are few signs of convergence.
+Hardware manufacturers have developed a variety of custom silicon to train and run these programs rapidly. But unlike most programming, deep learning is a much simpler model of computation - so long as a computer can add and multiply, it has the ability to run a deep neural network. Yet due to the variety of hardware platforms which exist and the software churn associated with them, reproducing deep learning models can be painstakingly difficult on new hardware, even with the same source code and dependencies. Many graph formats, or \textit{intermediate representations} (IRs) in compiler parlance, promise hardware portability but if developers are not careful, their models may not converge during training, or produce different results on different hardware. Complicating the problem, IRs are produced by competing vendors, with competing chips and incompatible standards (e.g.~MLIR, ONNX, NNEF, OpenVINO, et al.). While some have tried to leverage existing compilers such as GHC~\cite{elliott2018simple} or LLVM~\cite{wei2017dlvm}, there are few signs of convergence.
 
 At the end of the day, researchers need to reproduce the work of other researchers, but the mental effort of re-implementing their abstractions can be tedious and detrimental towards scientific progress. Since it is necessary to reuse programs written by other researchers, it would be convenient if there were tools for reproducibility and incremental development. Fortunately, this is the same problem software developers have been attempting to solve for many years, via the open source community. But source control management (SCM) alone is insufficient, since SCM tools are primarily intended for text. While text-based representations may be stable for a time, as dependencies are periodically updated and rebuilt, important details about the original development environment can be misplaced. To reproduce a program in its entirety, we need a snapshot of all digital information available to the computer at the time of its execution. Short of that, the minimal set of dependencies for running a program is essential.
 
@@ -435,7 +419,7 @@ The cost of calculating the Hessian, $\mathbf{H}$ is approximately quadratic~\ci
 \begin{enumerate}
     \item If all eigenvalues of $\mathbf{H}(a)$ are positive, $a$ is a local minimum
     \item If all eigenvalues of $\mathbf{H}(a)$ are negative, $a$ is a local maximum
-    \item If $\mathbf{H}$ contains a mixture of positive and negative eigenvalues, $a$ is a "saddle point"\\
+    \item If $\mathbf{H}$ contains a mixture of positive and negative eigenvalues, $a$ is a \textit{saddle point}\\
 \end{enumerate}
 %
 For some classes of computable functions, small changes to the input will produce a sudden large change in the output. We say that such functions are non-differentiable.
@@ -490,11 +474,11 @@ Statically typed languages eliminate a broad class of runtime errors and allow u
 
 \section{Imperative and functional languages}
 
-Most programs written today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\cite{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more natural medium for expressing mathematical functions and computing their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, and there is no way to refer to a function directly. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which requires taking extra precautions when computing mathematical derivatives.
+Most programs written today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\cite{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more appropriate notation for expressing mathematical functions and computing their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, and there is no way to refer to a function directly. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which requires taking extra precautions when computing mathematical derivatives.
 
-In functional programming, the mathematical notion of function composition is a very natural pattern. Just like calculus, to take the derivative of a programming function composed of another function, we simply apply the chain rule~\ref{sec:automatic-differentiation}. Since there is no mutable state, we do not require any exotic data structures or compiler tricks to keep track of the state.
+In functional programming, the mathematical notion of function composition is a first-class pattern. Just like calculus, to take the derivative of a programming function composed with another function, we simply apply the chain rule~\ref{sec:automatic-differentiation}. Since there is no mutable state, we do not require any exotic data structures or compiler tricks to keep track of the program state.
 
-For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{tab:1}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover that computation graph for reverse mode AD, we need to either override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming mutable variables do not exist, which makes our lives much easier.
+For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{tab:1}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
 \begin{table*}[t]
     \centering
@@ -518,9 +502,8 @@ fun dot(l1, l2) {
   return if (len(l1) != len(l2))
     error
   else if (len(l1) == 0) 0
-  else
-    head(l1) * head(l2) +
-    dot(tail(l1) + tail(l2))
+  else head(l1) * head(l2) +
+    dot(tail(l1), tail(l2))
 }
         \end{lstlisting}}
         \\
@@ -601,16 +584,15 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // This does not perform any calculat
 
 %In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
 
-\mediumrare{\section{Type system}\label{sec:type-system}}
+\section{Type system}\label{sec:type-system}
 
-Early work in type safe dimension analysis can be found in Kennedy (1994~\cite{kennedy1994dimension}, 1996~\cite{kennedy1996programming}), which shows how static types can be used to encode dimensionality and prevent common bugs arising from dimension mismatch. Furthermore, programs decorated with dimension types can determine subsequent types by employing standard type checking and inference. Kennedy's work is particularly interested in units of measurement, but more recent studies including Chen (2017~\cite{chen2017typesafe}) and Rink (2018~\cite{rink2018modeling}) explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
+Early work in type safe dimension analysis can be found in Kennedy (1994~\cite{kennedy1994dimension}, 1996~\cite{kennedy1996programming}) showing how static types in array programming can be used to encode dimensionality and prevent common bugs arising from dimension mismatch. Kennedy's work is particularly interested in units of measurement, and was followed by Jay (1996~\cite{jay1996shape}), Rittri (1995~\cite{rittri1995dimension}), and Zenger (1997~\cite{zenger1997indexed}). Later, Kiselyov~\cite{kiselyov2005number,kiselyov2010fun} and Griffioen~\cite{griffioen2015type}, show how to encode numbers to infer array sizes in more complex ways. More recently, with the resurgence of interest in tensor algebra and the array programming paradigm, Chen (2017~\cite{chen2017typesafe}) and Rink (2018~\cite{rink2018modeling}) explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
 
-The problem we would like to solve can be summarized as follows. Given two variables \texttt{x} and \texttt{y}, and operator $\diamond$, how do we determine whether the expression \texttt{z = x} $\diamond$ \texttt{y} is valid, and if so, what is the result type of \texttt{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, for some operator $\otimes: (\mathbb{R}^{a_0 \times \dots \times a_q}, \mathbb{R}^{b_0 \times \dots \times b_r}) \rightarrow \mathbb{R}^{c_0 \times \dots \times c_s}$, we would like to answer the same question.
+The problem we would like to solve can be summarized as follows. Given two variables \texttt{x} and \texttt{y}, and operator $\diamond$, how do we determine whether the expression \texttt{z = x} $\diamond$ \texttt{y} is valid, and if so, what is the result type of \texttt{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \texttt{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations, $\mathcal{T}$ is computable in $\mathcal{O}(1)$ as in the case of standard matrix multiplication - we can simply check the inner dimensions for equivalence and use the outer dimensions for inference.
 
+Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{C}(\mathbf{a}, \mathbf{b}, \mathbf{c}) = \mathbf{c} \Leftrightarrow \mathcal{T}(\mathbf{a}, \mathbf{b})$ requires a Turing machine, at which point it would be easier to implement at runtime rather than in the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\cite{dumoulin2016guide}, type checking becomes equivalent to Peano arithmetic, which is known to be undecidable~\cite{godel1931formal}.
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices \cite{xi1998eliminating}), but they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\cite{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore}. When the shape of a tensor is known at compile time, it is possible to type check arithmetical operations in a fully decidable type system, as long as the host language supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in Java, Kotlin, C++, C\# or Typescript.
 
 {\tiny
 \begin{table}
@@ -635,59 +617,13 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 }
 %$\dagger$ \texttt{a} and \texttt{b} are higher order functions. These may be constants (e.g. 0, 1.0), variables (e.g. \texttt{Var("x")}) or expressions (e.g. \texttt{x + 1}, \texttt{2 * x + y}).
 
-
-\section{Testing}\label{sec:testing}
-
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, called property-based testing (PBT), is borrowed from the Haskell community and closely related to metamorphic testing~\cite{chen1998metamorphic}. Notable implementations include QuickCheck~\cite{claessen2011quickcheck}, Hypothesis~\cite{Hypothesis} and KotlinTest~\cite{kotlintest}. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
-%
-\begin{enumerate}
-    \item \textbf{Manual differentiation}: manually differentiate common functions and numerically evaluate a subset of the domain with AD.
-    \item \textbf{Finite difference approximation}: sample space of symbolic (differentiable) functions, comparing results of AD to FD. \\
-\end{enumerate}
-%
-For example, the following test checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
-%
-\begin{lstlisting}[language=Kotlin, showstringspaces=false]
-val x = Var("x")
-val y = Var("y")
-val z = y * (sin(x * y) - x)            // Function under test
-val dz_dx = d(z) / d(x)                 // Automatic derivative
-val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
-
-"dz/dx should be y * (cos(x * y) * y - 1)" {
-    NumericalGenerator.assertAll { x0, y0 ->
-        // Evaluate the results at a given seed
-        val autoEval = dz_dx(x to x0, y to y0)
-        val manualEval = manualDx(x to x0, y to y0)
-        autoEval shouldBeApproximately manualEval // Should pass iff |adEval - manualEval| < eps
-    }
-}
-\end{lstlisting}
-%
-PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
-%
-\begin{lstlisting}[language=Kotlin, showstringspaces=false]
-"d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
-    NumericalGenerator.assertAll { x0 ->
-        val f = sin(x)
-        val df_dx = d(f) / d(x)
-        val adEval = df_dx(x0)
-        val dx = 1E-8
-        val fdEval = (sin(x0 + dx) - sin(x0)) / dx
-        adEval shouldBeApproximately fdEval
-    }
-}
-\end{lstlisting}
-%
-There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. We plan to conduct a more thorough comparison of numerical accuracy and performance.
-
 \section{Shape safety}\label{sec:shape-safety}
 
-\noindent There are three broad strategies for handling shape errors in numerical programming: \\
+\noindent There are three broad strategies for handling shape errors in array programming: \\
 %
 \begin{enumerate}
     \item Hide the error somehow by implicitly reshaping or broadcasting arrays
-    \item Announce the error at runtime, with a relevant message, e.g. "InvalidArgument"
+    \item Announce the error at runtime, with a relevant message, e.g.\ "InvalidArgument"
     \item Do not allow programs which can result in a shape error to compile \\
 \end{enumerate}
 %
@@ -734,9 +670,7 @@ fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 \end{lstlisting}
 %
-When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices.
-
-First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices), but they are unnecessary for simple equality checking (such as when multiplying two matrices)\footnote{Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\cite{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore}. When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism. In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C\# or Typescript, which accept generic type parameters. In Kotlin, whose type system is less expressive than Java, we use the following strategy.
+When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices, using the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that $0 <: 1 <: 2 <: \dots <: C$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, but in order to do so, the code will need to be regenerated.
 %
@@ -759,9 +693,8 @@ infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
     Vec(length, contents.zip(v.contents).map { it.first + it.second })
 \end{lstlisting}
 %
-
 The operator can now be used as follows. Incompatible operands will result in a type error:
-
+%
 \begin{lstlisting}
 // Type-checked vector addition with shape inference
 val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4)) // Y: Vec<Float, `2`>
@@ -808,6 +741,52 @@ val mm = m * m // Does not compile
 \end{lstlisting}
 %
 This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\cite{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\cite{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or would require enumerating every possible combination of type literals.
+
+\section{Testing}\label{sec:testing}
+
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, called property-based testing (PBT), is borrowed from the Haskell community and closely related to metamorphic testing~\cite{chen1998metamorphic}. Notable implementations include QuickCheck~\cite{claessen2011quickcheck}, Hypothesis~\cite{Hypothesis} and KotlinTest~\cite{kotlintest}. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
+%
+\begin{enumerate}
+    \item \textbf{Analytical differentiation}: manually differentiate common functions and numerically evaluate a subset of the domain with AD.
+    \item \textbf{Finite difference approximation}: sample space of symbolic (differentiable) functions, comparing results of AD to FD. \\
+\end{enumerate}
+%
+For example, the following test checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
+%
+\begin{lstlisting}[language=Kotlin, showstringspaces=false]
+val x = Var("x")
+val y = Var("y")
+val z = y * (sin(x * y) - x)            // Function under test
+val dz_dx = d(z) / d(x)                 // Automatic derivative
+val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
+
+"dz/dx should be y * (cos(x * y) * y - 1)" {
+    NumericalGenerator.assertAll { x0, y0 ->
+        // Evaluate the results at a given seed
+        val autoEval = dz_dx(x to x0, y to y0)
+        val manualEval = manualDx(x to x0, y to y0)
+        autoEval shouldBeApproximately manualEval // Should pass iff |adEval - manualEval| < eps
+    }
+}
+\end{lstlisting}
+%
+PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then "shrink" them to discover pass-fail boundary values. We can construct a similar test using finite differences:
+%
+\begin{lstlisting}[language=Kotlin, showstringspaces=false]
+"d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
+    NumericalGenerator.assertAll { x0 ->
+        val f = sin(x)
+        val df_dx = d(f) / d(x)
+        val adEval = df_dx(x0)
+        val dx = 1E-8
+        val fdEval = (sin(x0 + dx) - sin(x0)) / dx
+        adEval shouldBeApproximately fdEval
+    }
+}
+\end{lstlisting}
+%
+There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. We plan to conduct a more thorough comparison of numerical accuracy and performance.
+
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
@@ -948,7 +927,7 @@ interface Field<X: Field<X>> {
 
 Furthermore, if we need to later define a field over the quaternions (suppose for backpropogating through a quaternion neural network~\cite{isokawa2003quaternion}), these abstractions are easy to extend, since we only need to implement a very small set of primitive operations.
 
-\section{Symbolic and Automatic Differentiation}
+\section{Automatic, Symbolic Differentiation}
 
 It has long been claimed that automatic differentiation is not symbolic differentiation~\cite{baydin-survey}. Many, including the author, have suspected this claim to be misleading. Recent literature has questioned~\cite{wang2018demystifying} and refuted~\cite{laue2019equivalence} this claim. It is our view the distinction is a minor semantic disagreement. While it may be true that certain implementations of automatic differentiation interleave numerical and symbolic differentiation during a program's execution, it is certainly not a prerequisite for a library to be considered automatic differentiation, especially considering that prior AD implementations, including Theano, have taken a different approach. Furthermore, we consider symbolic differentiation to be a type of automatic differentiation.
 
