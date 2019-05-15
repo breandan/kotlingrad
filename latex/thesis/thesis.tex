@@ -474,9 +474,9 @@ Statically typed languages eliminate a broad class of runtime errors and allow u
 
 \section{Imperative and functional languages}
 
-Most programs written today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\cite{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more appropriate notation for expressing mathematical functions and computing their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, and there is no way to refer to a function directly. More troubling in the case of automatic differentiation, is that imperative programs have mutable state, which requires taking extra precautions when computing mathematical derivatives.
+Most programs written today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\cite{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that $\lambda$-calculus is Turing Complete.} language for computing, which we argue, is a more appropriate notation for expressing mathematical functions and computing their derivatives. In pure imperative programming the sole purpose of a function is to pass it values, and there is no way to refer to a function directly. More troubling in the case of automatic differentiation, is imperative programs have mutable state, which requires taking extra precautions when computing their derivatives.
 
-In functional programming, the mathematical notion of function composition is a first-class pattern. Just like calculus, to take the derivative of a programming function composed with another function, we simply apply the chain rule~\ref{sec:automatic-differentiation}. Since there is no mutable state, we do not require any exotic data structures or compiler tricks to keep track of the program state.
+The mathematical notion of function composition is a first-class notion in functional programming. Just like in calculus, to take the derivative of a programming function composed with another function, we simply apply the chain rule~\ref{sec:automatic-differentiation}. Since there is no mutable state, no exotic data structures or compiler tricks are required to keep track of the program state.
 
 For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{tab:1}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
@@ -502,7 +502,8 @@ fun dot(l1, l2) {
   return if (len(l1) != len(l2))
     error
   else if (len(l1) == 0) 0
-  else head(l1) * head(l2) +
+  else
+    head(l1) * head(l2) +
     dot(tail(l1), tail(l2))
 }
         \end{lstlisting}}
