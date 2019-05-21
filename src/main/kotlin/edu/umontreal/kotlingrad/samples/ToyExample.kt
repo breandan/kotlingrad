@@ -99,7 +99,7 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Field
   override val e: Const<X> by lazy { proto.e }
   override val one: Const<X> by lazy { proto.one }
   override val zero: Const<X> by lazy { proto.zero }
-  val proto: X by lazy { variables.first().value }
+  private val proto: X by lazy { variables.first().value }
 
   override fun toString(): String = when {
     this is Log -> "ln($logarithmand)"
