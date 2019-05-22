@@ -25,7 +25,7 @@ showstringspaces=false,
 \mode<presentation> { \usetheme{Madrid} }
 
 \title{Kotlin\texorpdfstring{$\nabla$}{}}
-\subtitle{Differentiable functional programming with algebraic data types}
+\subtitle{A Shape Safe eDSL for Differentiable Functional Programming}
 \author{Breandan Considine}
 \institute[UdeM]{
 Universit\'e de Montr\'eal \\
@@ -44,30 +44,109 @@ Universit\'e de Montr\'eal \\
         \tableofcontents
     \end{frame}
 
-    \section{Introduction and motivation}\label{sec:first-section}
+    \section{A Short Lesson on Computing Derivatives}\label{sec:second-section}
 
     %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Differentiation}
+        If we have a function, $P(x): \mathbb{R}\rightarrow\mathbb{R}$, recall the derivative is defined as:
+        %
+        \begin{equation}
+            P'(x) = \lim _{h\to 0}{\frac {f(x+h)-f(x)}{h}} = \frac{\Delta y}{\Delta x} = \frac{dP}{dx}
+        \end{equation}
+        %
+        For $P(x_0, x_1, \dots, x_n): \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient is a vector of derivatives:
+        %
+        \begin{equation}
+            \nabla P = \left[\frac{\partial P}{\partial x_0}, \frac{\partial P}{\partial x_1}, \dots, \dfrac{\partial P}{\partial x_n}\right]\text{ where }\frac{\partial P}{\partial x_i} = \frac{dP}{dx_i}
+        \end{equation}
+        %
+        For $\mathbf{P}(x_0, x_1, \dots, x_n): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian is a vector of gradients:
+        %
+        \begin{equation}
+            \mathbf{J}_\mathbf{P} = \left[\nabla P_0, \nabla P_1, \dots, \nabla P_n \right] \text{ or equivalently, } \mathbf{J}_{ij} = \frac{\partial P_i}{\partial x_j}
+        \end{equation}
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
+
+    \section{Introduction and motivation}\label{sec:first-section}
 
     \begin{frame}
         \frametitle{Type checking automatic differentiation}
         Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
         %
         \begin{equation}
-            P(x)=p_n \circ p_{n-1} \circ p_{n-2} \circ \dots \circ p_1 \circ p_0
+            \mathbf{P}(p_0)=p_n \circ p_{n-1} \circ p_{n-2} \circ \dots \circ p_1 \circ p_0
         \end{equation}
         %
         From the chain rule of calculus, we know that:
         %
         \begin{equation}
-            \frac{dP}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+            \frac{dP}{dp_0} = \frac{dp_n}{dp_{n-1}}\frac{dp_{n-1}}{dp_{n-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
         \end{equation}
         %
-        In order for $P$ to type check, what is the type of $p_{0<i<n}$?
+        More generally, for $P: \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule also applies:
+        %
+        \begin{equation}
+            \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{n} \mathbf{J}_{p_i} = \bigg(\Big((\mathbf{J}_{p_n} \mathbf{J}_{p_{n-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg) = \bigg(\mathbf{J}_{p_n} \Big(\mathbf{J}_{p_{n-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)
+        \end{equation}
+        %
+        In order for $\mathbf{P}$ to type check, what is the type signature of $p_{0<i<n}$?
+        %
         \begin{equation}
             p_i: T_{out}(p_{i-1}) \rightarrow T_{in}(p_{i+1})
         \end{equation}
         %
-        What happens if we let $P: \mathbb{R}^c\rightarrow\mathbb{R}$, $P: \mathbb{R}^c\rightarrow\mathbb{C}^d$  or $P: \Psi^p\rightarrow\Omega^q$?
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Shape checking and inference}
+        \begin{itemize}
+            \item Scalar functions implicitly represent shape as arity $f(1, 2): \mathbb{R}^2 \rightarrow \mathbb{R}$
+            \item To check matrix functions, we need a type-level encoding of shape
+            \item Arbitrary matrix functions (e.g.\ convolution) require dependent types
+            \item But parametric polymorphism will suffice for most matrix functions
+            \item For arithmetical operations, we just need to check for equality
+        \end{itemize}
+        {\scriptsize
+\begin{table}
+    \begin{tabular}{|c|c|c|c|l|}
+        \hline
+        \multicolumn{1}{|c|}{Math}   & Derivative                                  & Code                                                                                           &  Type Signature                                                                                                                                                                                             \\ \hline
+                 $a(b)$              & $\mathbf{J}_a\mathbf{J}_b$                  & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
+                 $a + b$             & $\mathbf{J}_a + \mathbf{J}_b$               & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
+                 $a   b$             & $\mathbf{J}_a b + \mathbf{J}_b b$           & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
+    \end{tabular}
+\end{table}
+}
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Numeric tower}
+        \begin{itemize}
+            \item Abstract algebra can be useful when generalizing to new structures
+            \item Helps us to easily translate between mathematics and source code
+            \item Fields are a useful concept when computing over real numbers
+            \begin{itemize}
+                \item A field is a set $F$ with two operations $+$ and $\times$, with the properties:
+                \begin{itemize}
+                    \item Associativity: $\forall a, b, c \in F, a + (b + c) = (a + b) + c$
+                    \item Commutivity: $\forall a, b \in F, a + b = b + a$ and $a\times b = b\times a$
+                    \item Distributivity: $\forall a, b, c \in F, a \times (b \times c) = (a \times b) \times c$
+                    \item Identity: $\forall a \in F, \exists 0$, $ 1 \in F$ s.t. $a + 0 = a$ and $a\times 1= a$
+                    \item $+$ inverse: $\forall a\in F, \exists (-a)$ s.t. $a + (-a) = 0$
+                    \item $\times$ inverse: $\forall a\neq 0 \in F, \exists (a^{-1})$ s.t. $a \times a^{-1} = 1$
+                \end{itemize}
+            \end{itemize}
+            \item Extensible to other number systems (e.g. complex, dual numbers)
+            \item What is a program, but a series of arithmetic operations?
+        \end{itemize}
     \end{frame}
 
     %------------------------------------------------------------------------------------------------
@@ -107,7 +186,7 @@ Universit\'e de Montr\'eal \\
             \end{itemize}
             \item Usage desiderata
             \begin{itemize}
-                \item Generalized AD with imperative array programming
+                \item Generalized AD with functional array programming
                 \item Automatic differentiation with infix and Polish notation
                 \item Partials and higher order derivatives and gradients
             \end{itemize}
@@ -119,29 +198,6 @@ Universit\'e de Montr\'eal \\
         \end{itemize}
     \end{frame}
 
-    \begin{frame}
-        \frametitle{Algebraic types}
-        \begin{itemize}
-            \item Abstract algebra can be useful when generalizing to new structures
-            \item Helps us to easily translate between mathematics and source code
-            \item Most of the time in numerical computing, we are dealing with Fields
-            \begin{itemize}
-                \item A field is a set $F$ with two operations $+$ and $\times$, with the properties:
-                \begin{itemize}
-                    \item Associativity: $\forall a, b, c \in F, a + (b + c) = (a + b) + c$
-                    \item Commutivity: $\forall a, b \in F, a + b = b + a$ and $a\times b = b\times a$
-                    \item Distributivity: $\forall a, b, c \in F, a \times (b \times c) = (a \times b) \times c$
-                    \item Identity: $\forall a \in F, \exists 0$, $ 1 \in F$ s.t. $a + 0 = a$ and $a\times 1= a$
-                    \item $+$ inverse: $\forall a\in F, \exists -a$ s.t. $a + (-a) = 0$
-                    \item $\times$ inverse: $\forall a\neq 0 \in F, \exists a^{-1}$ s.t. $a \times a^{-1} = 1$
-                \end{itemize}
-            \end{itemize}
-            \item Readily extensible to complex numbers, quaternions, dual numbers
-            \item Field arithmetic can be implemented using parametric polymorphism
-            \item What is a program, but a series of arithmetic operations?
-            \item Sajovic \& Vuk, \href{https://arxiv.org/pdf/1610.07690.pdf}{Operational Calculus for Differentiable Programming}
-        \end{itemize}
-    \end{frame}
 
 
     \begin{frame}[fragile]
@@ -237,7 +293,7 @@ Universit\'e de Montr\'eal \\
             val manualDx = y * (cos(x * y) * y - 1)
 
             "dz/dx should be y * (cos(x * y) * y - 1)" {
-              assertAll (NumGen, NumGen) { cx, cy ->
+              assertAll (NumGen) { cx, cy ->
                 // Evaluate the results at a given seed
                 val autoEval = dz_dx(x to cx, y to cy)
                 val symbEval = manualDx(x to cx, y to cy)
@@ -276,6 +332,13 @@ Universit\'e de Montr\'eal \\
         \end{center}
     \end{frame}
 
+    \begin{frame}
+        \frametitle{$z = \sin(10(x^2 + y^2)) / 10$, $\frac{\partial^3 z}{\partial^2 y \partial x}$}
+        \begin{center}
+            \includegraphics[scale=0.4]{plot3d.png}
+        \end{center}
+    \end{frame}
+
     \section{Future exploration}\label{sec:fifth-section}
 
     \begin{frame}
@@ -284,10 +347,15 @@ Universit\'e de Montr\'eal \\
             \item Theory Directions
             \begin{itemize}
                 \item Generalization of types to higher order functions, vector spaces
-                \item Dependent types via code generation to type-check tensor dimensions
+                \item Dependent types via code generation to type-check convolution
                 \item General programming operators and data structures
                 \item Imperative define-by-run array programming syntax
-                \item Parallelization and asynchrony (cf. HogWild, YellowFin)
+                \item Program induction and synthesis, cf.
+                \begin{itemize}
+                    \item The Derivative of a Regular Type is its Type of One-Hole Contexts
+                    \item The Differential Lambda Calculus (2003)
+                \end{itemize}
+                \item Asynchronous gradient descent (cf. HogWild, YellowFin, et al.)
             \end{itemize}
             \item Implementation Details
             \begin{itemize}
@@ -315,8 +383,6 @@ Universit\'e de Montr\'eal \\
                 \huge{
                 Liam Paull \\
                 Michalis Famelis \\
-                Alexander Nozik \\
-                Hanneli Tavante \\~\\
                 }
                 \includegraphics[scale=0.1]{udem.png}
                 \includegraphics[scale=0.4]{mila.png}
