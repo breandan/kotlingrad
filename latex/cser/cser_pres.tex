@@ -78,19 +78,19 @@ Universit\'e de Montr\'eal \\
         Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
         %
         \begin{equation}
-            \mathbf{P}(p_0)=p_n \circ p_{n-1} \circ p_{n-2} \circ \dots \circ p_1 \circ p_0
+            \mathbf{P}(p_0)=p_q \circ p_{q-1} \circ p_{q-2} \circ \dots \circ p_1 \circ p_0
         \end{equation}
         %
         From the chain rule of calculus, we know that:
         %
         \begin{equation}
-            \frac{dP}{dp_0} = \frac{dp_n}{dp_{n-1}}\frac{dp_{n-1}}{dp_{n-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+            \frac{dP}{dp_0} = \frac{dp_q}{dp_{q-1}}\frac{dp_{q-1}}{dp_{q-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
         \end{equation}
         %
         More generally, for $P: \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule also applies:
         %
         \begin{equation}
-            \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{n} \mathbf{J}_{p_i} = \bigg(\Big((\mathbf{J}_{p_n} \mathbf{J}_{p_{n-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg) = \bigg(\mathbf{J}_{p_n} \Big(\mathbf{J}_{p_{n-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)
+            \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{q} \mathbf{J}_{p_i} = \bigg(\Big((\mathbf{J}_{p_q} \mathbf{J}_{p_{q-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg) = \bigg(\mathbf{J}_{p_q} \Big(\mathbf{J}_{p_{n-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)
         \end{equation}
         %
         In order for $\mathbf{P}$ to type check, what is the type signature of $p_{0<i<n}$?
@@ -384,6 +384,7 @@ Universit\'e de Montr\'eal \\
                 Liam Paull \\
                 Michalis Famelis \\
                 }
+                \includegraphics[scale=0.4]{cser_logo.png}\\
                 \includegraphics[scale=0.1]{udem.png}
                 \includegraphics[scale=0.4]{mila.png}
             \end{center}
