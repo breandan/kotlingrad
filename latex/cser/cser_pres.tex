@@ -4,23 +4,40 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 
+\usepackage{booktabs}
+\usepackage{pifont}
+\usepackage{float}
+
 \lstdefinelanguage{Kotlin}{
 comment=[l]{//},
 commentstyle={\color{gray}\ttfamily},
 emph={delegate, filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
 emphstyle={\color{red}},
 identifierstyle=\color{black},
-keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
 keywordstyle={\color{blue}\bfseries},
 morecomment=[s]{/*}{*/},
 morestring=[b]",
 morestring=[s]{"""*}{*"""},
-ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
+ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Number, Runnable, Short, String},
 ndkeywordstyle={\color{Orange}\bfseries},
 sensitive=true,
 stringstyle={\color{green}\ttfamily},
 showstringspaces=false,
 }
+
+
+\newcommand{\wmark}{\textcolor{orange}{\ding{45}}}
+\newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}}
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}
+
+\newcommand{\mediumwell}[1]{\textcolor{green}{#1}}
+\newcommand{\medium}[1]{\textcolor{yellow}{#1}}
+\newcommand{\mediumrare}[1]{\textcolor{orange}{#1}}
+\newcommand{\rare}[1]{\textcolor{red}{#1}}
+
+% Table
+\newcommand*\rot{\rotatebox{90}}
 
 \mode<presentation> { \usetheme{Madrid} }
 
@@ -198,23 +215,57 @@ Universit\'e de Montr\'eal \\
         \end{itemize}
     \end{frame}
 
-
+\begin{frame}
+    \frametitle{Feature Comparison Matrix}
+    \begin{center}
+\begin{tabular}{lllllllll}
+    \textbf{Framework} &
+    \textbf{Language} &
+    SD &
+    AD &
+    FP &
+    TS &
+    SS &
+    DP &
+    MP
+    \\ \hline
+Kotlin$\nabla$     & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
+DiffSharp          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+TensorFlow.FSharp  & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+Myia               & Python  & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+Deeplearning.scala & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+Nexus              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+Lantern            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+Grenade            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+Eclipse DL4J       & Java    & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
+Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+\end{tabular}
+\end{center}
+\footnotesize{SD: Symbolic Differentiation, AD: Automatic Differentiation, FP: Functional Program, TS: Type Safe, SS: Shape Safe, DP: Differentiable Programming, MP: Multiplatform}
+%    \begin{itemize}
+%       \item
+%    \end{itemize}
+\end{frame}
 
     \begin{frame}[fragile]
         \frametitle{How do we define algebraic types in Kotlin\texorpdfstring{$\nabla$}{}?}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             // T: Group<T> is effectively a self type
             interface Group<T: Group<T>> {
-              operator fun plus(f: T): T
-              operator fun times(f: T): T
+                operator fun plus(f: T): T
+                operator fun unaryMinus(): X
+                operator fun minus(f: X): X = this + -f
+                operator fun times(f: T): T
             }
 
-            // Inherits from Group, default methods
-            interface Field<T: Field<T>>: Group<T> {
-              operator fun unaryMinus(): T
-              operator fun minus(f: T): T = this + -f
-              fun inverse(): T
-              operator fun div(f: T): T = this * f.inverse()
+            interface Field<X: Group<X>> {
+              val e: X
+              val one: X
+              val zero: X
+              operator fun div(f: X): X = this * f.pow(-one)
+              infix fun pow(f: X): X
+              fun ln(): X
             }
         \end{lstlisting}
     \end{frame}
@@ -225,21 +276,21 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Algebraic Data Types}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            class Var: Expr()
-            class Const(val num: Number): Expr()
-            class Sum(val e1: Expr, val e2: Expr): Expr()
-            class Prod(val e1: Expr, val e2: Expr): Expr()
+            class Var<X: Fun<X>>(label: String): Fun<X>()
+            class Const<X: Fun<X>>(val num: Number): Fun<X>()
+            class Sum<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
+            class Prod<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
 
-            sealed class Expr: Group {
-              fun diff() = when(expr) {
+            sealed class Fun<X: Fun<X>>: Field<Fun<X>>{
+              open fun diff(): Fun<X> = when(this) {
                 is Const -> Zero
-                is Sum -> e1.diff() + e2.diff()
-                is Prod -> e1.diff() * e2 + e1 * e2.diff()
+                is Sum -> f1.diff() + f2.diff()
+                is Prod -> f1.diff() * f2 + f1 * f2.diff()
                 is Var -> One
               }
 
-              operator fun plus(e: Expr) = Sum(this, e)
-              operator fun times(e: Expr) = Prod(this, e)
+              operator fun plus(f: Fun<X>) = Sum(this, f)
+              operator fun times(f: Fun<X>) = Prod(this, f)
             }
         \end{lstlisting}
     \end{frame}
@@ -247,7 +298,7 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Expression simplification}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            operator fun Expr.times(exp: Expr) = when {
+            operator fun times(exp: Fun<X>): Fun<X> = when {
               this is Const && num == 0.0 -> Const(0.0)
               this is Const && num == 1.0 -> exp
               exp is Const && exp.num == 0.0 -> exp
@@ -265,35 +316,36 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Extension functions and contexts}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            class Expr<T: Group<T>>: Group<Expr<T>> {
-              //...
-              operator fun plus(exp: Expr<T>) = Sum(this, exp)
-              operator fun times(exp: Expr<T>) = Prod(this, exp)
+            object DoublePrecision {
+              operator fun Number.times(f: Fun<KGDouble>) =
+                Const(toDouble()) * f
             }
 
-            object DoubleContext {
-              operator fun Number.times(exp: Expr<DoubleReal>) =
-                Const(toDouble()) * exp
+            class KGDouble(num: Double): Const<KGDouble>(num) {
+              override val e by lazy { KGDouble(Math.E) }
+              override val one by lazy { KGDouble(1.0) }
+              override val zero by lazy { KGDouble(0.0) }
+              // Adapters for wrapping primitive Double...
             }
 
             // Uses `*` operator in DoubleContext
-            fun Expr<DoubleReal>.multiplyByTwo() =
-              with(DoubleContext) { 2 * this }
+            fun Fun<KGDouble>.multiplyByTwo() =
+              with(DoublePrecision) { 2 * this }
         \end{lstlisting}
     \end{frame}
 
     \begin{frame}[fragile]
         \frametitle{Automatic test case generation}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            val x = variable("x")
-            val y = variable("y")
+            val x = Var("x")
+            val y = Var("y")
 
             val z = y * (sin(x * y) - x) // Function under test
             val dz_dx = d(z) / d(x)      // Automatic derivative
             val manualDx = y * (cos(x * y) * y - 1)
 
             "dz/dx should be y * (cos(x * y) * y - 1)" {
-              assertAll (NumGen) { cx, cy ->
+              assertAll (DoubleGenerator) { cx, cy ->
                 // Evaluate the results at a given seed
                 val autoEval = dz_dx(x to cx, y to cy)
                 val symbEval = manualDx(x to cx, y to cy)
