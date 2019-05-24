@@ -4,9 +4,7 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 
-\usepackage{booktabs}
-\usepackage{pifont}
-\usepackage{float}
+
 
 \lstdefinelanguage{Kotlin}{
 comment=[l]{//},
@@ -26,18 +24,17 @@ stringstyle={\color{green}\ttfamily},
 showstringspaces=false,
 }
 
-
+% Comparison Table
+\usepackage{booktabs}
+\usepackage{pifont}
+\usepackage{float}
 \newcommand{\wmark}{\textcolor{orange}{\ding{45}}}
 \newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}}
 \newcommand{\xmark}{\textcolor{red}{\ding{55}}}
-
 \newcommand{\mediumwell}[1]{\textcolor{green}{#1}}
 \newcommand{\medium}[1]{\textcolor{yellow}{#1}}
 \newcommand{\mediumrare}[1]{\textcolor{orange}{#1}}
 \newcommand{\rare}[1]{\textcolor{red}{#1}}
-
-% Table
-\newcommand*\rot{\rotatebox{90}}
 
 \mode<presentation> { \usetheme{Madrid} }
 
@@ -133,10 +130,11 @@ Universit\'e de Montr\'eal \\
 \begin{table}
     \begin{tabular}{|c|c|c|c|l|}
         \hline
-        \multicolumn{1}{|c|}{Math}  & Derivative                         & Code                                                                                           &  Type Signature                                                                                                                                                                                             \\ \hline
-                 $a(b)$             & $\mathbf{J}_a\mathbf{J}_b$         & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
-                 $a + b$            & $\mathbf{J}_a + \mathbf{J}_b$      & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
-                 $a   b$            & $\mathbf{J}_a b + \mathbf{J}_b a$  & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Math}}  & \textbf{Derivative}           & \textbf{Code}                                                                                  &  \textbf{Type Signature}                                                                                                                                                                                    \\ \hline
+                 $a(b)$             & $\mathbf{J}_a\mathbf{J}_b$             & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
+                 $a + b$            & $\mathbf{J}_a + \mathbf{J}_b$          & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
+                 $a   b$            & $\mathbf{J}_a b + \mathbf{J}_b a$      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
+                 $a ^ b$            & \tiny{$a^b(a'\frac{b}{a} + b'\ln a)$}  & \begin{tabular}{@{}c@{}}\texttt{a.pow(b)}\\\texttt{pow(a, b)}\end{tabular}                     &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}) $                                          \\ \hline
     \end{tabular}
 \end{table}
 }
@@ -151,14 +149,14 @@ Universit\'e de Montr\'eal \\
             \item Helps us to easily translate between mathematics and source code
             \item Fields are a useful concept when computing over real numbers
             \begin{itemize}
-                \item A field is a set $F$ with two operations $+$ and $\times$, with the properties:
+                \item A field is a set $\mathbb{F}$ with two operations $+$ and $\times$, with the properties:
                 \begin{itemize}
-                    \item Associativity: $\forall a, b, c \in F, a + (b + c) = (a + b) + c$
-                    \item Commutivity: $\forall a, b \in F, a + b = b + a$ and $a\times b = b\times a$
-                    \item Distributivity: $\forall a, b, c \in F, a \times (b \times c) = (a \times b) \times c$
-                    \item Identity: $\forall a \in F, \exists 0$, $ 1 \in F$ s.t. $a + 0 = a$ and $a\times 1= a$
-                    \item $+$ inverse: $\forall a\in F, \exists (-a)$ s.t. $a + (-a) = 0$
-                    \item $\times$ inverse: $\forall a\neq 0 \in F, \exists (a^{-1})$ s.t. $a \times a^{-1} = 1$
+                    \item Associativity: $\forall a, b, c \in \mathbb{F}, a + (b + c) = (a + b) + c$
+                    \item Commutivity: $\forall a, b \in \mathbb{F}, a + b = b + a$ and $a\times b = b\times a$
+                    \item Distributivity: $\forall a, b, c \in \mathbb{F}, a \times (b \times c) = (a \times b) \times c$
+                    \item Identity: $\forall a \in \mathbb{F}, \exists 0$, $ 1 \in F$ s.t. $a + 0 = a$ and $a\times 1= a$
+                    \item $+$ inverse: $\forall a\in \mathbb{F}, \exists (-a)$ s.t. $a + (-a) = 0$
+                    \item $\times$ inverse: $\forall a\neq 0 \in \mathbb{F}, \exists (a^{-1})$ s.t. $a \times a^{-1} = 1$
                 \end{itemize}
             \end{itemize}
             \item Extensible to other number systems (e.g. complex, dual numbers)
