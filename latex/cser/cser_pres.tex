@@ -9,7 +9,7 @@
 \lstdefinelanguage{Kotlin}{
 comment=[l]{//},
 commentstyle={\color{gray}\ttfamily},
-emph={delegate, filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
+emph={delegate, filter, first, firstOrNull, forEach, map, mapNotNull, println, return@},
 emphstyle={\color{red}},
 identifierstyle=\color{black},
 keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
@@ -76,7 +76,7 @@ Universit\'e de Montr\'eal \\
             \nabla P = \left[\frac{\partial P}{\partial x_0}, \frac{\partial P}{\partial x_1}, \dots, \dfrac{\partial P}{\partial x_n}\right]\text{ where }\frac{\partial P}{\partial x_i} = \frac{dP}{dx_i}
         \end{equation}
         %
-        For $\mathbf{P}(x_0, x_1, \dots, x_n): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian is a vector of gradients:
+        For $\mathbf{P}(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian is a vector of gradients:
         %
         \begin{equation}
             \mathbf{J}_\mathbf{P} = \left[\nabla P_0, \nabla P_1, \dots, \nabla P_n \right] \text{ or equivalently, } \mathbf{J}_{ij} = \frac{\partial P_i}{\partial x_j}
@@ -89,29 +89,48 @@ Universit\'e de Montr\'eal \\
 
     \begin{frame}
         \frametitle{Type checking automatic differentiation}
-        Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
+        Suppose we have a scalar function $P_k: \mathbb{R}\rightarrow\mathbb{R}$ such that:
         %
-        \begin{equation}
-            \mathbf{P}(p_0)=p_q \circ p_{q-1} \circ p_{q-2} \circ \dots \circ p_1 \circ p_0
-        \end{equation}
+        \begin{align*}
+            P_k(x) = \begin{cases} p_0(x) = x &\text{if } k=0\\ (p_k\circ P_{k-1})(x)&\text{if } k > 0 \end{cases}
+        \end{align*}
         %
         From the chain rule of calculus, we know that:
         %
-        \begin{equation}
-            \frac{dP}{dp_0} = \frac{dp_q}{dp_{q-1}}\frac{dp_{q-1}}{dp_{q-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
-        \end{equation}
+        \begin{align*}
+            \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
+        \end{align*}
         %
-        More generally, for $P: \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule also applies:
+        For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule still applies:
         %
-        \begin{equation}
-            \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{q} \mathbf{J}_{p_i} = \bigg(\Big((\mathbf{J}_{p_q} \mathbf{J}_{p_{q-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg) = \bigg(\mathbf{J}_{p_q} \Big(\mathbf{J}_{p_{n-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)
-        \end{equation}
+        \begin{align*}
+            \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
+        \end{align*}
         %
-        In order for $\mathbf{P}$ to type check, what is the type signature of $p_{0<i<n}$?
+
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Parameter learning and gradient descent}
+        For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
-        \begin{equation}
-            p_i: T_{out}(p_{i-1}) \rightarrow T_{in}(p_{i+1})
-        \end{equation}
+        \begin{align*}
+            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta} = [\boldsymbol\theta_0, \dots, \boldsymbol\theta_k]) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta)\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+        \end{align*}
+        %
+        Where $\boldsymbol\Theta \in \mathbb{R}^{\text{max}(n, m) \times k}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Assume we are given $\mathbf{Y} = [\mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{P}(\mathbf{x}^{(z)})]$ from an oracle. In order to approximate $\mathbf{Y}$, repeat the following procedure until $\boldsymbol\Theta$ converges:
+        %
+        \begin{align*}
+            \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{P}(\mathbf{x}^{(i)})\big)
+        \end{align*}
+        %
+        If $\mathbf{\hat P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
+        %
+        \begin{align*}
+            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \rightarrow \mathcal{T}_{in}(\mathbf{p}_{i+1})
+        \end{align*}
         %
     \end{frame}
 
@@ -121,10 +140,10 @@ Universit\'e de Montr\'eal \\
         \frametitle{Shape checking and inference}
         \begin{itemize}
             \item Scalar functions implicitly represent shape as arity $f(1, 2): \mathbb{R}^2 \rightarrow \mathbb{R}$
-            \item To check matrix functions, we need a type-level encoding of shape
-            \item Arbitrary matrix functions (e.g.\ convolution) require dependent types
-            \item But parametric polymorphism will suffice for most matrix functions
-            \item For arithmetical operations, we just need to check for equality
+            \item To check array programs, we need a type-level encoding of shape
+            \item Arbitrary operations (e.g.\ convolution) may require dependent types
+            \item But parametric polymorphism will suffice for most tensor functions
+            \item For most algebraic operations, we just need to check for equality\ldots
         \end{itemize}
         {\scriptsize
 \begin{table}
@@ -143,7 +162,7 @@ Universit\'e de Montr\'eal \\
     %------------------------------------------------------------------------------------------------
 
     \begin{frame}
-        \frametitle{Numeric tower}
+        \frametitle{Numerical tower}
         \begin{itemize}
             \item Abstract algebra can be useful when generalizing to new structures
             \item Helps us to easily translate between mathematics and source code
@@ -315,19 +334,19 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
         \frametitle{Extension functions and contexts}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             object DoublePrecision {
-              operator fun Number.times(f: Fun<KGDouble>) =
+              operator fun Number.times(f: Fun<KDouble>) =
                 Const(toDouble()) * f
             }
 
-            class KGDouble(num: Double): Const<KGDouble>(num) {
-              override val e by lazy { KGDouble(Math.E) }
-              override val one by lazy { KGDouble(1.0) }
-              override val zero by lazy { KGDouble(0.0) }
+            class KDouble(num: Double): Const<KDouble>(num) {
+              override val e by lazy { KDouble(Math.E) }
+              override val one by lazy { KDouble(1.0) }
+              override val zero by lazy { KDouble(0.0) }
               // Adapters for wrapping primitive Double...
             }
 
             // Uses `*` operator in DoubleContext
-            fun Fun<KGDouble>.multiplyByTwo() =
+            fun Fun<KDouble>.multiplyByTwo() =
               with(DoublePrecision) { 2 * this }
         \end{lstlisting}
     \end{frame}
