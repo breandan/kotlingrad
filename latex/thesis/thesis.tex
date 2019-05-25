@@ -439,7 +439,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 %
-This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = [f(x^{(1)}), \dots, f(x^{(k)})]$, which we try to obtain in as large a quantity as possible and run the following procedure:
+This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = \{f(x^{(1)}), \dots, f(x^{(k)})\}$, which we try to obtain in as large a quantity as possible and run the following procedure:
 %
 \begin{equation}\label{eq:grad_descent}
     \begin{split}
