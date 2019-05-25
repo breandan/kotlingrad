@@ -88,7 +88,7 @@ Universit\'e de Montr\'eal \\
     \section{Introduction and motivation}\label{sec:first-section}
 
     \begin{frame}
-        \frametitle{Type checking automatic differentiation}
+        \frametitle{Automatic differentiation}
         Suppose we have a scalar function $P_k: \mathbb{R}\rightarrow\mathbb{R}$ such that:
         %
         \begin{align*}
@@ -107,20 +107,25 @@ Universit\'e de Montr\'eal \\
             \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
         \end{align*}
         %
-
+        If $\mathbf{P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
+        %
+        \begin{align*}
+            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \rightarrow \mathcal{T}_{in}(\mathbf{p}_{i+1})
+        \end{align*}
+        %
     \end{frame}
 
     %------------------------------------------------------------------------------------------------
 
     \begin{frame}
         \frametitle{Parameter learning and gradient descent}
-        For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
+        For parametric model , let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
         \begin{align*}
             \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta} = [\boldsymbol\theta_0, \dots, \boldsymbol\theta_k]) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta)\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
         \end{align*}
         %
-        Where $\boldsymbol\Theta \in \mathbb{R}^{\text{max}(n, m) \times k}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Assume we are given $\mathbf{Y} = [\mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{P}(\mathbf{x}^{(z)})]$ from an oracle. In order to approximate $\mathbf{Y}$, repeat the following procedure until $\boldsymbol\Theta$ converges:
+        Where $\boldsymbol\Theta \in \mathbb{R}^{\text{max}(n, m) \times k}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Assume we are given $\mathbf{Y} = [\mathbf{P}(\mathbf{y}^{(1)} = \mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)}\mathbf{P}(\mathbf{x}^{(z)})]$ from an oracle. To approximate $\mathbf{Y}$, repeat the following procedure until $\boldsymbol\Theta$ converges:
         %
         \begin{align*}
             \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{P}(\mathbf{x}^{(i)})\big)
@@ -129,7 +134,7 @@ Universit\'e de Montr\'eal \\
         If $\mathbf{\hat P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
         %
         \begin{align*}
-            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \rightarrow \mathcal{T}_{in}(\mathbf{p}_{i+1})
+            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \times \mathcal{T}(\boldsymbol\theta_{i}) \rightarrow \mathcal{T}_{in}(\mathbf{p}_{i+1}(\boldsymbol\theta_{i+1}))
         \end{align*}
         %
     \end{frame}
