@@ -122,10 +122,10 @@ Universit\'e de Montr\'eal \\
         For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
         \begin{align*}
-            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta} = [\boldsymbol\theta_0, \dots, \boldsymbol\theta_k]) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta)\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta)\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
         \end{align*}
         %
-        Where $\boldsymbol\Theta \in \mathbb{R}^{\text{max}(n, m) \times k}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = [\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})]$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
+        Where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
         %
         \begin{align*}
             \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{y}^{(i)}\big)
@@ -146,8 +146,8 @@ Universit\'e de Montr\'eal \\
         \begin{itemize}
             \item Scalar functions implicitly represent shape as arity $f(1, 2): \mathbb{R}^2 \rightarrow \mathbb{R}$
             \item To check array programs, we need a type-level encoding of shape
-            \item Arbitrary operations (e.g.\ convolution) may require dependent types
-            \item But parametric polymorphism will suffice for most tensor functions
+            \item Arbitrary ops (e.g.\ convolution, vectorization) require dependent types
+            \item But parametric polymorphism will suffice for many tensor functions
             \item For most algebraic operations, we just need to check for equality\ldots
         \end{itemize}
         {\scriptsize
@@ -384,10 +384,10 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
         \frametitle{Usage: plotting higher derivatives of nested functions}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             with(DoublePrecision) {// Use double-precision
-             val x = variable()  // Declare an immutable variable
+             val x = Var()  // Declare an immutable variable
              val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
 
-             // Lazily compute reverse-mode automatic derivatives
+             // Perform lazy symbolic differentiation
              val dy_dx = d(y) / d(x)
              val d2y_dx = d(dy_dx) / d(x)
              val d3y_dx = d(d2y_dx2) / d(x)
