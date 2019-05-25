@@ -119,16 +119,16 @@ Universit\'e de Montr\'eal \\
 
     \begin{frame}
         \frametitle{Parameter learning and gradient descent}
-        For parametric model , let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
+        For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
         \begin{align*}
             \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta} = [\boldsymbol\theta_0, \dots, \boldsymbol\theta_k]) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta)\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
         \end{align*}
         %
-        Where $\boldsymbol\Theta \in \mathbb{R}^{\text{max}(n, m) \times k}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Assume we are given $\mathbf{Y} = [\mathbf{P}(\mathbf{y}^{(1)} = \mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)}\mathbf{P}(\mathbf{x}^{(z)})]$ from an oracle. To approximate $\mathbf{Y}$, repeat the following procedure until $\boldsymbol\Theta$ converges:
+        Where $\boldsymbol\Theta \in \mathbb{R}^{\text{max}(n, m) \times k}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = [\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})]$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
         %
         \begin{align*}
-            \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{P}(\mathbf{x}^{(i)})\big)
+            \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{y}^{(i)}\big)
         \end{align*}
         %
         If $\mathbf{\hat P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
