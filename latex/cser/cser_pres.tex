@@ -1,15 +1,21 @@
 \documentclass{beamer}
 \usepackage{graphicx}
+\usepackage{sourcecodepro}
 \usepackage{listings}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
 
-
+\lstset{basicstyle=\ttfamily,breaklines=true}
+\usepackage{upquote}
+%\def\backtick{\char18}
+\lstdefinestyle{backtickstyle}{literate={`}{\char}1, escapechar=@}
 
 \lstdefinelanguage{Kotlin}{
 comment=[l]{//},
 commentstyle={\color{gray}\ttfamily},
-emph={delegate, filter, first, firstOrNull, forEach, map, mapNotNull, println, return@},
+%emph={delegate, filter, first, firstOrNull, forEach, map, mapNotNull, println, return@},
 emphstyle={\color{red}},
 identifierstyle=\color{black},
 keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
@@ -58,7 +64,7 @@ Universit\'e de Montr\'eal \\
         \tableofcontents
     \end{frame}
 
-    \section{A Short Lesson on Computing Derivatives}\label{sec:second-section}
+    \section{A Short Lesson on Computing Derivatives}
 
     %------------------------------------------------------------------------------------------------
 
@@ -85,7 +91,7 @@ Universit\'e de Montr\'eal \\
 
     %------------------------------------------------------------------------------------------------
 
-    \section{Introduction and motivation}\label{sec:first-section}
+    \section{Introduction and motivation}
 
     \begin{frame}
         \frametitle{Automatic differentiation}
@@ -151,17 +157,16 @@ Universit\'e de Montr\'eal \\
             \item For most algebraic operations, we just need to check for equality\ldots
         \end{itemize}
         {\scriptsize
-\begin{table}
-    \begin{tabular}{|c|c|c|c|l|}
-        \hline
-        \multicolumn{1}{|c|}{\textbf{Math}}  & \textbf{Derivative}           & \textbf{Code}                                                                                  &  \textbf{Type Signature}                                                                                                                                                                                    \\ \hline
-                 $a(b)$             & $\mathbf{J}_a\mathbf{J}_b$             & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
-                 $a + b$            & $\mathbf{J}_a + \mathbf{J}_b$          & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
-                 $a   b$            & $\mathbf{J}_a b + \mathbf{J}_b a$      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
-                 $a ^ b$            & \tiny{$a^b(a'\frac{b}{a} + b'\ln a)$}  & \begin{tabular}{@{}c@{}}\texttt{a.pow(b)}\\\texttt{pow(a, b)}\end{tabular}                     &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}) $                                          \\ \hline
-    \end{tabular}
-\end{table}
-}
+            \begin{table}
+            \begin{tabular}{|c|c|c|c|l|}\hline\multicolumn{1}{|c|}
+            {\textbf{Math}}             & \textbf{Derivative}                    & \textbf{Code}                                                                                  &  \textbf{Type Signature}                                                                                                                                                                                    \\ \hline
+                $a(b)$                  & $\mathbf{J}_a\mathbf{J}_b$             & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
+                $a + b$                 & $\mathbf{J}_a + \mathbf{J}_b$          & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
+                $a   b$                 & $\mathbf{J}_a b + \mathbf{J}_b a$      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
+                $a ^ b$                 & \tiny{$a^b(a'\frac{b}{a} + b'\ln a)$}  & \begin{tabular}{@{}c@{}}\texttt{a.pow(b)}\\\texttt{pow(a, b)}\end{tabular}                     &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}) $                                          \\ \hline
+            \end{tabular}
+            \end{table}
+        }
     \end{frame}
 
     %------------------------------------------------------------------------------------------------
@@ -237,38 +242,68 @@ Universit\'e de Montr\'eal \\
         \end{itemize}
     \end{frame}
 
-\begin{frame}
-    \frametitle{Feature Comparison Matrix}
-    \begin{center}
-\begin{tabular}{lllllllll}
-    \textbf{Framework} &
-    \textbf{Language} &
-    SD &
-    AD &
-    FP &
-    TS &
-    SS &
-    DP &
-    MP
-    \\ \hline
-Kotlin$\nabla$     & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
-DiffSharp          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-TensorFlow.FSharp  & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-Myia               & Python  & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-Deeplearning.scala & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-Nexus              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-Lantern            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-Grenade            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
-Eclipse DL4J       & Java    & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
-Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
-\end{tabular}
-\end{center}
-\footnotesize{SD: Symbolic Differentiation, AD: Automatic Differentiation, FP: Functional Program, TS: Type Safe, SS: Shape Safe, DP: Differentiable Programming, MP: Multiplatform}
-%    \begin{itemize}
-%       \item
-%    \end{itemize}
-\end{frame}
+    \begin{frame}
+        \frametitle{Feature Comparison Matrix}
+            \begin{center}
+            \begin{tabular}{lllllllll}
+            \textbf{Framework} & \textbf{Language}  & SD     & AD     & FP     & TS     & SS     & DP     & MP     \\ \hline
+            Kotlin$\nabla$     & Kotlin             & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
+            DiffSharp          & F\#                & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+            TensorFlow.FSharp  & F\#                & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+            Myia               & Python             & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+            Deeplearning.scala & Scala              & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+            Nexus              & Scala              & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+            Lantern            & Scala              & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+            Grenade            & Haskell            & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+            Eclipse DL4J       & Java               & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+            Halide             & C++                & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
+            Stalin$\naba$      & Scheme             & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+        \end{tabular}
+        \end{center}
+        \footnotesize{SD: Symbolic Differentiation, AD: Automatic Differentiation, FP: Functional Program, TS: Type Safe, SS: Shape Safe, DP: Differentiable Programming, MP: Multiplatform}
+    \end{frame}
+
+    \section{Usage}
+
+    \begin{frame}[fragile]
+        \frametitle{Abstract syntax tree construction}
+            \squeezeup\begin{figure}[!htb]
+                  \begin{center}
+                  \begin{tabular}{c}
+                  \begin{lstlisting}[language=Kotlin, gobble=22]
+                      val z = sin(10 * (x * x + pow(y, 2))) / 10
+                  \end{lstlisting}
+                  \end{tabular}
+                  \end{center}
+                  \squeezeup\centering
+                  \begin{tikzpicture}[grow=left]
+                      \tikzset{level distance=45pt}\squeezeup\squeezeup
+                      \Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{\textbf{x}} \texttt{\textbf{x}} ] [.\texttt{pow} \texttt{\textbf{y}} \texttt{2} ] ] ] ] \texttt{10} ]
+                  \end{tikzpicture}
+                  \squeezeup\squeezeup\squeezeup\caption{Implicit DFG constructed by the original expression, \texttt{z}.}
+    \end{figure}
+    \end{frame}
+
+    \section{Architectural Overview}
+
+    \begin{frame}[fragile]
+        \frametitle{Shape safe vector addition and inference (toy example)}
+        \begin{lstlisting}[language=Kotlin, gobble=12, style=backtickstyle]
+            interface Nat<T: `2`> { val value: Int }
+            open class `0`(override val value: Int = 0): `1`(0)
+              { companion object: `0`(), Nat<`0`> }
+            open class `1`(override val value: Int = 1): `2`(1)
+              { companion object: `1`(), Nat<`1`> }
+            open class `2`(open val value: Int = 2)
+              { companion object: `2`(), Nat<`2`> }
+            // <L: `2`> accepts L <= 2 via Liskov substitution
+            class Vec<E, L: `2`>(val len: L, val es: List<E>)
+            operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) = Vec<Int, L>(len, es.zip(v.es).map{it.l + it.r})
+
+            val Y=Vec(`2`, listOf(1,2)) + Vec(`2`, listOf(3,4))
+            val X=Vec(`1`, listOf(1)) + Y // Compiler error!
+        \end{lstlisting}
+    \end{frame}
 
     \begin{frame}[fragile]
         \frametitle{How do we define algebraic types in Kotlin\texorpdfstring{$\nabla$}{}?}
@@ -292,8 +327,6 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
         \end{lstlisting}
     \end{frame}
 
-
-    \section{Architectural Overview}\label{sec:third-section}
 
     \begin{frame}[fragile]
         \frametitle{Algebraic Data Types}
@@ -320,12 +353,12 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
     \begin{frame}[fragile]
         \frametitle{Expression simplification}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            operator fun times(exp: Fun<X>): Fun<X> = when {
+            operator fun times(f: Fun<X>): Fun<X> = when {
               this is Const && num == 0.0 -> Const(0.0)
-              this is Const && num == 1.0 -> exp
-              exp is Const && exp.num == 0.0 -> exp
-              exp is Const && exp.num == 1.0 -> this
-              this is Const && exp is Const -> Const(num*exp.num)
+              this is Const && num == 1.0 -> f
+              f is Const && f.num == 0.0 -> exp
+              f is Const && f.num == 1.0 -> this
+              this is Const && f is Const -> Const(num * f.num)
               else -> Prod(this, e)
             }
 
@@ -378,14 +411,15 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
         \end{lstlisting}
     \end{frame}
 
-    \section{Usage}\label{sec:fourth-section}
+    \section{Usage}
 
     \begin{frame}[fragile]
         \frametitle{Usage: plotting higher derivatives of nested functions}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            with(DoublePrecision) {// Use double-precision
-             val x = Var()  // Declare an immutable variable
-             val y = sin(sin(sin(x)))/x + sin(x) * x + cos(x) + x
+            // Use double-precision floating point numerics
+            with(DoublePrecision) {
+             val x = Var()
+             val y = sin(sin(sin(x)))/x + x*sin(x) + cos(x) + x
 
              // Perform lazy symbolic differentiation
              val dy_dx = d(y) / d(x)
@@ -394,7 +428,7 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
              val d4y_dx = d(d3y_dx3) / d(x)
              val d5y_dx = d(d4y_dx4) / d(x)
 
-             plot(-10..10, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
+             plot(-9..9, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
             }
         \end{lstlisting}
     \end{frame}
@@ -402,7 +436,7 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
     \begin{frame}
         \frametitle{$y = \frac{\sin{\sin{\sin{x}}}}{x} + x \sin{x} + \cos{x} + x$, $\frac{dy}{dx}$, $\frac{d^{2}y}{dx^2}$, $\frac{d^{3}y}{dx^3}$, $\frac{d^{4}y}{dx^4}$, $\frac{d^{5}y}{dx^5}$}
         \begin{center}
-            \includegraphics[scale=0.4]{plot.png}
+            \includegraphics[scale=0.35]{plot.png}
         \end{center}
     \end{frame}
 
@@ -413,7 +447,7 @@ Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
         \end{center}
     \end{frame}
 
-    \section{Future exploration}\label{sec:fifth-section}
+    \section{Future exploration}
 
     \begin{frame}
         \frametitle{Further directions to explore}

@@ -5,6 +5,8 @@ import edu.umontreal.kotlingrad.utils.step
 import krangl.dataFrameOf
 import kravis.geomLine
 import kravis.plot
+import kravis.themeLight
+import java.awt.Dimension
 import java.io.File
 
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
@@ -30,7 +32,7 @@ fun main() {
                d⁴y/dx⁴=$`d⁴y∕dx⁴`"""
         .trimIndent())
 
-    val xs = -10.0..10.0 step 0.09
+    val xs = -9.0..9.0 step 0.08
     val ys = (xs.map { listOf(it, y(it), "y") }
             + xs.map { listOf(it, `dy∕dx`(it), "dy/dx") }
             + xs.map { listOf(it, `d²y∕dx²`(it), "d²y/x²") }
@@ -43,6 +45,7 @@ fun main() {
       .plot(x = "x", y = "y", color = "Function")
       .geomLine(size = 1.0)
       .title("Derivatives of y=$y")
-      .save(File("src/main/resources/plot.png"))
+      .themeLight()
+      .save(File("src/main/resources/plot.png"), Dimension(2000, 1200))
   }
 }
