@@ -23,7 +23,7 @@ keywordstyle={\color{blue}\bfseries},
 morecomment=[s]{/*}{*/},
 morestring=[b]",
 morestring=[s]{"""*}{*"""},
-ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Number, Runnable, Short, String},
+ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, DoublePrecision, Float, Int, Integer, Iterable, Long, Number, Runnable, Short, String},
 ndkeywordstyle={\color{Orange}\bfseries},
 sensitive=true,
 stringstyle={\color{green}\ttfamily},
@@ -266,7 +266,7 @@ Universit\'e de Montr\'eal \\
     \section{Usage}
 
     \begin{frame}[fragile]
-        \frametitle{Abstract syntax tree construction}
+        \frametitle{Usage}
             \squeezeup\begin{figure}[!htb]
                   \begin{center}
                   \begin{tabular}{c}
@@ -275,38 +275,23 @@ Universit\'e de Montr\'eal \\
                   \end{lstlisting}
                   \end{tabular}
                   \end{center}
+                  \vspace{10}
                   \squeezeup\centering
                   \begin{tikzpicture}[grow=left]
                       \tikzset{level distance=45pt}\squeezeup\squeezeup
-                      \Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{\textbf{x}} \texttt{\textbf{x}} ] [.\texttt{pow} \texttt{\textbf{y}} \texttt{2} ] ] ] ] \texttt{10} ]
+                      \Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{x} \texttt{x} ] [.\texttt{pow} \texttt{y} \texttt{2} ] ] ] ] \texttt{10} ]
                   \end{tikzpicture}
-                  \squeezeup\squeezeup\squeezeup\caption{Implicit DFG constructed by the original expression, \texttt{z}.}
+                  \squeezeup\squeezeup\squeezeup\caption{Implicit DFG constructed by the above expression, \texttt{z}.}
     \end{figure}
     \end{frame}
 
     \section{Architectural Overview}
 
-    \begin{frame}[fragile]
-        \frametitle{Shape safe vector addition and inference (toy example)}
-        \begin{lstlisting}[language=Kotlin, gobble=12, style=backtickstyle]
-            interface Nat<T: `2`> { val value: Int }
-            open class `0`(override val value: Int = 0): `1`(0)
-              { companion object: `0`(), Nat<`0`> }
-            open class `1`(override val value: Int = 1): `2`(1)
-              { companion object: `1`(), Nat<`1`> }
-            open class `2`(open val value: Int = 2)
-              { companion object: `2`(), Nat<`2`> }
-            // <L: `2`> accepts L <= 2 via Liskov substitution
-            class Vec<E, L: `2`>(val len: L, val es: List<E>)
-            operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) = Vec<Int, L>(len, es.zip(v.es).map{it.l + it.r})
-
-            val Y=Vec(`2`, listOf(1,2)) + Vec(`2`, listOf(3,4))
-            val X=Vec(`1`, listOf(1)) + Y // Compiler error!
-        \end{lstlisting}
-    \end{frame}
 
     \begin{frame}[fragile]
         \frametitle{How do we define algebraic types in Kotlin\texorpdfstring{$\nabla$}{}?}
+\begin{center}
+\begin{tabular}{c}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             // T: Group<T> is effectively a self type
             interface Group<T: Group<T>> {
@@ -317,35 +302,37 @@ Universit\'e de Montr\'eal \\
             }
 
             interface Field<X: Group<X>> {
-              val e: X
-              val one: X
-              val zero: X
-              operator fun div(f: X): X = this * f.pow(-one)
-              infix fun pow(f: X): X
-              fun ln(): X
+                val e: X
+                val one: X
+                val zero: X
+                operator fun div(f: X): X = this * f.pow(-one)
+                infix fun pow(f: X): X
+                fun ln(): X
             }
         \end{lstlisting}
+\end{tabular}
+\end{center}
     \end{frame}
 
 
     \begin{frame}[fragile]
         \frametitle{Algebraic Data Types}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            class Var<X: Fun<X>>(label: String): Fun<X>()
-            class Const<X: Fun<X>>(val num: Number): Fun<X>()
+            class Var<X: Fun<X>>(val lbl: String): Fun<X>()
             class Sum<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
-            class Prod<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
+            class Pdt<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
+            class Const<X: Fun<X>>(val num: Number): Fun<X>()
 
-            sealed class Fun<X: Fun<X>>: Field<Fun<X>>{
-              open fun diff(): Fun<X> = when(this) {
-                is Const -> Zero
-                is Sum -> f1.diff() + f2.diff()
-                is Prod -> f1.diff() * f2 + f1 * f2.diff()
-                is Var -> One
-              }
+            sealed class Fun<X: Fun<X>>: Field<Fun<X>> {
+                open fun diff(): Fun<X> = when(this) {
+                    is Const -> Zero
+                    is Sum -> f1.diff() + f2.diff()
+                    is Pdt -> f1.diff() * f2 + f1 * f2.diff()
+                    is Var -> One
+                }
 
-              operator fun plus(f: Fun<X>) = Sum(this, f)
-              operator fun times(f: Fun<X>) = Prod(this, f)
+                operator fun plus(f: Fun<X>) = Sum(this, f)
+                operator fun times(f: Fun<X>) = Pdt(this, f)
             }
         \end{lstlisting}
     \end{frame}
@@ -354,15 +341,17 @@ Universit\'e de Montr\'eal \\
         \frametitle{Expression simplification}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             operator fun times(f: Fun<X>): Fun<X> = when {
+              // Constant propagation and folding optimizations
               this is Const && num == 0.0 -> Const(0.0)
               this is Const && num == 1.0 -> f
               f is Const && f.num == 0.0 -> exp
               f is Const && f.num == 1.0 -> this
               this is Const && f is Const -> Const(num * f.num)
-              else -> Prod(this, e)
+              // Only instantiate a product node on last resort
+              else -> Pdt(this, e)
             }
 
-            // Sum(Prod(Const(2.0), Var()), Const(6.0))
+            // Sum(Pdt(Const(2.0), Var()), Const(6.0))
             val q = Const(2.0) * Sum(Var(), Const(3.0))
         \end{lstlisting}
     \end{frame}
@@ -370,22 +359,49 @@ Universit\'e de Montr\'eal \\
 
     \begin{frame}[fragile]
         \frametitle{Extension functions and contexts}
+\begin{center}
+\begin{tabular}{c}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             object DoublePrecision {
-              operator fun Number.times(f: Fun<KDouble>) =
-                Const(toDouble()) * f
+                operator fun Number.times(f: Fun<KDouble>) =
+                    Const(toDouble()) * f
             }
 
             class KDouble(num: Double): Const<KDouble>(num) {
-              override val e by lazy { KDouble(Math.E) }
-              override val one by lazy { KDouble(1.0) }
-              override val zero by lazy { KDouble(0.0) }
-              // Adapters for wrapping primitive Double...
+                override val e by lazy { KDouble(Math.E) }
+                override val one by lazy { KDouble(1.0) }
+                override val zero by lazy { KDouble(0.0) }
+                // Adapters for wrapping primitive Double...
             }
 
-            // Uses `*` operator in DoubleContext
+            // Uses * operator in Double context
             fun Fun<KDouble>.multiplyByTwo() =
-              with(DoublePrecision) { 2 * this }
+                with(DoublePrecision) { 2 * this }
+        \end{lstlisting}
+\end{tabular}
+\end{center}
+    \end{frame}
+
+
+    \begin{frame}[fragile]
+        \frametitle{Shape safe vector addition and inference (toy example)}
+        \begin{lstlisting}[language=Kotlin, gobble=12, style=backtickstyle]
+            interface Nat<T: `2`> { val value: Int }
+            // Type level integer literals for shape checking
+            open class `0`(override val value: Int = 0): `1`(0)
+              { companion object: `0`(), Nat<`0`> }
+            open class `1`(override val value: Int = 1): `2`(1)
+              { companion object: `1`(), Nat<`1`> }
+            open class `2`(open val value: Int = 2)
+              { companion object: `2`(), Nat<`2`> }
+
+            // <L: `2`> accepts L <= 2 via Liskov substitution
+            class Vec<E, L: `2`>(val len: L, val es: List<E>)
+            operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) =
+              Vec<Int, L>(len, es.zip(v.es).map { it.l + it.r })
+
+            val Y= Vec(`2`, listOf(1,2)) + Vec(`2`, listOf(3,4))
+            val X= Vec(`1`, listOf(1)) + Y // Compiler error!
         \end{lstlisting}
     \end{frame}
 
@@ -400,35 +416,35 @@ Universit\'e de Montr\'eal \\
             val manualDx = y * (cos(x * y) * y - 1)
 
             "dz/dx should be y * (cos(x * y) * y - 1)" {
-              assertAll (DoubleGenerator) { cx, cy ->
-                // Evaluate the results at a given seed
-                val autoEval = dz_dx(x to cx, y to cy)
-                val symbEval = manualDx(x to cx, y to cy)
-                // Should pass if |adEval - manualEval| < eps
-                autoEval shouldBeApproximately symbEval
-              }
+                assertAll (DoubleGenerator) { cx, cy ->
+                    // Evaluate the results at a given seed
+                    val autoEval = dz_dx(x to cx, y to cy)
+                    val symbEval = manualDx(x to cx, y to cy)
+                    // Only pass iff |adEval - manualEval| < eps
+                    autoEval shouldBeApproximately symbEval
+                }
             }
         \end{lstlisting}
     \end{frame}
 
-    \section{Usage}
+    \section{Plotting}
 
     \begin{frame}[fragile]
-        \frametitle{Usage: plotting higher derivatives of nested functions}
+        \frametitle{Usage: Plotting higher derivatives of nested functions}
         \begin{lstlisting}[language=Kotlin, gobble=12]
             // Use double-precision floating point numerics
             with(DoublePrecision) {
-             val x = Var()
-             val y = sin(sin(sin(x)))/x + x*sin(x) + cos(x) + x
+              val x = Var()
+              val y = sin(sin(sin(x)))/x + x*sin(x) + cos(x) + x
 
-             // Perform lazy symbolic differentiation
-             val dy_dx = d(y) / d(x)
-             val d2y_dx = d(dy_dx) / d(x)
-             val d3y_dx = d(d2y_dx2) / d(x)
-             val d4y_dx = d(d3y_dx3) / d(x)
-             val d5y_dx = d(d4y_dx4) / d(x)
+              // Perform lazy symbolic differentiation
+              val dy_dx = d(y) / d(x)
+              val d2y_dx = d(dy_dx) / d(x)
+              val d3y_dx = d(d2y_dx2) / d(x)
+              val d4y_dx = d(d3y_dx3) / d(x)
+              val d5y_dx = d(d4y_dx4) / d(x)
 
-             plot(-9..9, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
+              plot(-9..9, dy_dx, dy2_dx, d3y_dx, d4y_dx, d5y_dx)
             }
         \end{lstlisting}
     \end{frame}
@@ -440,8 +456,30 @@ Universit\'e de Montr\'eal \\
         \end{center}
     \end{frame}
 
+    \begin{frame}[fragile]
+        \frametitle{Usage: 3D plotting with mixed higher order partials}
+
+        \begin{center}
+            \begin{tabular}{c}
+        \begin{lstlisting}[language=Kotlin, gobble=12]
+            with(DoublePrecision) {
+                val x = Var()
+                val y = Var()
+
+                val z = sin(10 * (x * x + pow(y, 2))) / 10
+                val dz_dx = d(z) / d(x)
+                val d2f_dxdy = d(dz_dx) / d(y)
+                val d3z_d2xdy = d(d(dz_dx) / d(y)) / d(x)
+
+                plot3d(-1, 1, d3z_d2xdy)
+            }
+        \end{lstlisting}
+            \end{tabular}
+        \end{center}
+    \end{frame}
+
     \begin{frame}
-        \frametitle{$z = \sin(10(x^2 + y^2)) / 10$, $\frac{\partial^3 z}{\partial^2 y \partial x}$}
+        \frametitle{$z = \sin(10(x^2 + y^2)) / 10$, $\frac{\partial^3 z}{\partial^2 x \partial y}$}
         \begin{center}
             \includegraphics[scale=0.4]{plot3d.png}
         \end{center}
@@ -492,7 +530,9 @@ Universit\'e de Montr\'eal \\
                 Liam Paull \\
                 Michalis Famelis \\
                 }
+                \vspace{10}
                 \includegraphics[scale=0.4]{cser_logo.png}\\
+                \vspace{10}
                 \includegraphics[scale=0.1]{udem.png}
                 \includegraphics[scale=0.4]{mila.png}
             \end{center}
@@ -500,60 +540,59 @@ Universit\'e de Montr\'eal \\
     \end{frame}
 \end{document}
 
-    %------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
 
-    %    \begin{frame}
-    %        \frametitle{Symbolic differentiation}
-    %        \begin{itemize}
-    %            \item What about evaluating functions symbolically?
-    %            \item Computer algebra systems for manipulate symbolic formulas
-    %        \end{itemize}
-    %    \end{frame}
+%    \begin{frame}
+%        \frametitle{Symbolic differentiation}
+%        \begin{itemize}
+%            \item What about evaluating functions symbolically?
+%            \item Computer algebra systems for manipulate symbolic formulas
+%        \end{itemize}
+%    \end{frame}
 
-    %------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
 
-    %    \begin{frame}
-    %        \frametitle{Automatic differentiation}
-    %        \begin{itemize}
-    %            \item Derivatives can be calculated automatically? (Wengert, 1964)
-    %            \item Code as an \textit{exact} symbolic representation of functions
-    %            \item To reason about code we need the ability to treat \textit{code as data}:
-    %            \begin{itemize}
-    %                \item Reflection and metaprogramming
-    %                \item Domain specific languages
-    %                \item First-class functions
-    %            \end{itemize}
-    %        \end{itemize}
-    %    \end{frame}
+%    \begin{frame}
+%        \frametitle{Automatic differentiation}
+%        \begin{itemize}
+%            \item Derivatives can be calculated automatically? (Wengert, 1964)
+%            \item Code as an \textit{exact} symbolic representation of functions
+%            \item To reason about code we need the ability to treat \textit{code as data}:
+%            \begin{itemize}
+%                \item Reflection and metaprogramming
+%                \item Domain specific languages
+%                \item First-class functions
+%            \end{itemize}
+%        \end{itemize}
+%    \end{frame}
 
-    %------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
 
-    %    \begin{frame}
-    %        \frametitle{Differentiable [functional] programming}
-    %        \begin{itemize}
-    %            \item What is a program, but a series of arithmetic operations?
-    %            \item What are arithmetic operations but syntactic sugar for functions?
-    %            \item Functions can be composed of other functions or chained in sequence
-    %            \item High school calculus gives us rules for differentiating function chains
-    %            \item Pearlmutter \& Siskind teach us AD is possible just using FP (2016)
-    %            \item Wang, Rompf, et al. show us this is possible \textit{without a tape}! (2018)
-    %        \end{itemize}
-    %    \end{frame}
+%    \begin{frame}
+%        \frametitle{Differentiable [functional] programming}
+%        \begin{itemize}
+%            \item What is a program, but a series of arithmetic operations?
+%            \item What are arithmetic operations but syntactic sugar for functions?
+%            \item Functions can be composed of other functions or chained in sequence
+%            \item High school calculus gives us rules for differentiating function chains
+%            \item Pearlmutter \& Siskind teach us AD is possible just using FP (2016)
+%            \item Wang, Rompf, et al. show us this is possible \textit{without a tape}! (2018)
+%        \end{itemize}
+%    \end{frame}
 
-    %------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
 
-    %    \begin{frame}
-    %        \frametitle{Differentiable programming with algebraic types}
-    %        \begin{itemize}
-    %            \item Combine the tools from mathematics and CS
-    %            \item Type safety
-    %            \item Static analysis
-    %            \item Allows us to preserve symmetries that are not obvious
-    %            \item There is an abstract algebra for tensor manipulations
-    %            \item Can be encoded using OOP and parametric polymorphism
-    %            \item \href{https://arxiv.org/pdf/1610.07690.pdf}{Operational Calculus for Differentiable Programming}
-    %        \end{itemize}
-    %    \end{frame}
+%    \begin{frame}
+%        \frametitle{Differentiable programming with algebraic types}
+%        \begin{itemize}
+%            \item Combine the tools from mathematics and CS
+%            \item Type safety
+%            \item Static analysis
+%            \item Allows us to preserve symmetries that are not obvious
+%            \item There is an abstract algebra for tensor manipulations
+%            \item Can be encoded using OOP and parametric polymorphism
+%            \item \href{https://arxiv.org/pdf/1610.07690.pdf}{Operational Calculus for Differentiable Programming}
+%        \end{itemize}
+%    \end{frame}
 
-    %------------------------------------------------------------------------------------------------
-
+%------------------------------------------------------------------------------------------------
