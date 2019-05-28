@@ -1,11 +1,8 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.algebra.Field
+import edu.umontreal.kotlingrad.functions.ScalarConst
+import edu.umontreal.kotlingrad.functions.ScalarFun
 
-// TODO: Try to make this a subtype of Function.ScalarConst
-abstract class RealNumber<X: RealNumber<X, Y>, Y>(val value: Y):
-  Field<X>, Comparable<Y> where Y: Number, Y: Comparable<Y> {
-  override fun compareTo(other: Y) = value.compareTo(value)
-
-  override fun equals(other: Any?) = if (other is RealNumber<*, *>) value == other.value else super.equals(other)
+abstract class RealNumber<X: ScalarFun<X>, Y: Number>(open val value: Y): ScalarConst<X>(), Comparable<Y> {
+//  override fun equals(other: Any?) = if (other is RealNumber<*, *>) value == other.value else super.equals(other)
 }

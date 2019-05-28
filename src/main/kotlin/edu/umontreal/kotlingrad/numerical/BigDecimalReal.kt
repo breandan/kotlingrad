@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.numerical
 
 import ch.obermuhlner.math.big.BigDecimalMath.*
+import edu.umontreal.kotlingrad.functions.ScalarFun
 import java.lang.Math.E
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
@@ -15,6 +16,8 @@ class BigDecimalReal(number: Number = ZERO):
     -1E20 > number.toDouble() -> BigDecimal(1E20)
     else -> BigDecimal(number.toDouble() + 0.0)
   }) {
+  override fun compareTo(other: BigDecimal) = value.compareTo(other)
+
   override val zero by lazy { BigDecimalReal(0.0) }
   override val one by lazy { BigDecimalReal(1.0) }
   override val e by lazy { BigDecimalReal(E) }
@@ -33,18 +36,32 @@ class BigDecimalReal(number: Number = ZERO):
 
   override fun unaryMinus() = BigDecimalReal(-value)
 
-  override fun plus(addend: BigDecimalReal) = BigDecimalReal(value + addend.value)
+  override fun plus(addend: ScalarFun<BigDecimalReal>) = when (addend) {
+    is BigDecimalReal -> BigDecimalReal(value + addend.value)
+    else -> super.plus(addend)
+  }
   infix operator fun plus(addend: Number) = BigDecimalReal(value + BigDecimal(addend.toDouble()))
 
-  override fun minus(subtrahend: BigDecimalReal) = BigDecimalReal(value - subtrahend.value)
+  override fun minus(subtrahend: ScalarFun<BigDecimalReal>) = when (subtrahend) {
+    is BigDecimalReal -> BigDecimalReal(value - subtrahend.value)
+    else -> super.plus(subtrahend)
+  }
   infix operator fun minus(subtrahend: Number) = BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
 
-  override fun times(multiplicand: BigDecimalReal) = BigDecimalReal(value * multiplicand.value)
+  override fun times(multiplicand: ScalarFun<BigDecimalReal>) = when (multiplicand) {
+    is BigDecimalReal -> BigDecimalReal(value * multiplicand.value)
+    else -> super.plus(multiplicand)
+  }
   infix operator fun times(multiplicand: Number) = BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
 
-  override fun div(divisor: BigDecimalReal) = BigDecimalReal(value / divisor.value)
+  override fun div(divisor: ScalarFun<BigDecimalReal>) = when(divisor) {
+    is BigDecimalReal -> BigDecimalReal(value / divisor.value)
+    else -> super.div(divisor)
+  }
   infix operator fun div(divisor: Number) = BigDecimalReal(value / BigDecimal(divisor.toDouble()))
 
-  //TODO: Fix this
-  override fun pow(exp: BigDecimalReal) = BigDecimalReal(pow(value, exp.value, mc))
+  override fun pow(exp: ScalarFun<BigDecimalReal>) = when(exp) {
+    is BigDecimalReal -> BigDecimalReal(pow(value, exp.value, mc))
+    else -> super.div(exp)
+  }
 }
