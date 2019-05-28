@@ -1,7 +1,8 @@
 package edu.umontreal.kotlingrad.coroutines
 
 import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 
 /**
  * Implementation for Delimited Continuations `shift`/`reset` primitives via Kotlin Coroutines.
