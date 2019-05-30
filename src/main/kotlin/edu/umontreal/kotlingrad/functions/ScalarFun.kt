@@ -144,11 +144,11 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
   override fun exp(): ScalarFun<X> = Exp(this)
   override fun sqrt(): ScalarFun<X> = SquareRoot(this)
 
-  val proto: X by lazy { variables.first().value }
+  open val proto: X by lazy { variables.first().value }
   override val one: ScalarConst<X> by lazy { proto.one }
   override val zero: ScalarConst<X> by lazy { proto.zero }
   override val e: ScalarConst<X> by lazy { proto.e }
-  val two: ScalarConst<X> by lazy { proto.two }
+  open val two: ScalarConst<X> by lazy { proto.two }
 }
 
 //TODO: Replace roots with fractional powers
@@ -198,6 +198,7 @@ open class ScalarConst<X: ScalarFun<X>>: ScalarFun<X>()
 class ScalarVar<X: ScalarFun<X>>: ScalarFun<X> {
   val value: X
   override val name: String
+  override val variables: Set<ScalarVar<X>>
 
   internal constructor(value: X, name: String = randomDefaultName()): super() {
     if (name.contains(' ')) throw IllegalArgumentException("Variable name must not contain spaces")
@@ -205,6 +206,4 @@ class ScalarVar<X: ScalarFun<X>>: ScalarFun<X> {
     this.name = name.replace(" ", "")
     this.variables = setOf(this)
   }
-
-  override val variables: Set<ScalarVar<X>>
 }

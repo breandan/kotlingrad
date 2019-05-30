@@ -12,8 +12,10 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
 }) {
   override fun compareTo(other: Double) = value.compareTo(other)
 
-  override val one by lazy { DoubleReal(1.0) }
+  override val proto = this
   override val zero by lazy { DoubleReal(0.0) }
+  override val one by lazy { DoubleReal(1.0) }
+  override val two by lazy { DoubleReal(2.0) }
   override val e by lazy { DoubleReal(E) }
 
   override fun sin() = DoubleReal(Math.sin(value))
