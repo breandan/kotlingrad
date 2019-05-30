@@ -18,8 +18,10 @@ class BigDecimalReal(number: Number = ZERO):
   }) {
   override fun compareTo(other: BigDecimal) = value.compareTo(other)
 
+  override val proto = this
   override val zero by lazy { BigDecimalReal(0.0) }
   override val one by lazy { BigDecimalReal(1.0) }
+  override val two by lazy { BigDecimalReal(2.0) }
   override val e by lazy { BigDecimalReal(E) }
   val mc = MathContext(10)
 
