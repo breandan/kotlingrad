@@ -25,7 +25,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     is ScalarVar -> map.getOrElse(this) { value }
     is ScalarProduct -> multiplicator(map) * multiplicand(map)
     is ScalarSum -> augend(map) + addend(map)
-//    else -> super.invoke(map)
   }
 
   override fun toString(): String = when {
@@ -43,7 +42,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     this is ScalarProduct -> "$multiplicator⋅$multiplicand"
     this is ScalarSum && addend is Negative -> "$augend - ${addend.arg}"
     this is ScalarSum -> "$augend + $addend"
-//    this is ScalarConst -> "$value"
     this is ScalarVar -> name
     else -> "UNKNOWN"
   }
@@ -59,7 +57,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     this is ScalarVar -> if (this in ind.variables) one * ind.inverse() else zero
     this is Log -> logarithmand.inverse() * logarithmand.diff(ind)
     this is Negative -> -arg.diff(ind)
-    this is Power -> (this as Power).diff(ind)
     this is Exp -> exponent.exp() * exponent.diff(ind)
     this is SquareRoot -> radicand.sqrt().inverse() / two * radicand.diff(ind)
     this is Sine -> angle.cos() * angle.diff(ind)
@@ -71,7 +68,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
   override fun plus(addend: ScalarFun<X>): ScalarFun<X> = when {
     this == zero -> addend
     addend == zero -> this
-//    this is ScalarConst && addend is ScalarConst -> const(value + addend.value)
     this == addend -> two * this
     else -> ScalarSum(this, addend)
   }
@@ -104,7 +100,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
 
   override fun equals(other: Any?) =
     if (this is ScalarVar<*> || other is ScalarVar<*>) this === other
-//    else if (this is ScalarConst<*> && other is ScalarConst<*>) value == other.value
     //TODO implement tree comparison for semantic equals
     else super.equals(other)
 

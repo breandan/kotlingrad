@@ -27,19 +27,11 @@ class TestHigherOrderDerivatives: StringSpec({
       }
     }
 
-    "d²(x² + x²) / dx² should be 4" {
-      NumericalGenerator.assertAll { ẋ: Double ->
-        val f = pow(x, 2) + pow(x, 2)
-        val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
-        `d²f∕dx²`(x to ẋ) shouldBeAbout 4
-      }
-    }
-
-    "d³(x³) / dx² should be 6x" {
+    "d²x³ / dx² should be 6x" {
       NumericalGenerator.assertAll { ẋ: Double ->
         val f = pow(x, 3)
-        val `d³f∕dx²` = d(d(f) / d(x)) / d(x)
-        `d³f∕dx²`(x to ẋ) shouldBeAbout (x * 6)(x to ẋ)
+        val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
+        `d²f∕dx²`(x to ẋ) shouldBeAbout (x * 6)(x to ẋ)
       }
     }
   }
