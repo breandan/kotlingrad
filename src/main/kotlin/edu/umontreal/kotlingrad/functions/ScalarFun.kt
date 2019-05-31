@@ -78,7 +78,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     multiplicand == one -> this
     multiplicand == zero -> multiplicand
     this == multiplicand -> pow(two)
-//    this is ScalarConst && multiplicand is ScalarConst -> const(value * multiplicand.value)
     this is Power && multiplicand is Power && base == multiplicand.base -> base.pow(exponent + multiplicand.exponent)
     this is Power && multiplicand is ScalarVar && base == multiplicand -> base.pow(exponent + one)
     this is ScalarVar && multiplicand is Power && this == multiplicand.base -> multiplicand.base.pow(multiplicand.exponent + one)
@@ -94,7 +93,6 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     divisor == one -> this
     divisor == zero -> throw Exception("Cannot divide by $divisor")
     this == divisor -> one
-//    this is ScalarConst && divisor is ScalarConst -> const(value / divisor.value)
     else -> super.div(divisor)
   }
 
@@ -105,31 +103,22 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
 
   override fun inverse(): ScalarFun<X> = when {
     this == one -> this
-//    this is ScalarConst -> const(value.inverse())
     this is Power -> base.pow(-exponent)
     else -> pow(-one)
   }
 
   override fun unaryMinus(): ScalarFun<X> = when {
     this == zero -> this
-//    this is ScalarConst -> const(-value)
     this is Negative -> arg
     else -> Negative(this)
   }
 
   override fun pow(exp: ScalarFun<X>): ScalarFun<X> = when {
-//    this is ScalarConst && exp is ScalarConst -> const(value pow exp.value)
     exp == zero -> one
     exp is ScalarConst && exp == (one / two) -> sqrt()
     this is Power && exp is ScalarConst -> base pow exponent * exp
     else -> Power(this, exp)
   }
-
-//  fun const(value: X) = when (value) {
-//    zero.value -> zero
-//    one.value -> one
-//    else -> ScalarConst(value)
-//  }
 
   fun ln() = Log(this)
   override fun log(): ScalarFun<X> = Log(this)
