@@ -39,13 +39,13 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
 
   override fun minus(subtrahend: ScalarFun<DoubleReal>) = when (subtrahend) {
     is DoubleReal -> DoubleReal(value - subtrahend.value)
-    else -> super.plus(subtrahend)
+    else -> super.minus(subtrahend)
   }
   infix operator fun minus(subtrahend: Number) = DoubleReal(value - subtrahend.toDouble())
 
   override fun times(multiplicand: ScalarFun<DoubleReal>) = when (multiplicand) {
     is DoubleReal -> DoubleReal(value * multiplicand.value)
-    else -> super.plus(multiplicand)
+    else -> super.times(multiplicand)
   }
   infix operator fun times(multiplicand: Number) = DoubleReal(value * multiplicand.toDouble())
 
@@ -57,7 +57,7 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
 
   override fun pow(exp: ScalarFun<DoubleReal>) = when(exp) {
     is DoubleReal -> DoubleReal(pow(value, exp.value))
-    else -> super.div(exp)
+    else -> super.pow(exp)
   }
   fun pow(exponent: Number) = DoubleReal(pow(value, exponent.toDouble()))
 }
