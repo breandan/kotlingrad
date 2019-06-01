@@ -21,9 +21,17 @@ fun main() {
     println("h'(x) = $dh_dx")
 
     val vf1 = VFun(`2`, y + x, y * 2)
-    val vf2 = VFun(`2`, x, x)
+    val vf2 = VFun(`2`, x, y)
     val q = vf1 * vf2
     println(q)
+
+    val mf1 = MFun(`2`, `1`, VFun(`1`, y * y), VFun(`1`, x * y))
+    val mf2 = MFun(`1`, `2`, vf2)
+    // TODO: Look into this * operator
+    println(mf1 * mf2)
+    println(mf1 * vf1)
+    println(mf2 * vf1)
+    println(mf2 * x)
   }
 }
 
@@ -135,21 +143,29 @@ open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, vararg val contents: Fun
   operator fun get(i: Int): Fun<X> = contents[i]
   fun plus(addend: VFun<X, E>): VFun<X, E> = VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
   override fun plus(addend: Fun<X>): VFun<X, E> = VFun(length, contents.map { it + addend })
-  override fun times(multiplicand: Fun<X>): VFun<X, E> = VFun(length, contents.map { it * multiplicand })
+//  override fun times(multiplicand: Fun<X>): VFun<X, E> = VFun(length, contents.map { it * multiplicand })
   operator fun times(multiplicand: VFun<X, E>): Fun<X> =
     contents.foldIndexed(zero as Fun<X>) { index, acc, t -> acc + t * multiplicand[index] }
+
+  val upcast: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
 }
 
-class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>): VFun<X, R>(numRows, rows.asList()) {
-  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, contents.map { (it as VFun<X, C>)[i] }) }.toTypedArray() }
-  fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = TODO()
-//    MFun(numRows, multiplicand.numCols,
-//    (0 until numRows).map { i -> VFun(numCols, (0 until multiplicand.numCols).map { j -> rows[i] * multiplicand.cols[j] }) })
+class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>): Fun<X>(rows.flatMap { it.variables }.toSet()) {
+  constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>): this(numRows, numCols, *contents.toTypedArray())
+  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, rows.map { it[i] }) }.toTypedArray() }
 
-  val transpose = lazy { MFun(numCols, numRows, *cols) }
+  operator fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
+    MFun(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
+        VFun(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
+          rows[i] * multiplicand.cols[j] }) })
+
+//  override fun times(multiplicand: Fun<X>): MFun<X, R, C> = MFun(numRows, numCols, rows.map { it * multiplicand })
+  operator fun times(multiplicand: VFun<X, C>): MFun<X, R, `1`> = this * multiplicand.upcast.transpose
+
+  val transpose by lazy { MFun(numCols, numRows, *cols) }
+
+  override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
 }
-
-typealias CFun<X, R, C, Z> = VFun<VFun<VFun<X, R>, C>, Z>
 
 open class Const<X: Fun<X>>: Fun<X>()
 class Sum<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)
