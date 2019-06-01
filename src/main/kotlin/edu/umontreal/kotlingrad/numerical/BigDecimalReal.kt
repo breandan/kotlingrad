@@ -8,16 +8,13 @@ import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
 
-class BigDecimalReal(number: Number = ZERO):
-  RealNumber<BigDecimalReal, BigDecimal>(when {
+class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecimal>(when {
     number is BigDecimal -> number
     number.toDouble().isNaN() -> ZERO
     1E20 < number.toDouble() -> BigDecimal(1E20)
     -1E20 > number.toDouble() -> BigDecimal(1E20)
     else -> BigDecimal(number.toDouble() + 0.0)
   }) {
-  override fun compareTo(other: BigDecimal) = value.compareTo(other)
-
   override val proto = this
   override val zero by lazy { BigDecimalReal(0.0) }
   override val one by lazy { BigDecimalReal(1.0) }
