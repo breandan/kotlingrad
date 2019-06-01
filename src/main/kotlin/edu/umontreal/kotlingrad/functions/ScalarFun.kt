@@ -8,7 +8,6 @@ import edu.umontreal.kotlingrad.utils.superscript
 sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = emptySet()):
   Field<ScalarFun<X>>, Differentiable<ScalarFun<X>> {
   open val name: String = randomDefaultName()
-
   constructor(fn: ScalarFun<X>): this(fn.variables)
   constructor(vararg fns: ScalarFun<X>): this(fns.flatMap { it.variables }.toSet())
 

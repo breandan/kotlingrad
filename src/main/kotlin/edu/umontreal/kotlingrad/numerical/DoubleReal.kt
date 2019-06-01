@@ -10,8 +10,6 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
   NaN -> 1E-100
   else -> number.toDouble().coerceIn(-1E200..1E200)
 }) {
-  override fun compareTo(other: Double) = value.compareTo(other)
-
   override val proto = this
   override val zero by lazy { DoubleReal(0.0) }
   override val one by lazy { DoubleReal(1.0) }
@@ -59,5 +57,5 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
     is DoubleReal -> DoubleReal(pow(value, exp.value))
     else -> super.pow(exp)
   }
-  fun pow(exponent: Number) = DoubleReal(pow(value, exponent.toDouble()))
+  infix fun pow(exponent: Number) = DoubleReal(pow(value, exponent.toDouble()))
 }

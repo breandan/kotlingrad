@@ -7,21 +7,20 @@
 //
 //// VFun should not be a List or the concatenation operator + will conflict with vector addition
 //open class VectorFun<X: Function<X>, MaxLength: `100`> protected constructor(
-//  open val length: Nat<MaxLength>,
-//  val variables: Set<Var<X>> = emptySet()):
+//  open val length: Nat<MaxLength>, val variables: Set<Var<X>> = emptySet()):
 //  AbelianGroup<VectorFun<X, MaxLength>> {
 //
 //  companion object {
-//    operator fun <T: Field<T>> invoke(): VectorConst<T, `0`> = VectorConst(`0`, arrayListOf())
-//    operator fun <T: Field<T>> invoke(t: T): VectorConst<T, `1`> = VectorConst(`1`, arrayListOf(t))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T): VectorConst<T, `2`> = VectorConst(`2`, arrayListOf(t0, t1))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T): VectorConst<T, `3`> = VectorConst(`3`, arrayListOf(t0, t1, t2))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T, t3: T): VectorConst<T, `4`> = VectorConst(`4`, arrayListOf(t0, t1, t2, t3))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T): VectorConst<T, `5`> = VectorConst(`5`, arrayListOf(t0, t1, t2, t3, t4))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T): VectorConst<T, `6`> = VectorConst(`6`, arrayListOf(t0, t1, t2, t3, t4, t5))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T): VectorConst<T, `7`> = VectorConst(`7`, arrayListOf(t0, t1, t2, t3, t4, t5, t6))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T): VectorConst<T, `8`> = VectorConst(`8`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
-//    operator fun <T: Field<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T): VectorConst<T, `9`> = VectorConst(`9`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
+//    operator fun <T: Function<T>> invoke(): VectorConst<T, `0`> = VectorConst(`0`, arrayListOf())
+//    operator fun <T: Function<T>> invoke(t: T): VectorConst<T, `1`> = VectorConst(`1`, arrayListOf(t))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T): VectorConst<T, `2`> = VectorConst(`2`, arrayListOf(t0, t1))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T): VectorConst<T, `3`> = VectorConst(`3`, arrayListOf(t0, t1, t2))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T): VectorConst<T, `4`> = VectorConst(`4`, arrayListOf(t0, t1, t2, t3))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T): VectorConst<T, `5`> = VectorConst(`5`, arrayListOf(t0, t1, t2, t3, t4))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T): VectorConst<T, `6`> = VectorConst(`6`, arrayListOf(t0, t1, t2, t3, t4, t5))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T): VectorConst<T, `7`> = VectorConst(`7`, arrayListOf(t0, t1, t2, t3, t4, t5, t6))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T): VectorConst<T, `8`> = VectorConst(`8`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T): VectorConst<T, `9`> = VectorConst(`9`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
 //  }
 //
 //  override val one: VectorConst<X, MaxLength>
@@ -56,7 +55,7 @@
 //    is VectorProduct -> "$multiplicator*$multiplicand"
 //    is VectorSum -> "$augend+$addend"
 //    is VectorDotProduct -> "$multiplicator+$multiplicand"
-//    is VectorNeg-> "-$argument"
+//    is VectorNeg -> "-$argument"
 //    else -> "UNKNOWN"
 //  }
 //}
@@ -89,8 +88,8 @@
 //
 ////  override operator fun invoke(map: Map<Var<X>, X>): VectorConst<X, MaxLength> = VectorConst(length, contents.map { it(map) })
 //
-//  operator fun plus(addend: VectorConst<X, MaxLength>): VectorConst<X, MaxLength>  = merge(addend) { it.first * it.second }
-//  operator fun minus(subtrahend: VectorConst<X, MaxLength>): VectorConst<X, MaxLength>  = merge(subtrahend) { it.first - it.second }
+//  operator fun plus(addend: VectorConst<X, MaxLength>): VectorConst<X, MaxLength> = merge(addend) { it.first + it.second }
+//  operator fun minus(subtrahend: VectorConst<X, MaxLength>): VectorConst<X, MaxLength> = merge(subtrahend) { it.first - it.second }
 //  operator fun times(multiplicand: VectorConst<X, MaxLength>): VectorConst<X, MaxLength> = merge(multiplicand) { it.first * it.second }
 //  infix fun dot(vx: VectorConst<X, MaxLength>): X = (this * vx).reduce { acc, it -> acc + it }
 //
