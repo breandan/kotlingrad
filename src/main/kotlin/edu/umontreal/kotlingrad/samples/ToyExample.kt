@@ -25,28 +25,32 @@ fun main() {
     val q = vf1 * vf2
     println(q)
 
-    val mf1 = MFun(`2`, `1`, VFun(`1`, y * y), VFun(`1`, x * y))
-    val mf2 = MFun(`1`, `2`, vf2)
-    // TODO: Look into this * operator
-    println(mf1 * mf2)
-    println(mf1 * vf1)
-    println(mf2 * vf1)
-    println(mf2 * x)
+//    val mf1 = MFun(`2`, `1`, VFun(`1`, y * y), VFun(`1`, x * y))
+//    val mf2 = MFun(`1`, `2`, vf2)
+//    val mf3 = MFun(`3`, `1`, VFun(`1`, x), VFun(`1`, y), VFun(`1`, x))
+//    // TODO: Look into this * operator
+//    println(mf1 * mf2) // 2*1 x 1*2
+//    println(mf1 * vf1) // 2*1 x 2
+//    println(mf2 * vf1) // 1*2 x 2
+//    println(mf3 * vf1) // 1*3 x 2
+//    println(mf2 * x)   // 1*2 x 1
   }
 }
 
 interface Group<X: Group<X>> {
-  val e: X
   val one: X
   val zero: X
   operator fun unaryMinus(): X
   operator fun plus(addend: X): X
   operator fun minus(subtrahend: X): X = this + -subtrahend
   operator fun times(multiplicand: X): X
-  //  operator fun div(dividend: X): X = this * dividend.pow(-one)
-  infix fun pow(exp: X): X
+}
 
+interface Field<X: Field<X>>: Group<X> {
+  operator fun div(dividend: X): X = this * dividend.pow(-one)
+  infix fun pow(exp: X): X
   fun ln(): X
+  val e: X
 }
 
 abstract class RealNumber<X: Fun<X>>(open val value: Number): Const<X>()
@@ -77,7 +81,7 @@ class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
   override fun toString() = value.toString()
 }
 
-sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
+sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Field<Fun<X>> {
   constructor(fn: Fun<X>): this(fn.variables)
   constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
@@ -133,39 +137,58 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
   }
 }
 
-open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, vararg val contents: Fun<X>): Fun<X>(contents.toList().flatMap { it.variables }.toSet()) {
-  constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, *contents.toTypedArray())
+open class VFun<Y: Fun<Y>, X: VFun<Y, X, E>, E: `10`>(val length: Nat<E>, vararg val contents: Fun<Y>): Group<VFun<Y, X, E>> {
+//  constructor(length: Nat<E>, contents: List<Fun<Y>>): this(length, *contents.toTypedArray())
+  override val one: VFun<Y, X, E>
+    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+  override val zero: VFun<Y, X, E>
+    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-  init {
-    if (length.i != contents.size) throw IllegalArgumentException("Declared $length != ${contents.size}")
+  override fun unaryMinus(): VFun<Y, X, E> {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
-  operator fun get(i: Int): Fun<X> = contents[i]
-  fun plus(addend: VFun<X, E>): VFun<X, E> = VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
-  override fun plus(addend: Fun<X>): VFun<X, E> = VFun(length, contents.map { it + addend })
+  //override fun plus(addend: VFun<Y, X, E>): VFun<Y, X, E> = this
+  override fun plus(addend: VFun<Y, X, E>): VFun<Y, X, E> = VFun(length, *contents.mapIndexed { i, p -> p + addend[i] }.toTypedArray())
+
+  override fun times(multiplicand: VFun<Y, X, E>): VFun<Y, X, E> {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+  }
+
+//
+//  init {
+//    if (length.i != contents.size) throw IllegalArgumentException("Declared $length != ${contents.size}")
+//  }
+//
+//  
+  operator fun get(i: Int): Fun<Y> = contents[i]
+//  fun plus(addend: VFun<X, E>): VFun<X, E> = VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
+//  override fun plus(addend: VFun<X, E>): VFun<X, E> = VFun(length, contents.map { it + addend })
+//
 //  override fun times(multiplicand: Fun<X>): VFun<X, E> = VFun(length, contents.map { it * multiplicand })
-  operator fun times(multiplicand: VFun<X, E>): Fun<X> =
-    contents.foldIndexed(zero as Fun<X>) { index, acc, t -> acc + t * multiplicand[index] }
-
-  val upcast: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
+//  operator fun times(multiplicand: VFun<X, E>): Fun<X> =
+//    contents.foldIndexed(zero as Fun<X>) { index, acc, t -> acc + t * multiplicand[index] }
+//  operator fun <Q: `10`> times(multiplicand: MFun<X, E, Q>) = multiplicand * this
+//
+//  val upcast: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
 }
 
-class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>): Fun<X>(rows.flatMap { it.variables }.toSet()) {
-  constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>): this(numRows, numCols, *contents.toTypedArray())
-  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, rows.map { it[i] }) }.toTypedArray() }
-
-  operator fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
-    MFun(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
-        VFun(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
-          rows[i] * multiplicand.cols[j] }) })
-
-//  override fun times(multiplicand: Fun<X>): MFun<X, R, C> = MFun(numRows, numCols, rows.map { it * multiplicand })
-  operator fun times(multiplicand: VFun<X, C>): MFun<X, R, `1`> = this * multiplicand.upcast.transpose
-
-  val transpose by lazy { MFun(numCols, numRows, *cols) }
-
-  override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
-}
+//class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>): VFun<X, R>(numRows, *rows) {
+//  constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>): this(numRows, numCols, *contents.toTypedArray())
+//  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, rows.map { it[i] }) }.toTypedArray() }
+//
+//  operator fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
+//    MFun(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
+//        VFun(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
+//          rows[i] * multiplicand.cols[j] }) })
+//
+////  override fun times(multiplicand: Fun<X>): MFun<X, R, C> = MFun(numRows, numCols, rows.map { it * multiplicand })
+//  operator fun times(multiplicand: VFun<X, C>): MFun<X, R, `1`> = this * multiplicand.upcast.transpose
+//
+//  val transpose by lazy { MFun(numCols, numRows, *cols) }
+//
+//  override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
+//}
 
 open class Const<X: Fun<X>>: Fun<X>()
 class Sum<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)

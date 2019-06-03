@@ -30,6 +30,12 @@ tasks {
     description = "Runs demo script"
   }
 
+  register("toy", JavaExec::class) {
+    main = "edu.umontreal.kotlingrad.samples.ToyExampleKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    description = "Runs toy example"
+  }
+
   withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
   }
