@@ -1,5 +1,8 @@
 package edu.umontreal.kotlingrad.samples
 
+import edu.umontreal.kotlingrad.dependent.Mat
+import edu.umontreal.kotlingrad.dependent.Vec
+
 fun main() {
   with(DoublePrecision) {
     val x = Var("x", DoubleReal(0.0))
@@ -19,10 +22,15 @@ fun main() {
     println("h(x) = $h")
     val dh_dx = h.diff(x)
     println("h'(x) = $dh_dx")
+
+    val vf1 = VFun(`2`, listOf(y + x, y * 2))
+    val vf2 = VFun(`2`, listOf(x, x))
+    val q = vf1 * vf2
+    println(q)
   }
 }
 
-interface Field<X: Field<X>> {
+interface Group<X: Group<X>> {
   val e: X
   val one: X
   val zero: X
@@ -30,8 +38,9 @@ interface Field<X: Field<X>> {
   operator fun plus(addend: X): X
   operator fun minus(subtrahend: X): X = this + -subtrahend
   operator fun times(multiplicand: X): X
-  operator fun div(dividend: X): X = this * dividend.pow(-one)
+  //  operator fun div(dividend: X): X = this * dividend.pow(-one)
   infix fun pow(exp: X): X
+
   fun ln(): X
 }
 
@@ -63,7 +72,7 @@ class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
   override fun toString() = value.toString()
 }
 
-sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Field<Fun<X>> {
+sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
   constructor(fn: Fun<X>): this(fn.variables)
   constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
@@ -78,6 +87,8 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Field
     is Power -> base(map) pow exponent(map)
     is Negative -> -value(map)
     is Log -> logarithmand(map).ln()
+
+    else -> throw ClassNotFoundException("Unknown class:$this")
   }
 
   open fun diff(variable: Var<X>): Fun<X> = when (this) {
@@ -88,6 +99,8 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Field
     is Power -> this * (exponent * Log(base)).diff(variable)
     is Negative -> -value.diff(variable)
     is Log -> logarithmand.pow(-one) * logarithmand.diff(variable)
+
+    else -> throw ClassNotFoundException("Unknown class:$this")
   }
 
   override fun ln(): Fun<X> = Log(this)
@@ -115,6 +128,28 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Field
   }
 }
 
+open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, open val contents: List<Fun<X>>): Fun<X>(contents.flatMap { it.variables }.toSet()) {
+  init {
+    if (length.i != contents.size) throw IllegalArgumentException("Declared $length != ${contents.size}")
+  }
+
+  operator fun get(i: Int): Fun<X> = contents[i]
+  fun plus(addend: VFun<X, E>): VFun<X, E> = VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
+  override fun plus(addend: Fun<X>): VFun<X, E> = VFun(length, contents.map { it + addend })
+  override fun times(multiplicand: Fun<X>): VFun<X, E> = VFun(length, contents.map { it * multiplicand })
+  operator fun times(multiplicand: VFun<X, E>): Fun<X> =
+    contents.foldIndexed(zero as Fun<X>) { index, acc, t -> acc + t * multiplicand[index] }
+}
+
+class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, val rows: List<VFun<X, R>>): VFun<X, R>(numRows, rows) {
+  val cols: VFun<X, C> by lazy { VFun(numCols, (0 until numCols.i).map { i -> VFun(numRows, contents.map { (it as VFun<X, C>)[i] }) }) }
+  fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = TODO()
+
+//  fun transpose() = MFun<VFun<V, R>, C, R>(numCols, numRows, cols)
+}
+
+typealias CFun<X, R, C, Z> = VFun<VFun<VFun<X, R>, C>, Z>
+
 open class Const<X: Fun<X>>: Fun<X>()
 class Sum<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)
 class Negative<X: Fun<X>>(val value: Fun<X>): Fun<X>(value)
@@ -141,3 +176,22 @@ sealed class Protocol<X: RealNumber<X>> {
 object DoublePrecision: Protocol<DoubleReal>() {
   override fun wrap(default: Number): DoubleReal = DoubleReal(default.toDouble())
 }
+
+open class `0`(override val i: Int = 0): `1`(i)  { companion object: `0`(), Nat<`0`> }
+open class `1`(override val i: Int = 1): `2`(i)  { companion object: `1`(), Nat<`1`> }
+open class `2`(override val i: Int = 2): `3`(i)  { companion object: `2`(), Nat<`2`> }
+open class `3`(override val i: Int = 3): `4`(i)  { companion object: `3`(), Nat<`3`> }
+open class `4`(override val i: Int = 4): `5`(i)  { companion object: `4`(), Nat<`4`> }
+open class `5`(override val i: Int = 5): `6`(i)  { companion object: `5`(), Nat<`5`> }
+open class `6`(override val i: Int = 6): `7`(i)  { companion object: `6`(), Nat<`6`> }
+open class `7`(override val i: Int = 7): `8`(i)  { companion object: `7`(), Nat<`7`> }
+open class `8`(override val i: Int = 8): `9`(i)  { companion object: `8`(), Nat<`8`> }
+open class `9`(override val i: Int = 9): `10`(i) { companion object: `9`(), Nat<`9`> }
+
+sealed class `10`(open val i: Int = 10) {
+  companion object: `10`(), Nat<`10`>
+
+  override fun toString() = "$i"
+}
+
+interface Nat<T: `10`> { val i: Int }
