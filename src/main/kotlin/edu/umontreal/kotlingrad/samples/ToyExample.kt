@@ -1,8 +1,5 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.dependent.Mat
-import edu.umontreal.kotlingrad.dependent.Vec
-
 fun main() {
   with(DoublePrecision) {
     val x = Var("x", DoubleReal(0.0))
@@ -23,8 +20,8 @@ fun main() {
     val dh_dx = h.diff(x)
     println("h'(x) = $dh_dx")
 
-    val vf1 = VFun(`2`, listOf(y + x, y * 2))
-    val vf2 = VFun(`2`, listOf(x, x))
+    val vf1 = VFun(`2`, y + x, y * 2)
+    val vf2 = VFun(`2`, x, x)
     val q = vf1 * vf2
     println(q)
   }
@@ -128,7 +125,9 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
   }
 }
 
-open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, open val contents: List<Fun<X>>): Fun<X>(contents.flatMap { it.variables }.toSet()) {
+open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, vararg val contents: Fun<X>): Fun<X>(contents.toList().flatMap { it.variables }.toSet()) {
+  constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, *contents.toTypedArray())
+
   init {
     if (length.i != contents.size) throw IllegalArgumentException("Declared $length != ${contents.size}")
   }
@@ -141,11 +140,13 @@ open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, open val contents: List<
     contents.foldIndexed(zero as Fun<X>) { index, acc, t -> acc + t * multiplicand[index] }
 }
 
-class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, val rows: List<VFun<X, R>>): VFun<X, R>(numRows, rows) {
-  val cols: VFun<X, C> by lazy { VFun(numCols, (0 until numCols.i).map { i -> VFun(numRows, contents.map { (it as VFun<X, C>)[i] }) }) }
+class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>): VFun<X, R>(numRows, rows.asList()) {
+  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, contents.map { (it as VFun<X, C>)[i] }) }.toTypedArray() }
   fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = TODO()
+//    MFun(numRows, multiplicand.numCols,
+//    (0 until numRows).map { i -> VFun(numCols, (0 until multiplicand.numCols).map { j -> rows[i] * multiplicand.cols[j] }) })
 
-//  fun transpose() = MFun<VFun<V, R>, C, R>(numCols, numRows, cols)
+  val transpose = lazy { MFun(numCols, numRows, *cols) }
 }
 
 typealias CFun<X, R, C, Z> = VFun<VFun<VFun<X, R>, C>, Z>
