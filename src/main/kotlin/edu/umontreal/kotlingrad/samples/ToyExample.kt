@@ -22,8 +22,9 @@ fun main() {
 
     val vf1 = VFun(`2`, y + x, y * 2)
     val vf2 = VFun(`2`, x, y)
-    val q = vf1 * vf2
-    println(q)
+    val q = vf1 + vf2
+    val z= q(mapOf(x to DoubleReal(1.0), y to DoubleReal(2.0)))
+    println("z: $z")
 
     val mf1 = MFun(`2`, `1`, VFun(`1`, y * y), VFun(`1`, x * y))
     val mf2 = MFun(`1`, `2`, vf2)
@@ -67,8 +68,6 @@ sealed class SFun<X: SFun<X>>(open val variables: Set<Var<X>> = emptySet()): Fie
     is Power -> base(map) pow exponent(map)
     is Negative -> -value(map)
     is Log -> logarithmand(map).ln()
-
-    else -> throw ClassNotFoundException("Unknown class:$this")
   }
 
   open fun diff(variable: Var<X>): SFun<X> = when (this) {
@@ -79,8 +78,6 @@ sealed class SFun<X: SFun<X>>(open val variables: Set<Var<X>> = emptySet()): Fie
     is Power -> this * (exponent * Log(base)).diff(variable)
     is Negative -> -value.diff(variable)
     is Log -> logarithmand.pow(-one) * logarithmand.diff(variable)
-
-    else -> throw ClassNotFoundException("Unknown class:$this")
   }
 
   override fun ln(): SFun<X> = Log(this)
@@ -113,7 +110,8 @@ class Negative<X: SFun<X>>(val value: SFun<X>): SFun<X>(value)
 class Prod<X: SFun<X>>(val left: SFun<X>, val right: SFun<X>): SFun<X>(left, right)
 class Power<X: SFun<X>> internal constructor(val base: SFun<X>, val exponent: SFun<X>): SFun<X>(base, exponent)
 class Log<X: SFun<X>> internal constructor(val logarithmand: SFun<X>): SFun<X>(logarithmand)
-class Var<X: SFun<X>>(val name: String, val value: X): SFun<X>() { override val variables: Set<Var<X>> = setOf(this) }
+interface Variable
+class Var<X: SFun<X>>(val name: String, val value: X): Variable, SFun<X>() { override val variables: Set<Var<X>> = setOf(this) }
 open class Const<X: SFun<X>>: SFun<X>()
 abstract class RealNumber<X: SFun<X>>(open val value: Number): Const<X>()
 
@@ -143,22 +141,28 @@ class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
   override fun toString() = value.toString()
 }
 
-open class VFun<X: SFun<X>, E: `1`>(val length: Nat<E>, vararg val contents: SFun<X>): Group<VFun<X, E>> {
-  constructor(length: Nat<E>, contents: List<SFun<X>>): this(length, *contents.toTypedArray())
+open class VFun<X: SFun<X>, E: `1`>(val length: Nat<E>, open val variables: Set<Variable> = emptySet(), vararg val contents: SFun<X>): List<SFun<X>> by contents.toList(), Group<VFun<X, E>> {
+  constructor(length: Nat<E>, contents: List<SFun<X>>): this(length, contents.flatMap { it.variables }.toSet(), *contents.toTypedArray())
+  constructor(length: Nat<E>, vararg contents: SFun<X>): this(length, contents.flatMap { it.variables }.toSet(), *contents)
+  constructor(vararg fns: VFun<X, E>): this(fns.first().length)
+
   init {
-    if (length.i != contents.size) throw IllegalArgumentException("Declared length, $length != ${contents.size}")
+    if (length.i != contents.size && contents.isNotEmpty()) throw IllegalArgumentException("Declared length, $length != ${contents.size}")
   }
-  operator fun get(i: Int): SFun<X> = contents[i]
 
   val upcast: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
 
+  operator fun invoke(map: Map<Var<X>, X>): VFun<X, E> = when (this) {
+    is VNegative<X, E> -> VFun(length, value(map).contents.map { -it })
+    is VSum<X, E> -> VFun(length, left(map).contents.zip(right(map)).map { it.first + it.second })
+    is VProd<X, E> -> VFun(length, left(map).contents.zip(right(map)).map { it.first * it.second })
+    else -> VFun(length, contents.map { it(map) })
+  }
+
   override fun unaryMinus(): VFun<X, E> = VFun(length, contents.map { -it })
-  override fun plus(addend: VFun<X, E>): VFun<X, E> =
-    VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
-  override fun times(multiplicand: VFun<X, E>): VFun<X, E> =
-    VFun(length, contents.mapIndexed { i, p -> p * multiplicand[i] })
-  operator fun times(multiplicand: SFun<X>): VFun<X, E> =
-    VFun(length, contents.map { it * multiplicand })
+  override fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
+  override fun times(multiplicand: VFun<X, E>): VFun<X, E> = VProd(this, multiplicand)
+  operator fun times(multiplicand: SFun<X>): VFun<X, E> = VFun(length, contents.map { it * multiplicand })
   operator fun <Q: `1`> times(multiplicand: MFun<X, E, Q>): MFun<X, `1`, Q> = upcast * multiplicand
 
   infix fun dot(multiplicand: VFun<X, E>): SFun<X> =
@@ -166,6 +170,11 @@ open class VFun<X: SFun<X>, E: `1`>(val length: Nat<E>, vararg val contents: SFu
 
   override fun toString() = "$contents"
 }
+
+class VNegative<X: SFun<X>, E: `1`>(val value: VFun<X, E>): VFun<X, E>(value)
+class VSum<X: SFun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
+class VProd<X: SFun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
+//class VVar<X: SFun<X>, E: `1`>(val name: String, val value: X): Variable, VFun<X, E>() { override val variables: Set<Variable> = setOf(this) }
 
 class MFun<X: SFun<X>, R: `1`, C: `1`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>) {
   constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>): this(numRows, numCols, *contents.toTypedArray())
