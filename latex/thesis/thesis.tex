@@ -361,16 +361,16 @@ In 1964, such an algorithm was first conceived by Robert Wengert~\cite{wengert19
 
 \section{Automatic differentiation}\label{sec:automatic-differentiation}
 
-Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $p_n: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
+Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P_k: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions:
 %
 \begin{equation}
-    p_n(p_0)= p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0
+    P_k(x) = \begin{cases} p_0(x) = x &\text{if } k=0\\ (p_k\circ P_{k-1})(x)&\text{if } k > 0 \end{cases}
 \end{equation}
 %
 From the chain rule of calculus, we recall that:
 %
 \begin{equation}
-    \frac{dp_n}{dp_0} = {\displaystyle \prod_{i=1}^{n} \frac{dp_{i}}{dp_{i-1}}}
+    \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
 %
 Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
@@ -400,6 +400,12 @@ More generally, for a vector function $\mathbf{f}:  \mathbb{R}^n\rightarrow\math
           \nabla f_n \end{bmatrix}
 \end{equation}
 %
+For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule still applies:
+%
+\begin{align*}
+\mathbf{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
+\end{align*}
+%
 For completeness, but rarely used in practice, is the second-order partials for vector functions:
 %
 \begin{equation}
@@ -428,7 +434,7 @@ For some classes of computable functions, small changes to the input will produc
     ||\nabla F|| \approx \pm \infty
 \end{equation}
 %
-It is an open question whether non-differentiable functions exist in the real world~\cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but modern computers are not equipped with the capability to accurately report the true value of their binary-valued functions, so for all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, computers are capable of approximating bounded functions of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a fixed precision approximation is sufficient.
+It is an open question whether non-differentiable functions exist in the real world~\cite{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are not capable of accurately report the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
 
 There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: R \rightarrow R$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\cite{hornik1989multilayer} states that for all real-valued continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $\hat{f}$, parameterized by constants $n \in \mathbb{N}, \beta \in \mathbb{R}^n, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $\theta \in \mathbb{R}^{m \times n}$:
 %
@@ -439,12 +445,16 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 %
-This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion and iteratively updating $\theta$ in the direction suggested by $\nabla_{\theta} \mathcal{L}(\hat{f}(x;\theta), f(x))$. In this setting, we do not have access to $f$ directly, but receive samples $Y = \{f(x^{(1)}), \dots, f(x^{(k)})\}$, which we try to obtain in as large a quantity as possible and run the following procedure:
+This theorem does not put an upper bound on the constant $n$, or tell us how to find $\theta$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to obtain accurate approximations to many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion, like so:
 %
-\begin{equation}\label{eq:grad_descent}
-    \begin{split}
-        \theta \leftarrow \theta - \alpha\nabla_\theta\mathcal{L}(\hat{f}(X;\theta), Y)
-    \end{split}
+\begin{equation}
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta)\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+\end{equation}
+%
+Where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, obtain as many samples as possible and repeat the following procedure until $\boldsymbol\Theta$ converges:
+%
+\begin{equation}
+    \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
 For most common $\mathcal{L}$, the complexity of this procedure is linear with $k$. As $k$ can be quite large in practice, a single iteration of this procedure can take prohibitively long. Since obtaining the exact gradient is not very important, we use a stochastic variant by sampling a \textit{minibatch} of rows $X', Y'$, from $X, Y$, which is slightly noisier, but runs considerably more quickly.
@@ -599,21 +609,21 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \begin{table}
     \begin{tabular}{|c|c|c|c|l|}
         \hline
-        \multicolumn{1}{|c|}{Math$\dagger$}                   &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                    \\ \hline
-                 $A(B)$                                       & \texttt{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A + B$                                      & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}        &  \texttt{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A - B$                                      & \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}       &  \texttt{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
-                 $A   B$                                      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\end{tabular}       &  \texttt{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})  $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a / b}\\\texttt{a.div(b)}\end{tabular}         &  \texttt{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}               &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
-\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}               & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}   &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
-                $\ln(A)$                                      &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
-               $\log_b A$                                     & \texttt{a.log(b)}                                                              &  \texttt{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
-                $A^{b}$                                       & \texttt{a.pow(b)}                                                              &  \tettt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
+        \multicolumn{1}{|c|}{Math$\dagger$}                    &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                    \\ \hline
+                 $A(B)$                                        & \texttt{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A + B$                                       & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}        &  \texttt{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A - B$                                       & \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}       &  \texttt{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
+                 $A   B$                                       & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\end{tabular}       &  \texttt{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})  $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular}  & \begin{tabular}{@{}c@{}}\texttt{a / b}\\\texttt{a.div(b)}\end{tabular}         &  \texttt{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}                &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
+\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}                & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}    &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
+                $\ln(A)$                                       &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
+               $\log_b A$                                      & \texttt{a.log(b)}                                                              &  \texttt{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
+                $A^{b}$                                        & \texttt{a.pow(b)}                                                              &  \tettt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
 \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular} & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
-               $\nabla a$                                     &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
+               $\nabla a$                                      &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
     \end{tabular}
 \end{table}
 }
@@ -830,7 +840,7 @@ println(z) // Prints: 7
 
 Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allows functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes another function representing the subsequent computation to be performed. Rather than returning to its caller, immediately prior to completion, the function invokes its continuation, and process is restarted. If the continuation is empty, the program halts.
 
-One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in \textit{Shift/Reset the Penultimate Backpropagator}~\cite{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\cite{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin Coroutines library (work in progress).
+One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in \textit{Shift/Reset the Penultimate Backpropagator}~\cite{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\cite{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin's Coroutines support.
 
 \section{Extension Functions}\label{sec:extension-functions}
 
@@ -855,7 +865,7 @@ Extensions can also be defined in another file or context and imported on demand
 
 \section{Algebraic data types}\label{sec:adts}
 
-\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
+\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitates a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler is able to guarantee the author has provided an exhaustive control flow over all concrete subtypes of an abstract class. For example, suppose we have the following classes:
 %
 \begin{lstlisting}
 class Const<T: Group<T>>(val number: Double) : Expr()
@@ -910,28 +920,31 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\cite{st2012typing}. First pioneered in Scheme\cite{sperber2009revised}, this strategy is highly-suited to object oriented programming~\cite{niculescu2003design, niculescu2011using} and widely used in other mathematical libraries such as KMath~\cite{nozik2019acat} and Apache Commons Math~\cite{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
+Kotlin$\nabla$ uses a numeric tower~\cite{st2012typing}. Pioneered in the functional programming language, Scheme\cite{sperber2009revised}, this strategy is also suited to object oriented programming~\cite{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\cite{nozik2019acat} and Apache Commons Math~\cite{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
 
-\begin{lstlisting}[caption={Many common mathematical operations can be defined in simpler terms.}, language=Kotlin]
-interface Field<X: Field<X>> {
-    val e: X
-    val one: X
-    val zero: X
+\begin{lstlisting}[caption={Most mathematica loperations are composed of simple operators.}, language=Kotlin]
+interface Group<X: Group<X>> {
     operator fun unaryMinus(): X
     operator fun plus(addend: X): X
     operator fun minus(subtrahend: X): X = this + -subtrahend
     operator fun times(multiplicand: X): X
+}
+
+interface Field<X: Field<X>>: Group<X> {
+    val e: X
+    val one: X
+    val zero: X
     operator fun div(dividend: X): X = this * dividend.pow(-one)
     infix fun pow(exp: X): X
     fun ln(): X
 }
 \end{lstlisting}
 
-Furthermore, if we need to later define a field over the quaternions (suppose for backpropogating through a quaternion neural network~\cite{isokawa2003quaternion}), these abstractions are easy to extend, since we only need to implement a very small set of primitive operations.
+The numeric tower allows us to define common behavior over abstract structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebraic structures \footnote{ex. to calculate derivatives in a quaternion neural network~\cite{isokawa2003quaternion}}, one must simply extend the numeric tower and override the default implementation. Most common mathematical operations can be defined by composing a small set of primitive operations, which can be symbolically differentiated.
 
 \section{Automatic, Symbolic Differentiation}
 
-It has long been claimed that automatic differentiation is not symbolic differentiation~\cite{baydin-survey}. Many, including the author, have suspected this claim to be misleading. Recent literature has questioned~\cite{wang2018demystifying} and refuted~\cite{laue2019equivalence} this claim. It is our view the distinction is a minor semantic disagreement. While it may be true that certain implementations of automatic differentiation interleave numerical and symbolic differentiation during a program's execution, it is certainly not a prerequisite for a library to be considered automatic differentiation, especially considering that prior AD implementations, including Theano, have taken a different approach. Furthermore, we consider symbolic differentiation to be a type of automatic differentiation.
+It has long been claimed that automatic differentiation is not symbolic differentiation~\cite{baydin-survey}. Many, including the author, have suspected this claim to be misleading. Recent literature has questioned~\cite{wang2018demystifying} and refuted~\cite{laue2019equivalence} this claim. It is our view the distinction is a minor semantic disagreement. While it may be true that certain implementations of automatic differentiation interleave numerical and symbolic differentiation during a program's execution, it is certainly not a prerequisite for a differentiation library to be considered automatic, particularly considering that prior AD implementations, including Theano~\cite{theano}, have taken a symbolic approach. Furthermore, we consider symbolic differentiation to be a type of automatic differentiation.
 
 \section{Comparison}\label{sec:comparison}
 
