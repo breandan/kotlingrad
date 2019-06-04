@@ -110,7 +110,7 @@ Universit\'e de Montr\'eal \\
         For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule still applies:
         %
         \begin{align*}
-            \mathbf{J}_\mathbf{P} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
+            \mathbf{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
         \end{align*}
         %
         If $\mathbf{P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
