@@ -27,64 +27,39 @@ fun main() {
 
     val mf1 = MFun(`2`, `1`, VFun(`1`, y * y), VFun(`1`, x * y))
     val mf2 = MFun(`1`, `2`, vf2)
-    // TODO: Look into this * operator
-    println(mf1 * mf2)
-    println(mf1 * vf1)
-    println(mf2 * vf1)
-    println(mf2 * x)
+    val mf3 = MFun(`3`, `1`, VFun(`1`, x), VFun(`1`, y), VFun(`1`, x))
+    println(mf1 * mf2) // 2*1 x 1*2
+//    println(mf1 * vf1) // 2*1 x 2
+    println(mf2 * vf1) // 1*2 x 2
+//    println(mf3 * vf1) // 1*3 x 2
+    println(mf2 * x)   // 1*2 x 1
   }
 }
 
 interface Group<X: Group<X>> {
-  val e: X
-  val one: X
-  val zero: X
   operator fun unaryMinus(): X
   operator fun plus(addend: X): X
   operator fun minus(subtrahend: X): X = this + -subtrahend
   operator fun times(multiplicand: X): X
-  //  operator fun div(dividend: X): X = this * dividend.pow(-one)
+}
+
+interface Field<X: Field<X>>: Group<X> {
+  operator fun div(dividend: X): X = this * dividend.pow(-one)
   infix fun pow(exp: X): X
-
   fun ln(): X
+  val e: X
+  val one: X
+  val zero: X
 }
 
-abstract class RealNumber<X: Fun<X>>(open val value: Number): Const<X>()
+sealed class SFun<X: SFun<X>>(open val variables: Set<Var<X>> = emptySet()): Field<SFun<X>> {
+  constructor(fn: SFun<X>): this(fn.variables)
+  constructor(vararg fns: SFun<X>): this(fns.flatMap { it.variables }.toSet())
 
-class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
-  override val e by lazy { DoubleReal(Math.E) }
-  override val one by lazy { DoubleReal(1.0) }
-  override val zero by lazy { DoubleReal(0.0) }
+  override operator fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
+  override operator fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
 
-  override fun plus(addend: Fun<DoubleReal>): Fun<DoubleReal> = when (addend) {
-    is DoubleReal -> DoubleReal(value + addend.value)
-    else -> super.plus(addend)
-  }
-
-  override fun unaryMinus() = DoubleReal(-value)
-
-  override fun times(multiplicand: Fun<DoubleReal>): Fun<DoubleReal> = when (multiplicand) {
-    is DoubleReal -> DoubleReal(value * multiplicand.value)
-    else -> super.times(multiplicand)
-  }
-
-  override fun pow(exp: Fun<DoubleReal>) = when (exp) {
-    is DoubleReal -> DoubleReal(Math.pow(value, exp.value))
-    else -> super.pow(exp)
-  }
-
-  override fun ln() = DoubleReal(Math.log(value))
-  override fun toString() = value.toString()
-}
-
-sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
-  constructor(fn: Fun<X>): this(fn.variables)
-  constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
-
-  override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
-  override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
-
-  operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
+  operator fun invoke(map: Map<Var<X>, X>): SFun<X> = when (this) {
     is Const -> this
     is Var -> map.getOrElse(this) { this }
     is Prod -> left(map) * right(map)
@@ -96,7 +71,7 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
     else -> throw ClassNotFoundException("Unknown class:$this")
   }
 
-  open fun diff(variable: Var<X>): Fun<X> = when (this) {
+  open fun diff(variable: Var<X>): SFun<X> = when (this) {
     is Var -> if (variable == this) one else zero
     is Const -> zero
     is Sum -> left.diff(variable) + right.diff(variable)
@@ -108,11 +83,11 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
     else -> throw ClassNotFoundException("Unknown class:$this")
   }
 
-  override fun ln(): Fun<X> = Log(this)
+  override fun ln(): SFun<X> = Log(this)
 
-  override fun pow(exp: Fun<X>): Fun<X> = Power(this, exp)
+  override fun pow(exp: SFun<X>): SFun<X> = Power(this, exp)
 
-  override fun unaryMinus(): Fun<X> = Negative(this)
+  override fun unaryMinus(): SFun<X> = Negative(this)
 
   override val e: Const<X> by lazy { proto.e }
   override val one: Const<X> by lazy { proto.one }
@@ -133,82 +108,117 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
   }
 }
 
-open class VFun<X: Fun<X>, E: `10`>(val length: Nat<E>, vararg val contents: Fun<X>): Fun<X>(contents.toList().flatMap { it.variables }.toSet()) {
-  constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, *contents.toTypedArray())
+class Sum<X: SFun<X>>(val left: SFun<X>, val right: SFun<X>): SFun<X>(left, right)
+class Negative<X: SFun<X>>(val value: SFun<X>): SFun<X>(value)
+class Prod<X: SFun<X>>(val left: SFun<X>, val right: SFun<X>): SFun<X>(left, right)
+class Power<X: SFun<X>> internal constructor(val base: SFun<X>, val exponent: SFun<X>): SFun<X>(base, exponent)
+class Log<X: SFun<X>> internal constructor(val logarithmand: SFun<X>): SFun<X>(logarithmand)
+class Var<X: SFun<X>>(val name: String, val value: X): SFun<X>() { override val variables: Set<Var<X>> = setOf(this) }
+open class Const<X: SFun<X>>: SFun<X>()
+abstract class RealNumber<X: SFun<X>>(open val value: Number): Const<X>()
 
-  init {
-    if (length.i != contents.size) throw IllegalArgumentException("Declared $length != ${contents.size}")
+class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
+  override val e by lazy { DoubleReal(Math.E) }
+  override val one by lazy { DoubleReal(1.0) }
+  override val zero by lazy { DoubleReal(0.0) }
+
+  override fun plus(addend: SFun<DoubleReal>): SFun<DoubleReal> = when (addend) {
+    is DoubleReal -> DoubleReal(value + addend.value)
+    else -> super.plus(addend)
   }
 
-  operator fun get(i: Int): Fun<X> = contents[i]
-  fun plus(addend: VFun<X, E>): VFun<X, E> = VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
-  override fun plus(addend: Fun<X>): VFun<X, E> = VFun(length, contents.map { it + addend })
-//  override fun times(multiplicand: Fun<X>): VFun<X, E> = VFun(length, contents.map { it * multiplicand })
-  operator fun times(multiplicand: VFun<X, E>): Fun<X> =
-    contents.foldIndexed(zero as Fun<X>) { index, acc, t -> acc + t * multiplicand[index] }
+  override fun unaryMinus() = DoubleReal(-value)
 
-  val upcast: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
+  override fun times(multiplicand: SFun<DoubleReal>): SFun<DoubleReal> = when (multiplicand) {
+    is DoubleReal -> DoubleReal(value * multiplicand.value)
+    else -> super.times(multiplicand)
+  }
+
+  override fun pow(exp: SFun<DoubleReal>) = when (exp) {
+    is DoubleReal -> DoubleReal(Math.pow(value, exp.value))
+    else -> super.pow(exp)
+  }
+
+  override fun ln() = DoubleReal(Math.log(value))
+  override fun toString() = value.toString()
 }
 
-class MFun<X: Fun<X>, R: `10`, C: `10`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>): Fun<X>(rows.flatMap { it.variables }.toSet()) {
+open class VFun<X: SFun<X>, E: `1`>(val length: Nat<E>, vararg val contents: SFun<X>): Group<VFun<X, E>> {
+  constructor(length: Nat<E>, contents: List<SFun<X>>): this(length, *contents.toTypedArray())
+  init {
+    if (length.i != contents.size) throw IllegalArgumentException("Declared length, $length != ${contents.size}")
+  }
+  operator fun get(i: Int): SFun<X> = contents[i]
+
+  val upcast: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
+
+  override fun unaryMinus(): VFun<X, E> = VFun(length, contents.map { -it })
+  override fun plus(addend: VFun<X, E>): VFun<X, E> =
+    VFun(length, contents.mapIndexed { i, p -> p + addend[i] })
+  override fun times(multiplicand: VFun<X, E>): VFun<X, E> =
+    VFun(length, contents.mapIndexed { i, p -> p * multiplicand[i] })
+  operator fun times(multiplicand: SFun<X>): VFun<X, E> =
+    VFun(length, contents.map { it * multiplicand })
+  operator fun <Q: `1`> times(multiplicand: MFun<X, E, Q>): MFun<X, `1`, Q> = upcast * multiplicand
+
+  infix fun dot(multiplicand: VFun<X, E>): SFun<X> =
+    contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
+
+  override fun toString() = "$contents"
+}
+
+class MFun<X: SFun<X>, R: `1`, C: `1`>(val numRows: Nat<R>, val numCols: Nat<C>, vararg val rows: VFun<X, C>) {
   constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>): this(numRows, numCols, *contents.toTypedArray())
+  init {
+    if (numRows.i != rows.size) throw IllegalArgumentException("Declared rows, $numRows != ${rows.size}")
+  }
+  operator fun get(i: Int): VFun<X, C> = rows[i]
+
   val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, rows.map { it[i] }) }.toTypedArray() }
 
-  operator fun <Q: `10`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
-    MFun(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
-        VFun(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
-          rows[i] * multiplicand.cols[j] }) })
-
-//  override fun times(multiplicand: Fun<X>): MFun<X, R, C> = MFun(numRows, numCols, rows.map { it * multiplicand })
+  operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MFun(numRows, numCols, rows.mapIndexed { i, r -> r + addend[i] } )
+  operator fun times(multiplicand: SFun<X>): MFun<X, R, C> = MFun(numRows, numCols, rows.map { it * multiplicand })
   operator fun times(multiplicand: VFun<X, C>): MFun<X, R, `1`> = this * multiplicand.upcast.transpose
+  operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
+    MFun(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
+      VFun(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
+        rows[i] dot multiplicand.cols[j] }) })
 
   val transpose by lazy { MFun(numCols, numRows, *cols) }
 
   override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
 }
 
-open class Const<X: Fun<X>>: Fun<X>()
-class Sum<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)
-class Negative<X: Fun<X>>(val value: Fun<X>): Fun<X>(value)
-class Prod<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)
-class Power<X: Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>): Fun<X>(base, exponent)
-class Log<X: Fun<X>> internal constructor(val logarithmand: Fun<X>): Fun<X>(logarithmand)
-class Var<X: Fun<X>>(val name: String, val value: X): Fun<X>() {
-  override val variables: Set<Var<X>> = setOf(this)
-}
-
 sealed class Protocol<X: RealNumber<X>> {
   abstract fun wrap(default: Number): X
 
-  operator fun Number.times(multiplicand: Fun<X>) = multiplicand * wrap(this)
-  operator fun Fun<X>.times(multiplicand: Number) = wrap(multiplicand) * this
+  operator fun Number.times(multiplicand: SFun<X>) = multiplicand * wrap(this)
+  operator fun SFun<X>.times(multiplicand: Number) = wrap(multiplicand) * this
 
-  operator fun Number.plus(addend: Fun<X>) = addend * wrap(this)
-  operator fun Fun<X>.plus(addend: Number) = wrap(addend) * this
+  operator fun Number.plus(addend: SFun<X>) = addend * wrap(this)
+  operator fun SFun<X>.plus(addend: Number) = wrap(addend) * this
 
-  fun Number.pow(exp: Fun<X>) = wrap(this) pow exp
-  infix fun Fun<X>.pow(exp: Number) = this pow wrap(exp)
+  fun Number.pow(exp: SFun<X>) = wrap(this) pow exp
+  infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
 }
 
 object DoublePrecision: Protocol<DoubleReal>() {
   override fun wrap(default: Number): DoubleReal = DoubleReal(default.toDouble())
 }
 
-open class `0`(override val i: Int = 0): `1`(i)  { companion object: `0`(), Nat<`0`> }
-open class `1`(override val i: Int = 1): `2`(i)  { companion object: `1`(), Nat<`1`> }
-open class `2`(override val i: Int = 2): `3`(i)  { companion object: `2`(), Nat<`2`> }
-open class `3`(override val i: Int = 3): `4`(i)  { companion object: `3`(), Nat<`3`> }
-open class `4`(override val i: Int = 4): `5`(i)  { companion object: `4`(), Nat<`4`> }
-open class `5`(override val i: Int = 5): `6`(i)  { companion object: `5`(), Nat<`5`> }
-open class `6`(override val i: Int = 6): `7`(i)  { companion object: `6`(), Nat<`6`> }
-open class `7`(override val i: Int = 7): `8`(i)  { companion object: `7`(), Nat<`7`> }
-open class `8`(override val i: Int = 8): `9`(i)  { companion object: `8`(), Nat<`8`> }
-open class `9`(override val i: Int = 9): `10`(i) { companion object: `9`(), Nat<`9`> }
-
-sealed class `10`(open val i: Int = 10) {
-  companion object: `10`(), Nat<`10`>
+interface Nat<T: `0`> { val i: Int }
+sealed class `0`(open val i: Int = 0) {
+  companion object: `0`(), Nat<`0`>
 
   override fun toString() = "$i"
 }
 
-interface Nat<T: `10`> { val i: Int }
+open class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
+open class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
+open class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
+open class `4`(override val i: Int = 4): `3`(i) { companion object: `4`(), Nat<`4`> }
+open class `5`(override val i: Int = 5): `4`(i) { companion object: `5`(), Nat<`5`> }
+open class `6`(override val i: Int = 6): `5`(i) { companion object: `6`(), Nat<`6`> }
+open class `7`(override val i: Int = 7): `6`(i) { companion object: `7`(), Nat<`7`> }
+open class `8`(override val i: Int = 8): `7`(i) { companion object: `8`(), Nat<`8`> }
+open class `9`(override val i: Int = 9): `8`(i) { companion object: `9`(), Nat<`9`> }
