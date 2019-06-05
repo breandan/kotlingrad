@@ -1,4 +1,4 @@
-\documentclass[12pt,initial,twoside,maitrise]{dms}
+    \documentclass[12pt,initial,twoside,maitrise]{dms}
 \usepackage[utf8]{inputenc} %Obligatoires
 %\usepackage[T1]{fontenc}    %
 \usepackage[dvipsnames]{xcolor}
@@ -310,9 +310,9 @@ All great software has a secret recipe: software gets better when engineers use 
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J. C. R. Licklider, \textit{Man-Computer Symbiosis}~\cite{licklider1960man}\end{flushright}}
 
-In this chapter we will discuss the design and implementation of an integrated development environment (IDE) for building intelligent robotic software. Modern robots are increasingly characterized by systems which learn and improve over time. Most researchers would agree that modern robotic systems have not yet achieved biologically competitive sensorimotor capabilities and most intelligent systems are not physically embodied. However, it is our view that any closed-loop control system that is not explicitly programmed to perform a specific task, but which learns it from experience is an \textit{intelligent system} and that any closed-loop system with physical motors is a \textit{robotic system}. While research has demonstrated successful applications in both areas separately, it is widely believed the integration of intelligent systems and robotics will be tremendously fruitful when fully realized.
+In this chapter we will discuss the design and implementation of an integrated development environment (IDE) for building intelligent robotic software. Modern robots are increasingly characterized by systems which learn and improve over time. Most researchers would agree that modern robotic systems have not yet achieved biologically competitive sensorimotor capabilities and most intelligent systems are not physically embodied. However, it is our view that any closed-loop control system that is not explicitly programmed to perform a specific task, but which learns it from experience is an \textit{intelligent system}. Furthermore, any closed-loop system with physical motors is a \textit{robotic system}. While research has demonstrated successful applications in both areas separately, it is widely believed the integration of intelligent systems in robotics will be tremendously fruitful when fully realized.
 
-Hatchery is a tool designed to assist programmers writing robotics applications with ROS middleware. At the time of its release, \href{https://github.com/duckietown/hatchery}{Hatchery} was the first ROS plugin for the IntelliJ Platform \footnote{A popular IDE for C/C++, Python and Android development}, and one year later, is also the most widely used with close to 10,000 downloads. While the idea is simple, its prior absence and subsequent adoption suggest there is unmet demand for such tools in the development of intelligent software systems, particularly in robotics.
+Hatchery is a tool designed to assist programmers writing robotics applications with ROS middleware. At the time of its release, \href{https://github.com/duckietown/hatchery}{Hatchery} was the first ROS plugin for the IntelliJ Platform \footnote{A popular IDE for C/C++, Python and Android development}, and one year later, is also the most widely used with close to 10,000 downloads. While the idea is simple, its prior absence and subsequent adoption suggest there is unmet demand for such tools in the development of intelligent software systems, particularly in robotics where the system is highly specialized.
 
 \section{Software architecture for robotics application}
 
@@ -685,14 +685,14 @@ When writing a function, it is mandatory to declare the input type(s), but the r
 First, we enumerate a list of integer type literals as a chain of subtypes, so that $0 <: 1 <: 2 <: \dots <: C$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, but in order to do so, the code will need to be regenerated.
 %
 \begin{lstlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall L\leq2.$}, language=Kotlin]
+interface Nat<T: `0`> { val i: Int }
 // Integer literals have reified Int values should we need to compare them at runtime
-open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
-open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
-open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
-open class `3`(override val i: Int = 3): `4`(i) { companion object: `3`(), Nat<`3`> }
+sealed class `0`(open val i: Int = 0) { companion object: `0`(), Nat<`0`> }
+open class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
+open class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
+open class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
 //...This is generated code
-sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`> }
-interface Nat<T: `100`> { val i: Int } // Used for certain type bounds
+open class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`> }
 \end{lstlisting}
 %
 Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. Let us consider the rank-1 tensor (i.e.\ vector) case:
@@ -811,11 +811,11 @@ interface Group<T: Group<T>> {
 }
 \end{lstlisting}
 %
-Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\cite{canning1989f} to ensure that operations return the concrete type variable T, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Expr} which has implemented \inline{Group}. It can be used as follows:
+Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\cite{canning1989f} to ensure that operations return the concrete type variable T, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Fun} which has implemented \inline{Group}. It can be used as follows:
 %
 \begin{lstlisting}[language=Kotlin]
 fun <T: Group<T>> cubed(t: T): T = t * t * t
-fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
+fun <X: Fun<X>> twiceExprCubed(e: X): X = cubed(e) + cubed(e)
 \end{lstlisting}
 %
 Like Python, Kotlin supports overloading a limited set of operators, which are evaluated using a fixed precedence. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
@@ -845,18 +845,18 @@ One form of continuation, known as shift-reset a.k.a.\ delimited continuations, 
 Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin allows us can expose custom extensions (e.g.\ in \inline{DoublePrecision}) to consumers without requiring subclasses or inheritance.
 %
 \begin{lstlisting}[caption={We can provide numerical extensions, wrapped in a context.}, language=Kotlin]
-data class Const<T: Group<T>>(val number: Double) : Expr()
-data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Const<T: Fun<T>>(val number: Double) : Fun<T>()
+data class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
+data class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
 object DoubleContext {
-    operator fun Number.times(expr: Expr<Double>) = Const(toDouble()) * expr
+    operator fun Number.times(expr: Fun<Double>) = Const(toDouble()) * expr
 }
 \end{lstlisting}
 %
-Now, we can use the context to define another extension, \inline{Expr.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
+Now, we can use the context to define another extension, \inline{Fun.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
 %
 \begin{lstlisting}[language=Kotlin]
-fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
+fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{lstlisting}
 %
 Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\cite{nozik2019acat}, another mathematical library for Kotlin.
@@ -866,31 +866,35 @@ Extensions can also be defined in another file or context and imported on demand
 \noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitates a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler is able to guarantee the author has provided an exhaustive control flow over all concrete subtypes of an abstract class. For example, suppose we have the following classes:
 %
 \begin{lstlisting}
-class Const<T: Group<T>>(val number: Double) : Expr()
-class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-class Var<T: Group<T>>: Expr()
-class Zero<T: Group<T>>: Const<T>
-class One<T: Group<T>>: Const<T>
+class Const<T: Fun<T>>(val number: Number) : Fun<T>()
+class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Prod<T:Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
+class Zero<T: Fun<T>>: Const<T>(0)
+class One<T: Fun<T>>: Const<T>(1)
 \end{lstlisting}
 %
 \begin{lstlisting}[caption={Users must handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of failing silently at runtime).}, language=Kotlin]
-sealed class Expr<T: Group<T>>: Group<Expr<T>> {
-    fun diff() = when(expr) {
+sealed class Fun<T: Group<T>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<T>> {
+    constructor(fn: Fun<X>): this(fn.variables)
+    constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
+
+    fun diff() = when(this) {
        is Const -> Zero
        // Smart casting allows us to access members of a checked typed without explicit casting
-       is Sum -> e1.diff() + e2.diff()
+       is Sum -> left.diff() + right.diff()
        // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-       is Prod -> e1.diff() * e2 + e1 * e2.diff()
+       is Prod -> left.diff() * right + left * right.diff()
        is Var -> One
-       // Since the subclasses of Expr are a closed set, no `else -> ...` is required.
+       // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
     }
-    operator fun plus(addend: Expr<T>) = Sum(this, addend)
-    operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
+
+    operator fun plus(addend: Fun<T>) = Sum(this, addend)
+    operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
 }
 \end{lstlisting}
 %
-Smart-casting allows us to treat the abstract type \inline{Expr} as a concrete type, e.g. \inline{Sum} after performing an \inline{is Sum} check. Otherwise, we would need to write \inline{(expr as Sum).e1} in order to access its field, \inline{e1}. If the type were incorrect, performing a cast without checking would throw a \inline{ClassCastException}, which sealed classes prevent.
+Smart-casting allows us to treat the abstract type \inline{Fun} as a concrete type, e.g. \inline{Sum} after performing an \inline{is Sum} check. Otherwise, we would need to write \inline{(this as Sum).left} in order to access its field, \inline{left}. If the type were incorrect, performing a cast without checking would throw a \inline{ClassCastException}, which sealed classes prevent.
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
@@ -899,15 +903,15 @@ In conjunction with ADTs, Kotlin$\nabla$ also uses multiple dispatch to instanti
 Building on the previous example, suppose we would like to perform algebraic simplification. This can be useful for reducing expression swell and improving numerical stability. We can use multiple dispatch to branch on a the type of a subexpression at runtime. \textit{Smart casting} lets us access  members of a class after checking its type, as if it were casted:
 
 \begin{lstlisting}[caption={Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.}, language=Kotlin]
-override fun times(multiplicand: Expr<X>): Expr<X> =
+override fun times(multiplicand: Fun<X>): Fun<X> =
     when {
         this == zero -> this
         this == one -> multiplicand
         multiplicand == one -> this
         multiplicand == zero -> multiplicand
         this == multiplicand -> pow(two)
-        // Without Smart Casting: const((this as Const).number * (multiplicand as Const).number)
-        this is Const && multiplicand is Const -> const(number * multiplicand.number) // With SC
+        // Without Smart Casting: Const((this as Const).number * (multiplicand as Const).number)
+        this is Const && multiplicand is Const -> Const(number * multiplicand.number) // With SC
         // Further simplification is possible using rules of replacement
         else -> Prod(this, multiplicand)
     }
