@@ -45,7 +45,7 @@
 \lstdefinelanguage{Kotlin}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
-    emph={delegate, filter, firstOrNull, forEach, it, lazy, map, mapNotNull, println, return@},
+    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
     keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
@@ -288,9 +288,9 @@ Realistically, intelligent systems need better ways to practice their skills and
 
 \section{Software reproducibility and maitenance}
 
-One of the challenges of building intelligent systems and programming in general, is the problem of reproducibility. Software reproducibility has several challenging aspects, including hardware compatibility, operating systems, file systems, build systems, and runtime determinism. While writing programs and feeding them directly into a computer may have once been common practice, today's source code is far too removed from its mechanical realization to be meaningfully executed in isolation. Today's handwritten programs are like schematics for a traffic light -- built inside a vast factory, and which require a city's-worth of infrastructure, cars, and traffic laws to serve their intended purpose. Like traffic lights, source code does not exist in a vacuum -- built by compilers, interpreted by virtual machines, executed inside an operating system, and which following a specific communication protocol -- programs are essentially meaningless abstractions outside this context.
+One of the challenges of building intelligent systems and programming in general, is the problem of reproducibility. Software reproducibility has several challenging aspects, including hardware compatibility, operating systems, file systems, build systems, and runtime determinism. While writing programs and feeding them directly into a computer may have once been common practice, today's source code is far too removed from its mechanical realization to be meaningfully executed in isolation. Today's handwritten programs are like schematics for a traffic light -- built inside a factory, and which require a city's-worth of infrastructure, cars, and traffic laws to serve their intended purpose. Like traffic lights, source code does not exist in a vacuum -- built by compilers, interpreted by virtual machines, executed inside an operating system, and which following a specific communication protocol -- programs are essentially meaningless abstractions outside this context.
 
-As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have long since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. And for most programs, such as those found in a typical GitHub repository, a vanishingly small fraction correspond to the handwritten program itself.
+As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have long since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository, a vanishingly small fraction correspond to the handwritten program itself.
 
 Applied machine learning shares many of the same practical challenges as traditional software development, with source code, release and dependency management. The current process of training a deep learning model can be seen as particularly long compilation step, but it differs significantly in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\cite{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
@@ -682,7 +682,7 @@ fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 %
 When writing a function, it is mandatory to declare the input type(s), but the return type may be omitted. Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices, using the following strategy.
 
-First, we enumerate a list of integer type literals as a chain of subtypes, so that $0 <: 1 <: 2 <: \dots <: C$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, but in order to do so, the code will need to be regenerated.
+First, we enumerate a list of integer type literals as a chain of subtypes, so that $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, who will need to regenerate the code.
 %
 \begin{lstlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall L\leq2.$}, language=Kotlin]
 interface Nat<T: `0`> { val i: Int }
@@ -834,59 +834,61 @@ println(z) // Prints: 7
 
 %Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds.
 
-\section{Coroutines}\label{sec:coroutines}
+\section{Numeric Tower}\label{sec:numeric-tower}
 
-Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allows functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes another function representing the subsequent computation to be performed. Rather than returning to its caller, immediately prior to completion, the function invokes its continuation, and process is restarted. If the continuation is empty, the program halts.
+Kotlin$\nabla$ uses a numeric tower~\cite{st2012typing}. First pioneered in the functional programming language, Scheme\cite{sperber2009revised}, this strategy is also suited to object oriented programming~\cite{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\cite{nozik2019acat} and Apache Commons Math~\cite{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
 
-One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in \textit{Shift/Reset the Penultimate Backpropagator}~\cite{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\cite{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin's Coroutines support.
+\begin{lstlisting}[caption={Most mathematical operations are composed of a small set of simple operators.}, language=Kotlin]
+interface Group<X: Group<X>> {
+    operator fun unaryMinus(): X
+    operator fun plus(addend: X): X
+    operator fun minus(subtrahend: X): X = this + -subtrahend
+    operator fun times(multiplicand: X): X
+}
 
-\section{Extension Functions}\label{sec:extension-functions}
-
-Extension functions augment external classes with new fields and methods. Via context oriented programming, Kotlin allows us can expose custom extensions (e.g.\ in \inline{DoublePrecision}) to consumers without requiring subclasses or inheritance.
-%
-\begin{lstlisting}[caption={We can provide numerical extensions, wrapped in a context.}, language=Kotlin]
-data class Const<T: Fun<T>>(val number: Double) : Fun<T>()
-data class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
-data class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
-object DoubleContext {
-    operator fun Number.times(expr: Fun<Double>) = Const(toDouble()) * expr
+interface Field<X: Field<X>>: Group<X> {
+    val e: X
+    val one: X
+    val zero: X
+    operator fun div(dividend: X): X = this * dividend.pow(-one)
+    infix fun pow(exp: X): X
+    fun ln(): X
 }
 \end{lstlisting}
-%
-Now, we can use the context to define another extension, \inline{Fun.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
-%
-\begin{lstlisting}[language=Kotlin]
-fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
-\end{lstlisting}
-%
-Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\cite{nozik2019acat}, another mathematical library for Kotlin.
+
+The numeric tower allows us to define common behavior over abstract structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebraic structures \footnote{ex. to calculate derivatives in a quaternion neural network~\cite{isokawa2003quaternion}}, one must simply extend the numeric tower and override the default implementation. Most common mathematical operations can be defined by composing a small set of primitive operations, which can be symbolically differentiated.
+
 
 \section{Algebraic data types}\label{sec:adts}
 
-\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitates a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler is able to guarantee the author has provided an exhaustive control flow over all concrete subtypes of an abstract class. For example, suppose we have the following classes:
+\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitates a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler enforces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
 %
-\begin{lstlisting}
+\begin{lstlisting}[language=Kotlin]
 class Const<T: Fun<T>>(val number: Number) : Fun<T>()
 class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
 class Prod<T:Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
 class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
-class Zero<T: Fun<T>>: Const<T>(0)
-class One<T: Fun<T>>: Const<T>(1)
+class Zero<T: Fun<T>>: Const<T>(0.0)
+class One<T: Fun<T>>: Const<T>(1.0)
 \end{lstlisting}
 %
-\begin{lstlisting}[caption={Users must handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of failing silently at runtime).}, language=Kotlin]
-sealed class Fun<T: Group<T>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<T>> {
-    constructor(fn: Fun<X>): this(fn.variables)
+Users must handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of failing silently at runtime).
+%
+\begin{lstlisting}[language=Kotlin]
+sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
+    operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
+        is Const -> this
+        is Var -> map.getOrElse(this) { this }
+        is Prod -> left(map) * right(map) // Smart casting implicitly casts after checking
+        is Sum -> left(map) + right(map)
+    } // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
 
-    fun diff() = when(this) {
+    fun diff(): Fun<X> = when(this) {
        is Const -> Zero
-       // Smart casting allows us to access members of a checked typed without explicit casting
-       is Sum -> left.diff() + right.diff()
-       // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-       is Prod -> left.diff() * right + left * right.diff()
        is Var -> One
-       // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
+       is Prod -> left.diff() * right + left * right.diff() // d(u*v)/dx = du/dx * v + u * dv/dx
+       is Sum -> left.diff() + right.diff()
     }
 
     operator fun plus(addend: Fun<T>) = Sum(this, addend)
@@ -920,37 +922,42 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 //         = Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
 \end{lstlisting}
 
-\section{Numeric Tower}\label{sec:numeric-tower}
+\section{Extension Functions}\label{sec:extension-functions}
 
-Kotlin$\nabla$ uses a numeric tower~\cite{st2012typing}. Pioneered in the functional programming language, Scheme\cite{sperber2009revised}, this strategy is also suited to object oriented programming~\cite{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\cite{nozik2019acat} and Apache Commons Math~\cite{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
-
-\begin{lstlisting}[caption={Most mathematica loperations are composed of simple operators.}, language=Kotlin]
-interface Group<X: Group<X>> {
-    operator fun unaryMinus(): X
-    operator fun plus(addend: X): X
-    operator fun minus(subtrahend: X): X = this + -subtrahend
-    operator fun times(multiplicand: X): X
-}
-
-interface Field<X: Field<X>>: Group<X> {
-    val e: X
-    val one: X
-    val zero: X
-    operator fun div(dividend: X): X = this * dividend.pow(-one)
-    infix fun pow(exp: X): X
-    fun ln(): X
+Extension functions augment external classes with new fields and methods. By using a technique known as context oriented programming~\cite{hirschfeld2008context}, we can expose custom extensions (e.g.\ through \inline{DoubleContext}) to consumers without requiring subclassing or inheritance.
+%
+\begin{lstlisting}[caption={We can provide numerical extensions, wrapped in a context.}, language=Kotlin]
+data class Const<T: Fun<T>>(val number: Double) : Fun<T>()
+data class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
+data class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
+object DoubleContext {
+    operator fun Number.times(expr: Fun<Double>) = Const(toDouble()) * expr
 }
 \end{lstlisting}
-
-The numeric tower allows us to define common behavior over abstract structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebraic structures \footnote{ex. to calculate derivatives in a quaternion neural network~\cite{isokawa2003quaternion}}, one must simply extend the numeric tower and override the default implementation. Most common mathematical operations can be defined by composing a small set of primitive operations, which can be symbolically differentiated.
+%
+Now, we can use the context to define another extension, \inline{Fun.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
+%
+\begin{lstlisting}[language=Kotlin]
+fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
+\end{lstlisting}
+%
+Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\cite{nozik2019acat}, another mathematical library for Kotlin.
 
 \section{Automatic, Symbolic Differentiation}
 
 It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\cite{baydin-survey}. Many, including the author of this thesis, has suspected this claim to be misleading. Recently, the claim has been questioned~\cite{wang2018demystifying} and refuted~\cite{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical and symbolic differentiation during a program's execution, interleaving differentiation and numerical execution is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}, particularly when popular AD implementations, such as Theano~\cite{theano}, have chosen the symbolic route. It is our view that symbolic differentiation is one type of automatic differentiation, in particular, one which affords more flexibility to perform global optimizations and rewriting procedures. These optimizations would otherwise be impossible if attempted at runtime, with only partial information about the graph.
 
+
+
+\section{Coroutines}\label{sec:coroutines}
+
+Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allows functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes another function representing the subsequent computation to be performed. Rather than returning to its caller, immediately prior to completion, the function invokes its continuation, and process is restarted. If the continuation is empty, the program halts.
+
+One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in \textit{Shift/Reset the Penultimate Backpropagator}~\cite{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\cite{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin's Coroutines support.
+
 \section{Comparison}\label{sec:comparison}
 
-Kotlin$\nabla$ is a symbolic graph-based autograd.
+Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern et al., Kotlin$\nabla$ attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. It also adds a number of novel ideas, including shape-safety, algebraic expression rewriting and numerical stability checking with property-based testing. Kotlin$\nabla$ is a symbolic graph-based autograd. \\
 
 \begin{center}
 \begin{tabular}{lllllllll}
@@ -972,9 +979,9 @@ Deeplearning.scala & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cma
 Nexus              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
 Lantern            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
 Grenade            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
-Eclipse DL4J       & Java    & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+Eclipse DL4J       & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
 Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
-Stalin$\naba$      & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
 \end{tabular}
 \end{center}
 
@@ -1136,8 +1143,8 @@ While containerization simplifies the process of building and deploying applicat
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.50\textwidth]{docker_stack_1.png}
-    \includegraphics[width=0.50\textwidth]{docker_stack_2.png}
+    \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
+    \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
     \caption{Container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
     \label{fig:docker}
 \end{figure}
