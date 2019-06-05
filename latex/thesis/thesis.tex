@@ -310,7 +310,7 @@ All great software has a secret recipe: software gets better when engineers use 
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J. C. R. Licklider, \textit{Man-Computer Symbiosis}~\cite{licklider1960man}\end{flushright}}
 
-In this chapter we will discuss the design and implementation of an integrated development environment (IDE) for building intelligent robotic software. Modern robots are increasingly characterized by systems which learn and improve over time. Most researchers would agree that modern robotic systems have not yet achieved competitive sensorimotor abilities and most intelligent systems are not physically embodied. However, it is our view that any closed-loop control system not explicitly programmed for a given task, but learns it from experience is an intelligent system, and any closed-loop system with physical motors is a robotic system. While researchers have developed very successful methods in each type, it is believed that the intersection of these will be tremendously fruitful.
+In this chapter we will discuss the design and implementation of an integrated development environment (IDE) for building intelligent robotic software. Modern robots are increasingly characterized by systems which learn and improve over time. Most researchers would agree that modern robotic systems have not yet achieved biologically competitive sensorimotor capabilities and most intelligent systems are not physically embodied. However, it is our view that any closed-loop control system that is not explicitly programmed to perform a specific task, but which learns it from experience is an \textit{intelligent system} and that any closed-loop system with physical motors is a \textit{robotic system}. While research has demonstrated successful applications in both areas separately, it is widely believed the integration of intelligent systems and robotics will be tremendously fruitful when fully realized.
 
 Hatchery is a tool designed to assist programmers writing robotics applications with ROS middleware. At the time of its release, \href{https://github.com/duckietown/hatchery}{Hatchery} was the first ROS plugin for the IntelliJ Platform \footnote{A popular IDE for C/C++, Python and Android development}, and one year later, is also the most widely used with close to 10,000 downloads. While the idea is simple, its prior absence and subsequent adoption suggest there is unmet demand for such tools in the development of intelligent software systems, particularly in robotics.
 
@@ -1190,9 +1190,9 @@ In the strictest sense, designing a good set of requirements is indistinguishabl
 
 An ongoing trend in modern software and systems engineering is the transition away from long development cycles towards continuous integration and deployment. Development teams across the industry are encouraged to iterate in a series of short sprints between feature development and deployment. In some cases, software is shipped to users on a nightly basis, with automated testing and deployment. Similarly, intelligent systems have a need to continuously adapt to their environment, and will change their code on an even shorter basis.
 
-Incremental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
+%Incremental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
 
-We need tools to more effectively harness the stochasticity of these learning systems.
+%We need tools to more effectively harness the stochasticity of these learning systems.
 
 %\subsection{Developers, Operations, and the DevOps toolchain}
 %
