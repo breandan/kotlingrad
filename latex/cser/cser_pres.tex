@@ -128,7 +128,7 @@ Universit\'e de Montr\'eal \\
         For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
         \begin{align*}
-            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf{x}; \boldsymbol\theta_0) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{<k})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\boldsymbol\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{<k})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
         \end{align*}
         %
         Where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
@@ -188,7 +188,7 @@ Universit\'e de Montr\'eal \\
                     \item $\times$ inverse: $\forall a\neq 0 \in \mathbb{F}, \exists (a^{-1})$ s.t. $a \times a^{-1} = 1$
                 \end{itemize}
             \end{itemize}
-            \item Extensible to other number systems (e.g. complex, dual numbers)
+            \item Extensible to other number systems (e.g.\ complex, dual numbers)
             \item What is a program, but a series of arithmetic operations?
         \end{itemize}
     \end{frame}
@@ -386,18 +386,18 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Shape safe vector addition and inference (toy example)}
         \begin{lstlisting}[language=Kotlin, gobble=12, style=backtickstyle]
-            interface Nat<T: `2`> { val value: Int }
+            interface Nat<T: `0`> { val value: Int }
             // Type level integer literals for shape checking
-            open class `0`(override val value: Int = 0): `1`(0)
+            sealed class `0`(open val value: Int = 0)
               { companion object: `0`(), Nat<`0`> }
-            open class `1`(override val value: Int = 1): `2`(1)
+            open class `1`(override val value: Int = 1): `0`(value)
               { companion object: `1`(), Nat<`1`> }
-            open class `2`(open val value: Int = 2)
+            open class `2`(override val value: Int = 2): `1`(value)
               { companion object: `2`(), Nat<`2`> }
 
-            // <L: `2`> accepts L <= 2 via Liskov substitution
-            class Vec<E, L: `2`>(val len: L, val es: List<E>)
-            operator fun <L: `2`, V: Vec<Int, L>> V.plus(v: V) =
+            // <L: `0`> accepts 0 <= L via Liskov substitution
+            class Vec<E, L: `0`>(val len: L, val es: List<E>)
+            operator fun <L: `0`, V: Vec<Int, L>> V.plus(v: V) =
               Vec<Int, L>(len, es.zip(v.es).map { it.l + it.r })
 
             val Y= Vec(`2`, listOf(1,2)) + Vec(`2`, listOf(3,4))
