@@ -37,6 +37,10 @@ fun main() {
   }
 }
 
+/**
+ * Algebraic primitives.
+ */
+
 interface Group<X: Group<X>> {
   operator fun unaryMinus(): X
   operator fun plus(addend: X): X
@@ -52,6 +56,10 @@ interface Field<X: Field<X>>: Group<X> {
   val one: X
   val zero: X
 }
+
+/**
+ * Scalar function.
+ */
 
 sealed class SFun<X: SFun<X>>(open val variables: Set<Var<X>> = emptySet()): Field<SFun<X>> {
   constructor(fn: SFun<X>): this(fn.variables)
@@ -105,6 +113,10 @@ sealed class SFun<X: SFun<X>>(open val variables: Set<Var<X>> = emptySet()): Fie
   }
 }
 
+/**
+ * Symbolic operators.
+ */
+
 class Sum<X: SFun<X>>(val left: SFun<X>, val right: SFun<X>): SFun<X>(left, right)
 class Negative<X: SFun<X>>(val value: SFun<X>): SFun<X>(value)
 class Prod<X: SFun<X>>(val left: SFun<X>, val right: SFun<X>): SFun<X>(left, right)
@@ -115,6 +127,10 @@ class Var<X: SFun<X>>(val name: String, val value: X): Variable, SFun<X>() { ove
 
 open class Const<X: SFun<X>>: SFun<X>()
 abstract class RealNumber<X: SFun<X>>(open val value: Number): Const<X>()
+
+/**
+ * Constant propogation.
+ */
 
 class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
   override val e by lazy { DoubleReal(Math.E) }
@@ -141,6 +157,10 @@ class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
   override fun ln() = DoubleReal(Math.log(value))
   override fun toString() = value.toString()
 }
+
+/**
+ * Vector function.
+ */
 
 open class VFun<X: SFun<X>, E: `1`>(
   val length: Nat<E>,
@@ -187,6 +207,10 @@ abstract class RealVector<X: SFun<X>, E: `1`>(length: Nat<E>, override vararg va
 //  override fun plus(addend: VFun<DoubleReal, E>): VFun<DoubleReal, E> = VDoubleReal(length, *contents.zip(addend.contents).map { (it.first + it.second) }.toTypedArray())
 //}
 
+/**
+ * Matrix function.
+ */
+
 open class MFun<X: SFun<X>, R: `1`, C: `1`>(
   val numRows: Nat<R>,
   val numCols: Nat<C>,
@@ -225,6 +249,10 @@ open class MFun<X: SFun<X>, R: `1`, C: `1`>(
 class MSum<X: SFun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
 class MProd<X: SFun<X>, R: `1`, C1: `1`, C2: `1`>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
 
+/**
+ * Numerical context.
+ */
+
 sealed class Protocol<X: RealNumber<X>> {
   abstract fun wrap(default: Number): X
 
@@ -241,6 +269,10 @@ sealed class Protocol<X: RealNumber<X>> {
 object DoublePrecision: Protocol<DoubleReal>() {
   override fun wrap(default: Number): DoubleReal = DoubleReal(default.toDouble())
 }
+
+/**
+ * Type level integers.
+ */
 
 interface Nat<T: `0`> { val i: Int }
 sealed class `0`(open val i: Int = 0) {
