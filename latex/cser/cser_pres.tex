@@ -390,9 +390,9 @@ Universit\'e de Montr\'eal \\
             // Type level integer literals for shape checking
             sealed class `0`(open val value: Int = 0)
               { companion object: `0`(), Nat<`0`> }
-            open class `1`(override val value: Int = 1): `0`(value)
+            open class `1`(override val value: Int = 1): `0`(2)
               { companion object: `1`(), Nat<`1`> }
-            open class `2`(override val value: Int = 2): `1`(value)
+            open class `2`(override val value: Int = 2): `1`(2)
               { companion object: `2`(), Nat<`2`> }
 
             // <L: `0`> accepts 0 <= L via Liskov substitution
