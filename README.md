@@ -212,48 +212,9 @@ z({x=0, y=1})                   = 0.0
 
 <img src="https://github.com/breandan/kotlingrad/raw/master/src/main/resources/plot.png" width="450">
 
-This plot was generated with the following code:
+To generate the above plot, run `./gradlew plot`.
 
-```kotlin
-fun main(args: Array<String>) {
-  with(DoublePrecision) {
-    val x = Var("x")
-
-    val y = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
-    val `dy∕dx` = d(y) / d(x)
-    val `d²y∕dx²` = d(`dy∕dx`) / d(x)
-    val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
-    val `d⁴y∕dx⁴` = d(`d³y∕dx³`) / d(x)
-    val `d⁵y∕dx⁵` = d(`d⁴y∕dx⁴`) / d(x)
-
-    val xs = -10.0..10.0 step 0.09
-    val ys = (xs.map { listOf(it, y(it), "y") }
-            + xs.map { listOf(it, `dy∕dx`(it), "dy/dx") }
-            + xs.map { listOf(it, `d²y∕dx²`(it), "d²y/x²") }
-            + xs.map { listOf(it, `d³y∕dx³`(it), "d³y/dx³") }
-            + xs.map { listOf(it, `d⁴y∕dx⁴`(it), "d⁴y/dx⁴") }
-            + xs.map { listOf(it, `d⁵y∕dx⁵`(it), "d⁵y/dx⁵") }).flatten()
-
-    dataFrameOf("x", "y", "Function")(ys)
-      .plot(x = "x", y = "y", color = "Function")
-      .geomLine(size = 1.0)
-      .title("Derivatives of y=$y")
-      .save(File("src/main/resources/plot.png"))
-  }
-}
-```
-
-To generate the above plot, you will need to install R and some packages. Ubuntu 18.04 instructions follow:
-
-```sh
-sudo apt-get install r-base && \
-sudo ln -s /usr/bin/R /usr/local/bin/R && \
-R -e "install.packages(c('ggplot2','dplyr','readr','forcats'))"
-```
-
-Then run `./gradlew plot`.
-
-Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Jzy3Demo.kt) in 3D via `./gradlew plot3D` (no other libraries requried):
+Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew plot3D` (no other libraries requried):
 
 ![](src/main/resources/ripple.png)
 ![](src/main/resources/pulsar.png)
