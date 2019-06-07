@@ -13,7 +13,7 @@ import org.jzy3d.plot3d.builder.Mapper
 import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid
 import org.jzy3d.plot3d.rendering.canvas.Quality.Advanced
 
-object Jzy3Demo: AbstractAnalysis() {
+object Plot3D: AbstractAnalysis() {
   override fun init() {
     // Define a function to plot
     val mapper = object: Mapper() {
@@ -54,4 +54,4 @@ object Jzy3Demo: AbstractAnalysis() {
   }
 }
 
-fun main() = AnalysisLauncher.open(Jzy3Demo)
+fun main() = AnalysisLauncher.open(Plot3D)
