@@ -37,6 +37,8 @@
 \newcommand{\medium}[1]{\textcolor{yellow}{#1}}
 \newcommand{\mediumrare}[1]{\textcolor{orange}{#1}}
 \newcommand{\rare}[1]{\textcolor{red}{#1}}
+\newcommand{\argmax}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{max}}\;}
+\newcommand{\argmin}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{min}}\;}
 
 % Table
 \newcommand*\rot{\rotatebox{90}}
@@ -387,7 +389,7 @@ Detecting and managing ROS installations.
 
 \mediumwell{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
-\setlength{\epigraphwidth}{\textwidth}
+\setlength{\epigraphwidth}{0.7\textwidth}
 \epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \textit{The Calculi of Lambda Conversion
 }\end{flushright}}
 
@@ -481,16 +483,16 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 %
-This theorem does not provide any method for how to find $\theta$ nor place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion. The resulting model can be expressed as,
+This theorem does not provide any method for how to find $\theta$ nor place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion. The resulting model might be expressed as,
 %
-\begin{equation}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\boldsymbol\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{<k})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+\begin{equation} \label{eq:recursive_parametric_eq}
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf\Theta_{\[0, k-1\]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
-where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\boldsymbol\Theta$ converges:
+where $\mathbf\Theta = \{\mathbf\theta_0, \dots, \mathbf\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
 %
-\begin{equation}
-    \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
+\begin{equation} \label{eq:stochastic_grad_descent}
+    \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
 For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, a single iteration can take prohibitively long. Since obtaining the exact gradient is not very important, we use a stochastic variant by randomly resampling a \textit{minibatch} $\mathbf{X}' \sim \mathbf{X}$ on each update, which is slightly noisier, but runs considerably more quickly.
@@ -508,13 +510,13 @@ The renaissance of modern deep learning is widely attributed to progress in thre
 
 A key aspect of the connectionist paradigm is gradient descent on a statistical loss function with respect to the free parameters of a neural network. For gradient descent to work, the representation must be differentiable almost everywhere. However many representations are non-differentiable in their natural domain. For example, the structure of language in its written form is not easily differentiable, as small changes to a word's symbolic representation can cause sudden changes to its semantic meaning. A key insight from representation learning is that many discrete data types can be mapped to a smoother latent space. For example, if we represent words as a vector of real numbers, then it is possible to learn a mapping from the textual domain to the vector representation so that the semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space~\citep{pennington2014glove} -- words with similar meanings map to similar vectors. It so happens that many classes of discrete problems can be relaxed to continuous surrogates by learning such representations, or \textit{embeddings} in an unsupervised manner.
 
-Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using low-precision arithmetic such as 8-bit floating point~\citep{wang2018training} and integer~\citep{jacob2018quantization} quantization are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should not have come as a big surprise, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, network training is surprisingly resilient to quantization.
+Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using low-precision arithmetic such as 8-bit floating point~\citep{wang2018training} and integer~\citep{jacob2018quantization} quantization are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should have been less surprising, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, network training is surprisingly resilient to quantization.
 
 As deep learning solved problems across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming} (DP) was born. Today, DP has found a wide range of applications, from protein folding~\citep{alquraishi2018end}, to physics engines~\citep{de2018end,DBLP:journals_corr_DegraveHDW16} and graphics rendering~\citep{loper2014opendr} to meta-learning~\citep{liu2018darts}. These domains have well-studied dynamics models, with parameters that can be tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required to learn these parameters, but given a smooth metric, DP promises to do this for a broad class of models, more or less automatically. For discrete optimization however, DP is not sufficient. To automatically learn discrete relations without ad hoc embedding, additional tools, such as probabilistic programming, are likely needed. As seen in Fig.~\ref{fig:diff_prob_prog}, these two fields have developed many productive collaborations in recent years.
 
 \section{Static and dynamic languages}
 
-Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. Dynamically typed languages are popular for experimentation and prototyping, but are they scalable to building complex software systems? According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality between statically typing and fewer defects has not been conclusively established, the majority of robotics~\citep{Areserio54:online} and embedded systems today rely on statically typed languages.
+Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. Dynamically typed languages are popular for experimentation and prototyping, but how scalable to building complex software systems? According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality between statically typing and fewer defects has not been conclusively established, the majority of robotics~\citep{Areserio54:online} and embedded systems today rely on statically typed languages.
 
 Statically typed languages eliminate a broad class of runtime errors and allow us to reason about the behavior of programs without needing to run them. A well-designed library in a statically typed language will eliminate errors related to API misuse, which would otherwise require documentation and code samples. Finally, type systems make it easier to implement automated reasoning tools, which can provide more relevant autocompletion, source code navigation, and earlier detection of runtime errors.
 
@@ -834,7 +836,6 @@ PBT will search the input space for two numerical values \inline{x0} and \inline
 %
 There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
-
 \section{Operator overloading}\label{sec:operator-overloading}
 
 \noindent Operator overloading enables a concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. \inline{Group}, \inline{Ring}, and \inline{Field}. These abstractions are extensible to other mathematical structures, such as complex numbers and quaternions.
@@ -988,8 +989,6 @@ Extensions can also be defined in another file or context and imported on demand
 
 It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin-survey}. Many, including the author of this thesis, has suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical and symbolic differentiation during a program's execution, interleaving differentiation and numerical execution is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}, particularly when popular AD implementations, such as Theano~\citep{theano}, have chosen the symbolic route. It is our view that symbolic differentiation is one type of automatic differentiation, in particular, one which affords more flexibility to perform global optimizations and rewriting procedures. These optimizations would otherwise be impossible if attempted at runtime, with only partial information about the graph.
 
-
-
 \section{Coroutines}\label{sec:coroutines}
 
 Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allow functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes a second function representing the subsequent computation to be performed. Rather than returning to its caller, the function invokes its continuation immediately prior to completion, and the process is restarted. If the continuation is empty, the program halts.
@@ -1028,17 +1027,39 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 
 \rare{\chapter{Verification and validation}\label{ch:difftest}}
 
-\setlength{\epigraphwidth}{0.85\textwidth}
+\setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-Roughly speaking, in backpropogation we perform gradient descent on the parameters of a program for a given input. In adversarial testing, we do gradient ascent on the input, at a given parameter setting.
+Roughly speaking, during backpropogation we perform gradient descent of a differentiable function with respect to its parameters on a set of inputs. In adversarial testing, we do gradient ascent with respect to the inputs at a given parameter setting.
 
 Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
 \section{Background}
-
 %
-\noindent Suppose we have a program $P: \mathbb{R}\rightarrow\mathbb{R}$ where:
+\noindent Suppose we have a differentiable vector function $\mathbf{P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$ as seen earlier (cf.~\ref{eq:recursive_parametric_eq}):
+%
+\begin{equation}
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf\Theta_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+\end{equation}
+%
+In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
+%
+\begin{equation}
+    \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
+\end{equation}
+%
+In the white box adversarial learning setting, we are given a fixed $\mathbf \Theta$ and our goal is to find:
+%
+\begin{equation}
+\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^n \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
+\end{equation}
+%
+ To do so, initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient ascent on the loss w.r.t. $\mathbf x$:
+%
+\begin{equation}
+    \mathbf x \leftarrow \mathbf{\Phi}_{CS}\Big(\mathbf x + \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)\Big) \text{ where }
+	\mathbf{\Phi}_{CS}(\mathbf \phi') = \argmin{\mathbf \phi \in CS}\frac{1}{2}||\mathbf \phi - \mathbf \phi'||^2_2
+\end{equation}
 %
 \begin{equation}
     P(p_0)=p_n \circ p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0 \circ p_0
@@ -1076,7 +1097,7 @@ If we have no information about the program implementation or its input distribu
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. The gradient of $P$'s loss with respect to $x$ (assuming $\theta$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_x \mathcal{L}(P(x; \theta))$. Instead of minimizing the loss, we want to maximize it. So the vanilla gradient update step \ref{eq:grad_descent} becomes:
+Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. The gradient of $P$'s loss with respect to $x$ (assuming $\theta$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_x \mathcal{L}(P(x; \theta))$. Instead of minimizing the loss, we want to maximize it. So the vanilla gradient update step~\ref{eq:stochastic_grad_descent} becomes:
 %
 \begin{equation}
     x_{n+1}^i = x_{n}^i + \alpha \nabla_{x_n} \mathcal{L}(P(x_n; \theta))
