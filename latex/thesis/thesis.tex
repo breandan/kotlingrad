@@ -261,12 +261,12 @@
 
 \mediumwell{\chapter{Introduction}\label{ch:introduction}}
 
-\setlength{\epigraphwidth}{0.9\textwidth}
-\epigraph{Intelligent system: \textit{A computer system that uses techniques derived from artificial intelligence, particularly one in which such techniques are central to the operation of the system.}}{\begin{flushright}--Wikipedia\end{flushright}}
+\setlength{\epigraphwidth}{0.85\textwidth}
+\epigraph{There is a race between the increasing complexity of the systems we build and our ability to develop intellectual tools for understanding their complexity. If the race is won by our tools, then systems will eventually become easier to use and more reliable. If not, they will continue to become harder to use and less reliable for all but a relatively small set of common tasks. Given how hard thinking is, if those intellectual tools are to succeed, they will have to substitute calculation for thought.}{\begin{flushright}--Leslie Lamport\end{flushright}}
 
 Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today’s software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity in building software systems.
 
-\textit{The objective of writing this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and container-based virtualization.}
+\textit{The object of writing this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
 
 Broadly speaking, intelligent systems differ from ordinary software systems in that they enable machines to detect patterns, perform tasks, and solve problems which they are not explicitly programmed to solve and which human experts were previously incapable of solving by hard-coding explicit rules. Typically, these systems are able to:\\
 %
@@ -295,7 +295,7 @@ In traditional software engineering, the Waterfall Model~\ref{fig:waterfall_mode
 
 \section{Designing intelligent systems}
 
-Today's software systems are deeply complex entities. Gone are the days where a solitary programmer, even a very skilled one, can maintain a large software system alone. To effectively scale software systems, programmers must pool their mental capacity to form a knowledge graph. Software projects which rely on a small set of maintainers tend to perish due to the so-called \textit{bus factor}~\citep{cosentino2015assessing} -- large portions of the knowledge graph are locked inside someone's head. Successful software projects learn how to distribute this graph and form new connections to the outside world. The knowledge graph which accumulates around a large software project contains facts, but it also contains workflows for programming, debugging, and delivery -- all well-traveled paths through the labyrinth of software development. Components of this graph can be committed to writing in the form of documentation, but documentation is time-consuming and grows stale over time. What is needed is a system that preserves the benefits of documentation without the burdens of maintenance.
+Today's software systems are deeply complex entities. Gone are the days where a solitary programmer, even a very skilled one, could maintain a large software system alone. To effectively scale modern software systems, programmers must pool their mental capacity to form a knowledge graph. Software projects which rely on a small set of maintainers tend to perish due to the so-called \textit{bus factor}~\citep{cosentino2015assessing} -- large portions of the knowledge graph are locked inside someone's head. Successful software projects learn how to distribute this graph and form new connections to the outside world. The knowledge graph which accumulates around a large software project contains facts, but it also contains workflows for programming, debugging, and delivery -- all well-traveled paths through the labyrinth of software development. Components of this graph can be committed to writing in the form of documentation, but documentation is time-consuming and grows stale over time. What is needed is a system that preserves the benefits of documentation without the burdens of maintenance.
 
 The development of software systems has a second component, the social graph. The social graph of a successful software project contains product designers, managers and software engineers who work in concert to build software that is well-designed, cohesive, and highly performant. Sometimes this means revising the specification to accommodate engineering challenges, or rewriting source code to remove technical debt. Software design is a multi-objective optimization process and requires contributors with a broad set of skills and common set of goals. To produce software that approximates criteria of its stakeholders, developers are asked to provide rapid prototypes, and continuously integrate user feedback. Yet today's software systems are larger and more unwieldy than ever. So finding ways to work together more efficiently is critical to building and maintaining intelligent systems.
 
@@ -347,7 +347,7 @@ All great software has a secret recipe: software gets better when engineers use 
 
 \rare{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
-\epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--\citet{licklider1960man}\end{flushright}, \textit{Man-Computer Symbiosis}}
+\epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J.C.R. \citet{licklider1960man}, \textit{Man-Computer Symbiosis}\end{flushright}}
 
 In this chapter we will discuss the design and implementation of an integrated development environment (IDE) for building intelligent robotic software. Modern robots are increasingly characterized by systems which learn and improve over time. Most researchers would agree that modern robotic systems have not yet achieved biologically competitive sensorimotor capabilities and most intelligent systems are not physically embodied. However, it is our view that any closed-loop control system that is not explicitly programmed to perform a specific task, but which learns it from experience is an \textit{intelligent system}. Furthermore, any closed-loop system with physical motors is a \textit{robotic system}. While research has demonstrated successful applications in both areas separately, it is widely believed the integration of intelligent systems in robotics will be tremendously fruitful when fully realized.
 
@@ -355,7 +355,7 @@ Hatchery is a tool designed to assist programmers writing robotics applications 
 
 \section{Software architecture for robotics application}
 
-The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but also includes a set of community-developed libraries and graphical tools for building robotics applications. ROS is not an operating system (OS) in the traditional sense, but it does offer OS-like functionality such as shared memory and inter-process communication. Unlike pure message-oriented systems like DDS and ZMQ, in addition to the communication infrastructure, ROS provides specific APIs for building decentralized robotic systems, particularly those which are capable of mobility. This includes standard libraries for serializing and consuming geometric data, coordinate frames, maps, sensor messages, and imagery.
+The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but also includes a set of community-developed libraries and graphical tools for building robotics applications. ROS is not an operating system (OS) in the traditional sense, but it does offer OS-like functionality such as shared memory and inter-process communication. Unlike pure message-oriented systems like DDS and ZMQ, in addition to the communication infrastructure, ROS provides specific APIs for building decentralized robotic systems, particularly those which are capable of mobility. This includes standard libraries for serializing and deserializing geometric data, coordinate frames, maps, sensor messages, and imagery.
 
 A ROS application consists of several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a ROS application, several steps are necessary. First, one must install the ROS system, which is only official supported on Debian-based Linux distributions. Then, a workspace must be created. ROS nodes, implemented as event based ``talkers'' and ``listeners''.
 
@@ -388,10 +388,10 @@ Detecting and managing ROS installations.
 \mediumwell{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
 \setlength{\epigraphwidth}{\textwidth}
-\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--\cite{church1985calculi}, \textit{The Calculi of Lambda Conversion
+\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \textit{The Calculi of Lambda Conversion
 }\end{flushright}}
 
-In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD), which has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers, and by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program\footnote{Not all programs are computable functions, but all computable functions are programs.}, that does not work properly. We would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
+In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD), which has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers, and by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program, that does not work properly. We would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
 
 In 1964, such an algorithm was first conceived in~\citet{wengert1964simple}, whose method is known today as forward-mode AD. Not long after, a certain Richard Bellman reproduced Wengert's algorithm to numerically estimate the orbital dynamics of a two body system, and recognized its potential for, ``the treatment of large systems of differential equations which might not otherwise be undertaken''~\citep{bellman1965wengert}. Around the same time, key details of the backpropogation algorithm first emerged~\citep{dreyfus1990artificial}. It was in~\citet{linnainmaa1970representation} where the idea of calculating derivatives over computation graphs was first recorded. Linnaimaa's algorithm was particularly important for the development of neural networks, and is today known as reverse-mode AD. But it was not until 2010 when standard software tools~\citep{bergstra2010theano, torch} for AD became widely available in machine learning. It is here where our journey begins.
 
@@ -600,8 +600,8 @@ Kotlin$\nabla$ allows users to implement differentiable programs by composing op
 \begin{figure}[!htb]
 \begin{mylisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output, rendered below.},label={lst:basic_kotlingrad}, basicstyle=\ttfamily\small, language=Kotlin]
 with(DoublePrecision) { // Uses double precision numerics for evaluation
-  val x = variable("x") // Declare immutable variables (these variables
-  val y = variable("y") // are symbolic constructs for differentiation)
+  val x = Var("x") // Declare immutable variables (these variables are
+  val y = Var("y") // just symbolic constructs used for differentiation)
   val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazily evaluated
   val dz_dx = d(z) / d(x) // Supports Leibniz's notation
   val d2z_dxdy = d(dz_dx) / d(y) // Mixing higher order partials
@@ -636,7 +636,7 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform any calculation
 
 Early work in type safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} showing how static types in array programming can be used to encode dimensionality and prevent common bugs due to dimension mismatch. Kennedy is particularly interested in units of measurement, and was followed by \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed}. Later, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to encode numbers to infer array sizes in more complex ways. More recently, with the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
 
-The problem we would like to solve can be summarized as follows. Given two variables \texttt{x} and \texttt{y}, and operator $\diamond$, how do we determine whether the expression \texttt{z = x} $\diamond$ \texttt{y} is valid, and if so, what is the result type of \texttt{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \texttt{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence and use the outer dimensions for inference.
+The problem we would like to solve can be summarized as follows. Given two variables \inline{x} and \inline{y}, and operator $\diamond$, how do we determine whether the expression \inline{z = x} $\diamond$ \texttt{y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence and use the outer dimensions for inference.
 
 Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to implement at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}.
 
@@ -837,7 +837,7 @@ There are many other ways to independently verify the numerical gradient, such a
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
-\noindent Operator overloading enables concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. \inline{Group}, \inline{Ring}, and \inline{Field}. These abstractions are extensible to other mathematical structures, such as complex numbers and quaternions.
+\noindent Operator overloading enables a concise notation for arithmetic on abstract types, where the types encode algebraic structures, e.g. \inline{Group}, \inline{Ring}, and \inline{Field}. These abstractions are extensible to other mathematical structures, such as complex numbers and quaternions.
 
 For example, we have an interface \inline{Group} which overloads the operators $+$ and $\times$:
 %
@@ -848,7 +848,7 @@ interface Group<T: Group<T>> {
 }
 \end{mylisting}
 %
-Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\citep{canning1989f} to ensure that operations return the concrete type variable T, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Fun} which has implemented \inline{Group}. It can be used as follows:
+Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\citep{canning1989f} to ensure that operations return the concerete value of the type variable \inline{T}, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Fun} which has implemented \inline{Group}. It can be used as follows:
 %
 \begin{mylisting}
 fun <T: Group<T>> cubed(t: T): T = t * t * t
@@ -859,17 +859,18 @@ Like Python, Kotlin supports overloading a limited set of operators, which are e
 
 \section{First class functions}\label{sec:first-class-functions}
 
-With higher-order functions and lambdas, Kotlin treats functions as first class citizens, following a number of recent papers in functional AD~\citep{pearlmutter2008reverse,wang2018backpropagation}. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (i.e.\ typed FP). In Kotlin$\nabla$, all expressions are treated as functions. For example:
+With support for higher-order functions and lambdas, Kotlin treats functions as first class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (i.e.\ typed FP). Following a number of recent papers in functional AD~\citep{pearlmutter2008reverse,wang2018backpropagation}, in Kotlin$\nabla$, all expressions are treated as functions. For example:
 
 \begin{mylisting}
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
-val x: Var<Double> = Var(1.0)
+val x: Var<DoubleReal> = Var()
+val y: Var<DoubleReal> = Var()
 val f = makePoly(x, y)
 val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 \end{mylisting}
 
-%Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds.
+Currently, it is possible to represent functions where all inputs and outputs share a single data type. It is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds. We leave this for further work.
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
@@ -997,7 +998,7 @@ One form of continuation, known as shift-reset a.k.a.\ delimited continuations, 
 
 \section{Comparison}\label{sec:comparison}
 
-Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain specific language}, thereby employing the host language's type system. It is particularly well suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, algebraic data types and more. \\
+Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain specific language}, thereby employing the host language's type system. Our approach is particularly well suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
 
 \begin{center}
 \begin{tabular}{lllllllll}
@@ -1028,7 +1029,7 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 \rare{\chapter{Verification and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.85\textwidth}
-\epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--\cite{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
+\epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
 Roughly speaking, in backpropogation we perform gradient descent on the parameters of a program for a given input. In adversarial testing, we do gradient ascent on the input, at a given parameter setting.
 
@@ -1140,6 +1141,9 @@ Consider Algorithm~\ref{alg:test_algo}.
 
 \mediumrare{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
 
+\setlength{\epigraphwidth}{0.80\textwidth}
+\epigraph{``As long as there were no machines, programming was no problem at all; when we had a few weak computers, programming became a mild problem, and now we have gigantic computers, programming has become an equally gigantic problem. In this sense the electronic industry has not solved a single problem, it has only created them, it has created the problem of using its products.''}{\begin{flushright}--Edsger W. \citet{dijkstra1972humble}, \textit{The humble programmer}\end{flushright}}
+
 In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering such as continuous integration and containers can help researchers mitigate the variability associated with building and running software. Our work focuses on computational determinism, and does not consider the variability of distributional shift or related statistical notions of variation.
 
 In order to address the issue of software reproducibility, we constructed a set of tools and development workflows that draw on best practices in software engineering. These tools are primarily built around containerization, a widely adopted virtualization technology in the software industry. In order to lower the barrier of entry for developers and minimize variability across hardware platforms, we provide a state-of-the-art container infrastructure based on Docker~\citep{merkel2014docker}, one popular container engine. Docker allows us to construct versioned deployment artifacts that represent the entire filesystem, and manages resource constraints via a sandboxed runtime environment.
@@ -1148,7 +1152,7 @@ In order to address the issue of software reproducibility, we constructed a set 
 
 One common source of variability in software development are software dependencies. For many years, developers struggled with dependency management before it was discovered the dependency resolution problem was NP-complete~\citep{abate2012dependency}. If we assume no two versions of the same dependency can be installed simultaneously, then for a set of software packages which need to be installed, and dependencies required to install them, determining the latest version of the dependencies which satisfy all requirements is as hard as the hardest problems in NP. Informally, this problem is known as \textit{dependency hell} and grows increasingly troublesome as software projects grow and introduce new dependencies.
 
-Dependency hell does not just occur inside individual software projects, but across projects and development environments. Hundreds of package managers have been developed for various operating systems, programming languages, and development frameworks. Ubuntu has the Advanced Package Tool (\texttt{apt}), macOS has Homebrew (\texttt{brew}), Windows has Chocolatey (\texttt{choco}). Most programming language ecosystems have their own bespoke package managers; Conan for C/C++, Maven for Java, and Cabal for Haskell. Python has developed several overlapping solutions for package management, including pip, Anaconda, PyEnv, Virtualenv, and others. Some of these install system-wide packages, and others provide command line environments. Over the lifetime of a computer system, as packages are installed and removed it becomes difficult to keep track of changes and their effects.
+Dependency hell does not just occur inside individual software projects, but across projects and development environments. Hundreds of package managers have been developed for various operating systems, programming languages, and development frameworks. Ubuntu has the Advanced Package Tool (\inline{apt}), macOS has Homebrew (\inline{brew}), Windows has Chocolatey (\inline{choco}). Most programming language ecosystems have their own bespoke package managers; Conan for C/C++, Maven for Java, and Cabal for Haskell. Python has developed several overlapping solutions for package management, including pip, Anaconda, PyEnv, Virtualenv, and others. Some of these install system-wide packages, and others provide command line environments. Over the lifetime of a computer system, as packages are installed and removed it becomes difficult to keep track of changes and their effects.
 
 The problem basically stems from the requirement that no two versions of the same dependency can be installed simultaneously. In addition, software installers tend to spray files across the file system, which can become corrupted and are difficult to completely remove. To address these issues, some notion of ``checkpointing'' is required, so that when new software is installed, any future changes can be traced and reverted. Backups would do the job, but are cumbersome to manage and are unsuitable for development purposes. Rather, it would be convenient if there were a tool which allowed applications to setup a private file system, install their dependencies, and avoid contaminating the host OS.
 
@@ -1200,6 +1204,9 @@ The Duckietown platform supports two primary instruction set architectures: x86 
 One issue encountered is whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host to build the artifacts. In this case, while build artifacts are standalone reproducible, they are not easily modified or inspected. The alternative is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts has the benefit of improved readability and diagnostics. If a user requires technical assistance, troubleshooting becomes much easier when the source code is directly accessible. But doing so adds some friction during development, which has caused users to struggle with environment setup. Our solution is to store all sources on the local development environment and rebuild the image periodically, by copying sources into the image.
 
 \rare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
+
+\setlength{\epigraphwidth}{0.80\textwidth}
+\epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \textit{The errors of TeX}\end{flushright}}
 
 As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the proposed toolchain.
 

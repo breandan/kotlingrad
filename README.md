@@ -309,8 +309,8 @@ In Kotlin𝛁, all expressions can be treated as functions. For example:
 
 ```kotlin
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
-
-val x: Var<Double> = Var(1.0)
+val x: Var<Double> = Var()
+val y: Var<Double> = Var()
 val f = makePoly(x, y)
 val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
