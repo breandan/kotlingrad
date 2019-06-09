@@ -91,6 +91,21 @@
 \usepackage{lipsum}
 \tcbuselibrary{listings,breakable}
 
+\newtcblisting{unbreakablelisting}[1][]{%
+    enhanced jigsaw,
+    listing only,
+    boxsep=-1.5pt,
+    listing options={
+        language=kotlin,
+        basicstyle=\ttfamily\scriptsize,
+        numberstyle=\footnotesize,
+        tabsize=2,
+        breaklines=true,
+        inputencoding=utf8,
+        #1
+    }
+}
+
 \newtcblisting{mylisting}[1][]{%
     enhanced jigsaw,
     breakable,
@@ -486,7 +501,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
 This theorem does not provide any method for how to find $\theta$ nor place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion. The resulting model might be expressed as,
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf\Theta_{\[0, k-1\]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta_{[0, k-1]}})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 where $\mathbf\Theta = \{\mathbf\theta_0, \dots, \mathbf\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
@@ -516,7 +531,7 @@ As deep learning solved problems across various domains, researchers observed th
 
 \section{Static and dynamic languages}
 
-Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. Dynamically typed languages are popular for experimentation and prototyping, but how scalable to building complex software systems? According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality between statically typing and fewer defects has not been conclusively established, the majority of robotics~\citep{Areserio54:online} and embedded systems today rely on statically typed languages.
+Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality between statically typing and fewer defects has not been conclusively established, dynamically typed languages are seldom used for building safety-critical software systems. The majority of robotics~\citep{Areserio54:online} and embedded systems today rely on statically typed languages.
 
 Statically typed languages eliminate a broad class of runtime errors and allow us to reason about the behavior of programs without needing to run them. A well-designed library in a statically typed language will eliminate errors related to API misuse, which would otherwise require documentation and code samples. Finally, type systems make it easier to implement automated reasoning tools, which can provide more relevant autocompletion, source code navigation, and earlier detection of runtime errors.
 
@@ -599,8 +614,8 @@ Kotlin$\nabla$ models are embedded domain specific languages (eDSLs), which are 
 
 Kotlin$\nabla$ allows users to implement differentiable programs by composing operations on numerical fields to form algebraic expressions. %Expressions are lazily evaluated inside a numerical context, which may be imported on a per file basis or lexically scoped for finer-grained control over the runtime behavior.
 %
-\begin{figure}[!htb]
-\begin{mylisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output, rendered below.},label={lst:basic_kotlingrad}, basicstyle=\ttfamily\small, language=Kotlin]
+\begin{figure}
+\begin{unbreakablelisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output, rendered below.}, basicstyle=\ttfamily\small, language=Kotlin, label={lst:basic_kotlingrad}]
 with(DoublePrecision) { // Uses double precision numerics for evaluation
   val x = Var("x") // Declare immutable variables (these variables are
   val y = Var("y") // just symbolic constructs used for differentiation)
@@ -610,14 +625,14 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
   val d3z_d2xdy = grad(d2z_dxdy)[x] // Equivalent to d(f)/d(x)
   plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in 3-space (-1 < x, y, z < 1)
 }
-\end{mylisting}
+\end{unbreakablelisting}
 %    \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big\left(\frac{\partial^{3z}}{\partial{x^2}\partial{y}}\Big\right)$ \\
 \includegraphics[scale=0.43]{plot_result.png}
 \end{figure}
 %
-In Listing~\ref{lst:basic_kotlingrad}, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
+Below, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
 %
-\begin{figure}[!htb]
+\begin{figure}
 \begin{mylisting}[language=Kotlin, basicstyle=\ttfamily\footnotesize]
 val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform any calculation
 \end{mylisting}
@@ -626,7 +641,7 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform any calculation
     \tikzset{level distance=60pt}
     \Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{\textbf{x}} \texttt{\textbf{x}} ] [.\texttt{pow} \texttt{\textbf{y}} \texttt{2} ] ] ] ] \texttt{10} ]
 \end{tikzpicture}
-\caption{Implicit DFG constructed by the original expression, \texttt{z} in Listing~\ref{lst:basic_kotlingrad}.}
+\caption{Implicit DFG constructed by the original expression, \texttt{z}, seen above.}
     \label{lst:edsl}
 \end{figure}
 
@@ -1039,7 +1054,7 @@ Neural networks and differentiable programming have provided a powerful set of o
 \noindent Suppose we have a differentiable vector function $\mathbf{P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$ as seen earlier (cf.~\ref{eq:recursive_parametric_eq}):
 %
 \begin{equation}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf\Theta_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta_{[0, k-1]}})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
