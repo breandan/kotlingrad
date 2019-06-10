@@ -360,7 +360,7 @@ There is a second component to software reproducibility of intelligent systems, 
 
 \subsection{Case Study}\label{subsec:case-study}
 
-All great software has a secret recipe: software gets better when engineers use the product. In the best case, software engineers are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find engineers who are so invested, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice has been employed for public relations, but is a very effective mechanism for building self-improving cybernetic systems. It is also an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (Chapter~\ref{ch:hatchery}), containing Kotlin$\nabla$ code (Chapter~\ref{ch:kotlingrad}), tested using adversarial fuzz testing (Chapter~\ref{ch:difftest}), and which is built and maintained using the Docker stack (Chapter~\ref{ch:ducker}).
+All great software has a secret recipe: software gets better when its authors use the product. In the best case, the authors are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find engineers who are so invested, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice has been employed for public relations, but is a very effective mechanism for building self-improving cybernetic systems. It is also an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (Chapter~\ref{ch:hatchery}), containing Kotlin$\nabla$ code (Chapter~\ref{ch:kotlingrad}), tested using adversarial fuzz testing (Chapter~\ref{ch:difftest}), and which is built and maintained using the Docker stack (Chapter~\ref{ch:ducker}).
 
 \rare{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
@@ -378,7 +378,7 @@ A ROS application consists of several components, including the source code, con
 
 The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\citep{Areserio54:online}. Source code for a typical ROS application will include a mixture of C/C++ and Python code, roughly corresponding to the language preferences in the robotics and machine learning communities. Hatchery supports most common language front-ends for ROS, including Java, Python, C/C++, and several others, through the IntelliJ Platform. By targeting an IDE platform with support for polyglot programming, we are able to focus on language-agnostic features for the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
 
-\section{Foundations of a modern IDE}
+\section{Prerequisities}
 
 To build an IDE, a few prerequisites are necessary. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, using IDE\textsubscript{0}, modify and compile the source code. Finally, run the compiled artifact, which becomes IDE\textsubscript{1}. Iterate as necessary.
 
@@ -398,6 +398,23 @@ Refactoring support is implemented.
 
 Assistance for running ROS applications.
 
+\subection{User interface}
+
+An often overlooked, but important aspect of development tools is the user interface, being the primary mechanism which developers use to edit source code. In early days of modern computing, the only way of getting information into or out of a computer required punching holes in paper. Later, computers were equipped with technology to emit the same binary pattern as contiguous points of light, which in aggregate, could be used to display a small alphabet. Later, through increased density and frequency, computers were able to render more sophisticated shapes and animations. This progression is the direct result of advances in video technology, but can also be viewed as improvements in program representation, where the explicit content was simply a medium for communicating developer intent and machine interpretation.
+
+The dominant medium for writing programs today is still ASCII, but computers continue to use the same binary and machine code representations internally. A great deal of computing infrastructure is dedicated to translating between these representations via programming languages and compilers. Many developer tools provide a minimalist command line interface (CLI), in addition to more sophisticated text editors. Yet these tools are still imperfect models of a program, which is whatever the developer has inside their heads at the time of its authorship. In the same way that early computer scientists probably did not design a new algorithm with a sequence of holes in mind, ASCII is also an indirect abstraction, albeit a slightly more natural one. A good abstraction is familiar and makes it easy to translate between idea and implementation.
+
+Modern IDEs use a mix of hypertext and graphical models. We can view this as a spectrum where on one end is text and the other is models.
+
+In Hatchery's case, we use a lightweight graphical user interface. Most of the graphical user interface is provided by the underlying IDE, and the plugin's primary job is to integrate smoothly with the host IDE for familiarity.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}
+    \caption{\textit{Hatchery's graphical user interface.}}
+    \label{fig:hatchery_gui}
+\end{figure}
+
 \section{More ROS Tools}
 
 Detecting and managing ROS installations.
@@ -405,8 +422,7 @@ Detecting and managing ROS installations.
 \mediumwell{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
 \setlength{\epigraphwidth}{0.7\textwidth}
-\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \textit{The Calculi of Lambda Conversion
-}\end{flushright}}
+\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \textit{The Calculi of Lambda Conversion}\end{flushright}}
 
 In this chapter, we will discuss the theory and implementation of a type safe domain specific language for automatic differentiation (AD), which has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive operations form the basis for all modern computers, and by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program, that does not work properly. We would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
 
