@@ -386,7 +386,9 @@ While valid, this approach has some disadvantages. First, most IDEs are already 
 
 \subsection{The Parser}\label{subsec:the-parser}
 
-One of the most important and easily overlooked components of an IDE is the parser. Most IDEs do not use not ordinary recursive descent or shift-reduce parsers, since the source code is often invalid during use. Even when the source code is invalid, the editor is expected to recover from local errors and provide responsive feedback to users. In order to parse code while it is being edited and provide low-latency feedback to users, a special kind of parser, called an incremental parser~\citep{wagner1997practical,harper1994incremental} is needed.
+One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are fragile and not well suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and moreover are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users, re-parsing the entire document in-between edits would be expensive and unnecessary. In order to effectively parse code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
+
+%Incremental parser~\citep{harper1994incremental,wagner1997practical} is one strategy for handling .
 
 We can parse URDF, package and launch XML, and srv files.
 
