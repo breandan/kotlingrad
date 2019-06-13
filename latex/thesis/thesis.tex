@@ -384,13 +384,13 @@ To build an IDE, a few prerequisites are necessary. First, is an IDE, which we s
 
 While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. Since most plugins are small by comparison, modern IDEs have adopted a modular design, which allows them to load certain packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load such a plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
 
-\subsection{The parser}
+\subsection{The Parser}\label{subsec:the-parser}
 
-An IDE consists of a few important components. First is a parser. This is typically not an ordinary parser, because most of the time users are modifying a program, their code is invalid. Even when the source code is invalid, the parser needs guide the user towards a functioning program. So this parser needs to be able to recover from syntactical errors.
+One of the most important and easily overlooked components of an IDE is the parser. Most IDEs do not use not ordinary recursive descent or shift-reduce parsers, since the source code is often invalid during use. Even when the source code is invalid, the editor is expected to recover from local errors and provide responsive feedback to users. In order to parse code while it is being edited and provide low-latency feedback to users, a special kind of parser, called an incremental parser~\citep{wagner1997practical,harper1994incremental} is needed.
 
 We can parse URDF, package and launch XML, and srv files.
 
-\subsection{Refactoring}
+\subsection{Refactoring}\label{subsec:refactoring}
 
 Refactoring support is implemented.
 
