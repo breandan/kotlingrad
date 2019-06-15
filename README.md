@@ -120,7 +120,7 @@ val c = a * b
 // b * b
 ```
 
-Similarly, attempting to multiply two tensors whose inner dimensions do not match will fail to compile.
+Similarly, attempting to multiply two matrices whose inner dimensions do not match will fail to compile.
 
 ```kotlin
 val a = Mat(`2`, `4`, 
