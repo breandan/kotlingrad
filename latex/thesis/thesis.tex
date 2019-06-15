@@ -1063,6 +1063,12 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 \end{tabular}
 \end{center}
 
+\section{Future Work}\label{sec:future-work}
+
+Allowing users to specify a matrix's structure in its type signature, (e.g. Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2008matrix}).
+
+Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into \cite{makwana2018numlin}.
+
 \rare{\chapter{Verification and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
