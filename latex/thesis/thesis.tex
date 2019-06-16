@@ -136,31 +136,28 @@
     },
 }
 
+\newtcblisting{pclisting}[1][]{%
+enhanced jigsaw,
+listing only,
+underlay={%
+\path[draw=none] (interior.south west) rectangle node[white]{\includegraphics[width=5mm]{laptop.png}} ([xshift=-10mm]interior.north west);
+},
+}
+
+\newtcblisting{rpilisting}[1][]{%
+enhanced jigsaw,
+listing only,
+underlay={
+\path[draw=none] (interior.south west) rectangle node[white]{\includegraphics[width=8mm]{raspi.png}} ([xshift=-10mm]interior.north west);
+},
+}
+
 \def\inline{\lstinline[basicstyle=\ttfamily]}
 
 %% Packages utiles.
 \usepackage{graphicx,amssymb,subfigure,icomma}
-%% icomma       permet d'écrire les nombres décimaux en
-%%                  français (p.ex. 1,23 plutôt que 1.23)
-%% subfigure    simplifie l'inclusion de figures côtes-à-côtes
-
-%% Packages parfois utiles.
-%%\usepackage{dsfont,mathrsfs,color,url,verbatim,booktabs}
-%% dsfont       symboles mathématiques \mathds
-%% mathrsfs     plus de symboles mathématiques \mathscr
-%% color        pour utiliser des couleurs (comparer avec <xcolor>)
-%% url          permet l'écriture d'url
-%% verbatim     pour écrire du code ou du texte tel quel
-%% booktabs     plus de macros pour faire les tableaux
-%%                  (voir documentation du package)
-
-%% pour que la largeur de la légende des figures soit = \textwidth
 \usepackage[labelfont=bf, width=\linewidth]{caption}
 
-%% les 3 lignes suivante servent à l'affichage de l'index
-%% dans le visionneur de pdf. <hyperref> et <bookmark>
-%% devraient être les dernier package a être chargé,
-%% donc chargez vos packages avant.
 \usepackage{hyperref}  % Ajoute les hyperlien
 \hypersetup{colorlinks=true,allcolors=black}
 \usepackage{hypcap}
@@ -183,7 +180,6 @@
 \begin{document}
 
 \version{1}
-
 
 \title{Programming tools for intelligent systems\\
 \small{with a case study in autonomous robotics}}
@@ -1263,6 +1259,20 @@ While containerization simplifies the process of building and deploying applicat
 Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform~\citep{paull2017duckietown}.
 
 The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
+
+\section{Docker Introduction}
+
+It would be nice to give a computer -- any computer with an internet connection -- a short string of ASCII characters, press enter, and return to see some program running. Never mind where the program was built or what software happened to be running at the time. This may seem trivial, but is a monumental software engineering task to implement.
+
+Today, we can run any Linux program on almost any networked device on the planet. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but we will rarely need to intervene in the installation process.
+
+\begin{rpilisting}
+testing
+\end{rpilisting}
+
+\begin{pclisting}
+    testing
+\end{pclisting}
 
 \section{Retrospective}
 
