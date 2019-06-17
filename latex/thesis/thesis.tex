@@ -43,6 +43,7 @@
 % Table
 \newcommand*\rot{\rotatebox{90}}
 
+\usepackage{menukeys}
 \usepackage[skins,breakable,listings]{tcolorbox}
 % Code listings
 \lstdefinelanguage{Kotlin}{
@@ -1219,7 +1220,7 @@ The problem basically stems from the requirement that no two versions of the sam
 
 \section{Operating systems and virtualization}\label{sec:os-and-virtualization}
 
-With the growth of developer operations (devops) a number of solutions emerged for building and running generic software artifacts. Most universal are emulators, which effectively simulate the physical circuitry of a foreign processor architecture, and thereby any software which runs on it. Another solution was virtual machines (VMs), a form of isolated runtime environment which use a \textit{hypervisor} to mediate access to hardware, but otherwise run software on physical hardware. The downside of both methods is their efficiency. Virtual machines contain full-fledged operating systems and are cumbersome to run and debug, especially to build or run a small application on a foreign OS, as is often their use case. Emulators are running a foreign processor architecture, which can run significantly more slowly depending on the host CPU.
+With the growth of developer operations (devops) a number of solutions emerged for building and running generic software artifacts. Most universal are emulators, which effectively simulate a foreign processor architecture, and thereby any software which runs on it. Another solution was virtual machines (VMs), a form of isolated runtime environment which use a \textit{hypervisor} to mediate access to hardware, but otherwise run software on physical hardware. The downside of both methods is their inefficiency. Virtual machines contain full-fledged operating systems and are cumbersome to run and debug, especially to build or run a small application on a foreign OS, as is often their use case. Emulators can run significantly more slowly than native machine code depending on the host and target architectures.
 
 In 2006, Linux introduced a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\citep{menage2007adding}. Collectively, these features provide a form of lightweight virtualization, offering many benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead. These features also paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a much broader class of mobile and embedded platforms.
 
@@ -1242,7 +1243,7 @@ One of the challenges of distributed software development across heterogeneous p
     \label{fig:user_kernel_hardware}
 \end{figure}
 
-Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and a separate Linux namespace for each container, isolating the network, users, and file system mounts. Unlike virtual machines, container-based virtualization like Docker only requires a lightweight kernel, and can support running many simultaneous containers with close to zero overhead. A single Raspberry Pi is capable of supporting hundreds of running containers.
+Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, in addition to a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization such as Docker only requires a lightweight host, which can support running many simultaneous containers with close to zero overhead compared to native linux processes. A single Raspberry Pi is capable of running hundreds of containers with no noticeable degradation in performance.
 
 While containerization simplifies the process of building and deploying applications considerably, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier.
 
@@ -1256,15 +1257,15 @@ While containerization simplifies the process of building and deploying applicat
 
 \section{Docker and ROS}
 
-Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which is extended specifically for the Duckietown platform~\citep{paull2017duckietown}.
+Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
 
 The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
 
 \section{Docker Introduction}
 
-It would be nice to give a computer -- any computer with an internet connection -- a short string of ASCII characters, press enter, and return to see some program running. Never mind where the program was built or what software happened to be running at the time. This may seem trivial, but is a monumental software engineering task to implement.
+Suppose there is a program that is known to run on some computer. It would be nice to give another computer -- any computer with an internet connection -- a short string of ASCII characters, press \keys{\return}, and return to see that program running. Never mind where the program was built or what software happened to be running at the time. This may seem trivial, but is a monumental software engineering problem. Various package managers have attempted to solve this, but even when they work as intended, only support natively compiled binaries, on operating systems with the same package manager.
 
-Today, we can run any Linux program on almost any networked device on the planet. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but we will rarely need to intervene in the installation process.
+With Docker, users can run any Linux program on almost any networked computing device on the planet, regardless of the operating system or hardware architecture. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but users will never need to intervene in the installation process.
 
 \begin{rpilisting}
 testing
