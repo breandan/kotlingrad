@@ -1,4 +1,4 @@
-    \documentclass[12pt,initial,twoside,maitrise]{dms}
+        \documentclass[12pt,initial,twoside,maitrise]{dms}
 \usepackage[utf8]{inputenc} %Obligatoires
 %\usepackage[T1]{fontenc}    %
 \usepackage[dvipsnames]{xcolor}
@@ -334,7 +334,7 @@ underlay={%
 \setlength{\epigraphwidth}{0.85\textwidth}
 \epigraph{There is a race between the increasing complexity of the systems we build and our ability to develop intellectual tools for understanding their complexity. If the race is won by our tools, then systems will eventually become easier to use and more reliable. If not, they will continue to become harder to use and less reliable for all but a relatively small set of common tasks. Given how hard thinking is, if those intellectual tools are to succeed, they will have to substitute calculation for thought.}{\begin{flushright}--Leslie Lamport\end{flushright}}
 
-Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today’s software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity in building software systems.
+Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today's software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity in building software systems.
 
 \textit{The object of writing this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
 
@@ -1357,7 +1357,7 @@ CONTAINER ID     IMAGE           ...     NAMES
 52994ef22481     daphne/duck     ...     happy_hamster
 \end{pclisting}
 
-Note how Daphne’s duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
+Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
 Docker images can be created two different ways, either by creating a snapshot from a running container, or writing a recipe, called a \inline{Dockerfile}. First, we will demonstrate the snapshot technique.
 
@@ -1401,7 +1401,7 @@ CONTAINER ID  IMAGE        STATUS                           NAMES
 52994ef22481  daphne/duck  Up 10 minutes                    happy_hamster
 \end{pclisting}
 
-It appears \inline{295fd7879184} a.k.a. \inline{merry_manatee} survived, but it is no longer running. Whenever a container’s main process (recall we ran \inline{merry_manatee} with \inline{bash}) finishes, the container will stop, but it will not cease to exist. In fact, we can resume the stopped container right where it left off:
+It appears \inline{295fd7879184} a.k.a. \inline{merry_manatee} survived, but it is no longer running. Whenever a container's main process (recall we ran \inline{merry_manatee} with \inline{bash}) finishes, the container will stop, but it will not cease to exist. In fact, we can resume the stopped container right where it left off:
 
 \begin{pclisting}
 ~# docker start -a merry_manatee
@@ -1420,7 +1420,7 @@ CONTAINER ID     IMAGE           ...     NAMES
 52994ef22481     daphne/duck     ...     happy_hamster
 \end{pclisting}
 
-Now suppose we would like to share the container \inline{shady_giraffe} with someone else. To do so, we must first snapshot the running container, or commit it to a new image, giving it a name and a tag. This will create a checkpoint that we may later restore:
+Now suppose we would like to share the container \inline{shady_giraffe} with someone else. To do so, we must first snapshot the running container, or commit it to a new image with a name and a tag. This will create a checkpoint that we may later restore:
 
 \begin{pclisting}
 ~# docker commit -m "forking Daphne's duck" shady_giraffe user/duck:v2
@@ -1452,13 +1452,13 @@ RUN touch new_file1   # new_file1 will be part of our snapshot
 CMD ls -l             # Default command run when container is started
 \end{filelisting}
 
-Now, to build the image we can simply run:
+Now, to build the image, we can simply run:
 
 \begin{pclisting}
 ~# docker build -t user/duck:v3 .
 \end{pclisting}
 
-The \inline{.} indicates the same directory as the \inline{Dockerfile}. This should produce something like the following output:
+The `\inline{.}' indicates the same directory as the \inline{Dockerfile}. This should produce something like the following output:
 
 \begin{pclisting}
 Sending build context to Docker daemon  2.048kB
@@ -1484,7 +1484,7 @@ user/duck     v2         d78be5cf073e     5 minutes ago    869MB
 user/duck     v3         05a3bd381fc2     2 seconds ago    869MB
 \end{pclisting}
 
-This procedure is identical to the snapshot method we performed in~\ref{subsec:creating-an-image}, but the result is much cleaner. Now, instead of needing to carry around a 869MB BLOB, we can just store the 4KB text file and rest assured that all our important setup commands are contained within. Similar to before, we can simply run:
+This procedure is identical to the snapshot method performed in Sec. ~\ref{subsec:creating-an-image}, but the result is much cleaner. Now, instead of maintaining a 869MB BLOB, we can just store the 4KB text file. Similar to before, we can simply run:
 
 \begin{pclisting}
 ~# docker run -it user/duck:v3
@@ -1572,7 +1572,7 @@ Successfully tagged user/duck:v4
 
 If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time we built an image, this would be slow and inconvenient. Instead, Docker caches the layers which have not changed, and only reruns the minimum set of commands to rebuild our image. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{--no-cache} flag.
 
-What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when an instruction changes, it and any subsequent instructions will need to be rerun during a build. Docker must also consider the build context. When \inline{docker build -t TAG .} is written, the \inline{.} indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
+What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker must also consider the build context. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
 \begin{filelisting}
 FROM daphne/duck
@@ -1580,15 +1580,10 @@ COPY duck.txt .
 RUN cat duck.txt
 \end{filelisting}
 
-Now if we run the following command,
+Now if we put some text in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
 
 \begin{pclisting}
 ~# echo "Make way for duckies!" > duck.txt && docker build -t my/duck:v5 .
-\end{pclisting}
-
-this will create a new file \inline{duck.txt} in the build directory, which will be copied into the Docker image, and print its contents:
-
-\begin{pclisting}
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM daphne/duck
 ---> cd6d8154f1e1
@@ -1603,16 +1598,11 @@ Successfully built 1633e3e10bef
 Successfully tagged my/duck:v5
 \end{pclisting}
 
-As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are not modified, these layers will be cached and Docker will not need to rebuild them. However if the contents of duck.txt are later modified, this will force a rebuild to occur. For example, if we run,
+As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are not modified, these layers will be cached and Docker will not need to rebuild them. However if the contents of the file \inline{duck.txt} are subsequently modified, this will force a rebuild to occur. For example, if we append to the file and rebuild, only the last step will be executed:
 
 \begin{pclisting}
 ~# echo "Thank you. Have a nice day!" >> duck.txt
 ~# docker build -t my/duck:v5 .
-\end{pclisting}
-
-this will produce the following output:
-
-\begin{pclisting}
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM ubuntu
 ---> cd6d8154f1e1
@@ -1630,17 +1620,17 @@ Successfully tagged my/duck:v5
 
 A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more than is necessary to perform the next build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. Users should be conservative and only \inline{COPY} the minimum set of files needed to accomplish for the next step, the subsequent instructions will be cached and builds will complete much more quickly.
 
-Like Git’s \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts more sophisticated pattern matching features like regular expressions and negation. For more details, refer to the Docker documentation.
+Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts more sophisticated pattern matching features like regular expressions and negation. For more details, refer to the Docker documentation.
 
 \subsection{Multi-stage builds}
 
-Docker’s filesystem is purely additive, so each layer will only increase the size of the final image. Due to image size, it is often necessary to reduce the number of layers and tidy up unnecessary files. For example, when installing dependencies on Debian-based images, a common practice is to run
+Docker's filesystem is purely additive, so each layer will only ever increase the size of the final image. Due to image size, it is often necessary to reduce the number of layers and tidy up unnecessary files. For example, when installing dependencies on Debian-based images, a common practice is to run:
 
 \begin{filelisting}
 RUN apt-get update && apt-get install ... && rm -rf /var/lib/apt/lists/*
 \end{filelisting}
 
-ensuring the package list is not baked into the image (Docker will only checkpoint the layer after an instruction is complete). Often, we only care about a single artifact, although building it can take several steps. To avoid this dance of chaining together commands and removing the garbage in a single instruction, we can use a technique called multi-stage builds. These allow us to build sequential images inside a Dockerfile, and copy resources from one to another, discarding the rest:
+This ensures the package list is not baked into the image (Docker will only checkpoint the layer after an instruction is complete). Often, complex builds can take several steps, despite only producing a single artifact. Instead of needing to chain together several commands and clean up the changes in a single step, multi-stage builds allow us to build sequential images inside a \inline{Dockerfile}, and copy resources from one to another, discarding any intermediate build artifacts:
 
 \begin{filelisting}
 FROM user/duck:v3 as template1
@@ -1653,7 +1643,7 @@ COPY --from=template2 new_file2 new_file3
 CMD ls -l
 \end{filelisting}
 
-Now let’s build and run this image:
+Now we can build and run this image as follows:
 
 \begin{pclisting}
 ~# docker build . -t user/duck:v4
@@ -1680,6 +1670,42 @@ total 0
 \end{pclisting}
 
 One application of multi-stage builds is compiling a dependency from its source code. In addition to all the source code, the compilation itself could have separate build dependencies and setup requirements, all of which are quite incidental to our ultimate goal - to build a single file. If we’re especially unlucky, we might end up with gigabytes of transitive dependencies to build a tiny binary file, and waste a lot of disk space or time cleaning up the mess. Multi-stage builds allow us to build the file, discard the unnecessary bits, copy it to a fresh layer, and move on with our life, unburdened by intermediate dependencies.
+
+\section{Duckiebot Development using Docker}
+
+Software development for the Duckietown platform requires the following physical objects:
+
+\begin{enumerate}
+    \item Raspberry Pi 3B+
+    \item Micro SD card (16GB+ reccommended)
+    \item Personal computer
+    \item Internet-enabled router
+    \item MicroSD card adapter
+\end{enumerate}
+%
+In addition, the following software are assumed:
+%
+\begin{enumerate}
+    \item POSIX-compliant shell
+    \item Browser and/or Docker CE
+    \item wget/curl
+    \item duckietown-shell
+    \item Docker
+\end{enumerate}
+
+When developing Docker containers, there are two paths to deployment. You can write the Dockerfile on your laptop or an x86 machine, then build with the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} commands. Once tested, you can deploy to the Duckiebot directly by running the following command:
+
+\begin{pclisting}
+~# docker save TAG_NAME | ssh -C duckie@DUCKIEBOT_NAME.local docker load
+\end{pclisting}
+
+Alternately, you can build directly on an ARM device by creating a file named Dockerfile.arm (the \inline{.arm} extension is just for the reader’s benefit), adding a base image and some build instructions, and running the command:
+
+\begin{rpilisting}
+~# docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
+\end{rpilisting}
+
+Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machines, and attempting to build one will cause an error on Docker Hub. However, once you have debugged the \inline{Dockerfile} on an ARM device, you can easily port the entire build to x86 by enclosing it with \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} instructions, after the \inline{FROM} and before the \inline{CMD} directive.
 
 \section{Retrospective}
 
