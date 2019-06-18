@@ -191,7 +191,7 @@ breakable,
 listing only,
 boxsep=-1.5pt,
 underlay={%
-\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{raspi.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
 },
     overlay first={
         \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
@@ -415,7 +415,7 @@ There is a second component to software reproducibility of intelligent systems, 
 
 All great software has a secret recipe: software gets better when its authors use the product. In the best case, the authors are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find engineers who are so invested, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice has been employed for public relations, but is a very effective mechanism for building self-improving cybernetic systems. It is also an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (Chapter~\ref{ch:hatchery}), containing Kotlin$\nabla$ code (Chapter~\ref{ch:kotlingrad}), tested using adversarial fuzz testing (Chapter~\ref{ch:difftest}), and which is built and maintained using the Docker stack (Chapter~\ref{ch:ducker}).
 
-\rare{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
+\mediumrare{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J.C.R. \citet{licklider1960man}, \textit{Man-Computer Symbiosis}\end{flushright}}
 
@@ -733,7 +733,7 @@ The problem we would like to solve can be summarized as follows. Given two varia
 
 Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to implement at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}.
 
-First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871} It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore}. When the shape of a tensor is known at compile time, it is possible to type check arithmetical operations in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in Java, Kotlin, C++, C\# or Typescript.
+First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871} It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} When the shape of a tensor is known at compile time, it is possible to type check arithmetical operations in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in Java, Kotlin, C++, C\# or Typescript.
 
 {\tiny
 \begin{table}
@@ -1122,7 +1122,7 @@ Allowing users to specify a matrix's structure in its type signature, (e.g. Sing
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into \cite{makwana2018numlin}.
 
-\rare{\chapter{Verification and validation}\label{ch:difftest}}
+\mediumrare{\chapter{Verification and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
@@ -1363,14 +1363,14 @@ Docker images can be created two different ways, either by creating a snapshot f
 
 \subsection{Creating an image}\label{subsec:creating-an-image}
 
-When a Docker container writes to its own filesystem, those changes are not persisted unless committed to a new image. For demonstration purposes, start a container with an interactive shell:
+When a Docker container writes to its own filesystem, those changes are not persisted unless committed to a new image. For example, start a container with an interactive shell:
 
 \begin{pclisting}
 ~# docker run -it daphne/duck bash
 root@295fd7879184:/#
 \end{pclisting}
 
-Note the container ID, \inline{295fd7879184}. If we make some change to the file system, and exit the shell like so:
+Note the container ID -- \inline{295fd7879184}. If we make a change and exit the shell like so,
 
 \begin{pclisting}
 root@295fd7879184:/# touch new_file && ls -l
@@ -1379,7 +1379,7 @@ total 0
 root@295fd7879184:/# exit
 \end{pclisting}
 
-This file is not persisted. If we re-run the command from earlier:
+\inline{new_file} will not be persisted. If we re-run the same command again:
 
 \begin{pclisting}
 ~# docker run -it daphne/duck bash
@@ -1630,7 +1630,7 @@ Docker's filesystem is purely additive, so each layer will only ever increase th
 RUN apt-get update && apt-get install ... && rm -rf /var/lib/apt/lists/*
 \end{filelisting}
 
-This ensures the package list is not baked into the image (Docker will only checkpoint the layer after an instruction is complete). Often, complex builds can take several steps, despite only producing a single artifact. Instead of needing to chain together several commands and clean up the changes in a single step, multi-stage builds allow us to build sequential images inside a \inline{Dockerfile}, and copy resources from one to another, discarding any intermediate build artifacts:
+This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Often, complex builds can take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up the changes in a single step, multi-stage builds let us to build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
 
 \begin{filelisting}
 FROM user/duck:v3 as template1
@@ -1674,7 +1674,7 @@ One application of multi-stage builds is compiling a dependency from its source 
 \section{Duckiebot Development using Docker}
 
 Software development for the Duckietown platform requires the following physical objects:
-
+%
 \begin{enumerate}
     \item Raspberry Pi 3B+
     \item Micro SD card (16GB+ reccommended)
@@ -1705,7 +1705,129 @@ Alternately, you can build directly on an ARM device by creating a file named Do
 ~# docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
 \end{rpilisting}
 
+\subsection{ARM Emulation}
+
 Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machines, and attempting to build one will cause an error on Docker Hub. However, once you have debugged the \inline{Dockerfile} on an ARM device, you can easily port the entire build to x86 by enclosing it with \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} instructions, after the \inline{FROM} and before the \inline{CMD} directive.
+
+All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e. one that does not require any camera or motor access) on a non-Mac x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
+
+\begin{pclisting}
+docker run ... --entrypoint=qemu3-arm-static YOUR_IMAGE [RUN_COMMAND]
+\end{pclisting}
+
+Here \inline{RUN_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
+
+\subsection{Running Simple HTTP File Server}
+
+All persistent data is stored under /data on the Duckiebot SD card. To access the data via the web browser, run:
+
+\begin{pclisting}
+~# docker -H DUCKEBOT_NAME.local run -d \
+  --name file-server \
+  -v /data:/data \
+  -p 8082:8082 \
+  duckietown/rpi-simple-server:master18
+\end{pclisting}
+
+And visit to the following URL: http://DUCKIEBOT_NAME.local:8082/
+
+\subsection{Testing the camera}
+
+Open Portainer Web interface and run the \inline{duckietown/rpi-docker-python-picamera} container.
+
+Publish port \inline{8081} and ensure that the container is run in ``Privileged'' mode.
+
+\subsection{Portainer PiCam Demo}
+
+\begin{pclisting}
+~# docker -H DUCKIEBOT_NAME.local run -d \
+  --name picam \
+  -v /data:/data \
+  --privileged \
+  -p 8081:8081 \
+  duckietown/rpi-docker-python-picamera:master18
+\end{pclisting}
+
+The syntax \inline{-H DUCKIEBOT_NAME.local} may be omitted if running the command over SSH.
+
+Visit the following URL: http://DUCKIEBOT_NAME.local:8082/image.jpg.
+
+\subsection{Testing ROS}
+
+It is best to first pull the base Duckietown Docker image using the following command:
+
+\begin{pclisting}
+~# docker -H DUCKIEBOT_NAME.local pull duckietown/rpi-ros-kinetic-roscore:master18
+\end{pclisting}
+
+Run the base Duckietown Docker image, opening a shell:
+
+\begin{pclisting}
+~# docker -H DUCKIEBOT_NAME.local run -it \
+  --name roscore \
+  --privileged \
+  --net host \
+  duckietown/rpi-ros-kinetic-roscore:master18
+\end{pclisting}
+
+For GUI tools, run the following command:
+
+\begin{pclisting}
+~# nvidia-docker run -it --rm \
+  --name rosgui \
+  --net host \
+  --env ROS_MASTER_URI=http://DUCKIEBOT_IP:11311 \
+  --env ROS_IP=LAPTOP_IP \
+  --env="DISPLAY" \
+  --env="QT_X11_NO_MITSHM=1" \
+  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+  rosindustrial/ros-robot-nvidia:kinetic
+\end{pclisting}
+
+To allow incoming X connections on Linux hosts, run \inline{xhost +} on your computer.\footnote{There is a more secure way to do this to prevent arbitrary X11 connections.}
+
+The above command opens a ROS shell running on your laptop that is set to connect to DUCKIEBOT‘s ROS Master. To test the ROS connection, run \inline{roswtf}.
+
+\subsection{Testing the Joystick}
+
+The following container runs the joystick demo:
+
+\begin{pclisting}
+~# docker -H DUCKIEBOT.local run -d \
+    --name joystick-demo \
+    --privileged \
+    -v /data:/data \
+    --net host \
+    duckietown/rpi-duckiebot-joystick-demo:master18
+\end{pclisting}
+
+\subsection{Calibration}
+
+The following container will launch the extrinsic calibration procedure:
+
+\begin{pclisting}
+~# docker -H DUCKIEBOT_NAME.local run -it \
+  --name calibration \
+  --privileged \
+  -v /data:/data \
+  --net host \
+  duckietown/rpi-duckiebot-calibration:master18
+\end{pclisting}
+
+Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided. \inline{rpi-simple-server} can be launched to view the results in the web browser; users can also download all files from \inline{/data}. This is an easy way to view and download all calibration files and validation results.
+
+\subsection{Lane Following Demo}
+
+Once calibrated, the Lane Following Demo can be launched as follows:
+
+\begin{pclisting}
+~# docker -H DUCKIEBOT_NAME.local run -it \
+  --name lanefollowing-demo \
+  --privileged \
+  -v /data:/data \
+  --net host \
+  duckietown/rpi-duckiebot-lanefollowing-demo:master18
+\end{pclisting}
 
 \section{Retrospective}
 
