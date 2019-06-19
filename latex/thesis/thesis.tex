@@ -387,7 +387,7 @@ While it took fundamental research in deep learning to realize the connectionist
 
 Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have little time to think about the high-level characteristics of these systems. Similarly, if programming abstractions are too specific, small variations will require costly reimplementation. This is no different from traditional software engineering -- as engineers, we need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details, too abstract and the details are lost completely. With deep learning, the necessity of choosing good abstractions is even more important, as the connection of between source code and runtime behavior is already difficult to grasp, due to the nature of neural networks.
 
-\section{Testing: Verification and validation}
+\section{Testing and validation}
 
 Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the ``curse of dimensionality''. Our physical universe is populated by problems which are simple to pose, but impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^{120}$, more than the number of atoms in the universe by approximately 40 orders of magnitude~\citep{shannon1950xxii}. At the time, it was believed that such problems would be insurmountable without a fundamental change in algorithms or computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before solutions to problems with the same order of complexity, first solved in the Cambrian explosion 541 million years ago, were approximated to a competitive margin in modern computers.
 
@@ -563,21 +563,21 @@ For some classes of computable functions, small changes to the input will produc
     ||\nabla F|| \approx \pm \infty
 \end{equation}
 %
-It is an open question whether non-differentiable functions exist in the real world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions of $\bathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
+It is an open question whether non-differentiable functions exist in the real world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions of $\mathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
 
-There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: R \rightarrow R$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $\hat{f}$, parameterized by constants $n \in \mathbb{N}, \beta \in \mathbb{R}^n, b \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $\theta \in \mathbb{R}^{m \times n}$:
+There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: \mathbb{R} \rightarrow \mathbb{R}$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $\mathbf{f}: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $\mathbf{\hat f}$, parameterized by constants $n \in \mathbb{N}, \mathbf{\beta} \in \mathbb{R}^n, \mathbf{b} \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $\mathbf{\theta} \in \mathbb{R}^{m \times n}$:
 %
 \begin{equation}
     \begin{split}
-        \hat{f}(x) = \beta^\intercal \varphi \left(\theta^\intercal x\right + b) \\
-        \forall x\in \mathbb{I}_m, \ | \hat{f}( x ) - f ( x ) | < \varepsilon
+        \mathbf{\hat{f}}(\mathbf{x}) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\mathbf{\theta}^\intercal \mathbf{x}\right + \mathbf{b}) \\
+        \forall \mathbf{x} \in \mathbb{I}_m, \ | \mathbf{\hat f}( \mathbf{x} ) - \mathbf{f} ( \mathbf{x} ) | < \epsilon
     \end{split}
 \end{equation}
 %
-This theorem does not provide any method for how to find $\theta$ nor place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\theta_I^\intercal x + b$ and $\varphi$ in an alternating fashion. The resulting model might be expressed as,
+This theorem does not provide any method for how to find $\theta$ nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\mathbf{\theta}^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion. The resulting model might be expressed as,
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta_{[0, k-1]}})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 where $\mathbf\Theta = \{\mathbf\theta_0, \dots, \mathbf\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
@@ -586,7 +586,7 @@ where $\mathbf\Theta = \{\mathbf\theta_0, \dots, \mathbf\theta_k\}$ are free par
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, a single iteration can take prohibitively long. Since obtaining the exact gradient is not very important, we use a stochastic variant by randomly resampling a \textit{minibatch} $\mathbf{X}' \sim \mathbf{X}$ on each update, which is slightly noisier, but runs considerably more quickly.
+For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, and since obtaining the exact gradient is not very important, we use a stochastic variant by randomly resampling a \textit{minibatch} $\mathbf{X}', \mathbf{Y}'$ of pairs $\mathbf{x}^{(i)}, \mathbf{y}^{(i)}$ for $i \sim \{0..z\}$ on each update. This is slightly noisier, but runs considerably more quickly.
 
 \section{Differentiable programming}\label{sec:differentiable-programming}
 
@@ -673,8 +673,8 @@ Existing AD implementations for the JVM include Lantern~\citep{DBLP:journals-cor
 
 \begin{itemize}
 \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e.\ groups, rings and fields.
-\item \textbf{$\mathbf{\lambda}$-functions and coroutines} support functional differentiable programming with lambdas and shift-reset continuations, following~\citet{pearlmutter2008reverse} and~\citet{DBLP:journals-corr-abs-1803-10228}.
-\item \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
+\item \textbf{$\mathbf{\lambda}$-functions} support functional programming, following~\citet{pearlmutter2008reverse}.
+\item \textbf{Extension functions} support extending classes with new fields and methods which can be exposed to external callers without requiring sub-classing or inheritance.
 \end{itemize}
 
 \begin{figure}
@@ -1122,30 +1122,30 @@ Allowing users to specify a matrix's structure in its type signature, (e.g. Sing
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into \cite{makwana2018numlin}.
 
-\mediumrare{\chapter{Verification and validation}\label{ch:difftest}}
+\mediumrare{\chapter{Testing and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
 Roughly speaking, during backpropogation we perform gradient descent of a differentiable function with respect to its parameters on a set of inputs. In adversarial testing, we do gradient ascent with respect to the inputs at a given parameter setting.
 
-Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. In contrast, these same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
+Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. The same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
 \section{Background}
 %
-\noindent Suppose we have a differentiable vector function $\mathbf{P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$ as seen earlier (cf.~\ref{eq:recursive_parametric_eq}):
+\noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$ as seen earlier:
 %
-\begin{equation}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\mathbf\Theta}) = \begin{cases} \mathbf{p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta_{[0, k-1]}})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+\begin{equation} \tag{\ref{eq:recursive_parametric_eq} revisited}
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
 %
-\begin{equation}
+\begin{equation} \tag{\ref{eq:stochastic_grad_descent} revisited}
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-In the white box adversarial learning setting, we are given a fixed $\mathbf \Theta$ and our goal is to find:
+In white box adversarial learning, we are given a fixed $\mathbf \Theta$ and our goal is to find:
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^n \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
@@ -1158,29 +1158,10 @@ In the white box adversarial learning setting, we are given a fixed $\mathbf \Th
 	\mathbf{\Phi}_{CS}(\mathbf \phi') = \argmin{\mathbf \phi \in CS}\frac{1}{2}||\mathbf \phi - \mathbf \phi'||^2_2
 \end{equation}
 %
-\begin{equation}
-    P(p_0)=p_n \circ p_{n-1} \circ p_{n-2} \circ ... \circ p_1 \circ p_0 \circ p_0
-\end{equation}
+Imagine a single test $T: \mathbb{R}^n \rightarrow \mathbb{B}$. Consider the following example:
 %
-From the chain rule of calculus, we know that:
-%
-\begin{equation}
-    \nabla p_i(p_0) = \frac{dp_{i+1}}{dp_{i}} \cdot \frac{dp_{i}}{dp_{i-1}}, \forall i \in (0, n)
-\end{equation}
-%
-More broadly, if $P: \mathbb{R}^n\rightarrow\mathbb{R}^k$, and $p_{i}: \mathbb{R}^{dim_{\mathbb{R}}(p_{i-1})}\rightarrow \mathbb{R}^{dim_{\mathbb{R}}(p_{i+1})} \forall i \in (0, n)$:
-%
-\begin{equation}
-    \nabla p_i(p_0) = \nabla p_i(p_{i-1}(p_0)) \cdot \nabla p_{i-1}(p_0)
-\end{equation}
-
-%
-% Imagine a set of tests $\mathrm{T}: \mathbb{R} \rightarrow \mathbb{B}$ where $\mathrm{T}={\tau_1, ...\tau_m}$.  For example,
-%
-Imagine a single test $T: \mathbb{R} \rightarrow \mathbb{B}$. Consider the following example:
-%
-\begin{equation}
-    T(P) = \forall x \in (0, 1), P(x) < C
+\begin{equation} \label{eq:output_constraint_example}
+    T(\mathbf{\hat P}) = \forall \mathbf{x} \in [0, 1]^m, \mathbf{P}(\mathbf{x}) < \mathbf{C}
 \end{equation}
 %
 How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
@@ -1189,18 +1170,17 @@ How can we find a set of inputs that break the test under a fixed computational 
     D_T: \{ x^i \sim \mathbb{R}(0, 1) \mid P(x^i) \implies \neg T \}, maximize |D_T|
 \end{equation}
 %
-
-If we have no information about the program implementation or its input distribution, $D_P$, we can do no better than random search~\citep{wolpert1997no}. However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we might consider sampling $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could prioritize our search in input regions leading towards internal discontinuities (e.g.\ edge cases in software testing). However for functions that are continuous and differentiable, these heuristics are almost certainly insufficient.
+If we have no information about the program implementation or its data distribution, $D_P$, we can do no better than random search~\citep{wolpert1997no}. However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we could sample $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. The gradient of $P$'s loss with respect to $x$ (assuming $\theta$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_x \mathcal{L}(P(x; \theta))$. Instead of minimizing the loss, we want to maximize it. So the vanilla gradient update step~\ref{eq:stochastic_grad_descent} becomes:
+Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ (assuming $\mathbf{\Theta}$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)$. Instead of minimizing the loss, we want to maximize it. So the vanilla gradient update step in~\ref{eq:stochastic_grad_descent} becomes:
 %
 \begin{equation}
-    x_{n+1}^i = x_{n}^i + \alpha \nabla_{x_n} \mathcal{L}(P(x_n; \theta))
+    \mathbf{x} \leftarrow \mathbf{x} + \alpha \frac{1}{z} \nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)
 \end{equation}
 %
-We hypothesize that if the implementation of $P$ were flawed and a counterexample to (3) existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification. How would such a search procedure look in practice?
+We hypothesize that if the implementation of $P$ were flawed and a counterexample to~\ref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
 %
@@ -1208,6 +1188,8 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
 %     (\forall i \in I^\dagger, p(i) \implies \neg T) \implies \lim_{|x|\to \infty}Prob(\hat{T}=False) = 1
 % \end{equation}
 %
+
+Consider Algorithm~\ref{alg:test_algo}.
 
 \begin{algorithm}
     \SetKwInOut{Input}{Input}
@@ -1249,13 +1231,14 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     \label{alg:test_algo}
 \end{algorithm}
 
-Consider Algorithm~\ref{alg:test_algo}.
+
+We could also sample from outside the feasible set and perform gradient descent over the objectives to perform the equivalent of "shrinking" from property based testing. TODO
 
 %\section{Regression testing and forgetting}
 
 %An endemic problem in modern deep learning is the problem of forgetting. In order to combat this issue, we turn to a classic software testing tool: regression testing.
 
-%Regular regression testing gives clear diagnostics about the behavior of intelligent systems.
+%Regular regression testing can provide diagnostics about the behavior of intelligent systems.
 
 \mediumrare{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
 
@@ -1848,7 +1831,7 @@ Designed with Hatchery.
 
 Implementation includes Kotlin$\nabla$
 
-\section{Verification and validation}
+\section{Testing and validation}
 
 Verified using property-based testing.
 
