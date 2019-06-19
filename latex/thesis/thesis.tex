@@ -1,4 +1,4 @@
-        \documentclass[12pt,initial,twoside,maitrise]{dms}
+\documentclass[12pt,initial,twoside,maitrise]{dms}
 \usepackage[utf8]{inputenc} %Obligatoires
 %\usepackage[T1]{fontenc}    %
 \usepackage[dvipsnames]{xcolor}
@@ -966,7 +966,7 @@ Currently, it is possible to represent functions where all inputs and outputs sh
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
+Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
 
 \begin{mylisting}[caption={Most mathematical operations are composed of a small set of simple operators.}, language=Kotlin]
 interface Group<X: Group<X>> {
@@ -1372,7 +1372,7 @@ total 0
 -rw-r--r-- 1 root root 0 May 21 21:32 new_file1
 \end{pclisting}
 
-It seems like \inline{new_file} has disappeared! Notice how the container ID (\inline{18f13bb4571a}) is now different. This is because the command \inline{docker run daphne/duck} created a new container from the base image \inline{daphne/duck}, rather than restarting the old container.
+It seems like \inline{new_file} has disappeared! Notice how the container ID (\inline{18f13bb4571a}) is now different. This is because the command \inline{docker run daphne/duck} created a new container from the base image \inline{daphne/duck}, rather than restarting the previous container.
 
 To see all containers on a Docker host, run the following command:
 
@@ -1666,23 +1666,27 @@ Software development for the Duckietown platform requires the following physical
     \item MicroSD card adapter
 \end{enumerate}
 %
-In addition, the following software are assumed:
+Furthermore, we assume the following software dependencies have been installed on (3):
 %
 \begin{enumerate}
+    \item Docker CE
     \item POSIX-compliant shell
-    \item Browser and/or Docker CE
-    \item wget/curl
-    \item duckietown-shell
-    \item Docker
+    \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}
+    \item Web browser
+    \item \inline{wget}/\inline{curl}
 \end{enumerate}
 
-When developing Docker containers, there are two paths to deployment. You can write the Dockerfile on your laptop or an x86 machine, then build with the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} commands. Once tested, you can deploy to the Duckiebot directly by running the following command:
+The following workflow has been tested extensively on Linux hosts running Ubuntu 16.04 (and to a lesser extent Mac OS X and VMs). No other dependencies are assumed or required.
+
+\subsection{Build and deployment}
+
+Docker images can be cross-compiled by enclosing the ARM-specific portion of the \inline{Dockerfile} with the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} instructions. The following command can be used for deployment:
 
 \begin{pclisting}
-~# docker save TAG_NAME | ssh -C duckie@DUCKIEBOT_NAME.local docker load
+~# docker save TAG_NAME | ssh -C duckie@HOSTNAME docker load
 \end{pclisting}
 
-Alternately, you can build directly on an ARM device by creating a file named Dockerfile.arm (the \inline{.arm} extension is just for the reader’s benefit), adding a base image and some build instructions, and running the command:
+Alternately, it is possible to build directly on ARM devices by creating a file named \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
 
 \begin{rpilisting}
 ~# docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
@@ -1690,7 +1694,7 @@ Alternately, you can build directly on an ARM device by creating a file named Do
 
 \subsection{ARM Emulation}
 
-Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machines, and attempting to build one will cause an error on Docker Hub. However, once you have debugged the \inline{Dockerfile} on an ARM device, you can easily port the entire build to x86 by enclosing it with \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} instructions, after the \inline{FROM} and before the \inline{CMD} directive.
+Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machines, and attempting to build one will cause an error on Docker Hub. However, ARM-specific \inline{Dockerfile} can easily be ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
 
 All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e. one that does not require any camera or motor access) on a non-Mac x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
@@ -1698,90 +1702,76 @@ All Duckietown Docker images contain an emulator called QEMU - this allows us to
 docker run ... --entrypoint=qemu3-arm-static YOUR_IMAGE [RUN_COMMAND]
 \end{pclisting}
 
-Here \inline{RUN_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
+Here, \inline{RUN_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is an emulator provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
 
 \subsection{Running Simple HTTP File Server}
 
-All persistent data is stored under /data on the Duckiebot SD card. To access the data via the web browser, run:
+All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
 
 \begin{pclisting}
-~# docker -H DUCKEBOT_NAME.local run -d \
-  --name file-server \
-  -v /data:/data \
-  -p 8082:8082 \
-  duckietown/rpi-simple-server:master18
+~# docker -H DUCKEBOT_NAME run -d \
+   --name file-server \
+   -v /data:/data \
+   -p 8082:8082 \
+   duckietown/rpi-simple-server:master18
 \end{pclisting}
 
-And visit to the following URL: http://DUCKIEBOT_NAME.local:8082/
+To access this directory, visit the following URL: \inline{http://HOSTNAME:8082/}
 
 \subsection{Testing the camera}
 
-Open Portainer Web interface and run the \inline{duckietown/rpi-docker-python-picamera} container.
-
-Publish port \inline{8081} and ensure that the container is run in ``Privileged'' mode.
-
-\subsection{Portainer PiCam Demo}
+The following image can be used to test the camera is working properly:
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT_NAME.local run -d \
-  --name picam \
-  -v /data:/data \
-  --privileged \
-  -p 8081:8081 \
-  duckietown/rpi-docker-python-picamera:master18
+~# docker -H DUCKIEBOT_NAME run -d \
+   --privileged \
+   --name picam \
+   -v /data:/data \
+   -p 8081:8081 \
+   duckietown/rpi-docker-python-picamera:master18
 \end{pclisting}
 
-The syntax \inline{-H DUCKIEBOT_NAME.local} may be omitted if running the command over SSH.
-
-Visit the following URL: http://DUCKIEBOT_NAME.local:8082/image.jpg.
+Images are hosted at \inline{http://DUCKIEBOT_NAME:8081/image.jpg}
 
 \subsection{Testing ROS}
-
-It is best to first pull the base Duckietown Docker image using the following command:
-
-\begin{pclisting}
-~# docker -H DUCKIEBOT_NAME.local pull duckietown/rpi-ros-kinetic-roscore:master18
-\end{pclisting}
 
 Run the base Duckietown Docker image, opening a shell:
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT_NAME.local run -it \
-  --name roscore \
-  --privileged \
-  --net host \
-  duckietown/rpi-ros-kinetic-roscore:master18
+~# docker -H HOSTNAME run -it \
+   --name roscore \
+   --privileged \
+   --net host \
+   duckietown/rpi-ros-kinetic-roscore:master18
 \end{pclisting}
 
 For GUI tools, run the following command:
 
 \begin{pclisting}
 ~# nvidia-docker run -it --rm \
-  --name rosgui \
-  --net host \
-  --env ROS_MASTER_URI=http://DUCKIEBOT_IP:11311 \
-  --env ROS_IP=LAPTOP_IP \
-  --env="DISPLAY" \
-  --env="QT_X11_NO_MITSHM=1" \
-  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-  rosindustrial/ros-robot-nvidia:kinetic
+   --name rosgui \
+   --net host \
+   --env ROS_MASTER_URI=http://DUCKIEBOT_IP:11311 \
+   --env ROS_IP=LAPTOP_IP \
+   --env="DISPLAY" \
+   --env="QT_X11_NO_MITSHM=1" \
+   --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+   rosindustrial/ros-robot-nvidia:kinetic
 \end{pclisting}
 
-To allow incoming X connections on Linux hosts, run \inline{xhost +} on your computer.\footnote{There is a more secure way to do this to prevent arbitrary X11 connections.}
-
-The above command opens a ROS shell running on your laptop that is set to connect to DUCKIEBOT‘s ROS Master. To test the ROS connection, run \inline{roswtf}.
+The above command opens a ROS shell that is set to connect to \inline{DUCKIEBOT}'s ROS Master. To test the ROS connection works, run \inline{roswtf}. To allow incoming X connections on GUI-enabled Linux host, run \inline{xhost +} outside Docker on the same computer.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.}
 
 \subsection{Testing the Joystick}
 
 The following container runs the joystick demo:
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT.local run -d \
-    --name joystick-demo \
-    --privileged \
-    -v /data:/data \
-    --net host \
-    duckietown/rpi-duckiebot-joystick-demo:master18
+~# docker -H DUCKIEBOT run -d \
+   --name joystick-demo \
+   --privileged \
+   -v /data:/data \
+   --net host \
+   duckietown/rpi-duckiebot-joystick-demo:master18
 \end{pclisting}
 
 \subsection{Calibration}
@@ -1789,12 +1779,12 @@ The following container runs the joystick demo:
 The following container will launch the extrinsic calibration procedure:
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT_NAME.local run -it \
-  --name calibration \
-  --privileged \
-  -v /data:/data \
-  --net host \
-  duckietown/rpi-duckiebot-calibration:master18
+~# docker -H HOSTNAME run -it \
+   --name calibration \
+   --privileged \
+   -v /data:/data \
+   --net host \
+   duckietown/rpi-duckiebot-calibration:master18
 \end{pclisting}
 
 Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided. \inline{rpi-simple-server} can be launched to view the results in the web browser; users can also download all files from \inline{/data}. This is an easy way to view and download all calibration files and validation results.
@@ -1804,12 +1794,12 @@ Passing \inline{-v /data:/data} is necessary so that all calibration settings wi
 Once calibrated, the Lane Following Demo can be launched as follows:
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT_NAME.local run -it \
-  --name lanefollowing-demo \
-  --privileged \
-  -v /data:/data \
-  --net host \
-  duckietown/rpi-duckiebot-lanefollowing-demo:master18
+~# docker -H HOSTNAME run -it \
+   --name lanefollowing-demo \
+   --privileged \
+   -v /data:/data \
+   --net host \
+   duckietown/rpi-duckiebot-lanefollowing-demo:master18
 \end{pclisting}
 
 \section{Retrospective}
