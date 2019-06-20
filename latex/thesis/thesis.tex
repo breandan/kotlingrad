@@ -9,6 +9,7 @@
 \usepackage{algorithm2e}
 \usepackage{amsmath}
 \usepackage{natbib}
+\usepackage{enumitem}
 
 % Footnotes
 %\usepackage[symbol]{footmisc}
@@ -1467,7 +1468,7 @@ user/duck     v2         d78be5cf073e     5 minutes ago    869MB
 user/duck     v3         05a3bd381fc2     2 seconds ago    869MB
 \end{pclisting}
 
-This procedure is identical to the snapshot method performed in Sec. ~\ref{subsec:creating-an-image}, but the result is much cleaner. Now, instead of maintaining a 869MB BLOB, we can just store the 4KB text file. Similar to before, we can simply run:
+This procedure is identical to the snapshot technique performed in Sec. ~\ref{subsec:creating-an-image}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
 
 \begin{pclisting}
 ~# docker run -it user/duck:v3
@@ -1475,10 +1476,10 @@ total 0
 -rw-r--r-- 1 root root 0 May 21 21:35 new_file1
 \end{pclisting}
 
-Notice that as soon as we run the container, Docker will execute the \inline{ls -l} command as specified by the \inline{Dockerfile}, revealing \inline{new_file1} was stored in the image. However we can still override \inline{ls -l} by passing a command line argument:
+Notice that as soon as we run the container, Docker will execute the \inline{ls -l} command as specified by the \inline{Dockerfile}, revealing that \inline{new_file1} was indeed stored in the image. However this default command can be overridden by supplying a custom command:
 
 \begin{pclisting}
-~# docker run -it user/duck:v3 [custom_command].
+~# docker run -it user/duck:v3 [custom_command]
 \end{pclisting}
 
 \subsection{Layer Caching}
@@ -1613,7 +1614,7 @@ Docker's filesystem is purely additive, so each layer will only ever increase th
 RUN apt-get update && apt-get install ... && rm -rf /var/lib/apt/lists/*
 \end{filelisting}
 
-This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Often, complex builds can take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up the changes in a single step, multi-stage builds let us to build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
+This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
 
 \begin{filelisting}
 FROM user/duck:v3 as template1
@@ -1668,7 +1669,7 @@ Software development for the Duckietown platform requires the following physical
 %
 Furthermore, we assume the following software dependencies have been installed on (3):
 %
-\begin{enumerate}
+\begin{enumerate}[label=(\alph*)]
     \item Docker CE
     \item POSIX-compliant shell
     \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}

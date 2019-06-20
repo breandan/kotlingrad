@@ -140,7 +140,7 @@ Universit\'e de Montr\'eal \\
         If $\mathbf{\hat P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
         %
         \begin{align*}
-            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \times \mathcal{T}(\boldsymbol\theta_{i}) \rightarrow \mathcal{T}_{in}(\mathbf{p}_{i+1}(\boldsymbol\theta_{i+1}))
+            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \times \mathcal{T}(\boldsymbol\theta_{i}) \rightarrow \mathcal{T}_{in}\big(\mathbf{p}_{i+1}(\boldsymbol\theta_{i+1})\big)
         \end{align*}
         %
     \end{frame}
@@ -201,8 +201,8 @@ Universit\'e de Montr\'eal \\
             \item Goal: To implement automatic differentiation in Kotlin
             \item Kotlin is a language with strong static typing and null safety
             \item Supports first-class functions, higher order functions and lambdas
-            \item Has support for algebraic data types, via tuples & sealed classes
-            \item Extension functions, operator overloading & other syntax sugar
+            \item Has support for algebraic data types through sealed classes
+            \item Extension functions, operator overloading \& other syntax sugar
             \item Offers features for embedding domain specific languages (DSLs)
             \item Access to all libraries and frameworks in the JVM ecosystem
             \item Multi-platform and cross-platform (JVM, Android, iOS, JS, native)
