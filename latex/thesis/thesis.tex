@@ -1566,10 +1566,10 @@ COPY duck.txt .
 RUN cat duck.txt
 \end{filelisting}
 
-Now if we add some text in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
+Now if we add some message in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
 
 \begin{pclisting}
-~# echo "Make way for duckies!" > duck.txt && docker build -t my/duck:v5 .
+~# echo "Make way!" > duck.txt && docker build -t user/duck:v5 .
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM daphne/duck
 ---> cd6d8154f1e1
@@ -1577,18 +1577,18 @@ Step 2/3 : COPY duck.txt .
 ---> e0e03d9e1791
 Step 3/3 : RUN cat duck.txt
 ---> Running in 590c5420ce29
-Make way for duckies!
+Make way!
 Removing intermediate container 590c5420ce29
 ---> 1633e3e10bef
 Successfully built 1633e3e10bef
-Successfully tagged my/duck:v5
+Successfully tagged user/duck:v5
 \end{pclisting}
 
 As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are not modified, these layers will be cached and Docker will not need to rebuild them. However if the contents of the file \inline{duck.txt} are subsequently modified, this will force a rebuild to occur. For example, if we append to the file and rebuild, only the last step will be executed:
 
 \begin{pclisting}
 ~# echo "Thank you. Have a nice day!" >> duck.txt
-~# docker build -t my/duck:v5 .
+~# docker build -t user/duck:v5 .
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM ubuntu
 ---> cd6d8154f1e1
@@ -1601,12 +1601,45 @@ Thank you. Have a nice day!
 Removing intermediate container 7c6f5f8b73e9
 ---> e8a1db712aee
 Successfully built e8a1db712aee
-Successfully tagged my/duck:v5
+Successfully tagged user/duck:v5
 \end{pclisting}
 
 A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more than is necessary to perform the next build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. Users should be conservative and only \inline{COPY} the minimum set of files needed to accomplish for the next step, the subsequent instructions will be cached and builds will complete much more quickly.
 
 Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{For more details, refer to: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
+
+\subsection{Volume Sharing}
+
+There is a second method to put data into a container, that does not require baking it into the image directly. This method is usually preferred for files which are not essential for the build, but are required at runtime. It takes the following form:
+
+\begin{pclisting}
+~# docker run user/duck:v6 -v [host_volume]:[target_volume]
+\end{pclisting}
+
+Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
+
+\begin{filelisting}
+FROM daphne/duck
+CMD /bin/bash -c "/launch.sh"
+\end{filelisting}
+
+If we simply built and ran this \inline{Dockerfile}, we would encounter an error:
+
+\begin{pclisting}
+~# docker build -t user/duck:v6 && docker run user/duck:v6
+bash: /launch.sh: No such file or directory
+\end{pclisting}
+
+Instead, when running the container, we need to share the volume via the Docker CLI:
+
+\begin{pclisting}
+~# echo -e '#!/bin/bash\necho Launching...' >> launch.sh && \
+   chmod 775 launch.sh && \
+   docker run user/duck:v6 -v launch.sh:/launch.sh
+Launching...
+\end{pclisting}
+
+This way, the file \inline{launch.sh} will be available to use from within the container.
 
 \subsection{Multi-stage builds}
 
@@ -1662,7 +1695,7 @@ One application of multi-stage builds is compiling a dependency from its source 
 Software development for the Duckietown platform requires the following physical objects:
 %
 \begin{enumerate}
-    \item Raspberry Pi 3B+
+    \item Duckiebot (including custom hat, camera, wheels, and Raspberry Pi 3B+)\footnote{Full materials list can be located at the following URL: \url{https://get.duckietown.org/}}
     \item Micro SD card (16GB+ recommended)
     \item Personal computer
     \item Internet-enabled router
@@ -1699,7 +1732,7 @@ Alternately, it is possible to build directly on ARM devices by creating a file 
 
 Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machines, and attempting to build one will cause an error on Docker Hub. However, ARM-specific \inline{Dockerfile} can easily be ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
 
-All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e. one that does not require any camera or motor access) on a non-Mac x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
+All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on a non-Mac x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
 \begin{pclisting}
 docker run ... --entrypoint=qemu3-arm-static YOUR_IMAGE [RUN_COMMAND]
