@@ -1305,7 +1305,7 @@ The Duckietown platform supports two primary instruction set architectures: x86 
 
 Suppose there is a program which is known to run on some computer. It would be nice to give another computer -- any computer with an internet connection -- a short string of ASCII characters, press \keys{\return}, and return to see that program running. Never mind where the program was built or what software happened to be running at the time. This may seem trivial, but is a monumental software engineering problem. Various package managers have attempted to solve this, but even when they work as intended, only support natively compiled binaries on operating systems with the same package manager.
 
-Docker\footnote{The following tutorial is Docker specific, but the workflow described is similar on most container platforms.} is a tool for portable, reproducible computing. With Docker, users can run any Linux program on almost any networked computing device on the planet, regardless of the operating system or hardware architecture. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but users will never need to intervene in the installation process.
+Docker\footnote{The following tutorial uses Docker, but the workflow described is similar to most container platforms.} is a tool for portable, reproducible computing. With Docker, users can run any Linux program on almost any networked computing device on the planet, regardless of the operating system or hardware architecture. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but users will never need to intervene in the installation process.
 
 To install Docker itself, execute the following command on a POSIX-compliant shell of any Docker-supported platform:
 
@@ -1313,7 +1313,7 @@ To install Docker itself, execute the following command on a POSIX-compliant she
 ~# curl -sSL https://get.docker.com/ | sh
 \end{pclisting}
 
-A Docker \textbf{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textbf{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default Docker Hub repository:
+A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default Docker Hub repository:
 
 \begin{pclisting}
 ~# docker pull daphne/duck
@@ -1327,7 +1327,7 @@ REPOSITORY      TAG        IMAGE ID         CREATED       SIZE
 daphne/duck     latest     ea2f90g8de9e     1 day ago     869MB
 \end{pclisting}
 
-To run a Docker container\footnote{When a Docker image is running, it is referred to as a \textbf{container}.}, use the following command:
+To run a Docker container\footnote{When a Docker image is running, it is referred to as a \textit{container}.}, use the following command:
 
 \begin{pclisting}
 ~# docker run daphne/duck
@@ -1343,9 +1343,9 @@ CONTAINER ID     IMAGE           ...     NAMES
 
 Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
-Docker images can be created two different ways, either by creating a snapshot from a running container, or writing a recipe, called a \inline{Dockerfile}. First, we will demonstrate the snapshot technique.
+Docker images can be created two different ways. In the following section, we will see how to create a Docker image by taking a snapshot from a running container, then in Sec.~\ref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
 
-\subsection{Creating an image}\label{subsec:creating-an-image}
+\subsection{Creating an image snapshot}\label{subsec:creating-an-image-snapshot}
 
 When a Docker container writes to its own filesystem, those changes are not persisted unless committed to a new image. For example, start a container with an interactive shell:
 
@@ -1426,7 +1426,7 @@ total 0
 
 This is a convenient way to share an image with colleagues and collaborators. Anyone with access to the repository can pull this image and continue where we left off, or create another image based on top.
 
-\subsection{Writing an image recipe}
+\subsection{Writing an image recipe}\label{subsec:writing-an-image-recipe}
 
 The second way to create a Docker image is to write a recipe, called a \inline{Dockerfile}. A \inline{Dockerfile} is a text file that specifies the commands required to create a Docker image, typically by modifying an existing container image using a scripting interface. They also have special keywords (which are conventionally \inline{CAPITALIZED}), like \inline{FROM}, \inline{RUN}, \inline{ENTRYPOINT} and so on. For example, create a file called \inline{Dockerfile} with the following content:
 
@@ -1537,9 +1537,11 @@ Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
 
-If we later make a change to the Dockerfile, Docker will only need to rebuild the image starting from the first modified instruction. Suppose we add the line RUN echo "Change here!" to the bottom of our Dockerfile and rebuild:
+Should we later need to make a change to the Dockerfile, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
 
 \begin{pclisting}
+~# echo 'RUN echo "Change here!"' >> Dockerfile
+~# docker build -t user/duck:v4 .
 Sending build context to Docker daemon  2.048kB
 ...
 Step 6/7 : RUN chmod +x index.html && ./index.html
@@ -1554,9 +1556,9 @@ Successfully built c1ec64cef9c6
 Successfully tagged user/duck:v4
 \end{pclisting}
 
-If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time we built an image, this would be slow and inconvenient. Instead, Docker caches the layers which have not changed, and only reruns the minimum set of commands to rebuild our image. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{--no-cache} flag.
+If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{--no-cache} flag when building a \inline{Dockerfile}.
 
-What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker must also consider the build context. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
+What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also considers the build context. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
 \begin{filelisting}
 FROM daphne/duck
@@ -1564,7 +1566,7 @@ COPY duck.txt .
 RUN cat duck.txt
 \end{filelisting}
 
-Now if we put some text in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
+Now if we add some text in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
 
 \begin{pclisting}
 ~# echo "Make way for duckies!" > duck.txt && docker build -t my/duck:v5 .
@@ -1604,7 +1606,7 @@ Successfully tagged my/duck:v5
 
 A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more than is necessary to perform the next build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. Users should be conservative and only \inline{COPY} the minimum set of files needed to accomplish for the next step, the subsequent instructions will be cached and builds will complete much more quickly.
 
-Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts more sophisticated pattern matching features like regular expressions and negation. For more details, refer to the Docker documentation.
+Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{For more details, refer to: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
 
 \subsection{Multi-stage builds}
 
