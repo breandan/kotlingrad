@@ -1132,13 +1132,13 @@ Explore the meaning of derivatives in other calculi, and incremental compilation
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-Roughly speaking, during backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient ascent on a loss function with respect to the input(s) at a fixed parameter setting.
+Roughly speaking, during backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
 
 Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. The same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
 \section{Background}
 %
-\noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}$:
+\noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$:
 %
 \begin{equation} \tag{\ref{eq:recursive_parametric_eq} revisited}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
@@ -1150,42 +1150,37 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-In white box adversarial learning, we are given a fixed $\mathbf \Theta$ and our goal is to find:
+In the white box adversarial learning setting, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(x^{(i)};\mathbf\Theta)$ instead as simply $\mathbf{\hat P}(\mathbf x)$. Our goal is to find:
 %
 \begin{equation}
-\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^n \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
+\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^n \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
 \end{equation}
 %
- To do so, initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient ascent on the loss w.r.t. $\mathbf x$:
+ To do so, initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient descent on the loss w.r.t. $\mathbf x$:
 %
-\begin{equation}
-    \mathbf x \leftarrow \mathbf{\Phi}_{CS}\Big(\mathbf x + \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)\Big) \text{ where }
+\begin{equation}\label{eq:projected_gd}
+    \mathbf x \leftarrow \mathbf{\Phi}_{CS}\Big(\mathbf x - \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)\Big) \text{, where }
 	\mathbf{\Phi}_{CS}(\mathbf \phi') = \argmin{\mathbf \phi \in CS}\frac{1}{2}||\mathbf \phi - \mathbf \phi'||^2_2
 \end{equation}
 %
-Imagine a single test $T: \mathbb{R}^n \rightarrow \mathbb{B}$. Consider the following example:
+Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^n \times \mathbb{R} \rightarrow \mathbb{B}$:
 %
 \begin{equation} \label{eq:output_constraint_example}
-    T(\mathbf{\hat P}) = \forall \mathbf{x} \in [0, 1]^m, \mathbf{P}(\mathbf{x}) < \mathbf{C}
+    \mathbf T(\mathbf{\hat P}, \mathbf{x}) = \mathcal{L}(\mathbf{x}) < C
 \end{equation}
 %
-How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
+Where $C \in \mathbf{R}$. How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
 %
 \begin{equation}
-    D_T: \{ x^i \sim \mathbb{R}(0, 1) \mid P(x^i) \implies \neg T \}, maximize |D_T|
+    D_\mathbf T: \{ x \sim \mathbb{R}(0, 1) \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If we have no knowledge about the program implementation or its data distribution, $D_P$, we can do no better than random search~\citep{wolpert1997no}. However, if we have some information about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we could sample $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
+If we have no knowledge about the program implementation or its data distribution, $D_\mathbf\hat P$, we can do no better than random search~\citep{wolpert1997no}. However, if we have some information about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has previously been tested on common inputs, we could sample $x \sim \frac{1}{D_\mathbf\hat P}$ for inputs that are infrequent. If we knew how $\mathbf\hat P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. If we do not have access to the function directly, we can still use zeroth order optimization techniques to approximate the gradient. If we have access to the program, we can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ (assuming $\mathbf{\Theta}$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)$. Instead of minimizing the loss as we do in backpropogation, we want to maximize it. So the vanilla gradient update step in~\ref{eq:stochastic_grad_descent} becomes:
+Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. If we do not have access to the function directly, we can still use zeroth order optimization techniques to approximate the gradient. If we have access to the program, we can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
 %
-\begin{equation}
-    \mathbf{x} \leftarrow \mathbf{x} + \alpha \frac{1}{z} \nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)
-\end{equation}
-%
-We hypothesize that if the implementation of $P$ were flawed and a counterexample to~\ref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
 %
@@ -1198,19 +1193,18 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     \caption{Probabilistic Fuzzer}
     \label{alg:prob_fuzz}
     \begin{algorithmic}[1]
-        \Procedure{ProbFuzz}{$\mathbf{\hat P}(\mathbf\Theta)$, budget, S, shrink = False}
-        \State $D_T \gets []$
-        \State $count \gets 0$
-        \While{$count \le budget$}\Comment{Iterate until count exceeds our budget}
-            \State $\mathbf{x}^{(i)} \sim S$\Comment{Sample from S}
-            \If {$P(\mathbf{x}^{(i)})\implies \neg T$}
-                \State append DiffShrink$(\mathbf{\hat P}(\mathbf\Theta), \mathbf{x}^{(i)}, false)$ to $D_T$
-                \State \textbf{continue}
+        \Procedure{ProbFuzz}{$\mathcal L: \mathbb R^n \rightarrow \mathbb R$, $\mathcal S_n$, $\mathbf T: \mathbb R^n \times \mathbb R \rightarrow \mathbb B$, budget: $\mathbb Z^+$}
+        \State $D_\mathbf T \gets \{\}, j \gets 0$
+        \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
+            \State $\mathbf{x}_j \sim \mathcal S_n$\Comment{Sample from S}
+            \If {$\neg \mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$}
+                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
+            \Else
+                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
             \EndIf
-            \State append DiffShrink$(-\mathbf{\hat P}(\mathbf\Theta), \mathbf{x}^{(i)}, true)$ to $D_T$
-            \State $count++$
+            \State $j \gets j + 1$
         \EndWhile
-        \State \Return $D_T$
+        \State \Return $D_\mathbf T$
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
@@ -1219,25 +1213,28 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     \caption{Differential Shrinker}
     \label{alg:gd_shrink}
     \begin{algorithmic}[1]
-        \Procedure{DiffShrink}{$\mathbf{\hat P}(\mathbf\Theta)$, $\mathbf{x}^{(i)}$, passingStatus}
-        \State $n \gets 0$
-        \State $\mathbf{x}^{(i)}_n = \mathbf{x}^{(i)}$
-        \While {$n \leq C$ \textbf{and} $\neg converged$}
-            \State $n++$
-            \State $\mathbf{x}_{n}^{(i)}=\mathbf{x}_{n-1}^{(i)} - \alpha\nabla \mathbf{\hat P}(\mathbf\Theta)$
-            \If {$T\left(\mathbf{x}^{(i)}_n, \mathbf{\hat P}(\mathbf{x}^{(i)}_n;\mathbf\Theta)\right) \neq passingStatus$}
-                \State \Return $\mathbf{x}^{(i)}_n$
+        \Procedure{DiffShrink}{$\mathcal L: \mathbb R^n \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^n$, $\mathbf T: \mathbb R^n \times \mathbb R \rightarrow \mathbb B$}
+        \State $i \gets 1$
+        \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
+        \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
+            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\Big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x_{i-1}})\big)\Big)$ \Comment{PGD step (cf. Eq.~\ref{eq:projected_gd})}
+            \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_0$} \Comment{Boundary value was found.}
+                \State \Return $\{\mathbf{x}_{i-1}\}$
             \EndIf
-            \State $n++$
+            \State $i \gets i + 1$
         \EndWhile
-        \State \Return none
+        \If {$\neg t_0$} \Comment{If the initial guess was a failure, report most recent iterate.}
+            \State \Return $\{\mathbf x_i\}$
+        \Else \Comment{Otherwise, there was no test failure.}
+            \State \Return $\varnothing$
+        \EndIf
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
 
-Algorithm for finding test failures. First select a candidate input $\mathbf{x}^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i; \mathbf \Theta)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}^{i+1}$ from the initial sampling strategy $S$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
+Consider the following algorithm for finding test failures. First, we select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
 
-We could also sample from outside the feasible set and perform gradient descent over the objectives to perform the equivalent of "shrinking" from property based testing. TODO
+We hypothesize that if the implementation of $P$ were flawed and a counterexample to~\ref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
 
 %\section{Regression testing and forgetting}
 
