@@ -6,7 +6,9 @@
 \usepackage{ocr}
 \usepackage[T1]{fontenc}
 \usepackage{array}
-\usepackage{algorithm2e}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 \usepackage{amsmath}
 \usepackage{natbib}
 \usepackage{enumitem}
@@ -358,7 +360,7 @@ In this thesis, we explore several tools that facilitate the process of programm
 \begin{figure}
     \centering
     \includegraphics[width=0.70\textwidth]{waterfall_diagram.png}
-    \caption{Royce's original Waterfall model, originally intended to describe the software development process, but the same sequence can be found in most engineering disciplines. We use it to help guide our discussion and frame our work inside of this process model.\vspace{-10}}
+    \caption{Royce's original Waterfall model, originally intended to describe the software development process, but the same sequence can be found in most engineering disciplines. We use it to help guide our discussion and frame our work inside of this process model.\vspace{-10pt}}
     \label{fig:waterfall_model}
 \end{figure}
 
@@ -440,7 +442,7 @@ While valid, this approach has some disadvantages. First, most IDEs are already 
 
 \subsection{The Parser}\label{subsec:the-parser}
 
-One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are not well suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users while editing, re-parsing the entire document between edits would be expensive and unnecessary. In order to validate source code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
+One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users while editing, re-parsing the entire document between edits would be expensive and unnecessary. In order to validate source code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
 
 Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under modification. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools for IDEs and text editors, which must be able to provide rapid and specific feedback whilst the user is typing.
 
@@ -570,7 +572,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
 %
 \begin{equation}
     \begin{split}
-        \mathbf{\hat{f}}(\mathbf{x}) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\mathbf{\theta}^\intercal \mathbf{x}\right + \mathbf{b}) \\
+        \mathbf{\hat{f}}(\mathbf{x}) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\mathbf{\theta}^\intercal \mathbf{x} + \mathbf{b}\right) \\
         \forall \mathbf{x} \in \mathbb{I}_m, \ | \mathbf{\hat f}( \mathbf{x} ) - \mathbf{f} ( \mathbf{x} ) | < \epsilon
     \end{split}
 \end{equation}
@@ -751,7 +753,7 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}    &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
                 $\ln(A)$                                       &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
                $\log_b A$                                      & \texttt{a.log(b)}                                                              &  \texttt{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
-                $A^{b}$                                        & \texttt{a.pow(b)}                                                              &  \tettt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
+                $A^{b}$                                        & \texttt{a.pow(b)}                                                              &  \texttt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
 \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
 \begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
                $\nabla a$                                      &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
@@ -911,7 +913,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 }
 \end{mylisting}
 %
-PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test using finite differences:
+PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test with the finite difference method, which uses the equation $f'(x) \approx \frac{f(a+h)-f(a), h}$:
 %
 \begin{mylisting}[language=Kotlin, showstringspaces=false]
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
@@ -926,7 +928,7 @@ PBT will search the input space for two numerical values \inline{x0} and \inline
 }
 \end{mylisting}
 %
-There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. We plan to conduct a more thorough comparison of numerical accuracy and performance.
+There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
@@ -967,7 +969,7 @@ Currently, it is possible to represent functions where all inputs and outputs sh
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}. By doing so, we are able to define common functionality on the supertype.
+Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}. By doing so, we are able to define common functionality like subtraction and division on a supertype.
 
 \begin{mylisting}[caption={Most mathematical operations are composed of a small set of simple operators.}, language=Kotlin]
 interface Group<X: Group<X>> {
@@ -987,11 +989,11 @@ interface Field<X: Field<X>>: Group<X> {
 }
 \end{mylisting}
 
-The numeric tower allows us to define common behavior over abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras \footnote{ex. In order to calculate derivatives in a quaternion neural network.\citep{isokawa2003quaternion}}, one must simply extend the numeric tower and override the default implementation. Most common mathematical operations can be defined by composing a small set of primitive operations, which can then be symbolically differentiated.
+The numeric tower also allows us to define common behavior on abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras,~\footnote{ex. In order to calculate derivatives in a quaternion neural network.\citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined by composing a small set of primitive operations, which can later be differentiated in a generic fashion, rather than on an ad hoc basis.
 
 \section{Algebraic data types}\label{sec:adts}
 
-\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitates a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler enforces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
+\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler enforces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
 %
 \begin{mylisting}
 class Const<T: Fun<T>>(val number: Number) : Fun<T>()
@@ -1089,7 +1091,7 @@ One form of continuation, known as shift-reset a.k.a.\ delimited continuations, 
 
 \section{Comparison}\label{sec:comparison}
 
-Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain specific language}, thereby employing the host language's type system. Our approach is particularly well suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
+Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain specific language}, thereby employing the host language's type system. Our approach is particularly well-suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
 
 \begin{center}
 \begin{tabular}{lllllllll}
@@ -1117,24 +1119,26 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 \end{tabular}
 \end{center}
 
-\section{Future Work}\label{sec:future-work}
+\section{Future work}\label{sec:future-work}
 
-Allowing users to specify a matrix's structure in its type signature, (e.g. Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2008matrix}).
+Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2008matrix}).
 
-Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into \cite{makwana2018numlin}.
+Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into~\cite{makwana2018numlin}.
+
+Explore the meaning of derivatives in other calculi, and incremental compilation following~\citet{ehrhard2003differential, chen2012type,cai2014theory, kelly2016evolving}.
 
 \mediumrare{\chapter{Testing and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-Roughly speaking, during backpropogation we perform gradient descent of a differentiable function with respect to its parameters on a set of inputs. In adversarial testing, we do gradient ascent with respect to the inputs at a given parameter setting.
+Roughly speaking, during backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient ascent on a loss function with respect to the input(s) at a fixed parameter setting.
 
 Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. The same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
 \section{Background}
 %
-\noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$ as seen earlier:
+\noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}$:
 %
 \begin{equation} \tag{\ref{eq:recursive_parametric_eq} revisited}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
@@ -1171,11 +1175,11 @@ How can we find a set of inputs that break the test under a fixed computational 
     D_T: \{ x^i \sim \mathbb{R}(0, 1) \mid P(x^i) \implies \neg T \}, maximize |D_T|
 \end{equation}
 %
-If we have no information about the program implementation or its data distribution, $D_P$, we can do no better than random search~\citep{wolpert1997no}. However, if we know something about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we could sample $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
+If we have no knowledge about the program implementation or its data distribution, $D_P$, we can do no better than random search~\citep{wolpert1997no}. However, if we have some information about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has been tested on common inputs, we could sample $x \sim \frac{1}{D_P}$ for inputs that are infrequent. If we knew how $P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ (assuming $\mathbf{\Theta}$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)$. Instead of minimizing the loss, we want to maximize it. So the vanilla gradient update step in~\ref{eq:stochastic_grad_descent} becomes:
+Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. If we do not have access to the function directly, we can still use zeroth order optimization techniques to approximate the gradient. If we have access to the program, we can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ (assuming $\mathbf{\Theta}$ is fixed\footnote{In contrast with backpropogation, where the parameters are updated.}) is $\nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)$. Instead of minimizing the loss as we do in backpropogation, we want to maximize it. So the vanilla gradient update step in~\ref{eq:stochastic_grad_descent} becomes:
 %
 \begin{equation}
     \mathbf{x} \leftarrow \mathbf{x} + \alpha \frac{1}{z} \nabla_{\mathbf{x}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}; \mathbf{\Theta}), \mathbf{y}\big)
@@ -1190,48 +1194,48 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
 % \end{equation}
 %
 
-Consider Algorithm~\ref{alg:test_algo}.
-
 \begin{algorithm}
-    \SetKwInOut{Input}{Input}
-    \SetKwInOut{Output}{Output}
-
-    \Input{Program $P$, specification $T$, evaluation budget $Budget$}
-    \Output{$D_T$, the set of inputs which cause $P$ to fail on T}
-    $D_T$ = []\;
-    evalCount = 0\;
-    \While{evalCount \leq $Budget$} {
-    sample candidate input $x^i$ according to selection strategy S\;
-    \eIf{$P(x^i)\implies$ \neg T}{
-    append $x^i$ to D_T\;
-
-    }{
-    n = 0\;
-    $x^i_n = x^i$\;
-
-    \While{$n \leq C \land evalCount \leq Budget$ \land $\neg converged$} {
-    n++\;
-
-    $x_{n}^i=x_{n-1}^i - \alpha\frac{dP}{dx}$\;
-
-
-    \If{P(x^i_n) \implies T} {
-    append $x^i_n$ to D_T\;
-
-    break\;
-
-    }
-
-    evalCount++\;
-    }
-    }
-    evalCount++; i++\;
-    }
-
-    \caption{Algorithm for finding test failures. First select a candidate input $x^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $P$ and $T$ as input). If $P(x^i)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(P, x)$ with respect to $x$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $x^{i+1}$ from the initial sampling strategy $S$ to ensure each gradient descent trajectory will terminate before exhausting our budget.}
-    \label{alg:test_algo}
+    \caption{Probabilistic Fuzzer}
+    \label{alg:prob_fuzz}
+    \begin{algorithmic}[1]
+        \Procedure{ProbFuzz}{$\mathbf{\hat P}(\mathbf\Theta)$, budget, S, shrink = False}
+        \State $D_T \gets []$
+        \State $count \gets 0$
+        \While{$count \le budget$}\Comment{Iterate until count exceeds our budget}
+            \State $\mathbf{x}^{(i)} \sim S$\Comment{Sample from S}
+            \If {$P(\mathbf{x}^{(i)})\implies \neg T$}
+                \State append DiffShrink$(\mathbf{\hat P}(\mathbf\Theta), \mathbf{x}^{(i)}, false)$ to $D_T$
+                \State \textbf{continue}
+            \EndIf
+            \State append DiffShrink$(-\mathbf{\hat P}(\mathbf\Theta), \mathbf{x}^{(i)}, true)$ to $D_T$
+            \State $count++$
+        \EndWhile
+        \State \Return $D_T$
+        \EndProcedure
+    \end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}
+    \caption{Differential Shrinker}
+    \label{alg:gd_shrink}
+    \begin{algorithmic}[1]
+        \Procedure{DiffShrink}{$\mathbf{\hat P}(\mathbf\Theta)$, $\mathbf{x}^{(i)}$, passingStatus}
+        \State $n \gets 0$
+        \State $\mathbf{x}^{(i)}_n = \mathbf{x}^{(i)}$
+        \While {$n \leq C$ \textbf{and} $\neg converged$}
+            \State $n++$
+            \State $\mathbf{x}_{n}^{(i)}=\mathbf{x}_{n-1}^{(i)} - \alpha\nabla \mathbf{\hat P}(\mathbf\Theta)$
+            \If {$T\left(\mathbf{x}^{(i)}_n, \mathbf{\hat P}(\mathbf{x}^{(i)}_n;\mathbf\Theta)\right) \neq passingStatus$}
+                \State \Return $\mathbf{x}^{(i)}_n$
+            \EndIf
+            \State $n++$
+        \EndWhile
+        \State \Return none
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+Algorithm for finding test failures. First select a candidate input $\mathbf{x}^i$ according to sampling strategy $S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i; \mathbf \Theta)$ violates $T$, we can append $x^i$ to $D_T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}^{i+1}$ from the initial sampling strategy $S$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
 
 We could also sample from outside the feasible set and perform gradient descent over the objectives to perform the equivalent of "shrinking" from property based testing. TODO
 
@@ -1267,13 +1271,13 @@ In 2006, Linux introduced a variety of new kernel features for controlling group
 \begin{figure}
     \centering
     \includegraphics[width=0.70\textwidth]{vms_containers_emulators.png}
-    \caption{Virtualization is a very resource expensive proposition. Containerization is cheaper, as it shares a kernel with the host OS. Emulation allows us to emulate hardware as software. Any of these methods can be used in conjunction with any other method.\vspace{-10}}
+    \caption{Virtualization is a very resource expensive proposition. Containerization is cheaper, as it shares a kernel with the host OS. Emulation allows us to emulate hardware as software. Any of these methods can be used in conjunction with any other method.\vspace{-10pt}}
     \label{fig:vms_containers_emulators}
 \end{figure}
 
 \section{Containerization}\label{sec:containerization}
 
-One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well documented codebase can be a considerable challenge, especially in an academic setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
+One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well-documented codebase can be a considerable challenge, especially in an academic setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
 
 
 \begin{figure}[ht]
