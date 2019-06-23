@@ -12,10 +12,7 @@
 \usepackage{amsmath}
 \usepackage{natbib}
 \usepackage{enumitem}
-
-% Footnotes
-%\usepackage[symbol]{footmisc}
-%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage{graphicx}
 
 % Quotes
 \usepackage{epigraph}
@@ -66,6 +63,25 @@
     stringstyle={\color{ForestGreen}\ttfamily},
 }
 
+\lstdefinelanguage{shelll}{
+    keywords={docker},
+    sensitive=false,
+    otherkeywords={~#},
+    keywordstyle=[10]{\color{blue}},
+}
+
+\lstdefinelanguage{docker}{
+    keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+    keywordstyle=\color{blue}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=true,
+    comment=[l]{\#},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+
 %% Adjustments
 
 \lstdefinestyle{barelisting}{
@@ -76,22 +92,10 @@
     frame=single,
     tabsize=2,
     rulecolor=\color{black!30},
-    %title=\lstname,
-    %escapeinside={\%*}{*)},
     breaklines=true,
-    %breakatwhitespace=true,
-    framextopmargin=2pt,
-    framexbottommargin=2pt,
-    %extendedchars=false,
-    %keepspaces=true,
-    %moredelim=**[is]{@}{@},
     inputencoding=utf8
 }
 
-%\addtolength{\topmargin}{-1\baselineskip}
-%\addtolength{\textheight}{4\baselineskip}
-%\pretolerance = 2000
-%\tolerance = 5000   \hbadness = \tolerance
 \usepackage{lipsum}
 \tcbuselibrary{listings,breakable}
 
@@ -114,7 +118,8 @@
     enhanced jigsaw,
     breakable,
     listing only,
-    boxsep=-1.5pt,
+    top=-3pt,
+    bottom=-3pt,
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\scriptsize,
@@ -141,13 +146,20 @@
 }
 
 \newtcblisting{pclisting}[1][]{%
-enhanced jigsaw,
-breakable,
-listing only,
-boxsep=-1.5pt,
-underlay={%
-\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
-},
+    enhanced jigsaw,
+    breakable,
+    listing only,
+    boxsep=-1.5pt,
+    %listing options={
+    %        language=shelll,
+    %        basicstyle=\ttfamily\normalsize,
+    %        tabsize=2,
+    %        inputencoding=utf8,
+    %        #1
+    %    },
+    underlay={%
+    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop_icon.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+    },
     overlay first={
         \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
@@ -164,14 +176,23 @@ underlay={%
     },
 }
 
-    \newtcblisting{filelisting}[1][]{%
-enhanced jigsaw,
-breakable,
-listing only,
-boxsep=-1.5pt,
-underlay={%
-\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{file.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
-},
+\newtcblisting{filelisting}[1][]{%
+    enhanced jigsaw,
+    breakable,
+    listing only,
+    top=-5pt,
+    bottom=-5pt,
+    listing options={
+        language=docker,
+        basicstyle=\ttfamily\small,
+        numberstyle=\footnotesize,
+        tabsize=2,
+        breaklines=true,
+        inputencoding=utf8,
+    },
+    underlay={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{docker_icon.jpg}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+    },
     overlay first={
         \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
@@ -189,13 +210,13 @@ underlay={%
 }
 
 \newtcblisting{rpilisting}[1][]{%
-enhanced jigsaw,
-breakable,
-listing only,
-boxsep=-1.5pt,
-underlay={%
-\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
-},
+    enhanced jigsaw,
+    breakable,
+    listing only,
+    boxsep=-1.5pt,
+    underlay={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi_icon.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+    },
     overlay first={
         \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
@@ -215,7 +236,7 @@ underlay={%
 \def\inline{\lstinline[basicstyle=\ttfamily]}
 
 %% Packages utiles.
-\usepackage{graphicx,amssymb,subfigure,icomma}
+\usepackage{amssymb,subfigure,icomma}
 \usepackage[labelfont=bf, width=\linewidth]{caption}
 
 \usepackage{hyperref}  % Ajoute les hyperlien
@@ -765,7 +786,6 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \section{Shape safety}\label{sec:shape-safety}
 
 \noindent There are three broad strategies for handling shape errors in array programming: \\
-%
 \begin{enumerate}
     \item Hide the error somehow by implicitly reshaping or broadcasting arrays
     \item Announce the error at runtime, with a relevant message, e.g.\ \texttt{InvalidArgument}
@@ -1432,7 +1452,7 @@ This is a convenient way to share an image with colleagues and collaborators. An
 The second way to create a Docker image is to write a recipe, called a \inline{Dockerfile}. A \inline{Dockerfile} is a text file that specifies the commands required to create a Docker image, typically by modifying an existing container image using a scripting interface. They also have special keywords (which are conventionally \inline{CAPITALIZED}), like \inline{FROM}, \inline{RUN}, \inline{ENTRYPOINT} and so on. For example, create a file called \inline{Dockerfile} with the following content:
 
 \begin{filelisting}
-FROM daphne/duck       # Defines the base image
+FROM daphne/duck      # Defines the base image
 RUN touch new_file1   # new_file1 will be part of our snapshot
 CMD ls -l             # Default command run when container is started
 \end{filelisting}
