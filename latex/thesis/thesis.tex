@@ -1220,6 +1220,20 @@ Roughly speaking, during backpropogation we perform gradient descent on a differ
 
 Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. The same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
 
+\section{Fuzz Testing}
+
+Fuzz testing is a methodology which generates inputs.
+
+\subsection{Property-based Testing}
+
+Property-based testing is a fuzz testing mechanism.
+
+\subsection{Metamorphic testing}
+
+Metamorphic testing is a property-based testing methodology.
+
+It has been used to test driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest}.
+
 \section{Background}
 %
 \noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$:
@@ -1273,7 +1287,11 @@ Another strategy, independent of how candidate inputs are selected, is to use so
 % \end{equation}
 %
 
-\begin{algorithm}
+Consider algorithm~\ref{alg:prob_fuzz} for finding test failures. First, we select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
+
+We hypothesize that if the implementation of $P$ were flawed and a counterexample to~\ref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
+
+\begin{algorithm}[H]
     \caption{Probabilistic Fuzzer}
     \label{alg:prob_fuzz}
     \begin{algorithmic}[1]
@@ -1281,10 +1299,10 @@ Another strategy, independent of how candidate inputs are selected, is to use so
         \State $D_\mathbf T \gets \{\}, j \gets 0$
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
             \State $\mathbf{x}_j \sim \mathcal S_n$\Comment{Sample from S}
-            \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, gradient descent}
-                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
-            \Else \Comment{Outside feasible set, gradient ascent}
+            \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, gradient ascent}
                 \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
+            \Else \Comment{Outside feasible set, gradient descent}
+                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
             \EndIf
             \State $j \gets j + 1$
         \EndWhile
@@ -1293,7 +1311,7 @@ Another strategy, independent of how candidate inputs are selected, is to use so
     \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
+\begin{algorithm}[H]
     \caption{Differential Shrinker}
     \label{alg:gd_shrink}
     \begin{algorithmic}[1]
@@ -1303,22 +1321,19 @@ Another strategy, independent of how candidate inputs are selected, is to use so
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
             \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\Big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x_{i-1}})\big)\Big)$ \Comment{PGD step (cf. Eq.~\ref{eq:projected_gd})}
             \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_0$} \Comment{Boundary value was found.}
-                \State \Return $\{\mathbf{x}_{i-1}\}$
+                \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
             \EndIf
             \State $i \gets i + 1$
         \EndWhile
-        \If {$\neg t_0$} \Comment{If the initial guess was a failure, report most recent iterate.}
+        \If {$\neg t_0$} \Comment{If initial test state was failure, return most recent iterate.}
             \State \Return $\{\mathbf x_i\}$
-        \Else \Comment{Otherwise, there was no test failure.}
+        \Else \Comment{Otherwise, there was no test failure and return the empty set.}
             \State \Return $\varnothing$
         \EndIf
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
 
-Consider the following algorithm for finding test failures. First, we select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
-
-We hypothesize that if the implementation of $P$ were flawed and a counterexample to~\ref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
 
 %\section{Regression testing and forgetting}
 
@@ -1380,7 +1395,7 @@ While containerization simplifies the process of building and deploying applicat
     \label{fig:docker}
 \end{figure}
 
-\section{Docker and ROS}
+\section{ROS and Docker}
 
 Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
 
