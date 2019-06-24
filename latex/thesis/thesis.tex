@@ -63,13 +63,6 @@
     stringstyle={\color{ForestGreen}\ttfamily},
 }
 
-\lstdefinelanguage{shelll}{
-    keywords={docker},
-    sensitive=false,
-    otherkeywords={~#},
-    keywordstyle=[10]{\color{blue}},
-}
-
 \lstdefinelanguage{docker}{
     keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
     keywordstyle=\color{blue}\bfseries,
@@ -80,6 +73,19 @@
     stringstyle=\color{red}\ttfamily,
     morestring=[b]',
     morestring=[b]"
+}
+
+\lstdefinelanguage{BashPrompt}{%
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily,
+    literate={\$}{{\bfseries\textcolor{blue}{\$}}}1
+    {~}{{\bfseries\textcolor{blue}{\textasciitilde}}}1,
+}
+
+\lstdefinelanguage{DtsPrompt}{%
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily,
+    literate={dt> }{{\bfseries\textcolor{blue}{dt> }}}1
 }
 
 %% Adjustments
@@ -163,33 +169,57 @@
     enhanced jigsaw,
     breakable,
     listing only,
-    boxsep=-1.5pt,
-    %listing options={
-    %        language=shelll,
-    %        basicstyle=\ttfamily\normalsize,
-    %        tabsize=2,
-    %        inputencoding=utf8,
-    %        #1
-    %    },
+    boxsep=-1pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    right=-0.5pt,
+    listing options={
+            language=BashPrompt,
+            basicstyle=\ttfamily\small,
+            tabsize=2,
+            inputencoding=utf8,
+            #1
+        },
     underlay={%
-    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop_icon.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     },
     overlay first={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
     },
     overlay middle={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
     overlay last={
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
     underlay last={%
         \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+    },
+}
+
+\newtcblisting{dtslisting}[1][]{%
+    enhanced jigsaw,
+    unbreakable,
+    listing only,
+    boxsep=-1pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    left=20pt,
+    right=-0.5pt,
+    listing options={
+            language=DtsPrompt,
+            basicstyle=\ttfamily\small,
+            tabsize=2,
+            inputencoding=utf8,
+            #1
+        },
+    underlay={%
+    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     },
 }
 
@@ -208,7 +238,7 @@
         inputencoding=utf8,
     },
     underlay={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{docker_icon.jpg}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{docker_icon.jpg}} ([xshift=-10mm,yshift=-9mm]interior.north west);
     },
     overlay first={
         \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
@@ -233,9 +263,19 @@
     enhanced jigsaw,
     breakable,
     listing only,
-    boxsep=-1.5pt,
+    boxsep=-1pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    right=-0.5pt,
+    listing options={
+            language=BashPrompt,
+            basicstyle=\ttfamily\small,
+            tabsize=2,
+            inputencoding=utf8,
+            #1
+        },
     underlay={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi_icon.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     },
     overlay first={
         \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
@@ -1052,7 +1092,6 @@ When branching on the type of a sealed class, consumers must explicitly handle e
 %
 \begin{mylisting}
 sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
-
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
     // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
@@ -1170,7 +1209,7 @@ Allowing users to specify a matrix's structure in its type signature, (e.g.\ Sin
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into~\cite{makwana2018numlin}.
 
-Explore the meaning of derivatives in other calculi, and incremental compilation following~\citet{ehrhard2003differential, chen2012type,cai2014theory, kelly2016evolving}.
+Explore the meaning of derivatives in other calculi, and incremental compilation following~\citet{ehrhard2003differential, chen2012type, cai2014theory, kelly2016evolving}.
 
 \mediumrare{\chapter{Testing and validation}\label{ch:difftest}}
 
@@ -1242,10 +1281,10 @@ Another strategy, independent of how candidate inputs are selected, is to use so
         \State $D_\mathbf T \gets \{\}, j \gets 0$
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
             \State $\mathbf{x}_j \sim \mathcal S_n$\Comment{Sample from S}
-            \If {$\neg \mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$}
-                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
-            \Else
+            \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, gradient descent}
                 \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
+            \Else \Comment{Outside feasible set, gradient ascent}
+                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
             \EndIf
             \State $j \gets j + 1$
         \EndWhile
@@ -1347,6 +1386,10 @@ Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-
 
 The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
 
+\section{ROS Introduction}
+
+TODO
+
 \section{Docker Introduction}
 
 Suppose there is a program which is known to run on some computer. It would be nice to give another computer -- any computer with an internet connection -- a short string of ASCII characters, press \keys{\return}, and return to see that program running. Never mind where the program was built or what software happened to be running at the time. This may seem trivial, but is a monumental software engineering problem. Various package managers have attempted to solve this, but even when they work as intended, only support natively compiled binaries on operating systems with the same package manager.
@@ -1356,19 +1399,19 @@ Docker\footnote{The following tutorial uses Docker, but the workflow described i
 To install Docker itself, execute the following command on a POSIX-compliant shell of any Docker-supported platform:
 
 \begin{pclisting}
-~# curl -sSL https://get.docker.com/ | sh
+~$ curl -sSL https://get.docker.com/ | sh
 \end{pclisting}
 
 A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default Docker Hub repository:
 
 \begin{pclisting}
-~# docker pull daphne/duck
+~$ docker pull daphne/duck
 \end{pclisting}
 
 Every Docker image has a image ID, a name and a tag:
 
 \begin{pclisting}
-~# docker images
+~$ docker images
 REPOSITORY      TAG        IMAGE ID         CREATED       SIZE
 daphne/duck     latest     ea2f90g8de9e     1 day ago     869MB
 \end{pclisting}
@@ -1376,13 +1419,13 @@ daphne/duck     latest     ea2f90g8de9e     1 day ago     869MB
 To run a Docker container\footnote{When a Docker image is running, it is referred to as a \textit{container}.}, use the following command:
 
 \begin{pclisting}
-~# docker run daphne/duck
+~$ docker run daphne/duck
 \end{pclisting}
 
 The following command will verify the container is indeed running:
 
 \begin{pclisting}
-~# docker ps
+~$ docker ps
 CONTAINER ID     IMAGE           ...     NAMES
 52994ef22481     daphne/duck     ...     happy_hamster
 \end{pclisting}
@@ -1396,11 +1439,11 @@ Docker images can be created two different ways. In the following section, we wi
 When a Docker container writes to its own filesystem, those changes are not persisted unless committed to a new image. For example, start a container with an interactive shell:
 
 \begin{pclisting}
-~# docker run -it daphne/duck bash
+~$ docker run -it daphne/duck bash
 root@295fd7879184:/#
 \end{pclisting}
 
-Note the container ID -- \inline{295fd7879184}. If we make a change and exit the shell like so,
+Note the container ID: \inline{295fd7879184}. If we write to disk and leave the container,
 
 \begin{pclisting}
 root@295fd7879184:/# touch new_file && ls -l
@@ -1412,7 +1455,7 @@ root@295fd7879184:/# exit
 \inline{new_file} will not be persisted. If we re-run the same command again:
 
 \begin{pclisting}
-~# docker run -it daphne/duck bash
+~$ docker run -it daphne/duck bash
 root@18f13bb4571a:/# ls
 root@18f13bb4571a:/# touch new_file1 && ls -l
 total 0
@@ -1424,17 +1467,17 @@ It seems like \inline{new_file} has disappeared! Notice how the container ID (\i
 To see all containers on a Docker host, run the following command:
 
 \begin{pclisting}
-~# docker container ls -a
-CONTAINER ID  IMAGE        STATUS                           NAMES
-295fd7879184  daphne/duck  Exited (130) About a minute ago  merry_manatee
-18f13bb4571a  daphne/duck  Up 5 minutes                     shady_giraffe
-52994ef22481  daphne/duck  Up 10 minutes                    happy_hamster
+~$ docker container ls -a
+CONTAINER ID      IMAGE            STATUS             NAMES
+295fd7879184      daphne/duck      Exited (130)       merry_manatee
+18f13bb4571a      daphne/duck      Up 5 minutes       shady_giraffe
+52994ef22481      daphne/duck      Up 10 minutes      happy_hamster
 \end{pclisting}
 
 It appears \inline{295fd7879184} a.k.a. \inline{merry_manatee} survived, but it is no longer running. Whenever a container's main process (recall we ran \inline{merry_manatee} with \inline{bash}) finishes, the container will stop, but it will not cease to exist. In fact, we can resume the stopped container right where it left off:
 
 \begin{pclisting}
-~# docker start -a merry_manatee
+~$ docker start -a merry_manatee
 root@295fd7879184:/# ls -l
 total 0
 -rw-r--r-- 1 root root 0 May 21 20:52 new_file
@@ -1443,29 +1486,29 @@ total 0
 Nothing was lost! To verify this, we can check which other containers are running:
 
 \begin{pclisting}
-~# docker ps
-CONTAINER ID     IMAGE           ...     NAMES
-295fd7879184     daphne/duck     ...     merry_manatee
-18f13bb4571a     daphne/duck     ...     shady_giraffe
-52994ef22481     daphne/duck     ...     happy_hamster
+~$ docker ps
+CONTAINER ID       IMAGE             ...       NAMES
+295fd7879184       daphne/duck       ...       merry_manatee
+18f13bb4571a       daphne/duck       ...       shady_giraffe
+52994ef22481       daphne/duck       ...       happy_hamster
 \end{pclisting}
 
 Now suppose we would like to share the container \inline{shady_giraffe} with someone else. To do so, we must first snapshot the running container, or commit it to a new image with a name and a tag. This will create a checkpoint that we may later restore:
 
 \begin{pclisting}
-~# docker commit -m "forking Daphne's duck" shady_giraffe user/duck:v2
+~$ docker commit -m "forking daphne/duck" shady_giraffe user/duck:v2
 \end{pclisting}
 
 To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the Docker Hub registry:
 
 \begin{pclisting}
-~# docker push user/duck:v2
-~# docker images
+~$ docker push user/duck:v2
+~$ docker images
 REPOSITORY    TAG        IMAGE ID         CREATED          SIZE
 daphne/duck   latest     ea2f90g8de9e     1 day ago        869MB
 user/duck     v2         d78be5cf073e     2 seconds ago    869MB
-~# docker pull user/duck:v2
-~# docker run user/duck ls -l
+~$ docker pull user/duck:v2
+~$ docker run user/duck ls -l
 total 0
 -rw-r--r-- 1 root root 0 May 21 21:32 new_file1
 \end{pclisting}
@@ -1485,7 +1528,7 @@ CMD ls -l             # Default command run when container is started
 Now, to build the image, we can simply run:
 
 \begin{pclisting}
-~# docker build -t user/duck:v3 .
+~$ docker build -t user/duck:v3 .
 \end{pclisting}
 
 The `\inline{.}' indicates the same directory as the \inline{Dockerfile}. This should produce something like the following output:
@@ -1507,7 +1550,7 @@ Successfully tagged user/duck:v3
 The command, \inline{docker images} should display an image called \inline{user/duck:v3}:
 
 \begin{pclisting}
-~# docker images
+~$ docker images
 REPOSITORY    TAG        IMAGE ID         CREATED          SIZE
 daphne/duck   latest     ea2f90g8de9e     1 day ago        869MB
 user/duck     v2         d78be5cf073e     5 minutes ago    869MB
@@ -1517,7 +1560,7 @@ user/duck     v3         05a3bd381fc2     2 seconds ago    869MB
 This procedure is identical to the snapshot technique performed in Sec. ~\ref{subsec:creating-an-image}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
 
 \begin{pclisting}
-~# docker run -it user/duck:v3
+~$ docker run -it user/duck:v3
 total 0
 -rw-r--r-- 1 root root 0 May 21 21:35 new_file1
 \end{pclisting}
@@ -1525,7 +1568,7 @@ total 0
 Notice that as soon as we run the container, Docker will execute the \inline{ls -l} command as specified by the \inline{Dockerfile}, revealing that \inline{new_file1} was indeed stored in the image. However this default command can be overridden by supplying a custom command:
 
 \begin{pclisting}
-~# docker run -it user/duck:v3 [custom_command]
+~$ docker run -it user/duck:v3 [custom_command]
 \end{pclisting}
 
 \subsection{Layer Caching}
@@ -1534,16 +1577,17 @@ An important concept in Docker is the concept of layers. One way to think of a l
 
 \begin{filelisting}
 FROM daphne/duck
-RUN touch new_file1                             # Defines a new layer
-RUN mkdir config && mv new_file1 mkdir          # Layers can chain commands
-RUN apt-get update && apt-get install -y wget   # Install a dependency
-RUN wget https://get.your.app/install.sh        # Download a script
-RUN chmod +x install.sh && ./install.sh         # Run the script
+RUN touch new_file1                            # Defines a new layer
+RUN mkdir config && mv new_file1 mkdir         # Layers can chain commands
+RUN apt-get update && apt-get install -y wget  # Install a dependency
+RUN wget https://get.your.app/install.sh       # Download a script
+RUN chmod +x install.sh && ./install.sh        # Run the script
 \end{filelisting}
 
-To build this image, we can run the command \inline{docker build -t user/duck:v4 .}:
+To build this image, we can run the following command:
 
 \begin{pclisting}
+~$ docker build -t user/duck:v4 .
 Sending build context to Docker daemon  2.048kB
 Step 1/6 : FROM daphne/duck
 ---> cd6d8154f1e1
@@ -1586,8 +1630,8 @@ Successfully tagged user/duck:v4
 Should we later need to make a change to the Dockerfile, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
 
 \begin{pclisting}
-~# echo 'RUN echo "Change here!"' >> Dockerfile
-~# docker build -t user/duck:v4 .
+~$ echo 'RUN echo "Change here!"' >> Dockerfile
+~$ docker build -t user/duck:v4 .
 Sending build context to Docker daemon  2.048kB
 ...
 Step 6/7 : RUN chmod +x index.html && ./index.html
@@ -1615,7 +1659,7 @@ RUN cat duck.txt
 Now if we add some message in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
 
 \begin{pclisting}
-~# echo "Make way!" > duck.txt && docker build -t user/duck:v5 .
+~$ echo "Make way!" > duck.txt && docker build -t user/duck:v5 .
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM daphne/duck
 ---> cd6d8154f1e1
@@ -1633,8 +1677,8 @@ Successfully tagged user/duck:v5
 As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are not modified, these layers will be cached and Docker will not need to rebuild them. However if the contents of the file \inline{duck.txt} are subsequently modified, this will force a rebuild to occur. For example, if we append to the file and rebuild, only the last step will be executed:
 
 \begin{pclisting}
-~# echo "Thank you. Have a nice day!" >> duck.txt
-~# docker build -t user/duck:v5 .
+~$ echo "Thank you. Have a nice day!" >> duck.txt
+~$ docker build -t user/duck:v5 .
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM ubuntu
 ---> cd6d8154f1e1
@@ -1650,16 +1694,18 @@ Successfully built e8a1db712aee
 Successfully tagged user/duck:v5
 \end{pclisting}
 
-A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more than is necessary to perform the next build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. Users should be conservative and only \inline{COPY} the minimum set of files needed to accomplish for the next step, the subsequent instructions will be cached and builds will complete much more quickly.
+A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more files than are strictly necessary to perform the following build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. In order to maximize cache reusability and minimize rebuild time, users should be conservative and only \inline{COPY} the minimum set of files necessary to accomplish the following build step.
 
-Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{For more details, refer to: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
+% Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{Further details: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
+
+
 
 \subsection{Volume Sharing}
 
 There is a second method to put data into a container, that does not require baking it into the image directly. This method is usually preferred for files which are not essential for the build, but are required at runtime. It takes the following form:
 
 \begin{pclisting}
-~# docker run user/duck:v6 -v [host_volume]:[target_volume]
+~$ docker run user/duck:v6 -v [host_volume]:[target_volume]
 \end{pclisting}
 
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
@@ -1672,14 +1718,14 @@ CMD /bin/bash -c "/launch.sh"
 If we simply built and ran this \inline{Dockerfile}, we would encounter an error:
 
 \begin{pclisting}
-~# docker build -t user/duck:v6 && docker run user/duck:v6
+~$ docker build -t user/duck:v6 && docker run user/duck:v6
 bash: /launch.sh: No such file or directory
 \end{pclisting}
 
 Instead, when running the container, we need to share the volume via the Docker CLI:
 
 \begin{pclisting}
-~# echo -e '#!/bin/bash\necho Launching...' >> launch.sh && \
+~$ echo -e '#!/bin/bash\necho Launching...' >> launch.sh && \
    chmod 775 launch.sh && \
    docker run user/duck:v6 -v launch.sh:/launch.sh
 Launching...
@@ -1705,13 +1751,14 @@ COPY --from=template1 new_file1 new_file2
 
 FROM donald/duck as template3
 COPY --from=template2 new_file2 new_file3
+
 CMD ls -l
 \end{filelisting}
 
 Now we can build and run this image as follows:
 
 \begin{pclisting}
-~# docker build . -t user/duck:v4
+~$ docker build . -t user/duck:v4
 Sending build context to Docker daemon  2.048kB
 Step 1/6 : FROM user/duck:v3 as template1
 --- e3b75ef8ecc4
@@ -1729,12 +1776,12 @@ Removing intermediate container cb1b84277228
 ---> c7dc5dd63e77
 Successfully built c7dc5dd63e77
 Successfully tagged user/duck:v4
-~# docker run -it user/duck:v4
+~$ docker run -it user/duck:v4
 total 0
 -rw-r--r-- 1 root root 0 Jul  8 15:06 new_file3
 \end{pclisting}
 
-One application of multi-stage builds is compiling a dependency from its source code. In addition to all the source code, the compilation itself could have separate build dependencies and setup requirements, all of which are quite incidental to our ultimate goal - to build a single file. If we’re especially unlucky, we might end up with gigabytes of transitive dependencies to build a tiny binary file, and waste a lot of disk space or time cleaning up the mess. Multi-stage builds allow us to build the file, discard the unnecessary bits, copy it to a fresh layer, and move on with our life, unburdened by intermediate dependencies.
+One application of multi-stage builds is compiling a project dependency from its source code. In addition to all the source code, the compilation process could introduce gigabytes of build artifacts and transitive dependencies, just to build a single binary. Multi-stage builds allow us to build the file, and copy it to a fresh layer, unburdened by intermediate files.
 
 \section{Duckiebot Development using Docker}
 
@@ -1765,13 +1812,13 @@ The following workflow has been tested extensively on Linux hosts running Ubuntu
 Docker images can be cross-compiled by enclosing the ARM-specific portion of the \inline{Dockerfile} with the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} instructions. The following command can be used for deployment:
 
 \begin{pclisting}
-~# docker save TAG_NAME | ssh -C duckie@HOSTNAME docker load
+~$ docker save TAG_NAME | ssh -C duckie@HOSTNAME docker load
 \end{pclisting}
 
 Alternately, it is possible to build directly on ARM devices by creating a file named \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
 
 \begin{rpilisting}
-~# docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
+~$ docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
 \end{rpilisting}
 
 \subsection{ARM Emulation}
@@ -1781,7 +1828,7 @@ Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machin
 All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on a non-Mac x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
 \begin{pclisting}
-docker run ... --entrypoint=qemu3-arm-static YOUR_IMAGE [RUN_COMMAND]
+~$ docker run ... --entrypoint=qemu3-arm-static IMAGE [RUN_COMMAND]
 \end{pclisting}
 
 Here, \inline{RUN_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is an emulator provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
@@ -1791,7 +1838,7 @@ Here, \inline{RUN_COMMAND} may be a shell such as \inline{/bin/bash} or another 
 All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
 
 \begin{pclisting}
-~# docker -H DUCKEBOT_NAME run -d \
+~$ docker -H DUCKEBOT_NAME run -d \
    --name file-server \
    -v /data:/data \
    -p 8082:8082 \
@@ -1805,7 +1852,7 @@ To access this directory, visit the following URL: \inline{http://HOSTNAME:8082/
 The following image can be used to test the camera is working properly:
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT_NAME run -d \
+~$ docker -H DUCKIEBOT_NAME run -d \
    --privileged \
    --name picam \
    -v /data:/data \
@@ -1815,12 +1862,16 @@ The following image can be used to test the camera is working properly:
 
 Images are hosted at \inline{http://DUCKIEBOT_NAME:8081/image.jpg}
 
+\begin{dtslisting}
+dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
+\end{dtslisting}
+
 \subsection{Testing ROS}
 
 Run the base Duckietown Docker image, opening a shell:
 
 \begin{pclisting}
-~# docker -H HOSTNAME run -it \
+~$ docker -H HOSTNAME run -it \
    --name roscore \
    --privileged \
    --net host \
@@ -1830,7 +1881,7 @@ Run the base Duckietown Docker image, opening a shell:
 For GUI tools, run the following command:
 
 \begin{pclisting}
-~# nvidia-docker run -it --rm \
+~$ nvidia-docker run -it --rm \
    --name rosgui \
    --net host \
    --env ROS_MASTER_URI=http://DUCKIEBOT_IP:11311 \
@@ -1841,14 +1892,18 @@ For GUI tools, run the following command:
    rosindustrial/ros-robot-nvidia:kinetic
 \end{pclisting}
 
+\begin{dtslisting}
+dt> start_gui_tools DUCKIEBOT_NAME rqt_image_view
+\end{dtslisting}
+
 The above command opens a ROS shell that is set to connect to \inline{DUCKIEBOT}'s ROS Master. To test the ROS connection works, run \inline{roswtf}. To allow incoming X connections on GUI-enabled Linux host, run \inline{xhost +} outside Docker on the same computer.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.}
 
-\subsection{Testing the Joystick}
+\subsection{Remote control}
 
-The following container runs the joystick demo:
+The following container launches the joystick demo (USB joystick must be connected):
 
 \begin{pclisting}
-~# docker -H DUCKIEBOT run -d \
+~$ docker -H DUCKIEBOT_NAME run -d \
    --name joystick-demo \
    --privileged \
    -v /data:/data \
@@ -1856,17 +1911,43 @@ The following container runs the joystick demo:
    duckietown/rpi-duckiebot-joystick-demo:master18
 \end{pclisting}
 
+\begin{dtslisting}
+dt> duckiebot demo --demo_name joystick --duckiebot_name DUCKIEBOT_NAME
+\end{dtslisting}
+
+\begin{dtslisting}
+dt> dts duckiebot keyboard_control DUCKIEBOT_NAME
+\end{dtslisting}
+
 \subsection{Calibration}
 
 The following container will launch the extrinsic calibration procedure:
 
 \begin{pclisting}
-~# docker -H HOSTNAME run -it \
+~$ docker -H DUCKIEBOT_NAME run -it \
    --name calibration \
    --privileged \
    -v /data:/data \
    --net host \
    duckietown/rpi-duckiebot-calibration:master18
+\end{pclisting}
+
+\begin{dtslisting}
+dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
+\end{dtslisting}
+
+\begin{dtslisting}
+dt> duckiebot calibrate_intrinsics DUCKIEBOT_NAME
+\end{dtslisting}
+
+Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided. \inline{rpi-simple-server} can be launched to view the results in the web browser; users can also download all files from \inline{/data}. This is an easy way to view and download all calibration files and validation results.
+
+\begin{dtslisting}
+dt> duckiebot demo --demo_name base --duckiebot_name NAME
+\end{dtslisting}
+
+\begin{pclisting}
+~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_trim --TRIM
 \end{pclisting}
 
 Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided. \inline{rpi-simple-server} can be launched to view the results in the web browser; users can also download all files from \inline{/data}. This is an easy way to view and download all calibration files and validation results.
@@ -1876,7 +1957,24 @@ Passing \inline{-v /data:/data} is necessary so that all calibration settings wi
 Once calibrated, the Lane Following Demo can be launched as follows:
 
 \begin{pclisting}
-~# docker -H HOSTNAME run -it \
+~$ docker -H HOSTNAME run -it \
+   --name lanefollowing-demo \
+   --privileged \
+   -v /data:/data \
+   --net host \
+   duckietown/rpi-duckiebot-lanefollowing-demo:master18
+\end{pclisting}
+
+\begin{dtslisting}
+dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
+\end{dtslisting}
+
+\subsection{Lane Following Demo}
+
+Once calibrated, the Lane Following Demo can be launched as follows:
+
+\begin{pclisting}
+~$ docker -H HOSTNAME run -it \
    --name lanefollowing-demo \
    --privileged \
    -v /data:/data \
