@@ -103,6 +103,12 @@
     enhanced jigsaw,
     listing only,
     boxsep=-1.5pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    right=-0.5pt,
+    underlay={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    },
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\scriptsize,
@@ -118,8 +124,10 @@
     enhanced jigsaw,
     breakable,
     listing only,
-    top=-3pt,
-    bottom=-3pt,
+    boxsep=-1pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    right=-0.5pt,
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\scriptsize,
@@ -129,20 +137,26 @@
         inputencoding=utf8,
         #1
     },
+    underlay={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=4mm]{kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    },
     overlay first={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
     },
     overlay middle={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
     overlay last={
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
+    underlay last={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+    }
 }
 
 \newtcblisting{pclisting}[1][]{%
@@ -173,6 +187,9 @@
     overlay last={
         \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+    },
+    underlay last={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
     },
 }
 
@@ -207,6 +224,9 @@
         \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
+    underlay last={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+    }
 }
 
 \newtcblisting{rpilisting}[1][]{%
@@ -231,6 +251,9 @@
         \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
+    underlay last={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+    }
 }
 
 \def\inline{\lstinline[basicstyle=\ttfamily]}
@@ -786,6 +809,7 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \section{Shape safety}\label{sec:shape-safety}
 
 \noindent There are three broad strategies for handling shape errors in array programming: \\
+%
 \begin{enumerate}
     \item Hide the error somehow by implicitly reshaping or broadcasting arrays
     \item Announce the error at runtime, with a relevant message, e.g.\ \texttt{InvalidArgument}
@@ -989,7 +1013,7 @@ Currently, it is possible to represent functions where all inputs and outputs sh
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}. By doing so, we are able to define common functionality like subtraction and division on a supertype.
+Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}.
 
 \begin{mylisting}[caption={Most mathematical operations are composed of a small set of simple operators.}, language=Kotlin]
 interface Group<X: Group<X>> {
@@ -1009,7 +1033,7 @@ interface Field<X: Field<X>>: Group<X> {
 }
 \end{mylisting}
 
-The numeric tower also allows us to define common behavior on abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras,~\footnote{ex. In order to calculate derivatives in a quaternion neural network.\citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined by composing a small set of primitive operations, which can later be differentiated in a generic fashion, rather than on an ad hoc basis.
+The numeric tower also allows us to define common behavior such as subtraction and division on abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras,~\footnote{ex. In order to calculate derivatives in a quaternion neural network.\citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined by composing a small set of primitive operations, which can later be differentiated in a generic fashion, rather than on an ad hoc basis.
 
 \section{Algebraic data types}\label{sec:adts}
 
@@ -1028,6 +1052,7 @@ When branching on the type of a sealed class, consumers must explicitly handle e
 %
 \begin{mylisting}
 sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
+
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
     // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
