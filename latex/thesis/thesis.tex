@@ -298,6 +298,33 @@
 
 \def\inline{\lstinline[basicstyle=\ttfamily]}
 
+% Downloads Table
+\usepackage{pgfplots}
+\usepackage{filecontents}
+\usetikzlibrary{pgfplots.dateplot}
+
+\begin{filecontents}{hatchery_downloads.csv}
+Category,Downloads
+2017-12-01,25
+2018-01-01,42
+2018-02-01,64
+2018-03-01,51
+2018-04-01,37
+2018-05-01,51
+2018-06-01,64
+2018-07-01,829
+2018-08-01,674
+2018-09-01,930
+2018-10-01,861
+2018-11-01,718
+2018-12-01,835
+2019-01-01,805
+2019-02-01,1019
+2019-03-01,1707
+2019-04-01,1379
+2019-05-01,790
+\end{filecontents}
+
 %% Packages utiles.
 \usepackage{amssymb,subfigure,icomma}
 \usepackage[labelfont=bf, width=\linewidth]{caption}
@@ -508,8 +535,42 @@ All great software has a secret recipe: software gets better when its authors us
 
 In this chapter we will discuss the design and implementation of an integrated development environment (IDE) for building intelligent robotic software. Modern robots are increasingly driven by systems which learn and improve over time. Most researchers would agree that modern robotic systems have not yet achieved biologically competitive sensorimotor capabilities and most intelligent systems are not physically embodied. However, it is our view that any closed-loop control system that is not explicitly programmed to perform a specific task, but which learns it from experience is an \textit{intelligent system}. Furthermore, any closed-loop system with physical motors is a \textit{robotic system}. While research has demonstrated successful applications in both areas separately, it is widely believed the integration of intelligent systems in robotics will be tremendously fruitful when fully realized.
 
-Hatchery is a tool designed to assist programmers writing robotics applications with ROS middleware. At the time of its release, \href{https://github.com/duckietown/hatchery}{Hatchery} was the first ROS plugin for the IntelliJ Platform \footnote{A language-agnostic platform based on popular IDE for C/C++, Python and Android development}, and one year later, is also the most widely used with close to 10,000 downloads. While the idea is simple, its prior absence and subsequent adoption suggests there is unmet demand for such tools in the development of intelligent software systems, particularly in robotics where the system is highly specialized.
+Hatchery is a tool designed to assist programmers writing robotics applications using the ROS middleware. At the time of its release, \href{https://github.com/duckietown/hatchery}{Hatchery} was the first ROS plugin for the IntelliJ Platform \footnote{An IDE platform for C/C++, Python and Android development}, and today, is the most widely used with over 10,000 unique downloads. While the idea is simple, its prior absence and subsequent adoption suggests there is unmet demand for such tools in the development of intelligent software systems, particularly in domain-specific applications like robotics. The development toolchain primarily consists of command line tools.
+%
 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar, ymin=0,
+    ylabel=Downloads,
+    date coordinates in=x,
+    xmin=2017-12-01,
+    xmax=2019-06-01,
+    xtick=data,
+    xticklabel style={
+        rotate=70,
+        anchor=near xticklabel,
+    },
+    xticklabel=\year-\month,
+    nodes near coords,
+    nodes near coords align={vertical},
+    height=0.25\textwidth,
+    width=0.95\textwidth,
+    enlarge x limits=0.03,
+    axis x line*=bottom,
+    axis y line*=left,
+    tick pos=left,
+    compat=newest,
+]
+\addplot table[col sep=comma, x=Category,y=Downloads]{hatchery_downloads.csv};
+\end{axis}
+\node[above,font=\large\bfseries] at (current bounding box.north) {Unique Downloads of Hatchery};
+\end{tikzpicture}
+\caption{Unique downloads of Hatchery between the time of its release and now.}
+\label{fig:hatchery_downloads}
+\end{figure}
+%
 \section{Software architecture for robotics application}
 
 The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but also includes a set of community-developed libraries and graphical tools for building robotics applications. ROS is not an operating system (OS) in the traditional sense, but it does offer OS-like functionality such as shared memory and inter-process communication. Unlike pure message-oriented systems like DDS and ZMQ, in addition to the communication infrastructure, ROS provides specific APIs for building decentralized robotic systems, particularly those which are capable of mobility. This includes standard libraries for serializing and deserializing geometric data, coordinate frames, maps, sensor messages, and imagery.
@@ -520,9 +581,30 @@ The ROS middleware provides several language front-ends for polyglot programming
 
 \section{Prerequisities}
 
+To simply run the tool, users should have the following software dependencies:
+
+\begin{enumerate}
+    \item MacOS or Debian Linux
+    \item Robot Operating System (Electric Emys or later)
+    \item Java SE (JRE 8+)
+\end{enumerate}
+
 To build an IDE, a few prerequisites are necessary. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, using IDE\textsubscript{0}, modify and compile the source code. Finally, run the compiled artifact, which becomes IDE\textsubscript{1}. Iterate as necessary.
 
 While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. Since most plugins are small by comparison, modern IDEs have adopted a modular design, which allows them to load certain packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load such a plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
+
+ROS users can use the following command to open a ROS project:
+
+\begin{pclisting}
+~$ git clone https://github.com/duckietown/hatchery && cd hatchery && \
+   ./gradlew runIde [-Project="<ABSOLUTE_PATH_TO_ROS_PROJECT>"]
+\end{pclisting}
+
+Duckietown users can simply use \inline{dts}, the Duckietown Shell:
+
+\begin{dtslisting}
+dt> hatchery
+\end{dtslisting}
 
 \subsection{The Parser}\label{subsec:the-parser}
 
@@ -530,7 +612,7 @@ One of the most important and unappreciated components of an IDE is the parser. 
 
 Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under modification. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools for IDEs and text editors, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-We can parse URDF, package and launch XML, and srv files.
+Hatchery can parse URDF, package and launch XML, and \inline{.srv} files.
 
 \subsection{Refactoring}\label{subsec:refactoring}
 
@@ -1983,19 +2065,6 @@ Once calibrated, the Lane Following Demo can be launched as follows:
 \begin{dtslisting}
 dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
-
-\subsection{Lane Following Demo}
-
-Once calibrated, the Lane Following Demo can be launched as follows:
-
-\begin{pclisting}
-~$ docker -H HOSTNAME run -it \
-   --name lanefollowing-demo \
-   --privileged \
-   -v /data:/data \
-   --net host \
-   duckietown/rpi-duckiebot-lanefollowing-demo:master18
-\end{pclisting}
 
 \section{Retrospective}
 
