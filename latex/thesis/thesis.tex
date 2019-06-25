@@ -33,8 +33,9 @@
 \newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}}
 \newcommand{\xmark}{\textcolor{red}{\ding{55}}}
 
-\newcommand{\mediumwell}[1]{\textcolor{green}{#1}}
-\newcommand{\medium}[1]{\textcolor{yellow}{#1}}
+\newcommand{\welldone}[1]{\textcolor{green}{#1}}
+\newcommand{\mediumwell}[1]{\textcolor{blue}{#1}}
+\newcommand{\medium}[1]{\textcolor{cyan}{#1}}
 \newcommand{\mediumrare}[1]{\textcolor{orange}{#1}}
 \newcommand{\rare}[1]{\textcolor{red}{#1}}
 \newcommand{\argmax}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{max}}\;}
@@ -443,7 +444,7 @@ Category,Downloads
 \cleardoublepage
 \pagenumbering{arabic}
 
-\mediumwell{\chapter{Introduction}\label{ch:introduction}}
+\welldone{\chapter{Introduction}\label{ch:introduction}}
 
 \setlength{\epigraphwidth}{0.85\textwidth}
 \epigraph{There is a race between the increasing complexity of the systems we build and our ability to develop intellectual tools for understanding their complexity. If the race is won by our tools, then systems will eventually become easier to use and more reliable. If not, they will continue to become harder to use and less reliable for all but a relatively small set of common tasks. Given how hard thinking is, if those intellectual tools are to succeed, they will have to substitute calculation for thought.}{\begin{flushright}--Leslie Lamport\end{flushright}}
@@ -527,9 +528,9 @@ There is a second component to software reproducibility of intelligent systems, 
 
 \subsection{Case Study}\label{subsec:case-study}
 
-All great software has a secret recipe: software gets better when its authors use the product. In the best case, the authors are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find engineers who are so invested, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice has been employed for public relations, but is a very effective mechanism for building self-improving cybernetic systems. It is also an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (Chapter~\ref{ch:hatchery}), containing Kotlin$\nabla$ code (Chapter~\ref{ch:kotlingrad}), tested using adversarial fuzz testing (Chapter~\ref{ch:difftest}), and which is built and maintained using the Docker stack (Chapter~\ref{ch:ducker}).
+All great software has a secret recipe: software gets better when its authors use the product. In the best case, the authors are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find engineers who are so invested, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice is an effective mechanism for building self-improving cybernetic systems and an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (Chapter~\ref{ch:hatchery}), containing Kotlin$\nabla$ code (Chapter~\ref{ch:kotlingrad}), tested using adversarial fuzz testing (Chapter~\ref{ch:difftest}), and which is built and maintained using the Docker stack (Chapter~\ref{ch:ducker}).
 
-\mediumrare{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
+\medium{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J.C.R. \citet{licklider1960man}, \textit{Man-Computer Symbiosis}\end{flushright}}
 
@@ -579,6 +580,10 @@ A ROS application consists of several components, including the source code, con
 
 The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\citep{Areserio54:online}. Source code for a typical ROS application will include a mixture of C/C++ and Python code, roughly corresponding to the language preferences in the robotics and machine learning communities. Hatchery supports most common language front-ends for ROS, including Java, Python, C/C++, and several others, through the IntelliJ Platform. By targeting an IDE platform with support for polyglot programming, we are able to focus on language-agnostic features for the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
 
+\section{ROS Introduction}
+
+TODO
+
 \section{Prerequisities}
 
 To simply run the tool, users should have the following software dependencies:
@@ -589,7 +594,7 @@ To simply run the tool, users should have the following software dependencies:
     \item Java SE (JRE 8+)
 \end{enumerate}
 
-To build an IDE, a few prerequisites are necessary. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, using IDE\textsubscript{0}, modify and compile the source code. Finally, run the compiled artifact, which becomes IDE\textsubscript{1}. Iterate as necessary.
+To build an IDE, a few prerequisites are necessary. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, using IDE\textsubscript{0}, to modify, compile and run the source code, which becomes IDE\textsubscript{1}. Iterate as necessary.
 
 While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. Since most plugins are small by comparison, modern IDEs have adopted a modular design, which allows them to load certain packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load such a plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
 
@@ -648,7 +653,7 @@ Modern programming tools support a mix of hypertext and simple graphical models,
 
 Detecting and managing ROS installations.
 
-\mediumwell{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
+\welldone{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
 \setlength{\epigraphwidth}{0.7\textwidth}
 \epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \textit{The Calculi of Lambda Conversion}\end{flushright}}
@@ -818,7 +823,7 @@ fun dot(l1, l2) {
         \\
         \hline
     \end{tabular}
-    \caption{Two programs, both implementing the function $f(l_1, l_2) = l_1 \cdot l_2$.}
+    \caption{Two equivalent programs, both implementing the function $f(l_1, l_2) = l_1 \cdot l_2$.}
     \label{tab:1}
 \end{table*}
 
@@ -1293,28 +1298,28 @@ Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016
 
 Explore the meaning of derivatives in other calculi, and incremental compilation following~\citet{ehrhard2003differential, chen2012type, cai2014theory, kelly2016evolving}.
 
-\mediumrare{\chapter{Testing and validation}\label{ch:difftest}}
+\medium{\chapter{Testing and validation}\label{ch:difftest}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-Roughly speaking, during backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
+During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
 
-Neural networks and differentiable programming have provided a powerful set of optimization tools for training learning algorithms. However, these methods are often brittle to small variations in the input space, and have difficulty with generalization. The same techniques used for probing the failure modes of neural networks can be applied to adversarial test case generation for traditional programs.
+Neural network research has yielded a powerful set of general-purpose gradient-based optimizers. Yet the adversarial learning literature has shown neural networks are susceptible to pathological inputs, and trained models are notoriously hard to transfer to new domains. But the same techniques used to probe the failure modes of neural networks can be employed for automated testing of classical programs.
+
+In this chapter, we explore the intersection between adversarial learning and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
 
 \section{Fuzz Testing}
 
-Fuzz testing is a methodology which generates inputs.
+Fuzz testing is an automated software testing methodology which automatically generates test inputs in order to break a known function.
 
 \subsection{Property-based Testing}
 
-Property-based testing is a fuzz testing mechanism.
+Property-based testing is a fuzz testing mechanism which relies on properties. These properties must hold for all outputs.
 
 \subsection{Metamorphic testing}
 
-Metamorphic testing is a property-based testing methodology.
-
-It has been used to test driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest}.
+Metamorphic testing is a property-based testing methodology, which relies metamorphic relations. It has been used to test driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest}.
 
 \section{Background}
 %
@@ -1423,7 +1428,7 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
 
 %Regular regression testing can provide diagnostics about the behavior of intelligent systems.
 
-\mediumrare{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
+\mediumwell{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``As long as there were no machines, programming was no problem at all; when we had a few weak computers, programming became a mild problem, and now we have gigantic computers, programming has become an equally gigantic problem. In this sense the electronic industry has not solved a single problem, it has only created them, it has created the problem of using its products.''}{\begin{flushright}--Edsger W. \citet{dijkstra1972humble}, \textit{The humble programmer}\end{flushright}}
@@ -1482,10 +1487,6 @@ While containerization simplifies the process of building and deploying applicat
 Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
 
 The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
-
-\section{ROS Introduction}
-
-TODO
 
 \section{Docker Introduction}
 
