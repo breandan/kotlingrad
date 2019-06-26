@@ -1485,6 +1485,16 @@ Docker containers are sandboxed runtime environments that are portable, reproduc
 
 While containerization simplifies the process of building and deploying applications considerably, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier.
 
+\subsection{Iconography}
+
+In this chapter, we use the following iconography to denote: \\
+%
+\begin{enumerate}
+\item[] \inlineimg{laptop_icon.png} &  Either commands to be run on a laptop, or ouput received thereof. \\
+\item[] \inlineimg{docker_icon.jpg} &  Either \inline{Dockerfile} or Docker Compose syntax. \\
+\item[] \inlineimg{raspi_icon.png}  &  Commands which should be run on a Raspberry Pi. \\
+\item[] \inlineimg{duckietown.png}  &  Duckietown Shell (\inline{dts}) commands.
+\end{enumerate}
 
 \section{Docker Introduction}
 
@@ -1914,16 +1924,6 @@ Furthermore, we assume the following software dependencies have been installed o
 \end{enumerate}
 
 The following workflow has been tested extensively on Linux hosts running Ubuntu 16.04 (and to a lesser extent Mac OS X and VMs). No other dependencies are assumed or required.
-
-\subsection{Iconography}
-
-In this section, we use the following iconography to denote:
-
-\begin{enumerate}
-    \item[] \inlineimg{laptop_icon.png} Either commands to be run on a laptop, or ouput received thereof.
-    \item[] \inlineimg{raspi_icon.png} Commands which should be run on a Raspberry Pi.
-    \item[] \inlineimg{duckietown.png} Duckietown Shell (\inline{dts}) commands.
-\end{enumerate}
 
 \subsection{Build and deployment}
 
