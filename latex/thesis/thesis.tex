@@ -636,7 +636,7 @@ The dominant medium for programming today is still ASCII-based, but computers st
 \begin{figure}
     \centering
     \includegraphics[width=0.90\textwidth]{progress_in_program.png}
-    \caption{\textit{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}}
+    \caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
     \label{fig:evolution_of_programming}
 \end{figure}
 
@@ -645,7 +645,7 @@ Modern programming tools support a mix of hypertext and simple graphical models,
 \begin{figure}
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
-    \caption{\textit{Hatchery's graphical user interface.}}
+    \caption{Hatchery's graphical user interface.}
     \label{fig:hatchery_gui}
 \end{figure}
 
@@ -793,7 +793,7 @@ The mathematical notion of function composition is a first-class citizen in func
 
 For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{tab:1}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
-\begin{table*}[t]
+\begin{figure}[t]
     \centering
     \begin{tabular}{|l|l|}
         \hline
@@ -824,8 +824,8 @@ fun dot(l1, l2) {
         \hline
     \end{tabular}
     \caption{Two equivalent programs, both implementing the function $f(l_1, l_2) = l_1 \cdot l_2$.}
-    \label{tab:1}
-\end{table*}
+    \label{fig:fp_vs_ip}
+\end{figure}
 
 Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed to form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based approaches like TensorFlow and Theano.
 
@@ -1264,7 +1264,7 @@ One form of continuation, known as shift-reset a.k.a.\ delimited continuations, 
 
 Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain specific language}, thereby employing the host language's type system. Our approach is particularly well-suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
 
-\begin{center}
+\begin{figure}
 \begin{tabular}{lllllllll}
     Framework &
     Language &
@@ -1288,7 +1288,8 @@ Eclipse DL4J       & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xma
 Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
 Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
 \end{tabular}
-\end{center}
+\caption{Comparison of AD libraries. \wmark: Work in progress.}
+\end{figure}
 
 \section{Future work}\label{sec:future-work}
 
