@@ -297,6 +297,16 @@
     }
 }
 
+\newcommand*{\inlineimg}[1]{%
+    \raisebox{-.3\baselineskip}{%
+    \includegraphics[
+        height=\baselineskip,
+        width=\baselineskip,
+        keepaspectratio,
+    ]{#1}%
+    }%
+}
+
 \def\inline{\lstinline[basicstyle=\ttfamily]}
 
 % Downloads Table
@@ -1436,7 +1446,7 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
 
 In this chapter, we will discuss the challenges of software reproducibility and how best practices in software engineering such as continuous integration and containers can help researchers mitigate the variability associated with building and running software. Our work focuses on computational determinism, and does not consider the variability of distributional shift or related statistical notions of variation.
 
-In order to address the issue of software reproducibility, we constructed a set of tools and development workflows that draw on best practices in software engineering. These tools are primarily built around containerization, a widely adopted virtualization technology in the software industry. In order to lower the barrier of entry for developers and minimize variability across hardware platforms, we provide a state-of-the-art container infrastructure based on Docker~\citep{merkel2014docker}, one popular container engine. Docker allows us to construct versioned deployment artifacts that represent the entire filesystem, and manages resource constraints via a sandboxed runtime environment.
+In order to address the issue of software reproducibility, we constructed a set of tools and development workflows that draw on best practices in software engineering. These tools are primarily built around containerization, a widely adopted virtualization technology in the software industry. In order to lower the barrier of entry for developers to become productive contributors and minimize variability across hardware platforms, we provide a state-of-the-art container infrastructure based on Docker~\citep{merkel2014docker}, one popular container engine. Docker allows us to construct versioned deployment artifacts that represent the entire filesystem, and manages resource constraints via a sandboxed runtime environment.
 
 \section{Dependency management}\label{sec:dependency-management}
 
@@ -1475,19 +1485,6 @@ Docker containers are sandboxed runtime environments that are portable, reproduc
 
 While containerization simplifies the process of building and deploying applications considerably, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier.
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
-    \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
-    \caption{Container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
-    \label{fig:docker}
-\end{figure}
-
-\section{ROS and Docker}
-
-Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
-
-The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on all target architectures. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only build ARM artifacts and use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution with built-in support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container.
 
 \section{Docker Introduction}
 
@@ -1797,8 +1794,6 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 
 % Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{Further details: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
 
-
-
 \subsection{Volume Sharing}
 
 There is a second method to put data into a container, that does not require baking it into the image directly. This method is usually preferred for files which are not essential for the build, but are required at runtime. It takes the following form:
@@ -1882,6 +1877,20 @@ total 0
 
 One application of multi-stage builds is compiling a project dependency from its source code. In addition to all the source code, the compilation process could introduce gigabytes of build artifacts and transitive dependencies, just to build a single binary. Multi-stage builds allow us to build the file, and copy it to a fresh layer, unburdened by intermediate files.
 
+\section{ROS and Docker}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
+    \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
+    \caption{Container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
+    \label{fig:docker}
+\end{figure}
+
+Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
+
+The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
+
 \section{Duckiebot Development using Docker}
 
 Software development for the Duckietown platform requires the following physical objects:
@@ -1906,6 +1915,16 @@ Furthermore, we assume the following software dependencies have been installed o
 
 The following workflow has been tested extensively on Linux hosts running Ubuntu 16.04 (and to a lesser extent Mac OS X and VMs). No other dependencies are assumed or required.
 
+\subsection{Iconography}
+
+In this section, we use the following iconography to denote:
+
+\begin{enumerate}
+    \item[] \inlineimg{laptop_icon.png} Either commands to be run on a laptop, or ouput received thereof.
+    \item[] \inlineimg{raspi_icon.png} Commands which should be run on a Raspberry Pi.
+    \item[] \inlineimg{duckietown.png} Duckietown Shell (\inline{dts}) commands.
+\end{enumerate}
+
 \subsection{Build and deployment}
 
 Docker images can be cross-compiled by enclosing the ARM-specific portion of the \inline{Dockerfile} with the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} instructions. The following command can be used for deployment:
@@ -1920,11 +1939,17 @@ Alternately, it is possible to build directly on ARM devices by creating a file 
 ~$ docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
 \end{rpilisting}
 
-\subsection{ARM Emulation}
+\subsection{Multi-architecture support}
 
-Note that ARM-specific \inline{Dockerfile}s will not build on non-Mac x86 machines, and attempting to build one will cause an error on Docker Hub. However, ARM-specific \inline{Dockerfile} can easily be ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
+As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build on x86 machines\footnote{With the exception of the Mac OS Docker client, which offers multi-architecture support. Further details on multiarch support can be found here: \url{https://docs.docker.com/docker-for-mac/multi-arch/} For }, and attempting to build one will produce the following error when running \inline{docker build}:
 
-All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on a non-Mac x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
+\begin{pclisting}
+standard_init_linux.go:175: exec user process caused "exec format error"
+\end{pclisting}
+
+In order to circumvent this restriction, ARM-specific \inline{Dockerfile} can ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
+
+All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
 \begin{pclisting}
 ~$ docker run ... --entrypoint=qemu3-arm-static IMAGE [RUN_COMMAND]
@@ -1944,7 +1969,7 @@ All persistent data is stored in \inline{/data}. To serve this directory, a web 
    duckietown/rpi-simple-server:master18
 \end{pclisting}
 
-To access this directory, visit the following URL: \inline{http://HOSTNAME:8082/}
+To access this directory, visit the following URL: \url{http://HOSTNAME:8082/}
 
 \subsection{Testing the camera}
 
@@ -1959,7 +1984,7 @@ The following image can be used to test the camera is working properly:
    duckietown/rpi-docker-python-picamera:master18
 \end{pclisting}
 
-Images are hosted at \inline{http://DUCKIEBOT_NAME:8081/image.jpg}
+By default, images will be hosted at: \url{http://DUCKIEBOT_NAME:8081/image.jpg}
 
 \begin{dtslisting}
 dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
