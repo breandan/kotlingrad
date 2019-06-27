@@ -1852,10 +1852,8 @@ FROM user/duck:v3 as template1
 
 FROM daphne/duck as template2
 COPY --from=template1 new_file1 new_file2
-
 FROM donald/duck as template3
 COPY --from=template2 new_file2 new_file3
-
 CMD ls -l
 \end{filelisting}
 
@@ -1992,7 +1990,7 @@ dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
 
 \subsection{Testing ROS}
 
-Run the base Duckietown Docker image, opening a shell:
+Run the base Docker image
 
 \begin{pclisting}
 ~$ docker -H HOSTNAME run -it \
@@ -2002,10 +2000,12 @@ Run the base Duckietown Docker image, opening a shell:
    duckietown/rpi-ros-kinetic-roscore:master18
 \end{pclisting}
 
-For GUI tools, run the following command:
+\subsection{GUI Tools}
+
+For GUI tools, run the following command on Linux:
 
 \begin{pclisting}
-~$ nvidia-docker run -it --rm \
+~$ docker run -it --rm \
    --name rosgui \
    --net host \
    --env ROS_MASTER_URI=http://DUCKIEBOT_IP:11311 \
@@ -2013,14 +2013,14 @@ For GUI tools, run the following command:
    --env="DISPLAY" \
    --env="QT_X11_NO_MITSHM=1" \
    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-   rosindustrial/ros-robot-nvidia:kinetic
+   duckietown/rpi-gui-tools
 \end{pclisting}
 
 \begin{dtslisting}
 dt> start_gui_tools DUCKIEBOT_NAME rqt_image_view
 \end{dtslisting}
 
-The above command opens a ROS shell that is set to connect to \inline{DUCKIEBOT}'s ROS Master. To test the ROS connection works, run \inline{roswtf}. To allow incoming X connections on GUI-enabled Linux host, run \inline{xhost +} outside Docker on the same computer.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.}
+The above command opens a ROS shell that is set to connect to \inline{DUCKIEBOT}'s ROS master node. To test the ROS connection works, run \inline{roswtf}. To allow incoming X connections on GUI-enabled Linux host, run \inline{xhost +} outside Docker on the same computer.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.}
 
 \subsection{Remote control}
 
