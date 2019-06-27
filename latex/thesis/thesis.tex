@@ -1804,7 +1804,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 
 % Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{Further details: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
 
-\subsection{Volume Sharing}
+\subsection{Volume Sharing}\label{subsec:volume_sharing}
 
 There is a second method to put data into a container, that does not require baking it into the image directly. This method is usually preferred for files which are not essential for the build, but are required at runtime. It takes the following form:
 
@@ -2079,6 +2079,8 @@ The following container will launch the extrinsic calibration procedure:
    duckietown/rpi-duckiebot-calibration:master18
 \end{pclisting}
 
+Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided.
+
 \begin{dtslisting}
 dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
 \end{dtslisting}
@@ -2087,7 +2089,6 @@ dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
 dt> duckiebot calibrate_intrinsics DUCKIEBOT_NAME
 \end{dtslisting}
 
-Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided. \inline{rpi-simple-server} can be launched to view the results in the web browser; users can also download all files from \inline{/data}. This is an easy way to view and download all calibration files and validation results.
 
 \begin{dtslisting}
 dt> duckiebot demo --demo_name base --duckiebot_name NAME
@@ -2096,8 +2097,6 @@ dt> duckiebot demo --demo_name base --duckiebot_name NAME
 \begin{pclisting}
 ~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_trim --TRIM
 \end{pclisting}
-
-Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided. \inline{rpi-simple-server} can be launched to view the results in the web browser; users can also download all files from \inline{/data}. This is an easy way to view and download all calibration files and validation results.
 
 \subsection{Lane Following Demo}
 
@@ -2118,7 +2117,23 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 
 \section{Retrospective}
 
-One issue encountered is whether to package source code directly inside the container, or to store it separately. If source code is stored separately, a developer can use a shared volume on the host to build the artifacts. In this case, while build artifacts are standalone reproducible, they are not easily modified or inspected. The alternative is to ship code directly inside the container, where any changes to the source code will trigger a subsequent rebuild, effectively tying the sources and the build artifacts together. Including source code alongside build artifacts has the benefit of improved readability and diagnostics. If a user requires technical assistance, troubleshooting becomes much easier when the source code is directly accessible. But doing so adds some friction during development, which has caused users to struggle with environment setup. Our solution is to store all sources on the local development environment and rebuild the image periodically, by copying sources into the image.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources separately (e.g. as described in \ref{subsec:volume_sharing}). If the sources are stored externally, a developer can use a shared volume to build her artifacts. Both approaches ensure reproducible build dependencies, but including the the source code makes build artifacts are standalone decipherable.
+
+Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any changes to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. The motivation for including sources enables easier troubleshooting and diagnostics, but doing so adds some friction during development, which has caused users to struggle with environment setup and Docker configuration issues.
+
+\begin{figure}\label{fig:early_prototype}
+\includegraphics[width=0.80\textwidth]{image_provenance.png}
+\caption{An early prototype of the Docker image hierarchy.}
+\end{figure}
+
+The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream changes to cascade to downstream images. The short term solution was to disable auto-building and push manually, however fixing it required rethinking the role of Docker builds in the CI toolchain.
+
+\begin{figure}\label{fig:early_prototype}
+\includegraphics[width=0.40\textwidth]{aido_logo.png}
+\caption{The AI Driving Olympics, a primary use case for the system described above.}
+\end{figure}
+
+One of the primary use cases for the container infrastructure is a biannual robotics competition called the AI Driving Olympics. We discovered a more stable solution is to store all sources on the local development environment and rebuild the image only when its upstream dependencies change. A Docker image, paired with a Git repository and a commit message defines an AIDO submission. The image only contains its compiled upstream dependencies, and the source code is paired at runtime.
 
 \rare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
 
