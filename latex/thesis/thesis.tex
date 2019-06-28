@@ -768,7 +768,7 @@ Most programs written today are written in the imperative style, due the prevale
 
 The mathematical notion of function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a programming function composed with another function, simply apply the chain rule (cf.~\ref{sec:automatic-differentiation}). Since there is no mutable state, no exotic data structures or compiler tricks are required to keep track of the program state.
 
-For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{tab:1}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
+For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{fig:fp_vs_ip}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
 \begin{figure}[t]
     \centering
@@ -1632,7 +1632,7 @@ user/duck     v2         d78be5cf073e     5 minutes ago    869MB
 user/duck     v3         05a3bd381fc2     2 seconds ago    869MB
 \end{pclisting}
 
-This procedure is identical to the snapshot technique performed in Sec. ~\ref{subsec:creating-an-image}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
+This procedure is identical to the snapshot technique performed in Sec. ~\ref{subsec:creating-an-image-snapshot}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
 
 \begin{pclisting}
 ~$ docker run -it user/duck:v3
