@@ -47,7 +47,7 @@
 \usepackage{menukeys}
 \usepackage[skins,breakable,listings]{tcolorbox}
 % Code listings
-\lstdefinelanguage{Kotlin}{
+\lstdefinelanguage{kotlin}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
     emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
@@ -107,18 +107,17 @@
 \tcbuselibrary{listings,breakable}
 
 \newtcblisting{unbreakablelisting}[1][]{%
-    enhanced jigsaw,
+    breakable=false,
     listing only,
     boxsep=-1.5pt,
     top=-1pt,
     bottom=-0.5pt,
-    right=-0.5pt,
     underlay={%
         \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     },
     listing options={
         language=kotlin,
-        basicstyle=\ttfamily\scriptsize,
+        basicstyle=\ttfamily\small,
         numberstyle=\footnotesize,
         tabsize=2,
         breaklines=true,
@@ -127,14 +126,7 @@
     }
 }
 
-\newtcblisting{mylisting}[1][]{%
-    enhanced jigsaw,
-    breakable,
-    listing only,
-    boxsep=-1pt,
-    top=-1pt,
-    bottom=-0.5pt,
-    right=-0.5pt,
+\newtcblisting{kotlinlisting}[1][]{%
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\scriptsize,
@@ -144,92 +136,39 @@
         inputencoding=utf8,
         #1
     },
-    underlay={%
+    underlay unbroken and first={%
         \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=4mm]{kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
-    },
-    overlay first={
-        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-    },
-    overlay middle={
-        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    overlay last={
-        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    underlay last={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
     }
 }
 
 \newtcblisting{pclisting}[1][]{%
-    enhanced jigsaw,
-    breakable,
-    listing only,
-    boxsep=-1pt,
-    top=-1pt,
-    bottom=-0.5pt,
-    right=-0.5pt,
     listing options={
-            language=BashPrompt,
-            basicstyle=\ttfamily\small,
-            tabsize=2,
-            inputencoding=utf8,
-            #1
-        },
-    underlay={%
+        language=BashPrompt,
+        basicstyle=\ttfamily\small,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
+    },
+    underlay unbroken and first={%
     \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
-    },
-    overlay first={
-        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-    },
-    overlay middle={
-        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    overlay last={
-        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    underlay last={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
-    },
+    }
 }
 
 \newtcblisting{dtslisting}[1][]{%
-    enhanced jigsaw,
-    unbreakable,
-    listing only,
-    boxsep=-1pt,
-    top=-1pt,
-    bottom=-0.5pt,
     left=20pt,
-    right=-0.5pt,
     listing options={
-            language=DtsPrompt,
-            basicstyle=\ttfamily\small,
-            tabsize=2,
-            inputencoding=utf8,
-            #1
-        },
-    underlay={%
-    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        language=DtsPrompt,
+        basicstyle=\ttfamily\small,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
     },
+    underlay unbroken and first={%
+    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
 }
 
 \newtcblisting{filelisting}[1][]{%
-    enhanced jigsaw,
-    breakable,
-    listing only,
-    top=-5pt,
-    bottom=-5pt,
     listing options={
         language=docker,
         basicstyle=\ttfamily\small,
@@ -238,65 +177,37 @@
         breaklines=true,
         inputencoding=utf8,
     },
-    underlay={%
+    underlay unbroken and first={%
         \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{docker_icon.jpg}} ([xshift=-10mm,yshift=-9mm]interior.north west);
-    },
-    overlay first={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-    },
-    overlay middle={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    overlay last={
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    underlay last={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
     }
 }
 
 \newtcblisting{pythonlisting}[1][]{%
-    enhanced jigsaw,
-    breakable,
-    listing only,
-    boxsep=-1pt,
-    top=-1pt,
-    bottom=-0.5pt,
-    right=-0.5pt,
     listing options={
-            language=Python,
-                basicstyle=\ttfamily\small,
-                breaklines=true,
-            #1
-        },
-    underlay={%
+        language=Python,
+        basicstyle=\ttfamily\small,
+        breaklines=true,
+        #1
+    },
+    underlay unbroken and first={%
         \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
-    },
-    overlay first={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-    },
-    overlay middle={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    overlay last={
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
-        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    underlay last={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
     }
 }
 
 \newtcblisting{rpilisting}[1][]{%
+    listing options={
+        language=BashPrompt,
+        basicstyle=\ttfamily\small,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
+    },
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\tcbset{
     enhanced jigsaw,
     breakable,
     listing only,
@@ -304,32 +215,19 @@
     top=-1pt,
     bottom=-0.5pt,
     right=-0.5pt,
-    listing options={
-            language=BashPrompt,
-            basicstyle=\ttfamily\small,
-            tabsize=2,
-            inputencoding=utf8,
-            #1
-        },
-    underlay={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{raspi_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
-    },
     overlay first={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
     },
     overlay middle={
-        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
     overlay last={
-        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    },
-    underlay last={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
     }
 }
 
@@ -944,7 +842,7 @@ Kotlin$\nabla$ models are embedded domain specific languages (eDSLs), which are 
 Kotlin$\nabla$ allows users to implement differentiable programs by composing operations on numerical fields to form algebraic expressions. %Expressions are lazily evaluated inside a numerical context, which may be imported on a per file basis or lexically scoped for finer-grained control over the runtime behavior.
 %
 \begin{figure}
-\begin{unbreakablelisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output, rendered below.}, basicstyle=\ttfamily\small, language=Kotlin, label={lst:basic_kotlingrad}]
+\begin{unbreakablelisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output, rendered below.}, label={lst:basic_kotlingrad}]
 with(DoublePrecision) { // Uses double precision numerics for evaluation
   val x = Var("x") // Declare immutable variables (these variables are
   val y = Var("y") // just symbolic constructs used for differentiation)
@@ -959,12 +857,12 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
 \includegraphics[scale=0.43]{plot_result.png}
 \end{figure}
 %
-Below, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
+In Listing~\label{lst:edsl}, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
 %
 \begin{figure}
-\begin{mylisting}[language=Kotlin, basicstyle=\ttfamily\footnotesize]
+\begin{kotlinlisting}
 val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform any calculation
-\end{mylisting}
+\end{kotlinlisting}
 \centering
 \begin{tikzpicture}[grow=left]
     \tikzset{level distance=60pt}
@@ -1008,6 +906,7 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
                $\nabla a$                                      &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
     \end{tabular}
+\caption{\label{tab:shape_system}Kotlin$\nabla$'s shape system species the output shape for matrix arithmetic.}
 \end{table}
 }
 %$\dagger$ \texttt{a} and \texttt{b} are higher order functions. These may be constants (e.g. 0, 1.0), variables (e.g. \texttt{Var("x")}) or expressions (e.g. \texttt{x + 1}, \texttt{2 * x + y}).
@@ -1024,25 +923,25 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 %
 In Kotlin$\nabla$, we use the third strategy. Consider the following program:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 val a = Vec(1.0, 2.0) // Inferred type: Vec<Int, `2`>
 val b = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, `3`>
 val c = b + b
 val d = a + b // Does not compile, shape mismatch
-\end{mylisting}
+\end{kotlinlisting}
 %
 Attempting to sum two vectors whose shapes do not match will fail to compile.
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
 val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
 val c = a * b
 val d = a * a // Does not compile, inner dimension mismatch
-\end{mylisting}
+\end{kotlinlisting}
 %
 Similarly, multiplying two tensors whose inner dimensions do not match will not compile.
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 val a = Mat(`2`, `4`,
             1.0, 2.0, 3.0, 4.0,
             5.0, 6.0, 7.0, 8.0)
@@ -1056,18 +955,18 @@ val d = Mat(`2`, `1`, 1.0, 2.0)
 val e = c * d
 val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
 val g = e * f // Does not compile, inner dimension mismatch
-\end{mylisting}
+\end{kotlinlisting}
 %
 It is required to specify the input types in a method signature. Explicit return types are optional but encouraged for readability. If omitted, the type system can usually infer them:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
-\end{mylisting}
+\end{kotlinlisting}
 %
 . Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To do so, we enumerate a list of integer type literals as a chain of subtypes, so that $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, who will need to regenerate the code.
 %
-\begin{mylisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall C\leq2.$}, language=Kotlin]
+\begin{kotlinlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall C\leq2.$}]
 interface Nat<T: `0`> { val value: Int }
 // Integer literals have reified Int values should we need to compare them at runtime
 sealed class `0`(open val value: Int = 0) { companion object: `0`(), Nat<`0`> }
@@ -1076,49 +975,48 @@ open class `2`(override val value: Int = 2): `1`(i) { companion object: `2`(), N
 open class `3`(override val value: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
 //...This is generated code
 open class `100`(open val value: Int = 100) { companion object: `100`(), Nat<`100`> }
-\end{mylisting}
+\end{kotlinlisting}
 %
 Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. Let us consider the rank-1 tensor (i.e.\ vector) case:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 // <C: `1`> will accept 0 <= C via Liskov substitution
 infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
     Vec(length, contents.zip(v.contents).map { it.first + it.second })
-\end{mylisting}
+\end{kotlinlisting}
 %
 The operator `\texttt{+}' can now be used like so. Incompatible operands will cause a type error:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 // Type-checked vector addition with shape inference
 val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4)) // Y: Vec<Float, `2`>
 val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
-\end{mylisting}
+\end{kotlinlisting}
 %
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 open class Vec<E, Len: `1`> constructor(val len: Nat<Len>, val contents: List<E>) {
   companion object {
     operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, listOf(t))
     operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, listOf(t0, t1))
     operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(`3`, listOf(t0, t1, t2))
-    //...
   }
 }
-\end{mylisting}
+\end{kotlinlisting}
 %
 Dynamic length construction is possible, although it may fail at runtime. For example:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
 val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
 val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
 val sum = Vec(`2`, 1, 2) + add                    // Does not compile
-\end{mylisting}
+\end{kotlinlisting}
 %
 A similar syntax is used for matrices and tensors. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if their inner dimensions disagree:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 val l = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
              1, 2, 3, 4,
              5, 6, 7, 8,
@@ -1131,7 +1029,7 @@ val m = Mat(`4`, `3`, // Inferred type: Mat<Int, `4`, `3`>
              4, 4, 4)
 val lm = l * m // Inferred type: Mat<Int, `4`, `3`>
 val mm = m * m // Does not compile
-\end{mylisting}
+\end{kotlinlisting}
 %
 This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or would require enumerating every possible combination of type literals.
 
@@ -1146,7 +1044,7 @@ Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know th
 %
 For example, the following test checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
 %
-\begin{mylisting}[language=Kotlin, showstringspaces=false]
+\begin{kotlinlisting}[showstringspaces=false]
 val x = Var("x")
 val y = Var("y")
 val z = y * (sin(x * y) - x)            // Function under test
@@ -1161,11 +1059,11 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
         autoEval shouldBeApproximately manualEval // Fails iff eps < |adEval - manualEval|
     }
 }
-\end{mylisting}
+\end{kotlinlisting}
 %
 PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test with the finite difference method, which uses the equation $f'(x) \approx \frac{f(a+h)-f(a), h}$:
 %
-\begin{mylisting}[language=Kotlin, showstringspaces=false]
+\begin{kotlinlisting}
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
     NumericalGenerator.assertAll { x0 ->
         val f = sin(x)
@@ -1176,7 +1074,7 @@ PBT will search the input space for two numerical values \inline{x0} and \inline
         adEval shouldBeApproximately fdEval
     }
 }
-\end{mylisting}
+\end{kotlinlisting}
 %
 There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
 
@@ -1186,19 +1084,19 @@ There are many other ways to independently verify the numerical gradient, such a
 
 For example, we have an interface \inline{Group} which overloads the operators $+$ and $\times$:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 interface Group<T: Group<T>> {
     operator fun plus(addend: T): T
     operator fun times(multiplicand: T): T
 }
-\end{mylisting}
+\end{kotlinlisting}
 %
 Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\citep{canning1989f} to ensure that operations return the concerete value of the type variable \inline{T}, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Fun} which has implemented \inline{Group}. It can be used as follows:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 fun <T: Group<T>> cubed(t: T): T = t * t * t
 fun <X: Fun<X>> twiceExprCubed(e: X): X = cubed(e) + cubed(e)
-\end{mylisting}
+\end{kotlinlisting}
 %
 Like Python, Kotlin supports overloading a limited set of operators, which are evaluated using a fixed precedence. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
 
@@ -1206,14 +1104,14 @@ Like Python, Kotlin supports overloading a limited set of operators, which are e
 
 With support for higher-order functions and lambdas, Kotlin treats functions as first class citizens. This allows us to represent mathematical functions and programming functions with the same underlying abstractions (i.e.\ typed FP). Following a number of recent papers in functional AD~\citep{pearlmutter2008reverse,wang2018backpropagation}, in Kotlin$\nabla$, all expressions are treated as functions. For example:
 
-\begin{mylisting}
+\begin{kotlinlisting}
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
 val x: Var<DoubleReal> = Var()
 val y: Var<DoubleReal> = Var()
 val f = makePoly(x, y)
 val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
-\end{mylisting}
+\end{kotlinlisting}
 
 Currently, it is possible to represent functions where all inputs and outputs share a single data type. It is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds. We leave this for further work.
 
@@ -1221,7 +1119,7 @@ Currently, it is possible to represent functions where all inputs and outputs sh
 
 Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}.
 
-\begin{mylisting}[caption={Most mathematical operations are composed of a small set of simple operators.}, language=Kotlin]
+\begin{kotlinlisting}[caption={Most mathematical operations are composed of a small set of simple operators.}]
 interface Group<X: Group<X>> {
     operator fun unaryMinus(): X
     operator fun plus(addend: X): X
@@ -1237,7 +1135,7 @@ interface Field<X: Field<X>>: Group<X> {
     infix fun pow(exp: X): X
     fun ln(): X
 }
-\end{mylisting}
+\end{kotlinlisting}
 
 The numeric tower also allows us to define common behavior such as subtraction and division on abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras,~\footnote{ex. In order to calculate derivatives in a quaternion neural network.\citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined by composing a small set of primitive operations, which can later be differentiated in a generic fashion, rather than on an ad hoc basis.
 
@@ -1245,18 +1143,18 @@ The numeric tower also allows us to define common behavior such as subtraction a
 
 \noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler enforces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 class Const<T: Fun<T>>(val number: Number) : Fun<T>()
 class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
 class Prod<T:Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
 class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
 class Zero<T: Fun<T>>: Const<T>(0.0)
 class One<T: Fun<T>>: Const<T>(1.0)
-\end{mylisting}
+\end{kotlinlisting}
 %
 When branching on the type of a sealed class, consumers must explicitly handle every subclass, since incomplete control flow will not compile, rather than fail silently at runtime.
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
@@ -1280,7 +1178,7 @@ sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Gro
 
     operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
 }
-\end{mylisting}
+\end{kotlinlisting}
 %
 Kotlin's smart-casting implicitly downcasts the abstract type \inline{Fun} as a subtype, e.g. \inline{Sum} after performing an \inline{is Sum} check. Otherwise, we would need to write \inline{(this as Sum).left} in order to access its member, \inline{left}. If the type cast was mistaken, a \inline{ClassCastException} would be thrown, which smart casting also prevents.
 
@@ -1290,7 +1188,7 @@ In conjunction with ADTs, Kotlin$\nabla$ also uses multiple dispatch to instanti
 
 Building on the previous example, suppose we would like to perform algebraic simplification. This can be useful for reducing expression swell and improving numerical stability. We can use multiple dispatch to branch on a the type of a subexpression at runtime. \textit{Smart casting} lets us access  members of a class after checking its type, as if it were casted:
 
-\begin{mylisting}[caption={Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.}, language=Kotlin]
+\begin{kotlinlisting}
 override fun times(multiplicand: Fun<X>): Fun<X> =
     when {
         this == zero -> this
@@ -1306,26 +1204,28 @@ override fun times(multiplicand: Fun<X>): Fun<X> =
 
 val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 //         = Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
-\end{mylisting}
+\end{kotlinlisting}
+
+Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
 \section{Extension Functions}\label{sec:extension-functions}
 
 Extension functions augment external classes with new fields and methods. By using a technique known as context oriented programming~\citep{hirschfeld2008context}, we can expose custom extensions (e.g.\ through \inline{DoubleContext}) to consumers without requiring subclassing or inheritance.
 %
-\begin{mylisting}[caption={We can provide numerical extensions, wrapped in a context.}, language=Kotlin]
+\begin{kotlinlisting}[caption={We can provide numerical extensions, wrapped in a context.}]
 data class Const<T: Fun<T>>(val number: Double) : Fun<T>()
 data class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
 data class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
 object DoubleContext {
     operator fun Number.times(expr: Fun<Double>) = Const(toDouble()) * expr
 }
-\end{mylisting}
+\end{kotlinlisting}
 %
 Now, we can use the context to define another extension, \inline{Fun.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
 %
-\begin{mylisting}
+\begin{kotlinlisting}
 fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
-\end{mylisting}
+\end{kotlinlisting}
 %
 Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\citep{nozik2019acat}, another mathematical library for Kotlin.
 
@@ -1343,7 +1243,7 @@ One form of continuation, known as shift-reset a.k.a.\ delimited continuations, 
 
 Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain specific language}, thereby employing the host language's type system. Our approach is particularly well-suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
 
-\begin{figure}
+\begin{table}
 \begin{tabular}{lllllllll}
     Framework &
     Language &
@@ -1368,7 +1268,7 @@ Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cma
 Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
 \end{tabular}
 \caption{Comparison of AD libraries. The \wmark symbol indicates work in progress.}
-\end{figure}
+\end{table}
 
 \section{Future work}\label{sec:future-work}
 
@@ -1908,7 +1808,7 @@ This way, the file \inline{launch.sh} will be available to use from within the c
 
 \subsection{Multi-stage builds}
 
-Docker's filesystem is additive, so each layer will only increase the size of the final image. Due to image size, it is often necessary to reduce the number of layers and tidy up unnecessary files. For example, when installing dependencies on Debian-based images, a common practice is to run:
+Docker's filesystem is additive, so each layer will only increase the size of the final image. For this reason, it is often necessary to tidy up unneeded files after installation. For example, when installing dependencies on Debian-based images, it is a common practice to run:
 
 \begin{filelisting}
 RUN apt-get update && apt-get install ... && rm -rf /var/lib/apt/lists/*
