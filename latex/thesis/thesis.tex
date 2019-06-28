@@ -260,6 +260,42 @@
     }
 }
 
+\newtcblisting{pythonlisting}[1][]{%
+    enhanced jigsaw,
+    breakable,
+    listing only,
+    boxsep=-1pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    right=-0.5pt,
+    listing options={
+            language=Python,
+                basicstyle=\ttfamily\small,
+                breaklines=true,
+            #1
+        },
+    underlay={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    },
+    overlay first={
+        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
+    },
+    overlay middle={
+        \node[black!50] (S) at (frame.south) {\LARGE\ding{34}};
+        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
+        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+    },
+    overlay last={
+        \node[black!50] (S) at (frame.north) {\LARGE\ding{34}};
+        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+    },
+    underlay last={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{blank.png}} ([xshift=-10mm,yshift=-8mm]interior.north west);
+    }
+}
+
 \newtcblisting{rpilisting}[1][]{%
     enhanced jigsaw,
     breakable,
@@ -582,17 +618,50 @@ Hatchery is a tool designed to assist programmers writing robotics applications 
 \label{fig:hatchery_downloads}
 \end{figure}
 %
-\section{Software architecture for robotics application}
+\section{Introduction to the Robot Operating System}
 
 The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but also includes a set of community-developed libraries and graphical tools for building robotics applications. ROS is not an operating system (OS) in the traditional sense, but it does offer OS-like functionality such as shared memory and inter-process communication. Unlike pure message-oriented systems like DDS and ZMQ, in addition to the communication infrastructure, ROS provides specific APIs for building decentralized robotic systems, particularly those which are capable of mobility. This includes standard libraries for serializing and deserializing geometric data, coordinate frames, maps, sensor messages, and imagery.
 
-A ROS application consists of several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a ROS application, several steps are necessary. First, one must install the ROS system, which is only official supported on Debian-based Linux distributions. Then, a workspace must be created. ROS nodes, implemented as event based ``talkers'' and ``listeners''.
+The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\citep{Areserio54:online}. Source code for a typical ROS application will include a mixture of C/C++ and Python code, roughly corresponding to the language preferences in the robotics and machine learning communities. Hatchery supports most common language front-ends for ROS, including Java, Python, C/C++, and several others, through the IntelliJ Platform. By targeting an IDE platform with support for polyglot programming, we are able to focus on programming language-agnostic features in the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
 
-The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\citep{Areserio54:online}. Source code for a typical ROS application will include a mixture of C/C++ and Python code, roughly corresponding to the language preferences in the robotics and machine learning communities. Hatchery supports most common language front-ends for ROS, including Java, Python, C/C++, and several others, through the IntelliJ Platform. By targeting an IDE platform with support for polyglot programming, we are able to focus on language-agnostic features for the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
+A ROS application consists of several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a ROS application, several steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions. Then, a workspace must be created. ROS nodes, implemented as event based ``talkers'' and ``listeners''.
 
-\section{ROS Introduction}
+\begin{figure}
+\centering
+\includegraphics[width=0.90\textwidth]{rqt_dep_graph.png}
+\caption{A typical ROS application contains a large graph of dependencies.}
+\end{figure}
 
-TODO
+\begin{pythonlisting}
+import numpy as np
+
+def incmatrix(genl1,genl2):
+m = len(genl1)
+n = len(genl2)
+M = None
+VT = np.zeros((n*m,1), int)
+
+M1 = bitxormatrix(genl1)
+M2 = np.triu(bitxormatrix(genl2),1)
+
+for i in range(m-1):
+for j in range(i+1, m):
+[r,c] = np.where(M2 == M1[i,j])
+for k in range(len(r)):
+VT[(i)*n + r[k]] = 1;
+VT[(i)*n + c[k]] = 1;
+VT[(j)*n + r[k]] = 1;
+VT[(j)*n + c[k]] = 1;
+
+if M is None:
+M = np.copy(VT)
+else:
+M = np.concatenate((M, VT), 1)
+
+VT = np.zeros((n*m,1), int)
+
+return M
+\end{pythonlisting}
 
 \section{Prerequisities}
 
@@ -659,7 +728,7 @@ Modern programming tools support a mix of hypertext and simple graphical models,
     \label{fig:hatchery_gui}
 \end{figure}
 
-\section{More ROS Tools}
+\section{Future work}
 
 Detecting and managing ROS installations.
 
@@ -799,7 +868,7 @@ Statically typed languages eliminate a broad class of runtime errors and allow u
 
 Most programs written today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\citep{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that the Turing Machine and $\lambda$-calculus are both Turing Complete.} language for computing, which we argue, is a more appropriate notation for expressing mathematical functions and computing their derivatives. In imperative programming the sole purpose of using a function is to pass it values, and there is no way to refer to a function directly. More troubling in the case of AD, is imperative programs have mutable state, which requires taking extra precautions when computing their derivatives.
 
-The mathematical notion of function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a programming function composed with another function, simply apply the chain rule (cf.\ref{sec:automatic-differentiation}). Since there is no mutable state, no exotic data structures or compiler tricks are required to keep track of the program state.
+The mathematical notion of function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a programming function composed with another function, simply apply the chain rule (cf.~\ref{sec:automatic-differentiation}). Since there is no mutable state, no exotic data structures or compiler tricks are required to keep track of the program state.
 
 For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{tab:1}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
