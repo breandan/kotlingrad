@@ -42,17 +42,17 @@
 % hyperref makes hyperlinks in the resulting PDF.
 % If your build breaks (sometimes temporarily if a hyperlink spans a page)
 % please comment out the following usepackage line and replace
-% \usepackage{sysml2019} with \usepackage[nohyperref]{sysml2019} above.
+% \usepackage{mais2019} with \usepackage[nohyperref]{mais2019} above.
 \usepackage{hyperref}
 
 % Attempt to make hyperref and algorithmic work together better:
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 %\newcommand{\squeezeup}{\vspace{-2.5mm}}
 % Use the following line for the initial blind version submitted for review:
-\usepackage{sysml2019}
+\usepackage{mais2019}
 \setlength{\bibsep}{0pt plus 0.5ex}
 % If accepted, instead use the following line for the camera-ready submission:
-%\usepackage[accepted]{sysml2019}
+%\usepackage[accepted]{mais2019}
 %\AtBeginEnvironment{minted}{%
   \renewcommand{\fcolorbox}[4][]{#4}}
 % The \sysmltitle you define below is probably too long as a header.
@@ -68,7 +68,7 @@ An shape-safe DSL for differentiable functional programming}
 
 % It is OKAY to include author information, even for blind
 % submissions: the style file will automatically remove it for you
-% unless you've provided the [accepted] option to the sysml2019
+% unless you've provided the [accepted] option to the mais2019
 % package.
 
 % List of affiliations: The first argument should be a (short)
@@ -214,6 +214,6 @@ With these basic ingredients, we have almost all the features necessary to build
 In future work, we plan to implement a broader grammar of differentiable primitives including matrix convolution, as well as control flow and recursion. While Kotlin$\nabla$ currently implements matrix arithmetic directly, we plan to wrap a native linear algebra library for performance reasons.
 
 \squeezeup\bibliography{example_paper}
-\bibliographystyle{sysml2019}
+\bibliographystyle{mais2019}
 
 \end{document}
