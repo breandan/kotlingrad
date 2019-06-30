@@ -90,6 +90,17 @@
     literate={dt> }{{\bfseries\textcolor{blue}{dt> }}}1
 }
 
+\lstdefinelanguage{XML}{
+    basicstyle=\ttfamily,
+    morestring=[s][\color{black}]{"}{"},
+    morestring=[s][\color{black}]{>}{<},
+    stringstyle=\color{black},
+    identifierstyle=\color{blue}\bfseries,
+    moreidentifier={launch, node},
+    keywordstyle=\color{brown},
+    morekeywords={name, pkg, type, output},
+}
+
 %% Adjustments
 
 \lstdefinestyle{barelisting}{
@@ -169,7 +180,29 @@
     }
 }
 
-\newtcblisting{filelisting}[1][]{%
+%\usepackage{ulem}
+%\makeatletter
+%\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+%\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+%\makeatother
+\newtcblisting{xmllisting}[1][]{%
+    #1,
+    listing options={
+        language=XML,
+        basicstyle=\ttfamily\small,
+        numberstyle=\footnotesize,
+        tabsize=2,
+        breaklines=true,
+        inputencoding=utf8,
+        escapeinside={(*}{*)}
+    },
+    fonttitle=\ttfamily\small,
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{file.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+    }
+}
+
+\newtcblisting{dockerlisting}[1][]{%
     listing options={
         language=docker,
         basicstyle=\ttfamily\small,
@@ -184,14 +217,17 @@
 }
 
 \newtcblisting{pythonlisting}[1][]{%
+    #1,
     listing options={
         language=Python,
         basicstyle=\ttfamily\small,
         breaklines=true,
-        #1
+        showstringspaces=false,
+        keywordstyle=\color{blue}\bfseries,
     },
+    fonttitle=\ttfamily\small,
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -523,46 +559,85 @@ The Robot Operating System (ROS) is a popular middleware for robotics applicatio
 
 The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\citep{Areserio54:online}. Source code for a typical ROS application will include a mixture of C/C++ and Python code, roughly corresponding to the language preferences in the robotics and machine learning communities. Hatchery supports most common language front-ends for ROS, including Java, Python, C/C++, and several others, through the IntelliJ Platform. By targeting an IDE platform with support for polyglot programming, we are able to focus on programming language-agnostic features in the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
 
-A ROS application consists of several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a ROS application, several steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.
-
-A minimal ROS application requires two nodes, a ``talker'' and a ``listener''.
-
 \begin{figure}
 \centering
 \includegraphics[width=0.90\textwidth]{rqt_dep_graph.png}
 \caption{A typical ROS application contains a large graph of dependencies.}
 \end{figure}
 
-\begin{pythonlisting}
-import numpy as np
+A typical ROS application consists of several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, a number of steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions. Assuming this has already been installed, it can be sourced like so:
 
-def incmatrix(genl1,genl2):
-m = len(genl1)
-n = len(genl2)
-M = None
-VT = np.zeros((n*m,1), int)
+\begin{pclisting}
+~$ source /opt/ros/<DISTRO>/setup.bash
+\end{pclisting}
 
-M1 = bitxormatrix(genl1)
-M2 = np.triu(bitxormatrix(genl2),1)
+A minimal ROS application contains at least one \textit{publisher} and \textit{subscriber}, which pass messages over a shared communication channel. The publisher might be defined as follows:
 
-for i in range(m-1):
-for j in range(i+1, m):
-[r,c] = np.where(M2 == M1[i,j])
-for k in range(len(r)):
-VT[(i)*n + r[k]] = 1;
-VT[(i)*n + c[k]] = 1;
-VT[(j)*n + r[k]] = 1;
-VT[(j)*n + c[k]] = 1;
+\begin{pythonlisting}[title=./catkin\_ws/src/pubsub/publisher.py]
+import rospy
+from std_msgs.msg import String
 
-if M is None:
-M = np.copy(VT)
-else:
-M = np.concatenate((M, VT), 1)
-
-VT = np.zeros((n*m,1), int)
-
-return M
+i = 0
+pub = rospy.Publisher("channel", String, queue_size=10)
+rospy.init_node("publisher", anonymous=True)
+rate = rospy.Rate(10)
+while not rospy.is_shutdown():
+    pub.publish("sent: %s" % i)
+    rate.sleep()
+    i += 1
 \end{pythonlisting}
+
+As the publisher writes messages to the channel, the subscriber can read them:
+
+\begin{pythonlisting}[title=./catkin\_ws/src/pubsub/subscriber.py]
+import rospy
+from std_msgs.msg import String
+
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "received %s", data.data)
+
+rospy.init_node("subscriber", anonymous=True)
+rospy.Subscriber("channel", String, callback)
+rospy.spin()
+\end{pythonlisting}
+
+All ROS packages have launch file, which contain a manifest of the nodes:
+
+\begin{xmllisting}[title=./catkin\_ws/src/pubsub/launch.xml]
+<launch>
+<node name="publisher" pkg="pubsub" type="publisher.py" output="screen"/>
+<node name="subscriber" pkg="pubsub" type="subscriber.py" output="screen"/>
+</launch>
+\end{xmllisting}
+
+To build the application, the following command is required:
+
+\begin{pclisting}
+~$ cd catkin_ws && catkin_make
+\end{pclisting}
+
+To run the publisher, the following command is required:
+
+\begin{pclisting}
+~$ rosrun package_name publisher.py
+\end{pclisting}
+
+To run the subscriber, open a new terminal and run the following command:
+
+\begin{pclisting}
+~$ rosrun package_name subscriber.py
+\end{pclisting}
+
+Instead of interacting with the command line, it would be convenient if there were a graphical editor which had these abilities. For example, if there were a navigable reference or typographical error somewhere in the launch file, it would be appropriately flagged:
+
+\begin{xmllisting}[title=./catkin\_ws/src/pubsub/launch.xml]
+<launch>
+<(*\color{red}\textbf{\texttt{bode}}*) name="publisher" pkg="pubsub" type="(*\color{red}\textbf{\texttt{pubsher.py}}*)" output="screen"/>
+<node name="subscriber" pkg="pubsub" type="(*\color{blue}\underline{subscriber.py}*)" output="screen"/>
+</launch>
+\end{xmllisting}
+
+Note, how the typographical errors are printed in red and the file reference is underlined in blue, indicating it can be selected. These are the kinds of UI features that IDEs provide.
 
 \section{Prerequisities}
 
@@ -1597,11 +1672,11 @@ This is a convenient way to share an image with colleagues and collaborators. An
 
 The second way to create a Docker image is to write a recipe, called a \inline{Dockerfile}. A \inline{Dockerfile} is a text file that specifies the commands required to create a Docker image, typically by modifying an existing container image using a scripting interface. They also have special keywords (which are conventionally \inline{CAPITALIZED}), like \inline{FROM}, \inline{RUN}, \inline{ENTRYPOINT} and so on. For example, create a file called \inline{Dockerfile} with the following content:
 
-\begin{filelisting}
+\begin{dockerlisting}
 FROM daphne/duck      # Defines the base image
 RUN touch new_file1   # new_file1 will be part of our snapshot
 CMD ls -l             # Default command run when container is started
-\end{filelisting}
+\end{dockerlisting}
 
 Now, to build the image, we can simply run:
 
@@ -1653,14 +1728,14 @@ Notice that as soon as we run the container, Docker will execute the \inline{ls 
 
 An important concept in Docker is the concept of layers. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, identified by a hash code. In a \inline{Dockerfile}, layers begin with a keyword.
 
-\begin{filelisting}
+\begin{dockerlisting}
 FROM daphne/duck
 RUN touch new_file1                            # Defines a new layer
 RUN mkdir config && mv new_file1 mkdir         # Layers can chain commands
 RUN apt-get update && apt-get install -y wget  # Install a dependency
 RUN wget https://get.your.app/install.sh       # Download a script
 RUN chmod +x install.sh && ./install.sh        # Run the script
-\end{filelisting}
+\end{dockerlisting}
 
 To build this image, we can run the following command:
 
@@ -1728,11 +1803,11 @@ If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to ever
 
 What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also considers the build context. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
-\begin{filelisting}
+\begin{dockerlisting}
 FROM daphne/duck
 COPY duck.txt .
 RUN cat duck.txt
-\end{filelisting}
+\end{dockerlisting}
 
 Now if we add some message in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
 
@@ -1786,10 +1861,10 @@ There is a second method to put data into a container, that does not require bak
 
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
 
-\begin{filelisting}
+\begin{dockerlisting}
 FROM daphne/duck
 CMD /bin/bash -c "/launch.sh"
-\end{filelisting}
+\end{dockerlisting}
 
 If we simply built and ran this \inline{Dockerfile}, we would encounter an error:
 
@@ -1813,13 +1888,13 @@ This way, the file \inline{launch.sh} will be available to use from within the c
 
 Docker's filesystem is additive, so each layer will only increase the size of the final image. For this reason, it is often necessary to tidy up unneeded files after installation. For example, when installing dependencies on Debian-based images, it is a common practice to run:
 
-\begin{filelisting}
+\begin{dockerlisting}
 RUN apt-get update && apt-get install ... && rm -rf /var/lib/apt/lists/*
-\end{filelisting}
+\end{dockerlisting}
 
 This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
 
-\begin{filelisting}
+\begin{dockerlisting}
 FROM user/duck:v3 as template1
 
 FROM daphne/duck as template2
@@ -1827,7 +1902,7 @@ COPY --from=template1 new_file1 new_file2
 FROM donald/duck as template3
 COPY --from=template2 new_file2 new_file3
 CMD ls -l
-\end{filelisting}
+\end{dockerlisting}
 
 Now we can build and run this image as follows:
 
