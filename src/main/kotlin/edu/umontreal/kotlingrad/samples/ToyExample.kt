@@ -281,12 +281,12 @@ sealed class `0`(open val i: Int = 0) {
   override fun toString() = "$i"
 }
 
-open class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
-open class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
-open class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
-open class `4`(override val i: Int = 4): `3`(i) { companion object: `4`(), Nat<`4`> }
-open class `5`(override val i: Int = 5): `4`(i) { companion object: `5`(), Nat<`5`> }
-open class `6`(override val i: Int = 6): `5`(i) { companion object: `6`(), Nat<`6`> }
-open class `7`(override val i: Int = 7): `6`(i) { companion object: `7`(), Nat<`7`> }
-open class `8`(override val i: Int = 8): `7`(i) { companion object: `8`(), Nat<`8`> }
-open class `9`(override val i: Int = 9): `8`(i) { companion object: `9`(), Nat<`9`> }
+sealed class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
+sealed class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
+sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
+sealed class `4`(override val i: Int = 4): `3`(i) { companion object: `4`(), Nat<`4`> }
+sealed class `5`(override val i: Int = 5): `4`(i) { companion object: `5`(), Nat<`5`> }
+sealed class `6`(override val i: Int = 6): `5`(i) { companion object: `6`(), Nat<`6`> }
+sealed class `7`(override val i: Int = 7): `6`(i) { companion object: `7`(), Nat<`7`> }
+sealed class `8`(override val i: Int = 8): `7`(i) { companion object: `8`(), Nat<`8`> }
+sealed class `9`(override val i: Int = 9): `8`(i) { companion object: `9`(), Nat<`9`> }
