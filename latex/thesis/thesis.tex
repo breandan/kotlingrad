@@ -603,7 +603,7 @@ rospy.spin()
 
 All ROS packages have launch file, which contain a manifest of the nodes:
 
-\begin{xmllisting}[title=./catkin\_ws/src/pubsub/launch.xml]
+\begin{xmllisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
 <node name="publisher" pkg="pubsub" type="publisher.py" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="subscriber.py" output="screen"/>
@@ -630,7 +630,7 @@ To run the subscriber, open a new terminal and run the following command:
 
 Instead of interacting with the command line, it would be convenient if there were a graphical editor which had these abilities. For example, if there were a navigable reference or typographical error somewhere in the launch file, it would be appropriately flagged:
 
-\begin{xmllisting}[title=./catkin\_ws/src/pubsub/launch.xml]
+\begin{xmllisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
 <(*\color{red}\textbf{\texttt{bode}}*) name="publisher" pkg="pubsub" type="(*\color{red}\textbf{\texttt{pubsher.py}}*)" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="(*\color{blue}\underline{subscriber.py}*)" output="screen"/>
