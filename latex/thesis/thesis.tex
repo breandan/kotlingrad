@@ -103,16 +103,14 @@
 
 \lstdefinelanguage{bnf}{
     basicstyle=\ttfamily,
-    stringstyle={\color{ForestGreen}\ttfamily},
-    morestring=[s][\color{black}]{"}{"},
-    emphstyle={\color{red}\bfseries},
+    morestring=[s][\color{RoyalPurple}\bfseries]{"}{"},
+    emphstyle={\color{ForestGreen}\bfseries},
     moreemph={TYPE, KEY, SEPARATOR, VALUE, COMMENT},
     identifierstyle=\color{blue}\bfseries,
-    moreidentifier={pin, recoverWhile, mixin, implements, rosInterfaceFile},
-    keywordstyle=\color{brown},
-    morekeywords={property, recovery_property},
+    keywordstyle={\color{NavyBlue}\bfseries},
+    morekeywords={property, recover_property, rosInterfaceFile},
     ndkeywords={getType, get Key, getValue, getName, setName, getNameIdentifier},
-    ndkeywordstyle={\color{BurntOrange}\bfseries},
+    ndkeywordstyle={\color{black}\itshape},
 }
 
 %% Adjustments
@@ -199,7 +197,7 @@
 %\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
 %\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
 %\makeatother
-\newtcblisting{xmllisting}[1][]{%
+\newtcblisting{launchlisting}[1][]{%
     #1,
     listing options={
         language=XML,
@@ -212,7 +210,7 @@
     },
     fonttitle=\ttfamily\small,
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{file.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{launch_icon.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
     }
 }
 
@@ -641,12 +639,12 @@ rospy.spin()
 
 All ROS packages have launch file, which contain a manifest of the nodes:
 
-\begin{xmllisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
+\begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
 <node name="publisher" pkg="pubsub" type="publisher.py" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="subscriber.py" output="screen"/>
 </launch>
-\end{xmllisting}
+\end{launchlisting}
 
 To build and run the application, the following series of commands are required:
 
@@ -664,12 +662,12 @@ To build and run the application, the following series of commands are required:
 
 Rather than interacting with the command line, it would be convenient if there were a graphical tool which could perform all these tasks. Additionally, it would be helpful to detect if there were a navigable reference or typographical error in the launch file:
 
-\begin{xmllisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
+\begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
 <node name="publisher" pkg="pubsub" type="(*\color{red}\textbf{\texttt{pubsher.py}}*)" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="(*\color{blue}\underline{subscriber.py}*)" output="screen"/>
 </launch>
-\end{xmllisting}
+\end{launchlisting}
 
 Notice how the typographical error is printed in red and the file reference is underlined in blue, indicating it can be selected. These are the kinds of UI features that IDEs provide.
 
