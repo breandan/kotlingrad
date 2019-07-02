@@ -296,11 +296,11 @@
 
 \newcommand*{\inlineimg}[1]{%
     \raisebox{-.3\baselineskip}{%
-    \includegraphics[
-        height=\baselineskip,
-        width=\baselineskip,
-        keepaspectratio,
-    ]{#1}%
+        \includegraphics[
+            height=\baselineskip,
+            width=\baselineskip,
+            keepaspectratio,
+        ]{#1}%
     }%
 }
 
@@ -1425,23 +1425,81 @@ Explore the meaning of derivatives in other calculi, and incremental compilation
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
 
 Neural network research has yielded a powerful set of general-purpose gradient-based optimizers. Yet the adversarial learning literature has shown neural networks are susceptible to pathological inputs, and trained models are notoriously hard to transfer to new domains. But the same techniques used to probe the failure modes of neural networks can be employed for automated testing of classical programs.
 
 In this chapter, we explore the intersection between adversarial learning and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
 
-\section{Fuzz Testing}
+\subsection{Unit Testing}
 
-Fuzz testing is an automated software testing methodology which automatically generates test inputs in order to break a known function.
+In traditional unit testing, most tests are written in the following manner:
+
+\begin{kotlinlisting}
+fun unitTest() {
+    val input = 1
+    val expectedOutput = 2
+    val actualOutput = program(input)
+    assertEquals(actualOutput, expectedOutput)
+}
+\end{kotlinlisting}
+
+The trouble is, someone needs to sit down and write a bunch of test cases.
+
+\subsection{Fuzz Testing}
+
+Fuzz testing is an automated software testing methodology which automatically generates test inputs in order to break a known function. For example, consider the following test:
+
+\begin{kotlinlisting}
+fun fuzzTest() {
+    val inputs = generateRandomInputs()
+    for(i in inputs)
+        assertEquals(program(i), oracle(i))
+}
+\end{kotlinlisting}
+
+The trouble is, we need an oracle. This is known as the test oracle problem. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Furthermore, since a single call to \inline{program(i)} can be be quite expensive in practice, this method can be inefficient.
 
 \subsection{Property-based Testing}
 
-Property-based testing is a fuzz testing mechanism which relies on properties. These properties must hold for all outputs.
+Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. It can be seen as follows:
+
+\begin{kotlinlisting}
+fun propTest() {
+    val inputs = generateRandomInputs()
+    for(i in inputs)
+        output = program(i)
+        if (output !has property)
+            shrink(i, program, property)
+}
+\end{kotlinlisting}
+
+Roughly speaking, \inline{shrink} attempts to find the minimal breaking example. For example, if \inline{program} has type \inline{(Float) -> T}, a na\"ive shrinker might be implemented as follows:
+
+\begin{kotlinlisting}
+tailrec fun shrink(input: Float, program: (Float) -> T, property: (T) -> Boolean) =
+    if(program(input) has property) return
+    if(program(input - input / 2.0f) has property)
+        assert("Minimal output lacking $property:" + program(input))
+    else shrink(input - input / 2.0f, program, property)
+\end{kotlinlisting}
+
+The trouble is, finding the right properties to test can be quite tricky in practice, and requires a lot of effort and domain expertise. What if there were a better way?
 
 \subsection{Metamorphic testing}
 
-Metamorphic testing is a property-based testing methodology, which relies metamorphic relations. It has been used to test driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest}.
+Metamorphic testing is a fuzz testing methodology, which addresses the challenge of designing domain-specific properties, by leveraging more a more generic property: metamorphic relations. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+
+Roughly speaking, it can be expressed as follows: We find a relation over inputs that should hold for all input-output pairs, regardless of their value. Suppose we know that $\mathbf P(\mathbf x) = y$. Assume there is a relation \inline{r(x)} such that $\forall \mathbf z \in \mathbf r(\mathbf x), \mathbf P(\mathbf z) = y$. If we can find an $\mathbf r$ with a sufficiently large cardinality, then given a small set of $\mathbf x, \mathbf y$ pairs from an oracle, we can obtain a much larger set of test inputs.
+
+For example, if we have a function that should predict the correct steering angle for an image of a road. Suppose we are given a single image and the ground truth steering angle. One metamorphic relation could be changes to lighting, small rotations, shifts or skews of the image. We should be able to apply any single relation or permutation of these relations, and the output ought to remain unchanged. If the output is drastically different, we have detected an error.
+
+TODO: code
+
+For adequate coverage, we need to obtain labeled pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$. Now this is starting to sound familiar!
+
+\subsection{Adversarial Testing}
+
+During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
 
 \section{Background}
 %
@@ -1457,7 +1515,7 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-In the white box adversarial learning setting, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(x^{(i)};\mathbf\Theta)$ instead as simply $\mathbf{\hat P}(\mathbf x)$. Our goal is to find:
+In the white box adversarial learning setting, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$. Our goal is to find the worst X:
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^n \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
@@ -1476,13 +1534,13 @@ Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \math
     \mathbf T(\mathbf{\hat P}, \mathbf{x}) = \mathcal{L}(\mathbf{x}) < C
 \end{equation}
 %
-Where $C \in \mathbf{R}$. How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
+Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
 %
 \begin{equation}
     D_\mathbf T: \{ x \sim \mathbb{R}(0, 1) \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If we have no knowledge about the program implementation or its data distribution, $D_\mathbf\hat P$, we can do no better than random search~\citep{wolpert1997no}. However, if we have some information about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has previously been tested on common inputs, we could sample $x \sim \frac{1}{D_\mathbf\hat P}$ for inputs that are infrequent. If we knew how $\mathbf\hat P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
+If we have no knowledge about the programs implementation or its data distribution, $D_\mathbf\hat P$, we can do no better than random search~\citep{wolpert1997no}. However, if we have some information about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has previously been tested on common inputs, we could sample $x \sim \frac{1}{D_\mathbf\hat P}$ for inputs that are infrequent. If we knew how $\mathbf\hat P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
@@ -1508,9 +1566,9 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
         \State $D_\mathbf T \gets \{\}, j \gets 0$
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
             \State $\mathbf{x}_j \sim \mathcal S_n$\Comment{Sample from S}
-            \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, gradient ascent}
+            \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, perform gradient ascent}
                 \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
-            \Else \Comment{Outside feasible set, gradient descent}
+            \Else \Comment{Outside feasible set, perform gradient descent}
                 \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
             \EndIf
             \State $j \gets j + 1$
@@ -2289,7 +2347,7 @@ In the strictest sense, designing a good set of requirements is indistinguishabl
 
 \subsection{Continuous Delivery and Continual Learning}
 
-An ongoing trend in modern software and systems engineering is the transition away from long development cycles towards continuous integration and deployment. Development teams across the industry are encouraged to iterate in a series of short sprints between feature development and deployment. In some cases, software is shipped to users on a nightly basis, with automated testing and deployment. Similarly, intelligent systems have a need to continuously adapt to their environment, and will change their code on an even shorter basis.
+An ongoing trend in modern software and systems engineering is the transition away from long development cycles towards continuous integration and deployment. Development teams across the industry are encouraged to iterate in a series of short sprints between feature development and deployment. In some cases, software is shipped to users on a nightly basis, with automated testing and deployment. Similarly, intelligent systems have a need to continuously adapt to their environment, and will change their behavior on an even shorter basis.
 
 %Incremental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
 
