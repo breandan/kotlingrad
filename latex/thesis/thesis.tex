@@ -53,7 +53,7 @@
     emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
-    keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+    keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec},
     keywordstyle={\color{NavyBlue}\bfseries},
     morecomment=[s]{/*}{*/},
     morestring=[b]",
@@ -700,12 +700,6 @@ Modern programming tools support a mix of hypertext and simple graphical models,
     \label{fig:ros_settings}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
-    \caption{Configuring a \inline{roslaunch} run configuration.}
-    \label{fig:ros_run_config}
-\end{figure}
 
 \section{Prerequisities}
 
@@ -767,6 +761,12 @@ Refactoring support is implemented.
 
 Assistance for running ROS applications.
 
+\begin{figure}
+    \centering
+    \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
+    \caption{Configuring a \inline{roslaunch} run configuration.}
+    \label{fig:ros_run_config}
+\end{figure}
 
 \section{Future work}
 
@@ -1428,7 +1428,7 @@ Explore the meaning of derivatives in other calculi, and incremental compilation
 
 Neural network research has yielded a powerful set of general-purpose gradient-based optimizers. Yet the adversarial learning literature has shown neural networks are susceptible to pathological inputs, and trained models are notoriously hard to transfer to new domains. But the same techniques used to probe the failure modes of neural networks can be employed for automated testing of classical programs.
 
-In this chapter, we explore the intersection between adversarial learning and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
+In this chapter, we explore the intersection between adversarial testing and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
 
 \subsection{Unit Testing}
 
@@ -1487,9 +1487,13 @@ The trouble is, finding the right properties to test can be quite tricky in prac
 
 \subsection{Metamorphic testing}
 
-Metamorphic testing is a fuzz testing methodology, which addresses the challenge of designing domain-specific properties, by leveraging more a more generic property: metamorphic relations. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing  low-cost domain-specific properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
-Roughly speaking, it can be expressed as follows: We find a relation over inputs that should hold for all input-output pairs, regardless of their value. Suppose we know that $\mathbf P(\mathbf x) = y$. Assume there is a relation \inline{r(x)} such that $\forall \mathbf z \in \mathbf r(\mathbf x), \mathbf P(\mathbf z) = y$. If we can find an $\mathbf r$ with a sufficiently large cardinality, then given a small set of $\mathbf x, \mathbf y$ pairs from an oracle, we can obtain a much larger set of test inputs.
+Roughly speaking, it can be expressed as follows:
+
+Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation is a relation $\mathcal R \subset Q^z \times S^z$.
+
+Given a function $\mathbf{\hat P}$ and a relation $\mathcal R$, a metamorphic relation over that should hold for all input-output pairs, regardless of their value. Suppose we know that $\mathbf P(\mathbf x) = \mathbf y$. Assume there exists a relation \inline{r(x)} such that $\forall \mathbf z \in \mathbf r(\mathbf x), \mathbf P(\mathbf z) = \mathbf y$. If we can find an $\mathbf r$ with a sufficiently large cardinality, then given a small set of $\mathbf x, \mathbf y$ pairs from an oracle, we can obtain a much larger set of test inputs.
 
 For example, if we have a function that should predict the correct steering angle for an image of a road. Suppose we are given a single image and the ground truth steering angle. One metamorphic relation could be changes to lighting, small rotations, shifts or skews of the image. We should be able to apply any single relation or permutation of these relations, and the output ought to remain unchanged. If the output is drastically different, we have detected an error.
 
@@ -1975,7 +1979,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 
 \subsection{Volume Sharing}\label{subsec:volume_sharing}
 
-There is a second method to put data into a container, that does not require baking it into the image directly. This method is usually preferred for files which are not essential for the build, but are required at runtime. It takes the following form:
+There is a second method of depositing data into a container, which does not require baking it into the parent image at compile time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
 \begin{pclisting}
 ~$ docker run user/duck:v6 -v [host_volume]:[target_volume]
@@ -1988,14 +1992,14 @@ FROM daphne/duck
 CMD /bin/bash -c "/launch.sh"
 \end{dockerlisting}
 
-If we simply built and ran this \inline{Dockerfile}, we would encounter an error:
+If we built this image and tried to run it, the file \inline{launch.sh} would be missing:
 
 \begin{pclisting}
 ~$ docker build -t user/duck:v6 && docker run user/duck:v6
 bash: /launch.sh: No such file or directory
 \end{pclisting}
 
-Instead, when running the container, we need to share the volume via the Docker CLI:
+Instead, when running the container, we need to share the file via the Docker CLI:
 
 \begin{pclisting}
 ~$ echo -e '#!/bin/bash\necho Launching...' >> launch.sh && \
@@ -2004,7 +2008,7 @@ Instead, when running the container, we need to share the volume via the Docker 
 Launching...
 \end{pclisting}
 
-This way, the file \inline{launch.sh} will be available to use from within the container.
+This way, the local file \inline{launch.sh} will be available to use from within the container at the designated path, \inline{/launch.sh}.
 
 \subsection{Multi-stage builds}
 
