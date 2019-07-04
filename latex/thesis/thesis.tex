@@ -338,6 +338,7 @@ Category,Downloads
 \usepackage[labelfont=bf, width=\linewidth]{caption}
 
 \usepackage{hyperref}  % Ajoute les hyperlien
+\def\chapterautorefname{Chapter}
 \hypersetup{colorlinks=true,allcolors=black}
 \usepackage{hypcap}
 \usepackage{bookmark}
@@ -458,7 +459,7 @@ Category,Downloads
 
 Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today's software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity in building software systems.
 
-\textit{The object of writing this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
+\textit{The objective this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
 
 Broadly speaking, intelligent systems differ from ordinary software systems in that they enable machines to detect patterns, perform tasks, and solve problems which they are not explicitly programmed to solve and which human experts were previously incapable of solving by hard-coding explicit rules. Typically, these systems are able to:\\
 %
@@ -472,7 +473,7 @@ While the idea of intelligent systems has existed for decades, three critical de
 
 In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\citep{theano}, Torch~\citep{collobert2002torch} and Caffe~\citep{jia2014caffe}, and built many popular simulators for reinforcement learning, the ease of use and availability of which was crucial for popularizing deep learning techniques.
 
-In this thesis, we explore several tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (Chapter~\ref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (Chapter~\ref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (Chapter~\ref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (Chapter~\ref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (Chapter~\ref{ch:case-study}).
+In this thesis, we explore several tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (\autoref{ch:case-study}).
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -483,7 +484,7 @@ In this thesis, we explore several tools that facilitate the process of programm
     \label{fig:waterfall_model}
 \end{figure}
 
-In traditional software engineering, the Waterfall Model~\ref{fig:waterfall_model} is a classical software process model comprised of five stages. While the Waterfall Model was an early model in software engineering, the same activities it describes can be found in most engineering process models. We propose contributions to four such areas: design in Chapter~\ref{ch:hatchery}, implementation in Chapter~\ref{ch:kotlingrad}, verification in Chapter~\ref{ch:difftest} and maintenance in Chapter~\ref{ch:ducker}.
+In traditional software engineering, the Waterfall Model (\autoref{fig:waterfall_model}) is a classical software process model comprised of five stages. While the Waterfall Model was an early model in software engineering, the same activities it describes can be found in most engineering process models. We propose contributions to four such areas: design in \autoref{ch:hatchery}, implementation in \autoref{ch:kotlingrad}, verification in \autoref{ch:difftest} and maintenance in \autoref{ch:ducker}.
 
 \section{Designing intelligent systems}
 
@@ -499,7 +500,7 @@ But what are IDEs really doing? They are guiding developers through the knowledg
 
 In some aspects, the development of intelligent systems is no different than classical software engineering. The same principles and best-practices which guide software engineering are also applicable to intelligent systems. And the same activities, from analysis, design, implementation, verification and maintenance will continue to play an important role in building intelligent systems. But in other respects, the generic programming tools we use for developing traditional software will require domain-specific adaptations for learning systems to become a truly first class citizen in the next generation of software, particularly in the case of robotics development.
 
-Towards that goal, we developed an IDE for the Robot Operating System (ROS)\footnote{One popular middleware platform for robotics development} called \href{https://github.com/duckietown/hatchery}{Hatchery}. It supports a number of common workflows for ROS development, such as creating ROS nodes, Gazebo simulator integration, support for remote debugging, static analysis, autocompletion and refactoring. In Chapter~\ref{ch:hatchery} we discuss the implementation of these features and some of the challenges of building language support, programming tools and integrating with the ROS middleware. We argue that such tools reduce the cognitive complexity of building ROS applications by adopting explicit coding conventions, annotating unstructured text and automating repetitive development tasks.
+Towards that goal, we developed an IDE for the Robot Operating System (ROS)\footnote{One popular middleware platform for robotics development} called \href{https://github.com/duckietown/hatchery}{Hatchery}. It supports a number of common workflows for ROS development, such as creating ROS nodes, Gazebo simulator integration, support for remote debugging, static analysis, autocompletion and refactoring. In \autoref{ch:hatchery} we discuss the implementation of these features and some of the challenges of building language support, programming tools and integrating with the ROS middleware. We argue that such tools reduce the cognitive complexity of building ROS applications by adopting explicit coding conventions, annotating unstructured text and automating repetitive development tasks.
 
 \section{Implementation: Languages and compilers}
 
@@ -513,7 +514,7 @@ Intelligent systems engineers must think carefully about languages and abstracti
 
 The majority of existing AD frameworks for machine learning are implemented in dynamically-typed languages like Python, Lua and JavaScript, with some early implementations including projects like Theano, Torch and Caffe. Similar ideas have arisen in statically-typed, functional languages, such as Haskell (Stalin$\nabla$~\citet{pearlmutter2008using}), Scala (Nexus~\citet{chen2017typesafe}), F\# (DiffSharp~\citet{baydin-diffsharp}), Swift~\citep{swift}, et al. But most of these are unable to check the shape of multidimensional arrays in their type system, and those which do are typically implemented in experimental languages with sophisticated type-level programming features. In our work, we demonstrate the viability of shape-checked differentiable programming in a widely-used language with parametric types.
 
-Kotlin$\nabla$ is an embedded domain-specific language (eDSL) for differentiable programming in a language called Kotlin, a statically-typed programming language with support asynchronous programming and multi-platform compilation. In Kotlin$\nabla$ (Chapter~\ref{ch:kotlingrad}), we describe an algebraically-grounded implementation of forward-mode automatic differentiation with shape-safe tensor operations. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use.
+Kotlin$\nabla$ is an embedded domain-specific language (eDSL) for differentiable programming in a language called Kotlin, a statically-typed programming language with support asynchronous programming and multi-platform compilation. In Kotlin$\nabla$ (\autoref{ch:kotlingrad}), we describe an algebraically-grounded implementation of forward-mode automatic differentiation with shape-safe tensor operations. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use.
 
 \section{Testing and validation}
 
@@ -523,7 +524,7 @@ While computer science has made enormous strides in solving the common cases, Be
 
 Realistically speaking, intelligent systems need better ways to practice their skills and probe the effectiveness of a candidate solution within a limited computational budget, without harming humans in the process. The goal of this testing is to highlight errors, but ultimately to provide feedback to the system. In software engineering, the real system under test is the ecosystem of humans and machines which provide each other's means of subsistence. The success of this arrangement depends on an external testing mechanism to enforce a minimum bar of rigor, typically some form of hardware- or human-in-the-loop testing. If the testing mechanism is not somehow opposed to the system under test, an intelligent system can deceive itself, which is neither in the system's nor its users' best interests.
 
-In this Chapter~\ref{ch:difftest} we present preliminary work in adversarial fuzz testing, building on prior literature in adversarial learning, metamorphic and property-based testing. A similar technique is used for testing the numerical correctness of Kotlin$\nabla$'s implementation. We present a simple algorithm for property-based shrinking using projected gradient descent and suggest several future directions for improvement.
+In this \autoref{ch:difftest} we present preliminary work in adversarial fuzz testing, building on prior literature in adversarial learning, metamorphic and property-based testing. A similar technique is used for testing the numerical correctness of Kotlin$\nabla$'s implementation. We present a simple algorithm for property-based shrinking using projected gradient descent and suggest several future directions for improvement.
 
 \section{Software reproducibility and maintenance}
 
@@ -543,7 +544,7 @@ There is a second component to software reproducibility of intelligent systems, 
 
 \subsection{Case Study}\label{subsec:case-study}
 
-All great software has a secret recipe: software gets better when its authors use the product. In the best case, the authors are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find users are so inclined, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice is an effective mechanism for building self-improving cybernetic systems and an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (Chapter~\ref{ch:hatchery}), containing Kotlin$\nabla$ code (Chapter~\ref{ch:kotlingrad}), tested using adversarial fuzz testing (Chapter~\ref{ch:difftest}), and which is built and maintained using the Docker stack (Chapter~\ref{ch:ducker}).
+All great software has a secret recipe: software gets better when its authors use the product. In the best case, the authors are the core users, ideally by choice, if not by necessity. When software engineers are using their own software on a regular basis -- bumping into sharp corners and encountering edge cases firsthand -- the product gets better. When there is an obviously missing feature, it gets implemented. When there is a bug, it gets fixed. It may not be easy to find users are so inclined, or to build software which is so useful, but there must be some overlap in order for good software to become great. Termed ``dogfooding''~\citep{harrison2006eating}, this practice is an effective mechanism for building self-improving cybernetic systems and an important principle for open source software and safety-critical systems. Putting this principle into practice, we, as authors and primary users of these tools, validate their effectiveness by developing a robotics application within an IDE (\autoref{ch:hatchery}), containing Kotlin$\nabla$ code (\autoref{ch:kotlingrad}), tested using adversarial fuzz testing (\autoref{ch:difftest}), and which is built and maintained using the Docker stack (\autoref{ch:ducker}).
 
 \medium{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
@@ -896,7 +897,7 @@ A key aspect of the connectionist paradigm is gradient descent on a statistical 
 
 Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using low-precision arithmetic such as 8-bit floating point~\citep{wang2018training} and integer~\citep{jacob2018quantization} quantization are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should have been less surprising, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, network training is surprisingly resilient to quantization.
 
-As deep learning solved problems across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming} (DP) was born. Today, DP has found a wide range of applications, from protein folding~\citep{alquraishi2018end}, to physics engines~\citep{de2018end,DBLP:journals_corr_DegraveHDW16} and graphics rendering~\citep{loper2014opendr} to meta-learning~\citep{liu2018darts}. These domains have well-studied dynamics models, with parameters that can be tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required to learn these parameters, but given a smooth metric, DP promises to do this for a broad class of models, more or less automatically. For discrete optimization however, DP is not sufficient. To automatically learn discrete relations without ad hoc embedding, additional tools, such as probabilistic programming, are likely needed. As seen in Fig.~\ref{fig:diff_prob_prog}, these two fields have developed many productive collaborations in recent years.
+As deep learning solved problems across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming} (DP) was born. Today, DP has found a wide range of applications, from protein folding~\citep{alquraishi2018end}, to physics engines~\citep{de2018end,DBLP:journals_corr_DegraveHDW16} and graphics rendering~\citep{loper2014opendr} to meta-learning~\citep{liu2018darts}. These domains have well-studied dynamics models, with parameters that can be tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required to learn these parameters, but given a smooth metric, DP promises to do this for a broad class of models, more or less automatically. For discrete optimization however, DP is not sufficient. To automatically learn discrete relations without ad hoc embedding, additional tools, such as probabilistic programming, are likely needed. As seen in \autoref{fig:diff_prob_prog}, these two fields have developed many productive collaborations in recent years.
 
 \section{Static and dynamic languages}
 
@@ -908,9 +909,9 @@ Statically typed languages eliminate a broad class of runtime errors and allow u
 
 Most programs written today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\citep{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that the Turing Machine and $\lambda$-calculus are both Turing Complete.} language for computing, which we argue, is a more appropriate notation for expressing mathematical functions and computing their derivatives. In imperative programming the sole purpose of using a function is to pass it values, and there is no way to refer to a function directly. More troubling in the case of AD, is imperative programs have mutable state, which requires taking extra precautions when computing their derivatives.
 
-The mathematical notion of function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a programming function composed with another function, simply apply the chain rule (cf.~\ref{sec:automatic-differentiation}). Since there is no mutable state, no exotic data structures or compiler tricks are required to keep track of the program state.
+The mathematical notion of function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a programming function composed with another function, simply apply the chain rule (cf.~\autoref{sec:automatic-differentiation}). Since there is no mutable state, no exotic data structures or compiler tricks are required to keep track of the program state.
 
-For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in~\ref{fig:fp_vs_ip}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
+For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in \autoref{fig:fp_vs_ip}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
 \begin{figure}[t]
     \centering
@@ -954,7 +955,7 @@ When programming in a statically typed language, one common question is, ``Given
 
 Kotlin is a strong, statically typed language, that is well-suited for building cross-platform applications, with implementations in native, JVM, and JavaScript. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java.
 
-In this work, we make use of several Kotlin-specific language features, such as first-class functions (\ref{sec:first-class-functions}), extension functions (\ref{sec:extension-functions}), operator overloading (\ref{sec:operator-overloading}), and algebraic data types (\ref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support. Together, these language features enable Kotlin to provide a concise, flexible and type-safe platform for mathematical programming.
+In this work, we make use of several Kotlin-specific language features, such as first-class functions (\autoref{sec:first-class-functions}), extension functions (\autoref{sec:extension-functions}), operator overloading (\autoref{sec:operator-overloading}), and algebraic data types (\autoref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support. Together, these language features enable Kotlin to provide a concise, flexible and type-safe platform for mathematical programming.
 
 \section{Kotlin$\nabla$}\label{sec:kotlingrad}
 
@@ -1509,13 +1510,13 @@ During backpropogation we perform gradient descent on a differentiable function 
 %
 \noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$:
 %
-\begin{equation} \tag{\ref{eq:recursive_parametric_eq} revisited}
+\begin{equation} \tag{\autoref{eq:recursive_parametric_eq} revisited}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
 %
-\begin{equation} \tag{\ref{eq:stochastic_grad_descent} revisited}
+\begin{equation} \tag{\autoref{eq:stochastic_grad_descent} revisited}
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
@@ -1558,9 +1559,9 @@ Another strategy, independent of how candidate inputs are selected, is to use so
 % \end{equation}
 %
 
-Consider algorithm~\ref{alg:prob_fuzz} for finding test failures. First, we select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
+Consider algorithm \autoref{alg:prob_fuzz} for finding test failures. First, we select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
 
-We hypothesize that if the implementation of $P$ were flawed and a counterexample to~\ref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
+We hypothesize that if the implementation of $P$ were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
 
 \begin{algorithm}[H]
     \caption{Probabilistic Fuzzer}
@@ -1590,7 +1591,7 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
         \State $i \gets 1$
         \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
-            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\Big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x_{i-1}})\big)\Big)$ \Comment{PGD step (cf. Eq.~\ref{eq:projected_gd})}
+            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\Big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x_{i-1}})\big)\Big)$ \Comment{PGD step (cf. \autoref{eq:projected_gd})}
             \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_0$} \Comment{Boundary value was found.}
                 \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
             \EndIf
@@ -1711,7 +1712,7 @@ CONTAINER ID     IMAGE           ...     NAMES
 
 Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
-Docker images can be created two different ways. In the following section, we will see how to create a Docker image by taking a snapshot from a running container, then in Sec.~\ref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
+Docker images can be created two different ways. In \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
 
 \subsection{Creating an image snapshot}\label{subsec:creating-an-image-snapshot}
 
@@ -1836,7 +1837,7 @@ user/duck     v2         d78be5cf073e     5 minutes ago    869MB
 user/duck     v3         05a3bd381fc2     2 seconds ago    869MB
 \end{pclisting}
 
-This procedure is identical to the snapshot technique performed in Sec. ~\ref{subsec:creating-an-image-snapshot}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
+This procedure is identical to the snapshot technique performed in \autoref{subsec:creating-an-image-snapshot}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
 
 \begin{pclisting}
 ~$ docker run -it user/duck:v3
@@ -2290,7 +2291,7 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 
 \section{Retrospective}
 
-One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \ref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code makes build artifacts are standalone decipherable.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code makes build artifacts are standalone decipherable.
 
 Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any changes to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. The motivation for including sources enables easier troubleshooting and diagnostics, but doing so adds some friction during development, which has caused users to struggle with environment setup and Docker configuration issues.
 
