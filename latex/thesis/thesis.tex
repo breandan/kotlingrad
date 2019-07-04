@@ -155,6 +155,7 @@
         language=kotlin,
         basicstyle=\ttfamily\scriptsize,
         numberstyle=\footnotesize,
+        showstringspaces=false,
         tabsize=2,
         breaklines=true,
         inputencoding=utf8,
@@ -459,7 +460,7 @@ Category,Downloads
 
 Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today's software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity in building software systems.
 
-\textit{The objective this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
+\textit{The objective of this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
 
 Broadly speaking, intelligent systems differ from ordinary software systems in that they enable machines to detect patterns, perform tasks, and solve problems which they are not explicitly programmed to solve and which human experts were previously incapable of solving by hard-coding explicit rules. Typically, these systems are able to:\\
 %
@@ -473,7 +474,9 @@ While the idea of intelligent systems has existed for decades, three critical de
 
 In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\citep{theano}, Torch~\citep{collobert2002torch} and Caffe~\citep{jia2014caffe}, and built many popular simulators for reinforcement learning, the ease of use and availability of which was crucial for popularizing deep learning techniques.
 
-In this thesis, we explore several tools that facilitate the process of programming intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (\autoref{ch:case-study}).
+Intelligent systems are widely deployed in virtual settings like data science and cloud services. But even with the tremendous success of machine learning algorithms in fully-observable domains like image recognition and speech processing, intelligent systems have yet to become widely adopted in robotics at the time of writing this thesis. This dilemma can be partly attributed to various theoretical problems such as domain adaption and transfer learning. Yet with the exponential increase in processing power, proven capabilities of modern learning algorithms, and decades-long research into physically-embodied intelligent agents, we should have more progress to show. Why has this goal evaded researchers for so long? One reason, we conjecture, is a lack of programming tools and abstractions for designing, developing, deploying and evaluating intelligent systems. In practice, these activities consume a large amount of cognitive effort without the right set of tools and abstractions.
+
+In this thesis, we explore several tools that facilitate the process of building intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (\autoref{ch:case-study}).
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -494,13 +497,13 @@ The development of software systems has a second component, the social graph. Th
 
 First, let us consider the mechanical process of writing software with a keyboard.
 
-Integrated development environments (IDEs) can assist developers building complex software applications by automating certain repetitive programming tasks. For example, IDEs perform static analyses and inspections for catching bugs quickly. They provide completion, refactoring and source code navigation, and they automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation promises increased developer productivity by delivering earlier feedback, detecting clerical errors, and allows developers to focus on fundamental design tasks. Rather than being forced to concentrate on the structure and organization of text, if developers are able to manipulate code at a semantic level, they will be much happier and more productive. Furthermore, by automating mechanical tasks in software development, these tools allow developers direct their attention to the fundamental activity of writing and understanding programs.
+Integrated development environments (IDEs) can assist developers building complex software applications by automating certain repetitive programming tasks. For example, IDEs perform static analyses and inspections for catching bugs quickly. They provide completion, refactoring and source code navigation, and they automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation promises increased developer productivity by delivering earlier feedback, detecting clerical errors, and allows developers to focus on fundamental design tasks. Rather than being forced to concentrate on the structure and organization of text, if developers are able to manipulate code at a semantic level, they will be much happier and more productive. Furthermore, by automating mechanical tasks in software development, these tools allow developers to direct their attention to the fundamental activity of writing and understanding programs.
 
 But what are IDEs really doing? They are guiding developers through the knowledge graph of a software project. Consider what a new developer must learn to get up to speed: in addition to learning the language, developers must learn to use libraries and frameworks (arguably languages in their own right). They must become familiar with command line tools for software development, from build tools to version control and continuous integration. They must become familiar with the software ecosystem, programming styles, conventions and development workflows. And they must learn how to collaborate on a distributed team of developers. By automating common tasks in an interactive programming environment and making the graph connectivity explicit through document markup~\citep{goldfarb1981generalized} and projectional editing~\citep{voelter2014towards}, a well-designed IDE is a tool for graph traversal. It should come as no surprise IDEs are really graph databases.
 
-In some aspects, the development of intelligent systems is no different than classical software engineering. The same principles and best-practices which guide software engineering are also applicable to intelligent systems. And the same activities, from analysis, design, implementation, verification and maintenance will continue to play an important role in building intelligent systems. But in other respects, the generic programming tools we use for developing traditional software will require domain-specific adaptations for learning systems to become a truly first class citizen in the next generation of software, particularly in the case of robotics development.
+In some aspects, the development of intelligent systems is no different than classical software engineering. The same principles and best-practices which guide software engineering are also applicable to intelligent systems. And the same activities, from design to maintenance will continue to play an important role in building intelligent systems. But in other respects, the generic programming tools used to develop traditional software will require domain-specific adaptations for learning systems to become truly first class citizens in the next generation of intelligent software, particularly in the case of robotics development.
 
-Towards that goal, we developed an IDE for the Robot Operating System (ROS)\footnote{One popular middleware platform for robotics development} called \href{https://github.com/duckietown/hatchery}{Hatchery}. It supports a number of common workflows for ROS development, such as creating ROS nodes, Gazebo simulator integration, support for remote debugging, static analysis, autocompletion and refactoring. In \autoref{ch:hatchery} we discuss the implementation of these features and some of the challenges of building language support, programming tools and integrating with the ROS middleware. We argue that such tools reduce the cognitive complexity of building ROS applications by adopting explicit coding conventions, annotating unstructured text and automating repetitive development tasks.
+Towards that goal, we developed an IDE for the Robot Operating System (ROS) called \href{https://github.com/duckietown/hatchery}{Hatchery}. It supports a number of common workflows for ROS development, such as creating ROS nodes, Gazebo simulator integration, support for remote debugging, static analysis, autocompletion and refactoring. In \autoref{ch:hatchery} we discuss the implementation of these features and some of the challenges of building language support, programming tools and integrating with the ROS middleware. We argue that such tools reduce the cognitive complexity of building ROS applications by adopting explicit coding conventions, annotating unstructured text and automating repetitive development tasks.
 
 \section{Implementation: Languages and compilers}
 
@@ -512,9 +515,9 @@ While it took fundamental research in deep learning to realize the connectionist
 
 Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have scarce time to think about the high-level characteristics of these systems. Similarly, if programming abstractions are too specific, small variations will require costly reimplementation. This is no different from traditional software engineering -- as engineers, we need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details, too abstract and the details are lost completely. With deep learning, the necessity of choosing good abstractions is even more important, as the relationship of between source code and runtime behavior is already difficult to debug, due to the complexity of neural networks and array programming. One component of that complexity can be found in the type system.
 
-The majority of existing AD frameworks for machine learning are implemented in dynamically-typed languages like Python, Lua and JavaScript, with some early implementations including projects like Theano, Torch and Caffe. Similar ideas have arisen in statically-typed, functional languages, such as Haskell (Stalin$\nabla$~\citet{pearlmutter2008using}), Scala (Nexus~\citet{chen2017typesafe}), F\# (DiffSharp~\citet{baydin-diffsharp}), Swift~\citep{swift}, et al. But most of these are unable to check the shape of multidimensional arrays in their type system, and those which do are typically implemented in experimental languages with sophisticated type-level programming features. In our work, we demonstrate the viability of shape-checked differentiable programming in a widely-used language with parametric types.
+The majority of existing AD frameworks for machine learning are implemented in dynamically typed languages like Python, Lua and JavaScript, with some early implementations including projects like Theano, Torch and Caffe. Similar ideas have arisen in statically-typed, functional languages, such as Haskell (Stalin$\nabla$~\citet{pearlmutter2008using}), Scala (Nexus~\citet{chen2017typesafe}), F\# (DiffSharp~\citet{baydin-diffsharp}), Swift~\citep{swift}, et al., but most of these are unable to check the shape of multidimensional arrays in their type system, and those which do are typically implemented in experimental languages with sophisticated type-level programming features. In our work, we demonstrate the viability of shape-checked differentiable programming in a widely-used language with parametric types. This ensures that programs on matrices, if they compile, are the correct shape can be numerically evaluated at runtime.
 
-Kotlin$\nabla$ is an embedded domain-specific language (eDSL) for differentiable programming in a language called Kotlin, a statically-typed programming language with support asynchronous programming and multi-platform compilation. In Kotlin$\nabla$ (\autoref{ch:kotlingrad}), we describe an algebraically-grounded implementation of forward-mode automatic differentiation with shape-safe tensor operations. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use.
+Kotlin$\nabla$ is an embedded domain-specific language (eDSL) for differentiable programming in a language called Kotlin, a statically-typed programming language with support for asynchronous programming and multi-platform compilation. In Kotlin$\nabla$ (\autoref{ch:kotlingrad}), we describe an algebraically-grounded implementation of forward-mode automatic differentiation with shape-safe tensor operations. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use.
 
 \section{Testing and validation}
 
@@ -837,7 +840,7 @@ For completeness, but rarely used in practice, is the second-order partials for 
 %
 We can use these tools to compute the direction to adjust the inputs of a computable function, in order to maximally change that function's output, i.e.\ the direction of steepest descent.
 
-\noindent Sometimes a function has the property that given an input $a$, no matter $a$ is changed, the output stays the same. We say that such functions have zero gradient for that input.
+\noindent Sometimes a function has the property that given an input $a$, no matter $a$ is changed, the output remains the same. We say that such functions have zero gradient for that input.
 %
 \begin{equation}
     (\nabla F)(a) \approx \mathbf{0}
@@ -1187,7 +1190,7 @@ Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know th
 %
 For example, the following test checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
 %
-\begin{kotlinlisting}[showstringspaces=false]
+\begin{kotlinlisting}
 val x = Var("x")
 val y = Var("y")
 val z = y * (sin(x * y) - x)            // Function under test
@@ -1415,7 +1418,7 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 
 \section{Future work}\label{sec:future-work}
 
-Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2008matrix}).
+Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (c.f. section 2.8 of~\citet{petersen2008matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices).
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into~\cite{makwana2018numlin}.
 
@@ -1426,10 +1429,9 @@ Explore the meaning of derivatives in other calculi, and incremental compilation
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-
 Neural network research has yielded a powerful set of general-purpose gradient-based optimizers. Yet the adversarial learning literature has shown neural networks are susceptible to pathological inputs, and trained models are notoriously hard to transfer to new domains. But the same techniques used to probe the failure modes of neural networks can be employed for automated testing of classical programs.
 
-In this chapter, we explore the intersection between adversarial testing and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
+In this chapter, we will explore the intersection between adversarial testing and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
 
 \subsection{Unit Testing}
 
@@ -1451,21 +1453,21 @@ The trouble is, someone needs to sit down and write a bunch of test cases.
 Fuzz testing is an automated software testing methodology which automatically generates test inputs in order to break a known function. For example, consider the following test:
 
 \begin{kotlinlisting}
-fun fuzzTest() {
+fun simpleFuzzTest() {
     val inputs = generateRandomInputs()
     for(i in inputs)
         assertEquals(program(i), oracle(i))
 }
 \end{kotlinlisting}
 
-The trouble is, we need an oracle. This is known as the test oracle problem. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Furthermore, since a single call to \inline{program(i)} can be be quite expensive in practice, this method can be inefficient.
+The trouble is, we need an oracle, an often unreasonable assumption. This is known as the test oracle problem. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Furthermore, since a single call to \inline{program(i)} can be be quite expensive in practice, this method can be inefficient.
 
 \subsection{Property-based Testing}
 
 Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. It can be seen as follows:
 
 \begin{kotlinlisting}
-fun propTest() {
+fun propertyBasedTest() {
     val inputs = generateRandomInputs()
     for(i in inputs)
         output = program(i)
@@ -1488,7 +1490,7 @@ The trouble is, finding the right properties to test can be quite tricky in prac
 
 \subsection{Metamorphic testing}
 
-Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing  low-cost domain-specific properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost domain-specific properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
 Roughly speaking, it can be expressed as follows:
 
@@ -1545,11 +1547,11 @@ Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test un
     D_\mathbf T: \{ x \sim \mathbb{R}(0, 1) \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If we have no knowledge about the programs implementation or its data distribution, $D_\mathbf\hat P$, we can do no better than random search~\citep{wolpert1997no}. However, if we have some information about the input distribution, we could re-parameterize the distribution to incorporate our knowledge. Assuming the program has previously been tested on common inputs, we could sample $x \sim \frac{1}{D_\mathbf\hat P}$ for inputs that are infrequent. If we knew how $\mathbf\hat P$ were implemented, we could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
+If if the tester has no knowledge about the programs implementation or its data distribution, $D_\mathbf\hat P$, it can do no better than random search~\citep{wolpert1997no}. However, if she has some information about the input distribution, she could re-parameterize the distribution to incorporate her knowledge. Assuming the program has previously been tested on common inputs, she might sample $x \sim \frac{1}{D_\mathbf\hat P}$ for inputs that are infrequent. If the tester knew how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. If we do not have access to the function directly, we can still use zeroth order optimization techniques to approximate the gradient. If we have access to the program, we can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
+Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. If the tester does not have access to the function directly, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
 %
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
@@ -1559,7 +1561,7 @@ Another strategy, independent of how candidate inputs are selected, is to use so
 % \end{equation}
 %
 
-Consider algorithm \autoref{alg:prob_fuzz} for finding test failures. First, we select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
+Consider algorithm \autoref{alg:prob_fuzz} for finding test failures. First, let us select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
 
 We hypothesize that if the implementation of $P$ were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
 
@@ -2065,7 +2067,7 @@ One application of multi-stage builds is compiling a project dependency from its
     \centering
     \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
     \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
-    \caption{Container infrastructure. Left: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. Right: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
+    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
     \label{fig:docker}
 \end{figure}
 
@@ -2111,11 +2113,9 @@ Insert an SD card and follow the instructions provided. When complete, remove th
 
 To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation was successfully completed and the network is configured properly, the following interface should be visible:
 
-\begin{figure}
-    \centering
+\begin{figure}\label{fig:portainer_ui}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by Portainer\footnote{For further details about Portainer and its features, visit: \url{https://www.portainer.io/}}, a wrapper for the Docker CLI which has support for container management and terminal emulation.}
-    \label{fig:portainer_ui}
+    \caption{Browser interface for individual Duckiebots. It is provided by Portainer, a wrapper for the Docker CLI which has support for container management and terminal emulation.}
 \end{figure}
 
 \subsection{Testing ROS}
@@ -2297,7 +2297,7 @@ Initially, we made the explicit decision to ship user source code directly insid
 
 \begin{figure}\label{fig:early_prototype}
 \includegraphics[width=0.80\textwidth]{image_provenance.png}
-\caption{An early prototype of the Docker image hierarchy.}
+\caption{Early prototype of the Docker image hierarchy. Chaining unversioned autobuilds without disciplined unit testing tends to produce an undesirable domino effect, where breaking changes are allowed to propagate downstream, resulting in a cascade of silent failures.}
 \end{figure}
 
 The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream changes to cascade to downstream images. The short term solution was to disable auto-building and push manually, however fixing it required rethinking the role of Docker builds in the CI toolchain.
@@ -2307,7 +2307,7 @@ The root cause of this friction was a product of imprecise versioning and over-a
 \caption{The AI Driving Olympics, a primary use case for the system described above.}
 \end{figure}
 
-One of the primary use cases for the container infrastructure is a biannual robotics competition called the AI Driving Olympics. We discovered a more stable solution is to store all sources on the local development environment and rebuild the image only when its upstream dependencies change. A Docker image, paired with a Git repository and a commit message defines an AIDO submission. The image only contains its compiled upstream dependencies, and the source code is paired at runtime.
+One of the primary use cases for the container infrastructure is a biannual robotics competition called the AI Driving Olympics~\citep{aido2018}. We discovered a more stable solution is to store all sources on the local development environment and rebuild the image only when its upstream dependencies change. A Docker image, paired with a Git repository and a commit message defines an AIDO submission. The image only contains its compiled upstream dependencies, and the source code is paired at runtime.
 
 \rare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
 
