@@ -922,9 +922,11 @@ As deep learning solved problems across various domains, researchers observed th
 
 \section{Static and dynamic languages}
 
-Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality between statically typing and fewer defects has not been conclusively established, dynamically typed languages are seldom used for building safety-critical software systems. The majority of robotics~\citep{Areserio54:online} and embedded systems today rely on statically typed languages.
+Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality on using static typing and fewer defects has not been conclusively established, dynamically typed languages are seldom used for building safety-critical systems, and the majority of robotics applications~\citep{Areserio54:online} are written in statically typed languages.
 
-Statically typed languages eliminate a broad class of runtime errors and allow us to reason about the behavior of programs without needing to run them. A well-designed library in a statically typed language will eliminate errors related to API misuse, which would otherwise require documentation and code samples. Finally, type systems make it easier to implement automated reasoning tools, which can provide more relevant autocompletion, source code navigation, and earlier detection of runtime errors.
+Statically typed languages eliminate a broad class of runtime errors and allow users to reason about the behavior of programs without needing to execute them. In addition to stronger syntax validation for general purpose programming, a well-designed library in a strongly typed language can eliminate specific errors related to API misuse that would otherwise require documentation and code samples to prevent, reducing the burden of discovery and maintenance. Furthermore, strong type systems enable more powerful static analysis tools, which can provide relevant autocompletion, source code navigation, and earlier detection of runtime errors.
+
+One frequent objection to using strongly typed languages is attributed to the additional burden of manual type annotation. While early type-safe languages like C/C++ and Java required programmers to exhaustively annotate function and variable declarations, with judicious use of type inference in modern languages like Kotlin, Scala, Rust et al., most type signatures may be safely omitted and easily recovered from the surrounding context. Type inference enables modern languages to offer the brevity of dynamically typed languages with the safety of static type checking.
 
 \section{Imperative and functional languages}
 
@@ -1003,10 +1005,10 @@ Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs), which are 
 
 \section{Usage}
 
-Kotlin$\nabla$ allows users to implement differentiable programs by composing operations on numerical fields to form algebraic expressions. %Expressions are lazily evaluated inside a numerical context, which may be imported on a per file basis or lexically scoped for finer-grained control over the runtime behavior.
+Kotlin$\nabla$ allows users to implement differentiable programs by composing expressions. Consider the following Kotlin$\nabla$ program with two inputs and one output:
 %
-\begin{figure}
-\begin{unbreakablelisting}[caption={A basic Kotlin$\nabla$ program with two inputs and one output, rendered below.}, label={lst:basic_kotlingrad}]
+\begin{figure}[H] \label{fig:basic_kotlingrad}
+\begin{unbreakablelisting}[caption={, rendered below.}]
 with(DoublePrecision) { // Uses double precision numerics for evaluation
   val x = Var("x") // Declare immutable variables (these variables are
   val y = Var("y") // just symbolic constructs used for differentiation)
@@ -1021,12 +1023,12 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
 \includegraphics[scale=0.43]{plot_result.png}
 \end{figure}
 %
-In Listing~\label{lst:edsl}, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
+Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. Expressions are lazily evaluated inside a numerical context, which may be imported on a per-file basis or lexically scoped for finer-grained control over the runtime behavior. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
 %
 \begin{figure}
-\begin{kotlinlisting}
-val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform any calculation
-\end{kotlinlisting}
+\begin{unbreakablelisting}
+val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
+\end{unbreakablelisting}
 \centering
 \begin{tikzpicture}[grow=left]
     \tikzset{level distance=60pt}
@@ -1036,9 +1038,7 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform any calculation
     \label{lst:edsl}
 \end{figure}
 
-%It is possible to enforce shape-safe vector construction and checked vector arithmetic up to a fixed \texttt{L}. A similar pattern may be used to represent matrix and tensor data types, whose type signature will encode the operand's shape at runtime.
-
-%In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
+An expression is simply a DSL for constructing \texttt{Function}s. No numerical calculations, save for constant folding and algebraic simplification, are performed at this stage. Functions are only evaluated once invoked with numerical values, e.g. \texttt{z(0, 0)}.
 
 \section{Type systems}\label{sec:type-systems}
 
@@ -1048,7 +1048,7 @@ The problem we would like to solve can be summarized as follows. Given two varia
 
 Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to compute at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
 
-First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871} It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} When the shape of a tensor is known at compile time, it is possible to shape check ordinary matrix arithmetic in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in Java, Kotlin, C++, C\# or Typescript.
+First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871} It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} When the shape of a tensor is known at compile time, it is possible to shape check ordinary matrix arithmetic in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in any language with parametric types, such as Java, Kotlin, C++, Rust or Typescript, by enumerating a finite set of type-level integer literals, as shown in \autoref{sec:shape-safety}.
 
 {\tiny
 \begin{table}
