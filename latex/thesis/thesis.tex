@@ -1138,7 +1138,7 @@ sealed class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat
 sealed class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
 sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
 //...This is generated code
-sealed class `100`(open val i: Int = 100): `99`(i) { companion object: `100`(), Nat<`100`> }
+sealed class `99`(override val i: Int = 99): `98`(i) { companion object: `99`(), Nat<`99`> }
 \end{kotlinlisting}
 %
 Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. Let us consider the rank-1 tensor (i.e.\ vector) case:
@@ -1682,7 +1682,7 @@ While containerization simplifies the process of building and deploying applicat
 
 Suppose there is a program which is known to run on some computer. It would be nice to give another computer -- any computer with an internet connection -- a short string of ASCII characters, press \keys{\return}, and return to see that program running. Never mind where the program was built or what software happened to be running at the time. This may seem trivial, but is a monumental software engineering problem. Various package managers have attempted to solve this, but even when they work as intended, only support natively compiled binaries on operating systems with the same package manager.
 
-Docker\footnote{The following tutorial uses Docker, but the workflow described is similar to most container platforms.} is a tool for portable, reproducible computing. With Docker, users can run any Linux program on almost any networked computing device on the planet, regardless of the operating system or hardware architecture. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but users will never need to intervene in the installation process.
+Docker\footnote{The following tutorial uses Docker, but the workflow described is similar to most container platforms.} is a tool for portable, reproducible computing. With Docker, users can run any Linux program on almost any networked computing device on the planet, regardless of the underling operating system or hardware architecture. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but users will never need to intervene in the installation process.
 
 To install Docker itself, execute the following command on a POSIX-compliant shell of any Docker-supported platform:
 
