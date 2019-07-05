@@ -1507,23 +1507,19 @@ tailrec fun shrink(input: Float, program: (Float) -> T, property: (T) -> Boolean
     else shrink(input - input / 2.0f, program, property)
 \end{kotlinlisting}
 
-The trouble is, finding the right properties to test can be quite tricky in practice, and requires a lot of effort and domain expertise. What if there were a better way?
+The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. What if there were a better way?
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost domain-specific properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost, general-purpose properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
-Roughly speaking, it can be expressed as follows:
+More precisely, it can be expressed as follows: Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset Q^z \times S^z$ where $z \geq 2$. In the simplest case, an MR is a binary relation over input-output pairs, where e.g., $\langle \mathbf x, \mathbf y \rangle \mathcal R \langle \mathbf x', \mathbf y' \rangle \Leftrightarrow \mathbf P(\mathbf x) = \mathbf P(\mathbf x')$.
 
-Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation is a relation $\mathcal R \subset Q^z \times S^z$.
+For example, suppose that our MR is $\mathbf P(\mathbf x) = \mathbf P(\mathbf x' = \mathbf x + \varphi) = \mathbf y, \forall \varphi \in [0, \varepsilon]$. Given a small set of pairs from an oracle $\langle \mathbf x, \mathbf y \rangle \in \mathbf P$, and a program $\mathbf{\hat P}$, the MR suggests a much larger set of inputs on which to test $\mathbf{\hat P}$, without requiring matched outputs from the oracle $\mathbf P$. If $\exists \mathbf x' \in \{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon\}$, this implies $\mathcal R$ does not hold on $\mathbf{\hat P}$ and either (1) the MR is invalid $(\langle \mathbf x, \mathbf P(\mathbf x)\rangle, \langle \mathbf x', \mathbf P(\mathbf x')\rangle) \notin \mathcal R$, or (2) $\mathbf{\hat P} != \mathbf{P}$ the program under test is broken.
 
-Given a function $\mathbf{\hat P}$ and a relation $\mathcal R$, a metamorphic relation over that should hold for all input-output pairs, regardless of their value. Suppose we know that $\mathbf P(\mathbf x) = \mathbf y$. Assume there exists a relation \inline{r(x)} such that $\forall \mathbf z \in \mathbf r(\mathbf x), \mathbf P(\mathbf z) = \mathbf y$. If we can find an $\mathbf r$ with a sufficiently large cardinality, then given a small set of $\mathbf x, \mathbf y$ pairs from an oracle, we can obtain a much larger set of test inputs.
-
-For example, if we have a function that should predict the correct steering angle for an image of a road. Suppose we are given a single image and the ground truth steering angle. One metamorphic relation could be changes to lighting, small rotations, shifts or skews of the image. We should be able to apply any single relation or permutation of these relations, and the output ought to remain unchanged. If the output is drastically different, we have detected an error.
+Consider a more concrete example: suppose we have a function that should predict the correct steering angle for an image of a road. Assume we are given a single image and the ground truth steering angle. One metamorphic relation could be invariance under changes to lighting, small rotations, shifts or skews of the image. We should be able to apply any single transformation or permutation of composed transformations on the image, and the output ought to remain unchanged. If the output is drastically different in some way, we have detected an error.
 
 TODO: code
-
-For adequate coverage, we need to obtain labeled pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$. Now this is starting to sound familiar!
 
 \subsection{Adversarial Testing}
 
