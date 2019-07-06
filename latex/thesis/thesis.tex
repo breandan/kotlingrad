@@ -613,20 +613,20 @@ Hatchery is a tool designed to assist programmers writing robotics applications 
 
 The Robot Operating System (ROS) is a popular middleware for robotics applications. At its core, ROS provides software infrastructure for distributed messaging, but also includes a set of community-developed libraries and graphical tools for building robotics applications. ROS is not an operating system (OS) in the traditional sense, but it does offer OS-like functionality such as shared memory and inter-process communication. Unlike pure message-oriented systems like DDS and ZMQ, in addition to the communication infrastructure, ROS provides specific APIs for building decentralized robotic systems, particularly those which are capable of mobility. This includes standard libraries for serializing and deserializing geometric data, coordinate frames, maps, sensor messages, and imagery.
 
-The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of ROS applications on GitHub are written in C/C++, followed by Python at around 25\%~\citep{Areserio54:online}. Source code for a typical ROS application will include a mixture of C/C++ and Python code, roughly corresponding to the language preferences in the robotics and machine learning communities. Hatchery can be used with most common ROS client libraries, including rosjava for Java, rospy for Python, roscpp for C/C++, and others.
+The ROS middleware provides several language front-ends for polyglot programming. According to one community census in 2018, 55\% of all ROS applications on GitHub are written in C/C++, followed by Python with a 25\%~\citep{Areserio54:online} share. Source code for a typical ROS application contains a mixture of C/C++ and Python code, corresponding to the language preferences in the robotics and machine learning communities. Hatchery is capable of working with most common ROS client libraries, including rosjava for Java, rospy for Python, roscpp for C/C++, and several other language front ends.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.90\textwidth]{rqt_dep_graph.png}
+\includegraphics[width=\textwidth]{rqt_dep_graph.png}
 \caption{A typical ROS application contains a large graph of dependencies.}
 \end{figure}
 
-A typical ROS application consists of several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, a number of steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.
+A typical ROS project has several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, a number of steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.\footnote{Detailed installation instructions may be found here: \url{http://wiki.ros.org/ROS/Installation}}
 
-Assuming ROS has previously been installed on the host, it can be sourced like so:
+Assuming ROS has been installed to the default location, it can be sourced like so:
 
 \begin{pclisting}
-~$ source /opt/ros/<DISTRO>/setup.bash
+~$ source /opt/ros/<ROS DISTRO>/setup.[ba]sh
 \end{pclisting}
 
 A minimal ROS application contains at least one \textit{publisher} and \textit{subscriber}, which pass messages over a shared communication channel. The publisher might be defined as follows:
@@ -645,12 +645,9 @@ while not rospy.is_shutdown():
     i += 1
 \end{pythonlisting}
 
-As the publisher writes messages to \inline{channel}, the subscriber can read them off like so:
+As the publisher writes messages to \inline{channel}, a subscriber can read them off like so:
 
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/subscriber.py]
-import rospy
-from std_msgs.msg import String
-
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "received %s", data.data)
 
@@ -659,7 +656,7 @@ rospy.Subscriber("channel", String, callback)
 rospy.spin()
 \end{pythonlisting}
 
-All ROS packages have launch file, which contain a manifest of the nodes:
+All ROS packages have launch file, which contain a manifest of available nodes:
 
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
@@ -697,18 +694,29 @@ Notice how the typographical error is printed in red and the file reference is u
 
 An often overlooked, but important aspect of development tools is the user interface, being the primary mechanism through which developers edit source code. In the early days of modern computing, the only way of getting information into or out of a computer required punching holes in paper. Later, computers were equipped with technology to emit the same binary pattern as pixels, which could be used to display a small alphabet called ASCII. Later, through increased density and frequency, computers were able to render more sophisticated shapes and animations. This evolution is the direct result of advances in graphics technology, but can also be seen as progress in program representation, where the explicit source code was simply a medium for communicating developer intent and machine interpretation.
 
-The dominant medium for programming today is still ASCII-based, although machines still use some form of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. Many developer tools provide a minimal command line interface (CLI), in addition to more sophisticated text editors for manipulating programs. Yet these tools are still fairly restrictive. In the same way that early computer scientists probably did not fashion a new algorithm with a sequence of holes in mind, ASCII is also an indirect representation, albeit one slightly less contrived. Language designers have tried to provide a notation is compact, familiar to use and easy to reason about execution. But most programming is still confined to text.
-
 \begin{figure}
-    \centering
-    \includegraphics[width=0.90\textwidth]{progress_in_program.png}
-    \caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
-    \label{fig:evolution_of_programming}
+\centering
+\includegraphics[width=0.90\textwidth]{progress_in_program.png}
+\caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
+\label{fig:evolution_of_programming}
 \end{figure}
 
-Modern programming tools support a mix of hypertext and simple graphical models, as in the case of Hatchery. This provides a somewhat richer representation than raw text and captures the program's connected structure, but is rendered as ASCII with minor visual cues. While some programming languages and tools offer a larger character set and support typographic ligatures, the visual representation of source code is still highly linear. In Hatchery's case, we use a lightweight graphical user interface (GUI), most of which is provided by the underlying IDE platform. The plugin's primary job is to integrate smoothly with the IDE, which requires language- and framework-specific customizations.
+ASCII is still the dominant medium for modern programming, although machines still use various forms of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many developer tools provide a minimal command line interface (CLI), in addition to more sophisticated text editors for manipulating programs, these tools are still fairly restrictive. In the same way that early computer scientists probably did not fashion a new algorithm with a sequence of holes in mind, ASCII is also an indirect representation, albeit one slightly less contrived. Modern languages allow users to express their ideas in a notation is compact, familiar to use and easy to reason about its execution.
 
 \begin{figure}
+\centering
+\includegraphics[width=0.90\textwidth]{mps_screenshot.png}
+\caption{Projectional editors such as MPS~\citep{voelter2010language} (shown above)  are able to render plaintext source code in alternate formats for reading and manipulation.}
+\label{fig:mps_screenshot}
+\end{figure}
+
+Modern programming tools are capable of representing code as a mixture of hypertext and graphical user interfaces. This provides a somewhat richer representation than plaintext and helps to capture programs' graph-based structure, but is rendered as ASCII with sparse visual cues. Some tools support larger character sets and font-based typographic ligatures, although the visual representation of source code remains highly linear.
+
+More experimental UIs, such as model-driven engineering and \textit{projectional editors} offer more flexible visual layouts, through macro-based text replacement. This uncoupling between the composition and representation of text raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a particular task? And who, or what, is the intended reader? These are important questions to ask when designing a developer tool.
+
+In the case of Hatchery, we use a lightweight graphical user interface (GUI), most of which is provided by the underlying IDE platform. The plugin's primary job is to integrate smoothly with the IDE, which requires language- and framework-specific customizations.
+
+\begin{figure}[b]
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
     \caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
@@ -990,7 +998,7 @@ Existing AD implementations for the JVM include Lantern~\citep{wang2018demystify
 
 \begin{itemize}
 \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e.\ groups, rings and fields.
-\item \textbf{$\mathbf{\lambda}$-functions} support functional programming, following~\citet{pearlmutter2008reverse}.
+\item \textbf{$\mathbf{\lambda}$-functions} support functional programming, following~\citet{pearlmutter2008reverse, pearlmutter2008using, siskind2008nesting, elliott2009beautiful, elliott2018simple}, et al.
 \item \textbf{Extension functions} support extending classes with new fields and methods which can be exposed to external callers without requiring sub-classing or inheritance.
 \end{itemize}
 
@@ -1144,7 +1152,7 @@ sealed class `99`(override val i: Int = 99): `98`(i) { companion object: `99`(),
 Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. Let us consider the rank-1 tensor (i.e.\ vector) case:
 %
 \begin{kotlinlisting}
-// <C: `1`> will accept 0 <= C via Liskov substitution
+// <C: `1`> will accept 1 <= C <= 99 via Liskov substitution
 infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
     Vec(length, contents.zip(v.contents).map { it.first + it.second })
 \end{kotlinlisting}
