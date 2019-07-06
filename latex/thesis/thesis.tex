@@ -1088,12 +1088,12 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \noindent There are three broad strategies for handling shape errors in array programming: \\
 %
 \begin{enumerate}
-    \item Hide the error somehow by implicitly reshaping or broadcasting arrays
-    \item Announce the error at runtime, with a relevant message, e.g.\ \texttt{InvalidArgument}
-    \item Do not allow programs which can result in a shape error to compile \\
+    \item Hide the error somehow by implicitly reshaping or broadcasting arrays.
+    \item Announce the error at runtime with a relevant message, e.g.~\texttt{InvalidArgument}.
+    \item Do not allow programs which can result in a shape error to compile. \\
 \end{enumerate}
 %
-In Kotlin$\nabla$, we use the third strategy. Consider the following program:
+In Kotlin$\nabla$, we adopt the third strategy. Consider the following example:
 %
 \begin{kotlinlisting}
 val a = Vec(1.0, 2.0) // Inferred type: Vec<Int, `2`>
@@ -1145,7 +1145,7 @@ sealed class `0`(open val i: Int = 0) { companion object: `0`(), Nat<`0`> }
 sealed class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
 sealed class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
 sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
-//...This is generated code
+//...Code for integer literals should be generated
 sealed class `99`(override val i: Int = 99): `98`(i) { companion object: `99`(), Nat<`99`> }
 \end{kotlinlisting}
 %
@@ -1203,18 +1203,18 @@ val lm = l * m // Inferred type: Mat<Int, `4`, `3`>
 val mm = m * m // Does not compile
 \end{kotlinlisting}
 %
-This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or would require enumerating every possible combination of type literals.
+This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or highly impractical as it would require enumerating every possible combination of type literals in type arithmetic.
 
 \section{Testing}\label{sec:testing}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property} (c.f.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (c.f.~\autoref{subsec:metamorphic-testing}). Notable implementations include QuickCheck~\citep{claessen2011quickcheck}, Hypothesis~\citep{Hypothesis} and KotlinTest~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer . Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property} (c.f.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (c.f.~\autoref{subsec:metamorphic-testing}). Notable implementations include QuickCheck~\citep{claessen2011quickcheck}, Hypothesis~\citep{Hypothesis} and KotlinTest~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
 %
 \begin{enumerate}
-    \item \textbf{Analytical differentiation}: manually differentiate common functions and numerically evaluate a subset of the domain with AD.
-    \item \textbf{Finite difference approximation}: sample space of symbolic (differentiable) functions, comparing results of AD to FD. \\
+    \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
+    \item \textbf{Finite difference approximation}: sample the space of symbolic differentiable functions, comparing the numerical results suggested by the finite difference method and the equivalent AD result, up to a fixed-precision approximation. \\
 \end{enumerate}
 %
-For example, the following test checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to within numerical precision:
+For example, the following test checks whether the analytical derivative and the automatic derivative, when evaluated at random points, are equal to within numerical precision:
 %
 \begin{kotlinlisting}
 val x = Var("x")
@@ -1251,7 +1251,7 @@ val fd_dx = (sin(x + dx) - sin(x)) / dx
 }
 \end{kotlinlisting}
 %
-There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method is to compare the numerical output against a well-known implementation, such as TensorFlow. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
+There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method would be to compare the numerical output against a well-known implementation, such as TensorFlow. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
@@ -1316,7 +1316,7 @@ The numeric tower also allows us to define common behavior such as subtraction a
 
 \section{Algebraic data types}\label{sec:adts}
 
-\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler enforces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
+\noindent Algebraic data types (ADTs) in the form of sealed classes (a.k.a.\ sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler forces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
 %
 \begin{kotlinlisting}
 class Const<T: Fun<T>>(val number: Number) : Fun<T>()
@@ -1458,9 +1458,9 @@ Explore the meaning of derivatives in other calculi, and incremental compilation
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \textit{Some moral and technical consequences of automation}~\end{flushright}}
 
-Neural network research has yielded a powerful set of general-purpose gradient-based optimizers. Yet the adversarial learning literature has shown neural networks are susceptible to pathological inputs, and trained models are notoriously hard to transfer to new domains. But the same techniques used to probe the failure modes of neural networks can be employed for automated testing of classical programs.
+Neural networks provide a powerful set of gradient-based function approximators, which are surprisingly effective compared to many handcrafted algorithms. But the same methods which have proven so effective in practice are also prone to failure when presented with carefully designed inputs. Furthermore, trained models are notoriously difficult to transfer to new domains where the training and test distributions are dissimilar. But the same gradient-based optimization techniques used to train neural networks can also be employed to probe the failure modes of neural networks and differentiable programs.
 
-In this chapter, we will explore the intersection between adversarial testing and the notion of fuzz testing in software engineering. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs.
+In this chapter, we will explore the intersection between adversarial testing and the notion of fuzz testing in software engineering. We will see how the notion of software testing and adversarial methods in machine learning share a curious resemblance. In particular, we show how probabilistic sampling with constrained optimization can be seen as an extension of property-based testing for adversarial training of differentiable programs, and propose PBT algorithm which incorporates features of probabilistic programming and gradient-based optimization.
 
 \subsection{Unit Testing}
 
@@ -1521,9 +1521,14 @@ The trouble is, finding the right properties to test can be highly sensitive, an
 
 Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost, general-purpose properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
-More precisely, it can be expressed as follows: Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset Q^z \times S^z$ where $z \geq 2$. In the simplest case, an MR is a binary relation over input-output pairs, where e.g., $\langle \mathbf x, \mathbf y \rangle \mathcal R \langle \mathbf x', \mathbf y' \rangle \Leftrightarrow \mathbf P(\mathbf x) = \mathbf P(\mathbf x')$.
+More precisely, it can be expressed as follows: Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset Q^z \times S^z$ where $z \geq 2$. In the simplest case, an MR is a equivalence relation over input-output pairs, where e.g., $\langle \mathbf x, \mathbf y \rangle \mathcal R \langle \mathbf x', \mathbf y' \rangle \Leftrightarrow \mathbf P(\mathbf x) = \mathbf P(\mathbf x')$.
 
-For example, suppose that our MR is $\mathbf P(\mathbf x) = \mathbf P(\mathbf x' = \mathbf x + \varphi) = \mathbf y, \forall \varphi \in [0, \varepsilon]$. Given a small set of pairs from an oracle $\langle \mathbf x, \mathbf y \rangle \in \mathbf P$, and a program $\mathbf{\hat P}$, the MR suggests a much larger set of inputs on which to test $\mathbf{\hat P}$, without requiring matched outputs from the oracle $\mathbf P$. If $\exists \mathbf x' \in \{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon\}$, this implies $\mathcal R$ does not hold on $\mathbf{\hat P}$ and either (1) the MR is invalid $(\langle \mathbf x, \mathbf P(\mathbf x)\rangle, \langle \mathbf x', \mathbf P(\mathbf x')\rangle) \notin \mathcal R$, or (2) $\mathbf{\hat P} != \mathbf{P}$ the program under test is broken.
+For example, suppose that our MR is $\mathbf P(\mathbf x) = \mathbf P(\mathbf x' = \mathbf x + \varphi) = \mathbf y, \forall \varphi \in [0, \varepsilon]$. Given a small set of pairs from an oracle $\langle \mathbf x, \mathbf y \rangle \in \mathbf P$, and a program $\mathbf{\hat P}$, the MR suggests a much larger set of inputs on which to test $\mathbf{\hat P}$, without requiring matched outputs from the oracle $\mathbf P$. If $\exists \mathbf x' \in \{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon\}$, this implies $\mathcal R$ does not hold on $\mathbf{\hat P}$ and either:
+
+\begin{enumerate}
+\item the MR is invalid $(\langle \mathbf x, \mathbf P(\mathbf x)\rangle, \langle \mathbf x', \mathbf P(\mathbf x')\rangle) \notin \mathcal R$, or
+\item $\mathbf{\hat P} != \mathbf{P}$ the program under test is broken.
+\end{enumerate}
 
 Consider a more concrete example: suppose we have a function that should predict the correct steering angle for an image of a road. Assume we are given a single image and the ground truth steering angle. One metamorphic relation could be invariance under changes to lighting, small rotations, shifts or skews of the image. We should be able to apply any single transformation or permutation of composed transformations on the image, and the output ought to remain unchanged. If the output is drastically different in some way, we have detected an error.
 
