@@ -123,7 +123,7 @@
     language=kotlin,
     basicstyle=\ttfamily\scriptsize,
     numberstyle=\footnotesize,
-    backgroundcolor=\color{gray!10},
+    backgroundcolor=\color{slightgray},
     frame=single,
     tabsize=2,
     rulecolor=\color{black!30},
@@ -312,7 +312,22 @@
     }%
 }
 
-\def\inline{\lstinline[basicstyle=\ttfamily]}
+\definecolor{slightgray}{rgb}{0.90, 0.90, 0.90}
+
+\usepackage{soul}
+\makeatletter
+\def\SOUL@hlpreamble{%
+\setul{}{3.0ex}%
+\let\SOUL@stcolor\SOUL@hlcolor%
+\SOUL@stpreamble%
+}
+\makeatother
+\newcommand{\inline}[1]{%
+\begingroup%
+\sethlcolor{slightgray}%
+\hl{\ttfamily #1}%
+\endgroup
+}
 
 % Downloads Table
 \usepackage{pgfplots}
@@ -686,7 +701,7 @@ Rather than interacting with the command line, it would be convenient if there w
 %
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
-<node name="publisher" pkg="pubsub" type="(*\color{red}\textbf{\texttt{pubsher.py}}*)" output="screen"/>
+<node name="publisher" pkg="pubsub" type="(*\color{red}\textbf{pubsher.py}*)" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="(*\color{blue}\underline{subscriber.py}*)" output="screen"/>
 </launch>
 \end{launchlisting}
@@ -724,34 +739,30 @@ For the purposes of this plugin, we use the IntelliJ Platform, a popular platfor
 
 \subsection{Refactoring}\label{subsec:refactoring}
 
-Refactoring is a key features in any good IDE, and the essence of refactoring is renaming. Consider what must occur when a user wishes to rename a token in her program, for example the \inline{data} parameter on line \#1 below:
+Refactoring is an essential feature in any IDE, and the essence of refactoring is renaming. Consider what must occur when a user wishes to rename a token in her program, such as the \inline{data} parameter on line \#1 below:
 %
 \begin{pythonlisting}
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
 \end{pythonlisting}
 %
-If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} in the file via \inline{:%s/data/msg/g}, with the following result:
+If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} in the file via \inline{:\%s/data/msg/g}, with the following result:
 %
 \begin{pythonlisting}
 def callback((*\hl{msg}*)):
     rospy.loginfo(rospy.get_caller_id() + "received (*\hl{msg}*): %s", (*\hl{msg}*).(*\hl{msg}*))
 \end{pythonlisting}
 %
-There were four occurrences of the string \inline{data}, only two of which were valid renaming tokens. Instead, we would like to rename only those identifiers sharing a lexical scope.
+There were four occurrences of the string \inline{data}, only two of which were correctly renamed. Instead, the operation should only touch those identifiers which refer to the variable:
 %
-\newcommand{\cfbox}[2]{
-    \colorlet{currentcolor}{.}{
-        \color{#1}\fbox{\color{currentcolor}#2}
-    }
-}
+\newcommand{\cfbox}[2]{\colorlet{currentcolor}{.}{\color{#1}\fbox{\color{currentcolor}#2}}}
 
 \begin{pythonlisting}
 def callback((*\cfbox{red}{data}*)):
     rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{data}*).data)
 \end{pythonlisting}
-
-More generally, we would like to rename identifiers used across files and languages in the same project, and doing so requires a richer model of the text in an editor. We need a parser.
+%
+Generally, we would like the ability to rename identifiers across files and languages. To do this, we need a richer understanding of code that transcends text. We need a parser.
 
 \subsection{The Parser}\label{subsec:the-parser}
 
@@ -1039,7 +1050,7 @@ Existing AD implementations for the JVM include Lantern \citep{wang2018demystify
     \label{fig:kotlingrad_digram}
 \end{figure}
 
-Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really just functions for building an abstract syntax tree (AST), which can be evaluated eagerly or lazily depending on the user's needs. Typically these ASTs represent simple state machines, but they can also be used to implement a full-fledged programming language. Popular examples include SQL/LINQ~\citep{meijer2006linq}, OptiML~\citep{sujeeth2011optiml} and other fluent interfaces~\citep{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with a carefully designed type system, users will automatically receive code completion and static analysis from their favorite developer tools. Many have observed that functional programming languages are suitable host languages~\citep{elliott2003compiling,rompf2010lightweight}, perhaps owing to the notion of code as data.\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}
+Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really functions for building an abstract syntax tree (AST). Often these ASTs represent simple state machines, but are also used to embed a programming language. Popular examples include SQL/LINQ~\citep{meijer2006linq}, OptiML~\citep{sujeeth2011optiml} and other fluent interfaces~\citep{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with proper typing, users will receive code completion and static analysis from their favorite developer tools. Functional languages are suitable host languages~\citep{elliott2003compiling,rompf2010lightweight}, perhaps owing to the notion of code as data.%\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}
 
 \section{Usage}
 
@@ -1070,19 +1081,19 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
 \centering
 \begin{tikzpicture}[grow=left]
     \tikzset{level distance=60pt}
-    \Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{\textbf{x}} \texttt{\textbf{x}} ] [.\texttt{pow} \texttt{\textbf{y}} \texttt{2} ] ] ] ] \texttt{10} ]
+    \Tree [.$\div$ [.\inline{sin} [.$\times$ \inline{10} [.$+$ [.$\times$ \inline{\textbf{x}} \inline{\textbf{x}} ] [.\inline{pow} \inline{\textbf{y}} \inline{2} ] ] ] ] \inline{10} ]
 \end{tikzpicture}
-\caption{Implicit DAG constructed by the original expression, \texttt{z}, seen above.}
+\caption{Implicit DAG constructed by the original expression, \inline{z}, seen above.}
     \label{lst:edsl}
 \end{figure}
 
-An expression is simply a DSL for constructing \texttt{Function}s. No numerical calculations, save for constant folding and algebraic simplification, are performed at this stage. Functions are only evaluated once invoked with numerical values, e.g. \texttt{z(0, 0)}.
+An expression is simply a DSL for constructing \inline{Function}s. No numerical calculations, save for constant folding and algebraic simplification, are performed at this stage. Functions are only evaluated once invoked with numerical values, e.g. \inline{z(0, 0)}.
 
 \section{Type systems}\label{sec:type-systems}
 
 Early work in type safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} showing how static types in array programming can be used to encode dimensionality and prevent common bugs due to dimension mismatch. Kennedy is particularly interested in units of measurement, and was followed by \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed}. Later, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to encode numbers to infer array sizes in more complex ways. More recently, with the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
 
-The problem we would like to solve can be summarized as follows. Given two variables \inline{x} and \inline{y}, and operator $\diamond$, how do we determine whether the expression \inline{z = x} $\diamond$ \inline{y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}(a, b) \stackrel{?}{=} c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence and use the outer dimensions for inference.
+The problem we would like to solve can be summarized as follows. Given two variables \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}(a, b) \stackrel{?}{=} c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence and use the outer dimensions for inference.
 
 Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to compute at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
 
@@ -1093,25 +1104,25 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
     \begin{tabular}{|c|c|c|c|l|}
         \hline
         \multicolumn{1}{|c|}{Math$\dagger$}                    &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                    \\ \hline
-                 $A(B)$                                        & \texttt{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A + B$                                       & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\end{tabular}        &  \texttt{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A - B$                                       & \begin{tabular}{@{}c@{}}\texttt{a - b}\\\texttt{a.minus(b)}\end{tabular}       &  \texttt{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
-                 $A   B$                                       & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\end{tabular}       &  \texttt{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})  $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular}  & \begin{tabular}{@{}c@{}}\texttt{a / b}\\\texttt{a.div(b)}\end{tabular}         &  \texttt{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}                &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{-a}\\\texttt{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\texttt{a.unaryMinus()}\\\texttt{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
-\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}                & \begin{tabular}{@{}c@{}}\texttt{a + 1}\\\texttt{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\texttt{++a}\\\texttt{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\texttt{a++, a.inc()}\\\texttt{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}    &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{sin(a)}\\\texttt{cos(a)}\\\texttt{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.sin()}\\\texttt{a.cos()}\\\texttt{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
-                $\ln(A)$                                       &                                                                                &  \begin{tabular}{@{}c@{}}\texttt{ln(a)}\\\texttt{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\texttt{a.ln()}\\\texttt{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
-               $\log_b A$                                      & \texttt{a.log(b)}                                                              &  \texttt{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
-                $A^{b}$                                        & \texttt{a.pow(b)}                                                              &  \texttt{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\texttt{a.pow(1.0/2)}\\\texttt{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\texttt{a.sqrt()}\\\texttt{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \texttt{a.diff(b)}                                                             &  \texttt{grad(a)[b]}                                                                    & \texttt{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
-               $\nabla a$                                      &                                                                                &  \texttt{grad(a)}                                                                       & \texttt{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
+                 $A(B)$                                        & \inline{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A + B$                                       & \begin{tabular}{@{}c@{}}\inline{a + b}\\\inline{a.plus(b)}\end{tabular}        &  \inline{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A - B$                                       & \begin{tabular}{@{}c@{}}\inline{a - b}\\\inline{a.minus(b)}\end{tabular}       &  \inline{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
+                 $A   B$                                       & \begin{tabular}{@{}c@{}}\inline{a * b}\\\inline{a.times(b)}\end{tabular}       &  \inline{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})  $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular}  & \begin{tabular}{@{}c@{}}\inline{a / b}\\\inline{a.div(b)}\end{tabular}         &  \inline{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}                &                                                                                &  \begin{tabular}{@{}c@{}}\inline{-a}\\\inline{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\inline{a.unaryMinus()}\\\inline{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
+\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}                & \begin{tabular}{@{}c@{}}\inline{a + 1}\\\inline{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\inline{++a}\\\inline{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\inline{a++, a.inc()}\\\inline{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}    &                                                                                &  \begin{tabular}{@{}c@{}}\inline{sin(a)}\\\inline{cos(a)}\\\inline{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\inline{a.sin()}\\\inline{a.cos()}\\\inline{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
+                $\ln(A)$                                       &                                                                                &  \begin{tabular}{@{}c@{}}\inline{ln(a)}\\\inline{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\inline{a.ln()}\\\inline{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
+               $\log_b A$                                      & \inline{a.log(b)}                                                              &  \inline{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
+                $A^{b}$                                        & \inline{a.pow(b)}                                                              &  \inline{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\inline{a.pow(1.0/2)}\\\inline{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\inline{a.pow(1.0/2)}\\\inline{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\inline{a.sqrt()}\\\inline{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \inline{a.diff(b)}                                                             &  \inline{grad(a)[b]}                                                                    & \inline{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
+               $\nabla a$                                      &                                                                                &  \inline{grad(a)}                                                                       & \inline{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
     \end{tabular}
 \caption{\label{tab:shape_system}Kotlin$\nabla$'s shape system specifies the output shape for matrix arithmetic.}
 \end{table}
 }
-%$\dagger$ \texttt{a} and \texttt{b} are higher order functions. These may be constants (e.g. 0, 1.0), variables (e.g. \texttt{Var("x")}) or expressions (e.g. \texttt{x + 1}, \texttt{2 * x + y}).
+%$\dagger$ \inline{a} and \inline{b} are higher order functions. These may be constants (e.g. 0, 1.0), variables (e.g. \inline{Var("x")}) or expressions (e.g. \inline{x + 1}, \inline{2 * x + y}).
 
 \section{Shape safety}\label{sec:shape-safety}
 
@@ -1119,7 +1130,7 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 %
 \begin{enumerate}
     \item Hide the error somehow by implicitly reshaping or broadcasting arrays.
-    \item Announce the error at runtime with a relevant message, e.g.~\texttt{InvalidArgument}.
+    \item Announce the error at runtime with a relevant message, e.g.~\inline{InvalidArgument}.
     \item Do not allow programs which can result in a shape error to compile. \\
 \end{enumerate}
 %
@@ -1187,7 +1198,7 @@ infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
     Vec(length, contents.zip(v.contents).map { it.first + it.second })
 \end{kotlinlisting}
 %
-The operator `\texttt{+}' can now be used like so. Incompatible operands will cause a type error:
+The operator `\inline{+}' can now be used like so. Incompatible operands will cause a type error:
 %
 \begin{kotlinlisting}
 // Type-checked vector addition with shape inference
