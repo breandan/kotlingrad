@@ -140,9 +140,6 @@
     boxsep=-1.5pt,
     top=-1pt,
     bottom=-0.5pt,
-    underlay={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
-    },
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\small,
@@ -151,6 +148,9 @@
         breaklines=true,
         inputencoding=utf8,
         #1
+    },
+    underlay={
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -179,7 +179,7 @@
         #1
     },
     underlay unbroken and first={%
-    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -193,7 +193,7 @@
         #1
     },
     underlay unbroken and first={%
-    \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -255,6 +255,7 @@
         breaklines=true,
         showstringspaces=false,
         keywordstyle=\color{blue}\bfseries,
+        escapeinside={(*}{*)}
     },
     fonttitle=\ttfamily\small,
     underlay unbroken and first={%
@@ -649,7 +650,7 @@ As the publisher writes messages to \inline{channel}, a subscriber can read them
 
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/subscriber.py]
 def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "received %s", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "received data %s", data.data)
 
 rospy.init_node("subscriber", anonymous=True)
 rospy.Subscriber("channel", String, callback)
@@ -785,7 +786,33 @@ private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 
 \subsection{Refactoring}\label{subsec:refactoring}
 
-Refactoring support is implemented.
+The essence of refactoring is renaming. Consider what needs to occur when a user wants to rename a token in a program, such as the \inline{data} parameter on line \#1 below:
+
+\begin{pythonlisting}
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
+\end{pythonlisting}
+
+If they were using \inline{vim}, one solution would be to replace all textual occurrences of the string \inline{data} in the file via \inline{:\%s/data/msg/g}, with the following result:
+
+\begin{pythonlisting}
+def callback(msg):
+    rospy.loginfo(rospy.get_caller_id() + "received msg: %s", msg.msg)
+\end{pythonlisting}
+
+There were four occurrences of the string \inline{data}, only two of which were valid renaming tokens. Instead, we would like to rename only those identifiers sharing a lexical scope.
+
+\newcommand{\cfbox}[2]{%
+\colorlet{currentcolor}{.}%
+{\color{#1}%
+\fbox{\color{currentcolor}#2}}%
+}
+
+\begin{pythonlisting}
+def callback((*\cfbox{red}{\texttt{data}}*)):
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{\texttt{data}}*).data)
+\end{pythonlisting}
+
 
 \subsection{Running and debugging}
 
