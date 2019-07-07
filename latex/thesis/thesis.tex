@@ -297,7 +297,9 @@
     overlay last={
         \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
-    }
+    },
+%    before={\vspace{5pt}},
+%    after={\par\vspace{\parskip}\noindent}  %% do you really need \vspace{\baselineskip}?
 }
 
 \newcommand*{\inlineimg}[1]{%
@@ -623,15 +625,15 @@ The ROS middleware provides several language front-ends for polyglot programming
 \end{figure}
 
 A typical ROS project has several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, a number of steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.\footnote{Detailed installation instructions may be found here: \url{http://wiki.ros.org/ROS/Installation}}
-
+%
 Assuming ROS has been installed to the default location, it can be sourced like so:
-
+%
 \begin{pclisting}
 ~$ source /opt/ros/<ROS DISTRO>/setup.[ba]sh
 \end{pclisting}
-
+%
 A minimal ROS application contains at least one \textit{publisher} and \textit{subscriber}, which pass messages over a shared communication channel. The publisher might be defined as follows:
-
+%
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/publisher.py]
 import rospy
 from std_msgs.msg import String
@@ -645,9 +647,9 @@ while not rospy.is_shutdown():
     rate.sleep()
     i += 1
 \end{pythonlisting}
-
+%
 As the publisher writes messages to \inline{channel}, a subscriber can read them off like so:
-
+%
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/subscriber.py]
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "received data %s", data.data)
@@ -656,40 +658,135 @@ rospy.init_node("subscriber", anonymous=True)
 rospy.Subscriber("channel", String, callback)
 rospy.spin()
 \end{pythonlisting}
-
+%
 All ROS packages have launch file, which contain a manifest of available nodes:
-
+%
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
 <node name="publisher" pkg="pubsub" type="publisher.py" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="subscriber.py" output="screen"/>
 </launch>
 \end{launchlisting}
-
+%
 To build and run the application, the following series of commands are required:
-
+%
 \begin{pclisting}
 ~$ cd catkin_ws && catkin_make
 \end{pclisting}
-
+%
 \begin{pclisting}
 ~$ rosrun package_name publisher.py
 \end{pclisting}
-
+%
 \begin{pclisting}
 ~$ rosrun package_name subscriber.py
 \end{pclisting}
-
+%
 Rather than interacting with the command line, it would be convenient if there were a graphical tool which could perform all these tasks. Additionally, it would be helpful to detect if there were a navigable reference or typographical error in the launch file:
-
+%
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
 <node name="publisher" pkg="pubsub" type="(*\color{red}\textbf{\texttt{pubsher.py}}*)" output="screen"/>
 <node name="subscriber" pkg="pubsub" type="(*\color{blue}\underline{subscriber.py}*)" output="screen"/>
 </launch>
 \end{launchlisting}
-
+%
 Notice how the typographical error is printed in red and the file reference is underlined in blue, indicating it can be selected. These are the kinds of UI features that IDEs provide.
+
+\section{Prerequisities}
+
+To simply run the tool, users should have the following software dependencies:
+%
+\begin{enumerate}
+    \item MacOS or Debian Linux
+    \item Robot Operating System (Electric Emys or later)
+    \item Java SE (JRE 8+)
+\end{enumerate}
+%
+ROS users can use the following command to open a ROS project:
+%
+\begin{pclisting}
+~$ git clone https://github.com/duckietown/hatchery && cd hatchery && \
+   ./gradlew runIde [-Project="<ABSOLUTE_PATH_TO_ROS_PROJECT>"]
+\end{pclisting}
+%
+Duckietown users can simply use \inline{dts}, the Duckietown Shell:
+%
+\begin{dtslisting}
+dt> hatchery
+\end{dtslisting}
+%
+To build the IDE, some additional tools are helpful. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, use IDE\textsubscript{0}, to modify, compile and run the source code, which becomes IDE\textsubscript{1}. Iterate as necessary until feature complete.
+
+While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load their plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
+
+For the purposes of this plugin, we use the IntelliJ Platform, a popular platform for cross-language development. By targeting an IDE platform with support for polyglot programming, we are able to focus on programming language-agnostic features in the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
+
+\subsection{Refactoring}\label{subsec:refactoring}
+
+Refactoring is a key features in any good IDE, and the essence of refactoring is renaming. Consider what must occur when a user wishes to rename a token in her program, for example the \inline{data} parameter on line \#1 below:
+%
+\begin{pythonlisting}
+def callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
+\end{pythonlisting}
+%
+If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} in the file via \inline{:\%s/data/msg/g}, with the following result:
+%
+\begin{pythonlisting}
+def callback(msg):
+    rospy.loginfo(rospy.get_caller_id() + "received msg: %s", msg.msg)
+\end{pythonlisting}
+%
+There were four occurrences of the string \inline{data}, only two of which were valid renaming tokens. Instead, we would like to rename only those identifiers sharing a lexical scope.
+%
+\newcommand{\cfbox}[2]{%
+\colorlet{currentcolor}{.}%
+{\color{#1}%
+\fbox{\color{currentcolor}#2}}%
+}
+
+\begin{pythonlisting}
+def callback((*\cfbox{red}{\texttt{data}}*)):
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{\texttt{data}}*).data)
+\end{pythonlisting}
+
+More generally, we would like to rename identifiers used across files and languages in the same project, and doing so requires a richer model of the text in an editor. We need a parser.
+
+\subsection{The Parser}\label{subsec:the-parser}
+
+One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users while editing, re-parsing the entire document between edits would be expensive and unnecessary. In order to validate source code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
+
+Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under modification. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools for IDEs and text editors, which must be able to provide rapid and specific feedback whilst the user is typing.
+
+Hatchery can parse URDF, package and launch XML, and \inline{.msg}/\inline{.srv} files.
+
+Here is an excerpt of a ROS interface file grammar:
+
+\begin{bnflisting}
+rosInterfaceFile ::= (property|COMMENT)*
+property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
+pin=3
+recoverWhile="recover_property"
+mixin="edu.umontreal.hatchery.psi.impl.RosInterfaceNamedElementImpl"
+implements="edu.umontreal.hatchery.psi.RosInterfaceNamedElement"
+methods=[getType getKey getValue getName setName getNameIdentifier]
+}
+
+private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
+\end{bnflisting}
+
+\subsection{Running and debugging}
+
+Assistance for running ROS applications.
+
+\begin{figure}
+    \centering
+    \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
+    \caption{Configuring a \inline{roslaunch} run configuration.}
+    \label{fig:ros_run_config}
+\end{figure}
+
 
 \subsection{User interface}
 
@@ -718,111 +815,17 @@ More experimental UIs, such as model-driven engineering and \textit{projectional
 In the case of Hatchery, we use a lightweight graphical user interface (GUI), most of which is provided by the underlying IDE platform. The plugin's primary job is to integrate smoothly with the IDE, which requires language- and framework-specific customizations.
 
 \begin{figure}[b]
-    \centering
-    \frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
-    \caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
-    \label{fig:hatchery_gui}
+\centering
+\frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
+\caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
+\label{fig:hatchery_gui}
 \end{figure}
 
 \begin{figure}
-    \centering
-    \frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
-    \caption{Detection of local ROS packages.}
-    \label{fig:ros_settings}
-\end{figure}
-
-
-\section{Prerequisities}
-
-To simply run the tool, users should have the following software dependencies:
-
-\begin{enumerate}
-    \item MacOS or Debian Linux
-    \item Robot Operating System (Electric Emys or later)
-    \item Java SE (JRE 8+)
-\end{enumerate}
-
-ROS users can use the following command to open a ROS project:
-
-\begin{pclisting}
-~$ git clone https://github.com/duckietown/hatchery && cd hatchery && \
-   ./gradlew runIde [-Project="<ABSOLUTE_PATH_TO_ROS_PROJECT>"]
-\end{pclisting}
-
-Duckietown users can simply use \inline{dts}, the Duckietown Shell:
-
-\begin{dtslisting}
-dt> hatchery
-\end{dtslisting}
-
-To build the IDE, some additional tools are helpful. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, use IDE\textsubscript{0}, to modify, compile and run the source code, which becomes IDE\textsubscript{1}. Iterate as necessary until feature complete.
-
-While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load their plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
-
-For the purposes of this plugin, we use the IntelliJ Platform, a popular platform for cross-language development. By targeting an IDE platform with support for polyglot programming, we are able to focus on programming language-agnostic features in the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
-
-\subsection{The Parser}\label{subsec:the-parser}
-
-One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users while editing, re-parsing the entire document between edits would be expensive and unnecessary. In order to validate source code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
-
-Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under modification. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools for IDEs and text editors, which must be able to provide rapid and specific feedback whilst the user is typing.
-
-Hatchery can parse URDF, package and launch XML, and \inline{.msg}/\inline{.srv} files.
-
-Here is an excerpt of a ROS interface file grammar:
-
-\begin{bnflisting}
-rosInterfaceFile ::= (property|COMMENT)*
-property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
-    pin=3
-    recoverWhile="recover_property"
-    mixin="edu.umontreal.hatchery.psi.impl.RosInterfaceNamedElementImpl"
-    implements="edu.umontreal.hatchery.psi.RosInterfaceNamedElement"
-    methods=[getType getKey getValue getName setName getNameIdentifier]
-}
-
-private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
-\end{bnflisting}
-
-\subsection{Refactoring}\label{subsec:refactoring}
-
-The essence of refactoring is renaming. Consider what needs to occur when a user wants to rename a token in a program, such as the \inline{data} parameter on line \#1 below:
-
-\begin{pythonlisting}
-def callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
-\end{pythonlisting}
-
-If they were using \inline{vim}, one solution would be to replace all textual occurrences of the string \inline{data} in the file via \inline{:\%s/data/msg/g}, with the following result:
-
-\begin{pythonlisting}
-def callback(msg):
-    rospy.loginfo(rospy.get_caller_id() + "received msg: %s", msg.msg)
-\end{pythonlisting}
-
-There were four occurrences of the string \inline{data}, only two of which were valid renaming tokens. Instead, we would like to rename only those identifiers sharing a lexical scope.
-
-\newcommand{\cfbox}[2]{%
-\colorlet{currentcolor}{.}%
-{\color{#1}%
-\fbox{\color{currentcolor}#2}}%
-}
-
-\begin{pythonlisting}
-def callback((*\cfbox{red}{\texttt{data}}*)):
-    rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{\texttt{data}}*).data)
-\end{pythonlisting}
-
-
-\subsection{Running and debugging}
-
-Assistance for running ROS applications.
-
-\begin{figure}
-    \centering
-    \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
-    \caption{Configuring a \inline{roslaunch} run configuration.}
-    \label{fig:ros_run_config}
+\centering
+\frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
+\caption{Detection of local ROS packages.}
+\label{fig:ros_settings}
 \end{figure}
 
 \section{Future work}
@@ -836,7 +839,7 @@ Detecting and managing ROS installations.
 
 In this chapter, we will discuss the theory and implementation of a type safe domain-specific language for automatic differentiation (AD), which has a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive mathematical operations form the basis for all modern computers, and by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, it is often the case we are given a computable function, in the form of a program, that does not work properly. We would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
 
-In 1964, such an algorithm was first conceived in~\citet{wengert1964simple}, whose method is known today as forward-mode AD. Not long after, a certain Richard Bellman reproduced Wengert's algorithm to numerically estimate the orbital dynamics of a two body system, and recognized its potential for, ``the treatment of large systems of differential equations which might not otherwise be undertaken''~\citep{bellman1965wengert}. Around the same time, key details of the backpropogation algorithm first emerged~\citep{dreyfus1990artificial}. It was in~\citet{linnainmaa1970representation} where the idea of calculating derivatives over computation graphs was first recorded. Linnaimaa's algorithm was particularly important for the development of neural networks, and is today known as reverse-mode AD. But it was not until 2010 when standard software tools~\citep{bergstra2010theano, torch} for AD became widely available in machine learning. It is here where our journey begins.
+In 1964, such an algorithm was first conceived in~\citet{wengert1964simple}, whose method is known today as forward-mode AD. Not long after, a certain Richard Bellman reproduced Wengert's algorithm to numerically estimate the orbital dynamics of a two body system, recognizing its potential for, ``the treatment of large systems of differential equations which might not otherwise be undertaken''~\citep{bellman1965wengert}. Around the same time, key details of the backpropogation algorithm first emerged~\citep{dreyfus1990artificial}. It was in~\citet{linnainmaa1970representation} where the idea of calculating derivatives over computation graphs was first recorded. Linnaimaa's algorithm was particularly important for neural networks, and is today known as reverse-mode AD. But it was not until 2010 when standard software tools~\citep{bergstra2010theano} for AD became widely available in machine learning. It is here where our journey begins.
 
 \section{Automatic differentiation}\label{sec:automatic-differentiation}
 
@@ -1021,7 +1024,7 @@ Prior work has shown it is possible to encode a deterministic context-free gramm
 
 Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano~\citep{theano}, Torch~\citep{collobert2002torch}, and TensorFlow~\citep{abadi2016tensorflow}. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\citep{pearlmutter2008using}, DiffSharp in F\#~\citep{baydin-diffsharp} and recently Swift~\citep{swift}. However, the majority of existing automatic differentiation (AD) libraries use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
-Existing AD implementations for the JVM include Lantern~\citep{wang2018demystifying}, Nexus~\citep{chen2017typesafe} and DeepLearning.scala~\citep{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. Kotlin$\nabla$ primarily relies on the following language features:
+Existing AD implementations for the JVM include Lantern \citep{wang2018demystifying}, Nexus \citep{chen2017typesafe} and DeepLearning.scala~\citep{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language has several useful features for implementing a native AD framework. Kotlin$\nabla$ primarily relies on the following language features:
 
 \begin{itemize}
 \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e.\ groups, rings and fields.
@@ -1069,7 +1072,7 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
     \tikzset{level distance=60pt}
     \Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{\textbf{x}} \texttt{\textbf{x}} ] [.\texttt{pow} \texttt{\textbf{y}} \texttt{2} ] ] ] ] \texttt{10} ]
 \end{tikzpicture}
-\caption{Implicit DFG constructed by the original expression, \texttt{z}, seen above.}
+\caption{Implicit DAG constructed by the original expression, \texttt{z}, seen above.}
     \label{lst:edsl}
 \end{figure}
 
@@ -1163,7 +1166,7 @@ fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
 fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 \end{kotlinlisting}
 %
-Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To do so, we enumerate a list of integer type literals as a chain of subtypes, so that $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, who will need to regenerate the code.
+Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To check shapes in our type system, we enumerate a list of integer type literals as a chain of subtypes, so that $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, who will need to regenerate the code.
 %
 \begin{kotlinlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall C\leq2.$}]
 interface Nat<T: `0`> { val i: Int }
@@ -1176,7 +1179,7 @@ sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat
 sealed class `99`(override val i: Int = 99): `98`(i) { companion object: `99`(), Nat<`99`> }
 \end{kotlinlisting}
 %
-Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. Let us consider the rank-1 tensor (i.e.\ vector) case:
+Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution~\citep{liskov1987} to preserve shape safety for all subtypes. Consider the rank-1 tensor (i.e.\ vector) case:
 %
 \begin{kotlinlisting}
 // <C: `1`> will accept 1 <= C <= 99 via Liskov substitution
@@ -1189,7 +1192,7 @@ The operator `\texttt{+}' can now be used like so. Incompatible operands will ca
 \begin{kotlinlisting}
 // Type-checked vector addition with shape inference
 val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4)) // Y: Vec<Float, `2`>
-val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
+val X = Vec(`2`, listOf(1, 2)) + Vec(`3`, listOf(3, 4, 5)) // Undefined!
 \end{kotlinlisting}
 %
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
