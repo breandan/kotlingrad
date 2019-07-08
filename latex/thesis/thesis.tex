@@ -777,13 +777,12 @@ Here is an excerpt of a ROS interface file grammar:
 \begin{bnflisting}
 rosInterfaceFile ::= (property|COMMENT)*
 property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
-pin=3
-recoverWhile="recover_property"
-mixin="edu.umontreal.hatchery.psi.impl.RosInterfaceNamedElementImpl"
-implements="edu.umontreal.hatchery.psi.RosInterfaceNamedElement"
-methods=[getType getKey getValue getName setName getNameIdentifier]
+    pin=3
+    recoverWhile="recover_property"
+    mixin="edu.umontreal.hatchery.psi.impl.RosInterfaceNamedElementImpl"
+    implements="edu.umontreal.hatchery.psi.RosInterfaceNamedElement"
+    methods=[getType getKey getValue getName setName getNameIdentifier]
 }
-
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
 
@@ -1566,11 +1565,11 @@ Metamorphic testing is a fuzz testing methodology which addresses the test oracl
 
 More precisely, it can be expressed as follows: Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset Q^z \times S^z$ where $z \geq 2$. In the simplest case, an MR is a equivalence relation over input-output pairs, where e.g. $\langle \mathbf x, \mathbf y \rangle \mathcal R \langle \mathbf x', \mathbf y' \rangle \Leftrightarrow \mathbf P(\mathbf x) = \mathbf P(\mathbf x')$.
 
-For example, suppose that our MR is $\mathbf P(\mathbf x) = \mathbf P(\mathbf x' = \mathbf x + \varphi) = \mathbf y, \forall \varphi \in [0, \varepsilon]$. Given a small set of pairs from an oracle $\langle \mathbf x, \mathbf y \rangle \in \mathbf P$, and a program $\mathbf{\hat P}$, the MR suggests a much larger set of inputs $\{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon\}$ on which to test $\mathbf{\hat P}$, without requiring matching outputs from the oracle $\mathbf P$. If $\exists \mathbf x' \in \{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon \mid \mathbf P(\mathbf x) \neq \mathbf{\hat P}(\mathbf x')\}$, this implies $\mathcal R$ does not hold on $\mathbf{\hat P}$ and either:
+For example, suppose that our MR is $\mathbf P(\mathbf x) = \mathbf P(\mathbf x' = \mathbf x + \varphi) = \mathbf y, \forall \varphi \in [0, \varepsilon]$. Given a small set of input-output pairs from an oracle $\langle \mathbf x, \mathbf y \rangle \in \mathbf P$, and a program $\mathbf{\hat P}$, the MR suggests a much larger set of inputs $\{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon\}$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from the oracle $\mathbf P$. If $\exists \mathbf x' \in \{\mathbf x: |\mathbf x - \mathbf x'| < \varepsilon \mid \mathbf P(\mathbf x) \neq \mathbf{\hat P}(\mathbf x')\}$, this implies $\mathcal R$ does not hold on $\mathbf{\hat P}$ and either:
 
 \begin{enumerate}
 \item the MR is invalid $(\langle \mathbf x, \mathbf P(\mathbf x)\rangle, \langle \mathbf x', \mathbf P(\mathbf x')\rangle) \notin \mathcal R$, or
-\item $\mathbf{\hat P} != \mathbf{P}$ the program under test is broken.
+\item $\mathbf{\hat P} \neq \mathbf{P}$ the program under test is broken.
 \end{enumerate}
 
 Consider a more concrete example: suppose we have a function that should predict the correct steering angle for an image of a road. Assume we are given a single image and the ground truth steering angle. One metamorphic relation could be invariance under changes to lighting, small rotations, shifts or skews of the image. We should be able to apply any single transformation or permutation of composed transformations on the image, and the output ought to remain unchanged. If the output is drastically different in some way, we have detected an error.
@@ -1620,7 +1619,7 @@ Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test un
     D_\mathbf T: \{ x \sim \mathbb{R}(0, 1) \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If if the tester has no knowledge about the programs implementation or its data distribution, $D_\mathbf\hat P$, it can do no better than random search~\citep{wolpert1997no}. However, if she has some information about the input distribution, she could re-parameterize the distribution to incorporate her knowledge. Assuming the program has previously been tested on common inputs, she might sample $x \sim \frac{1}{D_\mathbf\hat P}$ for inputs that are infrequent. If the tester knew how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
+If if the tester has no knowledge about the programs implementation or its data distribution, $D_{\mathbf{\hat P}}$, it can do no better than random search~\citep{wolpert1997no}. However, if she has some information about the input distribution, she could re-parameterize the distribution to incorporate her knowledge. Assuming the program has previously been tested on common inputs, she might sample $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ for inputs that are infrequent. If the tester knew how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
