@@ -1097,7 +1097,7 @@ The problem we would like to solve can be summarized as follows. Given two varia
 
 Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to compute at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
 
-First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871} It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} When the shape of a tensor is known at compile time, it is possible to shape check ordinary matrix arithmetic in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in any language with parametric types, such as Java, Kotlin, C++, Rust or Typescript, by enumerating a finite set of type-level integer literals, as shown in \autoref{sec:shape-safety}.
+First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} When the shape of a tensor is known at compile time, it is possible to shape check ordinary matrix arithmetic in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in any language with parametric types, such as Java, Kotlin, C++, Rust or Typescript, by enumerating a finite set of type-level integer literals, as shown in \autoref{sec:shape-safety}.
 
 {\tiny
 \begin{table}
@@ -1508,7 +1508,7 @@ In this chapter, we will explore the relationship between testing in machine lea
 \subsection{Unit Testing}
 
 In traditional unit testing, most tests are written in the following manner:
-
+%
 \begin{kotlinlisting}
 fun unitTest() {
     val input = 1
@@ -1517,13 +1517,13 @@ fun unitTest() {
     assertEquals(actualOutput, expectedOutput)
 }
 \end{kotlinlisting}
-
+%
 The trouble is, someone needs to sit down and write a bunch of test cases.
 
 \subsection{Fuzz Testing}
 
 Fuzz testing is an automated software testing methodology which automatically generates test inputs in order to break a known function. For example, consider the following test:
-
+%
 \begin{kotlinlisting}
 fun simpleFuzzTest() {
     val inputs = generateRandomInputs()
@@ -1531,13 +1531,13 @@ fun simpleFuzzTest() {
         assertEquals(program(i), oracle(i))
 }
 \end{kotlinlisting}
-
+%
 The trouble is, we need an oracle, an often unreasonable assumption. This is known as the test oracle problem. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Furthermore, since a single call to \inline{program(i)} can be be quite expensive in practice, this method can be inefficient.
 
 \subsection{Property-based Testing}\label{subsec:property-based-testing}
 
 Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. It can be seen as follows:
-
+%
 \begin{kotlinlisting}
 fun propertyBasedTest() {
     val inputs = generateRandomInputs()
@@ -1547,9 +1547,9 @@ fun propertyBasedTest() {
             shrink(i, program, property)
 }
 \end{kotlinlisting}
-
+%
 Roughly speaking, \inline{shrink} attempts to find the minimal breaking example. For example, if \inline{program} has type \inline{(Float) -> T}, a na\"ive shrinker might be implemented as follows:
-
+%
 \begin{kotlinlisting}
 tailrec fun shrink(input: Float, program: (Float) -> T, property: (T) -> Boolean) =
     if(program(input) has property) return
@@ -1557,7 +1557,7 @@ tailrec fun shrink(input: Float, program: (Float) -> T, property: (T) -> Boolean
         assert("Minimal output lacking $property:" + program(input))
     else shrink(input - input / 2.0f, program, property)
 \end{kotlinlisting}
-
+%
 The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. What if there were a better way?
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
