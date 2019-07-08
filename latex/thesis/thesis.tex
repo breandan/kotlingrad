@@ -1708,7 +1708,7 @@ The problem basically stems from the requirement that no two versions of the sam
 
 With the growth of developer operations (devops) a number of solutions emerged for building and running generic software artifacts. Most universal are emulators, which effectively simulate a foreign processor architecture, and thereby any software which runs on it. Another solution was virtual machines (VMs), a form of isolated runtime environment which use a \textit{hypervisor} to mediate access to hardware, but otherwise run software on physical hardware. The downside of both methods is their inefficiency. Virtual machines contain full-fledged operating systems and are cumbersome to run and debug, especially to build or run a small application on a foreign OS, as is often their use case. Emulators can run significantly more slowly than native machine code depending on the host and target architectures.
 
-In 2006, Linux introduced a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\citep{menage2007adding}. Collectively, these features provide a form of lightweight virtualization, offering many benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead. These features also paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a much broader class of mobile and embedded platforms.
+In 2006, Linux introduced a variety of new kernel features for controlling groups of processes, under the aegis of \textbf{cgroups}~\citep{menage2007adding}. Collectively, these features support a form of lightweight virtualization, featuring many of the benefits of virtual machines (VMs) such as resource control and namespace isolation, without the computational overhead associated with full virtualization. These features paved the way for a set of tools that are today known as containers. Unlike VMs, containers share a common kernel, but remain isolated from their host OS and sibling containers. Where VMs often require server-class hardware to run smoothly, containers are suitable for a much broader class of mobile and embedded platforms due to their light resource footprint.
 
 \begin{figure}
     \centering
@@ -1719,8 +1719,7 @@ In 2006, Linux introduced a variety of new kernel features for controlling group
 
 \section{Containerization}\label{sec:containerization}
 
-One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With the increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so too must source code be updated to build and run correctly. Maintaining a stable and well-documented codebase can be a considerable challenge, especially in an academic setting where contributors are frequently joining and leaving the project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
-
+One of the challenges of distributed software development across heterogeneous platforms is the problem of variability. With an increasing pace of software development comes the added burden of software maintenance. As hardware and software stacks evolve, so must source code be updated to build and run correctly. Maintaining a stable and well-documented codebase can be a considerable challenge, especially in an academic setting where contributors are frequently joining and leaving a project. Together, these challenges present significant obstacles to experimental reproducibility and scientific collaboration.
 
 \begin{figure}[ht]
     \centering
@@ -1729,9 +1728,9 @@ One of the challenges of distributed software development across heterogeneous p
     \label{fig:user_kernel_hardware}
 \end{figure}
 
-Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, in addition to a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization such as Docker only requires a lightweight host, which can support running many simultaneous containers with close to zero overhead compared to native linux processes. A single Raspberry Pi is capable of running hundreds of containers with no noticeable degradation in performance.
+Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, in addition to a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization such as Docker only requires a lightweight host, which can support running many simultaneous containers with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of running hundreds of containers with no noticeable degradation in performance.
 
-While containerization simplifies the process of building and deploying applications considerably, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images may be based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer as described earlier.
+While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle in the form of abstraction. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images are typically based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer, as we describe in \autoref{sec:retrospective.}.
 
 \section{Docker Introduction}
 
@@ -2260,7 +2259,7 @@ dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
 
 \subsection{Graphical User Interface Tools}
 
-To use GUI tools, first allow incoming X connections. On Linux hosts, this can be done by running \inline{xhost +} from outside Docker.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
+To use GUI tools, one must first allow incoming X connections from the host. On Linux hosts, this can be done by running \inline{xhost +} outside Docker.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
 
 \begin{pclisting}
 ~$ docker run -it --rm \
@@ -2306,15 +2305,12 @@ dt> duckiebot keyboard_control DUCKIEBOT_NAME
 The following container will launch the extrinsic calibration procedure:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -it \
-   --name calibration \
-   --privileged \
+~$ docker -H DUCKIEBOT_NAME run -it --name calibration --privileged --net host \
    -v /data:/data \
-   --net host \
    duckietown/rpi-duckiebot-calibration:master18
 \end{pclisting}
 
-Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. Place the Duckiebot on the calibration pattern and follow the instructions provided.
+Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. When placed on the calibration pattern, the following commands will initiate an interactive calibration sequence for the camera.
 
 \begin{dtslisting}
 dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
@@ -2324,18 +2320,21 @@ dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
 dt> duckiebot calibrate_intrinsics DUCKIEBOT_NAME
 \end{dtslisting}
 
+To calibrate the gain and trim of the wheel motors, the following commands are needed:
 
 \begin{dtslisting}
-dt> duckiebot demo --demo_name base --duckiebot_name NAME
+~$ dt> duckiebot demo --demo_name base --duckiebot_name NAME
 \end{dtslisting}
-
+\begin{pclisting}
+~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_gain --GAIN
+\end{pclisting}
 \begin{pclisting}
 ~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_trim --TRIM
 \end{pclisting}
 
 \subsection{Lane Following Demo}
 
-Once calibrated, the Lane Following Demo can be launched as follows:
+Once calibrated, the lane following demo can be launched as follows:
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run -it \
@@ -2350,7 +2349,7 @@ Once calibrated, the Lane Following Demo can be launched as follows:
 dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
 
-\section{Retrospective}
+\section{Retrospective}\label{sec:retrospective}
 
 One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code makes build artifacts are standalone decipherable.
 
