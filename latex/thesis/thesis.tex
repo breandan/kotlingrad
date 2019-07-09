@@ -1774,7 +1774,7 @@ CONTAINER ID     IMAGE           ...     NAMES
 52994ef22481     daphne/duck     ...     happy_hamster
 \end{pclisting}
 
-Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
+Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy\_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
 Docker images can be created two different ways. In \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
 
@@ -1783,7 +1783,7 @@ Docker images can be created two different ways. In \autoref{subsec:creating-an-
 When a Docker container writes to its own filesystem, those changes are not persisted unless committed to a new image. For example, start a container with an interactive shell:
 
 \begin{pclisting}
-~$ docker run -it daphne/duck bash
+~$ docker run -it daphne/duck /bin/bash
 root@295fd7879184:/#
 \end{pclisting}
 
@@ -1796,17 +1796,17 @@ total 0
 root@295fd7879184:/# exit
 \end{pclisting}
 
-\inline{new_file} will not be persisted. If we re-run the same command again:
+\inline{new\_file} will not be persisted. If we re-run the same command again:
 
 \begin{pclisting}
-~$ docker run -it daphne/duck bash
+~$ docker run -it daphne/duck /bin/bash
 root@18f13bb4571a:/# ls
 root@18f13bb4571a:/# touch new_file1 && ls -l
 total 0
 -rw-r--r-- 1 root root 0 May 21 21:32 new_file1
 \end{pclisting}
 
-It seems like \inline{new_file} has disappeared! Notice how the container ID (\inline{18f13bb4571a}) is now different. This is because the command \inline{docker run daphne/duck} created a new container from the base image \inline{daphne/duck}, rather than restarting the previous container.
+It seems like \inline{new\_file} has disappeared! Notice how the container ID (\inline{18f13bb4571a}) is now different. This is because the command \inline{docker run daphne/duck} created a new container from the base image \inline{daphne/duck}, rather than restarting the previous container.
 
 To see all containers on a Docker host, run the following command:
 
@@ -1818,7 +1818,7 @@ CONTAINER ID      IMAGE            STATUS             NAMES
 52994ef22481      daphne/duck      Up 10 minutes      happy_hamster
 \end{pclisting}
 
-It appears \inline{295fd7879184} a.k.a. \inline{merry_manatee} survived, but it is no longer running. Whenever a container's main process (recall we ran \inline{merry_manatee} with \inline{bash}) finishes, the container will stop, but it will not cease to exist. In fact, we can resume the stopped container right where it left off:
+It appears \inline{295fd7879184} a.k.a. \inline{merry\_manatee} survived, but it is no longer running. Whenever a container's main process (recall we ran \inline{merry\_manatee} with \inline{/bin/bash}) finishes, the container will stop, but it will not cease to exist. In fact, we can resume the stopped container right where it left off:
 
 \begin{pclisting}
 ~$ docker start -a merry_manatee
@@ -1837,13 +1837,13 @@ CONTAINER ID       IMAGE             ...       NAMES
 52994ef22481       daphne/duck       ...       happy_hamster
 \end{pclisting}
 
-Now suppose we would like to share the container \inline{shady_giraffe} with someone else. To do so, we must first snapshot the running container, or commit it to a new image with a name and a tag. This will create a checkpoint that we may later restore:
+Now suppose we would like to share the container \inline{shady\_giraffe} with someone else. To do so, we must first snapshot the running container, or commit it to a new image with a name and a tag. This will create a checkpoint that we may later restore:
 
 \begin{pclisting}
 ~$ docker commit -m "forking daphne/duck" shady_giraffe user/duck:v2
 \end{pclisting}
 
-To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the Docker Hub registry:
+To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady\_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the Docker Hub registry:
 
 \begin{pclisting}
 ~$ docker push user/duck:v2
@@ -1909,7 +1909,7 @@ total 0
 -rw-r--r-- 1 root root 0 May 21 21:35 new_file1
 \end{pclisting}
 
-Notice that as soon as we run the container, Docker will execute the \inline{ls -l} command as specified by the \inline{Dockerfile}, revealing that \inline{new_file1} was indeed stored in the image. However this default command can be overridden by supplying a custom command:
+Notice that as soon as we run the container, Docker will execute the \inline{ls -l} command as specified by the \inline{Dockerfile}, revealing that \inline{new\_file1} was indeed stored in the image. However this default command can be overridden by supplying a custom command:
 
 \begin{pclisting}
 ~$ docker run -it user/duck:v3 [custom_command]
@@ -2047,7 +2047,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 There is a second method of depositing data into a container, which does not require baking it into the parent image at compile time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
 \begin{pclisting}
-~$ docker run user/duck:v6 -v \hl{[host_volume]:[target_volume]}
+~$ docker run user/duck:v6 (*\hl{-v [HOST PATH]:[TARGET PATH]}*)
 \end{pclisting}
 
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
@@ -2192,7 +2192,7 @@ To verify Docker is working properly, launch a remote container, interactively, 
    duckietown/rpi-ros-kinetic-base:master18
 \end{pclisting}
 
-The \inline{-H} flag indicates a remote Docker host on the local area network where the Docker command should be executed. For the \inline{DUCKIEBOT_NAME} address it to work, mDNS must be configured properly in the network settings beforehand, otherwise an IP address is required.
+The \inline{-H} flag indicates a remote Docker host on the local area network where the Docker command should be executed. For the \inline{DUCKIEBOT\_NAME} address it to work, mDNS must be configured properly in the network settings beforehand, otherwise an IP address is required.
 
 \subsection{Build and deployment}
 
@@ -2224,7 +2224,7 @@ All Duckietown Docker images contain an emulator called QEMU - this allows us to
 ~$ docker run ... --entrypoint=qemu3-arm-static IMAGE [RUN_COMMAND]
 \end{pclisting}
 
-Here, \inline{RUN_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is an emulator provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
+Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is an emulator provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
 
 \subsection{Running Simple HTTP File Server}
 
