@@ -176,6 +176,7 @@
         basicstyle=\ttfamily\small,
         tabsize=2,
         inputencoding=utf8,
+        escapeinside={(*}{*)},
         #1
     },
     underlay unbroken and first={%
@@ -227,6 +228,7 @@
         tabsize=2,
         breaklines=true,
         inputencoding=utf8,
+        escapeinside={(*}{*)}
     },
     underlay unbroken and first={%
         \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{docker_icon.jpg}} ([xshift=-10mm,yshift=-9mm]interior.north west);
@@ -1730,7 +1732,7 @@ One of the challenges of distributed software development across heterogeneous p
 
 Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, in addition to a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization such as Docker only requires a lightweight host, which can support running many simultaneous containers with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of running hundreds of containers with no noticeable degradation in performance.
 
-While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle in the form of abstraction. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images are typically based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer, as we describe in \autoref{sec:retrospective.}.
+While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images are typically based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer, as we describe in \autoref{sec:retrospective}.
 
 \section{Docker Introduction}
 
@@ -2045,7 +2047,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 There is a second method of depositing data into a container, which does not require baking it into the parent image at compile time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
 \begin{pclisting}
-~$ docker run user/duck:v6 -v [host_volume]:[target_volume]
+~$ docker run user/duck:v6 -v \hl{[host_volume]:[target_volume]}
 \end{pclisting}
 
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
@@ -2067,7 +2069,7 @@ Instead, when running the container, we need to share the file via the Docker CL
 \begin{pclisting}
 ~$ echo -e '#!/bin/bash\necho Launching...' >> launch.sh && \
    chmod 775 launch.sh && \
-   docker run user/duck:v6 -v launch.sh:/launch.sh
+   docker run user/duck:v6 (*\hl{-v launch.sh:/launch.sh}*)
 Launching...
 \end{pclisting}
 
@@ -2078,7 +2080,7 @@ This way, the local file \inline{launch.sh} will be available to use from within
 Docker's filesystem is additive, so each layer will only increase the size of the final image. For this reason, it is often necessary to tidy up unneeded files after installation. For example, when installing dependencies on Debian-based images, it is a common practice to run:
 
 \begin{dockerlisting}
-RUN apt-get update && apt-get install ... && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install ... && (*\hl{rm -rf /var/lib/apt/lists/*}*)
 \end{dockerlisting}
 
 This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
