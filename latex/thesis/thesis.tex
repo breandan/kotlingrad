@@ -34,6 +34,7 @@ anchorcolor = blue]{hyperref}
 % Table Checks
 \usepackage{booktabs}
 \usepackage{pifont}
+\usepackage{fontawesome}
 \usepackage{float}
 
 \newcommand{\wmark}{\textcolor{orange}{\ding{45}}}
@@ -52,6 +53,7 @@ anchorcolor = blue]{hyperref}
 \newcommand*\rot{\rotatebox{90}}
 
 \usepackage{menukeys}
+\usepackage{relsize}
 \usepackage[skins,breakable,listings]{tcolorbox}
 % Code listings
 \lstdefinelanguage{kotlin}{
@@ -716,7 +718,7 @@ Notice how the typographical error is printed in red and the file reference is u
 
 \section{Prerequisities}
 
-To simply run the tool, users should have the following software dependencies:
+\noindent To simply run the tool, users should have the following software dependencies:
 %
 \begin{enumerate}
     \item MacOS or Debian Linux
@@ -724,19 +726,27 @@ To simply run the tool, users should have the following software dependencies:
     \item Java SE (JRE 8+)
 \end{enumerate}
 %
-ROS users can use the following command to open a ROS project:
+\noindent ROS users can use the following command to open a ROS project:
 %
 \begin{pclisting}
 ~$ git clone https://github.com/duckietown/hatchery && cd hatchery && \
    ./gradlew runIde [-Project="<ABSOLUTE_PATH_TO_ROS_PROJECT>"]
 \end{pclisting}
 %
-Duckietown users can simply use \inline{dts}, the Duckietown Shell:
+\noindent Duckietown users can simply use \inline{dts}, the Duckietown Shell:
 %
 \begin{dtslisting}
 dt> hatchery
 \end{dtslisting}
 %
+\noindent Hatchery can also be installed directly from inside the CLion or PyCharm IDEs, via:\\
+%
+\begin{centering}
+\menu{File > Settings > Plugins > Marketplace > {\faSearch ``Hatchery''}}
+\end{centering}
+
+\section{Plugin development}
+
 To build the IDE, some additional tools are helpful. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, use IDE\textsubscript{0}, to modify, compile and run the source code, which becomes IDE\textsubscript{1}. Iterate as necessary until feature complete.
 
 While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load their plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
@@ -799,7 +809,7 @@ Assistance for running ROS applications.
 \begin{figure}
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
-    \caption{\inline{roslaunch} configuration. Accessible via: \menu[,]{Run,Edit Configurations,+,{ROS Launch}}}
+    \caption{\inline{roslaunch} configuration. Accessible via: \menu{Run > Edit Configurations > + > ROS Launch}}
     \label{fig:ros_run_config}
 \end{figure}
 
@@ -840,7 +850,7 @@ In the case of Hatchery, we use a lightweight graphical user interface (GUI), mo
 \begin{figure}
 \centering
 \frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
-\caption{Detection of local ROS packages. Accessible via: \menu[,]{File,Settings,{ROS config}}}
+\caption{Detection of local ROS packages. Accessible via: \menu{File > Settings > ROS config}}
 \label{fig:ros_settings}
 \end{figure}
 
@@ -2182,7 +2192,7 @@ To access the DuckieOS web interface, visit following the URL in the web browser
 
 \begin{figure}\label{fig:portainer_ui}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a wrapper for the Docker CLI with support for container management and terminal emulation, which is accessible at: \menu[,]{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}},{Console}}}
+    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a wrapper for the Docker CLI with support for container management and terminal emulation, which is accessible at: \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > Console}}
 \end{figure}
 
 \subsection{Testing ROS}
