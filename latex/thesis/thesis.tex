@@ -12,8 +12,11 @@
 \usepackage{amsmath}
 
 \usepackage{natbib}
-\usepackage{hyperref}
-\hypersetup{colorlinks,citecolor=green}
+\usepackage[colorlinks = true,
+linkcolor = blue,
+urlcolor  = blue,
+citecolor = blue,
+anchorcolor = blue]{hyperref}
 
 \usepackage{enumitem}
 \usepackage{graphicx}
@@ -325,6 +328,7 @@
 }
 \makeatother
 \newcommand{\inline}[1]{%
+%\keys{#1} %hmm
 \begingroup%
 \sethlcolor{slightgray}%
 \hl{\ttfamily #1}%
@@ -795,7 +799,7 @@ Assistance for running ROS applications.
 \begin{figure}
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
-    \caption{Configuring a \inline{roslaunch} run configuration.}
+    \caption{\inline{roslaunch} configuration. Accessible via: \menu[,]{Run,Edit Configurations,+,{ROS Launch}}}
     \label{fig:ros_run_config}
 \end{figure}
 
@@ -836,7 +840,7 @@ In the case of Hatchery, we use a lightweight graphical user interface (GUI), mo
 \begin{figure}
 \centering
 \frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
-\caption{Detection of local ROS packages.}
+\caption{Detection of local ROS packages. Accessible via: \menu[,]{File,Settings,{ROS config}}}
 \label{fig:ros_settings}
 \end{figure}
 
@@ -2129,7 +2133,7 @@ One application of multi-stage builds is compiling a project dependency from its
     \centering
     \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
     \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
-    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we only build ARM artifacts, and emulate ARM on x86. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
+    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts, which can be emulated on x86 via qemu~\citep{bellard2015qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
     \label{fig:docker}
 \end{figure}
 
@@ -2149,7 +2153,8 @@ Software development for the Duckietown platform requires the following physical
     \item MicroSD card adapter
 \end{enumerate}
 %
-Furthermore, we assume the following software dependencies have been installed on (3):
+In addition,
+We assume the following software dependencies have been installed on (3):
 %
 \begin{enumerate}[label=(\alph*)]
     \item Docker CE
@@ -2173,11 +2178,11 @@ Insert an SD card and follow the instructions provided. When complete, remove th
 
 \subsection{Web interface}
 
-To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation was successfully completed and the network is configured properly, the following interface should be visible:
+To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation was successfully completed and the network is configured properly, the screenshot displayed in~\autoref{fig:portainer_ui} should be visible.
 
 \begin{figure}\label{fig:portainer_ui}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by Portainer, a wrapper for the Docker CLI which has support for container management and terminal emulation.}
+    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a wrapper for the Docker CLI with support for container management and terminal emulation, which is accessible at: \menu[,]{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}},{Console}}}
 \end{figure}
 
 \subsection{Testing ROS}
@@ -2185,10 +2190,7 @@ To access the DuckieOS web interface, visit following the URL in the web browser
 To verify Docker is working properly, launch a remote container, interactively, like so:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -it \
-   --name test \
-   --privileged \
-   --net host \
+~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host \
    duckietown/rpi-ros-kinetic-base:master18
 \end{pclisting}
 
@@ -2231,10 +2233,7 @@ Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another
 All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
 
 \begin{pclisting}
-~$ docker -H DUCKEBOT_NAME run -d \
-   --name file-server \
-   -v /data:/data \
-   -p 8082:8082 \
+~$ docker -H DUCKEBOT_NAME run -d -v /data:/data -p 8082:8082 \
    duckietown/rpi-simple-server:master18
 \end{pclisting}
 
@@ -2245,11 +2244,7 @@ To access this directory, visit the following URL: \url{http://DUCKIEBOT_NAME:80
 The following image can be used to test the camera is working properly:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -d \
-   --privileged \
-   --name picam \
-   -v /data:/data \
-   -p 8081:8081 \
+~$ docker -H DUCKIEBOT_NAME run -d --privileged -v /data:/data -p 8081:8081
    duckietown/rpi-docker-python-picamera:master18
 \end{pclisting}
 
@@ -2264,9 +2259,7 @@ dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
 To use GUI tools, one must first allow incoming X connections from the host. On Linux hosts, this can be done by running \inline{xhost +} outside Docker.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
 
 \begin{pclisting}
-~$ docker run -it --rm \
-   --name rosgui \
-   --net host \
+~$ docker run -it --rm --net host \
    --env ROS_MASTER_URI=http://DUCKIEBOT_IP:11311 \
    --env ROS_IP=LAPTOP_IP \
    --env="DISPLAY" \
@@ -2286,11 +2279,7 @@ The above command opens a ROS shell that will connect to the \inline{DUCKIEBOT}'
 The following container launches the joystick demo (USB joystick must be connected):
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -d \
-   --name joystick-demo \
-   --privileged \
-   -v /data:/data \
-   --net host \
+~$ docker -H DUCKIEBOT_NAME run --privileged --net host -v /data:/data \
    duckietown/rpi-duckiebot-joystick-demo:master18
 \end{pclisting}
 
@@ -2302,13 +2291,12 @@ dt> duckiebot demo --demo_name joystick --duckiebot_name DUCKIEBOT_NAME
 dt> duckiebot keyboard_control DUCKIEBOT_NAME
 \end{dtslisting}
 
-\subsection{Calibration}
+\subsection{Camera Calibration}
 
 The following container will launch the extrinsic calibration procedure:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -it --name calibration --privileged --net host \
-   -v /data:/data \
+~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host -v /data:/data
    duckietown/rpi-duckiebot-calibration:master18
 \end{pclisting}
 
@@ -2322,10 +2310,12 @@ dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
 dt> duckiebot calibrate_intrinsics DUCKIEBOT_NAME
 \end{dtslisting}
 
+\subsection{Wheel Calibration}
+
 To calibrate the gain and trim of the wheel motors, the following commands are needed:
 
 \begin{dtslisting}
-~$ dt> duckiebot demo --demo_name base --duckiebot_name NAME
+dt> duckiebot demo --demo_name base --duckiebot_name NAME
 \end{dtslisting}
 \begin{pclisting}
 ~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_gain --GAIN
@@ -2339,11 +2329,7 @@ To calibrate the gain and trim of the wheel motors, the following commands are n
 Once calibrated, the lane following demo can be launched as follows:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -it \
-   --name lanefollowing-demo \
-   --privileged \
-   -v /data:/data \
-   --net host \
+~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host -v /data:/data
    duckietown/rpi-duckiebot-lanefollowing-demo:master18
 \end{pclisting}
 
