@@ -1539,11 +1539,11 @@ fun unitTest() {
 }
 \end{kotlinlisting}
 %
-The trouble is, someone needs to sit down and write a bunch of test cases.
+The trouble is, someone needs to sit down and write a bunch of test cases for this strategy to catch any bugs.
 
-\subsection{Fuzz Testing}
+\subsection{Oracle Testing}
 
-Fuzz testing is an automated software testing methodology which automatically generates test inputs in order to break a known function. For example, consider the following test:
+Oracle testing is an automated software testing methodology which automatically generates test inputs in order to break a known function. For example, consider the following test:
 %
 \begin{kotlinlisting}
 fun simpleFuzzTest() {
@@ -1557,7 +1557,7 @@ The trouble is, we need an oracle, an often unreasonable assumption. This is kno
 
 \subsection{Property-based Testing}\label{subsec:property-based-testing}
 
-Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. Users specify a property and It can be seen as follows:
+Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. Users specify a property over all outputs and the test fails if it a counterexample can be found:
 %
 \begin{kotlinlisting}
 fun propertyBasedTest() {
@@ -1569,7 +1569,7 @@ fun propertyBasedTest() {
 }
 \end{kotlinlisting}
 %
-Roughly speaking, \inline{shrink} attempts to find the minimal breaking example. For example, if \inline{program} has type \inline{(Float) -> T}, a na\"ive shrinker might be implemented as follows:
+Roughly speaking, \inline{shrink} attempts to find the minimal counterexample. For example, if \inline{program} has type \inline{(Float) -> T}, a na\"ive shrinker might be implemented as follows:
 %
 \begin{kotlinlisting}
 tailrec fun shrink(input: Float, program: (Float) -> T, property: (T) -> Boolean) =
@@ -1599,8 +1599,8 @@ Consider a more concrete example: suppose we have implemented a program which ta
 \begin{kotlinlisting}
 fun <Q, S> metamorphicTest(program: (Q) -> S, mr: (Q, S, Q, S) -> Boolean) {
     while(true) {
-        val (input: Q, output: S) = drawSampleFromData()
-        val tx: (Q) -> S = generateValidTransformation(mr)
+        val (input: Q, output: ) = drawSampleFromData()
+        val tx: (Q) -> Q = genLegalTx(program, mr, input, output)
         val txInput: Q = tx(input)
         val txOutput: S = program(txIn)
         if(!mr(input, output, txInput, txOutput))
@@ -1609,11 +1609,24 @@ fun <Q, S> metamorphicTest(program: (Q) -> S, mr: (Q, S, Q, S) -> Boolean) {
 }
 \end{kotlinlisting}
 %
-The trouble is, generating valid transformations is a non-trivial exercise.
+The trouble is, generating valid transformations is a non-trivial exercise. We could try to generate random transformations until we find one which meets our criteria:
+%
+\begin{kotlinlisting}
+fun <Q, S> genLegalTx(program: (Q) -> S, mr: (Q, S, Q, S) -> Boolean, input: Q, output: S) {
+    while(true) {
+        val tx: (Q) -> Q = genRandomTx() // Samples a random transformation
+        val txInput: Q = tx(input)
+        val txOutput: S = program(txIn)
+        if(mr(input, output, txInput, txOutput)) return tx
+    }
+}
+\end{kotlinlisting}
+
+But this would be very inefficient. Instead, we should have a more principled way to mutate the input so as to find valid outputs.
 
 \subsection{Adversarial Testing}
 
-This leads us to adversarial testing.
+This leads us to adversarial testing. Imagine we have a two-player game.
 
 During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
 
