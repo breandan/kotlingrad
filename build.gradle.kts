@@ -48,7 +48,7 @@ repositories {
 dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
-  testCompile("io.kotlintest:kotlintest-runner-junit5:3.3.2")
+  testCompile("io.kotlintest:kotlintest-runner-junit5:3.3.3")
   compile("org.jzy3d:jzy3d-api:1.0.2")
   compile("org.knowm.xchart:xchart:3.5.4")
   compile("ch.obermuhlner:kotlin-big-math:0.0.1")

@@ -355,13 +355,13 @@ Extensions can also be defined in another file or context and imported on demand
 [Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
 
 ```kotlin
-sealed class Expr<T: Group<T>>: Group<Expr<T>> {
-    fun diff() = when(expr) {
+sealed class Expr<T: Expr<T>>: Group<Expr<T>> {
+    fun diff(variable: Var<T>): Expr<T> = when(this) {
         is Const -> Zero
         // Smart casting allows us to access members of a checked typed without explicit casting
-        is Sum -> e1.diff() + e2.diff()
+        is Sum -> e1.diff(variable) + e2.diff(variable)
         // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-        is Prod -> e1.diff() * e2 + e1 * e2.diff()
+        is Prod -> e1.diff(variable) * e2 + e1 * e2.diff(variable)
         is Var -> One
         // Since the subclasses of Expr are a closed set, the compiler does not require an `else -> ...`
     }
@@ -371,9 +371,9 @@ sealed class Expr<T: Group<T>>: Group<Expr<T>> {
     operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
 }
 
-data class Const<T: Group<T>>(val number: Double) : Expr()
-data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+class Const<T: Group<T>>(val number: Double) : Expr()
+class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
 class Var<T: Group<T>>: Expr()
 class Zero<T: Group<T>>: Const<T>
 class One<T: Group<T>>: Const<T>

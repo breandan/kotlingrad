@@ -305,8 +305,8 @@ anchorcolor = blue]{hyperref}
         \node[black!50] (S) at (frame.north) {\Large\ding{34}};
         \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
     },
-%    before={\vspace{5pt}},
-%    after={\par\vspace{\parskip}\noindent}  %% do you really need \vspace{\baselineskip}?
+    before={\par\vspace{10pt}},
+    after={\par\vspace{\parskip}\noindent}
 }
 
 \newcommand*{\inlineimg}[1]{%
@@ -329,11 +329,20 @@ anchorcolor = blue]{hyperref}
 \SOUL@stpreamble%
 }
 \makeatother
+
 \newcommand{\inline}[1]{%
 %\keys{#1} %hmm
 \begingroup%
 \sethlcolor{slightgray}%
-\hl{\ttfamily #1}%
+\hl{\ttfamily\small #1}%
+\endgroup
+}
+
+\newcommand{\tinline}[1]{%
+%\keys{#1} %hmm
+\begingroup%
+\sethlcolor{slightgray}%
+\hl{\ttfamily\tiny #1}%
 \endgroup
 }
 
@@ -562,7 +571,7 @@ In this \autoref{ch:difftest} we present preliminary work in adversarial fuzz te
 
 One of the challenges of building intelligent systems and programming in general, is the problem of reproducibility. Software reproducibility has several challenging aspects, including hardware compatibility, operating systems, file systems, build systems, and runtime determinism. While writing programs and feeding them directly into a computer may have once been common practice, today's source code is far too removed from its mechanical realization to be meaningfully executed in isolation. Today's handwritten programs are like schematics for a traffic light -- built inside a factory, and which require a city's-worth of infrastructure, cars, and traffic laws to serve their intended purpose. Like traffic lights, source code does not exist in a vacuum -- built by compilers, interpreted by virtual machines, executed inside an operating system, and which following a specific communication protocol -- programs are essentially meaningless abstractions outside this context.
 
-As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have long since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{c.f. \url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction correspond to the source code itself.
+As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have long since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{cf. \url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction correspond to the source code itself.
 
 Applied machine learning shares many of the same practical challenges as traditional software development, with source code, release and dependency management. The current process of training a deep learning model can be seen as particularly long compilation step, but it differs significantly in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\citep{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
@@ -801,7 +810,7 @@ property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
 }
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
-
+%
 \subsection{Running and debugging}
 
 Assistance for running ROS applications.
@@ -819,19 +828,19 @@ Assistance for running ROS applications.
 An often overlooked, but important aspect of development tools is the user interface, being the primary mechanism through which developers edit source code. In the early days of modern computing, the only way of getting information into or out of a computer required punching holes in paper. Later, computers were equipped with technology to emit the same binary pattern as pixels, which could be used to display a small alphabet called ASCII. Later, through increased density and frequency, computers were able to render more sophisticated shapes and animations. This evolution is the direct result of advances in graphics technology, but can also be seen as progress in program representation, where the explicit source code was simply a medium for communicating developer intent and machine interpretation.
 
 \begin{figure}
-\centering
-\includegraphics[width=0.90\textwidth]{progress_in_program.png}
-\caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
-\label{fig:evolution_of_programming}
+    \centering
+    \includegraphics[width=0.90\textwidth]{progress_in_program.png}
+    \caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
+    \label{fig:evolution_of_programming}
 \end{figure}
 
 ASCII is still the dominant medium for modern programming, although machines still use various forms of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many developer tools provide a minimal command line interface (CLI), in addition to more sophisticated text editors for manipulating programs, these tools are still fairly restrictive. In the same way that early computer scientists probably did not fashion a new algorithm with a sequence of holes in mind, ASCII is also an indirect representation, albeit one slightly less contrived. Modern languages allow users to express their ideas in a notation is compact, familiar to use and easy to reason about its execution.
 
 \begin{figure}
-\centering
-\includegraphics[width=0.90\textwidth]{mps_screenshot.png}
-\caption{Projectional editors such as MPS~\citep{voelter2010language} (shown above)  are able to render plaintext source code in alternate formats for reading and manipulation.}
-\label{fig:mps_screenshot}
+    \centering
+    \includegraphics[width=0.90\textwidth]{mps_screenshot.png}
+    \caption{Projectional editors such as MPS~\citep{voelter2010language} (shown above)  are able to render plaintext source code in alternate formats for reading and manipulation.}
+    \label{fig:mps_screenshot}
 \end{figure}
 
 Modern programming tools are capable of representing code as a mixture of hypertext and graphical user interfaces. This provides a somewhat richer representation than plaintext and helps to capture programs' graph-based structure, but is rendered as ASCII with sparse visual cues. Some tools support larger character sets and font-based typographic ligatures, although the visual representation of source code remains highly linear.
@@ -841,17 +850,17 @@ More experimental UIs, such as model-driven engineering and \textit{projectional
 In the case of Hatchery, we use a lightweight graphical user interface (GUI), most of which is provided by the underlying IDE platform. The plugin's primary job is to integrate smoothly with the IDE, which requires language- and framework-specific customizations.
 
 \begin{figure}[b]
-\centering
-\frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
-\caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
-\label{fig:hatchery_gui}
+    \centering
+    \frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
+    \caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
+    \label{fig:hatchery_gui}
 \end{figure}
 
 \begin{figure}
-\centering
-\frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
-\caption{Detection of local ROS packages. Accessible via: \menu{File > Settings > ROS config}}
-\label{fig:ros_settings}
+    \centering
+    \frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
+    \caption{Detection of local ROS packages. Accessible via: \menu{File > Settings > ROS config}}
+    \label{fig:ros_settings}
 \end{figure}
 
 \section{Future work}
@@ -1044,7 +1053,7 @@ Kotlin is a strong, statically typed language, that is well-suited for building 
 
 In this work, we make use of several language features unique to Kotlin, such as first-class functions (\autoref{sec:first-class-functions}), extension functions (\autoref{sec:extension-functions}), operator overloading (\autoref{sec:operator-overloading}), and algebraic data types (\autoref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support for shape-safe array programming. Together, these language features provide a concise, flexible and type-safe platform for mathematical programming.
 
-\section{Kotlin$\nabla$}\label{sec:kotlingrad}
+\section{Kotlin\textorpdfstring{$\nabla$}}\label{sec:kotlingrad}
 
 Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface}~\citep{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete~\citep{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types.
 
@@ -1119,20 +1128,20 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
     \begin{tabular}{|c|c|c|c|l|}
         \hline
         \multicolumn{1}{|c|}{Math$\dagger$}                    &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                    \\ \hline
-                 $A(B)$                                        & \inline{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A + B$                                       & \begin{tabular}{@{}c@{}}\inline{a + b}\\\inline{a.plus(b)}\end{tabular}        &  \inline{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
-                 $A - B$                                       & \begin{tabular}{@{}c@{}}\inline{a - b}\\\inline{a.minus(b)}\end{tabular}       &  \inline{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
-                 $A   B$                                       & \begin{tabular}{@{}c@{}}\inline{a * b}\\\inline{a.times(b)}\end{tabular}       &  \inline{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})  $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular}  & \begin{tabular}{@{}c@{}}\inline{a / b}\\\inline{a.div(b)}\end{tabular}         &  \inline{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}                &                                                                                &  \begin{tabular}{@{}c@{}}\inline{-a}\\\inline{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\inline{a.unaryMinus()}\\\inline{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
-\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}                & \begin{tabular}{@{}c@{}}\inline{a + 1}\\\inline{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\inline{++a}\\\inline{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\inline{a++, a.inc()}\\\inline{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}    &                                                                                &  \begin{tabular}{@{}c@{}}\inline{sin(a)}\\\inline{cos(a)}\\\inline{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\inline{a.sin()}\\\inline{a.cos()}\\\inline{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
-                $\ln(A)$                                       &                                                                                &  \begin{tabular}{@{}c@{}}\inline{ln(a)}\\\inline{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\inline{a.ln()}\\\inline{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
-               $\log_b A$                                      & \inline{a.log(b)}                                                              &  \inline{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
-                $A^{b}$                                        & \inline{a.pow(b)}                                                              &  \inline{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
-\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\inline{a.pow(1.0/2)}\\\inline{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\inline{a.pow(1.0/2)}\\\inline{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\inline{a.sqrt()}\\\inline{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \inline{a.diff(b)}                                                             &  \inline{grad(a)[b]}                                                                    & \inline{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
-               $\nabla a$                                      &                                                                                &  \inline{grad(a)}                                                                       & \inline{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
+                 $A(B)$                                        & \tinline{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A + B$                                       & \begin{tabular}{@{}c@{}}\tinline{a + b}\\\tinline{a.plus(b)}\end{tabular}        &  \tinline{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
+                 $A - B$                                       & \begin{tabular}{@{}c@{}}\tinline{a - b}\\\tinline{a.minus(b)}\end{tabular}       &  \tinline{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
+                 $A   B$                                       & \begin{tabular}{@{}c@{}}\tinline{a * b}\\\tinline{a.times(b)}\end{tabular}       &  \tinline{times(a, b)}                                                                   &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})  $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{A}{B}$\\$AB^{-1}$\end{tabular}  & \begin{tabular}{@{}c@{}}\tinline{a / b}\\\tinline{a.div(b)}\end{tabular}         &  \tinline{div(a, b)}                                                                     &                                                                                            & $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$-A$\\$+A$\end{tabular}                &                                                                                &  \begin{tabular}{@{}c@{}}\tinline{-a}\\\tinline{+a}\end{tabular}                          & \begin{tabular}{@{}c@{}}\tinline{a.unaryMinus()}\\\tinline{a.unaryPlus()}\end{tabular}       & $                   (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi})                                             $ \\ \hline
+\begin{tabular}{@{}c@{}}A+1 \\ A-1\end{tabular}                & \begin{tabular}{@{}c@{}}\tinline{a + 1}\\\tinline{a - 1}\end{tabular}            &  \begin{tabular}{@{}c@{}}\tinline{++a}\\\tinline{--a}\end{tabular}                        & \begin{tabular}{@{}c@{}}\tinline{a++, a.inc()}\\\tinline{a--, a.dec()}\end{tabular}          & $                 (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}sin(a)\\cos(a)\\tan(a)\end{tabular}    &                                                                                &  \begin{tabular}{@{}c@{}}\tinline{sin(a)}\\\tinline{cos(a)}\\\tinline{tan(a)}\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.sin()}\\\tinline{a.cos()}\\\tinline{a.tan()}\end{tabular}  & $                                            (\texttt{a}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R})                                              $ \\ \hline
+                $\ln(A)$                                       &                                                                                &  \begin{tabular}{@{}c@{}}\tinline{ln(a)}\\\tinline{log(a)}\end{tabular}                   & \begin{tabular}{@{}c@{}}\tinline{a.ln()}\\\tinline{a.log()}\end{tabular}                     & $                  (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m})                                              $ \\ \hline
+               $\log_b A$                                      & \tinline{a.log(b)}                                                              &  \tinline{log(a, b)}                                                                     &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})     $ \\ \hline
+                $A^{b}$                                        & \tinline{a.pow(b)}                                                              &  \tinline{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
+\begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\tinline{a.sqrt()}\\\tinline{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \tinline{a.diff(b)}                                                             &  \tinline{grad(a)[b]}                                                                    & \tinline{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
+               $\nabla a$                                      &                                                                                &  \tinline{grad(a)}                                                                       & \tinline{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
     \end{tabular}
 \caption{\label{tab:shape_system}Kotlin$\nabla$'s shape system specifies the output shape for matrix arithmetic.}
 \end{table}
@@ -1263,7 +1272,7 @@ This technique originates in Haskell, which supports more powerful forms of type
 
 \section{Testing}\label{sec:testing}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property} (c.f.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (c.f.~\autoref{subsec:metamorphic-testing}). Notable implementations include QuickCheck~\citep{claessen2011quickcheck}, Hypothesis~\citep{Hypothesis} and KotlinTest~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property} (cf.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (cf.~\autoref{subsec:metamorphic-testing}). Notable implementations include QuickCheck~\citep{claessen2011quickcheck}, Hypothesis~\citep{Hypothesis} and KotlinTest~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
 %
 \begin{enumerate}
     \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
@@ -1343,7 +1352,7 @@ val f = makePoly(x, y)
 val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 \end{kotlinlisting}
-
+%
 Currently, it is possible to represent functions where all inputs and outputs share a single data type. It is possible to extend support for building functions with varying input/output types and enforce constraints on both, using covariant and contravariant type bounds. We leave this for further work.
 
 \section{Numeric Tower}\label{sec:numeric-tower}
@@ -1367,8 +1376,8 @@ interface Field<X: Field<X>>: Group<X> {
     fun ln(): X
 }
 \end{kotlinlisting}
-
-The numeric tower also allows us to define common behavior such as subtraction and division on abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras,~\footnote{ex. In order to calculate derivatives in a quaternion neural network.\citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined by composing a small set of primitive operations, which can later be differentiated in a generic fashion, rather than on an ad hoc basis.
+%
+The numeric tower also allows us to define common behavior such as subtraction and division on abstract algebraic structures, which are easily extended to concrete number systems. For example, to later define a field over the complex numbers or other algebras,~\footnote{ex. In order to calculate derivatives in a quaternion neural network. \citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined by composing a small set of primitive operations, which can later be differentiated in a generic fashion, rather than on an ad hoc basis.
 
 \section{Algebraic data types}\label{sec:adts}
 
@@ -1377,32 +1386,32 @@ The numeric tower also allows us to define common behavior such as subtraction a
 \begin{kotlinlisting}
 class Const<T: Fun<T>>(val number: Number) : Fun<T>()
 class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
-class Prod<T:Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
 class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
 class Zero<T: Fun<T>>: Const<T>(0.0)
 class One<T: Fun<T>>: Const<T>(1.0)
 \end{kotlinlisting}
 %
-When branching on the type of a sealed class, consumers must explicitly handle every subclass, since incomplete control flow will not compile, rather than fail silently at runtime.
+When branching on the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of \inline{Fun}, a sealed class which defines the behavior of function invocation and differentiation, using a restricted form of pattern matching. It can be constructed with a set of \inline{Var}s, and can be invoked with a numerical value:
 %
 \begin{kotlinlisting}
-sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
+sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
     // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
     operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
         is Const -> this
-        is Var -> map.getOrElse(this) { this }
+        is Var -> map.getOrElse(this) { this } // Partial application is permitted
         is Prod -> left(map) * right(map) // Smart casting implicitly casts after checking
         is Sum -> left(map) + right(map)
     }
 
-    fun diff(): Fun<X> = when(this) {
+    fun diff(variable: Var<X>): Fun<X> = when(this) {
        is Const -> Zero
-       is Var -> One
+       is Var -> if (variable == this) One else Zero
        // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-       is Prod -> left.diff() * right + left * right.diff()
-       is Sum -> left.diff() + right.diff()
+       is Prod -> left.diff(variable) * right + left * right.diff(variable)
+       is Sum -> left.diff(variable) + right.diff(variable)
     }
 
     operator fun plus(addend: Fun<T>) = Sum(this, addend)
@@ -1411,7 +1420,7 @@ sealed class Fun<X: Group<X>>(open val variables: Set<Var<X>> = emptySet()): Gro
 }
 \end{kotlinlisting}
 %
-Kotlin's smart-casting implicitly downcasts the abstract type \inline{Fun} as a subtype, e.g. \inline{Sum} after performing an \inline{is Sum} check. Otherwise, we would need to write \inline{(this as Sum).left} in order to access its member, \inline{left}. If the type cast was mistaken, a \inline{ClassCastException} would be thrown, which smart casting also prevents.
+Kotlin's smart-casting implicitly downcasts the abstract type \inline{Fun} as a subtype, such as \inline{Sum} after performing an \inline{is Sum} check. If \inline{Fun} were not sealed, we would have needed to write \inline{(this as Sum).left} instead to access its member, \inline{left}. If the type cast was mistaken, a \inline{ClassCastException} would need to be thrown, which smart casting also prevents.
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
@@ -1436,7 +1445,7 @@ override fun times(multiplicand: Fun<X>): Fun<X> =
 val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 //         = Sum(Prod(Const(2.0), Var(2.0)), Const(6.0))
 \end{kotlinlisting}
-
+%
 Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
 \section{Extension Functions}\label{sec:extension-functions}
@@ -1444,9 +1453,6 @@ Multiple dispatch allows us to put all related control flow on a single abstract
 Extension functions augment external classes with new fields and methods. By using context oriented programming~\citep{hirschfeld2008context}, we can expose custom extensions (e.g.\ through \inline{DoubleContext}) to consumers without requiring subclassing or inheritance.
 %
 \begin{kotlinlisting}[caption={We can provide numerical extensions, wrapped in a context.}]
-data class Const<T: Fun<T>>(val number: Double) : Fun<T>()
-data class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
-data class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>(left, right)
 object DoubleContext {
     operator fun Number.times(expr: Fun<Double>) = Const(toDouble()) * expr
 }
@@ -1503,7 +1509,7 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 
 \section{Future work}\label{sec:future-work}
 
-Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (c.f. section 2.8 of~\citet{petersen2008matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices).
+Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2008matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices).
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into~\cite{makwana2018numlin}.
 
@@ -1522,7 +1528,7 @@ In this chapter, we will explore the relationship between testing in machine lea
 
 \subsection{Unit Testing}
 
-In traditional unit testing, most tests are written in the following manner:
+\noindent In traditional unit testing, most tests are written in the following manner:
 %
 \begin{kotlinlisting}
 fun unitTest() {
@@ -1551,7 +1557,7 @@ The trouble is, we need an oracle, an often unreasonable assumption. This is kno
 
 \subsection{Property-based Testing}\label{subsec:property-based-testing}
 
-Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. It can be seen as follows:
+Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. Users specify a property and It can be seen as follows:
 %
 \begin{kotlinlisting}
 fun propertyBasedTest() {
@@ -1759,7 +1765,7 @@ One of the challenges of distributed software development across heterogeneous p
     \label{fig:user_kernel_hardware}
 \end{figure}
 
-Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment contains all the software dependencies necessary to run the packaged application(s), but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, in addition to a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization such as Docker only requires a lightweight host, which can support running many simultaneous containers with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of running hundreds of containers with no noticeable degradation in performance.
+Docker containers are sandboxed runtime environments that are portable, reproducible and version controlled. Each environment fully contains its dependencies, but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and provisions a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization such as Docker only requires a lightweight host, which can support running many simultaneous containers with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of simultaneously running hundreds of containers with no noticeable degradation in performance\footnote{cf. \url{https://blog.docker.com/2015/09/update-raspberry-pi-dockercon-challenge/}}.
 
 While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity to the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images are typically based on a number of lower layers, which must periodically be updated. Care must be taken when designing the development pipeline to ensure that such updates do not silently break a subsequent layer, as we describe in \autoref{sec:retrospective}.
 
@@ -1774,13 +1780,13 @@ To install Docker itself, execute the following command on a POSIX-compliant she
 \begin{pclisting}
 ~$ curl -sSL https://get.docker.com/ | sh
 \end{pclisting}
-
+%
 A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default Docker Hub repository:
 
 \begin{pclisting}
 ~$ docker pull daphne/duck
 \end{pclisting}
-
+%
 Every Docker image has a image ID, a name and a tag:
 
 \begin{pclisting}
@@ -1788,13 +1794,13 @@ Every Docker image has a image ID, a name and a tag:
 REPOSITORY      TAG        IMAGE ID         CREATED       SIZE
 daphne/duck     latest     ea2f90g8de9e     1 day ago     869MB
 \end{pclisting}
-
+%
 To run a Docker container\footnote{When a Docker image is running, it is referred to as a \textit{container}.}, use the following command:
 
 \begin{pclisting}
 ~$ docker run daphne/duck
 \end{pclisting}
-
+%
 The following command will verify the container is indeed running:
 
 \begin{pclisting}
@@ -1802,7 +1808,7 @@ The following command will verify the container is indeed running:
 CONTAINER ID     IMAGE           ...     NAMES
 52994ef22481     daphne/duck     ...     happy_hamster
 \end{pclisting}
-
+%
 Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy\_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
 Docker images can be created two different ways. In \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
@@ -1815,7 +1821,7 @@ When a Docker container writes to its own filesystem, those changes are not pers
 ~$ docker run -it daphne/duck /bin/bash
 root@295fd7879184:/#
 \end{pclisting}
-
+%
 Note the container ID: \inline{295fd7879184}. If we write to disk and leave the container,
 
 \begin{pclisting}
@@ -1824,7 +1830,7 @@ total 0
 -rw-r--r-- 1 root root 0 May 21 20:52 new_file
 root@295fd7879184:/# exit
 \end{pclisting}
-
+%
 \inline{new\_file} will not be persisted. If we re-run the same command again:
 
 \begin{pclisting}
@@ -1834,10 +1840,8 @@ root@18f13bb4571a:/# touch new_file1 && ls -l
 total 0
 -rw-r--r-- 1 root root 0 May 21 21:32 new_file1
 \end{pclisting}
-
-It seems like \inline{new\_file} has disappeared! Notice how the container ID (\inline{18f13bb4571a}) is now different. This is because the command \inline{docker run daphne/duck} created a new container from the base image \inline{daphne/duck}, rather than restarting the previous container.
-
-To see all containers on a Docker host, run the following command:
+%
+It seems like \inline{new\_file} has disappeared! Notice how the container ID (\inline{18f13bb4571a}) is now different. This is because the command \inline{docker run daphne/duck} created a new container from the base image \inline{daphne/duck}, rather than restarting the previous container. To see all containers on a Docker host, run the following command:
 
 \begin{pclisting}
 ~$ docker container ls -a
@@ -1846,16 +1850,16 @@ CONTAINER ID      IMAGE            STATUS             NAMES
 18f13bb4571a      daphne/duck      Up 5 minutes       shady_giraffe
 52994ef22481      daphne/duck      Up 10 minutes      happy_hamster
 \end{pclisting}
-
+%
 It appears \inline{295fd7879184} a.k.a. \inline{merry\_manatee} survived, but it is no longer running. Whenever a container's main process (recall we ran \inline{merry\_manatee} with \inline{/bin/bash}) finishes, the container will stop, but it will not cease to exist. In fact, we can resume the stopped container right where it left off:
-
+%
 \begin{pclisting}
 ~$ docker start -a merry_manatee
 root@295fd7879184:/# ls -l
 total 0
 -rw-r--r-- 1 root root 0 May 21 20:52 new_file
 \end{pclisting}
-
+%
 Nothing was lost! To verify this, we can check which other containers are running:
 
 \begin{pclisting}
@@ -1865,13 +1869,13 @@ CONTAINER ID       IMAGE             ...       NAMES
 18f13bb4571a       daphne/duck       ...       shady_giraffe
 52994ef22481       daphne/duck       ...       happy_hamster
 \end{pclisting}
-
+%
 Now suppose we would like to share the container \inline{shady\_giraffe} with someone else. To do so, we must first snapshot the running container, or commit it to a new image with a name and a tag. This will create a checkpoint that we may later restore:
 
 \begin{pclisting}
 ~$ docker commit -m "forking daphne/duck" shady_giraffe user/duck:v2
 \end{pclisting}
-
+%
 To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady\_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the Docker Hub registry:
 
 \begin{pclisting}
@@ -1885,7 +1889,7 @@ user/duck     v2         d78be5cf073e     2 seconds ago    869MB
 total 0
 -rw-r--r-- 1 root root 0 May 21 21:32 new_file1
 \end{pclisting}
-
+%
 This is a convenient way to share an image with colleagues and collaborators. Anyone with access to the repository can pull this image and continue where we left off, or create another image based on top.
 
 \subsection{Writing an image recipe}\label{subsec:writing-an-image-recipe}
@@ -1897,14 +1901,14 @@ FROM daphne/duck      # Defines the base image
 RUN touch new_file1   # new_file1 will be part of our snapshot
 CMD ls -l             # Default command run when container is started
 \end{dockerlisting}
-
+%
 Now, to build the image, we can simply run:
 
 \begin{pclisting}
 ~$ docker build -t user/duck:v3 .
 \end{pclisting}
-
-The `\inline{.}' indicates the same directory as the \inline{Dockerfile}. This should produce something like the following output:
+%
+The `\inline{.}' indicates the same path as the \inline{Dockerfile}. This command should produce something like the following output:
 
 \begin{pclisting}
 Sending build context to Docker daemon  2.048kB
@@ -1919,7 +1923,7 @@ Removing intermediate container 14f834yud59
 Successfully built 05a3bd381fc2
 Successfully tagged user/duck:v3
 \end{pclisting}
-
+%
 The command, \inline{docker images} should display an image called \inline{user/duck:v3}:
 
 \begin{pclisting}
@@ -1929,7 +1933,7 @@ daphne/duck   latest     ea2f90g8de9e     1 day ago        869MB
 user/duck     v2         d78be5cf073e     5 minutes ago    869MB
 user/duck     v3         05a3bd381fc2     2 seconds ago    869MB
 \end{pclisting}
-
+%
 This procedure is identical to the snapshot technique performed in \autoref{subsec:creating-an-image-snapshot}, but the result is cleaner. Rather than maintaining a 869 MB image, we can just store the 4 KB text file instead. To run the resulting image, we can simply use the same command as before:
 
 \begin{pclisting}
@@ -1937,13 +1941,13 @@ This procedure is identical to the snapshot technique performed in \autoref{subs
 total 0
 -rw-r--r-- 1 root root 0 May 21 21:35 new_file1
 \end{pclisting}
-
+%
 Notice that as soon as we run the container, Docker will execute the \inline{ls -l} command as specified by the \inline{Dockerfile}, revealing that \inline{new\_file1} was indeed stored in the image. However this default command can be overridden by supplying a custom command:
 
 \begin{pclisting}
 ~$ docker run -it user/duck:v3 [custom_command]
 \end{pclisting}
-
+%
 \subsection{Layer Caching}
 
 An important concept in Docker is the concept of layers. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, identified by a hash code. In a \inline{Dockerfile}, layers begin with a keyword.
@@ -1956,7 +1960,7 @@ RUN apt-get update && apt-get install -y wget  # Install a dependency
 RUN wget https://get.your.app/install.sh       # Download a script
 RUN chmod +x install.sh && ./install.sh        # Run the script
 \end{dockerlisting}
-
+%
 To build this image, we can run the following command:
 
 \begin{pclisting}
@@ -1982,7 +1986,7 @@ Removing intermediate container 9526651fa492
 Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
-
+%
 Layers are conveniently cached by the Docker daemon. If we run the same command again, Docker will use the cache insead of rebuilding the entire image:
 
 \begin{pclisting}
@@ -1999,7 +2003,7 @@ Step 6/6 : RUN chmod +x index.html && ./index.html
 Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
-
+%
 Should we later need to make a change to the Dockerfile, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
 
 \begin{pclisting}
@@ -2018,7 +2022,7 @@ Removing intermediate container 80fc5c402304
 Successfully built c1ec64cef9c6
 Successfully tagged user/duck:v4
 \end{pclisting}
-
+%
 If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{--no-cache} flag when building a \inline{Dockerfile}.
 
 What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also considers the build context. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
@@ -2028,7 +2032,7 @@ FROM daphne/duck
 COPY duck.txt .
 RUN cat duck.txt
 \end{dockerlisting}
-
+%
 Now if we add some message in \inline{duck.txt} and rebuild our image, the file will be copied into the Docker image, and its contents will be printed:
 
 \begin{pclisting}
@@ -2046,7 +2050,7 @@ Removing intermediate container 590c5420ce29
 Successfully built 1633e3e10bef
 Successfully tagged user/duck:v5
 \end{pclisting}
-
+%
 As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are not modified, these layers will be cached and Docker will not need to rebuild them. However if the contents of the file \inline{duck.txt} are subsequently modified, this will force a rebuild to occur. For example, if we append to the file and rebuild, only the last step will be executed:
 
 \begin{pclisting}
@@ -2066,7 +2070,7 @@ Removing intermediate container 7c6f5f8b73e9
 Successfully built e8a1db712aee
 Successfully tagged user/duck:v5
 \end{pclisting}
-
+%
 A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more files than are strictly necessary to perform the following build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. In order to maximize cache reusability and minimize rebuild time, users should be conservative and only \inline{COPY} the minimum set of files necessary to accomplish the following build step.
 
 % Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{Further details: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
@@ -2078,21 +2082,21 @@ There is a second method of depositing data into a container, which does not req
 \begin{pclisting}
 ~$ docker run user/duck:v6 (*\hl{-v [HOST PATH]:[TARGET PATH]}*)
 \end{pclisting}
-
+%
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
 
 \begin{dockerlisting}
 FROM daphne/duck
 CMD /bin/bash -c "/launch.sh"
 \end{dockerlisting}
-
+%
 If we built this image and tried to run it, the file \inline{launch.sh} would be missing:
 
 \begin{pclisting}
 ~$ docker build -t user/duck:v6 && docker run user/duck:v6
 bash: /launch.sh: No such file or directory
 \end{pclisting}
-
+%
 Instead, when running the container, we need to share the file via the Docker CLI:
 
 \begin{pclisting}
@@ -2101,7 +2105,7 @@ Instead, when running the container, we need to share the file via the Docker CL
    docker run user/duck:v6 (*\hl{-v launch.sh:/launch.sh}*)
 Launching...
 \end{pclisting}
-
+%
 This way, the local file \inline{launch.sh} will be available to use from within the container at the designated path, \inline{/launch.sh}.
 
 \subsection{Multi-stage builds}
@@ -2111,7 +2115,7 @@ Docker's filesystem is additive, so each layer will only increase the size of th
 \begin{dockerlisting}
 RUN apt-get update && apt-get install ... && (*\hl{rm -rf /var/lib/apt/lists/*}*)
 \end{dockerlisting}
-
+%
 This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
 
 \begin{dockerlisting}
@@ -2123,7 +2127,7 @@ FROM donald/duck as template3
 COPY --from=template2 new_file2 new_file3
 CMD ls -l
 \end{dockerlisting}
-
+%
 Now we can build and run this image as follows:
 
 \begin{pclisting}
@@ -2149,7 +2153,7 @@ Successfully tagged user/duck:v4
 total 0
 -rw-r--r-- 1 root root 0 Jul  8 15:06 new_file3
 \end{pclisting}
-
+%
 One application of multi-stage builds is compiling a project dependency from its source code. In addition to all the source code, the compilation process could introduce gigabytes of build artifacts and transitive dependencies, just to build a single binary. Multi-stage builds allow us to build the file, and copy it to a fresh layer, unburdened by intermediate files.
 
 \section{ROS and Docker}
@@ -2158,7 +2162,7 @@ One application of multi-stage builds is compiling a project dependency from its
     \centering
     \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
     \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
-    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts, which can be emulated on x86 via qemu~\citep{bellard2015qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
+    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts, which can be emulated on x86 via qemu~\citep{bellard2005qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
     \label{fig:docker}
 \end{figure}
 
@@ -2198,27 +2202,28 @@ Our largest single contribution to the Duckietown project is writing a script fo
 \begin{dtslisting}
 dt> init_sd_card [--hostname "DUCKIEBOT_NAME" --wifi "username:password"]
 \end{dtslisting}
-
+%
 Insert an SD card and follow the instructions provided. When complete, remove the SD card and insert it into the SD card slot on the Raspberry Pi on the Duckiebot, then boot and ensure the device is powered continuously for a minimum of ten minutes.
 
 \subsection{Web interface}
 
 To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation was successfully completed and the network is configured properly, the screenshot displayed in~\autoref{fig:portainer_ui} should be visible.
 
-\begin{figure}\label{fig:portainer_ui}
+\begin{figure}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a wrapper for the Docker CLI with support for container management and terminal emulation, which is accessible at: \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > Console}}
+    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a wrapper for the Docker CLI with support for container management and terminal emulation, which is accessible at: \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
+    \label{fig:portainer_ui}
 \end{figure}
 
 \subsection{Testing ROS}
 
-To verify Docker is working properly, launch a remote container, interactively, like so:
+\noindent To verify Docker is working properly, launch a remote container, interactively, like so:
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host \
    duckietown/rpi-ros-kinetic-base:master18
 \end{pclisting}
-
+%
 The \inline{-H} flag indicates a remote Docker host on the local area network where the Docker command should be executed. For the \inline{DUCKIEBOT\_NAME} address it to work, mDNS must be configured properly in the network settings beforehand, otherwise an IP address is required.
 
 \subsection{Build and deployment}
@@ -2228,13 +2233,13 @@ Docker images can be cross-compiled by enclosing the ARM-specific portion of the
 \begin{pclisting}
 ~$ docker save TAG_NAME | ssh -C duckie@DUCKIEBOT_NAME docker load
 \end{pclisting}
-
+%
 Alternately, it is possible to build directly on ARM devices by creating a file named \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
 
 \begin{rpilisting}
 ~$ docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
 \end{rpilisting}
-
+%
 \subsection{Multi-architecture support}
 
 As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build on x86 machines\footnote{With the exception of the Mac OS Docker client, which offers multi-architecture support. Further details on multiarch support can be found here: \url{https://docs.docker.com/docker-for-mac/multi-arch/}. Later versions of Docker for Mac OS and Windows provide native ARM emulation, which was recently announced at the following URL: \url{https://engineering.docker.com/2019/04/multi-arch-images/}}, and attempting to build one will produce the following error when running \inline{docker build}:
@@ -2242,7 +2247,7 @@ As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build o
 \begin{pclisting}
 standard_init_linux.go:175: exec user process caused "exec format error"
 \end{pclisting}
-
+%
 In order to circumvent this restriction, ARM-specific \inline{Dockerfile}s can ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
 
 All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
@@ -2250,35 +2255,35 @@ All Duckietown Docker images contain an emulator called QEMU - this allows us to
 \begin{pclisting}
 ~$ docker run ... --entrypoint=qemu3-arm-static IMAGE [RUN_COMMAND]
 \end{pclisting}
-
+%
 Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is an emulator provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
 
 \subsection{Running Simple HTTP File Server}
 
-All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
+\noindent All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
 
 \begin{pclisting}
 ~$ docker -H DUCKEBOT_NAME run -d -v /data:/data -p 8082:8082 \
    duckietown/rpi-simple-server:master18
 \end{pclisting}
-
+%
 To access this directory, visit the following URL: \url{http://DUCKIEBOT_NAME:8082/}
 
 \subsection{Testing the camera}
 
-The following image can be used to test the camera is working properly:
+\noindent The following image can be used to test the camera is working properly:
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run -d --privileged -v /data:/data -p 8081:8081
    duckietown/rpi-docker-python-picamera:master18
 \end{pclisting}
-
+%
 By default, images will be hosted at: \url{http://DUCKIEBOT_NAME:8081/image.jpg}
 
 \begin{dtslisting}
 dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
-
+%
 \subsection{Graphical User Interface Tools}
 
 To use GUI tools, one must first allow incoming X connections from the host. On Linux hosts, this can be done by running \inline{xhost +} outside Docker.\footnote{See \url{http://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
@@ -2292,52 +2297,52 @@ To use GUI tools, one must first allow incoming X connections from the host. On 
    --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
    duckietown/rpi-gui-tools
 \end{pclisting}
-
+%
 \begin{dtslisting}
 dt> start_gui_tools DUCKIEBOT_NAME rqt_image_view
 \end{dtslisting}
-
+%
 The above command opens a ROS shell that will connect to the \inline{DUCKIEBOT}'s ROS master node. To test the ROS connection works, run \inline{roswtf}.
 
 \subsection{Remote control}
 
-The following container launches the joystick demo (USB joystick must be connected):
+\noindent The following container launches the joystick demo (USB joystick must be connected):
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run --privileged --net host -v /data:/data \
    duckietown/rpi-duckiebot-joystick-demo:master18
 \end{pclisting}
-
+%
 \begin{dtslisting}
 dt> duckiebot demo --demo_name joystick --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
-
+%
 \begin{dtslisting}
 dt> duckiebot keyboard_control DUCKIEBOT_NAME
 \end{dtslisting}
-
+%
 \subsection{Camera Calibration}
 
-The following container will launch the extrinsic calibration procedure:
+\noindent The following container will launch the extrinsic calibration procedure:
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host -v /data:/data
    duckietown/rpi-duckiebot-calibration:master18
 \end{pclisting}
-
+%
 Passing \inline{-v /data:/data} is necessary so that all calibration settings will be preserved. When placed on the calibration pattern, the following commands will initiate an interactive calibration sequence for the camera.
 
 \begin{dtslisting}
 dt> duckiebot calibrate_extrinsics DUCKIEBOT_NAME
 \end{dtslisting}
-
+%
 \begin{dtslisting}
 dt> duckiebot calibrate_intrinsics DUCKIEBOT_NAME
 \end{dtslisting}
-
+%
 \subsection{Wheel Calibration}
 
-To calibrate the gain and trim of the wheel motors, the following commands are needed:
+\noindent To calibrate the gain and trim of the wheel motors, the following commands are needed:
 
 \begin{dtslisting}
 dt> duckiebot demo --demo_name base --duckiebot_name NAME
@@ -2348,36 +2353,38 @@ dt> duckiebot demo --demo_name base --duckiebot_name NAME
 \begin{pclisting}
 ~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_trim --TRIM
 \end{pclisting}
-
+%
 \subsection{Lane Following Demo}
 
-Once calibrated, the lane following demo can be launched as follows:
+\noindent Once calibrated, the lane following demo can be launched as follows:
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host -v /data:/data
    duckietown/rpi-duckiebot-lanefollowing-demo:master18
 \end{pclisting}
-
+%
 \begin{dtslisting}
 dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
-
+%
 \section{Retrospective}\label{sec:retrospective}
 
 One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code makes build artifacts are standalone decipherable.
 
 Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any changes to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. The motivation for including sources enables easier troubleshooting and diagnostics, but doing so adds some friction during development, which has caused users to struggle with environment setup and Docker configuration issues.
 
-\begin{figure}\label{fig:early_prototype}
+\begin{figure}
 \includegraphics[width=0.80\textwidth]{image_provenance.png}
 \caption{Early prototype of the Docker image hierarchy. Chaining unversioned autobuilds without disciplined unit testing tends to produce an undesirable domino effect, where breaking changes are allowed to propagate downstream, resulting in a cascade of silent failures.}
+    \label{fig:early_prototype}
 \end{figure}
 
 The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream changes to cascade to downstream images. The short term solution was to disable auto-building and push manually, however fixing it required rethinking the role of Docker builds in the CI toolchain.
 
-\begin{figure}\label{fig:early_prototype}
-\includegraphics[width=0.40\textwidth]{aido_logo.png}
-\caption{The AI Driving Olympics, a primary use case for the system described above.}
+\begin{figure}
+    \includegraphics[width=0.40\textwidth]{aido_logo.png}
+    \caption{The AI Driving Olympics, a primary use case for the system described above.}
+    \label{fig:aido_logo}
 \end{figure}
 
 One of the primary use cases for the container infrastructure is a biannual robotics competition called the AI Driving Olympics~\citep{aido2018}. We discovered a more stable solution is to store all sources on the local development environment and rebuild the image only when its upstream dependencies change. A Docker image, paired with a Git repository and a commit message defines an AIDO submission. The image only contains its compiled upstream dependencies, and the source code is paired at runtime.
