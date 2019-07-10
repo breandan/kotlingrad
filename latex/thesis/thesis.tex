@@ -1591,20 +1591,23 @@ For example, suppose that our MR is $\mathbf P(\mathbf x) = \mathbf P(\mathbf x'
 Consider a more concrete example: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), a metamorphic relation one might use is approximate invariance under a set of image transformations, such as limited illumination changes, linear transformations or noise corruption. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy the chosen metamorphic relation. If not, this indicates our program is not sufficiently robust and may not generalize well.
 %
 \begin{kotlinlisting}
-fun <T, Y> metamorphicTest(program: (T) -> Y, mr: (T, Y, T, Y) -> Boolean) {
+fun <Q, S> metamorphicTest(program: (Q) -> S, mr: (Q, S, Q, S) -> Boolean) {
     while(true) {
-        val (input: T, output: Y) = drawSampleFromData()
-        val tx: (T) -> T = mr.generateValidTransformation()
-        val txInput: T = tx(input)
-        val txOutput: Y = program(txIn)
+        val (input: Q, output: S) = drawSampleFromData()
+        val tx: (Q) -> S = generateValidTransformation(mr)
+        val txInput: Q = tx(input)
+        val txOutput: S = program(txIn)
         if(!mr(input, output, txInput, txOutput))
             assert("<$input, $output> not related to <$txInput, $txOutput> by $mr ($tx)")
     }
 }
 \end{kotlinlisting}
 %
+The trouble is, generating valid transformations is a non-trivial exercise.
 
 \subsection{Adversarial Testing}
+
+This leads us to adversarial testing.
 
 During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
 
