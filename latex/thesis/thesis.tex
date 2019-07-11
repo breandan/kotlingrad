@@ -62,7 +62,7 @@ anchorcolor = blue]{hyperref}
     emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
-    keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec},
+    keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec, reified},
     keywordstyle={\color{NavyBlue}\bfseries},
     morecomment=[s]{/*}{*/},
     morestring=[b]",
@@ -1531,70 +1531,92 @@ In this chapter, we will explore the relationship between testing in machine lea
 \noindent In traditional unit testing, most tests are written in the following manner:
 %
 \begin{kotlinlisting}
-fun unitTest() {
-    val input = 1
-    val expectedOutput = 2
-    val actualOutput = program(input)
-    assertEquals(actualOutput, expectedOutput)
+fun <C, D> unitTest(subprogram: (C) -> D) {
+    val input = C(...)
+    val expectedOutput = D(...)
+    val actualOutput = subprogram(input)
+    assertEquals(expectedOutput, actualOutput)
 }
 \end{kotlinlisting}
 %
-The trouble is, someone needs to sit down and write a bunch of test cases for this strategy to catch any bugs.
+When carefully applied, it can be quite effective at detecting bugs and documenting the author's belief of preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work properly. Additionally, it only tests subprograms, and must be updated when the program changes. This has the unintended side effect of decreasing agility, discourage refactoring, or discarding prior work when tests become obsolete.
+
+\subsection{Integration Testing}
+
+\noindent In integration testing, we are not so concerned about the specific behavior of individual subprograms, but the overall behavior of an entire program. Integration tests are often written in the following style:
+
+\begin{kotlinlisting}
+fun <T, Y> integrationTest(program: (T) -> Y, inputs: Set<T>>) =
+    inputs.forEach { input ->
+        try {
+            assert(checkPostCondition(program(input)))
+        } catch(exception: SomeException) {
+            assert(exception)
+        }
+    }
+\end{kotlinlisting}
+%
+With this strategy, there are fewer tests to write as we only care about end-to-end behavior. Integration is an effective smoke test, to ensure that the program can run until termination, and some post condition holds.
+
+For simplicity, in the following sections, we will only consider examples of tests and functions which are pure functions, i.e. which have no side effect.
 
 \subsection{Oracle Testing}
 
 Oracle testing is an automated software testing methodology which generates random inputs to test a given program. For example, consider the following test:
 %
 \begin{kotlinlisting}
-fun simpleFuzzTest() {
-    val inputs = generateRandomInputs()
-    for(i in inputs)
-        assertEquals(program(i), oracle(i))
+fun <reified T, Y> simpleFuzzTest(program: (T) -> Y, oracle: (T) -> Y, budget: Int = 100) {
+    if(budget == 0) return
+    val input: T = generateRandomInput(T::class)
+    assertEquals(program(i), oracle(i))
+    simpleFuzzTest(program, oracle, budget--)
 }
 \end{kotlinlisting}
 %
-The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Furthermore, since a single call to \inline{program(i)} can be be quite expensive in practice, this method can be inefficient.
+The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Since a single call to \inline{program(i)} can be be quite expensive in practice, this method can also be quite inefficient.
 
 \subsection{Property-based Testing}\label{subsec:property-based-testing}
 
 Property-based testing (PBT) is a specific type of fuzz testing which addresses the test oracle problem by using properties. PBT has two phases, seaching and shrinking. Users specify a property over all outputs and the test fails if it a counterexample can be found:
 %
 \begin{kotlinlisting}
-fun propertyBasedTest() {
-    val inputs = generateRandomInputs()
-    for(i in inputs)
-        output = program(i)
-        if (output !has property)
-            shrink(i, program, property)
+tailrec fun <reified T, Y> propertyTest(program: (T) -> Y, hasProperty: (Y) -> Boolean) {
+    val input = generateRandomInput(T::class)
+    val output = program(input)
+    if(!hasProperty(output)) {
+        val shrunken: Y = shrink(input, program, property)
+        assert("Minimal counterexample of $property: $shrunken")
+    }
+    propertyTest(program, hasProperty)
 }
 \end{kotlinlisting}
 %
-Roughly speaking, \inline{shrink} attempts to find the minimal counterexample. For example, if \inline{program} has type \inline{(Float) -> T}, a na\"ive shrinker might be implemented as follows:
+Roughly speaking, \inline{shrink} attempts to simplify the counterexample. For example, given a \inline{program: (Float) -> Float}, a na\"ive shrinker might be implemented as follows:
 %
 \begin{kotlinlisting}
-tailrec fun shrink(input: Float, program: (Float) -> T, property: (T) -> Boolean) =
-    if(program(input) has property) return
-    if(program(input - input / 2.0f) has property)
-        assert("Minimal output lacking $property:" + program(input))
-    else shrink(input - input / 2.0f, program, property)
+tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> Boolean): T {
+    if(hasProperty(program(input - input / 2.0f)) return intput
+    else shrink(input - input / 2.0f, program, hasProperty)
+}
 \end{kotlinlisting}
 %
-The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. What if there were a better way?
+The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user needs to specify a custom shrinker for performance, which is not always clear how to implement efficiently. What if there were a better way?
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-Metamorphic testing is a fuzz testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost, general-purpose properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+Metamorphic testing is a property testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost, general-purpose properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
-More precisely, it can be expressed as follows: Given an oracle $\mathbf P: Q \rightarrow S$, a set of inputs $X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset Q^z \times S^z$ where $z \geq 2$. In the simplest case, an MR is a equivalence relation, e.g.: $\langle \mathbf x, \mathbf y \rangle \mathcal R \langle \mathbf x', \mathbf y' \rangle \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
+First, let us consider the following concrete example, taken from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy the chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability likely to be encountered in an operational setting.
 
-For example, suppose our MR is $\forall \mathbf\varphi \in ||\mathbf\varphi|| < \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Given a program $\mathbf{\hat P}$ and small set of inputs and outputs from an oracle $\langle \mathbf X, \mathbf Y\rangle = \{\langle \mathbf x_0, \mathbf y_0 \rangle, \langle \mathbf x_n, \ldots, \mathbf y_n \rangle\}$, the MR suggests an $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from $\mathbf P$. If we can find $\mathbf x \not\sim_{\mathcal R} \mathbf x'$, then we can infer at least one of the following:
+More precisely, it can be expressed as follows: Given an oracle $\mathbf P: \mathcal Q \rightarrow \mathcal S$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal Q^z \times \mathcal S^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation, e.g.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
+
+Suppose our MR is $\forall \varphi \in \mathcal Q: ||\mathbf\varphi|| \leq \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Given a program $\mathbf{\hat P}$ and a set of inputs $\mathbf X$ and outputs $\mathbf Y$ from our oracle, the MR suggests an $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from $\mathbf P$. If we can show that $\exists \mathbf x' \in \mathbf X' \mid \mathbf P(\mathbf x') \not\approx \mathbf P(\mathbf x)$, then we can infer at least one of the following:
 
 \begin{enumerate}
-\item $(\langle \mathbf x, \mathbf P(\mathbf x)\rangle, \langle \mathbf x', \mathbf P(\mathbf x')\rangle) \notin \mathcal R$, i.e. the MR is invalid
-\item $\mathbf{\hat P}(\mathbf x) \not\approx \mathbf{P}(\mathbf x')$, i.e. the program under test is broken
+\item $\langle \mathbf x, \mathbf P(\mathbf x), \mathbf x', \mathbf P(\mathbf x')\rangle \notin \mathcal R$, i.e. our assumptions were invalid
+\item $\mathbf{\hat P}(\mathbf x') \not\approx \mathbf{P}(\mathbf x')$, i.e. the program under test is unsound
 \end{enumerate}
 
-Consider a more concrete example: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), a metamorphic relation one might use is approximate invariance under a set of image transformations, such as limited illumination changes, linear transformations or noise corruption. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy the chosen metamorphic relation. If not, this indicates our program is not sufficiently robust and may not generalize well.
 %
 \begin{kotlinlisting}
 fun <Q, S> metamorphicTest(program: (Q) -> S, mr: (Q, S, Q, S) -> Boolean) {
@@ -1622,7 +1644,7 @@ fun <Q, S> genLegalTx(program: (Q) -> S, mr: (Q, S, Q, S) -> Boolean, input: Q, 
 }
 \end{kotlinlisting}
 
-But this would be very inefficient. Instead, we should have a more principled way to mutate the input so as to find invalid outputs.
+But this would be very inefficient. Instead, we should have a more principled way to mutate the input so as to discover invalid outputs.
 
 \subsection{Adversarial Testing}
 
