@@ -128,7 +128,7 @@ Universit\'e de Montr\'eal \\
         For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
         \begin{align*}
-            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\boldsymbol\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{<k})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\boldsymbol\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
         \end{align*}
         %
         Where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:

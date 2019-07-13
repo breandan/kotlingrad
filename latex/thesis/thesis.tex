@@ -150,6 +150,7 @@ anchorcolor = blue]{hyperref}
         basicstyle=\ttfamily\small,
         numberstyle=\footnotesize,
         tabsize=2,
+        numbers=right,
         breaklines=true,
         inputencoding=utf8,
         #1
@@ -167,7 +168,9 @@ anchorcolor = blue]{hyperref}
         showstringspaces=false,
         tabsize=2,
         breaklines=true,
+        numbers=right,
         inputencoding=utf8,
+        escapeinside={(*}{*)},
         #1
     },
     underlay unbroken and first={%
@@ -180,6 +183,7 @@ anchorcolor = blue]{hyperref}
         language=BashPrompt,
         basicstyle=\ttfamily\small,
         tabsize=2,
+        numbers=right,
         inputencoding=utf8,
         escapeinside={(*}{*)},
         #1
@@ -203,11 +207,11 @@ anchorcolor = blue]{hyperref}
     }
 }
 
-%\usepackage{ulem}
-%\makeatletter
-%\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
-%\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
-%\makeatother
+\usepackage{ulem}
+\makeatletter
+\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+\makeatother
 \newtcblisting{launchlisting}[1][]{%
     #1,
     listing options={
@@ -215,6 +219,7 @@ anchorcolor = blue]{hyperref}
         basicstyle=\ttfamily\small,
         numberstyle=\footnotesize,
         tabsize=2,
+        numbers=right,
         breaklines=true,
         inputencoding=utf8,
         escapeinside={(*}{*)}
@@ -231,6 +236,7 @@ anchorcolor = blue]{hyperref}
         basicstyle=\ttfamily\small,
         numberstyle=\footnotesize,
         tabsize=2,
+        numbers=right,
         breaklines=true,
         inputencoding=utf8,
         escapeinside={(*}{*)}
@@ -246,6 +252,7 @@ anchorcolor = blue]{hyperref}
         language=bnf,
         basicstyle=\ttfamily\small,
         breaklines=true,
+        numbers=right,
         showstringspaces=false,
     },
     fonttitle=\ttfamily\small,
@@ -260,6 +267,7 @@ anchorcolor = blue]{hyperref}
         language=Python,
         basicstyle=\ttfamily\small,
         breaklines=true,
+        numbers=right,
         showstringspaces=false,
         keywordstyle=\color{blue}\bfseries,
         escapeinside={(*}{*)}
@@ -537,7 +545,7 @@ First, let us consider the mechanical process of writing software with a keyboar
 
 Integrated development environments (IDEs) can assist developers building complex software applications by automating certain repetitive programming tasks. For example, IDEs perform static analyses and inspections for catching bugs quickly. They provide completion, refactoring and source code navigation, and they automate the process of building, running and debugging programs. While these tasks may seem trivial, their automation promises increased developer productivity by delivering earlier feedback, detecting clerical errors, and allows developers to focus on fundamental design tasks. Rather than being forced to concentrate on the structure and organization of text, if developers are able to manipulate code at a semantic level, they will be much happier and more productive. Furthermore, by automating mechanical tasks in software development, these tools allow developers to direct their attention to the fundamental activity of writing and understanding programs.
 
-But what are IDEs really doing? They are guiding developers through the knowledge graph of a software project. Consider what a new developer must learn to get up to speed: in addition to learning the language, developers must learn to use libraries and frameworks (arguably languages in their own right). They must become familiar with command line tools for software development, from build tools to version control and continuous integration. They must become familiar with the software ecosystem, programming styles, conventions and development workflows. And they must learn how to collaborate on a distributed team of developers. By automating common tasks in an interactive programming environment and making the graph connectivity explicit through document markup~\citep{goldfarb1981generalized} and projectional editing~\citep{voelter2014towards}, a well-designed IDE is a tool for graph traversal. It should come as no surprise IDEs are really graph databases.
+But what are IDEs really doing? They are guiding developers through the knowledge graph of a software project. Consider what a new developer must learn to get up to speed: in addition to learning the language, developers must learn to use libraries and frameworks (arguably languages in their own right). They must become familiar with command line tools for software development, from build tools to version control and continuous integration. They must become familiar with the software ecosystem, programming styles, conventions and development workflows. And they must learn how to collaborate on a distributed team of developers. By automating common tasks in an interactive programming environment and making the graph connectivity explicit through document markup~\citep{goldfarb1981generalized} and projectional editing~\citep{voelter2014towards}, a well-designed IDE is a tool for graph traversal. It should come as little surprise IDEs are really graph databases.
 
 In some aspects, the development of intelligent systems is no different than classical software engineering. The same principles and best-practices which guide software engineering are also applicable to intelligent systems. And the same activities, from design to maintenance will continue to play an important role in building intelligent systems. But in other respects, the generic programming tools used to develop traditional software will require domain-specific adaptations for learning systems to become truly first class citizens in the next generation of intelligent software, particularly in the case of robotics development.
 
@@ -571,7 +579,7 @@ In this \autoref{ch:difftest} we present preliminary work in adversarial fuzz te
 
 One of the challenges of building intelligent systems and programming in general, is the problem of reproducibility. Software reproducibility has several challenging aspects, including hardware compatibility, operating systems, file systems, build systems, and runtime determinism. While writing programs and feeding them directly into a computer may have once been common practice, today's source code is far too removed from its mechanical realization to be meaningfully executed in isolation. Today's handwritten programs are like schematics for a traffic light -- built inside a factory, and which require a city's-worth of infrastructure, cars, and traffic laws to serve their intended purpose. Like traffic lights, source code does not exist in a vacuum -- built by compilers, interpreted by virtual machines, executed inside an operating system, and which following a specific communication protocol -- programs are essentially meaningless abstractions outside this context.
 
-As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have long since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{cf. \url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction correspond to the source code itself.
+As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have since been automated and long forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{cf. \url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction correspond to the source code itself.
 
 Applied machine learning shares many of the same practical challenges as traditional software development, with source code, release and dependency management. The current process of training a deep learning model can be seen as particularly long compilation step, but it differs significantly in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\citep{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
@@ -595,11 +603,11 @@ Throughout this thesis, the following iconography is used to denote: \\
 \item[] \inlineimg{laptop_icon.png} &  Shell commands intended for a laptop, or output derived thereof. \\
 \item[] \inlineimg{bnf_file.png} & GrammarKit's \inline{.bnf} parsing expression grammar (PEG)~\footnote{GrammarKit usage notes: \url{https://github.com/JetBrains/Grammar-Kit/blob/master/HOWTO.md}} \\
 \item[] \inlineimg{docker_icon.jpg} &  Either \inline{Dockerfile}~\footnote{Dockerfile reference: \url{https://docs.docker.com/engine/reference/builder/}} or Docker Compose~\footnote{Compose file reference: \url{https://docs.docker.com/compose/compose-file/}} syntax. \\
-\item[] \inlineimg{raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi. \\
-\item[] \inlineimg{duckietown.png}  &  Duckietown Shell (\inline{dts}) commands. \\
-\item[] \inlineimg{launch_icon.png}  &  roslaunch \inline{.launch} files. \\
-\item[] \inlineimg{python_icon.png}  &  Python source code. \\
-\item[] \inlineimg{kotlin_file.png}  &  Kotlin source code.
+\item[] \inlineimg{raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi~\footnote{Raspberry Pi: \url{https://www.raspberrypi.org/}}. \\
+\item[] \inlineimg{duckietown.png}  &  Duckietown Shell (\inline{dts}) commands~\footnote{Duckietown Shell: \url{https://github.com/duckietown/duckietown-shell-commands}}. \\
+\item[] \inlineimg{launch_icon.png}  &  roslaunch \inline{.launch} files~\footnote{ROS Launch XML: \url{http://wiki.ros.org/roslaunch/XML}}. \\
+\item[] \inlineimg{python_icon.png}  &  Python source code~\footnote{Python documentation: \url{https://www.python.org/doc/}}. \\
+\item[] \inlineimg{kotlin_file.png}  &  Kotlin source code~\footnote{Kotlin documentation: \url{https://kotlinlang.org/docs/reference/}}.
 \end{enumerate}
 
 \medium{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
@@ -1161,37 +1169,37 @@ First class dependent types are useful for ensuring arbitrary shape safety (e.g.
 In Kotlin$\nabla$, we adopt the third strategy. Consider the following example:
 %
 \begin{kotlinlisting}
-val a = Vec(1.0, 2.0) // Inferred type: Vec<Int, `2`>
-val b = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, `3`>
-val c = b + b
-val d = a + b // Does not compile, shape mismatch
+val vecA = Vec(1.0, 2.0)      // Inferred type: Vec<Int, `2`>
+val vecB = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, `3`>
+val vecC = vecB + vecB
+val vecD = (*\uwave{vecA + vecB}*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
 %
 Attempting to sum two vectors whose shapes do not match will fail to compile.
 %
 \begin{kotlinlisting}
-val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
-val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
-val c = a * b
-val d = a * a // Does not compile, inner dimension mismatch
+val matA = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
+val matB = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
+val matC = matA * matB
+val matD = (*\uwave{matA *\ matC}*) // Compile error: Expected Mat<4, *>, found Mat<1, 1>
 \end{kotlinlisting}
 %
-Similarly, multiplying two tensors whose inner dimensions do not match will not compile.
+Similarly, multiplying two matrices whose inner dimensions do not match will not compile.
 %
 \begin{kotlinlisting}
-val a = Mat(`2`, `4`,
+val matA = Mat(`2`, `4`,
             1.0, 2.0, 3.0, 4.0,
             5.0, 6.0, 7.0, 8.0)
-val b = Mat(`4`, `2`,
+val matB = Mat(`4`, `2`,
             1.0, 2.0,
             3.0, 4.0,
             5.0, 6.0,
             7.0, 8.0)
-val c: Mat<Double, `2`, `2`> = a * b // Types are optional, but encouraged
-val d = Mat(`2`, `1`, 1.0, 2.0)
-val e = c * d
-val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
-val g = e * f // Does not compile, inner dimension mismatch
+val matC: Mat<Double, `2`, `2`> = a * b // Types are optional, but encouraged
+val matD = Mat(`2`, `1`, 1.0, 2.0)
+val matE = matC * matD
+val matF = Mat(`3`, `1`, 1.0, 2.0, 3.0)
+val matG = (*\uwave{matE *\ matF}*) // Compile error: Expected Mat<1, *>, found Mat<3, 1>
 \end{kotlinlisting}
 %
 It is required to specify the input types in a method signature. Explicit return types are optional but encouraged for readability. If omitted, the type system can usually infer them:
@@ -1227,7 +1235,7 @@ The operator `\inline{+}' can now be used like so. Incompatible operands will ca
 \begin{kotlinlisting}
 // Type-checked vector addition with shape inference
 val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4)) // Y: Vec<Float, `2`>
-val X = Vec(`2`, listOf(1, 2)) + Vec(`3`, listOf(3, 4, 5)) // Undefined!
+val X = (*\uwave{Vec(`2`, listOf(1, 2)) + Vec(`5`, listOf(3, 4, 1, 2, 4))}*)
 \end{kotlinlisting}
 %
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
@@ -1247,25 +1255,25 @@ Dynamic length construction is possible, although it may fail at runtime. For ex
 \begin{kotlinlisting}
 val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
 val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
-val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
-val sum = Vec(`2`, 1, 2) + add                    // Does not compile
+val vec = Vec(1, 2, 3) // Inferred type: Vec<3>
+val sum = (*\uwave{Vec(`2`, 1, 2) + add}*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
 %
 A similar syntax is used for matrices and tensors. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if their inner dimensions disagree:
 %
 \begin{kotlinlisting}
-val l = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
+val matL = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
              1, 2, 3, 4,
              5, 6, 7, 8,
              9, 0, 0, 0,
              9, 0, 0, 0)
-val m = Mat(`4`, `3`, // Inferred type: Mat<Int, `4`, `3`>
+val matM = Mat(`4`, `3`, // Inferred type: Mat<Int, `4`, `3`>
              1, 1, 1,
              2, 2, 2,
              3, 3, 3,
              4, 4, 4)
-val lm = l * m // Inferred type: Mat<Int, `4`, `3`>
-val mm = m * m // Does not compile
+val matN = matL * matM // Inferred type: Mat<Int, `4`, `3`>
+val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
 \end{kotlinlisting}
 %
 This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or highly impractical as it would require enumerating every possible combination of type literals in type arithmetic.
