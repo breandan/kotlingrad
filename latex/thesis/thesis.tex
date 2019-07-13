@@ -59,7 +59,7 @@ anchorcolor = blue]{hyperref}
 \lstdefinelanguage{kotlin}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
-    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
+    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, @Repeat, return@},
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
     keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec, reified},
@@ -1546,10 +1546,11 @@ When carefully applied, it can be quite effective at detecting bugs and document
 \noindent In integration testing, we are more concerned about the overall behavior of a program, rather than the specific behavior of its component subroutines. Consider the following example:
 
 \begin{kotlinlisting}
-fun <T, Y> integrationTest(program: (T) -> Y, inputs: Set<T>>) =
+fun <T, Y> integrationTest(program: (T) -> Y, inputs: Set<T>) =
     inputs.forEach { input ->
         try {
-            assert(checkPostCondition(program(input)))
+            if(checkPostCondition(program(input)))
+                assert("Postcondition failed on $input")
         } catch(exception: SomeException) {
             assert(exception)
         }
@@ -1601,7 +1602,7 @@ The trouble is, finding the right properties to test can be highly sensitive, an
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem, and specifically the challenge of designing low-cost, general-purpose properties. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+It is often the case we would like to test the behavior of a program given a limited set of inputs and outputs, without requiring extensive domain expertise. Many naturally-occurring generative processes exhibit a kind of local invariance - small perturbations to the input do not drastically change the output. We can exploit this property to design general purpose fuzzing methods. Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
 First, let us consider the following concrete example, taken from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy the chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability likely to be encountered in an operational setting.
 
@@ -1735,14 +1736,14 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
         \State $i \gets 1$
         \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
-            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\Big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x_{i-1}})\big)\Big)$ \Comment{PGD step (cf. \autoref{eq:projected_gd})}
+            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (cf. \autoref{eq:projected_gd})}
             \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_0$} \Comment{Boundary value was found.}
                 \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
             \EndIf
             \State $i \gets i + 1$
         \EndWhile
         \If {$\neg t_0$} \Comment{If initial test state was failure, return most recent iterate.}
-            \State \Return $\{\mathbf x_i\}$
+            \State \Return $\{\mathbf x_{i-1}\}$
         \Else \Comment{Otherwise, there was no test failure and return the empty set.}
             \State \Return $\varnothing$
         \EndIf
