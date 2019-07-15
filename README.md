@@ -352,42 +352,52 @@ Extensions can also be defined in another file or context and imported on demand
 
 #### Algebraic data types
 
-[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) allows creating a closed set of internal subclasses to guarantee an exhaustive control flow over the concrete types of an abstract class. At runtime, we can branch on the concrete type of the abstract class. For example, suppose we have the following classes:
+[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler forces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
 
 ```kotlin
-sealed class Expr<T: Expr<T>>: Group<Expr<T>> {
-    fun diff(variable: Var<T>): Expr<T> = when(this) {
-        is Const -> Zero
-        // Smart casting allows us to access members of a checked typed without explicit casting
-        is Sum -> e1.diff(variable) + e2.diff(variable)
-        // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-        is Prod -> e1.diff(variable) * e2 + e1 * e2.diff(variable)
-        is Var -> One
-        // Since the subclasses of Expr are a closed set, the compiler does not require an `else -> ...`
-    }
-    
-    operator fun plus(addend: Expr<T>) = Sum(this, addend)
-      
-    operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
-}
-
-class Const<T: Group<T>>(val number: Double) : Expr()
-class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-class Var<T: Group<T>>: Expr()
-class Zero<T: Group<T>>: Const<T>
-class One<T: Group<T>>: Const<T>
+class Const<T: Fun<T>>(val number: Number) : Fun<T>()
+class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
+class Zero<T: Fun<T>>: Const<T>(0.0)
+class One<T: Fun<T>>: Const<T>(1.0)
 ```
 
-Users are forced to handle all subclasses when branching on the type of a sealed class, as incomplete control flow will not compile (instead of say, failing silently at runtime).
+When branching on the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of `Fun`, a sealed class which defines the behavior of function invocation and differentiation, using a restricted form of pattern matching. It can be constructed with a set of `Var`s, and can be invoked with a numerical value:
 
-[Smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) allows us to treat the abstract type `Expr` as a concrete type, e.g. `Sum` after performing an `is Sum` check. Otherwise, we would need to write `(expr as Sum).e1` in order to access its field, `e1`. Performing a cast without checking would throw a runtime exception, if the type were incorrect. Using sealed classes helps avoid casting, thus avoiding `ClassCastException`s.
+```kotlin
+sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
+    constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
+
+    // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
+    operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
+        is Const -> this
+        is Var -> map.getOrElse(this) { this } // Partial application is permitted
+        is Prod -> left(map) * right(map) // Smart casting implicitly casts after checking
+        is Sum -> left(map) + right(map)
+    }
+
+    fun diff(variable: Var<X>): Fun<X> = when(this) {
+       is Const -> Zero
+       is Var -> if (variable == this) One else Zero
+       // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
+       is Prod -> left.diff(variable) * right + left * right.diff(variable)
+       is Sum -> left.diff(variable) + right.diff(variable)
+    }
+
+    operator fun plus(addend: Fun<T>) = Sum(this, addend)
+
+    operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
+}
+```
+
+Kotlin's [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) implicitly downcasts the abstract type `Fun` as a subtype, such as `Sum` after performing an `is Sum` check. If `Fun` were not sealed, we would have needed to write `(this as Sum).left` instead to access its member, `left`. If the type cast was mistaken, a `ClassCastException` would need to be thrown, which smart casting also prevents.
 
 #### Multiple Dispatch
 
 In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
-Building on the previous example, a common task in AD is to [simplify a graph](http://deeplearning.net/software/theano/extending/optimization.html). This is useful in order to minimize the number of calculations required, or to improve numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
+Building on the previous example, a common task in AD is to [simplify a graph](http://deeplearning.net/software/theano/extending/optimization.html). This is useful in order to minimize the total number of calculations required, improving numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 
 [//]: # (Note: numerical stability is sensitive to the order of rewriting, cf. https://en.wikipedia.org/wiki/Kahan_summation_algorithm)
 
