@@ -772,21 +772,21 @@ For the purposes of this plugin, we use the IntelliJ Platform, a popular platfor
 
 \subsection{Refactoring}\label{subsec:refactoring}
 
-Refactoring is an essential feature in any IDE, and the essence of refactoring is renaming. Consider what must occur when a user wishes to rename a token in her program, such as the \inline{data} parameter on line \#1 below:
+Refactoring is an essential feature in any IDE, and the essence of refactoring is renaming. Consider what must occur when a user wishes to rename a token in her program, such as the parameter named \inline{data} on line \#1 below:
 %
 \begin{pythonlisting}
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
 \end{pythonlisting}
 %
-If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} in the file via \inline{:\%s/data/msg/g}, with the following result:
+If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} within the file using \inline{:\%s/data/msg/g}, producing the following result:
 %
 \begin{pythonlisting}
 def callback((*\hl{msg}*)):
     rospy.loginfo(rospy.get_caller_id() + "received (*\hl{msg}*): %s", (*\hl{msg}*).(*\hl{msg}*))
 \end{pythonlisting}
 %
-There were four occurrences of the string \inline{data}, only two of which were correctly renamed. Instead, the operation should only touch those identifiers which refer to the variable:
+There were four occurrences of the string \inline{data}, only two of which were correctly renamed. Instead, the operation should only affect those identifiers which refer to the parameter:
 %
 \newcommand{\cfbox}[2]{\colorlet{currentcolor}{.}{\color{#1}\fbox{\color{currentcolor}#2}}}
 
@@ -803,7 +803,7 @@ One of the most important and unappreciated components of an IDE is the parser. 
 
 Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under modification. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools for IDEs and text editors, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-Hatchery can parse URDF, package and launch XML, and \inline{.msg}/\inline{.srv} files.
+Modern parsers are seldom handwritten unless the language is very simple or raw performance is desired. Even for source code editing, where incremental parsing and error-recovery is highly important, modern metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses Grammar-Kit, a language toolkit designed to assist users developing custom language plugins for the IntelliJ Platform. It uses JFlex~\citep{klein2001jflex}, a DFA-based lexer and its own formal grammar, based on the parsing expression grammar (PEG), which is easily translated to the IntelliJ Platform's internal abstract syntax tree (AST) representation, the program structure interface (PSI).
 
 Here is an excerpt of a ROS interface file grammar:
 
@@ -819,6 +819,9 @@ property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
 %
+
+Hatchery is capable of parsing URDF, package and launch XML, and \inline{.msg}/\inline{.srv} files.
+
 \subsection{Running and debugging}
 
 Assistance for running ROS applications.
