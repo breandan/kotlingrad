@@ -1126,11 +1126,11 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 
 \section{Type systems}\label{sec:type-systems}
 
-Early work in type safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} showing how static types in array programming can be used to encode dimensionality and prevent common bugs due to dimension mismatch. Kennedy is particularly interested in units of measurement, and was followed by \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed}. Later, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to encode numbers to infer array sizes in more complex ways. More recently, with the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
+Early work in type safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} showing how static types in array programming can be used to encode dimensionality and prevent common bugs related to dimension mismatch from arising. Kennedy is particularly interested in units of measurement, and was followed by \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} who explore the application of dimension types for linear algebra. Later, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to encode numbers to infer array sizes in more complex ways. More recently, with the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
 
 The problem we would like to solve can be summarized as follows. Given two variables \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_2 \stackrel{?}{=} \mathbf{b}_1$) and use the outer dimensions for inference ($\mathbf c = \begin{bmatrix}\mathbf{a}_1 & \mathbf{b}_2\end{bmatrix}$).
 
-Shape checking matrix operations is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to compute at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
+Shape checking matrix operations is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to implement at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
 
 First-class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} Type checking ordinary matrix arithmetic is decidable in any type system loosely based on System $\text{F}_{<:}$. In practice, we can implement a shape-safe tensor algebra in any language with support for subtyping and parametric polymorphism, such as Java, Kotlin, C++, Rust or Typescript, by enumerating a finite set of type-level integer literals, as shown in \autoref{sec:shape-safety}.
 
@@ -1164,12 +1164,12 @@ First-class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \noindent There are three broad strategies for handling shape errors in array programming: \\
 %
 \begin{enumerate}
-    \item Hide the error somehow by implicitly reshaping or broadcasting arrays.
+    \item Conceal the error by implicitly reshaping or broadcasting arrays.
     \item Announce the error at runtime with a relevant message, e.g.~\inline{InvalidArgument}.
     \item Do not allow programs which can result in a shape error to compile. \\
 \end{enumerate}
 %
-In Kotlin$\nabla$, we adopt the third strategy. Consider the following example:
+Most array programming libraries such as NumPy~\citep{van2011numpy} or TensorFlow~\citep{abadi2016tensorflow} take the first or second route. In Kotlin$\nabla$, we adopt the third strategy, which allows an incremental type checker, such as those typically found in IDEs, to immediately detect when a matrix operation is invalid. Consider the following example:
 %
 \begin{kotlinlisting}
 val vecA = Vec(1.0, 2.0)      // Inferred type: Vec<Int, `2`>
@@ -1262,7 +1262,7 @@ val vec = Vec(1, 2, 3) // Inferred type: Vec<3>
 val sum = (*\uwave{Vec(`2`, 1, 2) + add}*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
 %
-A similar syntax is used for matrices and tensors. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if their inner dimensions disagree:
+Matrices and tensors have a similar syntax. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if the arguments' inner dimensions disagree:
 %
 \begin{kotlinlisting}
 val matL = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
@@ -1279,7 +1279,7 @@ val matN = matL * matM // Inferred type: Mat<Int, `4`, `3`>
 val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
 \end{kotlinlisting}
 %
-This technique originates in Haskell, which supports more powerful forms of type-level computation, \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic makes it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or highly impractical as it would require enumerating every possible combination of type literals in type arithmetic.
+A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which, like Kotlin$\nabla$, also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic would make it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or highly impractical as it would require enumerating every possible combination of type literals in its type system.
 
 \section{Testing}\label{sec:testing}
 
@@ -1489,7 +1489,7 @@ One form of continuation, known as shift-reset a.k.a.\ delimited continuations, 
 
 \section{Comparison}\label{sec:comparison}
 
-Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain-specific language}, thereby employing the host language's type system. Our approach is particularly well-suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
+Inspired by Stalin$\nabla$, Autograd, DiffSharp, Myia, Nexus, Lantern, Tangent et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Prior work, including Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain-specific language}, thereby employing the host language's type system. Our approach is particularly well-suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
 
 \begin{table}
 \begin{tabular}{lllllllll}
