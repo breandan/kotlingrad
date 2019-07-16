@@ -1169,7 +1169,7 @@ First-class dependent types are useful for ensuring arbitrary shape safety (e.g.
     \item Do not allow programs which can result in a shape error to compile. \\
 \end{enumerate}
 %
-Most array programming libraries such as NumPy~\citep{van2011numpy} or TensorFlow~\citep{abadi2016tensorflow} take the first or second route. In Kotlin$\nabla$, we adopt the third strategy, which allows an incremental type checker, such as those typically found in IDEs, to immediately detect when a matrix operation is invalid. Consider the following example:
+Most array programming libraries such as NumPy~\citep{van2011numpy} or TensorFlow~\citep{abadi2016tensorflow} use the first or second strategy. In Kotlin$\nabla$, we adopt the third, which allows an incremental type checker, such as those typically found in IDEs, to immediately detect when a matrix operation is invalid. Consider the following example:
 %
 \begin{kotlinlisting}
 val vecA = Vec(1.0, 2.0)      // Inferred type: Vec<Int, `2`>
@@ -1279,7 +1279,7 @@ val matN = matL * matM // Inferred type: Mat<Int, `4`, `3`>
 val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
 \end{kotlinlisting}
 %
-A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which, like Kotlin$\nabla$, also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic would make it easy to express convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations on shape variables, which is currently not possible in Kotlin$\nabla$, or highly impractical as it would require enumerating every possible combination of type literals in its type system.
+A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which, like Kotlin$\nabla$, also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic would make it easy to express array concatenation, convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations, which are currently impossible to express in Kotlin$\nabla$, or highly impractical as each operator would require enumerating $C^2$ functions.
 
 \section{Testing}\label{sec:testing}
 
@@ -1435,9 +1435,9 @@ Kotlin's smart-casting implicitly downcasts the abstract type \inline{Fun} as a 
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
-In conjunction with ADTs, Kotlin$\nabla$ also uses multiple dispatch to instantiate the most specific result type of applying an operator based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
+In conjunction with ADTs, Kotlin$\nabla$ also uses multiple dispatch to instantiate the most specific result type of an operation based on the type of its component operands. Although multiple dispatch is not an explicit language feature, it can be emulated using inheritance and double dispatch.
 
-Building on the previous example, suppose we would like to perform algebraic simplification. This can be useful for reducing expression swell and improving numerical stability. We can use multiple dispatch to branch on a the type of a subexpression at runtime. \textit{Smart casting} lets us access members of a class after checking its type, as if it were casted:
+Building on the previous example, imagine performing algebraic simplification, a useful trick for reducing expression swell and improving numerical stability. We can use `when` to detect the type of a subexpression at runtime, then use \textit{smart casting} to access its members afterwards, as though it were casted:
 
 \begin{kotlinlisting}
 override fun times(multiplicand: Fun<X>): Fun<X> =
