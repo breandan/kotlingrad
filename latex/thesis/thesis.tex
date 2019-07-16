@@ -1054,13 +1054,13 @@ fun dot(l1, l2) {
     \label{fig:fp_vs_ip}
 \end{figure}
 
-By using functional programming, Kotlin$\nabla$ uses the same abstraction to represent mathematical functions and programming functions. All functions in Kotlin$\nabla$ are pure functions, composed of expressions, which form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based approaches like TensorFlow and Theano.
+By using functional programming, Kotlin$\nabla$ uses the same abstraction to represent mathematical functions and programming functions. All functions in Kotlin$\nabla$ are pure functions, composed of expressions which together form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based frameworks like TensorFlow and Theano.
 
 \section{Kotlin}\label{sec:kotlin}
 
-When programming in a statically typed language, a common question one might ask the compiler is, ``Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?'' (e.g. type checking \inline{x instanceof Y}) In Java, this question turns out to be unsound~\citep{amin2016java} and undecidable~\citep{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program in which the answer is ``yes'' regardless of \inline{Y}, or for which the answer cannot be determined in a finite amount of time. In the latter case, this is not necessarily a problem, but the former case is more critical and unclear how to fix, even if it rarely occurs in practice.
+When programming in a statically typed language, a common question one might ask the compiler is, ``Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?'' (e.g. type checking \inline{x instanceof Y}) In Java, this question turns out to be unsound~\citep{amin2016java} and undecidable~\citep{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program in which the answer is ``yes'' regardless of \inline{Y}, or for which the answer cannot be determined in a finite amount of time. Undecidability is not necessarily a showstopper, but the unsoundness of Java's is more critical and unclear how to fix, even if it rarely occurs in practice.
 
-Kotlin is a strong, statically typed language, that is well-suited for building cross-platform applications, targeting JVM, JavaScript and native. Unlike most programming languages, the language was designed with IDE support from the outset, and owes much of its popularity to its programming ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java's. It is unknown whether the the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java spurred its adoption and remains a key usability feature of the language.
+Kotlin is a statically typed language that is well-suited for building cross-platform applications, with compiler support for JVM, JavaScript and native targets. Unlike most programming languages, the language was designed with IDE support from the outset, and owes much of its popularity to its programming ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java's. It is unknown whether the the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java has spurred its broad adoption and remains a key usability feature of the language.
 
 In this work, we make use of several language features unique to Kotlin, such as first-class functions (\autoref{sec:first-class-functions}), extension functions (\autoref{sec:extension-functions}), operator overloading (\autoref{sec:operator-overloading}), and algebraic data types (\autoref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support for shape-safe array programming. Together, these language features provide a concise, flexible and type-safe platform for mathematical programming.
 
@@ -1435,9 +1435,9 @@ Kotlin's smart-casting implicitly downcasts the abstract type \inline{Fun} as a 
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
-In conjunction with ADTs, Kotlin$\nabla$ also uses multiple dispatch to instantiate the most specific result type of an operation based on the type of its component operands. Although multiple dispatch is not an explicit language feature, it can be emulated using inheritance and double dispatch.
+In conjunction with ADTs, Kotlin$\nabla$ uses multiple dispatch to instantiate the most specific result type of an arithmetic operation based on the type of its component operands. Like ADTs, multiple dispatch is not directly supported in the language, but it can be emulated using dynamic dispatch and overloading.
 
-Building on the previous example, imagine performing algebraic simplification, a useful trick for reducing expression swell and improving numerical stability. We can use `when` to detect the type of a subexpression at runtime, then use \textit{smart casting} to access its members afterwards, as though it were casted:
+Building on \autoref{sec:adts}, imagine we would like to perform algebraic simplification, a useful trick for reducing expression swell~\citep{laue2019equivalence} and improving numerical stability. We can use \inline{when} to detect the type of a subexpression at runtime, then use \textit{smart casting} to access its members, as though it were previously cast:
 
 \begin{kotlinlisting}
 override fun times(multiplicand: Fun<X>): Fun<X> =
@@ -1524,7 +1524,7 @@ Allowing users to specify a matrix's structure in its type signature, (e.g.\ Sin
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into~\cite{makwana2018numlin}.
 
-Explore the meaning of derivatives in other calculi, and incremental compilation following~\citet{ehrhard2003differential, chen2012type, cai2014theory, kelly2016evolving}.
+Explore the meaning of derivatives in other calculi, and incremental computation following~\citet{ehrhard2003differential, chen2012type, cai2014theory, kelly2016evolving}.
 
 \medium{\chapter{Testing and validation}\label{ch:difftest}}
 
@@ -1633,7 +1633,7 @@ Consider the following example of an MT using an equivalence-based MR:
 \begin{kotlinlisting}
 @Repeat(value = 1000)
 fun <I, O> metamorphicTest(program: (I) -> O, mr: (I, O, I, O) -> Boolean) {
-    val (input: I, output: ) = drawSampleFromData()
+    val (input: I, output: O) = drawSampleFromData()
     val tx: (I) -> I = genLegalTx(program, mr, input, output)
     val txInput: I = tx(input)
     val txOutput: O = program(txIn)
