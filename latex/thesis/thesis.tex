@@ -1008,7 +1008,7 @@ As deep learning solved problems across various domains, researchers observed th
 
 Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality on using static typing and fewer defects has not been conclusively established, dynamically typed languages are seldom used for building safety-critical systems, and the majority of robotics applications~\citep{Areserio54:online} are written in statically typed languages.
 
-Statically typed languages eliminate a broad class of runtime errors and allow users to reason about the behavior of programs without needing to execute them. In addition to stronger syntax validation for general purpose programming, a well-designed library in a strongly typed language can eliminate specific errors related to API misuse that would otherwise require documentation and code samples to prevent, reducing the burden of discovery and maintenance. Furthermore, strong type systems enable more powerful static analysis tools, which can provide relevant autocompletion, source code navigation, and earlier detection of runtime errors.
+Statically typed languages eliminate a broad class of runtime errors and allow users to reason more carefully about the behavior of programs without needing to execute them. In addition to stronger syntax validation for general purpose programming, a well-designed library in a strongly typed language can eliminate specific errors related to API misuse that would otherwise require documentation and code samples to prevent, improving usability and reducing maintenance. Furthermore, strong type systems allow us to build more intelligent static analysis tools, which can provide relevant autocompletion, source code navigation, and earlier detection of runtime errors.
 
 One frequent objection to using strongly typed languages is attributed to the additional burden of manual type annotation. While early type-safe languages like C/C++ and Java required programmers to exhaustively annotate function and variable declarations, with judicious use of type inference in modern languages like Kotlin, Scala, Rust et al., most type signatures may be safely omitted and easily recovered from the surrounding context. Type inference enables modern languages to offer the brevity of dynamically typed languages with the safety of static type checking.
 
@@ -1018,7 +1018,7 @@ Most programs written today are written in the imperative style, due the prevale
 
 The mathematical notion of function composition is a first-class citizen in functional programming. Just as we do in calculus, to take the derivative of a program composed with another program, simply apply the chain rule (cf.~\autoref{sec:automatic-differentiation}). Since there is no mutable state in FP, no exotic data structures or compiler tricks are required.
 
-For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in \autoref{fig:fp_vs_ip}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values, which is quite tedious. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
+For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in \autoref{fig:fp_vs_ip}. Imperative programs, by allowing mutation, are destroying intermediate information. In order to recover the computation graph for reverse mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
 \begin{figure}[t]
     \centering
@@ -1054,7 +1054,7 @@ fun dot(l1, l2) {
     \label{fig:fp_vs_ip}
 \end{figure}
 
-Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed to form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based approaches like TensorFlow and Theano.
+By using functional programming, Kotlin$\nabla$ uses the same abstraction to represent mathematical functions and programming functions. All functions in Kotlin$\nabla$ are pure functions, composed of expressions, which form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based approaches like TensorFlow and Theano.
 
 \section{Kotlin}\label{sec:kotlin}
 
@@ -1128,11 +1128,11 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 
 Early work in type safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} showing how static types in array programming can be used to encode dimensionality and prevent common bugs due to dimension mismatch. Kennedy is particularly interested in units of measurement, and was followed by \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed}. Later, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to encode numbers to infer array sizes in more complex ways. More recently, with the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how shape safe tensor operations can be encoded in a sufficiently expressive type system.
 
-The problem we would like to solve can be summarized as follows. Given two variables \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}(a, b) \stackrel{?}{=} c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence and use the outer dimensions for inference.
+The problem we would like to solve can be summarized as follows. Given two variables \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{Z}^q, \mathbf{b} \in \mathbb{Z}^r, \mathbf{c} \in \mathbb{Z}^s$ and $q, r, s \in \mathbb{Z}^\geq$. For most linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_2 \stackrel{?}{=} \mathbf{b}_1$) and use the outer dimensions for inference ($\mathbf c = \begin{bmatrix}\mathbf{a}_1 & \mathbf{b}_2\end{bmatrix}$).
 
-Shape checking matrix operations is not always decidable, however. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to compute at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
+Shape checking matrix operations is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine, at which point it would be easier to compute at runtime rather than at the type level. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is known to be undecidable~\citep{godel1931formal}. However shape checking convolutional arithmetic may be decidable.
 
-First class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} When the shape of a tensor is known at compile time, it is possible to shape check ordinary matrix arithmetic in a decidable type system with support for subtyping and parametric polymorphism. In practice, we can implement a shape-safe tensor algebra in any language with parametric types, such as Java, Kotlin, C++, Rust or Typescript, by enumerating a finite set of type-level integer literals, as shown in \autoref{sec:shape-safety}.
+First-class dependent types are useful for ensuring arbitrary shape safety (e.g.\ when concatenating and reshaping matrices~\citep{xi1998eliminating}), but are unnecessary for simple equality checking, such as when multiplying two matrices.\footnote{Less expressive type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is known to be Turing Complete~\citep{Grigore:2017:JGT:3009837.3009871}. It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.} Type checking ordinary matrix arithmetic is decidable in any type system loosely based on System $\text{F}_{<:}$. In practice, we can implement a shape-safe tensor algebra in any language with support for subtyping and parametric polymorphism, such as Java, Kotlin, C++, Rust or Typescript, by enumerating a finite set of type-level integer literals, as shown in \autoref{sec:shape-safety}.
 
 {\tiny
 \begin{table}
@@ -1191,13 +1191,13 @@ Similarly, multiplying two matrices whose inner dimensions do not match will not
 %
 \begin{kotlinlisting}
 val matA = Mat(`2`, `4`,
-            1.0, 2.0, 3.0, 4.0,
-            5.0, 6.0, 7.0, 8.0)
+               1.0, 2.0, 3.0, 4.0,
+               5.0, 6.0, 7.0, 8.0)
 val matB = Mat(`4`, `2`,
-            1.0, 2.0,
-            3.0, 4.0,
-            5.0, 6.0,
-            7.0, 8.0)
+               1.0, 2.0,
+               3.0, 4.0,
+               5.0, 6.0,
+               7.0, 8.0)
 val matC: Mat<Double, `2`, `2`> = a * b // Types are optional, but encouraged
 val matD = Mat(`2`, `1`, 1.0, 2.0)
 val matE = matC * matD
@@ -1205,7 +1205,7 @@ val matF = Mat(`3`, `1`, 1.0, 2.0, 3.0)
 val matG = (*\uwave{matE *\ matF}*) // Compile error: Expected Mat<1, *>, found Mat<3, 1>
 \end{kotlinlisting}
 %
-It is required to specify the input types in a method signature. Explicit return types are optional but encouraged for readability. If omitted, the type system can usually infer them:
+It is required to specify the parameter types in a method signature. Explicit return types are optional but encouraged for readability. If omitted, the type system can often infer them:
 %
 \begin{kotlinlisting}
 fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
@@ -1266,15 +1266,15 @@ A similar syntax is used for matrices and tensors. For example, Kotlin$\nabla$ c
 %
 \begin{kotlinlisting}
 val matL = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
-             1, 2, 3, 4,
-             5, 6, 7, 8,
-             9, 0, 0, 0,
-             9, 0, 0, 0)
+               1, 2, 3, 4,
+               5, 6, 7, 8,
+               9, 0, 0, 0,
+               9, 0, 0, 0)
 val matM = Mat(`4`, `3`, // Inferred type: Mat<Int, `4`, `3`>
-             1, 1, 1,
-             2, 2, 2,
-             3, 3, 3,
-             4, 4, 4)
+               1, 1, 1,
+               2, 2, 2,
+               3, 3, 3,
+               4, 4, 4)
 val matN = matL * matM // Inferred type: Mat<Int, `4`, `3`>
 val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
 \end{kotlinlisting}
@@ -1309,7 +1309,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 }
 \end{kotlinlisting}
 %
-PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test with the finite difference method, which uses the equation $f'(x) \approx \frac{f(a+h)-f(a)}{h}$:
+PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test using the finite difference method, e.g. $f'(x)=\lim _{h\to 0}{\frac {f(x+h)-f(x)}{h}}$:
 %
 \begin{kotlinlisting}
 val dx = 1E-8
@@ -1327,7 +1327,7 @@ val fd_dx = (sin(x + dx) - sin(x)) / dx
 }
 \end{kotlinlisting}
 %
-There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method would be to compare the numerical output against a well-known implementation, such as TensorFlow. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
+There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method to validate Kotlin$\nabla$'s implementation would be to compare the numerical output against the output of a well-known A.D. framework, such as TensorFlow's. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
