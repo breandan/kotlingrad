@@ -1342,7 +1342,7 @@ interface Group<T: Group<T>> {
 }
 \end{kotlinlisting}
 %
-Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\citep{canning1989f} to ensure that operations return the concerete value of the type variable \inline{T}, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Fun} which has implemented \inline{Group}. It can be used as follows:
+Here, we specify a recursive type bound using a method known as F-bounded polymorphism~\citep{canning1989f} to ensure that operations return the concrete value of the type variable \inline{T}, rather than something more generic like \inline{Group} (effectively, \inline{T} is a \inline{self} type). Imagine a class \inline{Fun} which has implemented \inline{Group}. It can be used as follows:
 %
 \begin{kotlinlisting}
 fun <T: Group<T>> cubed(t: T): T = t * t * t
