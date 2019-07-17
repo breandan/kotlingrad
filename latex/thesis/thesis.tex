@@ -801,26 +801,23 @@ Generally, we would like the ability to rename identifiers across files and lang
 
 One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users while editing, re-parsing the entire document between edits would be expensive and unnecessary. In order to validate source code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
 
-Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under modification. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools for IDEs and text editors, which must be able to provide rapid and specific feedback whilst the user is typing.
+Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-Modern parsers are seldom handwritten unless the language is very simple or raw performance is desired. Even for source code editing, where incremental parsing and error-recovery is highly important, modern metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses Grammar-Kit, a language toolkit designed to assist users developing custom language plugins for the IntelliJ Platform. It uses JFlex~\citep{klein2001jflex}, a DFA-based lexer and its own formal grammar, based on the parsing expression grammar (PEG), which is easily translated to the IntelliJ Platform's internal abstract syntax tree (AST) representation, the program structure interface (PSI).
-
-Here is an excerpt of a ROS interface file grammar:
+Modern parsers are seldom handwritten unless the language being parsed is very simple or raw performance is desired. Even for source code editing, where incremental parsing, type-checking and error-recovery is highly important, modern metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses Grammar-Kit, a toolkit designed to assist users developing custom language plugins for the IntelliJ Platform. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}. This grammar is translated to a program structure interface (PSI), the IntelliJ Platform's internal abstract syntax tree (AST). Here is an excerpt of a grammar for ROS \inline{.msg} files:
 
 \begin{bnflisting}
 rosInterfaceFile ::= (property|COMMENT)*
 property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
     pin=3
     recoverWhile="recover_property"
-    mixin="edu.umontreal.hatchery.psi.impl.RosInterfaceNamedElementImpl"
-    implements="edu.umontreal.hatchery.psi.RosInterfaceNamedElement"
+    mixin="edu.umontreal.hatchery.psi.impl.RosMsgNamedElementImpl"
+    implements="edu.umontreal.hatchery.psi.RosMsgNamedElement"
     methods=[getType getKey getValue getName setName getNameIdentifier]
 }
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
-%
 
-Hatchery is capable of parsing URDF, package and launch XML, and \inline{.msg}/\inline{.srv} files.
+Grammar-Kit consumes this file, and generates source code for parsing ROS \inline{.msg} files. Hatchery is also capable of parsing URDF, package and launch XML, and \inline{.msg}/\inline{.srv} files.
 
 \subsection{Running and debugging}
 
