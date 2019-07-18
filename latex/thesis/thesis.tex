@@ -821,8 +821,6 @@ Grammar-Kit consumes this file, and generates source code for parsing ROS \inlin
 
 \subsection{Running and debugging}
 
-Assistance for running ROS applications.
-
 \begin{figure}
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
@@ -830,6 +828,18 @@ Assistance for running ROS applications.
     \label{fig:ros_run_config}
 \end{figure}
 
+ROS programs take a number of steps to compile and run. The follow steps are typical:
+%
+\begin{pclisting}
+~$ . /opt/ros/<DISTRO>/setup.[ba]sh &&
+   cd <PROJECT>/catkin_ws &&
+   catkin_make &&
+   . devel/setup.sh &&
+   [export ROS_MASTER_URI=<URI> &&]
+   roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
+\end{pclisting}
+%
+Hatchery provides assistance for these steps by providing a GUI for configuring, building and running ROS applications. Effectively it is a wrapper for the ROS command line interface.
 
 \subsection{User interface}
 
