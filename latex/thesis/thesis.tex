@@ -1667,27 +1667,45 @@ But this would be very inefficient. Instead, we should have a more principled wa
 
 \subsection{Adversarial Testing}
 
-This leads us to adversarial testing. Imagine we would like to change the inputs of a known function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R $ by a small amount, so as to produce the largest change in its output -- forget what we know about derivatives or differentiability for a moment. Suppose that for each input parameter $g_0, g_1, \ldots, g_{n-1}$, we have one of three choices to make: either increase the value by a fixed amount, decrease the value by the same amount, or leave it unchanged. Consider the na\"ive solution, in which we we try every direction:
+This leads us to adversarial testing. In adversarial testing, we generally want to find a small change to the input of a function that produces a large change to its output. Imagine we would like to change the inputs of a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R $ by a small amount $c in \mathbb R$, so as to produce the largest output. Suppose that for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either increase the value by a fixed amount, decrease the value by the same amount, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, in which we try every option and select the inputs corresponding to the greatest output:
 
 \begin{algorithm}[H]
 \caption{Na\"ive Fuzzer}
 \label{alg:naive_fuzz}
 \begin{algorithmic}[1]
-\Procedure{Na\"iveFuzz}{$\mathbf{\hat P}: \mathbb{R}^n \rightarrow \mathbb{R}, g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{n-1}: \mathbb R$}
-\If {$n = 1$}
-\State \Return $\argmax{g_0}\{\mathbf{\hat P}(g_0 + c), \mathbf{\hat P}(g_0 - c), \mathbf{\hat P}(g_0)\}$
+\Procedure{Na\"iveAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}, g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{m-1}: \mathbb R$}
+\If {$m = 1$}
+\State \Return $\argmax{}\{\mathbf{\hat P}(g_0 + c), \mathbf{\hat P}(g_0 - c), \mathbf{\hat P}(g_0)\}$
 \Else
-\State \Return $\argmax{g_0, \ldots, g_{n-1}}\{\Call{Na\"iveFuzz}{$\mathbf{\hat P}(g_0 + c), g_1, \ldots, g_{n-1}$},\newline
-    \hspace*{10.5em} \Call{Na\"iveFuzz}{$\mathbf{\hat P}(g_0 - c), g_1, \ldots, g_{n-1}$},\newline
-    \hspace*{10.5em} \Call{Na\"iveFuzz}{$\mathbf{\hat P}(g_0), g_1, \ldots, g_{n-1}$}$\}$
+\State \Return $\argmax{}\{\mathbf{\hat P}(g_0 + c) \circ$\Call{Na\"iveAdversary}{$\mathbf{\hat P}(g_0 + c), g_1, \ldots, g_{m-1}$},\newline
+\hspace*{10.5em} $\mathbf{\hat P}(g_0 - c)\circ$\Call{Na\"iveAdversary}{$\mathbf{\hat P}(g_0 - c), g_1, \ldots, g_{m-1}$},\newline
+\hspace*{10.5em} $\mathbf{\hat P}(g_0)\circ$\Call{Na\"iveAdversary}{$\mathbf{\hat P}(g_0), g_1, \ldots, g_{m-1}$}$\}$
 \EndIf
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
-As we can see, this solution is $\mathcal{O}(3^n)$ with respect to $\mathbf{\hat P}$ - not a very efficient solution to finding an update. Clearly, if we want to find the direction in which to update $\mathbf{g}$, we need to be more careful about how we perform the search.
+As we can see, algorithm \autoref{alg:naive_fuzz} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ - not a very efficient search routine, especially if we have a larger set of perturbances or need to repeat the procedure multiple times. Clearly, if we want to find the best direction in which to update $\mathbf g$, we need to be more careful about how we perform the search.
 
-During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
+Assume that $\mathbf{\hat P}$ is differentiable almost everywhere. Consider the following refinement of algorithm \autoref{alg:naive_fuzz}, which uses a finite difference method.
+
+\begin{algorithm}[H]
+\caption{Finite Difference Adversary}
+\label{alg:fd_fuzz}
+\begin{algorithmic}[1]
+\Procedure{FdAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}, g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{m-1}: \mathbb R$}
+\If {$m = 1$}
+\State \Return $g_0 + \frac{\mathbf{\hat P}(g_0) + \mathbf{\hat P}(g_0 + c)}{c}$
+\Else
+\State \Return $g_0 + \frac{\mathbf{\hat P}(g_0, 0, \ldots) + \mathbf{\hat P}(g_0 + c, 0, \ldots)}{c}$, \Call{FdAdversary}{$\mathbf{\hat P}, g_1, \ldots, g_{m-1}$}
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+We now have a procedure that is $\mathcal{O}(n)$ with respect to $\mathbf{\hat P}$, but will only give us local improvements - we can still do better. Furthermore, we have not yet incorporated the notion of search constraints. Perhaps we can combine the notion of metamorphic testing seen in \autoref{subsec:metamorphic-testing} with gradient descent to accelerate the search for adversarial examples.
+
+During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In gradient-based adversarial testing, we perform gradient descent on a loss function with respect to the inputs using a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
 %
 \begin{equation} \tag{\autoref{eq:recursive_parametric_eq} revisited}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
