@@ -11,6 +11,7 @@
 \usepackage{algpseudocode}
 \usepackage{amsmath}
 
+
 \usepackage{natbib}
 \usepackage[colorlinks = true,
 linkcolor = blue,
@@ -801,7 +802,7 @@ Generally, we would like the ability to rename identifiers across files and lang
 
 One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsers, as they are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid. As the IDE is expected to recover from local errors and provide responsive feedback to users while editing, re-parsing the entire document between edits would be expensive and unnecessary. In order to validate source code undergoing simultaneous modification, special consideration must be taken to ensure robust and responsive parsing.
 
-Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility an robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
+Incremental methods such as \citet{wagner1997practical,wagner1997incremental} incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played an important role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
 
 Modern parsers are seldom handwritten unless the language being parsed is very simple or raw performance is desired. Even for source code editing, where incremental parsing, type-checking and error-recovery is highly important, modern metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses Grammar-Kit, a toolkit designed to assist users developing custom language plugins for the IntelliJ Platform. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}. This grammar is translated to a program structure interface (PSI), the IntelliJ Platform's internal abstract syntax tree (AST). Here is an excerpt of a grammar for ROS \inline{.msg} files:
 
@@ -908,34 +909,34 @@ From the chain rule of calculus, we recall that:
     \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
 %
-Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
+Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^m\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
 %
 \begin{equation}
-    \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_n}\right)
+    \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_m}\right)
 \end{equation}
 %
 Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the Hessian, $\mathbf{H}$:
 %
 \begin{equation}
-\mathbf{H} = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{n}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{n}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{n}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{n}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{n}^{2}}}\end{bmatrix}
+\mathbf{H} = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{m}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{m}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{m}^{2}}}\end{bmatrix}
 \end{equation}
 %
-More generally, for a vector function $\mathbf{f}:  \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian $\mathbf J$ is defined as:
+More generally, for a vector function $\mathbf{f}:  \mathbb{R}^m\rightarrow\mathbb{R}^n$, the Jacobian $\mathbf J$ is defined as:
 %
 \begin{equation}
 \mathbf J = \begin{bmatrix}
-                       \dfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \dfrac{\partial \mathbf{f}}{\partial x_n} \end{bmatrix}
+                       \dfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \dfrac{\partial \mathbf{f}}{\partial x_m} \end{bmatrix}
 = \begin{bmatrix}
-      \dfrac{\partial f_1}{\partial x_1} & \cdots & \dfrac{\partial f_1}{\partial x_n}\\
+      \dfrac{\partial f_1}{\partial x_1} & \cdots & \dfrac{\partial f_1}{\partial x_m}\\
       \vdots & \ddots & \vdots\\
-      \dfrac{\partial f_m}{\partial x_1} & \cdots & \dfrac{\partial f_m}{\partial x_n} \end{bmatrix}
+      \dfrac{\partial f_n}{\partial x_1} & \cdots & \dfrac{\partial f_n}{\partial x_m} \end{bmatrix}
     = \begin{bmatrix}
           \nabla f_1 \\
           \vdots \\
-          \nabla f_n \end{bmatrix}
+          \nabla f_m \end{bmatrix}
 \end{equation}
 %
-For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule still applies:
+For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^m\rightarrow\mathbb{R}^n$, the chain rule still applies:
 %
 \begin{align*}
 \mathbf{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
@@ -944,7 +945,7 @@ For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{
 For completeness, but rarely used in practice, is the second-order partials for vector functions:
 %
 \begin{equation}
-\mathbf{H} (\mathbf {f} )=[\mathbf {H} (f_{1}), \mathbf {H} (f_{2}), \dots, \mathbf {H} (f_{m})]
+\mathbf{H} (\mathbf {f} )=[\mathbf {H} (f_{1}), \mathbf {H} (f_{2}), \dots, \mathbf {H} (f_{n})]
 \end{equation}
 %
 We can use these tools to compute the direction to adjust the inputs of a computable function, in order to maximally change that function's output, i.e.\ the direction of steepest descent.
@@ -969,30 +970,30 @@ For some classes of computable functions, small changes to the input will produc
     ||\nabla F|| \approx \pm \infty
 \end{equation}
 %
-It is an open question whether non-differentiable functions exist in the real world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions of $\mathbb{R}^n$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
+It is an open question whether non-differentiable functions exist in the real world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions of $\mathbb{R}^m$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
 
-There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: \mathbb{R} \rightarrow \mathbb{R}$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $\mathbf{f}: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m$, there exists a function $\mathbf{\hat f}$, parameterized by constants $n \in \mathbb{N}, \mathbf{\beta} \in \mathbb{R}^n, \mathbf{b} \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ and $\mathbf{\theta} \in \mathbb{R}^{m \times n}$:
+There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: \mathbb{R} \rightarrow \mathbb{R}$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $\mathbf{f}: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m \rightarrow [0, 1]$, there exists a function $\mathbf{\hat f}: \mathbb{R}^m \times \mathbb{R}^{n \times m}$, parameterized by $\Theta \in \mathbb{R}^{n \times m}$, taking an input $\mathbf x \in [0, 1]^m$ and constants $n \in \mathbb{N}, \mathbf{\beta} \in \mathbb{R}^n, \mathbf{b} \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ such that following statement holds:
 %
 \begin{equation}
     \begin{split}
-        \mathbf{\hat{f}}(\mathbf{x}) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\mathbf{\theta}^\intercal \mathbf{x} + \mathbf{b}\right) \\
+        \mathbf{\hat{f}}(\mathbf{x}; \Theta) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\Theta^\intercal \mathbf{x} + \mathbf{b}\right) \\
         \forall \mathbf{x} \in \mathbb{I}_m, \ | \mathbf{\hat f}( \mathbf{x} ) - \mathbf{f} ( \mathbf{x} ) | < \epsilon
     \end{split}
 \end{equation}
 %
-This theorem does not provide any method for how to find $\theta$ nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short time by composing several \textit{layers} of $\mathbf{\theta}^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion. The resulting model might be expressed as,
+Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short amount of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^m$. For further details, see \citet{schonfinkel1924bausteine, curry1967combinatory} et al.},
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
-where $\mathbf\Theta = \{\mathbf\theta_0, \dots, \mathbf\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
+where $\mathbf\Theta = \{\Theta_0, \dots, \Theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^m$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
 %
 \begin{equation} \label{eq:stochastic_grad_descent}
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, and since obtaining the exact gradient is not very important, we use a stochastic variant by randomly resampling a \textit{minibatch} $\mathbf{X}', \mathbf{Y}'$ consisting of pairs $\mathbf{x}^{(i)}, \mathbf{y}^{(i)}$ for $i \sim \{0..z\}$ on each update. This is slightly noisier, but runs considerably more quickly.
+For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, and since obtaining the exact gradient is not very important, we use a stochastic variant by randomly resampling a \textit{minibatch} $\mathbf{X}', \mathbf{Y}'$ consisting of pairs $\mathbf{x}^{(i)}, \mathbf{y}^{(i)}$ for $i \sim \{0, ..., z\}$ on each update. This is slightly noisier, but runs considerably more quickly.
 
 \section{Differentiable programming}\label{sec:differentiable-programming}
 
@@ -1622,7 +1623,7 @@ The trouble is, finding the right properties to test can be highly sensitive, an
 
 It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small perturbations to the input do not drastically change the output. We can exploit this property to design general purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
-First, let us consider the following concrete example, taken from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy the chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability likely to be encountered in an operational setting.
+First, let us consider the following concrete example, taken from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it may encounter in an operational setting.
 
 Metamorphic testing can be expressed as follows: Given an oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation, e.g.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
 
@@ -1666,15 +1667,30 @@ But this would be very inefficient. Instead, we should have a more principled wa
 
 \subsection{Adversarial Testing}
 
-This leads us to adversarial testing. Imagine we have a two-player game.
+This leads us to adversarial testing. Imagine we would like to change the inputs of a known function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R $ by a small amount, so as to produce the largest change in its output -- forget what we know about derivatives or differentiability for a moment. Suppose that for each input parameter $g_0, g_1, \ldots, g_{n-1}$, we have one of three choices to make: either increase the value by a fixed amount, decrease the value by the same amount, or leave it unchanged. Consider the na\"ive solution, in which we we try every direction:
 
-During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting.
+\begin{algorithm}[H]
+\caption{Na\"ive Fuzzer}
+\label{alg:naive_fuzz}
+\begin{algorithmic}[1]
+\Procedure{Na\"iveFuzz}{$\mathbf{\hat P}: \mathbb{R}^n \rightarrow \mathbb{R}, g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{n-1}: \mathbb R$}
+\If {$n = 1$}
+\State \Return $\argmax{g_0}\{\mathbf{\hat P}(g_0 + c), \mathbf{\hat P}(g_0 - c), \mathbf{\hat P}(g_0)\}$
+\Else
+\State \Return $\argmax{g_0, \ldots, g_{n-1}}\{\Call{Na\"iveFuzz}{$\mathbf{\hat P}(g_0 + c), g_1, \ldots, g_{n-1}$},\newline
+    \hspace*{10.5em} \Call{Na\"iveFuzz}{$\mathbf{\hat P}(g_0 - c), g_1, \ldots, g_{n-1}$},\newline
+    \hspace*{10.5em} \Call{Na\"iveFuzz}{$\mathbf{\hat P}(g_0), g_1, \ldots, g_{n-1}$}$\}$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
-%
-\noindent Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^n\rightarrow\mathbb{R}^m$:
+As we can see, this solution is $\mathcal{O}(3^n)$ with respect to $\mathbf{\hat P}$ - not a very efficient solution to finding an update. Clearly, if we want to find the direction in which to update $\mathbf{g}$, we need to be more careful about how we perform the search.
+
+During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In adversarial testing, we do gradient descent on a loss function with respect to the input(s) at a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
 %
 \begin{equation} \tag{\autoref{eq:recursive_parametric_eq} revisited}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\mathbf\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\mathbf\theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
@@ -1686,7 +1702,7 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x
 In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$. Our goal is to find the worst $\mathbf x$ nearby $\mathbf x^{(i)}$'s:
 %
 \begin{equation}
-\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^n \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
+\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
 \end{equation}
 %
  To do so, initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient descent on the loss w.r.t. $\mathbf x$:
@@ -1696,7 +1712,7 @@ In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnot
 	\mathbf{\Phi}_{CS}(\mathbf \phi') = \argmin{\mathbf \phi \in CS}\frac{1}{2}||\mathbf \phi - \mathbf \phi'||^2_2
 \end{equation}
 %
-Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^n \times \mathbb{R} \rightarrow \mathbb{B}$:
+Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^m \times \mathbb{R} \rightarrow \mathbb{B}$:
 %
 \begin{equation} \label{eq:output_constraint_example}
     \mathbf T(\mathbf{\hat P}, \mathbf{x}) = \mathcal{L}(\mathbf{x}) < C
@@ -1730,10 +1746,10 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     \caption{Probabilistic Fuzzer}
     \label{alg:prob_fuzz}
     \begin{algorithmic}[1]
-        \Procedure{ProbFuzz}{$\mathcal L: \mathbb R^n \rightarrow \mathbb R$, $\mathcal S_n$, $\mathbf T: \mathbb R^n \times \mathbb R \rightarrow \mathbb B$, budget: $\mathbb Z^+$}
+        \Procedure{ProbFuzz}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_n$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$, budget: $\mathbb Z^+$}
         \State $D_\mathbf T \gets \{\}, j \gets 0$
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
-            \State $\mathbf{x}_j \sim \mathcal S_n$\Comment{Sample from S}
+            \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from S}
             \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, perform gradient ascent}
                 \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
             \Else \Comment{Outside feasible set, perform gradient descent}
@@ -1750,7 +1766,7 @@ We hypothesize that if the implementation of $P$ were flawed and a counterexampl
     \caption{Differential Shrinker}
     \label{alg:gd_shrink}
     \begin{algorithmic}[1]
-        \Procedure{DiffShrink}{$\mathcal L: \mathbb R^n \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^n$, $\mathbf T: \mathbb R^n \times \mathbb R \rightarrow \mathbb B$}
+        \Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^m$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$}
         \State $i \gets 1$
         \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
@@ -2474,11 +2490,11 @@ Often it is not possible, or desirable to summarize the performance of a complex
 
 Traditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a re-imagining of these ideas to build systems that adapt to their environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
 
-For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any single criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so naively, we create a vehicle that never moves, or always yields to nearby vehicles.
+For example, in the design of a web based advertisement recommendation system, we can optimize for various objectives such as click rate, engagement, sales conversion. So long as we can measure these parameters, with today's powerful function approximators, we can optimize for any single criterion or combination thereof. Much of the work involved in machine learning is to find representations which are amenable to learning, and preventing unintended consequences. For example, by optimizing for click rate, we create an artificial market for click bots. Similarly, in self driving cars, we often want to optimize for passenger safety. However by doing so na\"ively, we create a vehicle that never moves, or always yields to nearby vehicles.
 
 When building an intelligent system developers must first ask, ``What are the requirements of the system?'' This question is often the most troublesome part, because the requirements must not be fuzzy specifications like traditional software engineering, but precise, programmable directives. ``The system must be fast,'' is not sufficiently precise. These kinds of requirements must be translated into statistical loss functions, so intelligent systems engineers must be very precise when specifying requirements. If we simply say, ``The system must produce a valid response as quickly as possible, in less than 100ms,'' is better, but leaves open the possibility of returning an empty response.
 
-In traditional software engineering, it is reasonable to assume the people who are implementing a system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a naive but powerful genie, and possibly an adversarial one. When given an optimization metric, it will take every available shortcut to meet that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
+In traditional software engineering, it is reasonable to assume the people who are implementing a system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a na\"ive but powerful genie, and possibly an adversarial one. When given an optimization metric, it will take every available shortcut to meet that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
 
 In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g.\ declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
 
