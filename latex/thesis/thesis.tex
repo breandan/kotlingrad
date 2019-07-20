@@ -2036,7 +2036,7 @@ Notice that as soon as we run the container, Docker will execute the \inline{ls 
 %
 \subsection{Layer Caching}
 
-An important concept in Docker is the concept of layers. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, identified by a hash code. In a \inline{Dockerfile}, layers begin with a keyword.
+Layers are an important concept to understand when working with Docker. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, uniquely identified by a hash code. In a \inline{Dockerfile}, layers begin with a keyword.
 
 \begin{dockerlisting}
 FROM daphne/duck
@@ -2073,7 +2073,7 @@ Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
 %
-Layers are conveniently cached by the Docker daemon. If we run the same command again, Docker will use the cache insead of rebuilding the entire image:
+Layers are conveniently cached by the Docker daemon. Should we need to run the same command twice, Docker will use the cache instead of rebuilding the entire image:
 
 \begin{pclisting}
 Sending build context to Docker daemon  2.048kB
@@ -2090,7 +2090,7 @@ Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
 %
-Should we later need to make a change to the Dockerfile, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
+If we need to make a change to the Dockerfile, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
 
 \begin{pclisting}
 ~$ echo 'RUN echo "Change here!"' >> Dockerfile
@@ -2111,7 +2111,7 @@ Successfully tagged user/duck:v4
 %
 If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{--no-cache} flag when building a \inline{Dockerfile}.
 
-What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also considers the build context. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the context, or path where the build should occur. Often, this path contains build artifacts. For example:
+What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also checks the build context for changes. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the build context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
 \begin{dockerlisting}
 FROM daphne/duck
@@ -2137,7 +2137,7 @@ Successfully built 1633e3e10bef
 Successfully tagged user/duck:v5
 \end{pclisting}
 %
-As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are not modified, these layers will be cached and Docker will not need to rebuild them. However if the contents of the file \inline{duck.txt} are subsequently modified, this will force a rebuild to occur. For example, if we append to the file and rebuild, only the last step will be executed:
+As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are unmodified, these layers will be cached and Docker will not rebuild them. If the contents of the file \inline{duck.txt} are subsequently modified, this will trigger a rebuild to occur. For example, if we append to the file and rebuild, the last two steps will be executed:
 
 \begin{pclisting}
 ~$ echo "Thank you. Have a nice day!" >> duck.txt
@@ -2283,17 +2283,17 @@ The following workflow has been tested extensively on Linux hosts running Ubuntu
 
 \subsection{Flashing a bootable disk}
 
-Our largest single contribution to the Duckietown project is writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. Now, the following command is all that is needed:
+Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. Afterwards, the following command is all that is needed:
 
 \begin{dtslisting}
 dt> init_sd_card [--hostname "DUCKIEBOT_NAME" --wifi "username:password"]
 \end{dtslisting}
 %
-Insert an SD card and follow the instructions provided. When complete, remove the SD card and insert it into the SD card slot on the Raspberry Pi on the Duckiebot, then boot and ensure the device is powered continuously for a minimum of ten minutes.
+Users insert an SD card and follow the instructions provided. When complete, the SD card must be removed and inserted it Raspberry Pi's SD card slot on the Duckiebot. On first boot, care must be taken to ensure the device is powered continuously for a minimum of ten minutes.
 
 \subsection{Web interface}
 
-To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation was successfully completed and the network is configured properly, the screenshot displayed in~\autoref{fig:portainer_ui} should be visible.
+To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation successfully completed and the network is configured properly, the page displayed in~\autoref{fig:portainer_ui} should be accessible.
 
 \begin{figure}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
@@ -2339,10 +2339,10 @@ In order to circumvent this restriction, ARM-specific \inline{Dockerfile}s can p
 All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
 \begin{pclisting}
-~$ docker run ... --entrypoint=qemu3-arm-static IMAGE [RUN_COMMAND]
+~$ docker run ... (*\hl{-{}-entrypoint=qemu3-arm-static}*) IMAGE [RUN_COMMAND]
 \end{pclisting}
 %
-Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The \inline{qemu3-arm-static} entrypoint is an emulator provided by the base image, \inline{duckietown/rpi-ros-kinetic-base}.
+Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The entrypoint refers to the ARM emulator packaged within the base image, \inline{duckietown/rpi-ros-kinetic-base}, which allows ARM binaries to be run on x86 hosts.
 
 \subsection{Running Simple HTTP File Server}
 
@@ -2357,14 +2357,14 @@ To access this directory, visit the following URL: \url{http://DUCKIEBOT_NAME:80
 
 \subsection{Testing the camera}
 
-\noindent The following image can be used to test the camera is working properly:
+\noindent The following command can be used to test the camera is working properly. By default, images will be hosted at: \url{http://DUCKIEBOT_NAME:8081/image.jpg}
 
 \begin{pclisting}
 ~$ docker -H DUCKIEBOT_NAME run -d --privileged -v /data:/data -p 8081:8081
    duckietown/rpi-docker-python-picamera:master18
 \end{pclisting}
 %
-By default, images will be hosted at: \url{http://DUCKIEBOT_NAME:8081/image.jpg}
+Like most commands, a Python-based shell is provided for the user's convenience:
 
 \begin{dtslisting}
 dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
@@ -2384,6 +2384,8 @@ To use GUI tools, one must first allow incoming X connections from the host. On 
    duckietown/rpi-gui-tools
 \end{pclisting}
 %
+Packaged within this image are common ROS plugins which can be run on graphical environments. A shell wrapper is also provided for convenience:
+
 \begin{dtslisting}
 dt> start_gui_tools DUCKIEBOT_NAME rqt_image_view
 \end{dtslisting}
