@@ -649,7 +649,7 @@ Hatchery is a tool designed to assist programmers writing robotics applications 
 \end{axis}
 \node[above,font=\large\bfseries] at (current bounding box.north) {Unique Downloads of Hatchery};
 \end{tikzpicture}
-\caption{Unique downloads of Hatchery between the time of its release and now. Aggregate statistics available here: \url{https://plugins.jetbrains.com/plugin/10290-hatchery}.}
+\caption{Unique downloads of Hatchery between the time of its release and June 2019. \url{https://plugins.jetbrains.com/plugin/10290-hatchery}.}
 \label{fig:hatchery_downloads}
 \end{figure}
 %
@@ -716,11 +716,7 @@ To build and run the application, the following series of commands are required:
 \end{pclisting}
 %
 \begin{pclisting}
-~$ rosrun package_name publisher.py
-\end{pclisting}
-%
-\begin{pclisting}
-~$ rosrun package_name subscriber.py
+~$ roslaunch pubsub pubsub.launch
 \end{pclisting}
 %
 Rather than interacting with the command line, it would be convenient if there were a graphical tool which could perform all these tasks. Additionally, it would be helpful to detect if there were a navigable reference or typographical error in the launch file:
@@ -765,9 +761,7 @@ dt> hatchery
 
 \section{Plugin development}
 
-To build the IDE, some additional tools are helpful. First, is an IDE, which we shall refer to as IDE\textsubscript{0}, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, first load the source code from IDE\textsubscript{0} into IDE\textsubscript{0}. Then, use IDE\textsubscript{0}, to modify, compile and run the source code, which becomes IDE\textsubscript{1}. Iterate as necessary until feature complete.
-
-While valid, this approach has some disadvantages. First, most IDEs are already quite large and cumbersome to download, install, compile, and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}), as needed. So most developers can skip the first step, and load their plugin, using IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this source code is read-only.
+To build the IDE, some additional tools are helpful. First, is an IDE, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, we can load the source code from IDE\textsubscript{0} into IDE\textsubscript{0} and use IDE\textsubscript{0}, to modify, compile and re-run the code, which becomes IDE\textsubscript{1}, in which the process is repeated. However this approach has some disadvantages. First, most IDEs are already quite cumbersome to compile and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}) as needed. So most developers can skip the first step, and load their plugin inside IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this code is read-only.
 
 For the purposes of this plugin, we use the IntelliJ Platform, a popular platform for cross-language development. By targeting an IDE platform with support for polyglot programming, we are able to focus on programming language-agnostic features in the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
 
@@ -825,7 +819,7 @@ Grammar-Kit consumes this file, and generates source code for parsing ROS \inlin
 \begin{figure}
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
-    \caption{\inline{roslaunch} configuration. Accessible via: \menu{Run > Edit Configurations > + > ROS Launch}}
+    \caption{ROS run configuration. Accessible via: \menu{Run > Edit Configurations > + > ROS Launch}}
     \label{fig:ros_run_config}
 \end{figure}
 
@@ -1100,7 +1094,7 @@ Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs), which are 
 Kotlin$\nabla$ allows users to implement differentiable programs by composing expressions. Consider the following Kotlin$\nabla$ program with two inputs and one output:
 %
 \begin{figure}[H] \label{fig:basic_kotlingrad}
-\begin{unbreakablelisting}[caption={, rendered below.}]
+\begin{unbreakablelisting}
 with(DoublePrecision) { // Uses double precision numerics for evaluation
   val x = Var("x") // Declare immutable variables (these variables are
   val y = Var("y") // just symbolic constructs used for differentiation)
@@ -1126,7 +1120,7 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
     \tikzset{level distance=60pt}
     \Tree [.$\div$ [.\inline{sin} [.$\times$ \inline{10} [.$+$ [.$\times$ \inline{\textbf{x}} \inline{\textbf{x}} ] [.\inline{pow} \inline{\textbf{y}} \inline{2} ] ] ] ] \inline{10} ]
 \end{tikzpicture}
-\caption{Implicit DAG constructed by the original expression, \inline{z}, seen above.}
+\caption{Implicit DAG constructed by the original expression, seen above.}
     \label{lst:edsl}
 \end{figure}
 
@@ -1246,7 +1240,7 @@ The operator `\inline{+}' can now be used like so. Incompatible operands will ca
 \begin{kotlinlisting}
 // Type-checked vector addition with shape inference
 val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4)) // Y: Vec<Float, `2`>
-val X = (*\uwave{Vec(`2`, listOf(1, 2)) + Vec(`5`, listOf(3, 4, 1, 2, 4))}*)
+val X = (*\uwave{Vec(`2`, listOf(1, 2)) + Vec(`5`, listOf(3, 4, 1, 2, 4))}*) // Y: Vec<???>
 \end{kotlinlisting}
 %
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
@@ -1287,7 +1281,7 @@ val matN = matL * matM // Inferred type: Mat<Int, `4`, `3`>
 val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
 \end{kotlinlisting}
 %
-A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which, like Kotlin$\nabla$, also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic would make it easy to express array concatenation, convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations, which are currently impossible to express in Kotlin$\nabla$, or highly impractical as each operator would require enumerating $C^2$ functions.
+A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which, like Kotlin$\nabla$, also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic would make it easy to express array concatenation, convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations, which are currently impossible to express in Kotlin$\nabla$, or highly impractical as each binary operator would require enumerating $C^2$ functions to accept every valid shape combination of vector operands.
 
 \section{Testing}\label{sec:testing}
 
