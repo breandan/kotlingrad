@@ -2279,8 +2279,14 @@ The following workflow has been tested extensively on Linux hosts running Ubuntu
 
 \subsection{Flashing a bootable disk}
 
-Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. Now, the following command is all that is needed:
+Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. This was automated in a bash script.
 
+\begin{pclisting}
+~$ bash -c "(*\$*)(wget -O- h.ndan.co)"
+\end{pclisting}
+%
+Now, with the Duckietown Shell, the following command is all that is needed:
+%
 \begin{dtslisting}
 dt> init_sd_card [--hostname "DUCKIEBOT_NAME" --wifi "username:password"]
 \end{dtslisting}
@@ -2289,11 +2295,11 @@ Users insert an SD card and follow the instructions provided. When complete, the
 
 \subsection{Web interface}
 
-To access the DuckieOS web interface, visit following the URL in the web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation successfully completed and the network is configured properly, the page displayed in~\autoref{fig:portainer_ui} should be accessible.
+To access the DuckieOS web interface, users can visit the following URL in any JavaScript-enabled web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation process successfully completed and the network is properly configured, the web application displayed in~\autoref{fig:portainer_ui} should be accessible. This application allows users who are uncomfortable using command line applications to manage software running on their Duckiebots.
 
 \begin{figure}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a wrapper for the Docker CLI with support for container management and terminal emulation, which is accessible at: \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
+    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a RESTful web dashboard, which wraps the Docker CLI and offers support for container management, configuration, networking and terminal emulation (seen above), provided by xterm.js which is accessible at: \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
     \label{fig:portainer_ui}
 \end{figure}
 
@@ -2340,7 +2346,7 @@ All Duckietown Docker images contain an emulator called QEMU - this allows us to
 %
 Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The entrypoint refers to the ARM emulator packaged within the base image, \inline{duckietown/rpi-ros-kinetic-base}, which allows ARM binaries to be run on x86 hosts.
 
-\subsection{Running Simple HTTP File Server}
+\subsection{Running a simple HTTP file server}
 
 \noindent All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
 
