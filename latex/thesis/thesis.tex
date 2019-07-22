@@ -466,6 +466,14 @@ Category,Downloads
 
 \chapter*{Summary}
 
+In which we describe tools for programming intelligent systems. (TODO)
+
+\chapter*{Acknowledgements}
+
+Thank you! (TODO)
+
+Mom, Gimmey, Mark, Dad, Andy, Adam, Siyan, Xiaoyan, Arthur, Renee, Doug, Ian, Hadi, Eugene, Rusi, Hanneli, Ryan, Sai, Vincent, Andrea, Liam, Michalis
+
 %%------------------------------------------------- %
 %%        page v --- Table de matieres              %
 %%------------------------------------------------- %
@@ -852,7 +860,7 @@ ASCII is still the dominant medium for modern programming, although machines sti
 \begin{figure}
     \centering
     \includegraphics[width=0.90\textwidth]{mps_screenshot.png}
-    \caption{Projectional editors such as MPS~\citep{voelter2010language} (shown above)  are able to render plaintext source code in alternate formats for reading and manipulation.}
+    \caption{Projectional editors such as MPS~\citep{voelter2010language, pech2013jetbrains} (shown above)  are able to render plaintext source code in alternate formats for reading and manipulation.}
     \label{fig:mps_screenshot}
 \end{figure}
 
@@ -975,7 +983,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 %
-Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short amount of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating each $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^n$. For further details, see \citet{schonfinkel1924bausteine, curry1967combinatory} et al.},
+Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short number of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating each $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^n$. For further details, see \citet{schonfinkel1924bausteine, curry1967combinatory} et al.},
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\Theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
@@ -1056,7 +1064,7 @@ fun dot(l1, l2) {
     \label{fig:fp_vs_ip}
 \end{figure}
 
-By using functional programming, Kotlin$\nabla$ uses the same abstraction to represent mathematical functions and programming functions. All functions in Kotlin$\nabla$ are pure functions, composed of expressions which together form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based frameworks like TensorFlow and Theano.
+Functional programming allows Kotlin$\nabla$ to use the same abstraction for representing mathematical functions and programming functions. All functions in Kotlin$\nabla$ are pure functions, composed of expressions which form a data-flow graph (DFG). An expression is simply a \inline{Function}, which is only evaluated when invoked with numerical values, e.g. \inline{z(0, 0)}. In this way, Kotlin$\nabla$ is similar to other compiled graph-based frameworks like TensorFlow and Theano.
 
 \section{Kotlin}\label{sec:kotlin}
 
@@ -2254,7 +2262,7 @@ The Duckietown platform supports two primary instruction set architectures: x86 
 
 \section{Duckiebot Development using Docker}
 
-Software development for the Duckietown platform requires the following physical objects:
+\noindent Software development for the Duckietown platform requires the following physical objects:
 %
 \begin{enumerate}
     \item Duckiebot (including custom hat, camera, wheels, and Raspberry Pi 3B+)\footnote{Full materials list can be located at the following URL: \url{https://get.duckietown.org/}}
@@ -2264,18 +2272,17 @@ Software development for the Duckietown platform requires the following physical
     \item MicroSD card adapter
 \end{enumerate}
 %
-In addition,
-We assume the following software dependencies have been installed on (3):
+In addition, we assume the following software dependencies have been installed on (3):
 %
 \begin{enumerate}[label=(\alph*)]
     \item Docker CE
     \item POSIX-compliant shell
     \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}
-    \item Web browser
+    \item Web browser (e.g. Chrome or Firefox)
     \item \inline{wget}/\inline{curl}
 \end{enumerate}
 
-The following workflow has been tested extensively on Linux hosts running Ubuntu 16.04 (and to a lesser extent Mac OS X and VMs). No other dependencies are assumed or required.
+\noindent The following workflow has been tested extensively on Linux hosts running Ubuntu 16.04 (and to a lesser extent, Mac OS X and VMs). No other dependencies are assumed or required.
 
 \subsection{Flashing a bootable disk}
 
