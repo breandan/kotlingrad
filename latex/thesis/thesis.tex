@@ -938,9 +938,9 @@ More generally, for a vector function $\mathbf{f}:  \mathbb{R}^m\rightarrow\math
 %
 For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^m\rightarrow\mathbb{R}^n$, the chain rule still applies:
 %
-\begin{align*}
+\begin{equation} \label{eq:vfun_chain_rule}
 \mathbf{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
-\end{align*}
+\end{equation}
 %
 For completeness, but rarely used in practice, is the second-order partials for vector functions:
 %
@@ -970,7 +970,7 @@ For some classes of computable functions, small changes to the input will produc
     ||\nabla F|| \approx \pm \infty
 \end{equation}
 %
-It is an open question whether non-differentiable functions exist in the real world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions of $\mathbb{R}^m$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
+It is an open question whether non-differentiable functions exist in the real world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions on $\mathbb{R}^m$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
 
 There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: \mathbb{R} \rightarrow \mathbb{R}$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $\mathbf{f}: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m \rightarrow [0, 1]$, there exists a function $\mathbf{\hat f}: \mathbb{R}^m \times \mathbb{R}^{n \times m}$, parameterized by $\Theta \in \mathbb{R}^{n \times m}$, taking an input $\mathbf x \in [0, 1]^m$ and constants $n \in \mathbb{N}, \mathbf{\beta} \in \mathbb{R}^n, \mathbf{b} \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ such that following statement holds:
 %
@@ -981,7 +981,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
     \end{split}
 \end{equation}
 %
-Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short amount of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^n$. For further details, see \citet{schonfinkel1924bausteine, curry1967combinatory} et al.},
+Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short amount of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating each $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^n$. For further details, see \citet{schonfinkel1924bausteine, curry1967combinatory} et al.},
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
     \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\Theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
@@ -993,7 +993,7 @@ where $\mathbf\Theta = \{\Theta_0, \dots, \Theta_k\}$ are free parameters and $\
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, and since obtaining the exact gradient is not very important, we use a stochastic variant by randomly resampling a \textit{minibatch} $\mathbf{X}', \mathbf{Y}'$ consisting of pairs $\mathbf{x}^{(i)}, \mathbf{y}^{(i)}$ for $i \sim \{0, ..., z\}$ on each update. This is slightly noisier, but runs considerably more quickly.
+In the general case, we can solve for the gradient using \autoref{eq:vfun_chain_rule}. For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, and since obtaining the exact gradient is not important, we use a stochastic variant by resampling a \textit{minibatch} $\mathbf{X}', \mathbf{Y}'$ consisting of pairs $\mathbf{x}^{(i)}, \mathbf{y}^{(i)}$ for $i \sim \{0, ..., z\}$ without replacement on each update step. This is slightly noisier, but runs considerably more quickly.
 
 \section{Differentiable programming}\label{sec:differentiable-programming}
 
@@ -1016,7 +1016,7 @@ As deep learning solved problems across various domains, researchers observed th
 
 Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality on using static typing and fewer defects has not been conclusively established, dynamically typed languages are seldom used for building safety-critical systems, and the majority of robotics applications~\citep{Areserio54:online} are written in statically typed languages.
 
-Statically typed languages eliminate a broad class of runtime errors and allow users to reason more carefully about the behavior of programs without needing to execute them. In addition to stronger syntax validation for general purpose programming, a well-designed library in a strongly typed language can eliminate specific errors related to API misuse that would otherwise require documentation and code samples to prevent, improving usability and reducing maintenance. Furthermore, strong type systems allow us to build more intelligent static analysis tools, which can provide relevant autocompletion, source code navigation, and earlier detection of runtime errors.
+Statically typed languages eliminate a broad class of runtime errors and allow users to reason more carefully about the behavior of programs without needing to execute them. In addition to stronger syntax validation for general-purpose programming, a well-designed library in a strongly typed language can eliminate specific errors related to API misuse that would otherwise require documentation and code samples to prevent, improving usability and reducing maintenance. Furthermore, strong type systems allow us to build more intelligent static analysis tools, which can provide relevant autocompletion, source code navigation, and earlier detection of runtime errors.
 
 One frequent objection to using strongly typed languages is attributed to the additional burden of manual type annotation. While early type-safe languages like C/C++ and Java required programmers to exhaustively annotate function and variable declarations, with judicious use of type inference in modern languages like Kotlin, Scala, Rust et al., most type signatures may be safely omitted and easily recovered from the surrounding context. Type inference enables modern languages to offer the brevity of dynamically typed languages with the safety of static type checking.
 
@@ -1477,7 +1477,7 @@ object DoubleContext {
 }
 \end{kotlinlisting}
 %
-Now, we can use the context to define another extension, \inline{Fun.multiplyByTwo}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
+Now, we can use the context to define another extension, \inline{Fun.multiplyByTwo()}, which computes the product inside a \inline{DoubleContext}, using the operator overload defined above:
 %
 \begin{kotlinlisting}
 fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
@@ -1541,7 +1541,7 @@ Explore the meaning of derivatives in other calculi, and incremental computation
 
 Today's deep neural networks are surprisingly effective when compared with handcrafted algorithms, but have known weaknesses. Training neural networks which can robustly transfer to new domains where the training and test distributions are dissimilar continues to pose a significant challenge. Furthermore, such models are susceptible to failure when presented with carefully crafted inputs. However the same gradient-based optimization techniques used for training neural networks can also be exploited to probe their failure modes.
 
-In software engineering, techniques for software testing have become increasingly more automated and general purpose. Developers love to write code, but loath writing tests. Yet tests are essential to validate an implementation's correctness. Tests prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. Techniques in coverage-guided fuzzing enable developers to write fewer tests with higher coverage. This is possible by automated testing.
+In software engineering, techniques for software testing have become increasingly more automated and general-purpose. Developers love to write code, but loath writing tests. Yet tests are essential to validate an implementation's correctness. Tests prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. Techniques in coverage-guided fuzzing enable developers to write fewer tests with higher coverage. This is possible by automated testing.
 
 In this chapter, we will explore the relationship between testing in machine learning and software engineering. We will see how the notion of adversarial testing shares a curious resemblance to fuzz testing in software engineering. In particular, we show how probabilistic sampling and constrained optimization can be seen as an extension of property-based testing (PBT) for adversarial training of differentiable programs, and propose a PBT algorithm which incorporates features of probabilistic programming and gradient-based optimization.
 
@@ -1621,9 +1621,9 @@ The trouble is, finding the right properties to test can be highly sensitive, an
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small perturbations to the input do not drastically change the output. We can exploit this property to design general purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the data representation do not drastically change the label. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
-First, let us consider the following concrete example, taken from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it may encounter in an operational setting.
+First, let us consider the following concrete example, from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations on the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it may encounter in an operational setting.
 
 Metamorphic testing can be expressed as follows: Given an oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation, e.g.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
 
@@ -1636,7 +1636,7 @@ Suppose our MR is $\forall \varphi \in \mathcal I: ||\mathbf\varphi|| \leq \vare
 %
 In either case, we have obtained useful information. If our assumptions were incorrect, we should adjust them to fix the problem. Otherwise, we have obtained a counterexample, and should update the program's implementation accordingly. Both of these are useful outcomes.
 
-Consider the following example of an MT using an equivalence-based MR:
+Consider the following example of an MT which uses an equivalence-based MR:
 
 \begin{kotlinlisting}
 @Repeat(value = 1000)
@@ -1663,11 +1663,11 @@ fun <I, O> genLegalTx(program: (I) -> O, mr: (I, O, I, O) -> Boolean, input: I, 
 }
 \end{kotlinlisting}
 
-But this would be very inefficient. Instead, we should have a more principled way to mutate the input so as to discover invalid outputs.
+But this would be very inefficient. Instead, we should have a more principled way to mutate a given input in our dataset so as to discover invalid outputs.
 
 \subsection{Adversarial Testing}
 
-This leads us to adversarial testing. In adversarial testing, we generally want to find a small change to the input of a function that produces a large change to its output. Imagine we would like to change the inputs of a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R $ by a small amount $c \in \mathbb R$, so as to produce the largest output. Suppose that for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either increase the value by a fixed amount, decrease the value by the same amount, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, in which we try every option and select the inputs corresponding to the greatest output:
+This leads us to adversarial testing. In the most general case, we are given an input-output pair from an oracle and a program claiming to approximate that oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input value, which when fed to our program, produces the largest change to its output. Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R $, where we seek to change each of the components $x_1, ..., x_m$ by a fixed amount $c \in \mathbb R$, so as to produce the largest output value directly. Suppose that for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, in which we try every combination of variable perturbations and select the inputs corresponding to the greatest output value:
 
 \begin{algorithm}[H]
 \caption{Na\"ive Fuzzer}
@@ -1687,7 +1687,7 @@ This leads us to adversarial testing. In adversarial testing, we generally want 
 
 As we can see, algorithm \autoref{alg:naive_fuzz} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ - not a very efficient search routine, especially if we have a larger set of perturbances or need to repeat the procedure multiple times. Clearly, if we want to find the best direction in which to update $\mathbf g$, we need to be more careful about how we perform the search.
 
-Assume that $\mathbf{\hat P}$ is differentiable almost everywhere. Consider the following refinement of algorithm \autoref{alg:naive_fuzz}, which uses a finite difference method.
+Assume that $\mathbf{\hat P}$ is differentiable almost everywhere. Consider algorithm \autoref{alg:fd_fuzz} a refinement of algorithm \autoref{alg:naive_fuzz} which uses a finite difference method to approximate the program's derivative with respect to each component of the input. This tells us how to change the input by a incremental amount to produce the largest output, without needing to check every possible perturbation.
 
 \begin{algorithm}[H]
 \caption{Finite Difference Adversary}
@@ -1703,7 +1703,7 @@ Assume that $\mathbf{\hat P}$ is differentiable almost everywhere. Consider the 
 \end{algorithmic}
 \end{algorithm}
 
-We now have a procedure that is $\mathcal{O}(n)$ with respect to $\mathbf{\hat P}$, but will only give us local improvements - we can still do better. Furthermore, we have not yet incorporated the notion of search constraints. Perhaps we can combine the notion of metamorphic testing seen in \autoref{subsec:metamorphic-testing} with gradient descent to accelerate the search for adversarial examples.
+We now have a procedure that is $\mathcal{O}(m)$ with respect to $\mathbf{\hat P}$, but must be recomputed for each input -- we can still do better. Furthermore, we have not yet incorporated any form of gradient descent or constraint on the input values. Perhaps we can combine the notion of metamorphic testing seen in \autoref{subsec:metamorphic-testing} with constrained optimization to accelerate the search for adversarial examples.
 
 During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In gradient-based adversarial testing, we perform gradient descent on a loss function with respect to the inputs using a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
 %
@@ -1717,13 +1717,13 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$. Our goal is to find the worst $\mathbf x$ nearby $\mathbf x^{(i)}$'s:
+Recall we can solve for the gradient using \autoref{eq:vfun_chain_rule} by taking the product of the Jacobians, $\mathbf{J}_{\mathbf{p}_0} \ldots \mathbf{J}_{\mathbf{p}_k}$ with respect to $\mathbf{\Theta}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Concretely, our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$:
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
 \end{equation}
 %
- To do so, initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient descent on the loss w.r.t. $\mathbf x$:
+ To do so, we initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient descent on the loss:
 %
 \begin{equation}\label{eq:projected_gd}
     \mathbf x \leftarrow \mathbf{\Phi}_{CS}\Big(\mathbf x - \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)\Big) \text{, where }
@@ -1739,14 +1739,14 @@ Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \math
 Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test under a fixed computational budget (i.e.\ constant number of program evaluations)? In other words:
 %
 \begin{equation}
-\{ D_\mathbf T: \mathbf x \sim CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
+\{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If if the tester has no knowledge about the programs implementation or its data distribution, $D_{\mathbf{\hat P}}$, it can do no better than random search~\citep{wolpert1997no}. However, if she has some information about the input distribution, she could re-parameterize the distribution to incorporate her knowledge. Assuming the program has previously been tested on common inputs, she might sample $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ for inputs that are infrequent. If the tester knew how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
+If the adversary has no knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$, she can do no better than random search~\citep{wolpert1997no}. However, if she has some information about the input distribution, she could re-parameterize the distribution to incorporate her knowledge. Assuming the program has previously been tested on common inputs, she might sample $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ for inputs that are infrequent. If the tester knew how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search procedure. But these methods are not specialized to continuous differentiable functions.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient based optimization in the search procedure. If the tester does not have access to the function directly, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
+Another strategy, independent of how candidate inputs are selected, is to use some form of gradient-based optimization in the search procedure. If the tester does not have access to the function directly, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
 %
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
@@ -1758,7 +1758,7 @@ Another strategy, independent of how candidate inputs are selected, is to use so
 
 Consider algorithm \autoref{alg:prob_fuzz} for finding test failures. First, let us select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
 
-We hypothesize that if the implementation of $P$ were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and a subset of trajectories would discover inputs violating the program specification.
+We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
 \begin{algorithm}[H]
     \caption{Probabilistic Fuzzer}
@@ -1897,7 +1897,7 @@ CONTAINER ID     IMAGE           ...     NAMES
 %
 Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy\_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
-Docker images can be created two different ways. In \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
+Docker images can be created two different ways. First, in \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
 
 \subsection{Creating an image snapshot}\label{subsec:creating-an-image-snapshot}
 
@@ -2283,13 +2283,13 @@ The following workflow has been tested extensively on Linux hosts running Ubuntu
 
 \subsection{Flashing a bootable disk}
 
-Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. Afterwards, the following command is all that is needed:
+Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. Now, the following command is all that is needed:
 
 \begin{dtslisting}
 dt> init_sd_card [--hostname "DUCKIEBOT_NAME" --wifi "username:password"]
 \end{dtslisting}
 %
-Users insert an SD card and follow the instructions provided. When complete, the SD card must be removed and inserted it Raspberry Pi's SD card slot on the Duckiebot. On first boot, care must be taken to ensure the device is powered continuously for a minimum of ten minutes.
+Users insert an SD card and follow the instructions provided. When complete, the card must be removed and inserted into the SD card slot on the Raspberry Pi. On first boot, care should be taken to ensure the device is powered continuously for a minimum of ten minutes.
 
 \subsection{Web interface}
 
@@ -2457,9 +2457,9 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 %
 \section{Retrospective}\label{sec:retrospective}
 
-One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code makes build artifacts are standalone decipherable.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code in the image makes build artifacts are more interpretable and reduces startup time.
 
-Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any changes to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. The motivation for including sources enables easier troubleshooting and diagnostics, but doing so adds some friction during development, which has caused users to struggle with environment setup and Docker configuration issues.
+Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, doing so adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
 
 \begin{figure}
 \includegraphics[width=0.80\textwidth]{image_provenance.png}
@@ -2467,7 +2467,7 @@ Initially, we made the explicit decision to ship user source code directly insid
     \label{fig:early_prototype}
 \end{figure}
 
-The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream changes to cascade to downstream images. The short term solution was to disable auto-building and push manually, however fixing it required rethinking the role of Docker builds in the CI toolchain.
+The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream modifications to cascade to downstream images. The short-term solution was to disable auto-building, and push local builds to the server manually, however fixing it required us to rethink the role of versioning and testing Docker builds in the CI toolchain.
 
 \begin{figure}
     \includegraphics[width=0.40\textwidth]{aido_logo.png}
