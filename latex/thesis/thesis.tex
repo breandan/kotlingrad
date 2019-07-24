@@ -1746,11 +1746,11 @@ Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test un
 \{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$, she can do no better than random search~\citep{wolpert1997no}. However, if she has some information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. Assuming the program has previously been tested on common inputs, she might use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select inputs that are less frequent in hopes of finding one not previously considered. In addition, if the tester knew some details of how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search inputs more likely to break $\mathbf T$. But these methods are not specialized to continuous differentiable functions.
+If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select inputs that are less frequent in hopes of finding one not previously considered. In addition, if the tester knew some details of how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search inputs for those more likely to break $\mathbf T$. We consider a extension of classical fuzzing techniques to differentiable functions on continuous random variables.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-Another strategy, independent of how candidate inputs are selected, is to use some form of gradient-based optimization in the search procedure. If the tester does not have access to the function directly, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
+One strategy, independent of how candidate inputs are selected, is to use some form of gradient-based optimization in the search procedure. If the tester does not have access to the function directly, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
 %
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
@@ -1765,10 +1765,10 @@ Consider algorithm \autoref{alg:prob_fuzz} for finding test failures. First, let
 We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
 \begin{algorithm}[H]
-    \caption{Probabilistic Fuzzer}
-    \label{alg:prob_fuzz}
+    \caption{Probabilistic Adversary}
+    \label{alg:prob_adversary}
     \begin{algorithmic}[1]
-        \Procedure{ProbFuzz}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_n$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$, budget: $\mathbb Z^+$}
+        \Procedure{ProbAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_n$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$, budget: $\mathbb Z^+$}
         \State $D_\mathbf T \gets \{\}, j \gets 0$
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
             \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from S}
@@ -1785,10 +1785,10 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \end{algorithm}
 
 \begin{algorithm}[H]
-    \caption{Differential Shrinker}
-    \label{alg:gd_shrink}
+    \caption{Differential Adversary}
+    \label{alg:diff_adversary}
     \begin{algorithmic}[1]
-        \Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^m$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$}
+        \Procedure{DiffAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^m$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$}
         \State $i \gets 1$
         \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
@@ -1807,6 +1807,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
     \end{algorithmic}
 \end{algorithm}
 
+Another type of adversary is a generative adversary~\citep{pmlr-v97-albuquerque19a}.
 
 %\section{Regression testing and forgetting}
 
