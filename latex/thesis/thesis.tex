@@ -2544,4 +2544,188 @@ An ongoing trend in modern software and systems engineering is the transition aw
 
 \bibliography{thesis}
 \bibliographystyle{plainnat}
+
+\appendix
+\chapter{Implementation: languages and compilers}
+
+\section{Linear Regression}
+
+Recall the matrix equation for linear regression, where $\mathbf{X}: \mathbb{R}^{m \times n}$ and $\mathbf{\Theta}: \mathbb{R}^{n \times 1}$:
+%
+\begin{equation}
+\mathbf{\hat f}(\mathbf{X}; \mathbf{\Theta}) = \mathbf{X}\mathbf{\Theta}
+\end{equation}
+%
+Imagine we are given the following dataset:
+%
+\begin{equation}
+\mathbf{X} =
+\begin{bmatrix}
+\mathbf{x}_1 \\
+\vdots \\
+\mathbf{x}_m
+\end{bmatrix} =
+\begin{pmatrix}
+1 & \ldots & x_{0n} \\
+\vdots & \ddots & \vdots \\
+1 & \ldots & x_{mn}
+\end{pmatrix},
+\mathbf{Y} =
+\begin{bmatrix}
+y_1 \\
+\vdots \\
+y_m
+\end{bmatrix}
+\end{equation}
+%
+Our goal in ordinary least squares (OLS) linear regression is to minimize the loss, or error between the data and the model's prediction:
+%
+\begin{equation}
+\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta}) = ||\mathbf{Y} - \mathbf{\hat f}(\mathbf{X}; \mathbf{\Theta})||^2
+\end{equation}
+%
+\begin{equation}
+\mathbf{\Theta}^* = \underset{\mathbf{\Theta}}{\operatorname{argmin}}\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta})
+\end{equation}
+
+\subsection{Finite Difference Method}
+
+First, we consider the scalar case, where $\mathbf{\hat f}(\mathbf{X}; \mathbf{\Theta}) = \hat f(x; \theta_1, \theta_0) = \theta_1 x + \theta_0$. Since $\mathbf{X}, \mathbf{Y}$ are considered to be fixed, we can rewrite $\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta})$ as simply:
+%
+\begin{equation}
+\mathcal{L}(\mathbf{\Theta}) = \mathcal{L}(\theta_1, \theta_0) = \frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2
+\end{equation}
+%
+To find the minimizer of $\mathcal{L}(\mathbf{\Theta})$, we need $\nabla_\mathbf{\Theta}\mathcal{L} = \lbrack \frac{\partial\mathcal{L}}{\partial \theta_1}, \frac{\partial\mathcal{L}}{\partial \theta_0}\rbrack$. There are various ways to compute this. First, let's see FDM with centered differences:
+%
+\begin{align}
+\frac{\partial\mathcal{L}}{\partial \theta_0} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=0}^m\left(y_i - \left(\theta_1 x_i + \theta_0 + h\right)\right)^2 - \sum_{i=0}^m\left(y_i - \left(\theta_1 x_i + \theta_0 - h\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(y_i - \left(\theta_1 x_i + \theta_0 + h\right)\right)^2 - \left(y_i - \left(\theta_1 x_i + \theta_0 - h\right)\right)^2 \\
+\frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=0}^m\left(y_i - \left((\theta_1 + h) x_i + \theta_0\right)\right)^2 - \sum_{i=0}^m\left(y_i - \left(\left(\theta_1 - h\right) x_i + \theta_0\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(y_i - \left(\left(\theta_1 + h\right) x_i + \theta_0\right)\right)^2 - \left(y_i - \left(\left(\theta_1 - h\right) x_i + \theta_0\right)\right)^2
+\end{align}
+%
+Using computer algebra, the above equations can be simplified considerably:
+%
+\begin{align}
+\frac{\partial\mathcal{L}}{\partial \theta_0} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(4h ( \theta_0 +  \theta_1 x_i - y_i)\right) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m\left(\theta_0 +  \theta_1 x_i - y_i\right)} \\
+\frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(4hx_i (\theta_1 x_i + \theta_0 - y_i)\right) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)}
+\end{align}
+%
+\begin{enumerate}
+    \item \url{https://www.wolframalpha.com/input/?i=(y_i-((%CE%B8_1%2Bh)x_i%2B%CE%B8_0))%5E2-(y_i-((%CE%B8_1-h)x_i%2B%CE%B8_0))%5E2}
+    \item \url{https://www.wolframalpha.com/input/?i=(y_i-(%CE%B8_1*x_i%2B%CE%B8_0%2Bh))%5E2%E2%88%92(y_i-(%CE%B8_1*x_i%2B%CE%B8_0-h))%5E2}
+\end{enumerate}
+
+\subsection{Partial Differentiation}
+
+Alternatively, we can calculate the partials analytically, by applying the chain rule:
+%
+\begin{align}
+\frac{\partial\mathcal{L}}{\partial \theta_0} & = \frac{\partial}{\partial \theta_0}\frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2 \\ & = \frac{1}{m}\sum_{i=0}^m 2 (y_i - (\theta_1 x_i + \theta_0))\frac{\partial}{\partial \theta_0}(y_i - (\theta_1 x_i + \theta_0)) \\ & = \frac{2}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))(-1) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m(\theta_1 x_i + \theta_0 - y_i)}
+\end{align}
+%
+\begin{align}
+\frac{\partial\mathcal{L}}{\partial \theta_1} & = \frac{\partial}{\partial \theta_1}\frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2 \\ & = \frac{1}{m}\sum_{i=0}^m 2(y_i - (\theta_1 x_i + \theta_0)) \frac{\partial}{\partial \theta_1}(y_i - (\theta_1 x_i + \theta_0)) \\ & = \frac{2}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))(-x_i) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)}
+\end{align}
+%
+Notice how analytical differentiation gives us the same answer as the finite difference method (this is not by accident), with much less algebra. We can rewrite these two solutions in gradient form, i.e. as a column vector of partial derivatives:
+%
+\begin{equation}
+\nabla_\mathbf{\Theta}\mathcal{L} =
+\begin{bmatrix}
+\frac{\partial\mathcal{L}}{\partial \theta_0} \\
+\frac{\partial\mathcal{L}}{\partial \theta_1}
+\end{bmatrix} = \frac{2}{m}
+\begin{bmatrix}
+\sum_{i=0}^m(\theta_1 x_i + \theta_0 - y_i) \\ \sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)
+\end{bmatrix}
+\end{equation}
+
+\subsection{Matrix Solution}
+
+Having reviewed the scalar procedure for linear regression, let us now return to the general form of $\mathcal L(\mathbf{\Theta})$. Matrix notation allows us to simplify the loss considerably:
+%
+\begin{align}
+\mathcal L(\mathbf{\Theta}) & = \frac{1}{m} (\mathbf Y - \mathbf X \mathbf \Theta)^\intercal(\mathbf Y - \mathbf X \mathbf \Theta) \\ &= \frac{1}{m} (\mathbf Y^\intercal \mathbf Y - \mathbf Y^\intercal \mathbf X \mathbf \Theta - \mathbf \Theta^\intercal \mathbf X^\intercal \mathbf Y + \mathbf \Theta^\intercal \mathbf X^\intercal \mathbf X \mathbf \Theta) \\ &= \frac{1}{m} (\mathbf Y^\intercal \mathbf Y - 2 \mathbf \Theta^\intercal \mathbf X^\intercal \mathbf Y + \mathbf \Theta^\intercal \mathbf X^\intercal \mathbf X \mathbf \Theta)
+\end{align}
+%
+Matrix notation allows us to derive the gradient and requires far less algebra:
+%
+\begin{align}
+\nabla_{\mathbf{\Theta}}\mathcal L(\mathbf{\Theta}) & = \frac{1}{m} (\nabla_{\mathbf{\Theta}}\mathbf Y^\intercal \mathbf Y - 2 \nabla_{\mathbf{\Theta}} \mathbf \Theta^\intercal \mathbf X^\intercal \mathbf Y + \nabla_{\mathbf{\Theta}}\mathbf \Theta^\intercal \mathbf X^\intercal \mathbf X \mathbf \Theta) \\ & = \frac{1}{m} ( 0 - 2\mathbf{X}^\intercal \mathbf Y + 2 \mathbf{X}^\intercal \mathbf X \mathbf \Theta ) \\ & = \boxed{\frac{2}{m} (\mathbf{X}^\intercal \mathbf X \mathbf \Theta - \mathbf{X}^\intercal \mathbf Y)}
+\end{align}
+%
+For completeness, and to convince ourselves the matrix solution is indeed the same:
+%
+\begin{align}
+& = \frac{2}{m}\left(
+\underbrace{\begin{bmatrix}
+1 & \ldots & 1 \\
+x_0 & \ldots & x_m \\
+\end{bmatrix}}_{\mathbf{X}^\intercal}
+\underbrace{\begin{bmatrix}
+1 & x_0 \\
+\vdots & \vdots \\
+1 & x_m
+\end{bmatrix}}_{\mathbf{X}}
+\underbrace{\begin{bmatrix}
+\theta_0 \\
+\theta_1
+\end{bmatrix}}_{\mathbf{\Theta}} -
+\underbrace{\begin{bmatrix}
+1 & \ldots & 1 \\
+x_0 & \ldots & x_m \\
+\end{bmatrix}}_{\mathbf{X}^\intercal}
+\underbrace{\begin{bmatrix}
+y_0 \\
+\vdots \\
+y_m
+\end{bmatrix}}_{\mathbf{Y}}\right) \\
+& = \frac{2}{m}\left(
+\underbrace{\begin{bmatrix}
+m & \sum_{i=0}^{m}x_i \\
+\sum_{i=0}^{m}x_i & \sum_{i=0}^{m}x_i^2 \\
+\end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{X}}
+\underbrace{\begin{bmatrix}
+\theta_0 \\
+\theta_1
+\end{bmatrix}}_{\mathbf{\Theta}} -
+\underbrace{\begin{bmatrix}
+\sum_{i=0}^{m}y_i \\
+\sum_{i=0}^{m}x_iy_i
+\end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{Y}}\right) \\
+& = \frac{2}{m}\left(
+\underbrace{\begin{bmatrix}
+m \theta_0 + \sum_{i=0}^{m}\theta_1x_i \\
+\sum_{i=0}^{m}\theta_0x_i + \sum_{i=0}^{m}\theta_1x_i^2
+\end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{X}\mathbf{\Theta}} -
+\underbrace{\begin{bmatrix}
+\sum_{i=0}^{m}y_i \\
+\sum_{i=0}^{m}x_iy_i
+\end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{Y}}\right) \\
+& = \boxed{\frac{2}{m}
+\underbrace{\begin{bmatrix}
+\sum_{i=0}^{m}\theta_1x_i + \theta_0 - y_i \\
+\sum_{i=0}^{m}(x_i)(\theta_1x_i + \theta_0 - y_i)
+\end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{X}\mathbf{\Theta} - \mathbf{X}^\intercal\mathbf{Y}} =
+\begin{bmatrix}
+\frac{\partial\mathcal{L}}{\partial \theta_0} \\
+\frac{\partial\mathcal{L}}{\partial \theta_1}
+\end{bmatrix} = \nabla_{\mathbf{\Theta}}\mathcal{L}(\mathbf{\Theta})}
+\end{align}
+%
+Notice how we recover the same solution obtained from partial differentiation and finite difference approximation, albeit in a more compact form. For a good introduction to matrix calculus, the textbook by \citet{magnus2019matrix} is an excellent guide, of which \citet{petersen2008matrix} offer a review of important identities.
+
+OLS linear regression is a convex optimization problem. If $\mathbf X^\intercal \mathbf X$ is invertible, i.e. full-rank, this implies a unique solution $\mathbf \Theta^*$, which we can solve for directly by setting $\nabla_{\mathbf{\Theta}}\mathcal{L} = \mathbf{0}$:
+%
+\begin{align}
+0 & = \mathbf X^\intercal \mathbf X \mathbf \Theta - \mathbf X ^ \intercal \mathbf Y \\ \mathbf \Theta &= (\mathbf X^\intercal \mathbf X)^{-1}\mathbf X^\intercal\mathbf Y
+\end{align}
+%
+Solving this requires computing $(\mathbf{X}^\intercal\mathbf{X})^{-1}$ which is at least $\mathcal{O}(n^{2.373})$\citep{williams2014multiplying} to the best of our knowledge, i.e. quadratic with respect to the number of input dimensions. Another way to find $\mathbf \Theta^*$ is by initializing $\mathbf{\Theta} \leftarrow \mathbf{0}$ and repeating the following procedure until convergence:
+%
+\begin{equation}
+\mathbf{\Theta}' \leftarrow \mathbf{\Theta} - \alpha \nabla_{\mathbf{\Theta}}\mathcal L(\mathbf{\Theta})
+\end{equation}
+%
+Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required to find a suitable $\alpha$ (various improvements like Nesterov momentum~\citep{nesterov2013gradient} and quasi-Newton methods also help to accelerate convergence), this procedure is guaranteed to be computationally more efficient than matrix inversion for sufficiently large $m$ and $n$. In practice, the normal equation is seldom used unless $m$ is very small.
 \end{document}
