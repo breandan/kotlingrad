@@ -2,11 +2,11 @@ package edu.umontreal.kotlingrad.numerical
 
 import ch.obermuhlner.math.big.BigDecimalMath.*
 import edu.umontreal.kotlingrad.functions.ScalarFun
-import java.lang.Math.E
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
 import java.math.MathContext
+import kotlin.math.E
 
 class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecimal>(when {
     number is BigDecimal -> number

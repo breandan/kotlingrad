@@ -2,6 +2,8 @@ package edu.umontreal.kotlingrad.calculus
 
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.DoubleShrinker
+import kotlin.math.pow
+import kotlin.random.Random
 
 open class NumericalGenerator(vararg exclude: Number, val positive: Boolean = false): Gen<Double> {
   private val excluding: List<Double> = exclude.map { it.toDouble() }
@@ -11,8 +13,8 @@ open class NumericalGenerator(vararg exclude: Number, val positive: Boolean = fa
   override fun constants() = listOf(0.0) - excluding
   override fun random(): Sequence<Double> =
     generateSequence {
-      val r = Math.random()
-      val e = Math.pow(10.0, (-100..100).random().toDouble())
+      val r = Random.nextDouble()
+      val e = 10.0.pow((-100..100).random().toDouble())
       if (positive) r * e else -e + 2 * e * r
     }
 

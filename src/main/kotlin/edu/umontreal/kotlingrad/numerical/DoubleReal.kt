@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.functions.ScalarFun
 import java.lang.Double.NaN
-import java.lang.Math.E
-import java.lang.Math.pow
+import kotlin.math.E
+import kotlin.math.*
 
 class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (number) {
   is Double -> number
@@ -16,12 +16,12 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
   override val two by lazy { DoubleReal(2.0) }
   override val e by lazy { DoubleReal(E) }
 
-  override fun sin() = DoubleReal(Math.sin(value))
-  override fun cos() = DoubleReal(Math.cos(value))
-  override fun tan() = DoubleReal(Math.tan(value))
-  override fun log() = DoubleReal(Math.log(value))
-  override fun exp() = DoubleReal(Math.exp(value))
-  override fun sqrt() = DoubleReal(Math.sqrt(value))
+  override fun sin() = DoubleReal(sin(value))
+  override fun cos() = DoubleReal(cos(value))
+  override fun tan() = DoubleReal(tan(value))
+  override fun log() = DoubleReal(ln(value))
+  override fun exp() = DoubleReal(exp(value))
+  override fun sqrt() = DoubleReal(sqrt(value))
 
   override fun toString() = "${if (value % 1 == 0.0) value.toInt() else value}"
 
@@ -54,8 +54,8 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
   infix operator fun div(divisor: Number) = DoubleReal(value / divisor.toDouble())
 
   override fun pow(exp: ScalarFun<DoubleReal>) = when(exp) {
-    is DoubleReal -> DoubleReal(pow(value, exp.value))
+    is DoubleReal -> DoubleReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
-  infix fun pow(exponent: Number) = DoubleReal(pow(value, exponent.toDouble()))
+  infix fun pow(exponent: Number) = DoubleReal(value.pow(exponent.toDouble()))
 }
