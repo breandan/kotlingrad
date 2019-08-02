@@ -911,37 +911,41 @@ From the chain rule of calculus, we recall that:
     \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
 %
-Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n):  \mathbb{R}^m\rightarrow\mathbb{R}$, the gradient $\nabla Q$ tells us:
+Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n): \mathbb{R}^m\rightarrow\mathbb{R}$, the \textit{gradient}, $\nabla Q$, tells us:
 %
 \begin{equation}
     \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_m}\right)
 \end{equation}
 %
-Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the Hessian, $\mathbf{H}$:
+Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the \textit{Hessian}, $\mathbf{H}$:
 %
 \begin{equation}
 \mathbf{H} = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{m}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{m}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{m}^{2}}}\end{bmatrix}
 \end{equation}
 %
-More generally, for a vector function $\mathbf{f}:  \mathbb{R}^m\rightarrow\mathbb{R}^n$, the Jacobian $\mathbf J$ is defined as:
+More generally, for a vector function $\mathbf{f}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, the \textit{Jacobian}, $\mathcal{J}_{\mathbf{f}}$, is defined as:
 %
 \begin{equation}
-\mathbf J = \begin{bmatrix}
-                       \dfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \dfrac{\partial \mathbf{f}}{\partial x_m} \end{bmatrix}
-= \begin{bmatrix}
-      \dfrac{\partial f_1}{\partial x_1} & \cdots & \dfrac{\partial f_1}{\partial x_m}\\
-      \vdots & \ddots & \vdots\\
-      \dfrac{\partial f_n}{\partial x_1} & \cdots & \dfrac{\partial f_n}{\partial x_m} \end{bmatrix}
-    = \begin{bmatrix}
-          \nabla f_1 \\
-          \vdots \\
-          \nabla f_m \end{bmatrix}
+\mathcal{J}_{\mathbf{f}} =
+\begin{bmatrix}
+    \dfrac{\partial \mathbf{f}}{\partial x_1} & \cdots & \dfrac{\partial \mathbf{f}}{\partial x_m}
+\end{bmatrix} =
+\begin{bmatrix}
+    \dfrac{\partial f_1}{\partial x_1} & \cdots & \dfrac{\partial f_1}{\partial x_m}\\
+    \vdots & \ddots & \vdots\\
+    \dfrac{\partial f_n}{\partial x_1} & \cdots & \dfrac{\partial f_n}{\partial x_m}
+\end{bmatrix} =
+\begin{bmatrix}
+    \nabla f_1 \\
+    \vdots \\
+    \nabla f_m
+\end{bmatrix}
 \end{equation}
 %
 For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^m\rightarrow\mathbb{R}^n$, the chain rule still applies:
 %
 \begin{equation} \label{eq:vfun_chain_rule}
-\mathbf{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
+\mathcal{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathcal{J}_{p_i} = \underbrace{\bigg(\Big((\mathcal{J}_{p_k} \mathcal{J}_{p_{k-1}}) \dots \mathcal{J}_{p_2}\Big) \mathcal{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathcal{J}_{p_k} \Big(\mathcal{J}_{p_{k-1}} \dots (\mathcal{J}_{p_2} \mathcal{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
 \end{equation}
 %
 For completeness, but rarely used in practice, is the second-order partials for vector functions:
@@ -1070,7 +1074,7 @@ Functional programming allows Kotlin$\nabla$ to use the same abstraction for rep
 
 When programming in a statically typed language, a common question one might ask the compiler is, ``Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?'' (e.g. type checking \inline{x instanceof Y}) In Java, this question turns out to be unsound~\citep{amin2016java} and undecidable~\citep{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program in which the answer is ``yes'' regardless of \inline{Y}, or for which the answer cannot be determined in a finite amount of time. Undecidability is not necessarily a showstopper, but the unsoundness of Java's is more critical and unclear how to fix, even if it rarely occurs in practice.
 
-Kotlin is a statically typed language that is well-suited for building cross-platform applications, with compiler support for JVM, JavaScript and native targets. Unlike most programming languages, the language was designed with IDE support from the outset, and owes much of its popularity to its programming ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java's. It is unknown whether the the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java has spurred its broad adoption and remains a key usability feature of the language.
+Kotlin is a statically typed language that is well-suited for building cross-platform applications, with compiler support for JVM, JavaScript and native targets. Unlike most programming languages, the language was designed with IDE support from the outset, and owes much of its popularity to its programming ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java's. It is unknown whether the the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java has broadened its adoption and remains a key usability feature of the language.
 
 In this work, we make use of several language features unique to Kotlin, such as first-class functions (\autoref{sec:first-class-functions}), extension functions (\autoref{sec:extension-functions}), operator overloading (\autoref{sec:operator-overloading}), and algebraic data types (\autoref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support for shape-safe array programming. Together, these language features provide a concise, flexible and type-safe platform for mathematical programming.
 
@@ -1530,6 +1534,13 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 
 \section{Future work}\label{sec:future-work}
 
+\vspace{40pt}\setlength{\epigraphwidth}{0.80\textwidth}
+\epigraph{``It is well known that the central problem of the whole of modern mathematics is the study of the transcendental functions defined by differential equations.''}{\begin{flushright}--Felix \citet{klein1893lectures}, \textit{Lectures on mathematics}\end{flushright}}
+
+The derivative, as it is commonly known today, is usually associated with the calculus of infinitesimals. But the same derivative introduced by Leibniz and Newton over three centuries ago is starting to reappear in strange and marvelous places throughout mathematics and computer science. In \citet{brzozowski1964derivatives}, which reinterprets the notion of derivative for regular expressions, we see one of the early modern applications of derivatives in a classically non-differentiable setting. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and parsing \citep{might2011parsing, moss2014derivatives}. The notion of derivative has also arisen in lambda calculus~\citep{ehrhard2003differential} with applications in type theory~\citep{mcbride2001derivative, mcbride2008clowns} and linear logic~\citep{clift2018derivatives}. This pattern of clues is surely no mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps with important insights for representation learning and differentiable programming.
+
+The work described above provides a framework for exploring symbolic differentiation using algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field}, however our implementation of automatic differentiation primarily relies on vector fields. In future work, we would like to explore the relationship between differentiable programming and the notion of symbolic differentiation in classically non-differentiable settings such as on graphs and other discrete data structures. Perhaps there exists an analog to gradient descent which can be exploited to accelerate optimization in such spaces.
+
 Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2008matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices).
 
 Integration with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}. Look into~\cite{makwana2018numlin}.
@@ -1669,7 +1680,7 @@ But this would be very inefficient and depending on the type of input and output
 
 \subsection{Adversarial Testing}
 
-This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input value, which when fed to our program, produces the largest change to its output, relative to the original output.
+This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input of a function, which produces the largest change to its output, relative to the original output.
 
 Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, where we seek to change each of the components $g_0, ..., g_{m-1}$ by a fixed amount, so as to produce the largest output value $\mathbf{\hat P}(g'_1, ..., g'_{m-1})$ directly. Suppose that for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, in which we try every combination of variable perturbations and select the inputs corresponding to the greatest output value:
 
@@ -1679,11 +1690,11 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, where w
 \begin{algorithmic}[1]
 \Procedure{BfAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}, g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{m-1}: \mathbb R$}
 \If {$m = 1$} \Comment{Evaluate $\mathbf{\hat P}$ and return the best variable perturbation}
-\State \Return $\argmax{}\{\mathbf{\hat P}(g_0 + c), \mathbf{\hat P}(g_0 - c), \mathbf{\hat P}(g_0)\}$
+\State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_0 + c), \mathbf{\hat P}(g_0 - c), \mathbf{\hat P}(g_0)\}$
 \Else \Comment{Partially apply candidate perturbation and recurse}
-\State \Return $\argmax{}\{\mathbf{\hat P}(g_0 + c) \circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0 + c), g_1, \ldots, g_{m-1}$},\newline
-\hspace*{10.5em} $\mathbf{\hat P}(g_0 - c)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0 - c), g_1, \ldots, g_{m-1}$},\newline
-\hspace*{10.5em} $\mathbf{\hat P}(g_0)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0), g_1, \ldots, g_{m-1}$}$\}$
+\State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_0 + c) \circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0 + c), g_1, \ldots, g_{m-1}$},\newline
+\hspace*{10em} $\mathbf{\hat P}(g_0 - c)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0 - c), g_1, \ldots, g_{m-1}$},\newline
+\hspace*{10em} $\mathbf{\hat P}(g_0)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0), g_1, \ldots, g_{m-1}$}$\}$
 \EndIf
 \EndProcedure
 \end{algorithmic}
@@ -1721,10 +1732,10 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-We can solve for the gradient by taking the product of the Jacobians (c.f. \autoref{eq:vfun_chain_rule}), $\mathbf{J}_{\mathbf{p}_0} \ldots \mathbf{J}_{\mathbf{p}_k}$ with respect to $\mathbf{\Theta}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
+We can solve for the gradient by taking the product of the Jacobians (c.f. \autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_0} \cdots \mathcal{J}_{\mathbf{p}_k}$ with respect to $\mathbf{\Theta}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
 %
 \begin{equation}
-\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}|| < \epsilon\}
+\mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}||_p    < \epsilon\}
 \end{equation}
 %
  To do so, we initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient ascent on the loss:
@@ -1746,11 +1757,11 @@ Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test un
 \{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select inputs that are less frequent in hopes of finding one not previously considered. In addition, if the tester knew some details of how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search inputs for those more likely to break $\mathbf T$. We consider a extension of classical fuzzing techniques to differentiable functions on continuous random variables.
+If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select inputs that are less frequent in hopes of finding one not previously considered. In addition, if the tester knew some details of how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search for those inputs which were more likely to break $\mathbf T$. We consider a extension of classical fuzzing techniques to differentiable functions on continuous random variables.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-One strategy, independent of how candidate inputs are selected, is to use some form of gradient-based optimization in the search procedure. If the tester does not have access to the function directly, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
+One strategy, independent of how candidate inputs are selected, is to use some form of gradient-based optimization in the search procedure. If the tester does not have access to the function's implementation, she can still use zeroth order optimization techniques to approximate the gradient. Given access to the program, she can compute the gradient of the program using automatic differentiation. The gradient of $\mathbf{\hat P}$'s loss with respect to $\mathbf{x}$ is $\nabla_{\mathbf{x}} \mathcal{L}(\mathbf x)$.
 %
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
@@ -1760,7 +1771,7 @@ One strategy, independent of how candidate inputs are selected, is to use some f
 % \end{equation}
 %
 
-Consider algorithm \autoref{alg:prob_adversary} for finding test failures. First, let us select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we will follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$ to ensure each gradient descent trajectory will terminate before exhausting our budget.
+Consider algorithm \autoref{alg:prob_adversary} for finding test failures. First, let us select a candidate input $\mathbf{x}_j$ according to sampling strategy $\mathcal S$ (e.g.\ uniform random, or a neural network which takes $\mathbf{\hat P}$ and $\mathbf T$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we will follow the gradient of $\mathcal{L}(\mathbf{\hat P}, \mathbf{x})$ with respect to $\mathbf{x}$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from the initial sampling strategy $\mathcal S_n$. $C$ helps to ensure each gradient descent trajectory terminates before exhausting the allotted computational budget.
 
 We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge, a portion would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
