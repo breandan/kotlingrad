@@ -1,5 +1,9 @@
 package edu.umontreal.kotlingrad.samples
 
+import kotlin.math.E
+import kotlin.math.ln
+import kotlin.math.pow
+
 fun main() {
   with(DoublePrecision) {
     val x = Var("x", DoubleReal(0.0))
@@ -133,7 +137,7 @@ abstract class RealNumber<X: SFun<X>>(open val value: Number): Const<X>()
  */
 
 class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
-  override val e by lazy { DoubleReal(Math.E) }
+  override val e by lazy { DoubleReal(E) }
   override val one by lazy { DoubleReal(1.0) }
   override val zero by lazy { DoubleReal(0.0) }
 
@@ -150,11 +154,11 @@ class DoubleReal(override val value: Double): RealNumber<DoubleReal>(value) {
   }
 
   override fun pow(exp: SFun<DoubleReal>) = when (exp) {
-    is DoubleReal -> DoubleReal(Math.pow(value, exp.value))
+    is DoubleReal -> DoubleReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
 
-  override fun ln() = DoubleReal(Math.log(value))
+  override fun ln() = DoubleReal(ln(value))
   override fun toString() = value.toString()
 }
 
