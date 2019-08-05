@@ -2,14 +2,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   application
-  kotlin("jvm") version "1.3.31"
+  kotlin("jvm") version "1.3.41"
 }
 
 group = "edu.umontreal"
 version = "0.1"
 repositories.jcenter()
 
-val kotlinVersion = "1.3.31"
+val kotlinVersion = "1.3.41"
 
 tasks {
   register("plot", JavaExec::class) {
@@ -51,5 +51,6 @@ dependencies {
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.3.3")
   compile("org.jzy3d:jzy3d-api:1.0.2")
   compile("org.knowm.xchart:xchart:3.5.4")
-  compile("ch.obermuhlner:kotlin-big-math:0.0.1")
+  compile("ch.obermuhlner:big-math:2.1.0")
+//  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }

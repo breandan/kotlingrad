@@ -1779,7 +1779,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
     \caption{Probabilistic Adversary}
     \label{alg:prob_adversary}
     \begin{algorithmic}[1]
-        \Procedure{ProbAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_n$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$, budget: $\mathbb Z^+$}
+        \Procedure{ProbAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_n$, budget: $\mathbb Z^+$}
         \State $D_\mathbf T \gets \{\}, j \gets 0$
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
             \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from S}
@@ -1799,7 +1799,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
     \caption{Differential Adversary}
     \label{alg:diff_adversary}
     \begin{algorithmic}[1]
-        \Procedure{DiffAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^m$, $\mathbf T: \mathbb R^m \times \mathbb R \rightarrow \mathbb B$}
+        \Procedure{DiffAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^m$}
         \State $i \gets 1$
         \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
