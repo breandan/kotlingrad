@@ -7,7 +7,11 @@ plugins {
 
 group = "edu.umontreal"
 version = "0.1"
-repositories.jcenter()
+
+repositories {
+  jcenter()
+  maven("https://dl.bintray.com/mipt-npm/scientifik")
+}
 
 val kotlinVersion = "1.3.41"
 
@@ -52,5 +56,6 @@ dependencies {
   compile("org.jzy3d:jzy3d-api:1.0.2")
   compile("org.knowm.xchart:xchart:3.5.4")
   compile("ch.obermuhlner:big-math:2.1.0")
+  api("scientifik:kmath-core:0.1.3")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
