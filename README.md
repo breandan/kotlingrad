@@ -668,4 +668,6 @@ The following individuals have helped shape this project through their enthusias
 * [Michalis Famelis](https://michalis.famelis.info/)
 * [Hanneli Tavante](http://hannelita.com/)
 * [Alexander Nozik](https://scholar.google.com/citations?user=B-WJi4kAAAAJ)
+* [Erik Meijer](https://twitter.com/headinthebox/)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
+* [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
