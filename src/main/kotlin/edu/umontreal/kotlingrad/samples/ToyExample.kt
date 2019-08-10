@@ -1,8 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import kotlin.math.E
-import kotlin.math.ln
-import kotlin.math.pow
+import kotlin.math.*
 
 @Suppress("DuplicatedCode")
 fun main() {
@@ -52,7 +50,7 @@ interface Field<X: Field<X>>: Group<X> {
  * Scalar function.
  */
 
-sealed class Fun<X: Fun<X>>(open val vars: Set<Var<X>> = emptySet()): Field<Fun<X>> {
+sealed class Fun<X: Fun<X>>(open val vars: Set<Var<X>> = emptySet()): Field<Fun<X>>, (Map<Var<X>, X>) -> Fun<X> {
   constructor(fn: Fun<X>): this(fn.vars)
   constructor(vararg fns: Fun<X>): this(fns.flatMap { it.vars }.toSet())
 
@@ -61,7 +59,7 @@ sealed class Fun<X: Fun<X>>(open val vars: Set<Var<X>> = emptySet()): Field<Fun<
 
   operator fun <E: `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
 
-  operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
+  override operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
     is SConst -> this
     is Var -> map.getOrElse(this) { this }
     is Prod -> left(map) * right(map)

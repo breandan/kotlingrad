@@ -1,10 +1,8 @@
 package edu.umontreal.kotlingrad.delimited
 
-import edu.umontreal.kotlingrad.coroutines.DelimitedContinuation
-import edu.umontreal.kotlingrad.coroutines.reset
+import edu.umontreal.kotlingrad.coroutines.*
 import junit.framework.Assert.assertEquals
-import org.junit.*
-import edu.umontreal.kotlingrad.coroutines.invoke
+import org.junit.Test
 
 
 class DelimitedTest {
@@ -16,7 +14,7 @@ class DelimitedTest {
 
   @Test
   fun testShiftOnly() {
-    val x = reset<Int> { shift<Int> { k -> k(42) } }
+    val x = reset<Int> { shift { k -> k(42) } }
     assertEquals(42, x)
   }
 

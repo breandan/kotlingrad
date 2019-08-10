@@ -11,6 +11,9 @@ version = "0.1"
 repositories {
   jcenter()
   maven("https://dl.bintray.com/mipt-npm/scientifik")
+//  maven("https://dl.bintray.com/arrow-kt/arrow-kt/")
+//  mavenCentral()
+//  maven("https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
 
 val kotlinVersion = "1.3.41"
@@ -49,7 +52,15 @@ repositories {
   maven("http://maven.jzy3d.org/releases")
 }
 
+val arrow_version = "0.9.1-SNAPSHOT"
 dependencies {
+//  compile("io.arrow-kt:arrow-core-data:$arrow_version")
+//  compile("io.arrow-kt:arrow-core-extensions:$arrow_version")
+//  compile("io.arrow-kt:arrow-syntax:$arrow_version")
+//  compile("io.arrow-kt:arrow-typeclasses:$arrow_version")
+//  compile("io.arrow-kt:arrow-extras-data:$arrow_version")
+//  compile("io.arrow-kt:arrow-extras-extensions:$arrow_version")
+
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.4.0")

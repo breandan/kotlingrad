@@ -1,8 +1,7 @@
 package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.functions.ScalarFun
-import java.lang.Double.NaN
-import kotlin.math.E
+import kotlin.Double.Companion.NaN
 import kotlin.math.*
 
 class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (number) {
