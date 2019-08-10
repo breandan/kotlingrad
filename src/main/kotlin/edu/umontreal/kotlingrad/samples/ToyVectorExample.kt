@@ -67,11 +67,11 @@ open class VFun<X: Fun<X>, E: `1`>(
   operator fun invoke(sMap: Map<Var<X>, X> = emptyMap(), vMap: Map<VVar<X, E>, VConst<X, E>> = emptyMap()): VFun<X, E> =
     when (this) {
       is VNegative<X, E> -> VFun(length, value(sMap, vMap).contents.map { -it })
-      is VSum<X, E> -> VFun(length, left(sMap, vMap).contents.zip(right(sMap, vMap)).map { it.first + it.second })
-      is VVProd<X, E> -> VFun(length, left(sMap, vMap).contents.zip(right(sMap, vMap)).map { it.first * it.second })
+      is VSum<X, E> -> left(sMap, vMap) + right(sMap, vMap)
+      is VVProd<X, E> -> left(sMap, vMap) * right(sMap, vMap)
 //    is VDot<X, E> -> VFun(`1`, contents.reduceIndexed { index, acc, element -> acc + element * right[index] })
       is VVar<X, E> -> vMap.getOrElse(this) { this }
-      else -> VFun(length, contents.map { it(sMap) })
+      else -> this
     }
 
   open fun diff(variable: Var<X>): VFun<X, E> =

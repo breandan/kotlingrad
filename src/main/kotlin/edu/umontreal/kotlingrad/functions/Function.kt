@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.functions
 
 import edu.umontreal.kotlingrad.algebra.Group
 
-interface Function<X: Function<X>>: Group<Function<X>> {
-  operator fun invoke(map: Map<Var<X>, X> = emptyMap()): Function<X> = when (this) {
+interface Function<X: Function<X>>: Group<Function<X>>, (Map<Var<X>, X>) -> Function<X> {
+  override operator fun invoke(map: Map<Var<X>, X>): Function<X> = when (this) {
     is Const -> this
     is Var -> map.getOrElse(this) { value }
     is Product -> multiplicator(map) * multiplicand(map)
