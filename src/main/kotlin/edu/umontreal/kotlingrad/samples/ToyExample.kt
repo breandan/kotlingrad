@@ -158,8 +158,8 @@ sealed class Protocol<X: RealNumber<X>> {
   operator fun Number.times(multiplicand: Fun<X>) = multiplicand * wrap(this)
   operator fun Fun<X>.times(multiplicand: Number) = wrap(multiplicand) * this
 
-  operator fun Number.plus(addend: Fun<X>) = addend * wrap(this)
-  operator fun Fun<X>.plus(addend: Number) = wrap(addend) * this
+  operator fun Number.plus(addend: Fun<X>) = addend + wrap(this)
+  operator fun Fun<X>.plus(addend: Number) = wrap(addend) + this
 
   fun Number.pow(exp: Fun<X>) = wrap(this) pow exp
   infix fun Fun<X>.pow(exp: Number) = this pow wrap(exp)
