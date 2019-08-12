@@ -10,382 +10,397 @@ fun main() {
     val shouldBe4Again: Double = q(X to 1.0)(Y = 1.0, Z = 1.0)
     println(shouldBe4Again)
     val t = X + Z + Z
-    val l: Z = t(X to 1.0)
+    val l = t(X to 1.0)
     val p = X + Y * Z
     val shouldBe7 = p(X = 1.0, Y = 2.0, Z = 3.0)
     println(shouldBe7)
-    val d = X + Z
+    val d = X + Z + X
   }
 }
 
-open class X(val left: Fnc<*>,
-             val right: Fnc<*>,
-             val app: (Double, Double) -> Double) : Fnc<X>() {
-  constructor(c: Double) : this(DConst(c), DConst(c), first)
+open class X<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                          val right: Fnc<*>,
+                                          val app: (P, P) -> P) : Fnc<X<P, Q>>() {
+  constructor(c: Const<P, Q>) : this(c, c, ::firstX)
 
-  override operator fun plus(that: X): X = X(this, that, plus)
-  operator fun plus(that: Y): XY = XY(this, that, plus)
-  operator fun plus(that: Z): XZ = XZ(this, that, plus)
-  operator fun plus(that: XY): XY = XY(this, that, plus)
-  operator fun plus(that: XZ): XZ = XZ(this, that, plus)
-  operator fun plus(that: YZ): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  override operator fun times(that: X): X = X(this, that, times)
-  operator fun times(that: Y): XY = XY(this, that, times)
-  operator fun times(that: Z): XZ = XZ(this, that, times)
-  operator fun times(that: XY): XY = XY(this, that, times)
-  operator fun times(that: XZ): XZ = XZ(this, that, times)
-  operator fun times(that: YZ): XYZ = XYZ(this, that, times)
-  operator fun times(that: XYZ): XYZ = XYZ(this, that, times)
+  override operator fun plus(that: X<P, Q>): X<P, Q> = X(this, that, ::plusX)
+  operator fun plus(that: Y<P, Q>): XY<P, Q> = XY<P, Q>(this, that, ::plusX)
+  operator fun plus(that: Z<P, Q>): XZ<P, Q> = XZ<P, Q>(this, that, ::plusX)
+  operator fun plus(that: XY<P, Q>): XY<P, Q> = XY<P, Q>(this, that, ::plusX)
+  operator fun plus(that: XZ<P, Q>): XZ<P, Q> = XZ<P, Q>(this, that, ::plusX)
+  operator fun plus(that: YZ<P, Q>): XYZ<P, Q> = XYZ<P, Q>(this, that, ::plusX)
+  operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ<P, Q>(this, that, ::plusX)
+  override operator fun times(that: X<P, Q>): X<P, Q> = X<P, Q>(this, that, ::timesX)
+  operator fun times(that: Y<P, Q>): XY<P, Q> = XY<P, Q>(this, that, ::timesX)
+  operator fun times(that: Z<P, Q>): XZ<P, Q> = XZ<P, Q>(this, that, ::timesX)
+  operator fun times(that: XY<P, Q>): XY<P, Q> = XY<P, Q>(this, that, ::timesX)
+  operator fun times(that: XZ<P, Q>): XZ<P, Q> = XZ<P, Q>(this, that, ::timesX)
+  operator fun times(that: YZ<P, Q>): XYZ<P, Q> = XYZ<P, Q>(this, that, ::timesX)
+  operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ<P, Q>(this, that, ::timesX)
 
-  open operator fun invoke(X: Double): Double = app(left(X), right(X))
-  operator fun Fnc<*>.invoke(X: Double): Double =
+  open operator fun invoke(X: Const<P, Q>): Const<P, Q> =
+    app(left(X) as P, right(X) as P)
+
+  operator fun Fnc<*>.invoke(X: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is X -> this(X)
+      is Const<*, *> -> this as Const<P, Q>
+      is X<*, *> -> (this as X<P, Q>)(X)
       else -> throw ClassNotFoundException(this.toString())
     }
 }
 
-open class Y(val left: Fnc<*>,
-             val right: Fnc<*>,
-             val app: (Double, Double) -> Double) : Fnc<Y>() {
-  constructor(c: Double) : this(DConst(c), DConst(c), first)
+open class Y<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                          val right: Fnc<*>,
+                                          val app: (P, P) -> P) : Fnc<Y<P, Q>>() {
+  constructor(c: Const<P, Q>) : this(c, c, ::firstX)
 
-  override operator fun plus(that: Y): Y = Y(this, that, plus)
-  operator fun plus(that: X): XY = XY(this, that, plus)
-  operator fun plus(that: Z): YZ = YZ(this, that, plus)
-  operator fun plus(that: XY): XY = XY(this, that, plus)
-  operator fun plus(that: XZ): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: YZ): YZ = YZ(this, that, plus)
-  operator fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  override operator fun times(that: Y): Y = Y(this, that, times)
-  operator fun times(that: X): XY = XY(this, that, times)
-  operator fun times(that: Z): YZ = YZ(this, that, times)
-  operator fun times(that: XY): XY = XY(this, that, times)
-  operator fun times(that: XZ): XYZ = XYZ(this, that, times)
-  operator fun times(that: YZ): YZ = YZ(this, that, times)
-  operator fun times(that: XYZ): XYZ = XYZ(this, that, times)
+  override operator fun plus(that: Y<P, Q>): Y<P, Q> = Y(this, that, ::plusX)
+  operator fun plus(that: X<P, Q>): XY<P, Q> = XY(this, that, ::plusX)
+  operator fun plus(that: Z<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: XY<P, Q>): XY<P, Q> = XY(this, that, ::plusX)
+  operator fun plus(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: YZ<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  override operator fun times(that: Y<P, Q>): Y<P, Q> = Y(this, that, ::timesX)
+  operator fun times(that: X<P, Q>): XY<P, Q> = XY(this, that, ::timesX)
+  operator fun times(that: Z<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: XY<P, Q>): XY<P, Q> = XY(this, that, ::timesX)
+  operator fun times(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: YZ<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
 
-  open operator fun invoke(Y: Double): Double = app(left(Y), right(Y))
-  operator fun Fnc<*>.invoke(Y: Double): Double =
+  open operator fun invoke(Y: Const<P, Q>): Const<P, Q> =
+    app(left(Y) as P, right(Y) as P)
+
+  operator fun Fnc<*>.invoke(Y: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is Y -> this(Y)
+      is Const<*, *> -> this as Const<P, Q>
+      is Y<*, *> -> (this as Y<P, Q>)(Y)
       else -> throw ClassNotFoundException(this.toString())
     }
 }
 
-open class Z(val left: Fnc<*>,
-             val right: Fnc<*>,
-             val app: (Double, Double) -> Double) : Fnc<Z>() {
-  constructor(c: Double) : this(DConst(c), DConst(c), first)
+open class Z<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                          val right: Fnc<*>,
+                                          val app: (P, P) -> P) : Fnc<Z<P, Q>>() {
+  constructor(c: Const<P, Q>) : this(c, c, ::firstX)
 
-  override operator fun plus(that: Z): Z = Z(this, that, plus)
-  operator fun plus(that: Y): YZ = YZ(this, that, plus)
-  operator fun plus(that: X): XZ = XZ(this, that, plus)
-  operator fun plus(that: XY): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XZ): XZ = XZ(this, that, plus)
-  operator fun plus(that: YZ): YZ = YZ(this, that, plus)
-  operator fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  override operator fun times(that: Z): Z = Z(this, that, times)
-  operator fun times(that: Y): YZ = YZ(this, that, times)
-  operator fun times(that: X): XZ = XZ(this, that, times)
-  operator fun times(that: XY): XYZ = XYZ(this, that, times)
-  operator fun times(that: XZ): XZ = XZ(this, that, times)
-  operator fun times(that: YZ): YZ = YZ(this, that, times)
-  operator fun times(that: XYZ): XYZ = XYZ(this, that, times)
+  override operator fun plus(that: Z<P, Q>): Z<P, Q> = Z(this, that, ::plusX)
+  operator fun plus(that: Y<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: X<P, Q>): XZ<P, Q> = XZ(this, that, ::plusX)
+  operator fun plus(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: XZ<P, Q>): XZ<P, Q> = XZ(this, that, ::plusX)
+  operator fun plus(that: YZ<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  override operator fun times(that: Z<P, Q>): Z<P, Q> = Z(this, that, ::timesX)
+  operator fun times(that: Y<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: X<P, Q>): XZ<P, Q> = XZ(this, that, ::timesX)
+  operator fun times(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: XZ<P, Q>): XZ<P, Q> = XZ(this, that, ::timesX)
+  operator fun times(that: YZ<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
 
-  open operator fun invoke(Z: Double): Double = app(left(Z), right(Z))
-  operator fun Fnc<*>.invoke(Z: Double): Double =
+  open operator fun invoke(Z: Const<P, Q>): Const<P, Q> =
+    app(left(Z) as P, right(Z) as P)
+
+  operator fun Fnc<*>.invoke(Z: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is Z -> this(Z)
+      is Const<*, *> -> this as Const<P, Q>
+      is Z<*, *> -> (this as Z<P, Q>)(Z)
       else -> throw ClassNotFoundException(this.toString())
     }
 }
 
-open class XY(val left: Fnc<*>,
-              val right: Fnc<*>,
-              val app: (Double, Double) -> Double) : Fnc<XY>() {
-  constructor(f: Fnc<*>) : this(f, f, first)
-  constructor(c: Double) : this(DConst(c), DConst(c), first)
+open class XY<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                           val right: Fnc<*>,
+                                           val app: (P, P) -> P) : Fnc<XY<P, Q>>() {
+  constructor(f: Fnc<*>) : this(f, f, ::firstX)
+  constructor(c: Const<P, Q>) : this(c, c, ::firstX)
 
-  operator fun plus(that: X): XY = XY(this, that, plus)
-  operator fun plus(that: Y): XY = XY(this, that, plus)
-  operator fun plus(that: Z): XYZ = XYZ(this, that, plus)
-  override operator fun plus(that: XY): XY = XY(this, that, plus)
-  operator fun plus(that: XZ): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: YZ): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  operator fun times(that: X): XY = XY(this, that, times)
-  operator fun times(that: Y): XY = XY(this, that, times)
-  operator fun times(that: Z): XYZ = XYZ(this, that, times)
-  override operator fun times(that: XY): XY = XY(this, that, times)
-  operator fun times(that: XZ): XYZ = XYZ(this, that, times)
-  operator fun times(that: YZ): XYZ = XYZ(this, that, times)
-  operator fun times(that: XYZ): XYZ = XYZ(this, that, times)
+  operator fun plus(that: X<P, Q>): XY<P, Q> = XY(this, that, ::plusX)
+  operator fun plus(that: Y<P, Q>): XY<P, Q> = XY(this, that, ::plusX)
+  operator fun plus(that: Z<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  override operator fun plus(that: XY<P, Q>): XY<P, Q> = XY(this, that, ::plusX)
+  operator fun plus(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: YZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun times(that: X<P, Q>): XY<P, Q> = XY(this, that, ::timesX)
+  operator fun times(that: Y<P, Q>): XY<P, Q> = XY(this, that, ::timesX)
+  operator fun times(that: Z<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  override operator fun times(that: XY<P, Q>): XY<P, Q> = XY(this, that, ::timesX)
+  operator fun times(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: YZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
 
-  operator fun Fnc<*>.invoke(X: Double, Y: Double): Double =
+  operator fun Fnc<*>.invoke(X: Const<P, Q>, Y: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is XY -> this(X, Y)
-      is X -> this(X)
-      is Y -> this(Y)
+      is Const<*, *> -> this as Const<P, Q>
+      is XY<*, *> -> (this as XY<P, Q>).invoke(X, Y)
+      is X<*, *> -> (this as X<P, Q>)(X)
+      is Y<*, *> -> (this as Y<P, Q>)(Y)
       else -> throw ClassNotFoundException(this.toString())
     }
 
-  operator fun invoke(X: Double, Y: Double) = app(left(X, Y), right(X, Y))
-  operator fun invoke(X: Pair<X, Double>, Y: Pair<Y, Double>) =
-    app(left(X.second, Y.second), right(X.second, Y.second))
+  operator fun invoke(X: Const<P, Q>, Y: Const<P, Q>): Const<P, Q> =
+    app(left(X, Y) as P, right(X, Y) as P)
 
-  operator fun Fnc<*>.invoke(X: Pair<X, Double>): Y =
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>, Y: Y<P, Q>, YP: Const<P, Q>) =
+    app(left(XP, YP) as P, right(XP, YP) as P)
+
+  operator fun Fnc<*>.invoke(X: X<P, Q>, XP: Const<P, Q>): Y<P, Q> =
     when (this) {
-      is XY -> this(X)
-      is X -> Y(this(X.second))
-      is Y -> this
+      is XY<*, *> -> (this as XY<P, Q>)(X, XP)
+      is X<*, *> -> Y((this as X<P, Q>)(XP))
+      is Y<*, *> -> this as Y<P, Q>
       else -> throw ClassNotFoundException(this.toString())
     }
 
-  operator fun Fnc<*>.invoke(Y: Pair<Y, Double>): X =
+  operator fun Fnc<*>.invoke(Y: Y<P, Q>, YP: Const<P, Q>): X<P, Q> =
     when (this) {
-      is XY -> this(Y)
-      is Y -> X(this(Y.second))
-      is X -> this
+      is XY<*, *> -> (this as XY<P, Q>)(Y, YP)
+      is Y<*, *> -> X((this as Y<P, Q>)(YP))
+      is X<*, *> -> this as X<P, Q>
       else -> throw ClassNotFoundException(this.toString())
     }
 
-  operator fun invoke(X: Pair<X, Double>): Y = Y(left(X), right(X), app)
-  operator fun invoke(Y: Pair<Y, Double>): X = X(left(Y), right(Y), app)
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>): Y<P, Q> = Y(left(X, XP), right(X, XP), app)
+  operator fun invoke(Y: Y<P, Q>, YP: Const<P, Q>): X<P, Q> = X(left(Y, YP), right(Y, YP), app)
 }
 
-open class XZ(val left: Fnc<*>,
-              val right: Fnc<*>,
-              val app: (Double, Double) -> Double) : Fnc<XZ>() {
-  constructor(f: Fnc<*>) : this(f, f, first)
-  constructor(c: Double) : this(DConst(c), DConst(c), first)
+open class XZ<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                           val right: Fnc<*>,
+                                           val app: (P, P) -> P) : Fnc<XZ<P, Q>>() {
+  constructor(f: Fnc<*>) : this(f, f, ::firstX)
+  constructor(c: Const<P, Q>) : this(c, c, ::firstX)
 
-  operator fun plus(that: X): XZ = XZ(this, that, plus)
-  operator fun plus(that: Y): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: Z): XZ = XZ(this, that, plus)
-  operator fun plus(that: XY): XYZ = XYZ(this, that, plus)
-  override operator fun plus(that: XZ): XZ = XZ(this, that, plus)
-  operator fun plus(that: YZ): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  operator fun times(that: X): XZ = XZ(this, that, times)
-  operator fun times(that: Y): XYZ = XYZ(this, that, times)
-  operator fun times(that: Z): XZ = XZ(this, that, times)
-  operator fun times(that: XY): XYZ = XYZ(this, that, times)
-  override operator fun times(that: XZ): XZ = XZ(this, that, times)
-  operator fun times(that: YZ): XYZ = XYZ(this, that, times)
-  operator fun times(that: XYZ): XYZ = XYZ(this, that, times)
+  operator fun plus(that: X<P, Q>): XZ<P, Q> = XZ(this, that, ::plusX)
+  operator fun plus(that: Y<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: Z<P, Q>): XZ<P, Q> = XZ(this, that, ::plusX)
+  operator fun plus(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  override operator fun plus(that: XZ<P, Q>): XZ<P, Q> = XZ(this, that, ::plusX)
+  operator fun plus(that: YZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun times(that: X<P, Q>): XZ<P, Q> = XZ(this, that, ::timesX)
+  operator fun times(that: Y<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: Z<P, Q>): XZ<P, Q> = XZ(this, that, ::timesX)
+  operator fun times(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  override operator fun times(that: XZ<P, Q>): XZ<P, Q> = XZ(this, that, ::timesX)
+  operator fun times(that: YZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
 
-  operator fun Fnc<*>.invoke(X: Double, Z: Double): Double =
+  operator fun Fnc<*>.invoke(X: Const<P, Q>, Z: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is XZ -> this(X, Z)
-      is X -> this(X)
-      is Z -> this(Z)
+      is Const<*, *> -> this as Const<P, Q>
+      is XZ<*, *> -> (this as XZ<P, Q>)(X, Z)
+      is X<*, *> -> (this as X<P, Q>)(X)
+      is Z<*, *> -> (this as Z<P, Q>)(Z)
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(X: Double, Z: Double) = app(left(X, Z), right(X, Z))
-  operator fun invoke(X: Pair<X, Double>, Z: Pair<Z, Double>) =
-    app(left(X.second, Z.second), right(X.second, Z.second))
+  operator fun invoke(X: Const<P, Q>, Z: Const<P, Q>): Const<P, Q> =
+    app(left(X, Z) as P, right(X, Z) as P)
 
-  operator fun Fnc<*>.invoke(X: Pair<X, Double>): Z =
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>, Z: Z<P, Q>, ZP: Const<P, Q>) =
+    app(left(XP, ZP) as P, right(XP, ZP) as P)
+
+  operator fun Fnc<*>.invoke(X: X<P, Q>, XP: Const<P, Q>): Z<P, Q> =
     when (this) {
-      is XZ -> this(X)
-      is X -> Z(this(X.second))
-      is Z -> this
+      is XZ<*, *> -> (this as XZ<P, Q>)(X, XP)
+      is X<*, *> -> Z((this as X<P, Q>)(XP))
+      is Z<*, *> -> this as Z<P, Q>
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun Fnc<*>.invoke(Z: Pair<Z, Double>): X =
+  operator fun Fnc<*>.invoke(Z: Z<P, Q>, ZP: Const<P, Q>): X<P, Q> =
     when (this) {
-      is XZ -> this(Z)
-      is Z -> X(this(Z.second))
-      is X -> this
+      is XZ<*, *> -> (this as XZ<P, Q>)(Z, ZP)
+      is Z<*, *> -> X((this as Z<P, Q>)(ZP))
+      is X<*, *> -> this as X<P, Q>
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(X: Pair<X, Double>): Z = Z(left(X), right(X), app)
-  operator fun invoke(Z: Pair<Z, Double>): X = X(left(Z), right(Z), app)
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>): Z<P, Q> = Z(left(X, XP), right(X, XP), app)
+  operator fun invoke(Z: Z<P, Q>, ZP: Const<P, Q>): X<P, Q> = X(left(Z, ZP), right(Z, ZP), app)
 }
 
-open class YZ(val left: Fnc<*>,
-              val right: Fnc<*>,
-              val app: (Double, Double) -> Double) : Fnc<YZ>() {
-  constructor(f: Fnc<*>) : this(f, f, first)
-  constructor(c: Double) : this(DConst(c), DConst(c), first)
+open class YZ<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                           val right: Fnc<*>,
+                                           val app: (P, P) -> P) : Fnc<YZ<P, Q>>() {
+  constructor(f: Fnc<*>) : this(f, f, ::firstX)
+  constructor(c: Const<P, Q>) : this(c, c, ::firstX)
 
-  operator fun plus(that: X): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: Z): YZ = YZ(this, that, plus)
-  operator fun plus(that: Y): YZ = YZ(this, that, plus)
-  operator fun plus(that: XY): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XZ): XYZ = XYZ(this, that, plus)
-  override fun plus(that: YZ): YZ = YZ(this, that, plus)
-  operator fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  operator fun times(that: X): XYZ = XYZ(this, that, times)
-  operator fun times(that: Z): YZ = YZ(this, that, times)
-  operator fun times(that: Y): YZ = YZ(this, that, times)
-  operator fun times(that: XY): XYZ = XYZ(this, that, times)
-  operator fun times(that: XZ): XYZ = XYZ(this, that, times)
-  override fun times(that: YZ): YZ = YZ(this, that, times)
-  operator fun times(that: XYZ): XYZ = XYZ(this, that, times)
+  operator fun plus(that: X<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: Z<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: Y<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  override operator fun plus(that: YZ<P, Q>): YZ<P, Q> = YZ(this, that, ::plusX)
+  operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun times(that: X<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: Z<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: Y<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  override operator fun times(that: YZ<P, Q>): YZ<P, Q> = YZ(this, that, ::timesX)
+  operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
 
-  operator fun Fnc<*>.invoke(Y: Double, Z: Double): Double =
+  operator fun Fnc<*>.invoke(Y: Const<P, Q>, Z: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is YZ -> this(Y, Z)
-      is Y -> this(Y)
-      is Z -> this(Z)
+      is Const<*, *> -> this as Const<P, Q>
+      is YZ<*, *> -> (this as YZ<P, Q>)(Y, Z)
+      is Y<*, *> -> (this as Y<P, Q>)(Y)
+      is Z<*, *> -> (this as Z<P, Q>)(Z)
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(Y: Double, Z: Double) = app(left(Y, Z), right(Y, Z))
-  operator fun invoke(Y: Pair<Y, Double>, Z: Pair<Z, Double>) =
-    app(left(Y.second, Z.second), right(Y.second, Z.second))
+  operator fun invoke(Y: Const<P, Q>, Z: Const<P, Q>): Const<P, Q> =
+    app(left(Y, Z) as P, right(Y, Z) as P)
 
-  operator fun Fnc<*>.invoke(Y: Pair<Y, Double>): Z =
+  operator fun invoke(Y: Y<P, Q>, YP: Const<P, Q>, Z: Z<P, Q>, ZP: Const<P, Q>) =
+    app(left(YP, ZP) as P, right(YP, ZP) as P)
+
+  operator fun Fnc<*>.invoke(Y: Y<P, Q>, YP: Const<P, Q>): Z<P, Q> =
     when (this) {
-      is YZ -> this(Y)
-      is Y -> Z(this(Y.second))
-      is Z -> this
+      is YZ<*, *> -> (this as YZ<P, Q>)(Y, YP)
+      is Y<*, *> -> Z((this as Y<P, Q>)(YP))
+      is Z<*, *> -> this as Z<P, Q>
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun Fnc<*>.invoke(Z: Pair<Z, Double>): Y =
+  operator fun Fnc<*>.invoke(Z: Z<P, Q>, ZP: Const<P, Q>): Y<P, Q> =
     when (this) {
-      is YZ -> this(Z)
-      is Z -> Y(this(Z.second))
-      is Y -> this
+      is YZ<*, *> -> (this as YZ<P, Q>)(Z, ZP)
+      is Z<*, *> -> Y((this as Z<P, Q>)(ZP))
+      is Y<*, *> -> this as Y<P, Q>
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(Y: Pair<Y, Double>): Z = Z(left(Y), right(Y), app)
-  operator fun invoke(Z: Pair<Z, Double>): Y = Y(left(Z), right(Z), app)
+  operator fun invoke(Y: Y<P, Q>, YP: Const<P, Q>): Z<P, Q> =
+    Z(left(Y, YP), right(Y, YP), app)
+
+  operator fun invoke(Z: Z<P, Q>, ZP: Const<P, Q>): Y<P, Q> =
+    Y(left(Z, ZP) as P, right(Z, ZP) as P, app)
 
 }
 
-open class XYZ(val left: Fnc<*>,
-               val right: Fnc<*>,
-               val app: (Double, Double) -> Double) : Fnc<XYZ>() {
-  operator fun plus(that: X): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: Y): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: Z): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XY): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: XZ): XYZ = XYZ(this, that, plus)
-  operator fun plus(that: YZ): XYZ = XYZ(this, that, plus)
-  override fun plus(that: XYZ): XYZ = XYZ(this, that, plus)
-  operator fun times(that: X): XYZ = XYZ(this, that, times)
-  operator fun times(that: Y): XYZ = XYZ(this, that, times)
-  operator fun times(that: Z): XYZ = XYZ(this, that, times)
-  operator fun times(that: XY): XYZ = XYZ(this, that, times)
-  operator fun times(that: XZ): XYZ = XYZ(this, that, times)
-  operator fun times(that: YZ): XYZ = XYZ(this, that, times)
-  override fun times(that: XYZ): XYZ = XYZ(this, that, times)
+open class XYZ<P : Const<P, Q>, Q : Number>(val left: Fnc<*>,
+                                            val right: Fnc<*>,
+                                            val app: (P, P) -> P) : Fnc<XYZ<P, Q>>() {
+  operator fun plus(that: X<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: Y<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: Z<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun plus(that: YZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  override operator fun plus(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::plusX)
+  operator fun times(that: X<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: Y<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: Z<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: XY<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: XZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  operator fun times(that: YZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
+  override operator fun times(that: XYZ<P, Q>): XYZ<P, Q> = XYZ(this, that, ::timesX)
 
-  operator fun Fnc<*>.invoke(X: Double, Y: Double, Z: Double): Double =
+  operator fun Fnc<*>.invoke(X: Const<P, Q>, Y: Const<P, Q>, Z: Const<P, Q>): Const<P, Q> =
     when (this) {
-      is DConst -> c
-      is XYZ -> this(X, Y, Z)
-      is XY -> this(X, Y)
-      is XZ -> this(X, Z)
-      is YZ -> this(Y, Z)
-      is X -> this(X)
-      is Y -> this(Y)
-      is Z -> this(Z)
+      is Const<*, *> -> this as Const<P, Q>
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(X, Y, Z)
+      is XY<*, *> -> (this as XY<P, Q>)(X, Y)
+      is XZ<*, *> -> (this as XZ<P, Q>)(X, Z)
+      is YZ<*, *> -> (this as YZ<P, Q>)(Y, Z)
+      is X<*, *> -> (this as X<P, Q>)(X)
+      is Y<*, *> -> (this as Y<P, Q>)(Y)
+      is Z<*, *> -> (this as Z<P, Q>)(Z)
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(X: Double, Y: Double, Z: Double): Double =
-    app(left(X, Y, Z), right(X, Y, Z))
+  operator fun invoke(X: Const<P, Q>, Y: Const<P, Q>, Z: Const<P, Q>): Const<P, Q> =
+    app(left(X, Y, Z) as P, right(X, Y, Z) as P)
 
-  operator fun Fnc<*>.invoke(X: Pair<X, Double>, Z: Pair<Z, Double>): Y =
+  operator fun Fnc<*>.invoke(X: X<P, Q>, XP: Const<P, Q>, Z: Z<P, Q>, ZP: Const<P, Q>): Y<P, Q> =
     when (this) {
-      is XYZ -> this(X, Z)
-      is XY -> this(X)
-      is XZ -> Y(this(X, Z))
-      is YZ -> this(Z)
-      is X -> Y(this(X.second))
-      is Y -> this
-      is Z -> Y(this(Z.second))
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(X, XP, Z, ZP)
+      is XY<*, *> -> (this as XY<P, Q>)(X, XP)
+      is XZ<*, *> -> Y((this as XZ<P, Q>)(X, XP, Z, ZP))
+      is YZ<*, *> -> (this as YZ<P, Q>)(Z, ZP)
+      is X<*, *> -> Y((this as Y<P, Q>)(XP))
+      is Y<*, *> -> this as Y<P, Q>
+      is Z<*, *> -> Y((this as Z<P, Q>)(ZP))
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(X: Pair<X, Double>, Z: Pair<Z, Double>): Y =
-    Y(left(X, Z), right(X, Z), app)
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>, Z: Z<P, Q>, ZP: Const<P, Q>): Y<P, Q> =
+    Y(left(X, XP, Z, ZP), right(X, XP, Z, ZP), app)
 
-  operator fun Fnc<*>.invoke(X: Pair<X, Double>, Y: Pair<Y, Double>): Z =
+  operator fun Fnc<*>.invoke(X: X<P, Q>, XP: Const<P, Q>, Y: Y<P, Q>, YP: Const<P, Q>): Z<P, Q> =
     when (this) {
-      is XYZ -> this(X, Y)
-      is XY -> Z(this(X, Y))
-      is XZ -> this(X)
-      is YZ -> this(Y)
-      is X -> Z(this(X.second))
-      is Y -> Z(this(Y.second))
-      is Z -> this
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(X, XP, Y, YP)
+      is XY<*, *> -> Z((this as XY<P, Q>)(X, XP, Y, YP))
+      is XZ<*, *> -> (this as XZ<P, Q>)(X, XP)
+      is YZ<*, *> -> (this as YZ<P, Q>)(Y, YP)
+      is X<*, *> -> Z((this as X<P, Q>)(XP))
+      is Y<*, *> -> Z((this as Y<P, Q>)(YP))
+      is Z<*, *> -> this as Z<P, Q>
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(X: Pair<X, Double>, Y: Pair<Y, Double>): Z =
-    Z(left(X, Y), right(X, Y), app)
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>, Y: Y<P, Q>, YP: Const<P, Q>): Z<P, Q> =
+    Z(left(X, XP, Y, YP), right(X, XP, Y, YP), app)
 
-  operator fun Fnc<*>.invoke(Y: Pair<Y, Double>, Z: Pair<Z, Double>): X =
+  operator fun Fnc<*>.invoke(Y: Y<P, Q>, YP: Const<P, Q>, Z: Z<P, Q>, ZP: Const<P, Q>): X<P, Q> =
     when (this) {
-      is XYZ -> this(Y, Z)
-      is XY -> this(Y)
-      is XZ -> this(Z)
-      is YZ -> X(this(Y, Z))
-      is X -> this
-      is Y -> X(this(Y.second))
-      is Z -> X(this(Z.second))
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(Y, YP, Z, ZP)
+      is XY<*, *> -> (this as XY<P, Q>)(Y, YP)
+      is XZ<*, *> -> (this as XZ<P, Q>)(Z, ZP)
+      is YZ<*, *> -> X((this as YZ<P, Q>)(Y, YP, Z, ZP))
+      is X<*, *> -> this as X<P, Q>
+      is Y<*, *> -> X((this as Y<P, Q>)(YP))
+      is Z<*, *> -> X((this as Z<P, Q>)(ZP))
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(Y: Pair<Y, Double>, Z: Pair<Z, Double>): X =
-    X(left(Y, Z), right(Y, Z), app)
+  operator fun invoke(Y: Y<P, Q>, YP: Const<P, Q>, Z: Z<P, Q>, ZP: Const<P, Q>): X<P, Q> =
+    X(left(Y, YP, Z, ZP), right(Y, YP, Z, ZP), app)
 
-  operator fun Fnc<*>.invoke(X: Pair<X, Double>): YZ =
+  operator fun Fnc<*>.invoke(X: X<P, Q>, XP: Const<P, Q>): YZ<P, Q> =
     when (this) {
-      is XYZ -> this(X)
-      is XY -> YZ(this(X))
-      is XZ -> YZ(this(X))
-      is YZ -> this
-      is X -> YZ(X(X.second))
-      is Y -> YZ(this)
-      is Z -> YZ(this)
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(X, XP)
+      is XY<*, *> -> YZ((this as XY<P, Q>)(X, XP))
+      is XZ<*, *> -> YZ((this as XZ<P, Q>)(X, XP))
+      is YZ<*, *> -> this as YZ<P, Q>
+      is X<*, *> -> YZ(X(XP))
+      is Y<*, *> -> YZ(this as Y<P, Q>)
+      is Z<*, *> -> YZ(this as Z<P, Q>)
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(X: Pair<X, Double>): YZ = YZ(left(X), right(X), app)
-  operator fun Fnc<*>.invoke(Y: Pair<Y, Double>): XZ =
+  operator fun invoke(X: X<P, Q>, XP: Const<P, Q>): YZ<P, Q> = YZ(left(X, XP), right(X, XP), app)
+  operator fun Fnc<*>.invoke(Y: Y<P, Q>, YP: Const<P, Q>): XZ<P, Q> =
     when (this) {
-      is XYZ -> this(Y)
-      is XY -> XZ(this(Y))
-      is XZ -> this
-      is YZ -> XZ(this(Y))
-      is X -> XZ(this)
-      is Y -> XZ(Y(Y.second))
-      is Z -> XZ(this)
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(Y, YP)
+      is XY<*, *> -> XZ((this as XY<P, Q>)(Y, YP))
+      is XZ<*, *> -> this as XZ<P, Q>
+      is YZ<*, *> -> XZ((this as YZ<P, Q>)(Y, YP))
+      is X<*, *> -> XZ(this as X<P, Q>)
+      is Y<*, *> -> XZ(Y(YP))
+      is Z<*, *> -> XZ(this as Z<P, Q>)
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(Y: Pair<Y, Double>): XZ = XZ(left(Y), right(Y), app)
-  operator fun Fnc<*>.invoke(Z: Pair<Z, Double>): XY =
+  operator fun invoke(Y: Y<P, Q>, YP: Const<P, Q>): XZ<P, Q> = XZ(left(Y, YP), right(Y, YP), app)
+  operator fun Fnc<*>.invoke(Z: Z<P, Q>, ZP: Const<P, Q>): XY<P, Q> =
     when (this) {
-      is XYZ -> this(Z)
-      is XY -> this
-      is XZ -> XY(this(Z))
-      is YZ -> XY(this(Z))
-      is X -> XY(this)
-      is Y -> XY(this)
-      is Z -> XY(Z(Z.second))
+      is XYZ<*, *> -> (this as XYZ<P, Q>)(Z, ZP)
+      is XY<*, *> -> this as XY<P, Q>
+      is XZ<*, *> -> XY((this as XZ<P, Q>)(Z, ZP))
+      is YZ<*, *> -> XY((this as YZ<P, Q>)(Z, ZP))
+      is X<*, *> -> XY(this as X<P, Q>)
+      is Y<*, *> -> XY(this as Y<P, Q>)
+      is Z<*, *> -> XY(Z(ZP))
       else -> throw ClassNotFoundException(toString())
     }
 
-  operator fun invoke(Z: Pair<Z, Double>): XY = XY(left(Z), right(Z), app)
+  operator fun invoke(Z: Z<P, Q>, ZP: Const<P, Q>): XY<P, Q> = XY(left(Z, ZP), right(Z, ZP), app)
 }
 
 abstract class Fnc<T : Fnc<T>> {
@@ -393,16 +408,16 @@ abstract class Fnc<T : Fnc<T>> {
   abstract infix operator fun times(that: T): T
 }
 
-abstract class Const<T : Fnc<T>>(open val c: Number) : Fnc<T>() {
+abstract class Const<T : Fnc<T>, Y : Number>(open val c: Y) : Fnc<T>() {
 //  override fun <T: Fnc<T>> plus(fn: T): T = TODO()
 }
 
-class DConst(override val c: Double) : Const<DConst>(c) {
+class DConst(override val c: Double) : Const<DConst, Double>(c) {
   override fun plus(that: DConst) = DConst(this.c + that.c)
   override fun times(that: DConst) = DConst(this.c * that.c)
 }
 
-class IConst(override val c: Int) : Const<IConst>(c) {
+class IConst(override val c: Int) : Const<IConst, Int>(c) {
   override fun plus(that: IConst) = IConst(this.c + that.c)
   override fun times(that: IConst) = IConst(this.c * that.c)
 }
@@ -412,14 +427,14 @@ object Vrb : Fnc<Vrb>() {
   override operator fun times(that: Vrb): Vrb = Vrb
 }
 
-fun <T: Fnc<T>> plus(l: T, r: T) = l + r
+fun <T : Const<T, Y>, Y : Number> plusX(l: T, r: T) = l + r
 val plus = { l: Double, r: Double -> l + r }
-fun <T: Fnc<T>> times(l: T, r: T) = l * r
+fun <T : Const<T, Y>, Y : Number> timesX(l: T, r: T) = l * r
 val times = { l: Double, r: Double -> l * r }
-fun <T: Fnc<T>> first(l: T, r: T): T = l
+fun <T : Const<T, Y>, Y : Number> firstX(l: T, r: T): T = l
 val first = { l: Double, _: Double -> l }
 
-sealed class Proto<T: Fnc<T>> {
+sealed class Proto<T : Const<T, Q>, Q : Number> {
   abstract fun wrap(default: Number): T
 
   operator fun Number.times(multiplicand: Fnc<T>) = multiplicand * wrap(this)
@@ -427,21 +442,26 @@ sealed class Proto<T: Fnc<T>> {
 
   operator fun Number.plus(addend: Fnc<T>) = addend + wrap(this)
 //  operator fun Fnc<T>.plus(addend: Number) = wrap(addend) + this
-  
-  abstract val X: X
-  abstract val Y: Y
-  abstract val Z: Z
+
+  abstract val X: X<T, Q>
+  abstract val Y: Y<T, Q>
+  abstract val Z: Z<T, Q>
 }
 
-object DProto: Proto<DConst>() {
+typealias DCD = Const<DConst, Double>
+
+object DProto : Proto<DConst, Double>() {
   override fun wrap(default: Number): DConst = DConst(default.toDouble())
-  override val X: X = object: X(Vrb, Vrb, first) {
-    override fun invoke(X: Double): Double = X
+  override val X: X<DConst, Double> = object :
+    X<DConst, Double>(Vrb, Vrb, ::firstX) {
+    override fun invoke(X: DCD): DCD = X
   }
-  override val Y: Y = object: Y(Vrb, Vrb, first) {
-    override fun invoke(Y: Double): Double = Y
+  override val Y: Y<DConst, Double> = object :
+    Y<DConst, Double>(Vrb, Vrb, ::firstX) {
+    override fun invoke(Y: DCD): DCD = Y
   }
-  override val Z: Z = object: Z(Vrb, Vrb, first) {
-    override fun invoke(Z: Double): Double = Z
+  override val Z: Z<DConst, Double> = object :
+    Z<DConst, Double>(Vrb, Vrb, ::firstX) {
+    override fun invoke(Z: DCD): DCD = Z
   }
 }
