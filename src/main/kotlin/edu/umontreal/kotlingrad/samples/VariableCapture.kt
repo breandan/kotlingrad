@@ -12,8 +12,13 @@ fun main() {
     val partialApp3 = q(Z to 1.0)(X to 1.0, Y to 1.0)
     println(partialApp3) // Should be 4
 
-    val t = X + Z + Z
-    val l = t(X to 1.0)
+    val t = X + Z + Z + Y
+    val l = t(X to 1.0)(Z to 2.0)
+    val r = t(X to 1.0)(Z to 2.0)(Y to 3.0)
+
+    val o = X + Z
+    // val k = o(Y to 4) Does not compile
+
     val p = X + Y * Z
     val totalApp2 = p(X to 1.0, Y to 2.0, Z to 3.0)
     println(totalApp2) // Should be 7
