@@ -9,6 +9,9 @@ fun main() {
     println(partialApp) // Should be 4
     val partialApp2 = q(X to 1.0)(Y to 1.0, Z to 1.0)
     println(partialApp2) // Should be 4
+    val partialApp3 = q(Z to 1.0)(X to 1.0, Y to 1.0)
+    println(partialApp3) // Should be 4
+
     val t = X + Z + Z
     val l = t(X to 1.0)
     val p = X + Y * Z
