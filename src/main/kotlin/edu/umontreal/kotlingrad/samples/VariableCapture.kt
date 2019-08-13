@@ -124,7 +124,6 @@ open class XY<P : Const<P, in Number>>(val left: Fnc<*>,
                                        val right: Fnc<*>,
                                        val app: (P, P) -> P) : Fnc<XY<P>>() {
   constructor(f: Fnc<*>) : this(f, f, ::firstX)
-  constructor(c: Const<P, in Number>) : this(c, c, ::firstX)
 
   operator fun plus(that: X<P>): XY<P> = XY(this, that, ::plusX)
   operator fun plus(that: Y<P>): XY<P> = XY(this, that, ::plusX)
@@ -177,7 +176,6 @@ open class XZ<P : Const<P, in Number>>(val left: Fnc<*>,
                                        val right: Fnc<*>,
                                        val app: (P, P) -> P) : Fnc<XZ<P>>() {
   constructor(f: Fnc<*>) : this(f, f, ::firstX)
-  constructor(c: Const<P, in Number>) : this(c, c, ::firstX)
 
   operator fun plus(that: X<P>): XZ<P> = XZ(this, that, ::plusX)
   operator fun plus(that: Y<P>): XYZ<P> = XYZ(this, that, ::plusX)
@@ -231,7 +229,6 @@ open class YZ<P : Const<P, in Number>>(val left: Fnc<*>,
                                        val right: Fnc<*>,
                                        val app: (P, P) -> P) : Fnc<YZ<P>>() {
   constructor(f: Fnc<*>) : this(f, f, ::firstX)
-  constructor(c: Const<P, in Number>) : this(c, c, ::firstX)
 
   operator fun plus(that: X<P>): XYZ<P> = XYZ(this, that, ::plusX)
   operator fun plus(that: Z<P>): YZ<P> = YZ(this, that, ::plusX)
@@ -429,11 +426,8 @@ object Vrb : Fnc<Vrb>() {
 }
 
 fun <T : Const<T, Y>, Y : Number> plusX(l: T, r: T) = l + r
-val plus = { l: Double, r: Double -> l + r }
 fun <T : Const<T, Y>, Y : Number> timesX(l: T, r: T) = l * r
-val times = { l: Double, r: Double -> l * r }
 fun <T : Const<T, Y>, Y : Number> firstX(l: T, r: T): T = l
-val first = { l: Double, _: Double -> l }
 
 sealed class Proto<T : Const<T, in Number>> {
   abstract fun wrap(default: Number): T
@@ -449,8 +443,6 @@ sealed class Proto<T : Const<T, in Number>> {
   abstract val Z: Z<T>
 }
 
-typealias DCN = Const<DConst, in Number>
-
 object DProto : Proto<DConst>() {
   override fun wrap(default: Number): DConst = DConst(default.toDouble())
   override val X: X<DConst> = object : X<DConst>(Vrb, Vrb, ::firstX) {
@@ -462,12 +454,12 @@ object DProto : Proto<DConst>() {
   override val Z: Z<DConst> = object : Z<DConst>(Vrb, Vrb, ::firstX) {
     override fun invoke(Z: ZBnd<DConst>): Const<DConst, in Number> = Z.const
   }
-  
+
   infix fun X<DConst>.to(d: Double) = XBnd(DConst(d))
   infix fun Y<DConst>.to(d: Double) = YBnd(DConst(d))
   infix fun Z<DConst>.to(d: Double) = ZBnd(DConst(d))
 }
 
-class XBnd<T: Const<T, Number>>(val const: T)
-class YBnd<T: Const<T, Number>>(val const: T)
-class ZBnd<T: Const<T, Number>>(val const: T)
+class XBnd<T : Const<T, Number>>(val const: T)
+class YBnd<T : Const<T, Number>>(val const: T)
+class ZBnd<T : Const<T, Number>>(val const: T)
