@@ -17,7 +17,7 @@ fun main() {
     val r = t(X to 1.0)(Z to 2.0)(Y to 3.0)
 
     val o = X + Z
-    // val k = o(Y to 4) Does not compile
+    //val k = o(Y to 4.0) // Does not compile
 
     val p = X + Y * Z
     val totalApp2 = p(X to 1.0, Y to 2.0, Z to 3.0)
