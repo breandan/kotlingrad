@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.samples
 fun main() {
   with(DoubleContext) {
     val q = X + Y + Z + Y + 0.0
-    println(q) // Should print above expression
+    println("q = $q") // Should print above expression
     val totalApp = q(X to 1.0, Y to 2.0, Z to 3.0) // Name resolution
     println(totalApp) // Should be 8
     val partialApp = q(X to 1.0, Y to 1.0)(Z to 1.0) // Currying is possible
@@ -433,11 +433,10 @@ open class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
 abstract class BiFn<T: Const<T, Number>>(open val left: BiFn<*>? = null,
                                          open val right: BiFn<*>? = null,
                                          open val op: Op<*>? = null) {
-  val add: Add<T> = Add()
-  val mul: Mul<T> = Mul()
-  val first: First<T> = First()
+  val add: Add<T> by lazy{ Add() }
+  val mul: Mul<T> by lazy{ Mul() }
 
-  override fun toString() = "$left ${op ?: ""} $right"
+  override fun toString() = "$left $op $right"
 }
 
 abstract class Const<T: Const<T, Number>, Y: Number>(internal open val c: Y): BiFn<T>() {
@@ -487,14 +486,6 @@ sealed class Proto<T: Const<T, in Number>, Q: Number> {
   operator fun YZ<T>.plus(c: Q): YZ<T> = this + wrap(c)
   operator fun XYZ<T>.plus(c: Q): XYZ<T> = this + wrap(c)
 
-  operator fun Q.plus(c: X<T>): X<T> = c + wrap(this)
-  operator fun Q.plus(c: Y<T>): Y<T> = c + wrap(this)
-  operator fun Q.plus(c: Z<T>): Z<T> = c + wrap(this)
-  operator fun Q.plus(c: XY<T>): XY<T> = c + wrap(this)
-  operator fun Q.plus(c: XZ<T>): XZ<T> = c + wrap(this)
-  operator fun Q.plus(c: YZ<T>): YZ<T> = c + wrap(this)
-  operator fun Q.plus(c: XYZ<T>): XYZ<T> = c + wrap(this)
-
   operator fun X<T>.times(c: Q): X<T> = this * wrap(c)
   operator fun Y<T>.times(c: Q): Y<T> = this * wrap(c)
   operator fun Z<T>.times(c: Q): Z<T> = this * wrap(c)
@@ -502,6 +493,15 @@ sealed class Proto<T: Const<T, in Number>, Q: Number> {
   operator fun XZ<T>.times(c: Q): XZ<T> = this * wrap(c)
   operator fun YZ<T>.times(c: Q): YZ<T> = this * wrap(c)
   operator fun XYZ<T>.times(c: Q): XYZ<T> = this * wrap(c)
+
+  // TODO: Make these order-preserving to support non-commutative algebras
+  operator fun Q.plus(c: X<T>): X<T> = c + wrap(this)
+  operator fun Q.plus(c: Y<T>): Y<T> = c + wrap(this)
+  operator fun Q.plus(c: Z<T>): Z<T> = c + wrap(this)
+  operator fun Q.plus(c: XY<T>): XY<T> = c + wrap(this)
+  operator fun Q.plus(c: XZ<T>): XZ<T> = c + wrap(this)
+  operator fun Q.plus(c: YZ<T>): YZ<T> = c + wrap(this)
+  operator fun Q.plus(c: XYZ<T>): XYZ<T> = c + wrap(this)
 
   operator fun Q.times(c: X<T>): X<T> = c * wrap(this)
   operator fun Q.times(c: Y<T>): Y<T> = c * wrap(this)
