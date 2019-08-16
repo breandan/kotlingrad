@@ -132,9 +132,9 @@ open class Z<P: Const<P, in Number>>(override val left: BiFn<*>,
     }
 }
 
-open class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                      override val right: BiFn<*>,
-                                      override val op: Op<P>): BiFn<P>(left, right, op) {
+class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
+                                 override val right: BiFn<*>,
+                                 override val op: Op<P>): BiFn<P>(left, right, op) {
   constructor(f: BiFn<*>): this(f, f, First())
 
   operator fun plus(that: P): XY<P> = XY(this, that, add)
@@ -188,9 +188,9 @@ open class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(Y: YBnd<P>): X<P> = X(left(Y), right(Y), op)
 }
 
-open class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                      override val right: BiFn<*>,
-                                      override val op: Op<P>): BiFn<P>(left, right, op) {
+class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
+                                 override val right: BiFn<*>,
+                                 override val op: Op<P>): BiFn<P>(left, right, op) {
   constructor(f: BiFn<*>): this(f, f, First())
 
   operator fun plus(that: P): XZ<P> = XZ(this, that, add)
@@ -244,9 +244,9 @@ open class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(Z: ZBnd<P>): X<P> = X(left(Z), right(Z), op)
 }
 
-open class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                      override val right: BiFn<*>,
-                                      override val op: Op<P>): BiFn<P>(left, right, op) {
+class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
+                                 override val right: BiFn<*>,
+                                 override val op: Op<P>): BiFn<P>(left, right, op) {
   constructor(f: BiFn<*>): this(f, f, First())
 
   operator fun plus(that: P): YZ<P> = YZ(this, that, add)
@@ -301,9 +301,9 @@ open class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(Z: ZBnd<P>): Y<P> = Y(left(Z), right(Z), op)
 }
 
-open class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                       override val right: BiFn<*>,
-                                       override val op: Op<P>): BiFn<P>(left, right, op) {
+class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
+                                  override val right: BiFn<*>,
+                                  override val op: Op<P>): BiFn<P>(left, right, op) {
   operator fun plus(that: P): XYZ<P> = XYZ(this, that, add)
   operator fun times(that: P): XYZ<P> = XYZ(this, that, mul)
 
@@ -435,8 +435,8 @@ open class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
 abstract class BiFn<T: Const<T, Number>>(open val left: BiFn<*>? = null,
                                          open val right: BiFn<*>? = null,
                                          open val op: Op<*>? = null) {
-  val add: Add<T> by lazy{ Add() }
-  val mul: Mul<T> by lazy{ Mul() }
+  val add: Add<T> by lazy { Add() }
+  val mul: Mul<T> by lazy { Mul() }
 
   override fun toString() = "$left $op $right"
 }
