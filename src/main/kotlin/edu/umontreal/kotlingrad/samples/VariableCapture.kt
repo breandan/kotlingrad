@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package edu.umontreal.kotlingrad.samples
 
 fun main() {
@@ -471,6 +473,7 @@ class First<T: Const<T, in Number>>: Op<T>("") {
   override fun invoke(l: T, r: T): T = l
 }
 
+@Suppress("PropertyName")
 sealed class Proto<T: Const<T, in Number>, Q: Number> {
   abstract fun wrap(default: Number): T
 
