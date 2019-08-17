@@ -119,6 +119,8 @@ anchorcolor = blue]{hyperref}
 }
 
 \lstdefinelanguage{bnf}{
+    comment=[l]{//},
+    commentstyle={\color{gray}\ttfamily},
     basicstyle=\ttfamily,
     morestring=[s][\color{RoyalPurple}\bfseries]{"}{"},
     emphstyle={\color{ForestGreen}\bfseries},
@@ -802,15 +804,15 @@ Generally, we would like the ability to rename identifiers across files and lang
 
 One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsing as presented in most introductory programming textbooks, as these algorithms are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid or incomplete between keystrokes. As most IDEs are expected to recover from local errors and provide responsive feedback to users while editing source code, re-parsing the entire program between minor edits would be expensive and unnecessary. In order to analyze source code undergoing simultaneous modification and provide interactive feedback, special consideration must be taken to ensure robust and responsive parsing.
 
-Various techniques have been developed to improve the efficiency of modern parsers. Incremental parsing techniques like those first proposed in \citet{ghezzi1979incremental} and further developed by \citet{wagner1997practical,wagner1997incremental} seek to incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played a role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
+Various techniques have been developed to improve the responsiveness of modern parsers. Incremental parsing techniques like those first proposed in \citet{ghezzi1979incremental} and further developed by \citet{wagner1997practical,wagner1997incremental} seek to incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played a role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs, where incremental parsing, type-checking and error-recovery is so important, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for ROS \inline{.msg} files:
+The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs which are highly dependent on incremental parsing and error-tolerance, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files:
 %
 \begin{bnflisting}
 rosInterfaceFile ::= (property|COMMENT)*
 property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
-    pin=3
-    recoverWhile="recover_property"
+    pin=3 // Identifies an unambiguous delimiter or fallback point
+    recoverWhile="recover_property" // Error recovery predicate
     mixin="edu.umontreal.hatchery.psi.impl.RosMsgNamedElementImpl"
     implements="edu.umontreal.hatchery.psi.RosMsgNamedElement"
     methods=[getType getKey getValue getName setName getNameIdentifier]
@@ -818,7 +820,7 @@ property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
 %
-Grammar-Kit consumes this file, and generates Java source code for parsing ROS \inline{.msg} files. Generated sources can be manually edited to provide support for more advanced functionality such as more effective error-recovery, but for parsing relatively simple key-value configuration languages, such as those used by ROS \inline{.msg} and \inline{.srv} files, the PEG BNF grammar presented above is sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, package and launch XML files.
+Grammar-Kit consumes this file, and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more effective error-recovery, but for parsing regular languages, such as the kind of interface description languages found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, the PEG BNF grammar presented above is quite sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML files.
 
 \subsection{Running and debugging}
 
@@ -840,11 +842,11 @@ The process of compiling and running ROS applications often requires several ste
    roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
 \end{pclisting}
 %
-Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and flags toggle an internal model called the ``Run/Debug Configuration''. When the user manually triggers the run command, Hatchery's internal model is converted to a string representing the command to be executed and sent to a terminal emulator, which invokes the command and displays the corresponding output.
+Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and command line flags are written to an internal model called the ``Run/Debug Configuration''. When the user manually triggers the run command, Hatchery's internal model is converted to a string representing the command to be executed. This string is then sent to a terminal emulator, which invokes the command and displays the corresponding output.
 
 \subsection{User interface}
 
-An often overlooked, but important aspect of development tools is the user interface, as the primary mechanism which developers use to edit source code. In the early days of modern computing, the only way of getting information into or out of a computer required punching holes in paper. Later, computers were equipped with technology to emit the same binary pattern as pixels, which could be used to display a small alphabet called ASCII. Later, through increased density and frequency, computers were given the ability to render more sophisticated shapes and animations. This evolution is the direct result of advances in graphics technology, but can also be seen as progress in program representation, where the explicit source code was simply a medium for communicating developer intent and machine interpretation.
+An often overlooked, but important aspect of development tools is the user interface, being the primary mechanism which developers use to edit source code. In the early days of modern computing, the only way of getting information in or out of a computer involved punching holes in paper. Later, computers were equipped with technology to emit the same binary pattern as pixels, which could be used to display a small alphabet called ASCII. Later, through increased density and frequency, computers were given the ability to render more sophisticated shapes and animations. This evolution is the direct result of advances in graphics technology, but can also be seen as progress in program representation, where the medium was simply a protocol through which developers and machines could communicate.
 
 \begin{figure}
     \centering
@@ -853,7 +855,7 @@ An often overlooked, but important aspect of development tools is the user inter
     \label{fig:evolution_of_programming}
 \end{figure}
 
-ASCII is still the dominant medium for modern programming, although machines still use various forms of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many software frameworks provide a minimal command line interface (CLI) and some even provide sophisticated programming environments, these tools are still fairly restrictive. In the same way that early computer scientists probably did not invent new algorithms by imagining novel patterns of holes in paper, ASCII is also an indirect medium for expressing ideas, perhaps slightly less contrived. Modern languages allow users to express their ideas in a notation which is much more compact, familiar and easy to reason about its execution.
+ASCII is still the dominant medium for modern programming, although machines still use various forms of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many software frameworks provide a minimal command line interface (CLI) and some even provide sophisticated programming environments, these tools are still fairly restrictive. In the same way that early computer scientists probably did not invent new algorithms by imagining novel patterns of holes in paper, ASCII is also an indirect medium for expressing ideas, perhaps slightly less contrived. As hardware and software technology progressed, programming languages moved ``up the stack'', allowing their users to express ideas in a notation which was more familiar and easy to reason about its execution.
 
 \begin{figure}
     \centering
@@ -866,7 +868,7 @@ With the development of modern languages came programming tools which were capab
 
 More experimental UIs, such as those proposed in the model-driven engineering~\citep{famelis2015mummint} and projectional editing ~\citep{voelter2010language} literature, offer more flexible visual layouts. This uncoupling between the composition and representation of text raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a given programming task? And who is the intended audience? These are important questions to consider when designing a new programming tool.
 
-In Hatchery's case, we use a lightweight graphical user interface (GUI) on top of the program's textual representation. This interface primarily consists of simple visual cues for text highlighting, source code navigation and other menus and configuration panels for performing various tasks. The IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these design patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires some familiarity with the design language and careful integration with the target framework.
+In Hatchery's case, we use a lightweight graphical user interface (GUI) on top of the program's textual representation. This interface primarily consists of simple visual cues for text highlighting, source code navigation and other menus and configuration panels for performing various tasks. The IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these design patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires some familiarity with the design language and careful integration with the target framework (i.e. ROS).
 
 \begin{figure}[b]
     \centering
@@ -883,13 +885,27 @@ In Hatchery's case, we use a lightweight graphical user interface (GUI) on top o
 \end{figure}
 
 \section{Future work}
-
+We are currently working to expand support for the following features:
+%
+\begin{itemize}
+\item \textbf{Syntax support} -- Highlighting, navigation, autocompletion
+\item \textbf{Program analysis} -- Code inspections, intentions, and linting
+\item \textbf{Testing support} -- Unit and integration testing, code coverage
+\item \textbf{Project creation} -- Project setup and boilerplate code generation
+\item \textbf{Dependency management} -- Track installed and missing packages
+\item \textbf{Monitoring utils} -- Logging, diagnostics, profiling and visualization
+\item \textbf{Crash analytics} -- Enhanced stack traces with source navigation
+\item \textbf{Build automation} -- Delta rebuilds, cmake magic, code hotswap
+\item \textbf{ROS integration} -- Nodes, topics, services, parameters, graphs
+\item \textbf{Duckumentation} -- Usage instructions and supported features
+\end{itemize}
+%
 \begin{multicols}{2}
 \begin{todolist}
     \item[\done] ROS Launch (\inline{*.launch}, \inline{*.test})
         \item[\done] Syntax highlighting
         \item[\done] Resource references (\inline{\$(find <directory>)...})
-    \item[\done] ROS Package (\inline{package.xml})
+    \item[\done] \href{http://wiki.ros.org/Manifest}{Package manifest (\inline{package.xml})}
         \item[\done] Syntax highlighting
         \item[\done] Package references (\inline{<build\_depend>}, \inline{<test\_depend>}, \inline{<run\_depend>})
     \item[\done] ROS URDF (\inline{*.urdf.xacro})
@@ -897,9 +913,9 @@ In Hatchery's case, we use a lightweight graphical user interface (GUI) on top o
         \item[\done] Resource references (\inline{\$(find <directory>)...})
     \item[\done] ROS Bag (\inline{*.bag})
     \item Live logfile tracking
-    \item[\done] ROS Message (\inline{*.msg})
+    \item[\done] \href{http://wiki.ros.org/msg}{ROS Message (\inline{*.msg})}
     \item[\done] Syntax highlighting
-    \item[\done] ROS Service (\inline{*.srv})
+    \item[\done] \href{http://wiki.ros.org/srv}{ROS Service (\inline{*.srv})}
 
     %It also supports refactoring and navigation in the following file types through third party plugins:
     %
@@ -922,24 +938,24 @@ In Hatchery's case, we use a lightweight graphical user interface (GUI) on top o
     \item Integration with the Robot Operating System (ROS)
     \item[\done] ROS 1 support (\href{http://wiki.ros.org/kinetic}{Kinetic Kame} recommended)
     \item \href{https://github.com/ros2/ros2/wiki}{ROS 2} support
-    \item[\done] Gazebo simulator integration
-    \item C/C++ support with build automation
-    \item Remote debugging and testing support
+    \item[\done] \href{http://gazebosim.org/}{Gazebo} simulator integration
+    \item CMake build integration
+    \item Remote debugging support
     \item Docker integration
     \item[\done] Basic Docker support
     \item Remote host and script support
-    \item Docker hub namespace awareness
-    \item Support for platformio tooling
-    \item X11 forwarding and rqt support
-    \item Static analysis
+    \item Docker Hub namespace awareness
+    \item Support for \href{https://platformio.org}{platformio} tooling
+    \item X11 forwarding and \href{http://wiki.ros.org/rqt}{rqt} support
+    \item Static analysis for Python API misuse
     \item[\done] Invalid dependency detection
-    \item Validate Python/msg/srv compatibility
+    \item Validate \inline{.msg}/\inline{.srv} compatibility
     \item ROS nodes and graph analysis via \inline{rosdep}/\inline{rqt\_dep}
     \item \href{http://wiki.ros.org/rqt}{rqt} plugin support
     \item[\done] \href{http://wiki.ros.org/rqt_image_view}{\inline{rqt\_img\_view}} - View images
     \item[\done] \href{http://wiki.ros.org/rqt_plot}{\inline{rqt\_plot}} - Plot data visually
     \item[\done] \href{http://wiki.ros.org/rqt_graph}{\inline{rqt\_graph}} - Graph messages
-    \item[\done] \href{http://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}} - Visualize dependecies
+    \item[\done] \href{http://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}} - Visualize dependencies
     \item[\done] \href{http://wiki.ros.org/rqt_bag}{\inline{rqt\_bag}} - Replay and edit bag files
     \item \href{http://wiki.ros.org/rqt_common_plugins}{rqt\_common} - Other common plugins
     \item[\done] Detecting and managing ROS installations.
