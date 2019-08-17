@@ -42,6 +42,13 @@ anchorcolor = blue]{hyperref}
 \newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}}
 \newcommand{\xmark}{\textcolor{red}{\ding{55}}}
 
+\usepackage{multicol}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+
+
 \newcommand{\welldone}[1]{\textcolor{green}{#1}}
 \newcommand{\mediumwell}[1]{\textcolor{blue}{#1}}
 \newcommand{\medium}[1]{\textcolor{cyan}{#1}}
@@ -469,7 +476,7 @@ Category,Downloads
 Programming tools are computer programs which help humans program computers. Tools come in many forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this work, we focus on four tools that were designed to assist the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial testing. Fourth, we explore a container infrastructure based on the Docker platform, which enables the development reproducible robotics software. Finally, we present a brief case study on an application built with these four tools in mind.
 
 \chapter*{Acknowledgements}
-\vspace{-50pt} I would like to thank Mom, Gimmey, Mark, Dad for their love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming, Siyan Wang for many years of friendship and adventures, \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics, Uncle Andy for watering the seed, Aunt Shannon, and Adam Devoe, Jacquie Kirrane for encouraging me to pursue grad school, \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me how to think like a computer scientist and explaining algorithmic differentiation to me a long time ago, \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science, \href{http://blog.locut.us}{Ian Clarke} for teaching me how to write clean code, a clever new language called Kotlin and multi-armed bandits, \href{https://hadihariri.com/}{Hadi Hariri} for putting more faith than in me than I deserved, \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school, \href{https://github.com/rusi}{Rusi Hristov} for patiently teaching me Docker and bash. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for showing me the meaning of hard work and how to do good research. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for setting a high bar and architectural contributions. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} and \href{https://bhairavmehta95.github.io/}{Bhairav Mehta} for the interesting conversations and adventures. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} for blazing the AD trail, teaching me about Myia and lighting the path between ML and PL, \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal, \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller}, for providing many useful comments and feedback. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for giving a stranger a chance on a cold winter's eve, \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my long-winded emails, \href{https://censi.science/}{Andrea Censi} for his encouragement, (last but not least) my wonderful advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and assigning far more credit to me than was deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline.
+\vspace{-50pt} I would like to thank Mom, Gimmey, Mark, Dad for their love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming, Siyan Wang for many years of friendship and adventures, \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics, Uncle Andy for watering the seed, Aunt Shannon, and Adam Devoe, Jacquie Kirrane for encouraging me to pursue grad school, \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me how to think like a computer scientist and explaining algorithmic differentiation to me a long time ago, \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science, \href{http://blog.locut.us}{Ian Clarke} for teaching me how to write clean code, a clever new language called Kotlin and multi-armed bandits, \href{https://hadihariri.com/}{Hadi Hariri} for putting more faith than in me than I deserved, \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school, \href{https://github.com/rusi}{Rusi Hristov} for patiently teaching me Docker and bash. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for showing me the meaning of hard work and how to do good research. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for setting a high bar and architectural contributions. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} and \href{https://bhairavmehta95.github.io/}{Bhairav Mehta}, \href{http://www.solomatov.me/}{Konstantin Solomatov} for the interesting conversations. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} for blazing the AD trail, teaching me about Myia and lighting the path between ML and PL, \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal, \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller}, for providing many useful comments and feedback. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for giving a stranger a chance on a cold winter's eve, \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my long-winded emails, \href{https://censi.science/}{Andrea Censi} for his encouragement, (last but not least) my wonderful advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and assigning far more credit to me than was deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline.
 
 %%------------------------------------------------- %
 %%        page v --- Table de matieres              %
@@ -559,9 +566,9 @@ Towards that goal, we developed an IDE for the Robot Operating System (ROS) call
 
 \section{Implementation: Languages and compilers}
 
-In the early days of machine learning, it was widely believed that human-level intelligence would emerge from a sufficiently descriptive first-order logic. By accumulating a database of facts and their relations, researchers believed they could use symbolic reasoning to bypass learning altogether. This rule-based approach dominated a large portion of early research in artificial intelligence and considerable effort was poured into the creation of domain-specific ontologies to capture human knowledge. Despite the best efforts of roboticists, signal processing engineers and natural language researchers, \textit{expert systems} were unable to scale to real-world applications, causing a great disillusionment in artificial intelligence research for a number of decades. While computer scientists underestimated the difficulty of \text{learning}, expert systems excelled in areas where current machine learning systems struggle such as classical reasoning and interpretability, and there is growing evidence to suggest many of these ideas were simply ahead of their time. In our work, we take inspiration from some early work in symbolic reasoning, type systems and functional programming.
+In the early days of machine learning, it was widely believed that human-level intelligence would emerge from a sufficiently descriptive first-order logic. By accumulating a database of facts and their relations, researchers believed they could use symbolic reasoning to bypass learning altogether. This rule-based approach dominated a large portion of early research in artificial intelligence and considerable effort was poured into the creation of domain-specific ontologies to capture human knowledge. Despite the best efforts of roboticists, signal processing engineers and natural language researchers, \textit{expert systems} were unable to scale to real-world applications, causing a great disillusionment in artificial intelligence research for several decades. While computer scientists underestimated the difficulty of \text{learning}, expert systems excelled in areas where current machine learning systems struggle such as classical reasoning and interpretability, and there is growing evidence to suggest many of these ideas were simply ahead of their time. In our work, we take inspiration from some early work in symbolic reasoning, type systems and functional programming.
 
-What was finally shown to scale, is the idea of connectionist learning. By nesting random function approximators, called perceptrons, and updating the free parameters using backpropagation~\citep{werbos1990backpropagation, rumelhart1988learning}, the resulting system is capable of learning a surprising amount of intelligent behavior. The approach, termed artificial neural networks (ANNs), can be traced back to the mid-20th century~\citep{ivakhnenko1965cybernetic, rosenblatt1958perceptron}, but was not fully-realized in silico until after the widespread availability of cheap computing and large datasets~\citep{lecun2015deep}. In theory, a single layer of nesting is able to approximate any continuous differentiable function~\citep{hornik1989multilayer}, but in practice, learning requires composing many such approximators in a deeply nested fashion, hence the term, \textit{deep neural networks} (DNNs). The importance of depth was suspected for many years, but the original backpropagation algorithm had difficulty training DNNs due to the vanishing gradient problem~\citep{bengio1994learning}. Solving this problem required a number of adaptations and many years to fully debug. It was not until 2013 when deep learning was competitive with humans in a number of domains.
+What was finally shown to scale, is the idea of connectionist learning. By nesting random function approximators, called perceptrons, and updating the free parameters using backpropagation~\citep{werbos1990backpropagation, rumelhart1988learning}, the resulting system is capable of learning a surprising amount of intelligent behavior. The approach, termed artificial neural networks (ANNs), can be traced back to the mid-20th century~\citep{ivakhnenko1965cybernetic, rosenblatt1958perceptron}, but was not fully-realized in silico until after the widespread availability of cheap computing and large datasets~\citep{lecun2015deep}. In theory, a single layer of nesting is able to approximate any continuous differentiable function~\citep{hornik1989multilayer}, but in practice, learning requires composing many such approximators in a deeply nested fashion, hence the term, \textit{deep neural networks} (DNNs). The importance of depth was suspected for many years, but the original backpropagation algorithm had difficulty training DNNs due to the vanishing gradient problem~\citep{bengio1994learning}. Solving this problem required a number of adaptations and many years to fully debug. It was not until 2013 when deep learning was competitive with humans in specific domains.
 
 While it took fundamental research in deep learning to realize the connectionist blueprint, the success of modern deep learning can be partly attributed to software tools for calculating mathematical derivatives, a key step in the backpropagation algorithm. Although it has yet not been established if or how derivatives might be calculated in biological circuits, derivatives are essential for ANN training. For many years, the symbolic form of these derivatives were analytically derived when prototyping a new neural network architecture, a tedious and error-prone process. There is a well-known algorithm in the scientific computing community dating back to the 1970s, called \textit{automatic differentiation} (AD)~\citep{linnainmaa1970representation, griewank1989automatic}, which is able to calculate derivatives for arbitrary differentiable functions. But surprisingly, it was not until much later, after the development of Theano~\citep{theano} when AD became widely adopted in the machine learning community. This library alone greatly accelerated the pace of deep learning research and spurred the development of others like TensorFlow~\citep{abadi2016tensorflow} and PyTorch~\citep{paszke2017automatic}.
 
@@ -616,7 +623,7 @@ Throughout this thesis, the following iconography is used to denote: \\
 \item[] \inlineimg{kotlin_file.png}  &  Kotlin source code~\footnote{Kotlin documentation: \url{https://kotlinlang.org/docs/reference/}}.
 \end{enumerate}
 
-\medium{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
+\mediumwell{\chapter{Design: Programming tools for robotics}\label{ch:hatchery}}
 \setlength{\epigraphwidth}{0.78\textwidth}
 \epigraph{``The hope is that, in not too many years, human brains and computing machines will be coupled together very tightly, and that the resulting partnership will think as no human brain has ever thought and process data in a way not approached by the information-handling machines we know today.''}{\begin{flushright}--J.C.R. \citet{licklider1960man}, \textit{Man-Computer Symbiosis}\end{flushright}}
 
@@ -670,7 +677,7 @@ The ROS middleware provides several language front-ends for polyglot programming
 \caption{A typical ROS application contains a large graph of dependencies.}
 \end{figure}
 
-A typical ROS project has several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, a number of steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.\footnote{Detailed installation instructions may be found here: \url{http://wiki.ros.org/ROS/Installation}}
+A typical ROS project has several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, several steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.\footnote{Detailed installation instructions may be found here: \url{http://wiki.ros.org/ROS/Installation}}
 %
 Assuming ROS has been installed to the default location, it can be sourced like so:
 %
@@ -738,12 +745,12 @@ Notice how the typographical error is printed in red and the valid file referenc
 \noindent To simply run the tool, users should have the following software dependencies:
 %
 \begin{enumerate}
-    \item MacOS or Debian Linux
+    \item MacOS or Debian-based Linux distribution
     \item Robot Operating System (Electric Emys or later)
-    \item Java SE (JRE 8+)
+    \item Java SE (JRE 8+) or CLion/PyCharm 2019.1+
 \end{enumerate}
 %
-\noindent ROS users can use the following command to open a ROS project:
+\noindent ROS users can use the following command to open an existing ROS project:
 %
 \begin{pclisting}
 ~$ git clone https://github.com/duckietown/hatchery && cd hatchery && \
@@ -756,11 +763,7 @@ Notice how the typographical error is printed in red and the valid file referenc
 dt> hatchery
 \end{dtslisting}
 %
-\noindent Hatchery can also be installed directly from inside the CLion or PyCharm IDEs, via:\\
-%
-\begin{centering}
-\menu{File > Settings > Plugins > Marketplace > {\faSearch ``Hatchery''}}
-\end{centering}
+\noindent Hatchery can also be installed directly from inside the CLion or PyCharm IDEs, via the following menu options: \menu{File > Settings > Plugins > Marketplace > {\faSearch ``Hatchery''}}
 
 \section{Plugin development}
 
@@ -793,16 +796,16 @@ def callback((*\cfbox{red}{data}*)):
     rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{data}*).data)
 \end{pythonlisting}
 %
-Generally, we would like the ability to rename identifiers across files and languages. To do so, we need a richer understanding of code that transcends text: we need a parser.
+Generally, we would like the ability to rename identifiers across files and languages. To do so, we need a richer understanding of code that transcends text -- we need a parser.
 
 \subsection{The Parser}\label{subsec:the-parser}
 
-One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not employ recursive descent or shift-reduce parsing as presented in most introductory programming textbooks, as these algorithms are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid or incomplete between keystrokes. As most IDEs are expected to recover from local errors and provide responsive feedback to users while editing source code, re-parsing the entire program between minor edits would be expensive and unnecessary. In order to reason about source code undergoing simultaneous modification and provide interactive feedback, special consideration must be taken to ensure robust and responsive parsing.
+One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsing as presented in most introductory programming textbooks, as these algorithms are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid or incomplete between keystrokes. As most IDEs are expected to recover from local errors and provide responsive feedback to users while editing source code, re-parsing the entire program between minor edits would be expensive and unnecessary. In order to analyze source code undergoing simultaneous modification and provide interactive feedback, special consideration must be taken to ensure robust and responsive parsing.
 
-Various techniques have been developed to improve the efficiency of modern parsers. Incremental parsing techniques like those first proposed in \citet{ghezzi1979} and further developed by \citet{wagner1997practical,wagner1997incremental} seek to incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Equally important, is the notion of error recovery. Fuzzy parsing techniques such as those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played a key role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
+Various techniques have been developed to improve the efficiency of modern parsers. Incremental parsing techniques like those first proposed in \citet{ghezzi1979incremental} and further developed by \citet{wagner1997practical,wagner1997incremental} seek to incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played a role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs, where incremental parsing, type-checking and error-recovery is so important, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}. This grammar is translated to a program structure interface (PSI), the IntelliJ Platform's internal abstract syntax tree (AST). Here is an excerpt of a grammar for ROS \inline{.msg} files:
-
+The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs, where incremental parsing, type-checking and error-recovery is so important, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for ROS \inline{.msg} files:
+%
 \begin{bnflisting}
 rosInterfaceFile ::= (property|COMMENT)*
 property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
@@ -814,8 +817,8 @@ property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
 }
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
-
-Grammar-Kit consumes this file, and generates source code for parsing ROS \inline{.msg} files. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, package and launch XML, and \inline{.msg}/\inline{.srv} files.
+%
+Grammar-Kit consumes this file, and generates Java source code for parsing ROS \inline{.msg} files. Generated sources can be manually edited to provide support for more advanced functionality such as more effective error-recovery, but for parsing relatively simple key-value configuration languages, such as those used by ROS \inline{.msg} and \inline{.srv} files, the PEG BNF grammar presented above is sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, package and launch XML files.
 
 \subsection{Running and debugging}
 
@@ -826,7 +829,7 @@ Grammar-Kit consumes this file, and generates source code for parsing ROS \inlin
     \label{fig:ros_run_config}
 \end{figure}
 
-ROS programs take a number of steps to compile and run. The follow steps are typical:
+The process of compiling and running ROS applications often requires several steps, ex.:
 %
 \begin{pclisting}
 ~$ . /opt/ros/<DISTRO>/setup.[ba]sh &&
@@ -837,7 +840,7 @@ ROS programs take a number of steps to compile and run. The follow steps are typ
    roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
 \end{pclisting}
 %
-Hatchery provides assistance for these steps by providing a GUI for configuring, building and running ROS applications. Effectively it serves as a wrapper for the ROS command line interface.
+Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and flags toggle an internal model called the ``Run/Debug Configuration''. When the user manually triggers the run command, Hatchery's internal model is converted to a string representing the command to be executed and sent to a terminal emulator, which invokes the command and displays the corresponding output.
 
 \subsection{User interface}
 
@@ -850,7 +853,7 @@ An often overlooked, but important aspect of development tools is the user inter
     \label{fig:evolution_of_programming}
 \end{figure}
 
-ASCII is still the dominant medium for modern programming, although machines still use various forms of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many software frameworks provide a minimal command line interface (CLI) and some even provide sophisticated programming environments, these tools are still fairly restrictive. In the same way that early computer scientists probably did not invent new algorithms by imagining novel patterns of holes in paper, ASCII is also an indirect medium for expressing ideas, perhaps slightly less contrived. Modern languages allow users to express their ideas in a notation which is much more compact, familiar and easy to reason its execution.
+ASCII is still the dominant medium for modern programming, although machines still use various forms of low level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many software frameworks provide a minimal command line interface (CLI) and some even provide sophisticated programming environments, these tools are still fairly restrictive. In the same way that early computer scientists probably did not invent new algorithms by imagining novel patterns of holes in paper, ASCII is also an indirect medium for expressing ideas, perhaps slightly less contrived. Modern languages allow users to express their ideas in a notation which is much more compact, familiar and easy to reason about its execution.
 
 \begin{figure}
     \centering
@@ -881,7 +884,68 @@ In Hatchery's case, we use a lightweight graphical user interface (GUI) on top o
 
 \section{Future work}
 
-Detecting and managing ROS installations.
+\begin{multicols}{2}
+\begin{todolist}
+    \item[\done] ROS Launch (\inline{*.launch}, \inline{*.test})
+        \item[\done] Syntax highlighting
+        \item[\done] Resource references (\inline{\$(find <directory>)...})
+    \item[\done] ROS Package (\inline{package.xml})
+        \item[\done] Syntax highlighting
+        \item[\done] Package references (\inline{<build\_depend>}, \inline{<test\_depend>}, \inline{<run\_depend>})
+    \item[\done] ROS URDF (\inline{*.urdf.xacro})
+        \item[\done] Syntax highlighting
+        \item[\done] Resource references (\inline{\$(find <directory>)...})
+    \item[\done] ROS Bag (\inline{*.bag})
+    \item Live logfile tracking
+    \item[\done] ROS Message (\inline{*.msg})
+    \item[\done] Syntax highlighting
+    \item[\done] ROS Service (\inline{*.srv})
+
+    %It also supports refactoring and navigation in the following file types through third party plugins:
+    %
+    %* XML
+    %* Python
+    %* YAML
+    %* CMake
+    %* Bash
+
+    \item[\done] Implement preliminary project structure and XML support
+    \item[\done] Write an MVP/POC app that supports file renaming and refactoring
+    \item[\done] Add support for project templates and skeleton project creation
+    \item[\done] Add support for deploying a project from the local machine to the remote
+    \item Add support for monitoring and tracking running code, viewing logs
+    \item Save to local disk
+    \item Searching the log
+    \item Collect crash dumps and link to the corresponding code points
+    \item Link stack traces to source code
+    \item Copy environment info and crash dump to clipboard
+    \item Integration with the Robot Operating System (ROS)
+    \item[\done] ROS 1 support (\href{http://wiki.ros.org/kinetic}{Kinetic Kame} recommended)
+    \item \href{https://github.com/ros2/ros2/wiki}{ROS 2} support
+    \item[\done] Gazebo simulator integration
+    \item C/C++ support with build automation
+    \item Remote debugging and testing support
+    \item Docker integration
+    \item[\done] Basic Docker support
+    \item Remote host and script support
+    \item Docker hub namespace awareness
+    \item Support for platformio tooling
+    \item X11 forwarding and rqt support
+    \item Static analysis
+    \item[\done] Invalid dependency detection
+    \item Validate Python/msg/srv compatibility
+    \item ROS nodes and graph analysis via \inline{rosdep}/\inline{rqt\_dep}
+    \item \href{http://wiki.ros.org/rqt}{rqt} plugin support
+    \item[\done] \href{http://wiki.ros.org/rqt_image_view}{\inline{rqt\_img\_view}} - View images
+    \item[\done] \href{http://wiki.ros.org/rqt_plot}{\inline{rqt\_plot}} - Plot data visually
+    \item[\done] \href{http://wiki.ros.org/rqt_graph}{\inline{rqt\_graph}} - Graph messages
+    \item[\done] \href{http://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}} - Visualize dependecies
+    \item[\done] \href{http://wiki.ros.org/rqt_bag}{\inline{rqt\_bag}} - Replay and edit bag files
+    \item \href{http://wiki.ros.org/rqt_common_plugins}{rqt\_common} - Other common plugins
+    \item[\done] Detecting and managing ROS installations.
+\end{todolist}
+\end{multicols}
+
 
 \welldone{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
@@ -1468,7 +1532,7 @@ Multiple dispatch allows us to put all related control flow on a single abstract
 
 \section{Extension Functions}\label{sec:extension-functions}
 
-Extension functions augment external classes with new fields and methods. By using context oriented programming~\citep{hirschfeld2008context}, we can expose custom extensions (e.g.\ through \inline{DoubleContext}) to consumers without requiring subclassing or inheritance.
+Extension functions augment external classes with new fields and methods. By using context-oriented programming~\citep{hirschfeld2008context}, we can expose custom extensions (e.g.\ through \inline{DoubleContext}) to consumers without requiring subclassing or inheritance.
 %
 \begin{kotlinlisting}[caption={We can provide numerical extensions, wrapped in a context.}]
 object DoubleContext {
@@ -1482,7 +1546,7 @@ Now, we can use the context to define another extension, \inline{Fun.multiplyByT
 fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{kotlinlisting}
 %
-Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\citep{nozik2019acat}, another mathematical library for Kotlin. This approach is also suitable for defining convenience methods and type converters for variable assignment and invocation.
+Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\citep{nozik2019acat}, another mathematical library for Kotlin. This approach is also suitable for defining convenience methods for variable assignment and invocation and type adapters in a context sensitive manner.
 %
 \begin{kotlinlisting}
 object DoubleContext: Proto<DConst, Double>() {
@@ -1503,14 +1567,14 @@ object DoubleContext: Proto<DConst, Double>() {
 \end{kotlinlisting}
 %
 Which can be used as follows:
-
+%
 \begin{kotlinlisting}
 with(DoubleContext) {
     val t = X + Y + 0.0
     val l = t(X to 1.0, Y to 2.0)
     val r = t(X to 1.0)(Y to 3.0) // Currying
-
     val o = X + 0.0
+    val p = o(X to 1.0)
     //val k = o(Y to 4.0) // Does not compile
 }
 \end{kotlinlisting}
@@ -1561,15 +1625,15 @@ Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xma
 \vspace{40pt}\setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``It is well known that the central problem of the whole of modern mathematics is the study of the transcendental functions defined by differential equations.''}{\begin{flushright}--Felix \citet{klein1893lectures}, \textit{Lectures on mathematics}\end{flushright}}
 
-The derivative, as it is commonly known today, is usually associated with the calculus of infinitesimals. But the same derivative introduced by Leibniz and Newton over three centuries ago is starting to reappear in strange and marvelous places throughout mathematics and computer science. In \citet{brzozowski1964derivatives}, we are shown the rules of derivation can be applied to regular expressions -- one of the early modern applications of derivatives in a classically non-differentiable setting. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and parsing \citep{might2011parsing, moss2014derivatives}. The boolean differential calculus introduced by \citet{thayse1981boolean} has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. The notion of symbolic differentiation has also arisen in lambda calculus~\citep{ehrhard2003differential}, yielding applications in automatic differentiation~\citep{kelly2016evolving}, incremental computation~\citep{cai2014theory, alvarezpicallo2019fixing}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
+The derivative, as it is commonly known today, is usually associated with the calculus of infinitesimals. But the same derivative introduced by Leibniz and Newton over three centuries ago is starting to reappear in strange and marvelous places throughout mathematics and computer science. In \citet{brzozowski1964derivatives}, we are shown the rules of derivation can be applied to regular expressions -- one of the early modern applications of derivatives in a classically non-differentiable setting. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and parsing \citep{might2011parsing, moss2014derivatives}. The boolean differential calculus introduced by \citet{thayse1981boolean} has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. The notion of symbolic differentiation has also arisen in lambda calculus~\citep{ehrhard2003differential}, yielding applications in automatic differentiation~\citep{kelly2016evolving}, incremental computation~\citep{cai2014theory, alvarezpicallo2019fixing}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential, blute2009cartesian}, domain theory~\citep{edalat2002domain}, probability theory~\citep{kac1951probability} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
 
-Many more examples of symbolic differentiation exist in various domains. This pattern is unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for representation learning and differentiable programming.
+Many more examples of symbolic differentiation exist in various forms. This pattern is unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for representation learning and differentiable programming.
 
 The work described in this chapter establishes a framework for exploring symbolic differentiation using general algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). While our implementation of automatic differentiation uses the traditional infinitesimal calculus on vector fields, in future work, we would like to explore the relationship between differentiable programming and the meaning of symbolic differentiation in other calculi. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces. If so, this would allow us to learn the manifold of classically non-differentiable data types such as boolean variables and other discrete structures like graphs and trees.
 
 As shown in prior literature~\citep{theano, baydin-survey, laue2019equivalence}, intermediate expression expression swell is a issue with many forms of computer algebra and automatic differentiation. The ad-hoc rules for algebraic simplifications described in ~\autoref{sec:multiple-dispatch} are almost certainly insufficient for general use cases. One interesting project would be to learn algorithms which lessen the impact of expression swell on numerical drift, by applying general purpose simplifications to improve wall clock runtime and precision required for accurate numerical approximation. There exists some prior work including \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} which explores versions of this problem.
 
-Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allows us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices). Furthermore, it would be interesting to explore an approach like \citet{makwana2018numlin} for a type-system encoding of linear algebra.
+Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allow us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices). Furthermore, it would be interesting to explore an approach like \citet{makwana2018numlin} for a type-system encoding of linear algebra.
 
 From a performance perspective, it would be advantageous to integrate with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}.
 
@@ -2246,7 +2310,7 @@ Docker's filesystem is additive, so each layer will only increase the size of th
 RUN apt-get update && apt-get install ... && (*\hl{rm -rf /var/lib/apt/lists/*}*)
 \end{dockerlisting}
 %
-This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often take several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
+This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often consume several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
 
 \begin{dockerlisting}
 FROM user/duck:v3 as template1
