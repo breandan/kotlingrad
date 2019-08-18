@@ -10,14 +10,10 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{amsmath}
+%\usepackage{rail}
 
 
 \usepackage{natbib}
-\usepackage[colorlinks = true,
-linkcolor = blue,
-urlcolor  = blue,
-citecolor = blue,
-anchorcolor = blue]{hyperref}
 
 \usepackage{enumitem}
 \usepackage{graphicx}
@@ -396,7 +392,6 @@ Category,Downloads
 \usepackage[labelfont=bf, width=\linewidth]{caption}
 
 \def\chapterautorefname{Chapter}
-\hypersetup{colorlinks=true,allcolors=black}
 \usepackage{hypcap}
 \usepackage{bookmark}
 
@@ -414,6 +409,7 @@ Category,Downloads
 
 \renewcommand{\baselinestretch}{1.5}
 
+\AtBeginDocument{\hypersetup{pdfborderstyle={/S/S/W 1}}}
 \begin{document}
 
 \version{1}
@@ -475,7 +471,7 @@ Category,Downloads
 
 \chapter*{Summary}
 
-Programming tools are computer programs which help humans program computers. Tools come in many forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this work, we focus on four tools that were designed to assist the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial testing. Fourth, we explore a container infrastructure based on the Docker platform, which enables the development reproducible robotics software. Finally, we present a brief case study on an application built with these four tools in mind.
+Programming tools are computer programs which help humans program computers. Tools come in many forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this work, we focus on four tools that were designed to assist the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe Kotlin$\nabla$, a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial testing. Fourth, we explore a container infrastructure based on the Docker platform, which enables the development reproducible robotics software. Finally, we present a brief case study on an application built with these four tools in mind.
 
 \chapter*{Acknowledgements}
 \vspace{-50pt} I would like to thank Mom, Gimmey, Mark, Dad for their love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming, Siyan Wang for many years of friendship and adventures, \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics, Uncle Andy for watering the seed, Aunt Shannon, and Adam Devoe, Jacquie Kirrane for encouraging me to pursue grad school, \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me how to think like a computer scientist and explaining algorithmic differentiation to me a long time ago, \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science, \href{http://blog.locut.us}{Ian Clarke} for teaching me how to write clean code, a clever new language called Kotlin and multi-armed bandits, \href{https://hadihariri.com/}{Hadi Hariri} for putting more faith than in me than I deserved, \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school, \href{https://github.com/rusi}{Rusi Hristov} for patiently teaching me Docker and bash. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for showing me the meaning of hard work and how to do good research. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for setting a high bar and architectural contributions. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} and \href{https://bhairavmehta95.github.io/}{Bhairav Mehta}, \href{http://www.solomatov.me/}{Konstantin Solomatov} for the interesting conversations. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} for blazing the AD trail, teaching me about Myia and lighting the path between ML and PL, \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal, \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller}, for providing many useful comments and feedback. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for giving a stranger a chance on a cold winter's eve, \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my long-winded emails, \href{https://censi.science/}{Andrea Censi} for his encouragement, (last but not least) my wonderful advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and assigning far more credit to me than was deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline.
@@ -533,7 +529,7 @@ Broadly speaking, intelligent systems differ from ordinary software systems in t
 %
 While the idea of intelligent systems has existed for decades, three critical developments made modern intelligent systems ultimately successful. First, computer processing power has become faster, cheaper, and much more readily available. Similarly, the digitalization of new datasets has made vast amounts of information available, and data storage costs have plummeted dramatically. (A \$5 thumb drive today has 200 times more storage capacity than a 2,000 pound, 5 MB, IBM hard drive that leased for \$3,000 per month in 1956.) Most importantly, has been the development of more efficient learning algorithms.
 
-In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\citep{theano}, Torch~\citep{collobert2002torch} and Caffe~\citep{jia2014caffe}, and built many popular simulators for reinforcement learning. The ease of use and availability of these tools was crucial for popularizing deep learning techniques.
+In recent years, computer science and software engineering has made significant strides in building and deploying intelligent systems. Nearly every mobile computer in the world is able to detect objects in images, perform speech-to-text and language translation. These breakthroughs were the direct result of fundamental progress in neural networks and representation learning. Also key to the success of modern intelligent systems was the adoption of collaborative open source practices, pioneered by the software engineering community. Software engineers developed automatic differentiation libraries like Theano~\citep{bergstra2010theano}, Torch~\citep{collobert2002torch} and Caffe~\citep{jia2014caffe}, and built many popular simulators for reinforcement learning. The ease of use and availability of these tools was crucial for popularizing deep learning techniques.
 
 Intelligent systems are widely deployed in virtual settings like data science and cloud services. But even with the tremendous success of machine learning algorithms in fully-observable domains like image recognition and speech processing, intelligent systems have yet to be widely adopted in robotics (at the time of writing this thesis). This dilemma can be partly attributed to various theoretical problems such as domain adaption and transfer learning. Yet with the proven capabilities of modern learning algorithms, exponential increase in processing power, and decades-long effort in building physically-embodied intelligent agents, we should have more progress to show. Why has this goal evaded researchers for so long? One reason, we conjecture, is a lack of programming tools and abstractions for designing, developing, deploying and evaluating intelligent systems. In practice, these activities consume a large amount of cognitive effort without the right set of tools and abstractions.
 
@@ -572,13 +568,13 @@ In the early days of machine learning, it was widely believed that human-level i
 
 What was finally shown to scale, is the idea of connectionist learning. By nesting random function approximators, called perceptrons, and updating the free parameters using backpropagation~\citep{werbos1990backpropagation, rumelhart1988learning}, the resulting system is capable of learning a surprising amount of intelligent behavior. The approach, termed artificial neural networks (ANNs), can be traced back to the mid-20th century~\citep{ivakhnenko1965cybernetic, rosenblatt1958perceptron}, but was not fully-realized in silico until after the widespread availability of cheap computing and large datasets~\citep{lecun2015deep}. In theory, a single layer of nesting is able to approximate any continuous differentiable function~\citep{hornik1989multilayer}, but in practice, learning requires composing many such approximators in a deeply nested fashion, hence the term, \textit{deep neural networks} (DNNs). The importance of depth was suspected for many years, but the original backpropagation algorithm had difficulty training DNNs due to the vanishing gradient problem~\citep{bengio1994learning}. Solving this problem required a number of adaptations and many years to fully debug. It was not until 2013 when deep learning was competitive with humans in specific domains.
 
-While it took fundamental research in deep learning to realize the connectionist blueprint, the success of modern deep learning can be partly attributed to software tools for calculating mathematical derivatives, a key step in the backpropagation algorithm. Although it has yet not been established if or how derivatives might be calculated in biological circuits, derivatives are essential for ANN training. For many years, the symbolic form of these derivatives were analytically derived when prototyping a new neural network architecture, a tedious and error-prone process. There is a well-known algorithm in the scientific computing community dating back to the 1970s, called \textit{automatic differentiation} (AD)~\citep{linnainmaa1970representation, griewank1989automatic}, which is able to calculate derivatives for arbitrary differentiable functions. But surprisingly, it was not until much later, after the development of Theano~\citep{theano} when AD became widely adopted in the machine learning community. This library alone greatly accelerated the pace of deep learning research and spurred the development of others like TensorFlow~\citep{abadi2016tensorflow} and PyTorch~\citep{paszke2017automatic}.
+While it took fundamental research in deep learning to realize the connectionist blueprint, the success of modern deep learning can be partly attributed to software tools for calculating mathematical derivatives, a key step in the backpropagation algorithm. Although it has yet not been established if or how derivatives might be calculated in biological circuits, derivatives are essential for ANN training. For many years, the symbolic form of these derivatives were analytically derived when prototyping a new neural network architecture, a tedious and error-prone process. There is a well-known algorithm in the scientific computing community dating back to the 1970s, called \textit{automatic differentiation} (AD)~\citep{linnainmaa1970representation, griewank1989automatic}, which is able to calculate derivatives for arbitrary differentiable functions. But surprisingly, it was not until much later, after the development of Theano~\citep{bergstra2010theano} when AD became widely adopted in the machine learning community. This library alone greatly accelerated the pace of deep learning research and spurred the development of others like TensorFlow~\citep{abadi2016tensorflow} and PyTorch~\citep{paszke2017automatic}.
 
 Intelligent systems engineers must think carefully about languages and abstractions. If developers are required to implement backpropogation by hand, they will have scarce time to think about the high-level characteristics of these systems. Similarly, if programming abstractions are too specific, small variations will require costly reimplementation. This is no different from traditional software engineering -- as engineers, we need to choose the right abstractions for the task at hand. Too low-level and the design is lost in the details -- too abstract and the details are lost completely. With deep learning, the necessity of choosing good abstractions is even more important, as the relationship of between source code and runtime behavior is already difficult to debug, due to the complexity of neural networks and array programming. One component of that complexity can be found in the type system.
 
 The majority of existing AD frameworks for machine learning are implemented in dynamically typed languages like Python, Lua and JavaScript, with some early implementations including projects like Theano, Torch and Caffe. Similar ideas have arisen in statically-typed, functional languages, such as Haskell (Stalin$\nabla$~\citet{pearlmutter2008using}), Scala (Nexus~\citet{chen2017typesafe}), F\# (DiffSharp~\citet{baydin-diffsharp}), Swift~\citep{swift}, et al., but most of these are unable to check the shape of multidimensional arrays in their type system, and those which do are typically implemented in experimental languages with sophisticated type-level programming features. In our work, we demonstrate the viability of shape-checked differentiable programming in a widely-used language with parametric types. This ensures that programs on matrices, if they compile, are the correct shape and can be numerically evaluated at runtime.
 
-Kotlin$\nabla$ is an embedded domain-specific language (eDSL) for differentiable programming in a language called Kotlin, a statically-typed programming language with support for asynchronous programming and multi-platform compilation. In Kotlin$\nabla$ (\autoref{ch:kotlingrad}), we describe an algebraically-grounded implementation of forward-mode automatic differentiation with shape-safe tensor operations. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use.
+\href{https://github.com/breandan/kotlingrad/}{Kotlin$\nabla$} is an embedded domain-specific language (eDSL) for differentiable programming in a language called \href{https://kotlinlang.org}{Kotlin}, a statically-typed programming language with support for asynchronous programming and multi-platform compilation. In Kotlin$\nabla$ (\autoref{ch:kotlingrad}), we describe an algebraically-grounded implementation of forward-mode automatic differentiation with shape-safe tensor operations. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use.
 
 \section{Testing and validation}
 
@@ -600,9 +596,9 @@ Applied machine learning shares many of the same practical challenges as traditi
 
 Hardware manufacturers have developed a variety of custom silicon to train and run these programs rapidly. But unlike most programming, deep learning is a much simpler model of computation -- so long as a computer can add and multiply, it has the ability to run a deep neural network. Yet due to the variety of hardware platforms which exist and the software churn associated with them, reproducing deep learning models can be painstakingly difficult on new hardware, even with the same source code and dependencies. Many graph formats, or \textit{intermediate representations} (IRs) in compiler parlance, promise hardware portability but if developers are not careful, their models may not converge during training, or may produce different results on different hardware. Complicating the problem, IRs are produced by competing vendors, with competing chips and incompatible standards (e.g.~MLIR~\citep{mlir}, ONNX~\citep{bai2019}, nGraph~\citep{cyphers2018intel}, Glow~\citep{rotem2018glow}, TVM~\citep{tvm2018} et al.) While some have tried to leverage existing compilers such as GHC~\citep{elliott2018simple} or DLVM/LLVM~\citep{wei2017dlvm}, there are few signs of interoperability at the time of writing this thesis.
 
-At the end of the day, researchers need to reproduce the work of other researchers, but the mental effort of re-implementing basic abstractions can impede scientific progress. As it is necessary to reuse programs written by others, tools which assist reproducibility and incremental development are essential. This is approximately the same problem which software developers have been attempting to solve for many years, through the open source movement. But source control management (SCM) alone is insufficient, since SCM tools are primarily intended for text. Although text-based representations are temporarily stable, when dependencies are periodically updated and rebuilt, important details about the original development environment can be easily misplaced. To reproduce a program in its entirety, a snapshot of all digital information available at the time of its execution, and ideally, the physical computer itself is needed for best results. Short of a full snapshot, the minimal set of dependencies and a near physical replica is important to ensure. Any variability in the physical or digital dependency graph is a potential source of experimental discrepancy which requires time and energy to isolate.
+At the end of the day, researchers need to reproduce the work of other researchers, but the mental effort of re-implementing basic abstractions can impede scientific progress. As it is necessary to reuse programs written by others, tools which assist reproducibility and incremental development are essential. This is approximately the same problem which software developers have been attempting to solve for many years, through the open source movement. But source control management (SCM) alone is insufficient, since SCM tools are primarily intended for text. Although text-based representations are temporarily stable, when dependencies are periodically updated and rebuilt, important details about the original development environment can be easily misplaced. To reproduce a program in its entirety, a snapshot of all digital information available at the time of its execution, and ideally, the physical computer itself is needed for best results. Short of a full snapshot, the minimal set of dependencies and a near physical replica is important to ensure. Any variability in the physical or digital dependency graph is a source of potential discrepancy which requires time and energy to isolate.
 
-In order to mitigate the effects of software variability and assist the development of intelligent systems on heterogeneous platforms, we use a developer tool called Docker, part of a loosely-related set of tools for build automation and developer operations which we shall refer to as \textit{container infrastructure}. Docker allows developers to freeze a software application and its host environment, allowing developers (e.g.~using a different environment) to quickly reproduce these applications. Docker itself is a technical solution, but also encompasses a set of best-practices which are more procedural in nature. While Docker itself does not address the incompatibility of vendor standards and hardware drivers, it makes these variables explicit, and reduces the difficulty of reproducing software artifacts.
+In order to mitigate the effects of software variability and assist the development of intelligent systems on heterogeneous platforms, we use a developer tool called \href{https://www.docker.com}{Docker}, part of a loosely-related set of tools for build automation and developer operations which we shall refer to as \textit{container infrastructure}. Docker allows developers to freeze a software application and its host environment, allowing developers (e.g.~using a different environment) to quickly reproduce these applications. Docker itself is a technical solution, but also encompasses a set of best-practices which are more procedural in nature. While Docker itself does not address the incompatibility of vendor standards and hardware drivers, it makes these variables explicit, and reduces the difficulty of reproducing software artifacts.
 
 There is a second component to software reproducibility of intelligent systems, which incorporates the notion of time: simulators. Simulators are used in nearly every engineering discipline to imitate a physical process which may be expensive, dangerous or impractical to bring into reality. For example, simulators are often used used to model the dynamics of another instruction set architecture~\citep{bellard2005qemu}, the dynamics of electrodynamic transients~\citep{tavante2018opensi}, the dynamics of orbital motion~\citep{bellman1965wengert}, or the dynamics of physical transportation systems like autonomous mobility-on-demand~\citep{ruch2018amodeus}. Today's computers are capable of running increasingly high fidelity simulations, but most practitioners agree that simulation alone will never be enough to capture the full distribution of real world data. In this view, while simulation can be a useful tool for detecting errors, it cannot fully reproduce all the intricacies of the real world, and should not be a surrogate for training and testing on real-world data. Others have suggested a middle road~\citep{bousmalis2018using}, where judicious use of simulator training, alongside domain adaption is a sufficiently rigorous environment for evaluating intelligent systems. Regardless of which view prevails, our goal is to provide rapid feedback to developers, and to make the entire process from testing to deployment as reproducible as possible.
 
@@ -820,6 +816,14 @@ property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
 private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
 \end{bnflisting}
 %
+%Or, alternately, in railroad form:
+%%
+%\begin{rail}
+%decl : 'def' identifier '=' ( expression + ';' )
+%| 'type' identifier '=' type
+%;
+%\end{rail}
+%
 Grammar-Kit consumes this file, and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more effective error-recovery, but for parsing regular languages, such as the kind of interface description languages found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, the PEG BNF grammar presented above is quite sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML files.
 
 \subsection{Running and debugging}
@@ -902,7 +906,7 @@ We are currently working to expand support for the following features:
 %
 \begin{multicols}{2}
 \begin{todolist}
-    \item[\done] ROS Launch (\inline{*.launch}, \inline{*.test})
+    \item[\done] ROS Launch (\href{http://wiki.ros.org/roslaunch/XML}{\inline{*.launch}}, \href{http://wiki.ros.org/rostest/Writing}{\inline{*.test}})
         \item[\done] Syntax highlighting
         \item[\done] Resource references (\inline{\$(find <directory>)...})
     \item[\done] \href{http://wiki.ros.org/Manifest}{Package manifest (\inline{package.xml})}
@@ -913,9 +917,9 @@ We are currently working to expand support for the following features:
         \item[\done] Resource references (\inline{\$(find <directory>)...})
     \item[\done] ROS Bag (\inline{*.bag})
     \item Live logfile tracking
-    \item[\done] \href{http://wiki.ros.org/msg}{ROS Message (\inline{*.msg})}
+    \item[\done] \href{http://wiki.ros.org/msg}{ROS Message (\href{http://wiki.ros.org/msg}{\inline{*.msg}})}
     \item[\done] Syntax highlighting
-    \item[\done] \href{http://wiki.ros.org/srv}{ROS Service (\inline{*.srv})}
+    \item[\done] \href{http://wiki.ros.org/srv}{ROS Service (\href{http://wiki.ros.org/srv}{\inline{*.srv}})}
 
     %It also supports refactoring and navigation in the following file types through third party plugins:
     %
@@ -935,7 +939,7 @@ We are currently working to expand support for the following features:
     \item Collect crash dumps and link to the corresponding code points
     \item Link stack traces to source code
     \item Copy environment info and crash dump to clipboard
-    \item Integration with the Robot Operating System (ROS)
+    \item Integration with the \href{http://www.ros.org}{Robot Operating System} (ROS)
     \item[\done] ROS 1 support (\href{http://wiki.ros.org/kinetic}{Kinetic Kame} recommended)
     \item \href{https://github.com/ros2/ros2/wiki}{ROS 2} support
     \item[\done] \href{http://gazebosim.org/}{Gazebo} simulator integration
@@ -944,13 +948,13 @@ We are currently working to expand support for the following features:
     \item Docker integration
     \item[\done] Basic Docker support
     \item Remote host and script support
-    \item Docker Hub namespace awareness
+    \item \href{http://hub.docker.com}{Docker Hub} namespace awareness
     \item Support for \href{https://platformio.org}{platformio} tooling
     \item X11 forwarding and \href{http://wiki.ros.org/rqt}{rqt} support
-    \item Static analysis for Python API misuse
+    \item Static analysis for \href{http://wiki.ros.org/rospy}{Python API} misuse
     \item[\done] Invalid dependency detection
     \item Validate \inline{.msg}/\inline{.srv} compatibility
-    \item ROS nodes and graph analysis via \inline{rosdep}/\inline{rqt\_dep}
+    \item ROS nodes and graph analysis via \href{http://wiki.ros.org/rosdep}{\inline{rosdep}}/\href{http://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}}
     \item \href{http://wiki.ros.org/rqt}{rqt} plugin support
     \item[\done] \href{http://wiki.ros.org/rqt_image_view}{\inline{rqt\_img\_view}} - View images
     \item[\done] \href{http://wiki.ros.org/rqt_plot}{\inline{rqt\_plot}} - Plot data visually
@@ -968,7 +972,7 @@ We are currently working to expand support for the following features:
 \setlength{\epigraphwidth}{0.7\textwidth}
 \epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \textit{The Calculi of Lambda Conversion}\end{flushright}}
 
-In this chapter, we will discuss the theory and implementation of a type safe domain-specific language for automatic differentiation (AD), which has produced a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive mathematical operations form the basis for all modern computers, and by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, we are often given a computable function in the form of a program which does not work properly. We would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
+In this chapter, we will discuss the theory and implementation of a type safe domain-specific language for automatic differentiation (AD), an algorithm with a variety of applications in numerical optimization and machine learning. The key idea behind AD is fairly simple. A small set of primitive mathematical operations form the basis for all modern computers, and by composing these operations over the real numbers in an orderly fashion, one can compute any computable function. In machine learning, we are often given a computable function in the form of a program which does not work properly. We would like an algorithm for determining how to change the input slightly, so as to produce a more suitable output.
 
 In 1964, such an algorithm was first conceived in~\citet{wengert1964simple}, whose method is known today as forward-mode AD. Not long after, a certain Richard Bellman reproduced Wengert's algorithm to numerically estimate the orbital dynamics of a two body system, recognizing its potential for, ``the treatment of large systems of differential equations which might not otherwise be undertaken''~\citep{bellman1965wengert}. Around the same time, key details of the backpropogation algorithm first emerged~\citep{dreyfus1990artificial}. It was in~\citet{linnainmaa1970representation} where the idea of calculating derivatives over computation graphs was first recorded. Linnaimaa's algorithm was particularly important for neural networks, and is today known as reverse-mode AD. But it was not until 2010 when standard software tools~\citep{bergstra2010theano} for AD became widely available in machine learning. It is here where our journey begins.
 
@@ -1149,15 +1153,15 @@ Functional programming allows Kotlin$\nabla$ to use the same abstraction for rep
 
 When programming in a statically typed language, a common question one might ask the compiler is, ``Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?'' (e.g. type checking \inline{x instanceof Y}) In Java, this question turns out to be unsound~\citep{amin2016java} and undecidable~\citep{Grigore:2017:JGT:3009837.3009871} in the general case. It is possible to construct a Java program in which the answer is ``yes'' regardless of \inline{Y}, or for which the answer cannot be determined in a finite amount of time. Undecidability is not necessarily a showstopper, but the unsoundness of Java's is more critical and unclear how to fix, even if it rarely occurs in practice.
 
-Kotlin is a statically typed language that is well-suited for building cross-platform applications, with compiler support for JVM, JavaScript and native targets. Unlike most programming languages, the language was designed with IDE support from the outset, and owes much of its popularity to its programming ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java's. It is unknown whether the the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java has broadened its adoption and remains a key usability feature of the language.
+Kotlin is a statically typed language that is well-suited for building cross-platform applications, with compiler support for JVM, JavaScript and native targets. Unlike most programming languages, Kotlin was designed with IDE support from the outset, and owes much of its popularity to its programming ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly less expressive, but fully interoperable with Java's. It is unknown whether the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java has broadened its adoption and remains a key usability feature of the language.
 
-In this work, we make use of several language features unique to Kotlin, such as first-class functions (\autoref{sec:first-class-functions}), extension functions (\autoref{sec:extension-functions}), operator overloading (\autoref{sec:operator-overloading}), and algebraic data types (\autoref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support for shape-safe array programming. Together, these language features provide a concise, flexible and type-safe platform for mathematical programming.
+In this work, we make use of several language features unique to Kotlin, such as first-class functions (\autoref{sec:first-class-functions}), extension functions (\autoref{sec:extension-functions}), operator overloading (\autoref{sec:operator-overloading}), and algebraic data types (\autoref{sec:adts}). Furthermore, we make heavy use of Kotlin's DSL support to implement shape-safe array programming. Together, these language features provide a concise, flexible and type-safe platform for mathematical programming.
 
 \section{Kotlin\textorpdfstring{$\nabla$}}\label{sec:kotlingrad}
 
-Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface}~\citep{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete~\citep{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types.
+Prior work has demonstrated the possibility of encoding a DCFL as a \textit{fluent interface}~\citep{gil2016formal, nakamaru2017silverchain} in Java. This result was strengthened to prove Java's type system is Turing complete~\citep{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types.
 
-Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano~\citep{theano}, Torch~\citep{collobert2002torch}, and TensorFlow~\citep{abadi2016tensorflow}. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\citep{pearlmutter2008using}, DiffSharp in F\#~\citep{baydin-diffsharp} and recently Swift~\citep{swift}. However, the majority of existing automatic differentiation (AD) libraries use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano~\citep{bergstra2010theano}, Torch~\citep{collobert2002torch}, and TensorFlow~\citep{abadi2016tensorflow}. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\citep{pearlmutter2008using}, DiffSharp in F\#~\citep{baydin-diffsharp} and recently Swift~\citep{swift}. However, the majority of existing automatic differentiation (AD) libraries use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
 Existing AD implementations for the JVM include Lantern \citep{wang2018demystifying}, Nexus \citep{chen2017typesafe} and DeepLearning.scala~\citep{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language has several useful features for implementing a native AD framework. Kotlin$\nabla$ primarily relies on the following language features:
 
@@ -1174,7 +1178,7 @@ Existing AD implementations for the JVM include Lantern \citep{wang2018demystify
     \label{fig:kotlingrad_digram}
 \end{figure}
 
-Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really functions for building an abstract syntax tree (AST). Often these ASTs represent simple state machines, but are also used to embed a programming language. Popular examples include SQL/LINQ~\citep{meijer2006linq}, OptiML~\citep{sujeeth2011optiml} and other fluent interfaces~\citep{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without needing to write a lexer, parser, compiler or interpreter. And with proper typing, users will receive code completion and static analysis from their favorite developer tools. Functional languages are suitable host languages~\citep{elliott2003compiling,rompf2010lightweight}, perhaps owing to the notion of code as data.%\footnote{i.e.\ homoiconicity, notably introduced by Lisp, one of the first functional programming languages}
+Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs), which are essentially data structures masquerading as code. These structures may look and act like code, but are really functions for building an abstract syntax tree (AST). Often these ASTs represent simple state machines, but are also used to embed a programming language. Popular examples include SQL/LINQ~\citep{meijer2006linq}, OptiML~\citep{sujeeth2011optiml} and other fluent interfaces~\citep{fowler05fluent}. In a sufficiently expressive host language, one can implement any language as a library, without the need to write a lexer, parser, compiler or interpreter. And with proper typing, users will receive code completion and static analysis from their favorite developer tools. Functional languages are often suitable host languages~\citep{elliott2003compiling,rompf2010lightweight}, perhaps owing to the notion of code as data.
 
 \section{Usage}
 
@@ -1455,7 +1459,7 @@ Currently, it is possible to represent functions where all inputs and outputs sh
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as KMath~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}.
+Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}.
 
 \begin{kotlinlisting}[caption={Most mathematical operations are composed of a small set of simple operators.}]
 interface Group<X: Group<X>> {
@@ -1562,7 +1566,7 @@ Now, we can use the context to define another extension, \inline{Fun.multiplyByT
 fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{kotlinlisting}
 %
-Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from KMath~\citep{nozik2019acat}, another mathematical library for Kotlin. This approach is also suitable for defining convenience methods for variable assignment and invocation and type adapters in a context sensitive manner.
+Extensions can also be defined in another file or context and imported on demand. This approach was borrowed from \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019acat}, another mathematical library for Kotlin. This approach is also suitable for defining convenience methods for variable assignment and invocation and type adapters in a context sensitive manner.
 %
 \begin{kotlinlisting}
 object DoubleContext: Proto<DConst, Double>() {
@@ -1590,24 +1594,24 @@ with(DoubleContext) {
     val l = t(X to 1.0, Y to 2.0)
     val r = t(X to 1.0)(Y to 3.0) // Currying
     val o = X + 0.0
-    val p = o(X to 1.0)
+    val p = o(X to 1.0) // Partial application
     //val k = o(Y to 4.0) // Does not compile
 }
 \end{kotlinlisting}
 
 \section{Automatic, Symbolic Differentiation}
 
-It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin-survey}. Many, including the author of this thesis, has suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical evaluation and symbolic differentiation at runtime, this interleaving is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}. Nor, as suggested by prior literature~\citep{baydin2014ad}, is the problem of expression swell unique to symbolic differentiation~\citep{laue2019equivalence}. Especially when we consider more flexible execution models~\citep{wang2018demystifying} and hybrid ADs~\citep{abadi2016tensorflow} which are capable of eager or lazy execution, this distinction becomes increasinly blurry. Instead we take the view that symbolic differentiation is a type of automatic differentiation which the AD literature has been too quick to dismiss. Symbolic differentiation in particular affords the compiler far more flexibility to perform global optimizations such as loop vectorization and algebraic simplifications~\citep{theano}. These optimizations would otherwise be impossible if their symbolic differentiation and numerical execution were performed in lockstep, when only partial information about the dataflow graph is available.
+It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin-survey}. Many, including the author of this thesis, has suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical evaluation and symbolic differentiation at runtime, this interleaving is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}. Nor, as suggested by prior literature~\citep{baydin2014ad}, is the problem of expression swell unique to symbolic differentiation~\citep{laue2019equivalence}. This distinction becomes increasingly blurry when we consider more flexible execution models~\citep{wang2018demystifying} and hybrid ADs~\citep{abadi2016tensorflow} which are capable of both eager and lazy execution. Instead we take the view that symbolic differentiation is a type of automatic differentiation which the AD literature has been too quick to dismiss. Symbolic differentiation in particular, affords the compiler far more flexibility to perform global optimizations such as loop vectorization and algebraic simplifications~\citep{bergstra2010theano}. These optimizations would otherwise be impossible if their symbolic differentiation and numerical execution were performed in lockstep, when only partial information about the dataflow graph is available.
 
 \section{Coroutines}\label{sec:coroutines}
 
-Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allow functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes a second function representing the subsequent computation to be performed. Rather than returning to its caller, the function invokes its continuation immediately prior to completion, and the process is restarted. If the continuation is empty, the program halts.
+Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allow functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes a second function representing the subsequent computation to be performed. Rather than returning to its caller, the function invokes its continuation immediately prior to completion, and the process is restarted.
 
-One form of continuation, known as shift-reset a.k.a.\ delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by \textit{Shift/Reset the Penultimate Backpropagator}~\citep{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\citep{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin's Coroutines support.
+One form of continuation, known as delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by \textit{Shift/Reset the Penultimate Backpropagator}~\citep{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\citep{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin Coroutines, and merits further investigation.
 
 \section{Comparison}\label{sec:comparison}
 
-Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaurin2015autograd}, DiffSharp~\citep{baydin-diffsharp}, Myia~\citep{breuleux2017automatic}, Nexus~\citep{chen2017typesafe}, Lantern~\citep{wang2018demystifying}, Tangent~\citep{van2018tangent}, Halide~\citep{li2018halide} et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. It introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Prior work, including Unlike most existing automatic differentiation libraries, Kotlin$\nabla$ is a purely symbolic, graph-based solution that does not require any compiler augmentation or runtime reflection. As we have seen, it achieves this primarily through operator overloading, polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or \textit{embedded domain-specific language}, thereby employing the host language's type system. Our approach is particularly well-suited to functional programming, and makes use of a number of functional programming concepts, including lambda expressions, higher order functions, partial application, and algebraic data types. \\
+Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaurin2015autograd}, Theano~\citep{bergstra2010theano}, Myia~\citep{breuleux2017automatic}, JAutoDiff~\citep{nureki2012jautodiff}, Nexus~\citep{chen2017typesafe}, Lantern~\citep{wang2018demystifying}, Tangent~\citep{van2018tangent}, Halide~\citep{li2018halide} et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. In the process, it introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Prior work, including PyTorch~\citep{paszke2017automatic}, TensorFlow~\citep{abadi2016tensorflow}, Chainer~\citep{chainer}, DL4J~\cite{team2016dl4j} and others have developed general purpose AD libraries in less safe languages. Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, graph-based AD that does not require any template metaprogramming, compiler augmentation or runtime reflection to ensure type safety. As we have seen, this approach is primarily achieved through operator overloading, parametric polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or embedded domain-specific language (EDSL), thereby leveraging the host language's type system to receive code completion and type inference for free. Our approach is particularly well-suited to functional programming, and employs several functional programming concepts, including lambda expressions, higher order functions, partial application, currying and algebraic data types. For a more detailed comparison of Kotlin$\nabla$ with other AD libraries, see \autoref{tab:ad_comparison}.\\
 
 \begin{table}
 \begin{tabular}{lllllllll}
@@ -1621,37 +1625,38 @@ Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaur
     \rot{Differentiable Programming} &
     \rot{Multiplatform}
     \\ \hline
-Kotlin$\nabla$     & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
-DiffSharp          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-TensorFlow.FSharp  & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-Myia               & Python  & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-Deeplearning.scala & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-Nexus              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-Lantern            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-Grenade            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
-Eclipse DL4J       & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-Halide             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
-Stalin$\nabla$     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+\href{https://github.com/breandan/kotlingrad}{Kotlin$\nabla$}     & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
+\href{http://diffsharp.github.io/DiffSharp/}{DiffSharp}          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://github.com/fsprojects/fsharp-ai-tools}{TensorFlow.FSharp}  & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+\href{https://github.com/mila-iqia/myia}{Myia}               & Python  & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+\href{https://github.com/ThoughtWorksInc/DeepLearning.scala}{Deeplearning.scala} & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://tongfei.me/nexus/}{Nexus}              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+\href{https://feiwang3311.github.io/Lantern/}{Lantern}            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://github.com/HuwCampbell/grenade}{Grenade}            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+\href{https://deeplearning4j.org}{Eclipse DL4J}       & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+\href{http://uniker9.github.io/JAutoDiff/}{JAutoDiff}          & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+\href{https://halide-lang.org}{Halide}             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
 \end{tabular}
-\caption{Comparison of AD libraries. The \wmark symbol indicates work in progress.}
+\caption{\label{tab:ad_comparison} Comparison of AD libraries. The \wmark symbol indicates work in progress.}
 \end{table}
 
 \section{Future work}\label{sec:future-work}
 
-\vspace{40pt}\setlength{\epigraphwidth}{0.80\textwidth}
-\epigraph{``It is well known that the central problem of the whole of modern mathematics is the study of the transcendental functions defined by differential equations.''}{\begin{flushright}--Felix \citet{klein1893lectures}, \textit{Lectures on mathematics}\end{flushright}}
+%\vspace{40pt}\setlength{\epigraphwidth}{0.80\textwidth}
+%\epigraph{``It is well known that the central problem of the whole of modern mathematics is the study of the transcendental functions defined by differential equations.''}{\begin{flushright}--Felix \citet{klein1893lectures}, \textit{Lectures on mathematics}\end{flushright}}
 
 The derivative, as it is commonly known today, is usually associated with the calculus of infinitesimals. But the same derivative introduced by Leibniz and Newton over three centuries ago is starting to reappear in strange and marvelous places throughout mathematics and computer science. In \citet{brzozowski1964derivatives}, we are shown the rules of derivation can be applied to regular expressions -- one of the early modern applications of derivatives in a classically non-differentiable setting. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and parsing \citep{might2011parsing, moss2014derivatives}. The boolean differential calculus introduced by \citet{thayse1981boolean} has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. The notion of symbolic differentiation has also arisen in lambda calculus~\citep{ehrhard2003differential}, yielding applications in automatic differentiation~\citep{kelly2016evolving}, incremental computation~\citep{cai2014theory, alvarezpicallo2019fixing}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential, blute2009cartesian}, domain theory~\citep{edalat2002domain}, probability theory~\citep{kac1951probability} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
 
-Many more examples of symbolic differentiation exist in various forms. This pattern is unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for representation learning and differentiable programming.
+Symbolic differentiation has been rediscovered in many domains, and more examples can be found through a careful literature review. This pattern is unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for representation learning and differentiable programming.
 
-The work described in this chapter establishes a framework for exploring symbolic differentiation using general algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). While our implementation of automatic differentiation uses the traditional infinitesimal calculus on vector fields, in future work, we would like to explore the relationship between differentiable programming and the meaning of symbolic differentiation in other calculi. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces. If so, this would allow us to learn the manifold of classically non-differentiable data types such as boolean variables and other discrete structures like graphs and trees.
+The work described in this chapter establishes a framework for exploring symbolic differentiation using general algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). While our implementation of automatic differentiation uses the traditional infinitesimal calculus on vector fields, in future work, we would like to explore the relationship between differentiable programming and the meaning of symbolic differentiation in other calculi. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces, e.g. for learning boolean variables and other classically non-differentiable data structures like graphs and trees.
 
 As shown in prior literature~\citep{theano, baydin-survey, laue2019equivalence}, intermediate expression expression swell is a issue with many forms of computer algebra and automatic differentiation. The ad-hoc rules for algebraic simplifications described in ~\autoref{sec:multiple-dispatch} are almost certainly insufficient for general use cases. One interesting project would be to learn algorithms which lessen the impact of expression swell on numerical drift, by applying general purpose simplifications to improve wall clock runtime and precision required for accurate numerical approximation. There exists some prior work including \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} which explores versions of this problem.
 
 Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allow us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices). Furthermore, it would be interesting to explore an approach like \citet{makwana2018numlin} for a type-system encoding of linear algebra.
 
-From a performance perspective, it would be advantageous to integrate with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}.
+Finally, from a performance perspective, it would be advantageous to integrate with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}.
 
 \medium{\chapter{Testing and validation}\label{ch:difftest}}
 
@@ -1782,13 +1787,13 @@ fun <I, O> genLegalTx(program: (I) -> O, mr: (I, O, I, O) -> Boolean, input: I, 
 }
 \end{kotlinlisting}
 
-But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled way to mutate a given input in our dataset so as to discover invalid outputs, which does not consume a lot of computation or domain expertise.
+But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled way to mutate a given input in our dataset so as to discover invalid outputs, which does not consume a lot of computation or require as much domain-specific expertise to craft useful transformations.
 
 \subsection{Adversarial Testing}
 
 This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input of a function, which produces the largest change to its output, relative to the original output.
 
-Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, where we seek to change each of the components $g_0, ..., g_{m-1}$ by a fixed amount, so as to produce the largest output value $\mathbf{\hat P}(g'_1, ..., g'_{m-1})$ directly. Suppose that for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, in which we try every combination of variable perturbations and select the inputs corresponding to the greatest output value:
+Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each component $g_0, ..., g_{m-1}$ of which we seek to change by a fixed amount, so as to produce the largest output value $\mathbf{\hat P}(g'_1, ..., g'_{m-1})$ directly. Suppose that for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, in which we try every combination of variable perturbations and select the inputs corresponding to the greatest output value:
 
 \begin{algorithm}[H]
 \caption{Brute Force Adversary}
@@ -2021,7 +2026,7 @@ CONTAINER ID     IMAGE           ...     NAMES
 %
 Note how Daphne's duck container has an alphanumeric container ID, a base image, and a memorable name, \inline{happy\_hamster}. This name is an alias for the container ID, which can be used interchangeably to refer to the container.
 
-Docker images can be created two different ways. First, in \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \inline{Dockerfile}.
+Docker images can be created two different ways. First, in \autoref{subsec:creating-an-image-snapshot}, we will see how to create a Docker image by taking a snapshot from a running container, then in \autoref{subsec:writing-an-image-recipe}, how to create a new Docker container using a special kind of recipe, called a \href{https://docs.docker.com/engine/reference/builder/}{\inline{Dockerfile}}.
 
 \subsection{Creating an image snapshot}\label{subsec:creating-an-image-snapshot}
 
@@ -2372,13 +2377,13 @@ One application of multi-stage builds is compiling a project dependency from its
     \centering
     \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
     \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
-    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts, which can be emulated on x86 via qemu~\citep{bellard2005qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
+    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts, which can be emulated on x86 via QEMU~\citep{bellard2005qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
     \label{fig:docker}
 \end{figure}
 
 Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
 
-The Duckietown platform supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
+The \href{Duckietown platform}{https://www.duckietown.org} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
 
 \section{Duckiebot Development using Docker}
 
@@ -2395,10 +2400,10 @@ The Duckietown platform supports two primary instruction set architectures: x86 
 In addition, we assume the following software dependencies have been installed on (3):
 %
 \begin{enumerate}[label=(\alph*)]
-    \item Docker CE
+    \item \href{https://get.docker.com}{Docker CE}
     \item POSIX-compliant shell
     \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}
-    \item Web browser (e.g. Chrome or Firefox)
+    \item Web browser (e.g. \href{https://www.google.com/chrome/}{Chrome} or \href{http://mozilla.org/firefox/}{Firefox})
     \item \inline{wget}/\inline{curl}
 \end{enumerate}
 
@@ -2412,7 +2417,7 @@ Our largest single contribution to the Duckietown project involved writing a scr
 ~$ bash -c "(*\$*)(wget -O- h.ndan.co)"
 \end{pclisting}
 %
-Now, with the Duckietown Shell, the following command is all that is needed:
+Now, with the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell}, the following command is all that is needed:
 %
 \begin{dtslisting}
 dt> init_sd_card [--hostname "DUCKIEBOT_NAME" --wifi "username:password"]
@@ -2465,7 +2470,7 @@ standard_init_linux.go:175: exec user process caused "exec format error"
 %
 In order to circumvent this restriction, ARM-specific \inline{Dockerfile}s can ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
 
-All Duckietown Docker images contain an emulator called QEMU - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
+All Duckietown Docker images contain an emulator called \href{https://www.qemu.org}{QEMU} - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
 \begin{pclisting}
 ~$ docker run ... (*\hl{-{}-entrypoint=qemu3-arm-static}*) IMAGE [RUN_COMMAND]
@@ -2586,7 +2591,7 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 %
 \section{Retrospective}\label{sec:retrospective}
 
-One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the the source code in the image makes build artifacts are more interpretable and reduces startup time.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can share the sources in a shared volume and build the artifacts on container startup. Both approaches ensure reproducible build dependencies, but including the source code in the image makes build artifacts are more interpretable and reduces startup time.
 
 Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, doing so adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
 
