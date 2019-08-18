@@ -128,12 +128,6 @@
     bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
-@online{dl4j,
-    title = "Deeplearning4j: Open-source, distributed deep learning for the JVM",
-    url = {http://deeplearning4j.org/},
-    year = "2019 (accessed January 1, 2019)"
-}
-
 @article{gil2016formal,
     author =	{Yossi Gil and Tomer Levy},
     title =	{{Formal Language Recognition with the Java Type Checker}},
@@ -1138,7 +1132,7 @@ bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 
 @article{paszke2017automatic,
-    title={Automatic differentiation in {P}ytorch},
+    title={Automatic differentiation in {P}y{T}orch},
     author={Paszke, Adam and Gross, Sam and Chintala, Soumith and Chanan, Gregory and Yang, Edward and DeVito, Zachary and Lin, Zeming and Desmaison, Alban and Antiga, Luca and Lerer, Adam},
     year={2017}
 }
@@ -1660,7 +1654,13 @@ bibsource = {dblp computer science bibliography, https://dblp.org}
 @article{team2016nd4j,
     title={{ND4J}: Fast, Scientific and Numerical Computing for the {JVM}},
     author={Eclipse Deeplearning4j Development Team},
-    journal={Apache Software Foundation License 2.0},
+    year={2016},
+    url = {https://github.com/eclipse/deeplearning4j},
+}
+
+@article{team2016dl4j,
+    title={{DL4J: Deep Learning for Java}},
+    author={Eclipse Deeplearning4j Development Team},
     year={2016},
     url = {https://github.com/eclipse/deeplearning4j},
 }
@@ -2611,7 +2611,7 @@ and Mart{\'i}n-Vide, Carlos",
 }
 
 @inproceedings{maclaurin2015autograd,
-    title = {Autograd: Effortless Gradients in {N}umpy},
+    title = {Autograd: Effortless Gradients in {N}um{P}y},
     author = {Maclaurin, Dougal and Duvenaud, David and Adams, Ryan P},
     year = {2015},
     booktitle = {ICML 2015 AutoML Workshop},
@@ -2746,4 +2746,37 @@ and Mart{\'i}n-Vide, Carlos",
     acmid = {357066},
     publisher = {ACM},
     address = {New York, NY, USA},
+}
+
+@misc{nureki2012jautodiff,
+    title={J{A}uto{D}iff: A Pure {J}ava Library for {A}utomatic {D}ifferentiation},
+    author={Nureki, Yu},
+    year = {2012},
+    url = {https://github.com/uniker9/JAutoDiff}
+}
+
+@inproceedings{chainer,
+    author       = "Tokui, Seiya and Oono, Kenta and Hido, Shohei and Clayton, Justin",
+    title        = "Chainer: a Next-Generation Open Source Framework for Deep Learning",
+    booktitle    = "Proceedings of Workshop on Machine Learning Systems (LearningSys) in The Twenty-ninth Annual Conference on Neural Information Processing Systems (NIPS)",
+    year         = "2015",
+    url          = "http://learningsys.org/papers/LearningSys_2015_paper_33.pdf"
+}
+
+@inproceedings{nakamaru2017silverchain,
+    author = {Nakamaru, Tomoki and Ichikawa, Kazuhiro and Yamazaki, Tetsuro and Chiba, Shigeru},
+    title = {Silverchain: A Fluent API Generator},
+    booktitle = {Proceedings of the 16th ACM SIGPLAN International Conference on Generative Programming: Concepts and Experiences},
+    series = {GPCE 2017},
+    year = {2017},
+    isbn = {978-1-4503-5524-7},
+    location = {Vancouver, BC, Canada},
+    pages = {199--211},
+    numpages = {13},
+    url = {http://doi.acm.org/10.1145/3136040.3136041},
+    doi = {10.1145/3136040.3136041},
+    acmid = {3136041},
+    publisher = {ACM},
+    address = {New York, NY, USA},
+    keywords = {Embedded DSL, Fluent API},
 }
