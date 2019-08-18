@@ -10,7 +10,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{amsmath}
-%\usepackage{rail}
+\usepackage{rail}
 
 
 \usepackage{natbib}
@@ -120,7 +120,7 @@
     basicstyle=\ttfamily,
     morestring=[s][\color{RoyalPurple}\bfseries]{"}{"},
     emphstyle={\color{ForestGreen}\bfseries},
-    moreemph={TYPE, KEY, SEPARATOR, VALUE, COMMENT},
+    moreemph={TYPE, FIELD, SEPARATOR, CONSTANT, COMMENT},
     identifierstyle=\color{blue}\bfseries,
     keywordstyle={\color{NavyBlue}\bfseries},
     morekeywords={property, recover_property, rosInterfaceFile},
@@ -802,27 +802,28 @@ One of the most important and unappreciated components of an IDE is the parser. 
 
 Various techniques have been developed to improve the responsiveness of modern parsers. Incremental parsing techniques like those first proposed in \citet{ghezzi1979incremental} and further developed by \citet{wagner1997practical,wagner1997incremental} seek to incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played a role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs which are highly dependent on incremental parsing and error-tolerance, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files:
+The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs which are highly dependent on incremental parsing and error-tolerance, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files:
 %
 \begin{bnflisting}
-rosInterfaceFile ::= (property|COMMENT)*
-property ::= (TYPE KEY SEPARATOR VALUE)|(TYPE KEY) {
+rosInterfaceFile ::= ( property | COMMENT )*
+property ::= ( TYPE FIELD SEPARATOR CONSTANT ) | ( TYPE FIELD ) {
     pin=3 // Identifies an unambiguous delimiter or fallback point
     recoverWhile="recover_property" // Error recovery predicate
     mixin="edu.umontreal.hatchery.psi.impl.RosMsgNamedElementImpl"
     implements="edu.umontreal.hatchery.psi.RosMsgNamedElement"
     methods=[getType getKey getValue getName setName getNameIdentifier]
 }
-private recover_property ::= !(TYPE|KEY|SEPARATOR|COMMENT)
+private recover_property ::= ! ( TYPE | FIELD | SEPARATOR | COMMENT )
 \end{bnflisting}
 %
-%Or, alternately, in railroad form:
-%%
-%\begin{rail}
-%decl : 'def' identifier '=' ( expression + ';' )
-%| 'type' identifier '=' type
-%;
-%\end{rail}
+\begin{figure}
+\centering
+\begin{rail}
+( [2] TYPE FIELD ( () | SEPARATOR CONSTANT) ) | ( [1] COMMENT )
+\end{rail}
+\caption{Railroad diagram for the grammar shown above (reads from left to right).}
+\label{fig:railroad}
+\end{figure}
 %
 Grammar-Kit consumes this file, and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more effective error-recovery, but for parsing regular languages, such as the kind of interface description languages found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, the PEG BNF grammar presented above is quite sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML files.
 
@@ -889,7 +890,7 @@ In Hatchery's case, we use a lightweight graphical user interface (GUI) on top o
 \end{figure}
 
 \section{Future work}
-We are currently working to expand support for the following features:
+\noindent We are currently working to expand support for the following features:
 %
 \begin{itemize}
 \item \textbf{Syntax support} -- Highlighting, navigation, autocompletion
