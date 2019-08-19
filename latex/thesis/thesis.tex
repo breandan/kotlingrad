@@ -199,6 +199,18 @@
     }
 }
 
+\newtcblisting{flexlisting}[1][]{%
+    left=20pt,
+    listing options={
+        language=DtsPrompt,
+        basicstyle=\ttfamily\small,
+        numbers=right,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
+    }
+}
+
 \newtcblisting{dtslisting}[1][]{%
     left=20pt,
     listing options={
@@ -765,7 +777,7 @@ dt> hatchery
 
 \section{Plugin development}
 
-To build the IDE, some additional tools are helpful. First, is an IDE, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, we can load the source code from IDE\textsubscript{0} into IDE\textsubscript{0} and use IDE\textsubscript{0}, to modify, compile and re-run the code, which becomes IDE\textsubscript{1}, in which the process is repeated. However this approach has some disadvantages. First, most IDEs are already quite cumbersome to compile and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}) as needed. So most developers can skip the first step, and load their plugin inside IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this code is read-only.
+To build an IDE, some tools are helpful. First, is an IDE, and its source code. Assume that IDE\textsubscript{0} exists. In order to build a new IDE, IDE\textsubscript{1}, we can load the source code from IDE\textsubscript{0} into IDE\textsubscript{0} and use IDE\textsubscript{0}, to modify, compile and re-run the code, which becomes IDE\textsubscript{1}, in which the process is repeated. However this approach has some disadvantages. First, most IDEs are already quite cumbersome to compile and run. As most auxiliary features are small by comparison, modern IDEs have adopted a modular design, which allows them to load specific packages (i.e.\ \textit{plugins}) as needed. So most developers can skip the first step, and load their plugin inside IDE\textsubscript{0} directly. It is still convenient to have the platform source code for reference purposes, but in most cases this code is read-only.
 
 For the purposes of this plugin, we use the IntelliJ Platform, a popular platform for cross-language development. By targeting an IDE platform with support for polyglot programming, we are able to focus on programming language-agnostic features in the ROS ecosystem, such as parsing and editing ROS-specific configuration files, build and run configuration and other common development tasks.
 
@@ -796,7 +808,7 @@ def callback((*\cfbox{red}{data}*)):
 %
 Generally, we would like the ability to rename identifiers across files and languages. To do so, we need a richer understanding of code that transcends text -- we need a parser.
 
-\subsection{The Parser}\label{subsec:the-parser}
+\subsection{Parsing}\label{subsec:the-parser}
 
 One of the most important and unappreciated components of an IDE is the parser. Unlike compilers, most IDEs do not use recursive descent or shift-reduce parsing as presented in most introductory programming textbooks, as these algorithms are not well-suited for real-time editing of source code. Edits are typically short, localized changes inside a large file, and are frequently invalid or incomplete between keystrokes. As most IDEs are expected to recover from local errors and provide responsive feedback to users while editing source code, re-parsing the entire program between minor edits would be expensive and unnecessary. In order to analyze source code undergoing simultaneous modification and provide interactive feedback, special consideration must be taken to ensure robust and responsive parsing.
 
@@ -825,16 +837,19 @@ private recover_property ::= ! ( TYPE | FIELD | SEPARATOR | COMMENT )
 \label{fig:railroad}
 \end{figure}
 %
-Grammar-Kit consumes this file, and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more effective error-recovery, but for parsing regular languages, such as the kind of interface description languages found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, the PEG BNF grammar presented above is quite sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML files.
+The lexical rules for the tokens, \inline{TYPE}, \inline{FIELD}, \inline{CONSTANT} et al. are specified in a separate file, which conforms to the \href{https://www.jflex.de/manual.html#Grammar}{JFlex grammar}. Below is an excerpt from the \inline{.flex} lexer:
+%
+\begin{flexlisting}
+TYPE_CHARACTER=[^:=#\ \r\n\t\f\\]
+FIELD_CHARACTER=[^:=#\ \r\n\t\f\\]
+SEPARATOR_CHARACTER=[:=]
+CONSTANT_CHARACTER=[^\r\n\f#]
+COMMENT_CHARACTER=#[^\r\n\f]*
+\end{flexlisting}
+
+Grammar-Kit consumes these file, and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more flexible error-recovery, but for parsing regular languages, such as the interface description languages found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, the parser and lexer definitions provided are quite sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML files.
 
 \subsection{Running and debugging}
-
-\begin{figure}
-    \centering
-    \frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
-    \caption{ROS run configuration. Accessible via: \menu{Run > Edit Configurations > + > ROS Launch}}
-    \label{fig:ros_run_config}
-\end{figure}
 
 The process of compiling and running ROS applications often requires several steps, ex.:
 %
@@ -847,7 +862,14 @@ The process of compiling and running ROS applications often requires several ste
    roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
 \end{pclisting}
 %
-Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and command line flags are written to an internal model called the ``Run/Debug Configuration''. When the user manually triggers the run command, Hatchery's internal model is converted to a string representing the command to be executed. This string is then sent to a terminal emulator, which invokes the command and displays the corresponding output.
+Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and command line flags are written to an internal model called the ``Run Configuration'' (cf. ~\autoref{fig:ros_run_config}). When run command is manually triggered, Hatchery's internal model is translated to a string, representing the command to be executed. This string is then sent to a terminal emulator, which invokes the command and displays the corresponding output.
+
+\begin{figure}
+\centering
+\frame{\includegraphics[width=0.90\textwidth]{ros_run_config.png}}
+\caption{ROS Run Configuration. Accessible via: \menu{Run > Edit Configurations > + > ROS Launch}}
+\label{fig:ros_run_config}
+\end{figure}
 
 \subsection{User interface}
 
@@ -873,15 +895,17 @@ With the development of modern languages came programming tools which were capab
 
 More experimental UIs, such as those proposed in the model-driven engineering~\citep{famelis2015mummint} and projectional editing ~\citep{voelter2010language} literature, offer more flexible visual layouts. This uncoupling between the composition and representation of text raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a given programming task? And who is the intended audience? These are important questions to consider when designing a new programming tool.
 
-In Hatchery's case, we use a lightweight graphical user interface (GUI) on top of the program's textual representation. This interface primarily consists of simple visual cues for text highlighting, source code navigation and other menus and configuration panels for performing various tasks. The IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these design patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires some familiarity with the design language and careful integration with the target framework (i.e. ROS).
-
+The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform has created a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these design patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires familiarity with the design language and careful integration with the target framework (i.e. ROS).
+%
 \begin{figure}[b]
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{hatchery_screenshot.png}}
     \caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
     \label{fig:hatchery_gui}
 \end{figure}
-
+%
+In addition, Hatchery provides an interface for configuring and managing ROS installations (cf. \autoref{fig:ros_settings}).
+%
 \begin{figure}
     \centering
     \frame{\includegraphics[width=0.90\textwidth]{ros_settings.png}}
@@ -907,63 +931,74 @@ In Hatchery's case, we use a lightweight graphical user interface (GUI) on top o
 %
 \begin{multicols}{2}
 \begin{todolist}
-    \item[\done] ROS Launch (\href{http://wiki.ros.org/roslaunch/XML}{\inline{*.launch}}, \href{http://wiki.ros.org/rostest/Writing}{\inline{*.test}})
-        \item[\done] Syntax highlighting
-        \item[\done] Resource references (\inline{\$(find <directory>)...})
-    \item[\done] \href{http://wiki.ros.org/Manifest}{Package manifest (\inline{package.xml})}
-        \item[\done] Syntax highlighting
-        \item[\done] Package references (\inline{<build\_depend>}, \inline{<test\_depend>}, \inline{<run\_depend>})
-    \item[\done] ROS URDF (\inline{*.urdf.xacro})
-        \item[\done] Syntax highlighting
-        \item[\done] Resource references (\inline{\$(find <directory>)...})
-    \item[\done] ROS Bag (\inline{*.bag})
-    \item Live logfile tracking
-    \item[\done] \href{http://wiki.ros.org/msg}{ROS Message (\href{http://wiki.ros.org/msg}{\inline{*.msg}})}
+\item[\done] ROS Launch (\href{http://wiki.ros.org/roslaunch/XML}{\inline{*.launch}}, \href{http://wiki.ros.org/rostest/Writing}{\inline{*.test}})
+    \begin{todolist}
     \item[\done] Syntax highlighting
-    \item[\done] \href{http://wiki.ros.org/srv}{ROS Service (\href{http://wiki.ros.org/srv}{\inline{*.srv}})}
-
-    %It also supports refactoring and navigation in the following file types through third party plugins:
-    %
-    %* XML
-    %* Python
-    %* YAML
-    %* CMake
-    %* Bash
-
-    \item[\done] Implement preliminary project structure and XML support
-    \item[\done] Write an MVP/POC app that supports file renaming and refactoring
-    \item[\done] Add support for project templates and skeleton project creation
-    \item[\done] Add support for deploying a project from the local machine to the remote
-    \item Add support for monitoring and tracking running code, viewing logs
+    \item[\done] Resource references (\inline{\$(find <directory>)...})
+    \end{todolist}
+\item[\done] \href{http://wiki.ros.org/Manifest}{Package manifest (\inline{package.xml})}
+    \begin{todolist}
+    \item[\done] Syntax highlighting
+    \item[\done] \href{http://wiki.ros.org/catkin/package.xml#Dependencies}{Package dependencies} (\inline{<build\_depend>}, \inline{<test\_depend>}, \inline{<run\_depend>})
+    \end{todolist}
+\item[\done] ROS URDF (\inline{*.urdf.xacro})
+    \begin{todolist}
+    \item[\done] Syntax highlighting
+    \item[\done] Resource references (\inline{\$(find <directory>)...})
+    \end{todolist}
+\item[\done] \href{http://wiki.ros.org/Bags/Format}{ROS Bag (\inline{*.bag})}
+    \begin{todolist}
+    \item[\done] Syntax highlighting
+    \end{todolist}
+\item[\done] \href{http://wiki.ros.org/msg}{ROS Message (\inline{*.msg})}
+\item[\done] \href{http://wiki.ros.org/srv}{ROS Service (\inline{*.srv})}
+\item[\done] Implement preliminary project structure and XML support
+\item[\done] Write an MVP/POC app that supports file renaming and refactoring
+\item[\done] Add support for project templates and skeleton project creation
+\item[\done] Add support for deploying a project from the local machine to the remote
+\item Add support for monitoring and tracking running code, viewing logs
+    \begin{todolist}
+    \item Live logfile tracking
     \item Save to local disk
     \item Searching the log
-    \item Collect crash dumps and link to the corresponding code points
+    \end{todolist}
+\item Collect crash dumps and link to the corresponding code points
+    \begin{todolist}
     \item Link stack traces to source code
     \item Copy environment info and crash dump to clipboard
-    \item Integration with the \href{http://www.ros.org}{Robot Operating System} (ROS)
+    \end{todolist}
+\item Integration with the \href{http://www.ros.org}{Robot Operating System} (ROS)
+    \begin{todolist}
     \item[\done] ROS 1 support (\href{http://wiki.ros.org/kinetic}{Kinetic Kame} recommended)
     \item \href{https://github.com/ros2/ros2/wiki}{ROS 2} support
-    \item[\done] \href{http://gazebosim.org/}{Gazebo} simulator integration
-    \item CMake build integration
-    \item Remote debugging support
-    \item Docker integration
+    \item[\done] Managing ROS installations.
+    \end{todolist}
+\item[\done] \href{http://gazebosim.org/}{Gazebo} simulator integration
+\item CMake build integration
+\item Remote debugging support
+\item Docker integration
+    \begin{todolist}
     \item[\done] Basic Docker support
     \item Remote host and script support
     \item \href{http://hub.docker.com}{Docker Hub} namespace awareness
     \item Support for \href{https://platformio.org}{platformio} tooling
     \item X11 forwarding and \href{http://wiki.ros.org/rqt}{rqt} support
-    \item Static analysis for \href{http://wiki.ros.org/rospy}{Python API} misuse
+    \end{todolist}
+\item Static analysis for \href{http://wiki.ros.org/rospy}{Python API} misuse
+    \begin{todolist}
     \item[\done] Invalid dependency detection
     \item Validate \inline{.msg}/\inline{.srv} compatibility
     \item ROS nodes and graph analysis via \href{http://wiki.ros.org/rosdep}{\inline{rosdep}}/\href{http://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}}
-    \item \href{http://wiki.ros.org/rqt}{rqt} plugin support
+    \end{todolist}
+\item \href{http://wiki.ros.org/rqt}{rqt} plugin support
+    \begin{todolist}
     \item[\done] \href{http://wiki.ros.org/rqt_image_view}{\inline{rqt\_img\_view}} - View images
     \item[\done] \href{http://wiki.ros.org/rqt_plot}{\inline{rqt\_plot}} - Plot data visually
     \item[\done] \href{http://wiki.ros.org/rqt_graph}{\inline{rqt\_graph}} - Graph messages
     \item[\done] \href{http://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}} - Visualize dependencies
     \item[\done] \href{http://wiki.ros.org/rqt_bag}{\inline{rqt\_bag}} - Replay and edit bag files
     \item \href{http://wiki.ros.org/rqt_common_plugins}{rqt\_common} - Other common plugins
-    \item[\done] Detecting and managing ROS installations.
+    \end{todolist}
 \end{todolist}
 \end{multicols}
 
@@ -1100,7 +1135,7 @@ As deep learning solved problems across various domains, researchers observed th
 
 \section{Static and dynamic languages}
 
-Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality on using static typing and fewer defects has not been conclusively established, dynamically typed languages are seldom used for building safety-critical systems, and the majority of robotics applications~\citep{Areserio54:online} are written in statically typed languages.
+Most programs in machine learning and scientific computing are written in dynamic languages, such as Python. In contrast, most of the industry uses statically typed languages~\citep{github}. According to some studies, type related errors account for over 15\% of software bugs~\citep{gao2017type}. While the causality of defectiveness and static typing has not been conclusively established, dynamically typed languages are seldom used for building safety-critical systems, and the majority of robotics applications~\citep{Areserio54:online} are written in statically typed languages.
 
 Statically typed languages eliminate a broad class of runtime errors and allow users to reason more carefully about the behavior of programs without needing to execute them. In addition to stronger syntax validation for general-purpose programming, a well-designed library in a strongly typed language can eliminate specific errors related to API misuse that would otherwise require documentation and code samples to prevent, improving usability and reducing maintenance. Furthermore, strong type systems allow us to build more intelligent static analysis tools, which can provide relevant autocompletion, source code navigation, and earlier detection of runtime errors.
 
