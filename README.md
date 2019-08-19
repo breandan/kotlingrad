@@ -157,6 +157,23 @@ fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
 
 When writing a function, it is mandatory to declare the input type(s), but the return type [may be omitted](https://kotlinlang.org/docs/reference/functions.html#explicit-return-types). Shape-safety is currently supported up to rank-2 tensors, i.e. matrices.
 
+### Variable Capture
+
+Kotlin𝛁 provides a DSL with support for type safe variable capture with variadic currying. Consider the following example:
+
+```kotlin
+val q = X + Y * Z + Y + 0.0
+val p0 = q(X to 1.0, Y to 2.0, Z to 3.0) // Name resolution
+val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0) // Currying is possible
+val p2 = q(X to 1.0)(Y to 1.0, Z to 1.0) // Any arity is possible
+val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
+val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0) // Proper currying
+val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
+val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
+```
+
+For further details, please refer to [the implementation](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt).
+
 ### Example
 
 The following example shows how to derive higher-order partials of a function `z` of type ℝ²→ℝ:
@@ -551,15 +568,16 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 |                              Framework                               | Language |         AD         | FP<sup>&dagger;</sup> | TS<sup>&Dagger;</sup> |   SS<sup>*</sup>   | DP<sup>&sect;</sup> | MP<sup>&para;</sup> |
 |:--------------------------------------------------------------------:|:--------:|:------------------:|:---------------------:|:---------------------:|:------------------:|:-------------------:|:-------------------:|
 |                               Kotlin𝛁                                |  Kotlin  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: |   :construction:    |   :construction:    |
-|          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |    F#    | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
-| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |    F#    | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |         :x:         |
+|          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |  F#      | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
+| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |  F#      | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |         :x:         |
 |              [Myia](https://github.com/mila-udem/myia)               |  Python  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |         :x:         |
 |   [Deeplearning.scala](https://deeplearning.thoughtworks.school/)    |  Scala   | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
 |                  [Nexus](http://tongfei.me/nexus/)                   |  Scala   | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: | :heavy_check_mark:  |         :x:         |
 |          [Lantern](https://feiwang3311.github.io/Lantern/)           |  Scala   | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
-|          [Grenade](https://github.com/HuwCampbell/grenade)           | Haskell  | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: |         :x:         |         :x:         |
-|             [Eclipse DL4J](https://deeplearning4j.org/)              |   Java   | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         |         :x:         |         :x:         |
-|                  [Halide](http://halide-lang.org/)                   |   C++    | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
+|          [Grenade](https://github.com/HuwCampbell/grenade)           |  Haskell | :heavy_check_mark: |  :heavy_check_mark:   |  :heavy_check_mark:   | :heavy_check_mark: |         :x:         |         :x:         |
+|             [Eclipse DL4J](https://deeplearning4j.org/)              |  Java    | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         |         :x:         |         :x:         |
+|          [JAutoDiff](https://github.com/uniker9/JAutoDiff/)          |  Java    | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         |         :x:         |         :x:         |
+|                  [Halide](http://halide-lang.org/)                   |  C++     | :heavy_check_mark: |          :x:          |  :heavy_check_mark:   |        :x:         | :heavy_check_mark:  |         :x:         |
 |     [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)     |  Scheme  | :heavy_check_mark: |  :heavy_check_mark:   |          :x:          |        :x:         |         :x:         |         :x:         |
 |            [Autograd](https://github.com/HIPS/autograd/)             |  Python  | :heavy_check_mark: |          :x:          |          :x:          |        :x:         |         :x:         |         :x:         |
 |             [Tangent](https://github.com/google/tangent)             |  Python  | :heavy_check_mark: |          :x:          |          :x:          |        :x:         |         :x:         |         :x:         |
