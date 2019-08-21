@@ -1688,9 +1688,9 @@ Symbolic differentiation has been rediscovered in many domains, and more example
 
 The work described in this chapter establishes a framework for exploring symbolic differentiation using general algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). While our implementation of automatic differentiation uses the traditional infinitesimal calculus on vector fields, in future work, we would like to explore the relationship between differentiable programming and the meaning of symbolic differentiation in other calculi. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces, e.g. for learning boolean variables and other classically non-differentiable data structures like graphs and trees.
 
-As shown in prior literature~\citep{theano, baydin-survey, laue2019equivalence}, intermediate expression expression swell is a issue with many forms of computer algebra and automatic differentiation. The ad-hoc rules for algebraic simplifications described in ~\autoref{sec:multiple-dispatch} are almost certainly insufficient for general use cases. One interesting project would be to learn algorithms which lessen the impact of expression swell on numerical drift, by applying general purpose simplifications to improve wall clock runtime and precision required for accurate numerical approximation. There exists some prior work including \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} which explores versions of this problem.
+As shown in prior literature~\citep{theano, baydin-survey, laue2019equivalence}, intermediate expression expression swell is a pernicious issue in computer algebra and automatic differentiation. The ad-hoc algebraic simplification procedure described in ~\autoref{sec:multiple-dispatch} is almost certainly inadequate for general use cases. One interesting project would be to train a model to minimize numerical drift, by applying general purpose algebraic simplifications. There exists some prior work including \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} which explores versions of this problem.
 
-Allowing users to specify a matrix's structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would allow us to specialize derivation over such matrices (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices). Furthermore, it would be interesting to explore an approach like \citet{makwana2018numlin} for a type-system encoding of linear algebra.
+Allowing users to specify matrix structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would admit specialized differentiation over such matrices (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices). Furthermore, it would be interesting to explore an approach like \citet{makwana2018numlin} for a linearly typed encoding of linear algebra.
 
 Finally, from a performance perspective, it would be advantageous to integrate with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}.
 
@@ -1879,7 +1879,7 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-We can solve for the gradient by taking the product of the Jacobians (c.f. \autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_0} \cdots \mathcal{J}_{\mathbf{p}_k}$ with respect to $\mathbf{\Theta}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
+We can solve for the gradient by multiplying the Jacobians (c.f. \autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_0} \cdots \mathcal{J}_{\mathbf{p}_k}$ with respect to $\mathbf{\Theta}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}||_p    < \epsilon\}
@@ -1904,7 +1904,7 @@ Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test un
 \{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select inputs that are less frequent in hopes of finding one not previously considered. In addition, if the tester knew some details of how $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search for those inputs which were more likely to break $\mathbf T$. We consider a extension of classical fuzzing techniques to differentiable functions on continuous random variables.
+If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might be use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select low probability inputs in hopes of finding one less common. In addition, if given access to some information about $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search for those inputs which were more likely to break $\mathbf T$. We consider an extension of classical fuzzing techniques to differentiable functions on continuous random variables.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
@@ -1965,7 +1965,11 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
     \end{algorithmic}
 \end{algorithm}
 
-Another type of adversary is a generative adversary~\citep{goodfellow2014gan, albuquerque2019hgan}. Consider the qualities of a good adversary. Not only must she be able to exploit weaknesses of the model, but also possess some understanding of the underlying data distribution.
+What properties should a good adversary possess? For an adversary to be considered a strong adversary, a significant portion of her candidate inputs must be able fool the program. To generate plausible inputs, not only must she be able to exploit weaknesses of the program, but ideally possess an equal or better understanding of the underlying data distribution than the program itself. She should be able to generate realistic inputs on which the program is often wrong.
+
+Suppose we are given a program which takes a high dimensional input and produces a boolean, i.e. a binary classifier. How should we test its implementation, without requiring a similarly large specification, or prior distribution over inputs? One solution, known a generative adversary~\citep{goodfellow2014gan, albuquerque2019hgan} (GAN), produces a low-cost adversary in a data-driven manner, which satisfies our desired criteria.
+
+
 
 %\section{Regression testing and forgetting}
 
@@ -2038,7 +2042,7 @@ A Docker \textit{image} is basically a filesystem snapshot -- a single file that
 ~$ docker pull daphne/duck
 \end{pclisting}
 %
-Every Docker image has a image ID, a name and a tag:
+Every Docker image has an image ID, a name and a tag:
 
 \begin{pclisting}
 ~$ docker images
