@@ -164,8 +164,7 @@ Kotlin𝛁 provides a DSL with support for type safe variable capture with varia
 ```kotlin
 val q = X + Y * Z + Y + 0.0
 val p0 = q(X to 1.0, Y to 2.0, Z to 3.0) // Name resolution
-val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0) // Currying is possible
-val p2 = q(X to 1.0)(Y to 1.0, Z to 1.0) // Any arity is possible
+val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0) // Variadic currying
 val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
 val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0) // Proper currying
 val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
