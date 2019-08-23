@@ -12,6 +12,12 @@
 %\def\backtick{\char18}
 \lstdefinestyle{backtickstyle}{literate={`}{\char}1, escapechar=@}
 
+\usepackage{xcolor}
+\usepackage{ulem}
+\makeatletter
+\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+\makeatother
 \lstdefinelanguage{Kotlin}{
 comment=[l]{//},
 commentstyle={\color{gray}\ttfamily},
@@ -28,6 +34,7 @@ ndkeywordstyle={\color{Orange}\bfseries},
 sensitive=true,
 stringstyle={\color{green}\ttfamily},
 showstringspaces=false,
+escapeinside={(*}{*)},
 }
 
 % Comparison Table
@@ -85,7 +92,7 @@ Universit\'e de Montr\'eal \\
         For $\mathbf{P}(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian is a vector of gradients:
         %
         \begin{equation}
-            \mathbf{J}_\mathbf{P} = \left[\nabla P_0, \nabla P_1, \dots, \nabla P_n \right] \text{ or equivalently, } \mathbf{J}_{ij} = \frac{\partial P_i}{\partial x_j}
+            \mathcal{J}_\mathbf{P} = \left[\nabla P_0, \nabla P_1, \dots, \nabla P_n \right] \text{ or equivalently, } \mathcal{J}_{ij} = \frac{\partial P_i}{\partial x_j}
         \end{equation}
     \end{frame}
 
@@ -110,7 +117,7 @@ Universit\'e de Montr\'eal \\
         For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule still applies:
         %
         \begin{align*}
-            \mathbf{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathbf{J}_{p_i} = \underbrace{\bigg(\Big((\mathbf{J}_{p_k} \mathbf{J}_{p_{k-1}}) \dots \mathbf{J}_{p_2}\Big) \mathbf{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathbf{J}_{p_k} \Big(\mathbf{J}_{p_{k-1}} \dots (\mathbf{J}_{p_2} \mathbf{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
+            \mathcal{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathcal{J}_{p_i} = \underbrace{\bigg(\Big((\mathcal{J}_{p_k} \mathcal{J}_{p_{k-1}}) \dots \mathcal{J}_{p_2}\Big) \mathcal{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathcal{J}_{p_k} \Big(\mathcal{J}_{p_{k-1}} \dots (\mathcal{J}_{p_2} \mathcal{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
         \end{align*}
         %
         If $\mathbf{P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
@@ -148,9 +155,42 @@ Universit\'e de Montr\'eal \\
     %------------------------------------------------------------------------------------------------
 
     \begin{frame}
+        \frametitle{Why differentiable programming?}
+        For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
+        %
+        \begin{align*}
+            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\boldsymbol\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+        \end{align*}
+        %
+        Where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
+        %
+        \begin{align*}
+            \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{y}^{(i)}\big)
+        \end{align*}
+        %
+        If $\mathbf{\hat P}_{k}$ were a program, what would the type signature of $\mathbf{p}_{0<i<k}$ be?
+        %
+        \begin{align*}
+            \mathbf{p}_i: \mathcal{T}_{out}(\mathbf{p}_{i-1}) \times \mathcal{T}(\boldsymbol\theta_{i}) \rightarrow \mathcal{T}_{in}\big(\mathbf{p}_{i+1}(\boldsymbol\theta_{i+1})\big)
+        \end{align*}
+        %
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
+        \frametitle{Why differentiable programming?}
+        \begin{center}
+            \includegraphics[scale=0.07]{diff_prob_prog.png}
+        \end{center}
+    \end{frame}
+
+    %------------------------------------------------------------------------------------------------
+
+    \begin{frame}
         \frametitle{Shape checking and inference}
         \begin{itemize}
-            \item Scalar functions implicitly represent shape as arity $f(1, 2): \mathbb{R}^2 \rightarrow \mathbb{R}$
+            \item Scalar functions implicitly represent shape as arity $f(\cdot, \cdot): \mathbb{R}^2 \rightarrow \mathbb{R}$
             \item To check array programs, we need a type-level encoding of shape
             \item Arbitrary ops (e.g.\ convolution, vectorization) require dependent types
             \item But parametric polymorphism will suffice for many tensor functions
@@ -160,9 +200,9 @@ Universit\'e de Montr\'eal \\
             \begin{table}
             \begin{tabular}{|c|c|c|c|l|}\hline\multicolumn{1}{|c|}
             {\textbf{Math}}             & \textbf{Derivative}                    & \textbf{Code}                                                                                  &  \textbf{Type Signature}                                                                                                                                                                                    \\ \hline
-                $a(b)$                  & $\mathbf{J}_a\mathbf{J}_b$             & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
-                $a + b$                 & $\mathbf{J}_a + \mathbf{J}_b$          & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
-                $a   b$                 & $\mathbf{J}_a b + \mathbf{J}_b a$      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
+                $a(b)$                  & $\mathcal{J}_a\mathcal{J}_b$             & \texttt{a(b)}                                                                                  &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\tau})   \rightarrow (\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{\pi})$                \\ \hline
+                $a + b$                 & $\mathcal{J}_a + \mathcal{J}_b$          & \begin{tabular}{@{}c@{}}\texttt{a + b}\\\texttt{a.plus(b)}\\\texttt{plus(a, b)}\end{tabular}   &  $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$                     \\ \hline
+                $a   b$                 & $\mathcal{J}_a b + \mathcal{J}_b a$      & \begin{tabular}{@{}c@{}}\texttt{a * b}\\\texttt{a.times(b)}\\\texttt{times(a, b)}\end{tabular} &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})    \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
                 $a ^ b$                 & \tiny{$a^b(a'\frac{b}{a} + b'\ln a)$}  & \begin{tabular}{@{}c@{}}\texttt{a.pow(b)}\\\texttt{pow(a, b)}\end{tabular}                     &  $ (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}) $                                          \\ \hline
             \end{tabular}
             \end{table}
@@ -285,150 +325,6 @@ Universit\'e de Montr\'eal \\
     \end{figure}
     \end{frame}
 
-    \section{Architectural Overview}
-
-
-    \begin{frame}[fragile]
-        \frametitle{How do we define algebraic types in Kotlin\texorpdfstring{$\nabla$}{}?}
-\begin{center}
-\begin{tabular}{c}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            // T: Group<T> is effectively a self type
-            interface Group<T: Group<T>> {
-                operator fun plus(f: T): T
-                operator fun unaryMinus(): X
-                operator fun minus(f: X): X = this + -f
-                operator fun times(f: T): T
-            }
-
-            interface Field<X: Group<X>> {
-                val e: X
-                val one: X
-                val zero: X
-                operator fun div(f: X): X = this * f.pow(-one)
-                infix fun pow(f: X): X
-                fun ln(): X
-            }
-        \end{lstlisting}
-\end{tabular}
-\end{center}
-    \end{frame}
-
-
-    \begin{frame}[fragile]
-        \frametitle{Algebraic Data Types}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            class Var<X: Fun<X>>(val lbl: String): Fun<X>()
-            class Sum<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
-            class Pdt<X: Fun<X>>(val f1: X, val f2: X): Fun<X>()
-            class Const<X: Fun<X>>(val num: Number): Fun<X>()
-
-            sealed class Fun<X: Fun<X>>: Field<Fun<X>> {
-                open fun diff(): Fun<X> = when(this) {
-                    is Const -> Zero
-                    is Sum -> f1.diff() + f2.diff()
-                    is Pdt -> f1.diff() * f2 + f1 * f2.diff()
-                    is Var -> One
-                }
-
-                operator fun plus(f: Fun<X>) = Sum(this, f)
-                operator fun times(f: Fun<X>) = Pdt(this, f)
-            }
-        \end{lstlisting}
-    \end{frame}
-
-    \begin{frame}[fragile]
-        \frametitle{Expression simplification}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            operator fun times(f: Fun<X>): Fun<X> = when {
-              // Constant propagation and folding optimizations
-              this is Const && num == 0.0 -> Const(0.0)
-              this is Const && num == 1.0 -> f
-              f is Const && f.num == 0.0 -> exp
-              f is Const && f.num == 1.0 -> this
-              this is Const && f is Const -> Const(num * f.num)
-              // Only instantiate a product node on last resort
-              else -> Pdt(this, e)
-            }
-
-            // Sum(Pdt(Const(2.0), Var()), Const(6.0))
-            val q = Const(2.0) * Sum(Var(), Const(3.0))
-        \end{lstlisting}
-    \end{frame}
-
-
-    \begin{frame}[fragile]
-        \frametitle{Extension functions and contexts}
-\begin{center}
-\begin{tabular}{c}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            object DoublePrecision {
-                operator fun Number.times(f: Fun<KDouble>) =
-                    Const(toDouble()) * f
-            }
-
-            class KDouble(num: Double): Const<KDouble>(num) {
-                override val e by lazy { KDouble(Math.E) }
-                override val one by lazy { KDouble(1.0) }
-                override val zero by lazy { KDouble(0.0) }
-                // Adapters for wrapping primitive Double...
-            }
-
-            // Uses * operator in Double context
-            fun Fun<KDouble>.multiplyByTwo() =
-                with(DoublePrecision) { 2 * this }
-        \end{lstlisting}
-\end{tabular}
-\end{center}
-    \end{frame}
-
-
-    \begin{frame}[fragile]
-        \frametitle{Shape safe vector addition and inference (toy example)}
-        \begin{lstlisting}[language=Kotlin, gobble=12, style=backtickstyle]
-            interface Nat<T: `0`> { val value: Int }
-            // Type level integer literals for shape checking
-            sealed class `0`(open val value: Int = 0)
-              { companion object: `0`(), Nat<`0`> }
-            open class `1`(override val value: Int = 1): `0`(2)
-              { companion object: `1`(), Nat<`1`> }
-            open class `2`(override val value: Int = 2): `1`(2)
-              { companion object: `2`(), Nat<`2`> }
-
-            // <L: `0`> accepts 0 <= L via Liskov substitution
-            class Vec<E, L: `0`>(val len: L, val es: List<E>)
-            operator fun <L: `0`, V: Vec<Int, L>> V.plus(v: V) =
-              Vec<Int, L>(len, es.zip(v.es).map { it.l + it.r })
-
-            val Y= Vec(`2`, listOf(1,2)) + Vec(`2`, listOf(3,4))
-            val X= Vec(`1`, listOf(1)) + Y // Compiler error!
-        \end{lstlisting}
-    \end{frame}
-
-    \begin{frame}[fragile]
-        \frametitle{Automatic test case generation}
-        \begin{lstlisting}[language=Kotlin, gobble=12]
-            val x = Var("x")
-            val y = Var("y")
-
-            val z = y * (sin(x * y) - x) // Function under test
-            val dz_dx = d(z) / d(x)      // Automatic derivative
-            val manualDx = y * (cos(x * y) * y - 1)
-
-            "dz/dx should be y * (cos(x * y) * y - 1)" {
-                assertAll (DoubleGenerator) { cx, cy ->
-                    // Evaluate the results at a given seed
-                    val autoEval = dz_dx(x to cx, y to cy)
-                    val symbEval = manualDx(x to cx, y to cy)
-                    // Only pass iff |adEval - manualEval| < eps
-                    autoEval shouldBeApproximately symbEval
-                }
-            }
-        \end{lstlisting}
-    \end{frame}
-
-    \section{Plotting}
-
     \begin{frame}[fragile]
         \frametitle{Usage: Plotting higher derivatives of nested functions}
         \begin{lstlisting}[language=Kotlin, gobble=12]
@@ -452,7 +348,7 @@ Universit\'e de Montr\'eal \\
     \begin{frame}
         \frametitle{$y = \frac{\sin{\sin{\sin{x}}}}{x} + x \sin{x} + \cos{x} + x$, $\frac{dy}{dx}$, $\frac{d^{2}y}{dx^2}$, $\frac{d^{3}y}{dx^3}$, $\frac{d^{4}y}{dx^4}$, $\frac{d^{5}y}{dx^5}$}
         \begin{center}
-            \includegraphics[scale=0.35]{plot.png}
+            \includegraphics[scale=0.55]{plot.png}
         \end{center}
     \end{frame}
 
@@ -482,6 +378,65 @@ Universit\'e de Montr\'eal \\
         \frametitle{$z = \sin(10(x^2 + y^2)) / 10$, $\frac{\partial^3 z}{\partial^2 x \partial y}$}
         \begin{center}
             \includegraphics[scale=0.4]{plot3d.png}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Currying and Partial Application}
+        \begin{center}
+            \begin{tabular}{c}
+                \begin{lstlisting}[language=Kotlin, gobble=20]
+                    with(DoublePrecision) {
+                        val q = X + Y * Z + Y + 0.0
+                        val p0 = q(X to 1.0, Y to 2.0, Z to 3.0)
+                        val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0)
+                        val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0)
+                        val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0)
+                        val p5 = q(Z to 1.0)(X to 1.0) // Fn<Y>
+                        val p6 = (X + Z + 0)(Y to 1.0) // Error
+                    }
+                \end{lstlisting}
+            \end{tabular}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Vector Shape Safety}
+        \begin{center}
+            \begin{tabular}{c}
+                \begin{lstlisting}[language=Kotlin, gobble=20]
+                    with(DoublePrecision) {        // Inferred type:
+                        val a = Vec(1.0, 2.0)      // Vec<Double, 2>
+                        val b = Vec(1.0, 2.0, 3.0) // Vec<Double, 3>
+                        val c = b + b              // Vec<Double, 3>
+                        val d = a + b              // Compile error
+                        val e = b dot b            // Vec<Double, 1>
+                        val f = b dot a            // Compile error
+                    }
+                \end{lstlisting}
+            \end{tabular}
+        \end{center}
+    \end{frame}
+
+    \begin{frame}[fragile]
+        \frametitle{Matrix Shape Safety}
+        \begin{center}
+            \begin{tabular}{c}
+                \begin{lstlisting}[language=Kotlin, gobble=20, style=backtickstyle]
+                    // Inferred type: Mat<Double, `1`, `4`>
+                    val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
+                    // Inferred type: Mat<Double, `4`, `1`>
+                    val b = Mat(`4`, `1`, 1.0,
+                                          2.0,
+                                          3.0,
+                                          4.0)
+                    val c = a * b
+
+                    // Does not compile, inner dimension mismatch
+                    // a * a
+                    // b * b
+                \end{lstlisting}
+            \end{tabular}
         \end{center}
     \end{frame}
 
@@ -531,8 +486,9 @@ Universit\'e de Montr\'eal \\
                 Michalis Famelis \\
                 }
                 \vspace{10}
-                \includegraphics[scale=0.4]{cser_logo.png}\\
-                \vspace{10}
+                \begin{tabular}{ll}
+                    \includegraphics[scale=0.1]{mais_logo.jpg} & \raisebox{\height}{{\fontfamily{courier}\selectfont\textbf{Symposium I.A. Montr\'eal}}}\\
+                \end{tabular} \\
                 \includegraphics[scale=0.1]{udem.png}
                 \includegraphics[scale=0.4]{mila.png}
             \end{center}

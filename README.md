@@ -94,9 +94,9 @@ Shape safety is an important concept in Kotlin𝛁. There are three broad strate
 In Kotlin𝛁, we use the last strategy to check the shape of tensor operations. Consider the following program:
 
 ```kotlin
-// Inferred type: Vec<Int, `2`>
+// Inferred type: Vec<Double, `2`>
 val a = Vec(1.0, 2.0)
-// Inferred type: Vec<Int, `3`>
+// Inferred type: Vec<Double, `3`>
 val b = Vec(1.0, 2.0, 3.0)
 
 val c = b + b
