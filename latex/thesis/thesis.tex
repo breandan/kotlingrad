@@ -1965,17 +1965,23 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
     \end{algorithmic}
 \end{algorithm}
 
-What properties should a good adversary possess? For an adversary to be considered a strong adversary, a significant portion of her candidate inputs must be able fool the program. To generate plausible inputs, not only must she be able to exploit weaknesses of the program, but ideally possess an equal or better understanding of the underlying data distribution than the program itself. She should be able to generate realistic inputs on which the program is often wrong.
+What constitutes a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her candidate inputs must be able fool the program. To generate plausible inputs, not only must she be able to exploit weaknesses of the program, but ideally possess an equal or better understanding of $p_data$ than the program itself. She should be able to generate realistic inputs which program often gets wrong.
 
-Suppose we are given a program which takes a high dimensional input and produces a boolean, i.e. a binary classifier. How should we test its implementation, without requiring a similarly large specification, or prior distribution over inputs? One solution, known a generative adversary~\citep{goodfellow2014gan, albuquerque2019hgan} (GAN), produces a low-cost adversary in a data-driven manner, which satisfies our desired criteria.
+Suppose we are given a program which takes a high dimensional input and produces a boolean, i.e. a binary classifier. How should we test its implementation, without providing an exhaustive specification, or some prior distribution over the input values? One solution, known a generative adversarial network~\citep{goodfellow2014gan, albuquerque2019hgan} or GAN, produces low-cost adversaries in a data-driven manner, which satisfy our desired criteria. The vanilla GAN objective can be formulated as follows:
 
+\begin{equation}
+\min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}(\mathbf x)}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
+\end{equation}
 
+This can be realized by updating the parameters of $G$ and $D$ using gradient descent:
 
-%\section{Regression testing and forgetting}
+\begin{equation}
+\theta_D \leftarrow \theta_D + \nabla_{\theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D\Big(\mathbf x^{(i)}\Big) + \log\Big(1 - D\Big(G\Big(\mathbf z^{(i)}\Big)\Big)\Big)\Big]
+\end{equation}
 
-%An endemic problem in modern deep learning is the problem of forgetting. In order to combat this issue, we turn to a classic software testing tool: regression testing.
-
-%Regular regression testing can provide diagnostics about the behavior of intelligent systems.
+\begin{equation}
+\theta_G \leftarrow \theta_G - \nabla_{\theta_G}\frac{1}{m}\sum_{i=1}^m \log\Big(1 - D\Big(G\Big(\mathbf z^{(i)}\Big)\Big)\Big)
+\end{equation}
 
 \mediumwell{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
 
@@ -2631,9 +2637,9 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 %
 \section{Retrospective}\label{sec:retrospective}
 
-One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can load source code in a shared volume and rebuild on container startup. Both approaches ensure reproducible build artifacts, but when packaged within the image makes build artifacts more interpretable and reduces startup time.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can still load source code in a shared volume and rebuild on container startup. Both approaches ensure reproducible artifacts, but Docker images become more interpretable when sources are included and launch more quickly when images are fully prebuilt.
 
-Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, doing so adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
+Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, it also adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
 
 \begin{figure}
 \includegraphics[width=0.80\textwidth]{image_provenance.png}
@@ -2717,6 +2723,12 @@ In the strictest sense, designing a good set of requirements is indistinguishabl
 \subsection{Continuous Delivery and Continual Learning}
 
 An ongoing trend in modern software and systems engineering is the transition away from long development cycles towards continuous integration and deployment. Development teams across the industry are encouraged to iterate in a series of short sprints between feature development and deployment. In some cases, software is shipped to users on a nightly basis, with automated testing and deployment. Similarly, intelligent systems have a need to continuously adapt to their environment, and will change their behavior on an even shorter basis.
+
+\subsection{Regression testing and forgetting}
+
+An endemic problem in modern deep learning is the problem of forgetting. In order to combat this issue, we turn to a classic software testing tool: regression testing.
+
+Regular regression testing can provide diagnostics about the behavior of intelligent systems.
 
 %Incremental updates will grow increasingly smaller, until the program starts to alter itself after every input it processes.
 
