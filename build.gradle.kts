@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   application
   kotlin("jvm") version "1.3.41"
+  `maven-publish`
 }
 
 group = "edu.umontreal"
@@ -54,7 +55,7 @@ repositories {
 
 val arrow_version = "0.9.1-SNAPSHOT"
 dependencies {
-//  compile("io.arrow-kt:arrow-core-data:$arrow_version")
+  //  compile("io.arrow-kt:arrow-core-data:$arrow_version")
 //  compile("io.arrow-kt:arrow-core-extensions:$arrow_version")
 //  compile("io.arrow-kt:arrow-syntax:$arrow_version")
 //  compile("io.arrow-kt:arrow-typeclasses:$arrow_version")
@@ -69,4 +70,17 @@ dependencies {
   compile("ch.obermuhlner:big-math:2.1.0")
   api("scientifik:kmath-core:0.1.3")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
+}
+
+val sourcesJar by tasks.registering(Jar::class) {
+  archiveClassifier.set("sources")
+  from(sourceSets["main"].allSource)
+}
+
+publishing {
+  publications.create<MavenPublication>("default") {
+    from(components["java"])
+    artifact(sourcesJar.get())
+  }
+  repositories.maven("${project.rootDir}/releases")
 }
