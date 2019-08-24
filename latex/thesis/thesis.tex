@@ -1413,7 +1413,7 @@ A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape
 
 \section{Testing}\label{sec:testing}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property} (cf.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (cf.~\autoref{subsec:metamorphic-testing}). Notable implementations include QuickCheck~\citep{claessen2011quickcheck}, Hypothesis~\citep{Hypothesis} and KotlinTest~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property} (cf.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (cf.~\autoref{subsec:metamorphic-testing}). Notable implementations include \href{http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html}{QuickCheck}~\citep{claessen2011quickcheck}, \href{https://hypothesis.readthedocs.io/en/latest/}{Hypothesis}~\citep{Hypothesis} and \{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
 %
 \begin{enumerate}
     \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
@@ -1496,7 +1496,7 @@ Currently, it is possible to represent functions where all inputs and outputs sh
 
 \section{Numeric Tower}\label{sec:numeric-tower}
 
-Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019acat} and Apache Commons Math~\citep{developers2012apache}.
+Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. First pioneered in the functional programming language, Scheme~\citep{sperber2009revised}, this strategy is also suited to object oriented programming~\citep{niculescu2003design, niculescu2011using} and widely used in other JVM libraries such as \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019acat} and \href{https://commons.apache.org/proper/commons-math/}{Apache Commons Math}~\citep{developers2012apache}.
 
 \begin{kotlinlisting}[caption={Most mathematical operations are composed of a small set of simple operators.}]
 interface Group<X: Group<X>> {
@@ -1644,11 +1644,11 @@ It has long been claimed by the AD literature that automatic differentiation is 
 
 Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations. Continuations are a mechanism that allow functions to access and modify subsequent computation. In continuation passing style (CPS), every function, in addition to its usual arguments, takes a second function representing the subsequent computation to be performed. Rather than returning to its caller, the function invokes its continuation immediately prior to completion, and the process is restarted.
 
-One form of continuation, known as delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by \textit{Shift/Reset the Penultimate Backpropagator}~\citep{wang2018demystifying} and later in \textit{Backpropagation with Continuation Callbacks}~\citep{wang2018backpropagation}. Delimited continuations can be implemented with Kotlin Coroutines, and merits further investigation.
+One form of continuation, known as delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by \citet{wang2018demystifying} and later in \citet{wang2018backpropagation}. Delimited continuations can be implemented with \href{https://kotlinlang.org/docs/reference/coroutines-overview.html}{Kotlin Coroutines}, and merits further investigation.
 
 \section{Comparison}\label{sec:comparison}
 
-Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaurin2015autograd}, Theano~\citep{bergstra2010theano}, Myia~\citep{breuleux2017automatic}, JAutoDiff~\citep{nureki2012jautodiff}, Nexus~\citep{chen2017typesafe}, Lantern~\citep{wang2018demystifying}, Tangent~\citep{van2018tangent}, Halide~\citep{li2018halide} et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. In the process, it introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Prior work, including PyTorch~\citep{paszke2017automatic}, TensorFlow~\citep{abadi2016tensorflow}, Chainer~\citep{chainer}, DL4J~\cite{team2016dl4j} and others have developed general purpose AD libraries in less safe languages. Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, graph-based AD that does not require any template metaprogramming, compiler augmentation or runtime reflection to ensure type safety. As we have seen, this approach is primarily achieved through operator overloading, parametric polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or embedded domain-specific language (EDSL), thereby leveraging the host language's type system to receive code completion and type inference for free. Our approach is particularly well-suited to functional programming, and employs several functional programming concepts, including lambda expressions, higher order functions, partial application, currying and algebraic data types. For a more detailed comparison of Kotlin$\nabla$ with other AD libraries, see \autoref{tab:ad_comparison}.\\
+Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaurin2015autograd}, Theano~\citep{bergstra2010theano}, Myia~\citep{breuleux2017automatic}, JAutoDiff~\citep{nureki2012jautodiff}, Nexus~\citep{chen2017typesafe}, Lantern~\citep{wang2018demystifying}, Tangent~\citep{van2018tangent}, Halide~\citep{li2018halide} et al., Kotlin$\nabla$ attempts to port recent developments in automatic differentiation (AD) to the Kotlin language. In the process, it introduces a number of experimental ideas, including compile-time shape-safety, algebraic simplification and numerical stability checking through property-based testing. Prior work, including PyTorch~\citep{paszke2017automatic}, TensorFlow~\citep{abadi2016tensorflow}, Chainer~\citep{chainer}, DL4J~\cite{team2016dl4j} and others have developed general purpose AD libraries in less safe languages. Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, graph-based AD that does not require any template metaprogramming, compiler augmentation or runtime reflection to ensure type safety. As we have seen, this approach is primarily achieved through operator overloading, parametric polymorphism, and pattern matching. The practical advantage of this approach is that it can be implemented as a simple library or embedded domain-specific language (eDSL), thereby leveraging the host language's type system to receive code completion and type inference for free. Our approach is particularly well-suited to functional programming, and employs several functional programming concepts, including lambda expressions, higher order functions, partial application, currying and algebraic data types. For a more detailed comparison of Kotlin$\nabla$ with other AD libraries, see \autoref{tab:ad_comparison}.\\
 
 \begin{table}
 \begin{tabular}{lllllllll}
@@ -1669,7 +1669,7 @@ Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaur
 \href{https://feiwang3311.github.io/Lantern/}{Lantern}                           & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
 \href{https://github.com/HuwCampbell/grenade}{Grenade}                           & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
 \href{https://deeplearning4j.org}{Eclipse DL4J}                                  & Java    & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-\href{http://uniker9.github.io/JAutoDiff/}{JAutoDiff}                            & Java    & \cmark & \xmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+\href{http://uniker9.github.io/JAutoDiff/}{JAutoDiff}                            & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
 \href{https://halide-lang.org}{Halide}                                           & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
 \href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}         & Scheme  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
 \href{https://github.com/mila-iqia/myia}{Myia}                                   & Python  & \cmark & \cmark & \cmark & \xmark & \xmark & \cmark & \wmark \\
@@ -1688,7 +1688,7 @@ Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaur
 
 The derivative, as it is commonly known today, is usually associated with the calculus of infinitesimals. But the same derivative introduced by Leibniz and Newton over three centuries ago is starting to reappear in strange and marvelous places throughout mathematics and computer science. In \citet{brzozowski1964derivatives}, we are shown the rules of derivation can be applied to regular expressions -- one of the early modern applications of derivatives in a classically non-differentiable setting. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and parsing \citep{might2011parsing, moss2014derivatives}. The boolean differential calculus introduced by \citet{thayse1981boolean} has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. The notion of symbolic differentiation has also arisen in lambda calculus~\citep{ehrhard2003differential}, yielding applications in automatic differentiation~\citep{kelly2016evolving}, incremental computation~\citep{cai2014theory, alvarezpicallo2019fixing}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential, blute2009cartesian}, domain theory~\citep{edalat2002domain}, probability theory~\citep{kac1951probability} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
 
-Symbolic differentiation has been rediscovered in many domains, and more examples can be found through a careful literature review. This pattern is unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for representation learning and differentiable programming.
+Symbolic differentiation has been rediscovered in many domains, and more examples can be found with a thorough literature review. This pattern is unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for representation learning and differentiable programming.
 
 The work described in this chapter establishes a framework for exploring symbolic differentiation using general algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). While our implementation of automatic differentiation uses the traditional infinitesimal calculus on vector fields, in future work, we would like to explore the relationship between differentiable programming and the meaning of symbolic differentiation in other calculi. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces, e.g. for learning boolean variables and other classically non-differentiable data structures like graphs and trees.
 
@@ -1696,7 +1696,7 @@ As shown in prior literature~\citep{theano, baydin-survey, laue2019equivalence},
 
 Allowing users to specify matrix structure in its type signature, (e.g.\ Singular, Symmetric, Orthogonal, Unitary, Hermitian, Toeplitz) would admit specialized differentiation over such matrices (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for calculating derivatives of structured matrices). Furthermore, it would be interesting to explore an approach like \citet{makwana2018numlin} for a linearly typed encoding of linear algebra.
 
-Finally, from a performance perspective, it would be advantageous to integrate with a dedicated linear algebra backend such as ND4J~\citep{team2016nd4j}, Apache Commons Math~\citep{developers2012apache}, EJML~\citep{abeles2010efficient} or JBlas~\citep{braun2011jblas}.
+Finally, from a performance perspective, it would be advantageous to integrate with a dedicated linear algebra backend such as \href{https://deeplearning4j.org/docs/latest/nd4j-overview}{ND4J}~\citep{team2016nd4j}, \href{https://commons.apache.org/proper/commons-math/}{Apache Commons Math}~\citep{developers2012apache}, \href{http://ejml.org}{EJML}~\citep{abeles2010efficient} or \href{http://jblas.org/}{JBlas}~\citep{braun2011jblas}.
 
 \mediumwell{\chapter{Testing and validation}\label{ch:difftest}}
 
@@ -2058,13 +2058,13 @@ Suppose there is a program which is known to run on some computer. It would be n
 
 Docker\footnote{The following tutorial uses Docker, but the workflow described is similar to most container platforms.} is a tool for portable, reproducible computing. With Docker, users can run any Linux program on almost any networked computing device on the planet, regardless of the underling operating system or hardware architecture. All of the environment preparation, installation and configuration steps can be automated from start to finish. Depending on how much network bandwidth is available, it might take some time, but users will never need to intervene in the installation process.
 
-To install Docker itself, execute the following command on a POSIX-compliant shell of any Docker-supported platform:
+To install Docker itself, execute the following command on a POSIX-compliant shell of any \href{https://docs.docker.com/install/#supported-platforms}{Docker-supported platform}:
 
 \begin{pclisting}
 ~$ curl -sSL https://get.docker.com/ | sh
 \end{pclisting}
 %
-A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default Docker Hub repository:
+A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default {Docker Hub} repository:
 
 \begin{pclisting}
 ~$ docker pull daphne/duck
@@ -2177,7 +2177,7 @@ This is a convenient way to share an image with colleagues and collaborators. An
 
 \subsection{Writing an image recipe}\label{subsec:writing-an-image-recipe}
 
-The second way to create a Docker image is to write a recipe, called a \inline{Dockerfile}. A \inline{Dockerfile} is a text file that specifies the commands required to create a Docker image, typically by modifying an existing container image using a scripting interface. They also have special keywords (which are conventionally \inline{CAPITALIZED}), like \inline{FROM}, \inline{RUN}, \inline{ENTRYPOINT} and so on. For example, create a file called \inline{Dockerfile} with the following content:
+The second way to create a Docker image is to write a recipe, called a \inline{Dockerfile}. A \inline{Dockerfile} is a text file that specifies the commands required to create a Docker image, typically by modifying an existing container image using a scripting interface. They also have special \href{https://docs.docker.com/engine/reference/builder/}{keywords} (which are conventionally \inline{CAPITALIZED}), like \href{https://docs.docker.com/engine/reference/builder/#from}{\inline{FROM}}, \href{https://docs.docker.com/engine/reference/builder/#from}{\inline{RUN}}, \href{https://docs.docker.com/engine/reference/builder/#entrypoint}{\inline{ENTRYPOINT}} and so on. For example, create a file called \inline{Dockerfile} with the following content:
 
 \begin{dockerlisting}
 FROM daphne/duck      # Defines the base image
@@ -2233,7 +2233,7 @@ Notice that as soon as we run the container, Docker will execute the \inline{ls 
 %
 \subsection{Layer Caching}
 
-Layers are an important concept to understand when working with Docker. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, uniquely identified by a hash code. In a \inline{Dockerfile}, layers begin with a keyword.
+\href{https://docs.docker.com/storage/storagedriver/#images-and-layers}{Layers} are an important concept to understand when working with Docker. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, uniquely identified by a hash code. In a \inline{Dockerfile}, layers begin with a \href{https://docs.docker.com/engine/reference/builder/#from}{keyword}.
 
 \begin{dockerlisting}
 FROM daphne/duck
@@ -2270,7 +2270,7 @@ Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
 %
-Layers are conveniently cached by the Docker daemon. Should we need to run the same command twice, Docker will use the cache instead of rebuilding the entire image:
+Layers are conveniently cached by the \href{https://docs.docker.com/engine/reference/commandline/dockerd/}{Docker daemon}. Should we need to run the same command twice, Docker will use the cache instead of rebuilding the entire image:
 
 \begin{pclisting}
 Sending build context to Docker daemon  2.048kB
@@ -2308,7 +2308,7 @@ Successfully tagged user/duck:v4
 %
 If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{-{}-no-cache} flag when building a \inline{Dockerfile}.
 
-What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also checks the build context for changes. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the build context, or path where the build should occur. Often, this path contains build artifacts. For example:
+What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also checks the \href{https://docs.docker.com/engine/reference/commandline/build/#extended-description}{build context} for changes. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the build context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
 \begin{dockerlisting}
 FROM daphne/duck
@@ -2451,7 +2451,7 @@ One application of multi-stage builds is compiling a project dependency from its
 
 Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
 
-The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is HypriotOS, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
+The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \href{https://blog.hypriot.com/}{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
 
 \section{Duckiebot Development using Docker}
 
@@ -2508,7 +2508,7 @@ To access the DuckieOS web interface, users can visit the following URL in any J
 \noindent To verify Docker is working properly, launch a remote container, interactively, like so:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host \
+~$ docker (*\hl{-H DUCKIEBOT\_NAME}*) run -it --privileged --net host \
    duckietown/rpi-ros-kinetic-base:master18
 \end{pclisting}
 %
@@ -2536,7 +2536,7 @@ As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build o
 standard_init_linux.go:175: exec user process caused "exec format error"
 \end{pclisting}
 %
-In order to circumvent this restriction, ARM-specific \inline{Dockerfile}s can ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions.
+In order to circumvent this restriction, ARM-specific \inline{Dockerfile}s can ported to run on x86 by using the \inline{RUN [ "cross-build-start" ]} and \inline{RUN [ "cross-build-end" ]} directives, after the \inline{FROM} and before the \inline{CMD} instructions. See \autoref{subsec:balena} for further details.
 
 All Duckietown Docker images contain an emulator called \href{https://www.qemu.org}{QEMU} - this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
@@ -2551,7 +2551,7 @@ Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another
 \noindent All persistent data is stored in \inline{/data}. To serve this directory, a web server is provided:
 
 \begin{pclisting}
-~$ docker -H DUCKEBOT_NAME run -d -v /data:/data -p 8082:8082 \
+~$ docker -H DUCKIEBOT_NAME run -d -v /data:/data -p 8082:8082 \
    duckietown/rpi-simple-server:master18
 \end{pclisting}
 %
@@ -2729,8 +2729,6 @@ So far we have made some tentative steps towards
 \section{Future work}
 
 \subsection{Requirements Engineering}
-
-Often it is not possible, or desirable to summarize the performance of a complex system using a single variable. In multi-objective optimization, we have the notion of pareto-efficiency...
 
 Traditional software engineering has followed a rigorous process model and testing methodology. This model has guided the development of traditional software engineering, intelligent systems will require a re-imagining of these ideas to build systems that adapt to their environment during operation. Intelligent systems are designed with objective functions, which are typically one- or low-dimensional metrics for evaluating the performance of the system. Most often, these take the form of a single criteria, such as an \textit{error} or \textit{loss} which can represent descriptive phenomena such as latency, safety, energy efficiency or any number of objective measures.
 
@@ -2950,4 +2948,77 @@ Solving this requires computing $(\mathbf{X}^\intercal\mathbf{X})^{-1}$ which is
 \end{equation}
 %
 Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required to find a suitable $\alpha$ (various improvements like Nesterov momentum~\citep{nesterov2013gradient} and quasi-Newton methods also help to accelerate convergence), this procedure is guaranteed to be computationally more efficient than matrix inversion for sufficiently large $m$ and $n$. In practice, the normal equation is seldom used unless $m$ is very small.
+
+\chapter{Software Maintenance and Reproducibility}
+
+\section{Useful Docker resources}
+
+The following resources have proven particularly helpful during the development of Duckietown container infrastructure.
+
+\subsection{\href{https://www.balena.io/}{Balena}}\label{subsec:balena}
+
+Balena is a very good source of base images for ARM devices. The best part of using Balena images, is that they can be rebuilt on x86 devices, such as a laptop or cloud server. Baked into every Balena image is a shim for the shell that will allow users to run ARM binaries on x86 from inside a container. To use this feature, the following \inline{Dockerfile} template is provided:
+%
+\begin{dockerlisting}
+FROM balena/BASE_IMAGE # e.g. raspberrypi3-python
+RUN [ "cross-build-start" ]
+# ARM-specific code goes here...
+RUN [ "cross-build-end" ]
+CMD <DEFAULT_START_COMMAND>
+\end{dockerlisting}
+%
+Balena uses \href{https://www.qemu.org/}{QEMU} to cross-build images~\footnote{cf. \href{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}}. When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
+%
+\begin{pclisting}
+~$ docker run (*\hl{--entrypoint=qemu-arm-static}*) -it your/arm-image bash
+\end{pclisting}
+
+\subsection{\href{https://hub.docker.com/_/ros}{ROS Docker Images}}
+
+ROS.org builds nightly ARM and x86 images for robotics development. For each distro, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.
+%
+\begin{centering}
+\includegraphics[width=\textwidth]{ros_docker_images.png}
+\end{centering}
+
+\subsection{\href{https://blog.hypriot.com/}{Hypriot}}
+
+Hypriot, a base OS for RPi and other ARM devices, include support for Docker out of the box. Hypriot is lightweight, fast, and builds the latest RPi Linux kernels and Raspbian releases.
+
+\subsection{\href{https://www.piwheels.org/}{PiWheels}}
+
+Not all Python packages (especially if they wrap a native library) can be run on all platforms. One might be tempted to build some package from its sources (and in rare cases, they might need to do so). But there is a good chance the package has already been compiled for Raspberry Pi on PiWheels. By using the following command (either in a \inline{Dockerfile} or via the CLI), various Python packages may be installed, e.g. \inline{opencv-python}:
+%
+\begin{rpilisting}
+~$ pip install opencv-python --index-url https://www.piwheels.org/simple
+\end{rpilisting}
+
+\subsection{\href{https://hub.docker.com/}{Docker Hub}}
+
+Docker Hub is the central repository for Docker Images. Unless a separate registry has been configured, whenever users pull a Docker image tag, it will first query the Docker Hub for a matching image. The Docker Hub can be used to upload Docker images, and configure automated builds from GitHub (with a two hour build timeout). Docker Hub does not support layer caching of any kind, so the build will always take a fixed amount of time.
+%
+\begin{centering}
+\includegraphics[width=\textwidth]{docker_hub_autobuild.png}
+\end{centering}
+%
+Docker Hub auto-builds support linking a Dockerfile in a GitHub repository, and whenever that Dockerfile changes, the Docker image will be updated.
+
+The Docker Hub also has features for configuring repository links and build triggers. These will automatically rebuild downstream Docker images whenever some event occurs.
+%
+\begin{centering}
+\includegraphics[width=\textwidth]{docker_hub_repo_links.png}
+\end{centering}
+%
+Repository links allow support chaining builds together across Docker Hub repositories. Whenever a linked repository is updated, the dependent image will be rebuilt.
+
+\subsection{\href{https://cloud.docker.com/}{Docker Cloud}}
+
+Docker Cloud is integrated with the Docker Hub (and may one day replace it). Builds are automatically published from Docker Cloud to Docker Hub. Notifications for email and Slack, as well as a longer build timeout (up to 4-hours) are supported. It also has features for configuring the build context and other useful build settings, such as caching (unlike Docker Hub).
+%
+\begin{centering}
+\includegraphics[width=\textwidth]{docker_cloud.png}
+\end{centering}
+%
+Docker Cloud allows a longer build timeout, and has more sophisticated build configuration features.
+
 \end{document}
