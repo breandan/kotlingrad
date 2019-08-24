@@ -1904,7 +1904,7 @@ Where $C \in \mathbb{R}$. How can we find a set of inputs that break the test un
 \{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
 \end{equation}
 %
-If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might be use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select low probability inputs in hopes of finding one less common. In addition, if given access to some information about $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search for those inputs which were more likely to break $\mathbf T$. We consider an extension of classical fuzzing techniques to differentiable functions on continuous random variables.
+If the adversary has zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$ when searching for adversarial inputs, she can do no better than random search~\citep{wolpert1997no}. However, if she has information about the input distribution, she could re-parameterize that distribution to incorporate her knowledge. By assuming the program has previously been tested on common inputs, she might be use the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select low probability inputs in hopes of finding one not previously considered. In addition, if given access to some information about $\mathbf{\hat P}$ were implemented, she could use classical fuzzing techniques to prioritize the search for those inputs which were more likely to break $\mathbf T$. We consider an extension of classical fuzzing techniques to differentiable functions on continuous random variables.
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
@@ -1973,14 +1973,14 @@ Suppose we are given a program which takes a high dimensional input and produces
 \min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}(\mathbf x)}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
 \end{equation}
 
-This can be realized by updating the parameters of $G$ and $D$ using gradient descent:
+This can be realized by updating the parameters of $G$ and $D$ using their gradient:
 
 \begin{equation}
-\theta_D \leftarrow \theta_D + \nabla_{\theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D\Big(\mathbf x^{(i)}\Big) + \log\Big(1 - D\Big(G\Big(\mathbf z^{(i)}\Big)\Big)\Big)\Big]
+\theta_D \leftarrow \theta_D + \nabla_{\theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D(\mathbf x^{(i)}) + \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
 \end{equation}
 
 \begin{equation}
-\theta_G \leftarrow \theta_G - \nabla_{\theta_G}\frac{1}{m}\sum_{i=1}^m \log\Big(1 - D\Big(G\Big(\mathbf z^{(i)}\Big)\Big)\Big)
+\theta_G \leftarrow \theta_G - \nabla_{\theta_G}\frac{1}{m}\sum_{i=1}^m \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)
 \end{equation}
 
 \mediumwell{\chapter{Software Maintenance and Reproducibility}\label{ch:ducker}}
@@ -2312,7 +2312,7 @@ Successfully built 1633e3e10bef
 Successfully tagged user/duck:v5
 \end{pclisting}
 %
-As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are unmodified, these layers will be cached and Docker will not rebuild them. If the contents of the file \inline{duck.txt} are subsequently modified, this will trigger a rebuild to occur. For example, if we append to the file and rebuild, the last two steps will be executed:
+As long as the first three lines of the \inline{Dockerfile} and \inline{duck.txt} are unmodified, these layers will be cached and Docker will not rebuild them. If the contents of the file \inline{duck.txt} are subsequently modified, this will trigger a rebuild to occur. For example, if we append to the file and rebuild, only the last two steps will need to be executed:
 
 \begin{pclisting}
 ~$ echo "Thank you. Have a nice day!" >> duck.txt
@@ -2332,7 +2332,7 @@ Successfully built e8a1db712aee
 Successfully tagged user/duck:v5
 \end{pclisting}
 %
-A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more files than are strictly necessary to perform the following build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever a file in changed anywhere in the build context, this will trigger a rebuild of all subsequent build steps. In order to maximize cache reusability and minimize rebuild time, users should be conservative and only \inline{COPY} the minimum set of files necessary to accomplish the following build step.
+A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more files than are strictly necessary to perform the following build step. For example, if \inline{COPY . .} is written at the beginning of the \inline{Dockerfile}, whenever any file in changed within the build context, this will trigger a rebuild of all subsequent build steps. In order to maximize cache reusability and minimize rebuild time, users should be as conservative as possible and only \inline{COPY} the minimum set of files necessary to accomplish the following build step.
 
 % Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{Further details: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
 
