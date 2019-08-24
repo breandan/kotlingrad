@@ -830,6 +830,7 @@ private recover_property ::= ! ( TYPE | FIELD | SEPARATOR | COMMENT )
 %
 \begin{figure}
 \centering
+% To regenerate: https://homepage.ruhr-uni-bochum.de/jan.holthuis/posts/using-the-latex-rail-package#manual-compilation-and-latexmk-support
 \begin{rail}
 ( [2] TYPE FIELD ( () | SEPARATOR CONSTANT) ) | ( [1] COMMENT )
 \end{rail}
@@ -1651,8 +1652,7 @@ Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaur
 
 \begin{table}
 \begin{tabular}{lllllllll}
-    Framework &
-    Language &
+    Framework & Language &
     \rot{Symbolic Differentiation} &
     \rot{Automatic Differentiation} &
     \rot{Functional Programming} &
@@ -1661,18 +1661,22 @@ Inspired by Stalin$\nabla$~\citep{pearlmutter2008using}, Autograd~\citep{maclaur
     \rot{Differentiable Programming} &
     \rot{Multiplatform}
     \\ \hline
-\href{https://github.com/breandan/kotlingrad}{Kotlin$\nabla$}     & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
-\href{http://diffsharp.github.io/DiffSharp/}{DiffSharp}          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-\href{https://github.com/fsprojects/fsharp-ai-tools}{TensorFlow.FSharp}  & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-\href{https://github.com/mila-iqia/myia}{Myia}               & Python  & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+\href{https://github.com/breandan/kotlingrad}{Kotlin$\nabla$}                    & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
+\href{http://diffsharp.github.io/DiffSharp/}{DiffSharp}                          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://github.com/fsprojects/fsharp-ai-tools}{TensorFlow.FSharp}          & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
 \href{https://github.com/ThoughtWorksInc/DeepLearning.scala}{Deeplearning.scala} & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-\href{https://tongfei.me/nexus/}{Nexus}              & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-\href{https://feiwang3311.github.io/Lantern/}{Lantern}            & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-\href{https://github.com/HuwCampbell/grenade}{Grenade}            & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
-\href{https://deeplearning4j.org}{Eclipse DL4J}       & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-\href{http://uniker9.github.io/JAutoDiff/}{JAutoDiff}          & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-\href{https://halide-lang.org}{Halide}             & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
-\href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}     & Scheme  & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+\href{https://tongfei.me/nexus/}{Nexus}                                          & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+\href{https://feiwang3311.github.io/Lantern/}{Lantern}                           & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://github.com/HuwCampbell/grenade}{Grenade}                           & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+\href{https://deeplearning4j.org}{Eclipse DL4J}                                  & Java    & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+\href{http://uniker9.github.io/JAutoDiff/}{JAutoDiff}                            & Java    & \cmark & \xmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+\href{https://halide-lang.org}{Halide}                                           & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
+\href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}         & Scheme  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
+\href{https://github.com/mila-iqia/myia}{Myia}                                   & Python  & \cmark & \cmark & \cmark & \xmark & \xmark & \cmark & \wmark \\
+\href{https://github.com/HIPS/autograd/}{Autograd}                               & Python  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
+\href{https://github.com/google/jax}{JAX}                                        & Python  & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark & \wmark \\
+\href{https://github.com/google/tangent}{Tangent}                                & Python  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
+
 \end{tabular}
 \caption{\label{tab:ad_comparison} Comparison of AD libraries. The \wmark symbol indicates work in progress.}
 \end{table}
@@ -2736,7 +2740,7 @@ When building an intelligent system developers must first ask, ``What are the re
 
 In traditional software engineering, it is reasonable to assume the people who are implementing a system have some implicit knowledge and are generally well-intentioned human beings working towards the same goal. When building an intelligent system, a more reasonable assumption is that the entity implementing our requirements is a na\"ive but powerful genie, and possibly an adversarial one. When given an optimization metric, it will take every available shortcut to meet that metric. If we are not careful about requirements engineering, this entity can produce a system that does not work, or has unintended consequences.
 
-In the strictest sense, designing a good set of requirements is indistinguishable from implementing the system. With the right language abstractions (e.g.\ declarative programming), requirements and implementation can be the same thing. These ideas have been explored in recent decades with languages like SQL and Prolog. While these are toy systems, neural networks can express much larger classes of functions than traditional software engineering.
+In the strictest sense, specifying the requirements is indistinguishable from implementing the system. With the right language abstractions (e.g.\ declarative programming), requirements and implementation can in fact be the same thing. These ideas have been explored in recent decades with declarative languages like SQL and Prolog.
 
 \subsection{Continuous Delivery and Continual Learning}
 
