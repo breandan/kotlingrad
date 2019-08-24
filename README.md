@@ -594,7 +594,7 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 ⁶ Differentiable programming
 
-⁷ [Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html)
+⁷ Multiplatform
 
 ## References
 
