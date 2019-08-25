@@ -71,7 +71,7 @@ dependencies {
   api("org.knowm.xchart:xchart:3.5.4")
   api("ch.obermuhlner:big-math:2.1.0")
   api("scientifik:kmath-core:0.1.3")
-  implementation("com.ionspin.kotlin:bignum:0.1.0")
+//  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
 
 val fatJar by tasks.registering(Jar::class) {
