@@ -48,6 +48,20 @@ All of these features are implemented without access to bytecode or special comp
 
 ## Usage
 
+### Installation
+
+Gradle users should add a repository and dependency:
+
+```kotlin
+repositories {
+    maven("https://raw.githubusercontent.com/breandan/kotlingrad/master/releases")
+}
+
+dependencies {
+    implementation("edu.umontreal:kotlingrad:0.1")
+}
+```
+
 ### Notation
 
 Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 

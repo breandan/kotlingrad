@@ -1,3 +1,5 @@
+import groovy.util.Node
+import groovy.util.NodeList
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -65,22 +67,57 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.4.0")
-  compile("org.jzy3d:jzy3d-api:1.0.2")
-  compile("org.knowm.xchart:xchart:3.5.4")
-  compile("ch.obermuhlner:big-math:2.1.0")
+  api("org.jzy3d:jzy3d-api:1.0.2")
+  api("org.knowm.xchart:xchart:3.5.4")
+  api("ch.obermuhlner:big-math:2.1.0")
   api("scientifik:kmath-core:0.1.3")
-//  implementation("com.ionspin.kotlin:bignum:0.1.0")
+  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-  archiveClassifier.set("sources")
-  from(sourceSets["main"].allSource)
+val fatJar by tasks.registering(Jar::class) {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  from(configurations.runtimeClasspath.get().map { file ->
+    if (file.isDirectory) file
+    else zipTree(file)
+  })
+  with(tasks["jar"] as CopySpec)
+  exclude("**.png", "LICENSE.txt")
 }
 
 publishing {
   publications.create<MavenPublication>("default") {
-    from(components["java"])
-    artifact(sourcesJar.get())
+    artifact(fatJar.get())
+    pom {
+      description.set("Kotlin∇: Differentiable Functional Programming with Algebraic Data Types")
+      name.set("Kotlin∇")
+      url.set("https://github.com/breandan/kotlingrad")
+      licenses {
+        license {
+          name.set("The Apache Software License, Version 2.0")
+          url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+          distribution.set("repo")
+        }
+      }
+      developers {
+        developer {
+          id.set("Breandan Considine")
+          name.set("Breandan Considine")
+          email.set("bre@ndan.co")
+          organization.set("Université de Montréal")
+        }
+      }
+      scm {
+        url.set("https://github.com/breandan/kotlingrad")
+      }
+      withXml {
+        // Remove deps since we're publishing a fat jar
+        val pom = asNode()
+        val depNode: NodeList = pom.get("dependencies") as NodeList
+        for (child in depNode) {
+          pom.remove(child as Node)
+        }
+      }
+    }
   }
   repositories.maven("${project.rootDir}/releases")
 }
