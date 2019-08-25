@@ -94,7 +94,7 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 
 <sup>&sect;</sup> Matrix division is defined iff **B** is invertible, although it could be possible to redefine this operator using the [Moore-Penrose inverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse).
 
-<sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions 𝑓 : ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
+<sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions 𝑓 : ℝ<sup>m</sup>→ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
 <sup>?</sup> While it would be nice to infer a combined input type λ∪τ for binary functions, it is likely impossible using the Kotlin type system. Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
 
@@ -176,7 +176,7 @@ When writing a function, it is mandatory to declare the input type(s), but the r
 
 ### Variable Capture
 
-Kotlin𝛁 provides a DSL with support for type safe variable capture with variadic currying. Consider the following example:
+Kotlin𝛁 provides a DSL with support for type-safe variable capture with variadic currying. Consider the following example:
 
 ```kotlin
 val q = X + Y * Z + Y + 0.0
@@ -453,7 +453,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
 First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
 
@@ -549,7 +549,7 @@ val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
 
-However inferring arity for arbitrary expressions at compile time would be difficult in the Kotlin type system. Instead, we can have the user specify it directly.
+However inferring arity for arbitrary expressions at compile-time would be difficult in the Kotlin type system. Instead, we can have the user specify it directly.
 
 ```kotlin
 val x = Var(1.0)                                // x: Variable<Double> inferred type
@@ -606,7 +606,7 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 
 ³ Functional programming
 
-⁴ Type safe
+⁴ Type-safe
 
 ⁵ Shape safe
 
@@ -651,7 +651,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 * [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
 * [On Using Generics for Implementing Algebraic Structures](http://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
-* [How to turn a scripting language into a domain specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
+* [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
 * [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
 * [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
 * [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
@@ -677,7 +677,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 * [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145)
 * [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf)
 
-### Domain Specific Languages
+### Domain-Specific Languages
 
 * [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf)
 
