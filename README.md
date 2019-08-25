@@ -1,3 +1,6 @@
+[//]: # @file:Suppress("ClassName")
+[//]: # @file:Suppress("PropertyName")
+
 # Kotlin𝛁: Type-safe Symbolic Differentiation for Kotlin
 
 Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs on higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a correctly-typed program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
@@ -102,7 +105,7 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 Shape safety is an important concept in Kotlin𝛁. There are three broad strategies for handling shape errors:
 
 * Hide the error somehow by implicitly reshaping or [broadcasting](https://docs.scipy.org/doc/numpy-1.10.4/user/basics.broadcasting.html) arrays
-* Announce the error at runtime, with a relevant message, e.g. "[InvalidArgumentError](https://www.tensorflow.org/api_docs/python/tf/errors/InvalidArgumentError)"
+* Announce the error at runtime, with a relevant message, e.g. [`InvalidArgumentError`](https://www.tensorflow.org/api_docs/python/tf/errors/InvalidArgumentError)
 * Do not allow programs which can result in a shape error to compile
 
 In Kotlin𝛁, we use the last strategy to check the shape of tensor operations. Consider the following program:
@@ -260,7 +263,7 @@ Kotlin𝛁 claims to eliminate certain runtime errors, but how do we know the pr
 * [Analytic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
 
-For example, consider the following test, which checks whether the manual derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
+For example, consider the following test, which checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
 
 ```kotlin
 val x = Var("x")
@@ -268,7 +271,7 @@ val y = Var("y")
 
 val z = y * (sin(x * y) - x)            // Function under test
 val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
-val manualDx = y * (cos(x * y) * y - 1) // Manual derivative 
+val manualDx = y * (cos(x * y) * y - 1) // Analytical derivative 
 
 "∂z/∂x should be y * (cos(x * y) * y - 1)" {
   NumericalGenerator.assertAll { ẋ, ẏ ->
@@ -455,7 +458,8 @@ While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are
 First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
 
 ```kotlin
-open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
+@file:Suppress("ClassName")
+ open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
 open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
 open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
 open class `3`(override val i: Int = 3): `4`(i) { companion object: `3`(), Nat<`3`> }
@@ -529,7 +533,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 The current API is experimental, but can be improved in many ways. Currently variables are instantiated with default values, so when a function is invoked with missing values(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value is applied. This is similar to [NumPy broadcasting](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html). However, we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). 
 
-When the shape of an N-dimensional array is known at compile-time, we can use type-level [integer literals](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
+When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
 Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
