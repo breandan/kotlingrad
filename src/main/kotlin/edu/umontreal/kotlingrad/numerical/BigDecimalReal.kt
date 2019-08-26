@@ -11,8 +11,8 @@ import kotlin.math.E
 class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecimal>(when {
     number is BigDecimal -> number
     number.toDouble().isNaN() -> ZERO
-    1E20 < number.toDouble() -> BigDecimal(1E20)
-    -1E20 > number.toDouble() -> BigDecimal(1E20)
+    1E30 < number.toDouble() -> BigDecimal(1E30)
+    -1E30 > number.toDouble() -> BigDecimal(1E30)
     else -> BigDecimal(number.toDouble() + 0.0)
   }) {
   override val proto = this
@@ -20,7 +20,7 @@ class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecim
   override val one by lazy { BigDecimalReal(ONE) }
   override val two by lazy { BigDecimalReal(ONE + ONE) }
   override val e by lazy { BigDecimalReal(E) }
-  val mc = MathContext(20)
+  val mc = MathContext(30)
 
   override fun sin() = BigDecimalReal(sin(value, mc))
   override fun cos() = BigDecimalReal(cos(value, mc))
@@ -43,13 +43,13 @@ class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecim
 
   override fun minus(subtrahend: ScalarFun<BigDecimalReal>) = when (subtrahend) {
     is BigDecimalReal -> BigDecimalReal(value - subtrahend.value)
-    else -> super.plus(subtrahend)
+    else -> super.minus(subtrahend)
   }
   infix operator fun minus(subtrahend: Number) = BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
 
   override fun times(multiplicand: ScalarFun<BigDecimalReal>) = when (multiplicand) {
     is BigDecimalReal -> BigDecimalReal(value * multiplicand.value)
-    else -> super.plus(multiplicand)
+    else -> super.times(multiplicand)
   }
   infix operator fun times(multiplicand: Number) = BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
 
@@ -61,6 +61,6 @@ class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecim
 
   override fun pow(exp: ScalarFun<BigDecimalReal>) = when(exp) {
     is BigDecimalReal -> BigDecimalReal(pow(value, exp.value, mc))
-    else -> super.div(exp)
+    else -> super.pow(exp)
   }
 }
