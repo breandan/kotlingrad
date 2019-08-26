@@ -530,7 +530,7 @@ In this thesis, we explore several tools that facilitate the process of building
 \begin{figure}
     \centering
     \includegraphics[width=0.70\textwidth]{waterfall_diagram.png}
-    \caption{Royce's original Waterfall model, originally intended to describe the software development process, but the same sequence can be found in most engineering disciplines. We use it to help guide our discussion and frame our work inside of this process model.\vspace{-10pt}}
+    \caption{Royce's original Waterfall model describes the software engineering process, but can also be found in most engineering disciplines. We use it to guide our discussion and frame our contributions inside of this model.\vspace{-10pt}}
     \label{fig:waterfall_model}
 \end{figure}
 
@@ -1226,7 +1226,7 @@ val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
     \tikzset{level distance=60pt}
     \Tree [.$\div$ [.\inline{sin} [.$\times$ \inline{10} [.$+$ [.$\times$ \inline{\textbf{x}} \inline{\textbf{x}} ] [.\inline{pow} \inline{\textbf{y}} \inline{2} ] ] ] ] \inline{10} ]
 \end{tikzpicture}
-\caption{Implicit DAG constructed by the original expression, seen above.}
+\caption{Implicit DAG constructed by the original expression, shown above.}
     \label{lst:edsl}
 \end{figure}
 
@@ -1765,7 +1765,7 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 %
 \begin{figure}
 \begin{tikzpicture}
-\begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
+\begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
 \addplot table [mark=none, x index=0, y index=1, col sep=comma] {adsd_comparison.csv};
 \addlegendentry{$\Delta$(SD, IP)}
 \addplot table [mark=none, x index=0, y index=2, col sep=comma] {adsd_comparison.csv};
@@ -1774,7 +1774,7 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \addlegendentry{$\Delta$(AD, SD)}
 \end{axis}
 \end{tikzpicture}
-\caption{We compare numerical drift between AD and SD over a swollen expression with Double precision. AD and SD both exhibit an absolute error (i.e. with respect to infinite precision (IP)) several orders of magnitude greater than their relative error with respect to each other. This result supports the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
+\caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and infinte precision. AD and SD both exhibit a relative error (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
 \label{fig:pbt_comparison}
 \end{figure}
 %
@@ -1957,11 +1957,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
             \EndIf
             \State $i \gets i + 1$
         \EndWhile
-        \If {$\neg t_0$} \Comment{If initial test state was failure, return most recent iterate.}
-            \State \Return $\{\mathbf x_{i-1}\}$
-        \Else \Comment{Otherwise, there was no test failure and return the empty set.}
-            \State \Return $\varnothing$
-        \EndIf
+        \State \Return \textbf{if } $\neg t_0$ \textbf{ then } $\{\mathbf x_{i-1}\}$ \textbf{ else } $\varnothing$ \Comment{Return last iterate or $\varnothing$ if test passed.}
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
@@ -2442,7 +2438,7 @@ One application of multi-stage builds is compiling a project dependency from its
     \centering
     \includegraphics[width=0.48\textwidth]{docker_stack_1.png}
     \includegraphics[width=0.48\textwidth]{docker_stack_2.png}
-    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts, which can be emulated on x86 via QEMU~\citep{bellard2005qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models, depending on their architecture, may be run on an ARM device using an accelerator.}
+    \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts on x86 using QEMU~\citep{bellard2005qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models may be also be run on an ARM device using an accelerator.}
     \label{fig:docker}
 \end{figure}
 
@@ -2496,7 +2492,7 @@ To access the DuckieOS web interface, users can visit the following URL in any J
 
 \begin{figure}
     \includegraphics[width=0.80\textwidth]{portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a RESTful web dashboard, which wraps the Docker CLI and offers support for container management, configuration, networking and terminal emulation (seen above). Accessible via: \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
+    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a RESTful web dashboard, which wraps the Docker CLI and offers support for container management, configuration, networking and terminal emulation (shown above). \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
     \label{fig:portainer_ui}
 \end{figure}
 
@@ -2972,7 +2968,7 @@ Balena uses \href{https://www.qemu.org/}{QEMU} to cross-build images~\footnote{c
 
 \subsection{\href{https://hub.docker.com/_/ros}{ROS Docker Images}}
 
-ROS.org builds nightly ARM and x86 images for robotics development. For each distro, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.
+ROS.org builds nightly ARM and x86 images for robotics development. For each distro, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.\vspace{10pt}
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{ros_docker_images.png}
@@ -2992,7 +2988,7 @@ Not all Python packages (especially if they wrap a native library) can be run on
 
 \subsection{\href{https://hub.docker.com/}{Docker Hub}}
 
-Docker Hub is the central repository for Docker Images. Unless a separate registry has been configured, whenever users pull a Docker image tag, it will first query the Docker Hub for a matching image. The Docker Hub can be used to upload Docker images, and configure automated builds from GitHub (with a two hour build timeout). Docker Hub does not support layer caching of any kind, so the build will always take a fixed amount of time.
+Docker Hub is the central repository for Docker Images. Unless a separate registry has been configured, whenever users pull a Docker image tag, it will first query the Docker Hub for a matching image. The Docker Hub can be used to upload Docker images, and configure automated builds from GitHub (with a two hour build timeout). Docker Hub does not support layer caching of any kind, so the build will always take a fixed amount of time.\vspace{10pt}
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{docker_hub_autobuild.png}
@@ -3000,7 +2996,7 @@ Docker Hub is the central repository for Docker Images. Unless a separate regist
 %
 Docker Hub auto-builds support linking a Dockerfile in a GitHub repository, and whenever that Dockerfile changes, the Docker image will be updated.
 
-The Docker Hub also has features for configuring repository links and build triggers. These will automatically rebuild downstream Docker images whenever some event occurs.
+The Docker Hub also has features for configuring repository links and build triggers. These will automatically rebuild downstream Docker images whenever some event occurs.\vspace{10pt}
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{docker_hub_repo_links.png}
