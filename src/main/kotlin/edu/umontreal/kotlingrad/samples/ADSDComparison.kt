@@ -11,7 +11,7 @@ import kotlin.math.log10
 
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main() {
-  val xs = (-100.0..100.0 step 7E-2).toList().toDoubleArray()
+  val xs = (-1000.0..1000.0 step 7E-1).toList().toDoubleArray()
 //  val xs = (-1.0..1.0 step 0.0037).toList().toDoubleArray()
   val bdvals = with(BigDecimalPrecision) {
     val x = Var("x")
@@ -60,9 +60,12 @@ fun main() {
   println("AD average error: ${errors[1].average()}")
   println("AD/SD average delta: ${errors[2].average()}")
 
+  for (i in 0..(xs.size - 1))
+    println(xs[i].toString() + "," + errors[0][i] + "," + errors[1][i] + "," + errors[2][i])
+
   val eqn = "sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
-  val labels = arrayOf("Δ(sd, ip)", "Δ(ad, ip)", "Δ(ad, sd)")
-  val chart = QuickChart.getChart("Log errors between AD and SD on the expression\nf(x) = $eqn", "x", "log(Δ)", labels, xs, errors)
+  val labels = arrayOf("Δ(SD, IP)", "Δ(AD, IP)", "Δ(AD, SD)")
+  val chart = QuickChart.getChart("Log errors between AD and SD on the function f(x) = $eqn", "x", "log(Δ)", labels, xs, errors)
 
   chart.styler.chartBackgroundColor = Color.WHITE
   SwingWrapper(chart).displayChart()

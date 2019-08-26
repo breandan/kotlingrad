@@ -377,28 +377,6 @@
 \usepackage{filecontents}
 \usetikzlibrary{pgfplots.dateplot}
 
-\begin{filecontents}{hatchery_downloads.csv}
-Category,Downloads
-2017-12-01,25
-2018-01-01,42
-2018-02-01,64
-2018-03-01,51
-2018-04-01,37
-2018-05-01,51
-2018-06-01,64
-2018-07-01,829
-2018-08-01,674
-2018-09-01,930
-2018-10-01,861
-2018-11-01,718
-2018-12-01,835
-2019-01-01,805
-2019-02-01,1019
-2019-03-01,1707
-2019-04-01,1379
-2019-05-01,790
-\end{filecontents}
-
 %% Packages utiles.
 \usepackage{amssymb,subfigure,icomma}
 \usepackage[labelfont=bf, width=\linewidth]{caption}
@@ -1638,7 +1616,9 @@ with(DoubleContext) {
 
 \section{Automatic, Symbolic Differentiation}
 
-It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin-survey}. Many, including the author of this thesis, have suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical evaluation and symbolic differentiation at runtime, this interleaving is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}. Nor, as suggested by prior literature~\citep{baydin2014ad}, is the problem of expression swell unique to symbolic differentiation~\citep{laue2019equivalence}. This distinction becomes increasingly blurry when we consider more flexible execution models~\citep{wang2018demystifying} and hybrid ADs~\citep{abadi2016tensorflow} which are capable of both eager and lazy execution. Instead, we take the view that symbolic differentiation is a type of automatic differentiation which the AD literature has been too quick to dismiss. Symbolic differentiation in particular, affords the compiler far more flexibility to perform global optimizations such as loop vectorization and algebraic simplifications~\citep{bergstra2010theano}. These optimizations would otherwise be impossible if their symbolic differentiation and numerical execution were performed in lockstep, when only partial information about the dataflow graph is available.
+It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin-survey}. Many, including the author of this thesis, have suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical evaluation and symbolic differentiation at runtime, this interleaving is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}. Nor, as suggested by prior literature~\citep{baydin2014ad}, is the problem of expression swell unique to symbolic differentiation~\citep{laue2019equivalence}, whose findings we can numerically reproduce as shown in ~\autoref{fig:pbt_comparison}.
+
+The distinction between AD and SD becomes increasingly blurry when we consider more flexible execution models~\citep{wang2018demystifying} and hybrid ADs~\citep{abadi2016tensorflow} which are capable of both eager and lazy execution. Instead, we take the view that symbolic differentiation is a type of automatic differentiation which the AD literature has been too quick to dismiss. Symbolic differentiation in particular, affords the compiler far more flexibility to perform global optimizations such as loop vectorization and algebraic simplifications~\citep{bergstra2010theano}. These optimizations would otherwise be impossible if their symbolic differentiation and numerical execution were performed in lockstep, when only partial information about the dataflow graph is available.
 
 \section{Coroutines}\label{sec:coroutines}
 
@@ -1784,9 +1764,17 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \end{kotlinlisting}
 %
 \begin{figure}
-\centering
-\includegraphics[width=0.70\textwidth]{pbt_comparison.png}
-\caption{Log errors between automatic differentiation and symbolic differentiation evaluated on a swollen expression. AD and SD produce roughly similar values, and both accumulate a significant error compared to infinite precision.\vspace{-10pt}}
+\begin{tikzpicture}
+\begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
+\addplot table [mark=none, x index=0, y index=1, col sep=comma] {adsd_comparison.csv};
+\addlegendentry{$\Delta$(SD, IP)}
+\addplot table [mark=none, x index=0, y index=2, col sep=comma] {adsd_comparison.csv};
+\addlegendentry{$\Delta$(AD, IP)}
+\addplot table [mark=none, x index=0, y index=3, col sep=comma] {adsd_comparison.csv};
+\addlegendentry{$\Delta$(AD, SD)}
+\end{axis}
+\end{tikzpicture}
+\caption{We compare numerical drift between AD and SD over a swollen expression with Double precision. AD and SD both produce similar error and numerical drift when compared to infinite precision (IP). This result supports the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
 \label{fig:pbt_comparison}
 \end{figure}
 %
