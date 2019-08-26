@@ -1268,7 +1268,7 @@ First-class dependent types are useful for ensuring arbitrary shape safety (e.g.
 \begin{table}
     \begin{tabular}{|c|c|c|c|l|}
         \hline
-        \multicolumn{1}{|c|}{Math$\dagger$}                    &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    & Type                                                                                                                                                                                    \\ \hline
+        \multicolumn{1}{|c|}{Math$\dagger$}                    &  Infix                                                                         &  Prefix                                                                                 & Postfix                                                                                    &  Operator Type Signature                                                                                                                                                                        \\ \hline
                  $A(B)$                                        & \tinline{a(b)}                                                                  &                                                                                         &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
                  $A + B$                                       & \begin{tabular}{@{}c@{}}\tinline{a + b}\\\tinline{a.plus(b)}\end{tabular}        &  \tinline{plus(a, b)}                                                                    &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi}) $ \\ \hline
                  $A - B$                                       & \begin{tabular}{@{}c@{}}\tinline{a - b}\\\tinline{a.minus(b)}\end{tabular}       &  \tinline{minus(a, b)}                                                                   &                                                                                            & $ (\texttt{a}:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}, \texttt{b}: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{\pi})  $ \\ \hline
@@ -1782,6 +1782,13 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
     if (hasProperty(program(input - input / 2.0f)) return input
     else shrink(input - input / 2.0f, program, hasProperty)
 \end{kotlinlisting}
+%
+\begin{figure}
+\centering
+\includegraphics[width=0.70\textwidth]{pbt_comparison.png}
+\caption{Log errors between automatic differentiation and symbolic differentiation evaluated on a swollen expression. AD and SD produce roughly similar values, and both accumulate a significant error compared to infinite precision.\vspace{-10pt}}
+\label{fig:pbt_comparison}
+\end{figure}
 %
 The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
 
