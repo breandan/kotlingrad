@@ -16,11 +16,11 @@ class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecim
     else -> BigDecimal(number.toDouble() + 0.0)
   }) {
   override val proto = this
-  override val zero by lazy { BigDecimalReal(0.0) }
-  override val one by lazy { BigDecimalReal(1.0) }
-  override val two by lazy { BigDecimalReal(2.0) }
+  override val zero by lazy { BigDecimalReal(ZERO) }
+  override val one by lazy { BigDecimalReal(ONE) }
+  override val two by lazy { BigDecimalReal(ONE + ONE) }
   override val e by lazy { BigDecimalReal(E) }
-  val mc = MathContext(10)
+  val mc = MathContext(20)
 
   override fun sin() = BigDecimalReal(sin(value, mc))
   override fun cos() = BigDecimalReal(cos(value, mc))

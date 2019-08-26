@@ -1,5 +1,5 @@
-[//]: # @file:Suppress("ClassName")
-[//]: # @file:Suppress("PropertyName")
+<!--- @file:Suppress("ClassName") --->
+<!--- @file:Suppress("PropertyName") --->
 
 # Kotlin𝛁: Type-safe Symbolic Differentiation for Kotlin
 
@@ -69,7 +69,7 @@ dependencies {
 
 Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
-|             Math<sup>&dagger;</sup>             |             Infix             |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                                    Type                                                    |
+|             Math<sup>&dagger;</sup>             |             Infix             |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                         |
 |:-----------------------------------------------:|:-----------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------:|
 |                  **A**(**B**)                   |            `a(b)`             |                                  |                                     |  (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ </sup>→ ℝ<sup>π</sup>) |
 |                  **A** + **B**                  |    `a + b`<br>`a.plus(b)`     |           `plus(a, b)`           |                                     |  (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ ℝ<sup>π</sup>)  |
