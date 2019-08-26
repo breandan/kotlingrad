@@ -1774,7 +1774,7 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \addlegendentry{$\Delta$(AD, SD)}
 \end{axis}
 \end{tikzpicture}
-\caption{We compare numerical drift between AD and SD over a swollen expression with Double precision. AD and SD both produce similar error and numerical drift when compared to infinite precision (IP). This result supports the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
+\caption{We compare numerical drift between AD and SD over a swollen expression with Double precision. AD and SD both exhibit an absolute error (i.e. with respect to infinite precision (IP)) several orders of magnitude greater than their relative error with respect to each other. This result supports the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
 \label{fig:pbt_comparison}
 \end{figure}
 %
