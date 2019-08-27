@@ -601,7 +601,7 @@ All great software has a secret recipe: software gets better when its authors us
 Throughout this thesis, the following iconography is used to denote: \\
 %
 \begin{enumerate}
-\item[] \inlineimg{laptop_icon.png} &  Shell commands intended for a laptop, or output derived thereof. \\
+\item[] \inlineimg{laptop_icon.png} &  Shell commands intended for a personal computer, or output derived thereof. \\
 \item[] \inlineimg{bnf_file.png} & GrammarKit's \inline{.bnf} parsing expression grammar (PEG)~\footnote{GrammarKit usage notes: \url{https://github.com/JetBrains/Grammar-Kit/blob/master/HOWTO.md}} \\
 \item[] \inlineimg{docker_icon.jpg} &  Either \inline{Dockerfile}~\footnote{Dockerfile reference: \url{https://docs.docker.com/engine/reference/builder/}} or Docker Compose~\footnote{Compose file reference: \url{https://docs.docker.com/compose/compose-file/}} syntax. \\
 \item[] \inlineimg{raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi~\footnote{Raspberry Pi: \url{https://www.raspberrypi.org/}}. \\
@@ -728,7 +728,7 @@ Rather than interacting with the command line, it would be convenient to have a 
 %
 Notice how the typographical error is printed in red and the valid file reference is underlined in blue, indicating it can be selected to open the file shown above. Broadly, these are the kinds of features IDEs provide and are examples of specific functionality in Hatchery.
 
-\section{Prerequisities}
+\section{Installation}\label{subsec:installation}
 
 \noindent To simply run the tool, users should have the following software dependencies:
 %
@@ -1774,7 +1774,7 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \addlegendentry{$\Delta$(AD, SD)}
 \end{axis}
 \end{tikzpicture}
-\caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and infinte precision. AD and SD both exhibit a relative error (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
+\caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and infinite precision (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
 \label{fig:pbt_comparison}
 \end{figure}
 %
@@ -2682,30 +2682,60 @@ Docker's unnecessarily high privileges and susceptibility for misuse are serious
 
 To address these issues, various container platforms, including Shifter~\citep{gerhardt2017shifter} and Singularity~\citep{kurtzer2017singularity}, have emerged and gained traction in the scientific computing community, owing to their lower privileges and compatibility with legacy Linux distributions used by many academic computing environments. Since then, Docker has also introduced a \href{https://engineering.docker.com/2019/02/experimenting-with-rootless-docker/}{rootless mode}, but it remains relatively experimental at the time of writing this thesis.
 
-\rare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
+\mediumrare{\chapter{Case study: application for autonomous robotics}\label{ch:case-study}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \textit{The errors of TeX}\end{flushright}}
 
-As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the proposed toolchain.
+As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the proposed toolchain. The code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
 
 \section{Design}
 
-Designed with Hatchery.
+Hatchery is compatible with most IDEs on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{sec:installation}. Create a new Android project or clone an existing one. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
+
+\begin{pclisting}
+~$ ln -s /absolute/path/to/ros/project /android/project
+\end{pclisting}
+%
+Create a new project in Android Studio and import the ROS project. Now, the ROS project can be managed from within Android Studio.\vspace{10pt}\\
+%
+\begin{centering}
+\includegraphics[width=\textwidth]{hatchery_android.png}
+\end{centering}
 
 \section{Implementation}
 
-Implementation includes Kotlin$\nabla$
+To use Kotlin$\nabla$ from an Android project, add a custom Maven repository to the project's \inline{build.gradle.kts} file:
+%
+\begin{kotlinlisting}
+repositories {
+    maven("https://raw.githubusercontent.com/breandan/kotlingrad/master/releases")
+}
+\end{kotlinlisting}
+%
+Then add the most recent stable version of Kotlin$\nabla$ to the \inline{dependencies} section of the application's \inline{build.gradle.kts} file:
+%
+\begin{kotlinlisting}
+dependencies {
+    compile("edu.umontreal:kotlingrad:<VERSION>")
+}
+\end{kotlinlisting}
+%
+Kotlin$\nabla$ can now be used on Android.
 
 \section{Testing and validation}
 
-Verified using property-based testing.
+Verified using property-based testing.\vspace{10pt}\\
+%
+\begin{centering}
+\includegraphics[width=\textwidth]{android_screenshot.png}
+\end{centering}
 
 \section{Containerization}
 
 Deployed and CI-tested using Docker.
 
-\rare{\chapter{Conclusion}\label{ch:conclusion}}
+\mediumrare{\chapter{Conclusion}\label{ch:conclusion}}
 \setlength{\epigraphwidth}{0.90\textwidth}
 \epigraph{``We are all shaped by the tools we use, in particular: the formalisms we use shape our thinking habits, for better or for worse, and that means that we have to be very careful in the choice of what we learn and teach, for unlearning is not really possible.''}{\begin{flushright}--Edsger W. \citet{dijkstra2000answers}, \textit{Answers to questions from students of Software Engineering}\end{flushright}}
 
