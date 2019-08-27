@@ -874,7 +874,7 @@ With the development of modern languages came programming tools which were capab
 
 More experimental UIs, such as those proposed in the model-driven engineering~\citep{famelis2015mummint} and projectional editing ~\citep{voelter2010language} literature, offer more flexible visual layouts. This uncoupling between the composition and representation of text raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a given programming task? And who is the intended audience? These are important questions to consider when designing a new programming tool.
 
-The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform has created a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these design patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires familiarity with the design language and careful integration with the target framework (i.e. ROS).
+The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these same patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires familiarity with the design language and careful integration with the target framework (i.e. ROS).\\
 %
 \begin{figure}[b]
     \centering
@@ -883,7 +883,7 @@ The Hatchery plugin provides a lightweight GUI overlaying the program's source c
     \label{fig:hatchery_gui}
 \end{figure}
 %
-In addition, Hatchery provides an interface for configuring and managing ROS installations (cf. \autoref{fig:ros_settings}).
+Hatchery provides a settings menu for configuring and managing ROS installations which can automatically detect local ROS distros and also allows users to manually configure the \href{http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in ~\autoref{fig:ros_settings}.
 %
 \begin{figure}
     \centering
