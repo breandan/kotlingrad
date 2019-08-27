@@ -792,7 +792,7 @@ One of the most important and unappreciated components of an IDE is the parser. 
 
 Various techniques have been developed to improve the responsiveness of modern parsers. Incremental parsing techniques like those first proposed in \citet{ghezzi1979incremental} and further developed by \citet{wagner1997practical,wagner1997incremental} seek to incorporate caching and differential parsing to accelerate the analysis of programs under simultaneous modification. Fuzzy parsing techniques like those described in ~\citet{koppler1997systematic} aim to increase the flexibility and robustness of parsing in the presence of local errors. Both of these techniques have played a role in the development of language-aware programming tools, which must be able to provide rapid and specific feedback whilst the user is typing.
 
-The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs which are highly dependent on incremental parsing and error-tolerance, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files:
+The procedural instructions for modern parsers are seldom written by hand unless the language being parsed is very simple or raw performance is desired. Even for parsers intended for use in IDEs which are highly dependent on incremental parsing and error-tolerance, metacompilation toolkits such as ANTLR~\citep{parr1995antlr}, or Xtext~\citep{eysholdt2010xtext} cover a surprising number of common use-cases. Hatchery uses \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, a toolkit designed to assist users developing custom language plugins for the \href{http://www.jetbrains.org/intellij/sdk/docs/welcome.html}{IntelliJ Platform}. It uses a DFA-based lexer, JFlex~\citep{klein2001jflex}, and a custom parser-generator loosely based on the parsing expression grammar (PEG)~\citep{ford2004parsing}, a descendant of the Backus-Naur Form (BNF). This grammar is consumed by the GrammarKit parser generator and translated to Java source code, producing a parser which reads source code from the language specified and constructs a program structure interface (PSI), the IntelliJ Platform's internal data structure for representing abstract syntax trees (ASTs). Here is an excerpt of a PEG BNF grammar for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files:
 %
 \begin{bnflisting}
 rosInterfaceFile ::= ( property | COMMENT )*
@@ -892,8 +892,9 @@ In addition, Hatchery provides an interface for configuring and managing ROS ins
     \label{fig:ros_settings}
 \end{figure}
 
-\section{Future work}
-\noindent We are currently working to expand support for the following features:
+\section{Ongoing work}
+
+\noindent While it supports many common use cases such as rudimentary code navigation, static analysis and run assistance, Hatchery is currently a work in progress. We are working to expand Hatchery's support for ROS programming in some of the following areas:\vspace{10pt}
 %
 \begin{itemize}
 \item \textbf{Syntax support} -- Highlighting, navigation, autocompletion
@@ -906,7 +907,9 @@ In addition, Hatchery provides an interface for configuring and managing ROS ins
 \item \textbf{Build automation} -- Delta rebuilds, cmake magic, code hotswap
 \item \textbf{ROS integration} -- Nodes, topics, services, parameters, graphs
 \item \textbf{Duckumentation} -- Usage instructions and supported features
-\end{itemize}
+\end{itemize}\vspace{10pt}
+%
+A more comprehensive list of currently supported and upcoming features are detailed below:\vspace{10pt}
 %
 \begin{multicols}{2}
 \begin{todolist}
@@ -980,7 +983,6 @@ In addition, Hatchery provides an interface for configuring and managing ROS ins
     \end{todolist}
 \end{todolist}
 \end{multicols}
-
 
 \welldone{\chapter{Implementation: languages and compilers}\label{ch:kotlingrad}}
 
