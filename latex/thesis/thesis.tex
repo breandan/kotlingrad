@@ -464,7 +464,7 @@
 Programming tools are computer programs which help humans program computers. Tools come in many forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this work, we focus on four tools that were designed to assist the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe Kotlin$\nabla$, a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial testing. Fourth, we explore a container infrastructure based on the Docker platform, which enables the development reproducible robotics software for the Duckietown platform. Finally, we present a brief case study on an application built with these four tools in mind and offer some concluding remarks about the past, present and future of programming tools for intelligent systems.
 
 \chapter*{Acknowledgements}
-\vspace{-60pt} I would like to thank Mom, Gimmey, Uncle Mark, and Dad for their unfailing love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming, Siyan Wang for the fellowship and adventures, \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics, Uncle Andy for watering the seed for many years, Aunt Shannon, and Adam Devoe, Jacquie Kirrane for encouraging me to pursue grad school, \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me algorithmic differentiation to me a long time ago, \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science. \href{http://blog.locut.us}{Ian Clarke} for showing me a clever new language called Kotlin. \href{https://hadihariri.com/}{Hadi Hariri} for placing more trust than in me than I deserved. \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school. \href{https://github.com/rusi}{Rusi Hristov} for his patience and mentorship. \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for  showing me what hard work and good research looks like. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for his excellent engineering and architectural advice. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} and \href{https://bhairavmehta95.github.io/}{Bhairav Mehta}, \href{http://www.solomatov.me/}{Konstantin Solomatov} for the interesting conversations and adventures. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} and for lighting the path between ML and PL. \href{http://conal.net/}{Conal Elliott} for teaching me the importance of simplicity and denotational semantics. \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller} for their useful comments and feedback related to Kotlin$\nabla$. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for helping a stranger on a cold winter's eve in 2017, \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my rambling emails. \href{https://censi.science/}{Andrea Censi} for his advice and encouragement. Last but not least, I wish to thank my brilliant advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and giving me far more credit than I deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline.
+\vspace{-60pt} I would like to thank Mom, Gimmey, Uncle Mark, and Dad for their unfailing love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming, Siyan Wang for the fellowship and adventures, \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics, Uncle Andy for watering the seed for many years, Aunt Shannon, and Adam Devoe, Jacquie Kirrane for encouraging me to pursue grad school, \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me algorithmic differentiation to me a long time ago, \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science. \href{http://blog.locut.us}{Ian Clarke} for showing me a clever new language called Kotlin. \href{https://hadihariri.com/}{Hadi Hariri} for placing more trust than in me than I deserved. \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school. \href{https://github.com/rusi}{Rusi Hristov} for his patience and mentorship. \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for  showing me what hard work and good research looks like. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for his excellent engineering and architectural advice. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} and \href{https://bhairavmehta95.github.io/}{Bhairav Mehta}, \href{http://www.solomatov.me/}{Konstantin Solomatov} for the interesting conversations and adventures. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} and for lighting the path between ML and PL. \href{http://conal.net/}{Conal Elliott} for teaching me the importance of simplicity and denotational semantics. \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller} for their useful comments and feedback related to Kotlin$\nabla$. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for helping a stranger on a cold winter's eve in 2017, \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my rambling emails. \href{https://censi.science/}{Andrea Censi} for his advice and encouragement. Last but not least, I wish to thank my brilliant advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and giving me far more credit than I deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline. Thank you!
 
 %%------------------------------------------------- %
 %%        page v --- Table de matieres              %
@@ -883,7 +883,7 @@ The Hatchery plugin provides a lightweight GUI overlaying the program's source c
     \label{fig:hatchery_gui}
 \end{figure}
 %
-Hatchery provides a settings menu for configuring and managing ROS installations which can automatically detect local ROS distros and also allows users to manually configure the \href{http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in ~\autoref{fig:ros_settings}.
+Hatchery provides a settings menu for configuring and managing ROS installations which can automatically detect local ROS distributions and also allows users to manually configure the \href{http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in ~\autoref{fig:ros_settings}.
 %
 \begin{figure}
     \centering
@@ -1689,7 +1689,7 @@ Finally, from a performance perspective, it would be advantageous to integrate w
 
 Today's deep neural networks are surprisingly effective when compared with handcrafted algorithms, but have known weaknesses. Training neural networks which can robustly transfer to new domains where the training and test distributions are dissimilar continues to pose a significant challenge. Furthermore, such models are susceptible to failure when presented with carefully crafted inputs. However the same gradient-based optimization techniques used for training neural networks can also be exploited to probe their failure modes.
 
-In software engineering, techniques for software testing have become increasingly more automated and general-purpose. Developers love to write code, but loath writing tests. Yet tests are essential to validate an implementation's correctness. Tests prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. Techniques in coverage-guided fuzzing enable developers to write fewer tests with higher coverage. This made is possible by automated testing.
+In software engineering, techniques for software testing have become increasingly automated and general-purpose. Developers love to write code, but dislike writing tests. Yet tests are essential to validate an implementation's correctness. Tests prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. Techniques in coverage-guided fuzzing enable developers to write fewer tests with higher coverage. This made is possible by automated testing.
 
 In this chapter, we will explore the relationship between testing in machine learning and software engineering. We will see how the notion of adversarial testing shares a curious resemblance to fuzz testing in software engineering. In particular, we show how probabilistic sampling and constrained optimization can be seen as an extension of property-based testing (PBT) for adversarial training of differentiable programs, and propose a PBT algorithm which incorporates features of probabilistic programming and gradient-based optimization.
 
@@ -2282,7 +2282,7 @@ Successfully built a8be23fea573
 Successfully tagged user/duck:v4
 \end{pclisting}
 %
-If we need to make a change to the Dockerfile, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
+If we need to make a change to the \inline{Dockerfile}, Docker will only rebuild the image starting from the first modified step. Suppose we add a new \inline{RUN} command to the end of our \inline{Dockerfile} and trigger a rebuild like so:
 
 \begin{pclisting}
 ~$ echo 'RUN echo "Change here!"' >> Dockerfile
@@ -2301,7 +2301,7 @@ Successfully built c1ec64cef9c6
 Successfully tagged user/duck:v4
 \end{pclisting}
 %
-If Docker had to rerun the entire \inline{Dockerfile} from top to bottom to every time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{-{}-no-cache} flag when building a \inline{Dockerfile}.
+If Docker had to rerun the entire \inline{Dockerfile} from top to bottom every time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{-{}-no-cache} flag when building a \inline{Dockerfile}.
 
 What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also checks the \href{https://docs.docker.com/engine/reference/commandline/build/#extended-description}{build context} for changes. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the build context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
@@ -2444,7 +2444,7 @@ One application of multi-stage builds is compiling a project dependency from its
     \label{fig:docker}
 \end{figure}
 
-Prior work has explored the Dockerization of ROS containers~\citep{white2017ros-docker}. This work forms the basis for our own, which extends White and Christensen's work to the Duckietown platform~\citep{paull2017duckietown}, which is more hardware- and domain-specific.
+\citet{white2017ros-docker} previously explored dockerizing the ROS. White and Christensen's work forms the basis for our own, which extends their implementation to the Duckietown platform~\citep{paull2017duckietown}, a more hardware- and domain-specific set of ROS applications.
 
 The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \href{https://blog.hypriot.com/}{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
 
@@ -2474,7 +2474,7 @@ In addition, we assume the following software dependencies have been installed o
 
 \subsection{Flashing a bootable disk}
 
-Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a manual and time-consuming process. This was automated in a bash script.
+Our largest single contribution to the Duckietown project involved writing a script for flashing bootable media with a DuckieOS image. Prior to its creation, installation was a tedious and time-consuming process. This was later automated in a Bash script.
 
 \begin{pclisting}
 ~$ bash -c "(*\$*)(wget -O- h.ndan.co)"
@@ -3000,7 +3000,7 @@ Balena uses \href{https://www.qemu.org/}{QEMU} to cross-build images~\footnote{c
 
 \subsection{\href{https://hub.docker.com/_/ros}{ROS Docker Images}}
 
-ROS.org builds nightly ARM and x86 images for robotics development. For each distro, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.\vspace{10pt}
+ROS.org builds nightly ARM and x86 images for robotics development. For each distribution, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.\vspace{10pt}
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{ros_docker_images.png}
@@ -3008,7 +3008,7 @@ ROS.org builds nightly ARM and x86 images for robotics development. For each dis
 
 \subsection{\href{https://blog.hypriot.com/}{Hypriot}}
 
-Hypriot, a base OS for RPi and other ARM devices, include support for Docker out of the box. Hypriot is lightweight, fast, and builds the latest RPi Linux kernels and Raspbian releases.
+Hypriot, a base OS for RPi and other ARM devices, includes support for Docker straight out of the box. Hypriot is a lightweight Raspbian-based Linux distribution which \href{https://github.com/hypriot/image-builder-rpi}{builds} from the latest Raspberry Pi kernels and Raspbian releases.
 
 \subsection{\href{https://www.piwheels.org/}{PiWheels}}
 
@@ -3026,7 +3026,7 @@ Docker Hub is the central repository for Docker Images. Unless a separate regist
 \includegraphics[width=\textwidth]{docker_hub_autobuild.png}
 \end{centering}
 %
-Docker Hub auto-builds support linking a Dockerfile in a GitHub repository, and whenever that Dockerfile changes, the Docker image will be updated.
+Docker Hub auto-builds support linking a \inline{Dockerfile} in a GitHub repository, and whenever that \inline{Dockerfile} changes, the Docker image will be updated.
 
 The Docker Hub also has features for configuring repository links and build triggers. These will automatically rebuild downstream Docker images whenever some event occurs.\vspace{10pt}
 %
@@ -3038,12 +3038,12 @@ Repository links allow support chaining builds together across Docker Hub reposi
 
 \subsection{\href{https://cloud.docker.com/}{Docker Cloud}}
 
-Docker Cloud is integrated with the Docker Hub (and may one day replace it). Builds are automatically published from Docker Cloud to Docker Hub. Notifications for email and Slack, as well as a longer build timeout (up to 4-hours) are supported. It also has features for configuring the build context and other useful build settings, such as caching (unlike Docker Hub).
+Docker Cloud is a Docker registry which is fully integrated with the Docker Hub. Builds are automatically published from Docker Cloud to Docker Hub. Notifications for email and Slack, as well as longer build timeouts (up to 4-hours) are supported. It also has features for configuring the build context and other useful build settings, such as caching (unlike Docker Hub).
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{docker_cloud.png}
 \end{centering}
 %
-Docker Cloud allows a longer build timeout, and has more sophisticated build configuration features.
+Docker Cloud supports a longer build timeout, and supports more advanced build configuration settings than Docker Hub.
 
 \end{document}
