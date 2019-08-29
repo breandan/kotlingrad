@@ -60,7 +60,7 @@ fun main() {
   println("AD average error: ${errors[1].average()}")
   println("AD/SD average delta: ${errors[2].average()}")
 
-  for (i in 0..(xs.size - 1))
+  for (i in 0 until xs.size)
     println(xs[i].toString() + "," + errors[0][i] + "," + errors[1][i] + "," + errors[2][i])
 
   val eqn = "sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"

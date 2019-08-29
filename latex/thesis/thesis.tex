@@ -2693,7 +2693,7 @@ As a case study, we have implemented a mobile application using ROS, Docker, and
 
 \section{Design}
 
-Hatchery is compatible with most IDEs on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{sec:installation}. Create a new Android project or clone an existing one. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
+Hatchery is compatible with most IDEs on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
 
 \begin{pclisting}
 ~$ ln -s /absolute/path/to/ros/project /android/project
@@ -2707,7 +2707,7 @@ Create a new project in Android Studio and import the ROS project. Now, the ROS 
 
 \section{Implementation}
 
-To use Kotlin$\nabla$ from an Android project, add a custom Maven repository to the project's \inline{build.gradle.kts} file:
+Due to Android's Kotlin interoperability, Kotlin libraries are directly usable in Android projects. To use Kotlin$\nabla$ in an Android project, first add a custom Maven repository to the project's \inline{build.gradle.kts} file:
 %
 \begin{kotlinlisting}
 repositories {
@@ -2723,7 +2723,7 @@ dependencies {
 }
 \end{kotlinlisting}
 %
-Kotlin$\nabla$ can now be used on Android.
+Kotlin$\nabla$ can now be used inside an Android application.
 
 \section{Testing and validation}
 
