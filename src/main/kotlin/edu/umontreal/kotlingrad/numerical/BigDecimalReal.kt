@@ -8,7 +8,7 @@ import java.math.BigDecimal.ZERO
 import java.math.MathContext
 import kotlin.math.E
 
-class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecimal>(when {
+class BigDecimalReal(number: Number, sigFigs: Int = 30): RealNumber<BigDecimalReal, BigDecimal>(when {
     number is BigDecimal -> number
     number.toDouble().isNaN() -> ZERO
     1E30 < number.toDouble() -> BigDecimal(1E30)
@@ -20,7 +20,7 @@ class BigDecimalReal(number: Number = ZERO): RealNumber<BigDecimalReal, BigDecim
   override val one by lazy { BigDecimalReal(ONE) }
   override val two by lazy { BigDecimalReal(ONE + ONE) }
   override val e by lazy { BigDecimalReal(E) }
-  val mc = MathContext(30)
+  val mc = MathContext(sigFigs)
 
   override fun sin() = BigDecimalReal(sin(value, mc))
   override fun cos() = BigDecimalReal(cos(value, mc))
