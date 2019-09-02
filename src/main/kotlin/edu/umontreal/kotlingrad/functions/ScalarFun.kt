@@ -11,6 +11,23 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
   constructor(fn: ScalarFun<X>): this(fn.variables)
   constructor(vararg fns: ScalarFun<X>): this(fns.flatMap { it.variables }.toSet())
 
+  @JvmName("substitutionInvoke")
+  operator fun invoke(map: Map<ScalarVar<X>, ScalarFun<X>>): ScalarFun<X> = when (this) {
+    is Exp -> exponent(map).exp()
+    is Log -> logarithmand(map).log()
+    is Negative -> -arg(map)
+    is Power -> base(map) pow exponent(map)
+    is SquareRoot -> radicand(map).sqrt()
+    is Sine -> angle(map).sin()
+    is Cosine -> angle(map).cos()
+    is Tangent -> angle(map).tan()
+    is ScalarConst -> this
+    is ScalarVar -> map.getOrElse(this) { value }
+    is ScalarProduct -> multiplicator(map) * multiplicand(map)
+    is ScalarSum -> augend(map) + addend(map)
+  }
+
+  @JvmName("numericalInvoke")
   operator fun invoke(map: Map<ScalarVar<X>, X>): ScalarFun<X> = when (this) {
     is Exp -> exponent(map).exp()
     is Log -> logarithmand(map).log()
