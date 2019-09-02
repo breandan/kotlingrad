@@ -2003,7 +2003,7 @@ This can be achieved by using a variant of hypervolume maximization:
 \nabla_\Theta \mathcal{L}_G = \sum_{k=1}^K \frac{1}{\eta - l_k}\nabla_\Theta l_k
 \end{equation}
 
-Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the traditional GAN to stabilize training and improve sample diversity. This family of techniques has also been shown successful in a number of domains such as speech synthesis~\citep{donahue2019wavegan} and graphs~\citep{wang2018graphgan}.
+Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the vanilla GAN to improve stability and sample diversity. GANs have been successfully applied in various domains from speech synthesis~\citep{donahue2019wavegan} to graphs~\citep{wang2018graphgan}. It would be interesting to explore whether GANs could also be used for program synthesis and compiler optimization, following~\citep{adams2019learning}.
 
 \section{Conclusion}
 
@@ -2016,7 +2016,7 @@ In this chapter we have visited some interesting ideas for validating intelligen
 \label{fig:verification_complexity}
 \end{figure}
 
-Type checking, compilers and automated testing are all part of a broader class of validation and verification tools. The goal of these tools is to provide feedback as early as possible. Some errors (e.g. syntactical errors), are minor nuisances and can be quickly detected with a good incremental parser. Others, as we show in~\autoref{fig:verification_complexity}, are more difficult to verify but can be detected by spending computation. We argue this computational cost is often justified as undetected bugs can have catastrophic consequences. Spending computation frees up valuable cognitive resources better spent on more challenging tasks. Studies have shown bugs detected early in the development are more likely to be fixed~\citep{distefano2019scaling} -- saving minutes during development could save lives during operation.
+Type checking, compilers and automated testing are all part of a broader class of validation and verification tools. The goal of these tools is to provide feedback as early as possible. Some errors (e.g. syntactical errors), are minor nuisances and can be quickly detected with a good incremental parser. Others, as shown in~\autoref{fig:verification_complexity}, are more complex but can be detected by spending computation. We argue this computational cost is often justified as undetected bugs can have catastrophic consequences. Spending computation frees up valuable cognitive resources better spent on more challenging tasks downstream. Studies have shown bugs detected early in development are more likely to be fixed~\citep{distefano2019scaling} -- saving minutes during development could save lives during operation.
 
 As today's engineers begin to incorporate learning in tomorrow's safety-critical robotic systems, we believe that the increased assurance provided by intelligent validation and verification tools will be indispensable for the deployment and scaling of these highly complex cyberphysical systems.
 
@@ -2711,7 +2711,7 @@ In this chapter we have taken a guided tour of containerization and demonstrated
 \mediumrare{\chapter{An application for autonomous robotics}\label{ch:case-study}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
-\epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \href{https://yurichev.com/mirrors/knuth1989.pdf}{\textit{The Errors of TeX}}\end{flushright}}
+\epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \href{https://yurichev.com/mirrors/knuth1989.pdf}{\textit{The Errors of \TeX}}\end{flushright}}
 
 As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the tools proposed in Chapters 2--5. The source code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
 
