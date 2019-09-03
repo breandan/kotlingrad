@@ -57,13 +57,15 @@ Gradle users should add a repository and dependency:
 
 ```kotlin
 repositories {
-    maven("https://raw.githubusercontent.com/breandan/kotlingrad/master/releases")
+    maven("https://maven.pkg.github.com/breandan/kotlingrad")
 }
 
 dependencies {
     implementation("edu.umontreal:kotlingrad:0.1")
 }
 ```
+
+Maven users should refer to [these instructions](https://help.github.com/en/articles/configuring-apache-maven-for-use-with-github-package-registry#installing-a-package).
 
 ### Notation
 
