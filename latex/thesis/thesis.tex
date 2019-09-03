@@ -2719,13 +2719,13 @@ As a case study, we have implemented a mobile application using ROS, Docker, and
 
 \section{Design}
 
-Hatchery is compatible with most IDEs built on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS-specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one from version control. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
+Hatchery is compatible with most IDEs built on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS-specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one from version control. Then create a symbolic link inside the Android project's root directory to the ROS project:
 %
 \begin{pclisting}
 ~$ ln -s /absolute/path/to/ros/project /android/project
 \end{pclisting}
 %
-Create a new project in Android Studio and import the ROS project. Now, the ROS project can be managed from within Android Studio.\vspace{10pt}\\
+Import the project in Android Studio via \menu{File > New > Project from Existing sources\textellipsis}.  Now, the ROS project can be managed from within Android Studio.\vspace{10pt}\\
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{hatchery_android.png}
@@ -2758,7 +2758,7 @@ dependencies {
 }
 \end{kotlinlisting}
 %
-Kotlin$\nabla$ can now be used inside an Android application.
+Kotlin$\nabla$ can now be used just like an ordinary library in any Android application.
 
 \section{Testing and validation}
 
