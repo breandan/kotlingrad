@@ -876,7 +876,9 @@ With the development of modern languages came programming tools which were capab
 
 More experimental UIs, as proposed in the language oriented programming~\citep{dmitriev2004language} and model-driven engineering~\citep{famelis2015mummint} literature, suggest the possibility of more visually flexible layouts. This uncoupling between the composition and representation of text raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a given programming task? And who is the intended audience? These are important questions to consider when designing a new programming tool.
 
-The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these same patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires familiarity with the design language and careful integration with the target framework (i.e. ROS).\\
+The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive aides to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a quick glance. Plugins can use these same patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires familiarity with the design language and careful integration with the target framework (i.e. ROS).
+
+Hatchery provides a settings menu for configuring and managing ROS installations which can automatically detect local ROS distributions and also allows users to manually configure the \href{http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in ~\autoref{fig:ros_settings}.
 %
 \begin{figure}[b]
     \centering
@@ -884,8 +886,6 @@ The Hatchery plugin provides a lightweight GUI overlaying the program's source c
     \caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
     \label{fig:hatchery_gui}
 \end{figure}
-%
-Hatchery provides a settings menu for configuring and managing ROS installations which can automatically detect local ROS distributions and also allows users to manually configure the \href{http://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in ~\autoref{fig:ros_settings}.
 %
 \begin{figure}
     \centering
@@ -1268,7 +1268,7 @@ First-class dependent types are needed for arbitrary shape safety (e.g.\ for con
                 $A^{b}$                                        & \tinline{a.pow(b)}                                                              &  \tinline{pow(a, b)}                                                                      &                                                                                            & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})     $ \\ \hline
 \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular} &  \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular}         & \begin{tabular}{@{}c@{}}\tinline{a.sqrt()}\\\tinline{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                               $ \\ \hline
 \begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \tinline{a.diff(b)}                                                             &  \tinline{grad(a)[b]}                                                                    & \tinline{d(a) / d(b)}                                                                       & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                               $ \\ \hline
-               $\nabla a$                                      &                                                                                &  \tinline{grad(a)}                                                                       & \tinline{a.grad()}                                                                          & $                   (\texttt{a}: C(\mathbb{R}^{m})) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
+               $\nabla a$                                      &                                                                                &  \tinline{grad(a)}                                                                       & \tinline{a.grad()}                                                                          & $                   \big(\texttt{a}: C(\mathbb{R}^{m})\big) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                         $ \\ \hline
     \end{tabular}
 \caption{\label{tab:shape_system}Kotlin$\nabla$'s shape system specifies the output shape for matrix arithmetic.}
 \end{table}
@@ -2719,7 +2719,7 @@ As a case study, we have implemented a mobile application using ROS, Docker, and
 
 \section{Design}
 
-Hatchery is compatible with most IDEs on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
+Hatchery is compatible with most IDEs built on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS-specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one from version control. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
 %
 \begin{pclisting}
 ~$ ln -s /absolute/path/to/ros/project /android/project
@@ -2731,27 +2731,26 @@ Create a new project in Android Studio and import the ROS project. Now, the ROS 
 \includegraphics[width=\textwidth]{hatchery_android.png}
 \end{centering}\vspace{10pt}
 %
-Running nodes on non-Android devices is no different than ordinary rospy projects. However, running ROS nodes on Android devices requires \href{http://wiki.ros.org/rosjava}{rosjava}, a pure Java implementation of the ROS messaging protocol. A few \href{https://github.com/rosjava/android_apps}{example applications} provide a basic Android UI and support communicating with networked ROS nodes.
+Running ROS nodes on desktop or embedded devices follows the same procedure as ordinary rospy projects. Running ROS nodes on Android devices, however, requires the use of \href{http://wiki.ros.org/rosjava}{rosjava}, a pure Java implementation of the ROS messaging protocol. The rosjava project provides examples of various \href{https://github.com/rosjava/android_apps}{Android applications}, including a basic Android UI and support for communicating with networked ROS nodes.
 
-ROS Android applications can be run on a physical Android device or inside the emulator by launching an Android Virtual Device (AVD) and using the following commands, as described in the \href{https://developer.android.com/studio/run/emulator-networking#consoleredir}{Android developer documentation}:
+ROS Android applications can be run on either a physical Android or Android Virtual Device (AVD). To enable bidirectional communication between an external node and AVD ROS node, use the following commands to open a \inline{telnet} connection and configure port forwarding, as described in the \href{https://developer.android.com/studio/run/emulator-networking#consoleredir}{Android developer documentation}:
 %
 \begin{pclisting}
 ~$ telnet localhost 5554
 ~$ redir add tcp:11311:11311
 \end{pclisting}
-%
 
 \section{Implementation}
 
-Due to Android's Kotlin interoperability, Kotlin libraries are directly usable in Android projects. To use Kotlin$\nabla$ in an Android project, first add a custom Maven repository to the project's \inline{build.gradle.kts} file:
+Due to Android's Kotlin interoperability, Kotlin libraries are directly usable inside Android projects. To use Kotlin$\nabla$ in an Android project, first add a custom Maven repository to the project's \inline{build.gradle.kts} file:
 %
 \begin{kotlinlisting}
 repositories {
-    maven("https://raw.githubusercontent.com/breandan/kotlingrad/master/releases")
+    maven("https://maven.pkg.github.com/breandan/kotlingrad")
 }
 \end{kotlinlisting}
 %
-Then add the most recent stable version of Kotlin$\nabla$ to the \inline{dependencies} section of the application's \inline{build.gradle.kts} file:
+Then add the \href{https://github.com/breandan/kotlingrad/packages}{latest version of Kotlin$\nabla$} to \inline{dependencies} in the \inline{build.gradle.kts} file:
 %
 \begin{kotlinlisting}
 dependencies {
