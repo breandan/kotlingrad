@@ -6,6 +6,7 @@ plugins {
   application
   kotlin("jvm") version "1.3.41"
   `maven-publish`
+  id("io.freefair.github.package-registry-maven-publish").version("4.0.1")
 }
 
 group = "edu.umontreal"
@@ -84,6 +85,13 @@ val fatJar by tasks.registering(Jar::class) {
   exclude("**.png", "LICENSE.txt")
 }
 
+github {
+  slug
+  username.set(project.properties["githubUsername"]?.toString())
+  token.set(project.properties["githubToken"]?.toString())
+  tag.set(project.version.toString())
+}
+
 publishing {
   publications.create<MavenPublication>("default") {
     artifact(fatJar.get())
@@ -119,5 +127,13 @@ publishing {
       }
     }
   }
-  repositories.maven("${project.rootDir}/releases")
+  repositories{
+    maven("${project.rootDir}/releases")
+//    maven("https://maven.pkg.github.com/breandan") {
+//      credentials {
+//        username = project.properties["githubUsername"]?.toString()
+//        password = project.properties["githubToken"]?.toString()
+//      }
+//    }
+  }
 }
