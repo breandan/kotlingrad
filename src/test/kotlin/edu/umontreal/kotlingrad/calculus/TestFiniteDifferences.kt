@@ -4,6 +4,7 @@ import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
+import org.junit.Ignore
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -14,7 +15,7 @@ class TestFiniteDifferences: StringSpec({
   with(DoublePrecision) {
     val x = Var("x")
 
-    "sin should be (sin(x + dx) - sin(x)) / dx" {
+    "sin should be (sin(x + dx) - sin(x)) / dx".config(enabled = false) {
       NumericalGenerator.assertAll { ẋ ->
         val f = sin(x)
         val `df∕dx` = d(f) / d(x)
@@ -22,7 +23,7 @@ class TestFiniteDifferences: StringSpec({
       }
     }
 
-    "cos should be (cos(x + dx) - cos(x)) / dx" {
+    "cos should be (cos(x + dx) - cos(x)) / dx".config(enabled = false) {
       NumericalGenerator.assertAll { ẋ ->
         val f = cos(x)
         val `df∕dx` = d(f) / d(x)
@@ -30,7 +31,7 @@ class TestFiniteDifferences: StringSpec({
       }
     }
 
-    "test composition" {
+    "test composition".config(enabled = false) {
       NumericalGenerator.assertAll { ẋ ->
         val f = sin(pow(x, 2))
         val `df∕dx` = d(f) / d(x)
