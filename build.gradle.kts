@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "edu.umontreal"
-version = "0.1"
+version = "0.2.1"
 
 repositories {
   jcenter()
@@ -58,13 +58,6 @@ repositories {
 
 val arrow_version = "0.9.1-SNAPSHOT"
 dependencies {
-  //  compile("io.arrow-kt:arrow-core-data:$arrow_version")
-//  compile("io.arrow-kt:arrow-core-extensions:$arrow_version")
-//  compile("io.arrow-kt:arrow-syntax:$arrow_version")
-//  compile("io.arrow-kt:arrow-typeclasses:$arrow_version")
-//  compile("io.arrow-kt:arrow-extras-data:$arrow_version")
-//  compile("io.arrow-kt:arrow-extras-extensions:$arrow_version")
-
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.4.0")
@@ -83,6 +76,11 @@ val fatJar by tasks.registering(Jar::class) {
   })
   with(tasks["jar"] as CopySpec)
   exclude("**.png", "LICENSE.txt")
+  manifest {
+    attributes(mapOf(
+      "Main-Class" to "edu.umontreal.kotlingrad.samples.HelloKotlinGradKt"
+    ))
+  }
 }
 
 github {
@@ -129,11 +127,5 @@ publishing {
   }
   repositories{
     maven("${project.rootDir}/releases")
-//    maven("https://maven.pkg.github.com/breandan") {
-//      credentials {
-//        username = project.properties["githubUsername"]?.toString()
-//        password = project.properties["githubToken"]?.toString()
-//      }
-//    }
   }
 }
