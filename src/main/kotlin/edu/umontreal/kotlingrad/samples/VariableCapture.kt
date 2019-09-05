@@ -435,8 +435,8 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
 abstract class BiFn<T: Const<T, Number>>(open val left: BiFn<*>? = null,
                                          open val right: BiFn<*>? = null,
                                          open val op: Op<*>? = null) {
-  val add: Add<T> by lazy { Add() }
-  val mul: Mul<T> by lazy { Mul() }
+  val add: Add<T> by lazy { Add<T>() }
+  val mul: Mul<T> by lazy { Mul<T>() }
 
   override fun toString() = "$left $op $right"
 }
