@@ -38,6 +38,23 @@ open class X<P: Const<P, in Number>>(override val left: BiFn<*>,
 
   operator fun plus(that: P): X<P> = X(this, that, add)
   operator fun times(that: P): X<P> = X(this, that, mul)
+  operator fun minus(that: P): X<P> = X(this, that, sub)
+  operator fun div(that: P): X<P> = X(this, that, div)
+
+  operator fun minus(that: X<P>): X<P> = X(this, that, sub)
+  operator fun minus(that: Y<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: Z<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: XY<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: XZ<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: X<P>): X<P> = X(this, that, div)
+  operator fun div(that: Y<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: Z<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: XY<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: XZ<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: X<P>): X<P> = X(this, that, add)
   operator fun plus(that: Y<P>): XY<P> = XY(this, that, add)
@@ -72,6 +89,23 @@ open class Y<P: Const<P, in Number>>(override val left: BiFn<*>,
 
   operator fun plus(that: P): Y<P> = Y(this, that, add)
   operator fun times(that: P): Y<P> = Y(this, that, mul)
+  operator fun minus(that: P): Y<P> = Y(this, that, sub)
+  operator fun div(that: P): Y<P> = Y(this, that, div)
+
+  operator fun minus(that: Y<P>): Y<P> = Y(this, that, sub)
+  operator fun minus(that: X<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: Z<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: XY<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: YZ<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: Y<P>): Y<P> = Y(this, that, div)
+  operator fun div(that: X<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: Z<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: XY<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: YZ<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: Y<P>): Y<P> = Y(this, that, add)
   operator fun plus(that: X<P>): XY<P> = XY(this, that, add)
@@ -106,6 +140,23 @@ open class Z<P: Const<P, in Number>>(override val left: BiFn<*>,
 
   operator fun plus(that: P): Z<P> = Z(this, that, add)
   operator fun times(that: P): Z<P> = Z(this, that, mul)
+  operator fun minus(that: P): Z<P> = Z(this, that, sub)
+  operator fun div(that: P): Z<P> = Z(this, that, div)
+
+  operator fun minus(that: Z<P>): Z<P> = Z(this, that, sub)
+  operator fun minus(that: Y<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: X<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XZ<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: YZ<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: Z<P>): Z<P> = Z(this, that, div)
+  operator fun div(that: Y<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: X<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XZ<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: YZ<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: Z<P>): Z<P> = Z(this, that, add)
   operator fun plus(that: Y<P>): YZ<P> = YZ(this, that, add)
@@ -139,6 +190,23 @@ class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
 
   operator fun plus(that: P): XY<P> = XY(this, that, add)
   operator fun times(that: P): XY<P> = XY(this, that, mul)
+  operator fun minus(that: P): XY<P> = XY(this, that, sub)
+  operator fun div(that: P): XY<P> = XY(this, that, div)
+
+  operator fun minus(that: X<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: Y<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: Z<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XY<P>): XY<P> = XY(this, that, sub)
+  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: X<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: Y<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: Z<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XY<P>): XY<P> = XY(this, that, div)
+  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: X<P>): XY<P> = XY(this, that, add)
   operator fun plus(that: Y<P>): XY<P> = XY(this, that, add)
@@ -195,6 +263,23 @@ class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
 
   operator fun plus(that: P): XZ<P> = XZ(this, that, add)
   operator fun times(that: P): XZ<P> = XZ(this, that, mul)
+  operator fun minus(that: P): XZ<P> = XZ(this, that, sub)
+  operator fun div(that: P): XZ<P> = XZ(this, that, div)
+
+  operator fun minus(that: X<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: Y<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: Z<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XZ<P>): XZ<P> = XZ(this, that, sub)
+  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: X<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: Y<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: Z<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XZ<P>): XZ<P> = XZ(this, that, div)
+  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: X<P>): XZ<P> = XZ(this, that, add)
   operator fun plus(that: Y<P>): XYZ<P> = XYZ(this, that, add)
@@ -251,6 +336,23 @@ class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
 
   operator fun plus(that: P): YZ<P> = YZ(this, that, add)
   operator fun times(that: P): YZ<P> = YZ(this, that, mul)
+  operator fun minus(that: P): YZ<P> = YZ(this, that, sub)
+  operator fun div(that: P): YZ<P> = YZ(this, that, div)
+
+  operator fun minus(that: X<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: Z<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: Y<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: YZ<P>): YZ<P> = YZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: X<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: Z<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: Y<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: YZ<P>): YZ<P> = YZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: X<P>): XYZ<P> = XYZ(this, that, add)
   operator fun plus(that: Z<P>): YZ<P> = YZ(this, that, add)
@@ -306,6 +408,23 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
                                   override val op: Op<P>): BiFn<P>(left, right, op) {
   operator fun plus(that: P): XYZ<P> = XYZ(this, that, add)
   operator fun times(that: P): XYZ<P> = XYZ(this, that, mul)
+  operator fun minus(that: P): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: P): XYZ<P> = XYZ(this, that, div)
+
+  operator fun minus(that: X<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: Y<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: Z<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
+  operator fun div(that: X<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: Y<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: Z<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
+  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
 
   operator fun plus(that: X<P>): XYZ<P> = XYZ(this, that, add)
   operator fun plus(that: Y<P>): XYZ<P> = XYZ(this, that, add)
@@ -437,6 +556,8 @@ abstract class BiFn<T: Const<T, Number>>(open val left: BiFn<*>? = null,
                                          open val op: Op<*>? = null) {
   val add: Add<T> by lazy { Add<T>() }
   val mul: Mul<T> by lazy { Mul<T>() }
+  val sub: Sub<T> by lazy { Sub<T>() }
+  val div: Div<T> by lazy { Div<T>() }
 
   override fun toString() = "$left $op $right"
 }
@@ -445,16 +566,22 @@ abstract class Const<T: Const<T, Number>, Y: Number>(internal open val c: Y): Bi
   override fun toString() = c.toString()
   abstract operator fun plus(that: T): T
   abstract operator fun times(that: T): T
+  abstract operator fun minus(that: T): T
+  abstract operator fun div(that: T): T
 }
 
 class DConst(override val c: Double): Const<DConst, Number>(c) {
   override fun plus(that: DConst) = DConst(this.c + that.c)
   override fun times(that: DConst) = DConst(this.c * that.c)
+  override fun minus(that: DConst) = DConst(this.c - that.c)
+  override fun div(that: DConst) = DConst(this.c / that.c)
 }
 
 class IConst(override val c: Int): Const<IConst, Number>(c) {
   override fun plus(that: IConst) = IConst(this.c + that.c)
   override fun times(that: IConst) = IConst(this.c * that.c)
+  override fun minus(that: IConst) = IConst(this.c - that.c)
+  override fun div(that: IConst) = IConst(this.c / that.c)
 }
 
 abstract class Op<T: Const<T, in Number>>(val string: String): (T, T) -> T {
@@ -467,6 +594,14 @@ class Add<T: Const<T, in Number>>: Op<T>("+") {
 
 class Mul<T: Const<T, in Number>>: Op<T>("*") {
   override fun invoke(l: T, r: T): T = l * r
+}
+
+class Sub<T: Const<T, in Number>>: Op<T>("-") {
+  override fun invoke(l: T, r: T): T = l - r
+}
+
+class Div<T: Const<T, in Number>>: Op<T>("/") {
+  override fun invoke(l: T, r: T): T = l / r
 }
 
 class First<T: Const<T, in Number>>: Op<T>("") {
