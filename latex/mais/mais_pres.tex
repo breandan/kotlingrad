@@ -287,17 +287,18 @@ McGill University \\
             \begin{center}
             \begin{tabular}{lllllllll}
             \textbf{Framework} & \textbf{Language}  & SD     & AD     & FP     & TS     & SS     & DP     & MP     \\ \hline
-            Kotlin$\nabla$     & Kotlin             & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
-            DiffSharp          & F\#                & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-            TensorFlow.FSharp  & F\#                & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-            Myia               & Python             & \cmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-            Deeplearning.scala & Scala              & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-            Nexus              & Scala              & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
-            Lantern            & Scala              & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
-            Grenade            & Haskell            & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
-            Eclipse DL4J       & Java               & \xmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-            Halide             & C++                & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
-            Stalin$\nabla$     & Scheme             & \xmark & \cmark & \cmark & \xmark & \xmark & \xmark & \xmark \\
+            \href{https://github.com/breandan/kotlingrad}{Kotlin$\nabla$}                    & Kotlin  & \cmark & \cmark & \cmark & \cmark & \cmark & \wmark & \wmark \\
+            \href{http://diffsharp.github.io/DiffSharp/}{DiffSharp}                          & F\#     & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+            \href{https://github.com/fsprojects/fsharp-ai-tools}{TensorFlow.FSharp}          & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+            \href{https://tongfei.me/nexus/}{Nexus}                                          & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
+            \href{https://feiwang3311.github.io/Lantern/}{Lantern}                           & Scala   & \xmark & \cmark & \cmark & \cmark & \xmark & \cmark & \xmark \\
+            \href{https://github.com/HuwCampbell/grenade}{Grenade}                           & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+            \href{http://uniker9.github.io/JAutoDiff/}{JAutoDiff}                            & Java    & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+            \href{https://halide-lang.org}{Halide}                                           & C++     & \xmark & \cmark & \xmark & \cmark & \xmark & \cmark & \xmark \\
+            \href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}         & Scheme  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
+            \href{https://github.com/mila-iqia/myia}{Myia}                                   & Python  & \cmark & \cmark & \cmark & \xmark & \xmark & \cmark & \wmark \\
+            \href{https://github.com/HIPS/autograd/}{Autograd}                               & Python  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
+            \href{https://github.com/google/jax}{JAX}                                        & Python  & \xmark & \cmark & \cmark & \xmark & \xmark & \cmark & \wmark \\
         \end{tabular}
         \end{center}
         \footnotesize{SD: Symbolic Differentiation, AD: Automatic Differentiation, FP: Functional Program, TS: Type-Safe, SS: Shape Safe, DP: Differentiable Programming, MP: Multiplatform}
@@ -387,13 +388,14 @@ McGill University \\
             \begin{tabular}{c}
                 \begin{lstlisting}[language=Kotlin, gobble=20]
                     with(DoublePrecision) {
-                        val q = X + Y * Z + Y + 0.0
+                        val q0 = X + Y * Z + Y + 0.0
                         val p0 = q(X to 1.0, Y to 2.0, Z to 3.0)
                         val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0)
                         val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0)
                         val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0)
                         val p5 = q(Z to 1.0)(X to 1.0) // Fn<Y>
-                        val p6 = (X + Z + 0)(Y to 1.0) // Error
+                        val q1 = X + Z + 0.0
+                        val p6 = q1(Y to 1.0) // Error
                     }
                 \end{lstlisting}
             \end{tabular}
@@ -424,12 +426,9 @@ McGill University \\
             \begin{tabular}{c}
                 \begin{lstlisting}[language=Kotlin, gobble=20, style=backtickstyle]
                     // Inferred type: Mat<Double, `1`, `4`>
-                    val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
+                    val a = Mat(1.0, 2.0, 3.0, 4.0)
                     // Inferred type: Mat<Double, `4`, `1`>
-                    val b = Mat(`4`, `1`, 1.0,
-                                          2.0,
-                                          3.0,
-                                          4.0)
+                    val b = Mat(1.0)(2.0)(3.0)(4.0)
                     val c = a * b
 
                     // Does not compile, inner dimension mismatch
