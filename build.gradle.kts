@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   application
-  kotlin("jvm") version "1.3.41"
+  kotlin("jvm") version "1.3.50"
   `maven-publish`
   id("io.freefair.github.package-registry-maven-publish").version("4.0.1")
 }
@@ -20,7 +20,7 @@ repositories {
 //  maven("https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
 
-val kotlinVersion = "1.3.41"
+val kotlinVersion = "1.3.50"
 
 tasks {
   register("plot", JavaExec::class) {

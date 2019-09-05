@@ -4,8 +4,8 @@ package edu.umontreal.kotlingrad.samples
 @Suppress("DuplicatedCode")
 fun main() {
   with(DoublePrecision) {
-    val x = Var("x", DoubleReal(0.0))
-    val y = Var("y", DoubleReal(0.0))
+    val x = Var("x", 0.0)
+    val y = Var("y", 0.0)
 
     val f = x pow 2
     println(f(x to 3.0))
