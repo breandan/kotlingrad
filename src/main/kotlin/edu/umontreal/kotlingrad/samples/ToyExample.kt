@@ -57,7 +57,7 @@ sealed class Fun<X: Fun<X>>(open val vars: Set<Var<X>> = emptySet()): Field<Fun<
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
 
-  operator fun <E: `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
+  operator fun <E: `1`> times(multiplicand: Vec<X, E>): Vec<X, E> = SVProd(this, multiplicand)
 
   override operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
     is SConst -> this
@@ -171,20 +171,20 @@ object DoublePrecision: Protocol<DoubleReal>() {
   fun Var(name: String, default: Number) = Var(name, wrap(default))
   operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Var<DoubleReal>, Number>) =
     this(pairs.map { (it.first to wrap(it.second)) }.toMap())
-  operator fun <Y: `1`> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
+  operator fun <Y: `1`> Vec<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
     this(sPairs.map { (it.first to wrap(it.second)) }.toMap())
 
   val x = Var("x", 0.0)
   val y = Var("y", 0.0)
   val z = Var("z", 0.0)
 
-  fun Vec(d0: Double) = VFun(DoubleReal(d0))
-  fun Vec(d0: Double, d1: Double): VFun<DoubleReal, `2`> = VFun(DoubleReal(d0), DoubleReal(d1))
-  fun Vec(d0: Double, d1: Double, d2: Double): VFun<DoubleReal, `3`> = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
+  fun Vec(d0: Double) = Vec(DoubleReal(d0))
+  fun Vec(d0: Double, d1: Double): Vec<DoubleReal, `2`> = Vec(DoubleReal(d0), DoubleReal(d1))
+  fun Vec(d0: Double, d1: Double, d2: Double): Vec<DoubleReal, `3`> = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
 }
