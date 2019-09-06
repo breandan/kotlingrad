@@ -4,9 +4,6 @@ package edu.umontreal.kotlingrad.samples
 @Suppress("DuplicatedCode")
 fun main() {
   with(DoublePrecision) {
-    val x = Var("x", 0.0)
-    val y = Var("y", 0.0)
-
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
@@ -24,11 +21,10 @@ fun main() {
     println("h'(x) = $dh_dx")
 
     val vf1 = VFun(y + x, y * 2)
-    val bh = x * vf1
+    val bh = x * vf1 + Vec(1.0, 3.0)
     val vf2 = VFun(x, y)
-    val q = vf1 + vf2
+    val q = vf1 + vf2 + Vec(0.0, 0.0)
     val z = q(x to 1.0, y to 2.0)
-    println("z: $z")
   }
 }
 
@@ -41,7 +37,7 @@ open class VFun<X: Fun<X>, E: `1`>(
   val sVars: Set<Var<X>> = emptySet(),
   open val vVars: Set<VVar<X, *>> = emptySet(),
   open vararg val contents: Fun<X>
-): List<Fun<X>> by contents.toList() {
+) {
   constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, contents.flatMap { it.vars }.toSet(), emptySet(), *contents.toTypedArray())
   constructor(length: Nat<E>, vararg contents: Fun<X>): this(length, contents.flatMap { it.vars }.toSet(), emptySet(), *contents)
   constructor(length: Nat<E>, vararg vFns: VFun<X, E>): this(length, vFns.flatMap { it.sVars }.toSet(), vFns.flatMap { it.vVars }.toSet())
@@ -91,6 +87,8 @@ open class VFun<X: Fun<X>, E: `1`>(
 
   infix fun dot(multiplicand: VFun<X, E>): Fun<X> =
     contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
+
+  operator fun get(index: Int) = contents[index]
 
   override fun toString() = contents.joinToString(", ")
 }

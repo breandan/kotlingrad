@@ -56,7 +56,7 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
   val vVars: Set<VVar<X, *>> = emptySet(),
   open val mVars: Set<MVar<X, *, *>> = emptySet(),
   open vararg val rows: VFun<X, C>
-): List<VFun<X, C>> by rows.toList() {
+) {
   constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>):
     this(numRows, numCols, contents.flatMap { it.sVars }.toSet(), contents.flatMap { it.vVars }.toSet(), emptySet(), *contents.toTypedArray())
   constructor(numRows: Nat<R>, numCols: Nat<C>, vararg rows: VFun<X, C>):
@@ -247,6 +247,8 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
   operator fun unaryMinus() = MFun(numRows, numCols, rows.map { -it })
   operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> =
     MFun(numRows, numCols, rows.mapIndexed { i, r -> r + addend[i] })
+
+  operator fun get(i: Int): VFun<X, C> = rows[i]
 
   operator fun times(multiplicand: Fun<X>): MFun<X, R, C> =
     MFun(numRows, numCols, rows.map { it * multiplicand })
