@@ -2174,7 +2174,7 @@ Now suppose we would like to share the container \inline{shady\_giraffe} with so
 ~$ docker commit -m "forking daphne/duck" shady_giraffe user/duck:v2
 \end{pclisting}
 %
-To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady\_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the Docker Hub registry:
+To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady\_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the \href{http://hub.docker.com}{Docker Hub} registry:
 
 \begin{pclisting}
 ~$ docker push user/duck:v2
@@ -2206,7 +2206,7 @@ Now, to build the image, we can simply run:
 ~$ docker build -t user/duck:v3 .
 \end{pclisting}
 %
-The `\inline{.}' indicates the same path as the \inline{Dockerfile}. This command should produce something like the following output:
+The \inline{.} indicates the current directory, which should be the same one containing our \inline{Dockerfile}. This command should produce something like the following output:
 
 \begin{pclisting}
 Sending build context to Docker daemon  2.048kB
@@ -2323,7 +2323,7 @@ Successfully tagged user/duck:v4
 %
 If Docker had to rerun the entire \inline{Dockerfile} from top to bottom each time it was rebuilt, this would be slow and inconvenient. Instead, Docker caches the unmodified steps by default, and only reruns the minimum set of steps necessary to rebuild. This can sometimes introduce unexpected results, especially when the cache is stale. To ignore the cache and force a clean rebuild, use the \inline{-{}-no-cache} flag when building a \inline{Dockerfile}.
 
-What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also checks the \href{https://docs.docker.com/engine/reference/commandline/build/#extended-description}{build context} for changes. When ``\inline{docker build -t TAG .}'' is written, the `\inline{.}' indicates the build context, or path where the build should occur. Often, this path contains build artifacts. For example:
+What does Docker consider when deciding whether to use the cache? First is the \inline{Dockerfile} itself -- when a step in a \inline{Dockerfile} changes, both it and any subsequent steps will need to be rerun during a build. Docker also checks the \href{https://docs.docker.com/engine/reference/commandline/build/#extended-description}{build context} for changes. When \inline{docker build -t TAG .} is written, the \inline{.} indicates the build context, or path where the build should occur. Often, this path contains build artifacts. For example:
 
 \begin{dockerlisting}
 FROM daphne/duck
@@ -2378,7 +2378,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 There is a second method of depositing data into a container, which does not require baking it into the parent image at compile-time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
 \begin{pclisting}
-~$ docker run user/duck:v6 (*\hl{-v [HOST PATH]:[TARGET PATH]}*)
+~$ docker run user/duck:v6 (*\hl{-v HOST_PATH:TARGET_PATH}*)
 \end{pclisting}
 %
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
@@ -2503,7 +2503,7 @@ Our largest single contribution to the Duckietown project involved writing a scr
 Now, with the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell}, the following command is all that is needed:
 %
 \begin{dtslisting}
-dt> init_sd_card [--hostname "DUCKIEBOT_NAME" --wifi "username:password"]
+dt> init_sd_card [--hostname "DUCKIEBOT_NAME"] [--wifi "username:password"]
 \end{dtslisting}
 %
 Users insert an SD card and follow the instructions provided. When complete, the card must be removed and inserted into the SD card slot on the Raspberry Pi. On first boot, care should be taken to ensure the device is powered continuously for a minimum of ten minutes.
@@ -2540,7 +2540,7 @@ Docker images can be cross-compiled by enclosing the ARM-specific portion of the
 Alternately, it is possible to build directly on ARM devices by creating a file named \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
 
 \begin{rpilisting}
-~$ docker build --file=[FILE PATH]/Dockerfile.arm --tag [TAG NAME] .
+~$ docker build --file=FILE_PATH/Dockerfile.arm --tag [TAG NAME] .
 \end{rpilisting}
 %
 \subsection{Multi-architecture support}
@@ -2694,7 +2694,7 @@ The root cause of this friction was a product of imprecise versioning and over-a
 
 A more stable solution is to store all sources on the local development environment and rebuild the image only when its upstream dependencies change. The image only contains its compiled upstream dependencies and is only paired with source code at runtime.
 
-One of the primary use cases for the Duckietown container infrastructure is a biannual autonomous robotics competition called the AI Driving Olympics~\citep{aido2018} (AIDO). To participate, competitors must submit a Docker image (various templates are provided for \href{https://github.com/duckietown/challenge-aido_LF-baseline-RL-sim-pytorch}{reinforcement learning}, \href{https://github.com/duckietown/challenge-aido_LF-baseline-IL-logs-tensorflow}{imitation learning} and \href{https://github.com/duckietown/challenge-aido_LF-template-ros}{classical robotics}). The submitted image, together with a Git repository and a commit hash, constitutes a AIDO submission. The submission is retrieved by the organizers and evaluated on a random map in Duckietown's \href{https://github.com/duckietown/gym-duckietown}{simulator}~\citep{gym_duckietown}. This evaluation produces a numerical score in several categories. Valid submissions may also be run on a physical ``robotarium''. The highest ranking submissions are evaluated in a final round at NeurIPS and ICRA.
+One of the primary use cases for the Duckietown container infrastructure is a biannual autonomous robotics competition called the AI Driving Olympics~\citep{aido2018} (AIDO). To participate, competitors must submit a Docker image (various templates are provided for \href{https://github.com/duckietown/challenge-aido_LF-baseline-RL-sim-pytorch}{reinforcement learning}, \href{https://github.com/duckietown/challenge-aido_LF-baseline-IL-logs-tensorflow}{imitation learning} and \href{https://github.com/duckietown/challenge-aido_LF-template-ros}{classical robotics}). The submitted image, together with a Git repository and a commit hash, constitutes an AIDO submission. The submission is retrieved by the organizers and evaluated on a random map in Duckietown's \href{https://github.com/duckietown/gym-duckietown}{simulator}~\citep{gym_duckietown}. This evaluation produces a numerical score in several categories. Valid submissions may also be run on a physical \textit{robotarium}. The highest ranking submissions are evaluated in a final round at NeurIPS and ICRA.
 
 \subsection{Remarks on security}
 
