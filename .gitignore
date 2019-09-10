@@ -5,7 +5,6 @@ build
 .attach_*
 out
 .kotlintest
-data
 *.lot
 *.lof
 *.log
