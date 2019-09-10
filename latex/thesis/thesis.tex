@@ -450,7 +450,7 @@
 %%              pages iv                            %
 %%------------------------------------------------- %
 
-\chapter*{Summary}
+\chapter*{R\'esum\'e}
 
 Programming tools are computer programs which help humans program computers. Tools come in all shapes and forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this thesis, we share some lessons learned designing four tools that facilitate the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe Kotlin$\nabla$, a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial and metamorphic testing. Fourth, we explore a container infrastructure based on Docker, which enables the development reproducible robotics software for the Duckietown platform. Finally, we present a brief case study on an application built with these four tools in mind and offer some concluding remarks about the past, present and future of programming tools for intelligent systems.
 
@@ -2369,7 +2369,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 There is a second method of depositing data into a container, which does not require baking it into the parent image at compile-time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
 \begin{pclisting}
-~$ docker run user/duck:v6 (*\hl{-v HOST_PATH:TARGET_PATH}*)
+~$ docker run user/duck:v6 (*\hl{-v HOST\_PATH:TARGET\_PATH}*)
 \end{pclisting}
 %
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
