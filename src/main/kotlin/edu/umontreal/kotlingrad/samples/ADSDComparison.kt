@@ -4,6 +4,8 @@ import edu.umontreal.kotlingrad.numerical.BigDecimalPrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
 import org.knowm.xchart.*
+import org.knowm.xchart.style.lines.SeriesLines
+import java.awt.BasicStroke
 import java.awt.Color
 import java.math.BigDecimal
 import kotlin.math.abs
@@ -56,8 +58,8 @@ fun main() {
   val fdvals = with(DoublePrecision) {
     val x = Var("x")
     val y = sin(x* cos(x* sin(x * cos(x))))
-    val h = 1
-    val `dy∕dx` = (y(x + h) - y(x - h)) / (2 * h)
+    val h = 7E-13
+    val `dy∕dx` = (y(x + h) - y(x - h)) / (2.0 * h)
 
     xs.run { arrayOf(map { y.invoke(it) }, map { `dy∕dx`(it) }) }.map { it.toDoubleArray() }.toTypedArray()
   }
@@ -65,7 +67,7 @@ fun main() {
   val t = { i: Double, d: Double -> log10(abs(i - d)).let { if (it < -20) -20.0 else it } }
 
   val errors = arrayOf(
-    sdvals[1].zip(bdvals[1], t),
+//    sdvals[1].zip(bdvals[1], t),
     advals[1].zip(bdvals[1], t),
     advals[1].zip(sdvals[1], t),
     fdvals[1].zip(bdvals[1], t)
@@ -79,10 +81,11 @@ fun main() {
   for (i in xs.indices) println(xs[i].toString() + "," + errors[0][i] + "," + errors[1][i] + "," + errors[2][i])
 
   val eqn = "sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
-  val labels = arrayOf("Δ(SD, IP)", "Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
-  val chart = QuickChart.getChart("Log errors between AD and SD on the function f(x) = $eqn", "x", "log(Δ)", labels, xs, errors)
+  val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
+  val chart = QuickChart.getChart("Log errors between AD and SD on f(x) = $eqn", "x", "log₁₀(Δ)", labels, xs, errors)
 
   chart.styler.chartBackgroundColor = Color.WHITE
+  chart.styler.setSeriesLines(chart.styler.seriesLines.mapIndexed { i, q -> if(i == 1) BasicStroke(20.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER) else SeriesLines.SOLID }.toTypedArray())
   SwingWrapper(chart).displayChart()
   BitmapEncoder.saveBitmapWithDPI(chart, "src/main/resources/comparison.png", BitmapEncoder.BitmapFormat.PNG, 300)
 }
