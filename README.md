@@ -465,7 +465,7 @@ First, we enumerate a list of integer type literals as a chain of subtypes, so t
 
 ```kotlin
 @file:Suppress("ClassName")
- open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
+open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
 open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
 open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
 open class `3`(override val i: Int = 3): `4`(i) { companion object: `3`(), Nat<`3`> }
@@ -712,6 +712,7 @@ The following individuals have helped shape this project through their enthusias
 * [Liam Paull](http://liampaull.ca)
 * [Michalis Famelis](https://michalis.famelis.info/)
 * [Hanneli Tavante](http://hannelita.com/)
+* [Stefan Monnier](https://www.iro.umontreal.ca/~monnier/)
 * [Alexander Nozik](https://scholar.google.com/citations?user=B-WJi4kAAAAJ)
 * [Erik Meijer](https://twitter.com/headinthebox/)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
