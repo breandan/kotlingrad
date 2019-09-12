@@ -1769,11 +1769,11 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \begin{tikzpicture}
 \begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
 \addplot table [mark=none, x index=0, y index=1, col sep=comma] {data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(SD, IP)}
+\addlegendentry{$\Delta$(SD, IP), $\Delta$(AD, IP)}
 \addplot table [mark=none, x index=0, y index=2, col sep=comma] {data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(AD, IP)}
-\addplot table [mark=none, x index=0, y index=3, col sep=comma] {data/adsd_comparison.csv};
 \addlegendentry{$\Delta$(AD, SD)}
+\addplot table [mark=none, x index=0, y index=3, col sep=comma] {data/adsd_comparison.csv};
+\addlegendentry{$\Delta$(FD, IP)}
 \end{axis}
 \end{tikzpicture}
 \caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and infinite precision (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
