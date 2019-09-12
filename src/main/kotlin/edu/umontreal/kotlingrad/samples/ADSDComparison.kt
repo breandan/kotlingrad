@@ -4,8 +4,6 @@ import edu.umontreal.kotlingrad.numerical.BigDecimalPrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
 import org.knowm.xchart.*
-import org.knowm.xchart.style.lines.SeriesLines
-import java.awt.BasicStroke
 import java.awt.Color
 import java.math.BigDecimal
 import kotlin.math.abs
@@ -46,10 +44,10 @@ fun main() {
     val y = sin(x* cos(x* sin(x * cos(x))))
     val `dy∕dx` = d(y) / d(x)
 
-    println("""
-      y=$y
-      dy/dx=$`dy∕dx`
-      """.trimIndent())
+//    println("""
+//      y=$y
+//      dy/dx=$`dy∕dx`
+//      """.trimIndent())
 
     xs.run { arrayOf(map { y.invoke(it) }, map { `dy∕dx`(it) }) }.map { it.toDoubleArray() }.toTypedArray()
   }
@@ -67,25 +65,24 @@ fun main() {
   val t = { i: Double, d: Double -> log10(abs(i - d)).let { if (it < -20) -20.0 else it } }
 
   val errors = arrayOf(
-//    sdvals[1].zip(bdvals[1], t),
+//    sdvals[1].zip(bdvals[1], t), // Appears indistinguishable on Xchart
     advals[1].zip(bdvals[1], t),
     advals[1].zip(sdvals[1], t),
     fdvals[1].zip(bdvals[1], t)
   // Filter out values which hit the floor of numerical precision (effectively zero)
   ).map { it.run { var last = -14.0; map { d -> if (d <= -15.0) last else { last = d; d } }.toDoubleArray() } }.toTypedArray()
 
-  println("SD average error: ${errors[0].average()}")
-  println("AD average error: ${errors[1].average()}")
-  println("AD/SD average delta: ${errors[2].average()}")
+//  println("SD average error: ${errors[0].average()}")
+//  println("AD average error: ${errors[1].average()}")
+//  println("AD/SD average delta: ${errors[2].average()}")
 
-  for (i in xs.indices) println(xs[i].toString() + "," + errors[0][i] + "," + errors[1][i] + "," + errors[2][i])
+  for (i in xs.indices) println(xs[i].toString() + ",\t" + errors[0][i] + ",\t" + errors[1][i] + ",\t" + errors[2][i])
 
   val eqn = "sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
   val chart = QuickChart.getChart("Log errors between AD and SD on f(x) = $eqn", "x", "log₁₀(Δ)", labels, xs, errors)
 
   chart.styler.chartBackgroundColor = Color.WHITE
-  chart.styler.setSeriesLines(chart.styler.seriesLines.mapIndexed { i, q -> if(i == 1) BasicStroke(20.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER) else SeriesLines.SOLID }.toTypedArray())
   SwingWrapper(chart).displayChart()
   BitmapEncoder.saveBitmapWithDPI(chart, "src/main/resources/comparison.png", BitmapEncoder.BitmapFormat.PNG, 300)
 }
