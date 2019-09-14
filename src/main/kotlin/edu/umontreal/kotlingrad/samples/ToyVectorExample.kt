@@ -1,4 +1,4 @@
-@file:Suppress("ClassName")
+@file:Suppress("ClassName", "LocalVariableName")
 package edu.umontreal.kotlingrad.samples
 
 @Suppress("DuplicatedCode")

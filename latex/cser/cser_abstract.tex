@@ -17,19 +17,17 @@
 % hyperref makes hyperlinks in the resulting PDF.
 % If your build breaks (sometimes temporarily if a hyperlink spans a page)
 % please comment out the following usepackage line and replace
-% \usepackage{sysml2019} with \usepackage[nohyperref]{sysml2019} above.
+% \usepackage{cser2019} with \usepackage[nohyperref]{cser2019} above.
 \usepackage{hyperref}
 
 % Attempt to make hyperref and algorithmic work together better:
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 \newcommand{\squeezeup}{\vspace{-2.5mm}}
 % Use the following line for the initial blind version submitted for review:
-%\usepackage{sysml2019}
+%\usepackage{cser2019}
 \setlength{\bibsep}{0pt plus 0.5ex}
 % If accepted, instead use the following line for the camera-ready submission:
-\usepackage[accepted]{sysml2019}
-\AtBeginEnvironment{minted}{%
-\renewcommand{\fcolorbox}[4][]{#4}}
+\usepackage[accepted]{cser2019}
 % The \sysmltitle you define below is probably too long as a header.
 % Therefore, a short form for the running title is supplied here:
 \sysmltitlerunning{Kotlin$\mathbf{\nabla}$:
@@ -43,7 +41,7 @@ An shape-safe DSL for differentiable functional programming}
 
         % It is OKAY to include author information, even for blind
         % submissions: the style file will automatically remove it for you
-        % unless you've provided the [accepted] option to the sysml2019
+        % unless you've provided the [accepted] option to the cser2019
         % package.
 
         % List of affiliations: The first argument should be a (short)
@@ -94,15 +92,15 @@ An shape-safe DSL for differentiable functional programming}
     \section{Introduction}
     \label{submission}
 
-    Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface}~\cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete~\cite{Grigore:2017:JGT:3009837.3009871}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types. We use \textit{Kotlin}, whose type system is less expressive, but fully compatible with Java.
+    Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface}~\cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing complete~\cite{grigore2017java}. As a practical consequence, we can use the same technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with generic types. We use \textit{Kotlin}, whose type system is less expressive, but fully compatible with Java.
 
-    Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\cite{pearlmutter2008using}, DiffSharp in F\#~\cite{DBLP:journals/corr/BaydinPS15} and recently Swift~\cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+    Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$~\cite{pearlmutter2008using}, DiffSharp in F\#~\cite{baydin2015diffsharp} and recently Swift~\citelattner2018tensorflow. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
-    Existing AD implementations for the JVM include Lantern~\cite{DBLP:journals/corr/abs-1803-10228}, Nexus~\cite{chen2017typesafe} and DeepLearning.scala~\cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
+    Existing AD implementations for the JVM include Lantern~\cite{wang2018demystifying}, Nexus~\cite{chen2017typesafe} and DeepLearning.scala~\cite{yang2018dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
     \squeezeup\squeezeup
     \begin{enumerate}[itemsep=-0.5ex]
         \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
-        \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following~\citealt{pearlmutter2008reverse} and~\citealt{DBLP:journals/corr/abs-1803-10228}.
+        \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following~\citealt{pearlmutter2008reverse} and~\citealt{wang2018demystifying}.
         \item \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
     \end{enumerate}
     % \squeezeup Finally, we notice two things about the nature of Kotlin langauge in respect
@@ -178,7 +176,7 @@ An shape-safe DSL for differentiable functional programming}
 
     In future work, we intend to implement a full grammar of differentiable primitives including matrix convolution, control flow and recursion. While Kotlin$\nabla$ currently implements arithmetic manually, we plan to wrap a BLAS such as cuBLAS or native linear algebra library for performance.
 
-    \squeezeup\bibliography{example_paper}
-    \bibliographystyle{sysml2019}
+    \squeezeup\bibliography{cser_abstract}
+    \bibliographystyle{cser2019}
 
 \end{document}

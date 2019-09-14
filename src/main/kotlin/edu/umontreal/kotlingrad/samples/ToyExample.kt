@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName", "LocalVariableName")
+
 package edu.umontreal.kotlingrad.samples
 
 import kotlin.math.*

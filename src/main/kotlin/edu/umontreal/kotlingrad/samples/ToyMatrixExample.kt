@@ -1,6 +1,7 @@
+@file:Suppress("DuplicatedCode", "LocalVariableName")
+
 package edu.umontreal.kotlingrad.samples
 
-@Suppress("DuplicatedCode")
 fun main() {
   with(DoublePrecision) {
     val x = Var("x", DoubleReal(0.0))

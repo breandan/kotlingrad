@@ -1,4 +1,5 @@
-//package edu.umontreal.kotlingrad.functions
+package edu.umontreal.kotlingrad.functions
+
 //
 //import edu.umontreal.kotlingrad.algebra.AbelianGroup
 //import edu.umontreal.kotlingrad.algebra.Field

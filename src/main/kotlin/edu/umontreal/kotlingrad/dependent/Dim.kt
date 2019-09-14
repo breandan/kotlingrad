@@ -1,3 +1,5 @@
+@file:Suppress("ClassName")
+
 package edu.umontreal.kotlingrad.dependent
 
 open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }

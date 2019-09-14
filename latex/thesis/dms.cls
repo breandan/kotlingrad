@@ -1604,7 +1604,7 @@ par\par\vskip9mm
 \let\chapter=\section %Pour que ça marche avec natbib aussi
 \def\@bibtitlestyle{\section*{\protect\refname}}
 \edef\jobname{\dms@inputfilename}
-\bibliography{#1}
+\bibliography{../biblio/kotlingrad}
 \endgroup%
 }
 
