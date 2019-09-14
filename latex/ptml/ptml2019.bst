@@ -1,4 +1,4 @@
-%% File: `mais2019.bst'
+%% File: `ptml2019.bst'
 %% A modification of `plainnl.bst' for use with natbib package 
 %%
 %% Copyright 2010 Hal Daum\'e III

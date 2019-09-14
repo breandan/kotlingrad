@@ -45,18 +45,14 @@
 % hyperref makes hyperlinks in the resulting PDF.
 % If your build breaks (sometimes temporarily if a hyperlink spans a page)
 % please comment out the following usepackage line and replace
-% \usepackage{mais2019} with \usepackage[nohyperref]{mais2019} above.
+% \usepackage{ptml2019} with \usepackage[nohyperref]{ptml2019} above.
 \usepackage{hyperref}
 
 % Attempt to make hyperref and algorithmic work together better:
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 %\newcommand{\squeezeup}{\vspace{-2.5mm}}
-% Use the following line for the initial blind version submitted for review:
-\usepackage{mais2019}
+\usepackage[accepted]{ptml2019}
 \setlength{\bibsep}{0pt plus 0.5ex}
-% If accepted, instead use the following line for the camera-ready submission:
-%\usepackage[accepted]{mais2019}
-\AtBeginEnvironment{minted}{\renewcommand{\fcolorbox}[4][]{#4}}
 % The \sysmltitle you define below is probably too long as a header.
 % Therefore, a short form for the running title is supplied here:
 \sysmltitlerunning{Kotlin$\mathbf{\nabla}$:
@@ -70,7 +66,7 @@ An shape-safe DSL for differentiable functional programming}
 
 % It is OKAY to include author information, even for blind
 % submissions: the style file will automatically remove it for you
-% unless you've provided the [accepted] option to the mais2019
+% unless you've provided the [accepted] option to the ptml2019
 % package.
 
 % List of affiliations: The first argument should be a (short)
@@ -92,7 +88,6 @@ An shape-safe DSL for differentiable functional programming}
 
 \sysmlaffiliation{mila}{Mila, Universit\'e de Montr\'eal}
 \sysmlaffiliation{udem}{Universit\'e de Montr\'eal}
-\sysmlaffiliation{anon}{Anonymous Institution}
 
 
 \sysmlcorrespondingauthor{Breandan Considine}{bre@ndan.co}
@@ -105,7 +100,7 @@ An shape-safe DSL for differentiable functional programming}
 \vskip 0.3in
 
 \begin{abstract}
- Kotlin is a statically-typed programming language with support for embedded domain specific languages, asynchronous programming, and multi-platform compilation. In this work, we present an algebraically-grounded implementation of forward- and reverse- mode automatic differentiation (AD) with shape-safe tensor operations, written in pure Kotlin. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use. A working prototype is available at: \url{https://github.com/anonymous/kotlingrad}.
+ Kotlin is a statically-typed programming language with support for embedded domain specific languages, asynchronous programming, and multi-platform compilation. In this work, we present an algebraically-grounded implementation of forward- and reverse- mode automatic differentiation (AD) with shape-safe tensor operations, written in pure Kotlin. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use. A working prototype is available at: \url{https://github.com/breandan/kotlingrad}.
 \end{abstract}
 ]
 
@@ -125,14 +120,14 @@ An shape-safe DSL for differentiable functional programming}
 
 Existing AD frameworks for machine learning are implemented in Python, which is not a type-safe language. Some AD implementations are written in statically-typed languages, but only type check primitive data types (e.g. integers or floating point numbers), and are unable to check the shape of multidimensional arrays in their type system. Those which do are typically implemented in experimental programming languages with sophisticated type-level programming features. In our work, we demonstrate an automatic differentiation library with shape-checked array programming in a widely-used programming language.
 
-Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface} \cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing Complete \cite{Grigore:2017:JGT:3009837.3009871}, allowing arbitrary computation to occur in the type system. As a practical consequence, we can use a similar technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with parametric polymorphism, such as C\# or TypeScript. We use \textit{Kotlin}, whose type system is strictly less expressive, but fully interoperable with Java.
+Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface} \cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing Complete \cite{grigore2017java}, allowing arbitrary computation to occur in the type system. As a practical consequence, we can use a similar technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with parametric polymorphism, such as C\# or TypeScript. We use \textit{Kotlin}, whose type system is strictly less expressive, but fully interoperable with Java.
 
-Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{DBLP:journals_corr_BaydinPS15} and recently Swift \cite{swift}. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{baydin2015diffsharp} and recently Swift \citelattner2018tensorflow. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
-Existing AD implementations for the JVM include Lantern \cite{DBLP:journals_corr_abs-1803-10228}, Nexus \cite{chen2017typesafe} and DeepLearning.scala \cite{dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
+Existing AD implementations for the JVM include Lantern \cite{wang2018demystifying}, Nexus \cite{chen2017typesafe} and DeepLearning.scala \cite{yang2018dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
 \begin{enumerate}[itemsep=-0.5ex]
   \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
-  \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \citealt{pearlmutter2008reverse} and \citealt{DBLP:journals_corr_abs-1803-10228}.
+  \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \citealt{pearlmutter2008reverse} and \citealt{wang2018demystifying}.
   \item \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
 \end{enumerate}
 % \squeezeup Finally, we notice two things about the nature of Kotlin langauge in respect
@@ -215,7 +210,7 @@ With these basic ingredients, we have almost all the features necessary to build
 
 In future work, we plan to implement a broader grammar of differentiable primitives including matrix convolution, as well as control flow and recursion. While Kotlin$\nabla$ currently implements matrix arithmetic directly, we plan to wrap a native linear algebra library for performance reasons.
 
-\squeezeup\bibliography{example_paper}
-\bibliographystyle{mais2019}
+\squeezeup\bibliography{ptml_abstract}
+\bibliographystyle{ptml2019}
 
 \end{document}

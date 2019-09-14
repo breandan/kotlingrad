@@ -1,5 +1,5 @@
-//package edu.umontreal.kotlingrad.functions
-//
+package edu.umontreal.kotlingrad.functions
+
 //import edu.umontreal.kotlingrad.numerical.DoublePrecision
 //import edu.umontreal.kotlingrad.numerical.DoubleReal
 //
