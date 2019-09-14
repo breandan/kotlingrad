@@ -15,3 +15,11 @@ out
 *.bbl
 *.blg
 *.swp
+*.dvi
+*.listing
+*.out.ps
+*.synctex.gz
+*.out
+*.nav
+*.snm
+*.vrb

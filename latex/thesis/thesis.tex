@@ -162,7 +162,7 @@
         #1
     },
     underlay={
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{figures/kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -180,7 +180,7 @@
         #1
     },
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=4mm]{figures/kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=4mm]{../figures/kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -195,7 +195,7 @@
         #1
     },
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{figures/laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -221,7 +221,7 @@
         #1
     },
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{figures/duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{../figures/duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -246,7 +246,7 @@
     },
     fonttitle=\ttfamily\small,
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{figures/launch_icon.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/launch_icon.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
     }
 }
 
@@ -277,7 +277,7 @@
     },
     fonttitle=\ttfamily\small,
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{figures/bnf_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/bnf_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -294,7 +294,7 @@
     },
     fonttitle=\ttfamily\small,
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{figures/python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -307,7 +307,7 @@
         #1
     },
     underlay unbroken and first={%
-        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{figures/raspi_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{../figures/raspi_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
     }
 }
 
@@ -520,7 +520,7 @@ In this thesis, we explore several tools that facilitate the process of building
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.70\textwidth]{figures/waterfall_diagram.png}
+    \includegraphics[width=0.70\textwidth]{../figures/waterfall_diagram.png}
     \caption{Royce's original waterfall model describes the software development process. We use it to guide our discussion and frame our contributions inside of this model.\vspace{-10pt}}
     \label{fig:waterfall_model}
 \end{figure}
@@ -594,14 +594,14 @@ All great software has a secret recipe: software gets better when its authors us
 Throughout this thesis, the following iconography is used to denote: \\
 %
 \begin{enumerate}
-\item[] \inlineimg{figures/laptop_icon.png} &  Shell commands intended for a personal computer, or output derived thereof. \\
-\item[] \inlineimg{figures/bnf_file.png} & GrammarKit's \inline{.bnf} parsing expression grammar (PEG)~\footnote{GrammarKit usage notes: \url{https://github.com/JetBrains/Grammar-Kit/blob/master/HOWTO.md}} \\
+\item[] \inlineimg{../figures/laptop_icon.png} &  Shell commands intended for a personal computer, or output derived thereof. \\
+\item[] \inlineimg{../figures/bnf_file.png} & GrammarKit's \inline{.bnf} parsing expression grammar (PEG)~\footnote{GrammarKit usage notes: \url{https://github.com/JetBrains/Grammar-Kit/blob/master/HOWTO.md}} \\
 \item[] \inlineimg{figures/docker_icon.jpg} &  Either \inline{Dockerfile}~\footnote{Dockerfile reference: \url{https://docs.docker.com/engine/reference/builder/}} or Docker Compose~\footnote{Compose file reference: \url{https://docs.docker.com/compose/compose-file/}} syntax. \\
-\item[] \inlineimg{figures/raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi~\footnote{Raspberry Pi: \url{https://www.raspberrypi.org/}}. \\
-\item[] \inlineimg{figures/duckietown.png}  &  Duckietown Shell (\inline{dts}) commands~\footnote{Duckietown Shell: \url{https://github.com/duckietown/duckietown-shell-commands}}. \\
-\item[] \inlineimg{figures/launch_icon.png}  &  roslaunch \inline{.launch} files~\footnote{ROS Launch XML: \url{http://wiki.ros.org/roslaunch/XML}}. \\
-\item[] \inlineimg{figures/python_icon.png}  &  Python source code~\footnote{Python documentation: \url{https://www.python.org/doc/}}. \\
-\item[] \inlineimg{figures/kotlin_file.png}  &  Kotlin source code~\footnote{Kotlin documentation: \url{https://kotlinlang.org/docs/reference/}}.
+\item[] \inlineimg{../figures/raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi~\footnote{Raspberry Pi: \url{https://www.raspberrypi.org/}}. \\
+\item[] \inlineimg{../figures/duckietown.png}  &  Duckietown Shell (\inline{dts}) commands~\footnote{Duckietown Shell: \url{https://github.com/duckietown/duckietown-shell-commands}}. \\
+\item[] \inlineimg{../figures/launch_icon.png}  &  roslaunch \inline{.launch} files~\footnote{ROS Launch XML: \url{http://wiki.ros.org/roslaunch/XML}}. \\
+\item[] \inlineimg{../figures/python_icon.png}  &  Python source code~\footnote{Python documentation: \url{https://www.python.org/doc/}}. \\
+\item[] \inlineimg{../figures/kotlin_file.png}  &  Kotlin source code~\footnote{Kotlin documentation: \url{https://kotlinlang.org/docs/reference/}}.
 \end{enumerate}
 
 \chapter{Programming tools for robotics}\label{ch:hatchery}
@@ -654,7 +654,7 @@ The ROS middleware provides several language front-ends for polyglot programming
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{figures/rqt_dep_graph.png}
+\includegraphics[width=\textwidth]{../figures/rqt_dep_graph.png}
 \caption{A typical ROS application contains a large graph of dependencies.}
 \end{figure}
 
@@ -838,7 +838,7 @@ Hatchery provides assistance for configuring, building and running ROS applicati
 
 \begin{figure}
 \centering
-\frame{\includegraphics[width=0.90\textwidth]{figures/ros_run_config.png}}
+\frame{\includegraphics[width=0.90\textwidth]{../figures/ros_run_config.png}}
 \caption{ROS Run Configuration. Accessible via: \menu{Run > Edit Configurations > + > ROS Launch}}
 \label{fig:ros_run_config}
 \end{figure}
@@ -849,7 +849,7 @@ An often overlooked, but important aspect of development tools is the user inter
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.90\textwidth]{figures/progress_in_program.png}
+    \includegraphics[width=0.90\textwidth]{../figures/progress_in_program.png}
     \caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
     \label{fig:evolution_of_programming}
 \end{figure}
@@ -858,7 +858,7 @@ ASCII is still the dominant medium for modern programming, although machines sti
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.90\textwidth]{figures/mps_screenshot.png}
+    \includegraphics[width=0.90\textwidth]{../figures/mps_screenshot.png}
     \caption{Projectional editors such as MPS~\citep{voelter2010language, pech2013jetbrains} (shown above) are able to render source code in visually creative ways. This might resemble freehand notation or some other visually appealing format.}
     \label{fig:mps_screenshot}
 \end{figure}
@@ -873,14 +873,14 @@ Hatchery provides a settings menu for configuring and managing ROS installations
 %
 \begin{figure}[b]
     \centering
-    \frame{\includegraphics[width=0.90\textwidth]{figures/hatchery_screenshot.png}}
+    \frame{\includegraphics[width=0.90\textwidth]{../figures/hatchery_screenshot.png}}
     \caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
     \label{fig:hatchery_gui}
 \end{figure}
 %
 \begin{figure}
     \centering
-    \frame{\includegraphics[width=0.90\textwidth]{figures/ros_settings.png}}
+    \frame{\includegraphics[width=0.90\textwidth]{../figures/ros_settings.png}}
     \caption{Detection of local ROS packages. Accessible via: \menu{File > Settings > ROS config}}
     \label{fig:ros_settings}
 \end{figure}
@@ -1098,7 +1098,7 @@ In the general case, we can solve for the gradient using \autoref{eq:vfun_chain_
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.90\textwidth]{figures/diff_prob_prog.png}
+    \includegraphics[width=0.90\textwidth]{../figures/diff_prob_prog.png}
     \caption{\textit{Differentiable programming} includes neural networks, but more broadly, arbitrary differentiable programs which use automatic differentiation and gradient-based optimization to approximate a loss function. \textit{Probabilistic programming}~\citep{carpenter2017stan, gorinova2018slicstan} is an emerging generalization of probabilistic graphical models, and uses various forms of Markov chain Monte Carlo (MCMC) and differentiable inference to approximate a probability density function.}
     \label{fig:diff_prob_prog}
 \end{figure}
@@ -1187,7 +1187,7 @@ Existing AD implementations for the JVM include \href{https://feiwang3311.github
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.70\textwidth]{figures/kotlingrad_diagram.png}
+    \includegraphics[width=0.70\textwidth]{../figures/kotlingrad_diagram.png}
     \caption{Adapted from~\citet{van2018tangent}. Kotlin$\nabla$ models are data structures, constructed by an embedded DSL, eagerly optimized, and lazily evaluated.}
     \label{fig:kotlingrad_digram}
 \end{figure}
@@ -1211,7 +1211,7 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
 }
 \end{unbreakablelisting}
 %    \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big\left(\frac{\partial^{3z}}{\partial{x^2}\partial{y}}\Big\right)$ \\
-\includegraphics[scale=0.43]{figures/plot_result.png}
+\includegraphics[scale=0.43]{../figures/plot_result.png}
 \end{figure}
 %
 Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. Expressions are lazily evaluated inside a numerical context, which may be imported on a per-file basis or lexically scoped for finer-grained control over the runtime behavior. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
@@ -2002,7 +2002,7 @@ In this chapter we have visited some interesting ideas for validating intelligen
 
 \begin{figure}
 \centering
-\includegraphics[width=0.60\textwidth]{figures/verification_complexity.png}
+\includegraphics[width=0.60\textwidth]{../figures/verification_complexity.png}
 \caption{Complexity of detecting various types of programming errors.}
 \label{fig:verification_complexity}
 \end{figure}
@@ -2038,7 +2038,7 @@ In 2006, Linux introduced several new kernel features for controlling groups of 
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.70\textwidth]{figures/vms_containers_emulators.png}
+    \includegraphics[width=0.70\textwidth]{../figures/vms_containers_emulators.png}
     \caption{Full virtualization is a very resource-hungry process. Containerization is cheaper, as it shares a kernel with the host OS. Emulation lets us to emulate hardware as software. Any of these methods can be used in conjunction with any other.\vspace{-10pt}}
     \label{fig:vms_containers_emulators}
 \end{figure}
@@ -2049,7 +2049,7 @@ One of the challenges of distributed software development across heterogeneous p
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.65\textwidth]{figures/user_kernel_hardware.png}
+    \includegraphics[width=0.65\textwidth]{../figures/user_kernel_hardware.png}
     \caption{Containers live in user space. By default they are sandboxed from the host OS and sibling containers, but unlike VMs, share a common kernel with each other and the host OS. All system calls are passed through host kernel.}
     \label{fig:user_kernel_hardware}
 \end{figure}
@@ -2449,8 +2449,8 @@ One application of multi-stage builds is compiling a project dependency from its
 
 \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.48\textwidth]{figures/docker_stack_1.png}
-    \includegraphics[width=0.48\textwidth]{figures/docker_stack_2.png}
+    \includegraphics[width=0.48\textwidth]{../figures/docker_stack_1.png}
+    \includegraphics[width=0.48\textwidth]{../figures/docker_stack_2.png}
     \caption{Container infrastructure. \textbf{Left}: The ROS stack targets two primary architectures, x86 and ARM. To simplify the build process, we build ARM artifacts on x86 using \href{https://www.qemu.org}{QEMU}~\citep{bellard2005qemu}. \textbf{Right}: Reinforcement learning stack. Build artifacts are trained on a GPU, and transferred to CPU for evaluation. Deep learning models may be also be run on an ARM device using an \href{https://software.intel.com/en-us/neural-compute-stick}{accelerator}.}
     \label{fig:docker}
 \end{figure}
@@ -2504,7 +2504,7 @@ Users insert an SD card and follow the instructions provided. When complete, the
 To access the DuckieOS web interface, users can visit the following URL in any JavaScript-enabled web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation process successfully completed and the network is properly configured, the web application displayed in~\autoref{fig:portainer_ui} should be accessible. This application allows users who are uncomfortable with the command line interface to manage containers on their Duckiebots from a browser.
 
 \begin{figure}
-    \includegraphics[width=0.80\textwidth]{figures/portainer_screenshot.png}
+    \includegraphics[width=0.80\textwidth]{../figures/portainer_screenshot.png}
     \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a RESTful web dashboard, which wraps the Docker CLI and offers support for container management, configuration, networking and terminal emulation (shown above). \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
     \label{fig:portainer_ui}
 \end{figure}
@@ -2670,7 +2670,7 @@ One problem encountered during the development of Duckietown's Docker infrastruc
 Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, it also adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
 
 \begin{figure}
-\includegraphics[width=0.80\textwidth]{figures/image_provenance.png}
+\includegraphics[width=0.80\textwidth]{../figures/image_provenance.png}
 \caption{Early prototype of the Docker image hierarchy. Chaining unversioned autobuilds without disciplined unit testing creates a potential domino effect which allows breaking changes to propagate downstream, resulting in a cascade of silent failures.}
     \label{fig:early_prototype}
 \end{figure}
@@ -2678,7 +2678,7 @@ Initially, we made the explicit decision to ship user source code directly insid
 The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream modifications to cascade to downstream images. Our short-term solution was to disable auto-building, and push local builds to the server manually, however fixing it required us to rethink the role of versioning and testing Docker builds in the CI toolchain.
 
 \begin{figure}
-    \includegraphics[width=0.40\textwidth]{figures/aido_logo.png}
+    \includegraphics[width=0.40\textwidth]{../figures/aido_logo.png}
     \caption{The AI Driving Olympics, a primary use case for the system described above.}
     \label{fig:aido_logo}
 \end{figure}
@@ -2719,7 +2719,7 @@ Hatchery is compatible with most IDEs built on the IntelliJ Platform, including 
 Import the project in Android Studio via \menu{File > New > Project from Existing sources\textellipsis}.  Now, the ROS project can be managed from within Android Studio.\vspace{10pt}\\
 %
 \begin{centering}
-\includegraphics[width=\textwidth]{figures/hatchery_android.png}
+\includegraphics[width=\textwidth]{../figures/hatchery_android.png}
 \end{centering}\vspace{10pt}
 %
 Running ROS nodes on desktop or embedded devices follows the same procedure as ordinary rospy projects. Running ROS nodes on Android devices, however, requires the use of \href{http://wiki.ros.org/rosjava}{rosjava}, a pure Java implementation of the ROS messaging protocol. The rosjava project provides examples of various \href{https://github.com/rosjava/android_apps}{Android applications}, including a basic Android UI and support for communicating with networked ROS nodes.
@@ -2756,7 +2756,7 @@ Kotlin$\nabla$ can now be used just like an ordinary library in any Android appl
 Verified using property-based testing.\vspace{10pt}\\
 %
 \begin{centering}
-\includegraphics[width=\textwidth]{figures/android_screenshot.png}
+\includegraphics[width=\textwidth]{../figures/android_screenshot.png}
 \end{centering}
 
 \section{Containerization}
@@ -3031,7 +3031,7 @@ Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-
 ROS.org builds nightly ARM and x86 images for robotics development. For each distribution, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.\vspace{10pt}
 %
 \begin{centering}
-\includegraphics[width=\textwidth]{figures/ros_docker_images.png}
+\includegraphics[width=\textwidth]{../figures/ros_docker_images.png}
 \end{centering}
 
 \subsection{\href{https://blog.hypriot.com/}{Hypriot}}
@@ -3051,7 +3051,7 @@ Not all Python packages (especially if they wrap a native library) can be run on
 Docker Hub is the central repository for Docker Images. Unless a separate registry has been configured, whenever users pull a Docker image tag, it will first query the Docker Hub for a matching image. The Docker Hub can be used to upload Docker images, and configure automated builds from GitHub (with a two hour build timeout). Docker Hub does not support layer caching of any kind, so the build will always take a fixed amount of time.\vspace{10pt}
 %
 \begin{centering}
-\includegraphics[width=\textwidth]{figures/docker_hub_autobuild.png}
+\includegraphics[width=\textwidth]{../figures/docker_hub_autobuild.png}
 \end{centering}
 %
 Docker Hub auto-builds support linking a \inline{Dockerfile} in a GitHub repository, and whenever that \inline{Dockerfile} changes, the Docker image will be updated.
@@ -3059,7 +3059,7 @@ Docker Hub auto-builds support linking a \inline{Dockerfile} in a GitHub reposit
 The Docker Hub also has features for configuring repository links and build triggers. These will automatically rebuild downstream Docker images whenever some event occurs.\vspace{10pt}
 %
 \begin{centering}
-\includegraphics[width=\textwidth]{figures/docker_hub_repo_links.png}
+\includegraphics[width=\textwidth]{../figures/docker_hub_repo_links.png}
 \end{centering}
 %
 Repository links allow support chaining builds together across Docker Hub repositories. Whenever a linked repository is updated, the dependent image will be rebuilt.
@@ -3069,7 +3069,7 @@ Repository links allow support chaining builds together across Docker Hub reposi
 Docker Cloud is a Docker registry which is fully integrated with the Docker Hub. Builds are automatically published from Docker Cloud to Docker Hub. Notifications for email and Slack, as well as longer build timeouts (up to 4-hours) are supported. Docker Cloud also supports more advanced build options than Docker Hub, such as a configurable build context and cache settings.\\
 
 \begin{centering}
-\includegraphics[width=\textwidth]{figures/docker_cloud.png}
+\includegraphics[width=\textwidth]{../figures/docker_cloud.png}
 \end{centering}
 
 \end{document}
