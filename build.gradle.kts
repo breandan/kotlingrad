@@ -6,7 +6,7 @@ plugins {
   application
   kotlin("jvm") version "1.3.50"
   `maven-publish`
-  id("io.freefair.github.package-registry-maven-publish").version("4.0.1")
+  id("io.freefair.github.package-registry-maven-publish") version "4.1.0"
 }
 
 group = "edu.umontreal"
