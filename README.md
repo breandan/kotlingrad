@@ -24,6 +24,7 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
 * [Comparison to other frameworks](#comparison)
+* [Citation](#citation)
 * [Special thanks](#special-thanks)
 
 ## Introduction
@@ -619,6 +620,21 @@ val z = x * y               // z: MVariable<Double, `3`, `2`>
 ⁶ Differentiable programming
 
 ⁷ Multiplatform
+
+## Citation
+
+If you would like to cite Kotlin𝛁, please use the following `bibtex` entry:
+
+```
+@misc{considine2019kotlingrad,
+  authors = {Considine, Breandan and Famelis, Michalis and Paull, Liam},
+  title = {Kotlin{\nabla}: A Shape-Safe e{DSL} for Differentiable Programming},
+  year = {2019},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/breandan/kotlingrad}},
+}
+```
 
 ## References
 
