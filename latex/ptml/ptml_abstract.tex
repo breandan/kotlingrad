@@ -80,14 +80,14 @@ An shape-safe DSL for differentiable functional programming}
 \sysmlsetsymbol{equal}{*}
 
 \begin{sysmlauthorlist}
-\sysmlauthor{Breandan Considine}{mila}
-\sysmlauthor{Liam Paull}{mila}
+\sysmlauthor{Breandan Considine}{mcgill}
+\sysmlauthor{Liam Paull}{udem}
 \sysmlauthor{Michalis Famelis}{udem}
 
 \end{sysmlauthorlist}
 
-\sysmlaffiliation{mila}{Mila, Universit\'e de Montr\'eal}
 \sysmlaffiliation{udem}{Universit\'e de Montr\'eal}
+\sysmlaffiliation{mcgill}{McGill University}
 
 
 \sysmlcorrespondingauthor{Breandan Considine}{bre@ndan.co}
@@ -124,13 +124,12 @@ Prior work has shown it is possible to encode a deterministic context-free gramm
 
 Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{baydin2015diffsharp} and recently Swift \citelattner2018tensorflow. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
 
-Existing AD implementations for the JVM include Lantern \cite{wang2018demystifying}, Nexus \cite{chen2017typesafe} and DeepLearning.scala \cite{yang2018dl4s}, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
+Existing AD implementations for the JVM include Lantern \cite{wang2018demystifying}, Nexus \cite{chen2017typesafe} and DeepLearning.scala, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
 \begin{enumerate}[itemsep=-0.5ex]
   \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
   \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \citealt{pearlmutter2008reverse} and \citealt{wang2018demystifying}.
   \item \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
 \end{enumerate}
-% \squeezeup Finally, we notice two things about the nature of Kotlin langauge in respect
 \squeezeup\squeezeup
 \section{Usage}
 
