@@ -638,7 +638,7 @@ Hatchery is a tool designed to assist programmers writing robotics applications 
     tick pos=left,
     compat=newest,
 ]
-\addplot table[col sep=comma, x=Category,y=Downloads]{data/hatchery_downloads.csv};
+\addplot table[col sep=comma, x=Category,y=Downloads]{../data/hatchery_downloads.csv};
 \end{axis}
 \node[above,font=\large\bfseries] at (current bounding box.north) {Unique downloads of Hatchery};
 \end{tikzpicture}
@@ -1768,11 +1768,11 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \begin{figure}
 \begin{tikzpicture}
 \begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
-\addplot table [mark=none, x index=0, y index=1, col sep=comma] {data/adsd_comparison.csv};
+\addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/adsd_comparison.csv};
 \addlegendentry{$\Delta$(SD, IP), $\Delta$(AD, IP)}
-\addplot table [mark=none, x index=0, y index=2, col sep=comma] {data/adsd_comparison.csv};
+\addplot table [mark=none, x index=0, y index=2, col sep=comma] {../data/adsd_comparison.csv};
 \addlegendentry{$\Delta$(AD, SD)}
-\addplot table [mark=none, x index=0, y index=3, col sep=comma] {data/adsd_comparison.csv};
+\addplot table [mark=none, x index=0, y index=3, col sep=comma] {../data/adsd_comparison.csv};
 \addlegendentry{$\Delta$(FD, IP)}
 \end{axis}
 \end{tikzpicture}
