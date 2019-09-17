@@ -1,16 +1,23 @@
-%%%%%%%% SysML 2019 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
-
 \documentclass{article}
 
-% Recommended, but optional, packages for figures and better typesetting:
+\usepackage[final]{ptml_abstract}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{amsmath}
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
 \usepackage{listings}
+\usepackage{float}
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
 \usepackage[scaled]{beramono}
 \usepackage[T1]{fontenc}
 
 \usepackage{tikz}
+\usepackage[skins,breakable,listings]{tcolorbox}
+\usepackage{pgfplots}
 \usepackage{tikz-qtree}
-\usepackage{microtype}
 \usepackage{graphicx}
 \usepackage{subfigure}
 \usepackage{enumitem}
@@ -18,198 +25,173 @@
 \usepackage{sourcecodepro}
 \usepackage[font=small,skip=0pt]{caption}
 
+% Imitate syntax error
+\usepackage{ulem}
+\usepackage{fontawesome}
+\makeatletter
+\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+\makeatother
+
 \lstdefinelanguage{kotlin}{
-    comment=[l]{//},
-    commentstyle={\color{gray}\ttfamily},
-    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
-    emphstyle={\color{OrangeRed}},
-    identifierstyle=\color{black},
-    keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
-    keywordstyle={\color{NavyBlue}\bfseries},
-    morecomment=[s]{/*}{*/},
-    morestring=[b]",
-    morestring=[s]{"""*}{*"""},
-    ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
-    ndkeywordstyle={\color{BurntOrange}\bfseries},
-    sensitive=true,
-    stringstyle={\color{ForestGreen}\ttfamily},
+comment=[l]{//},
+commentstyle={\color{gray}\ttfamily},
+emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, return@},
+emphstyle={\color{OrangeRed}},
+identifierstyle=\color{black},
+keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+keywordstyle={\color{NavyBlue}\bfseries},
+morecomment=[s]{/*}{*/},
+morestring=[b]",
+morestring=[s]{"""*}{*"""},
+ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
+ndkeywordstyle={\color{BurntOrange}\bfseries},
+sensitive=true,
+stringstyle={\color{ForestGreen}\ttfamily},
 }
 
 \lstset{
-    basicstyle=\ttfamily\scriptsize,
-    language=kotlin,
-    aboveskip=-2pt,
-    frame = single,
+basicstyle=\ttfamily\scriptsize,
+language=kotlin,
+aboveskip=-2pt,
+showstringspaces=false,
+escapeinside={(*}{*)},
 }
 
-% hyperref makes hyperlinks in the resulting PDF.
-% If your build breaks (sometimes temporarily if a hyperlink spans a page)
-% please comment out the following usepackage line and replace
-% \usepackage{ptml2019} with \usepackage[nohyperref]{ptml2019} above.
-\usepackage{hyperref}
+\definecolor{slightgray}{rgb}{0.90, 0.90, 0.90}
+\usepackage{soul}
+\newcommand{\inline}[1]{%
+\begingroup%
+\sethlcolor{slightgray}%
+\hl{\ttfamily\small #1}%
+\endgroup
+}
 
-% Attempt to make hyperref and algorithmic work together better:
-\newcommand{\theHalgorithm}{\arabic{algorithm}}
-%\newcommand{\squeezeup}{\vspace{-2.5mm}}
-\usepackage[accepted]{ptml2019}
-\setlength{\bibsep}{0pt plus 0.5ex}
-% The \sysmltitle you define below is probably too long as a header.
-% Therefore, a short form for the running title is supplied here:
-\sysmltitlerunning{Kotlin$\mathbf{\nabla}$:
-An shape-safe DSL for differentiable functional programming}
+\title{Kotlin$\mathbf{\nabla}$\\\large{A shape-safe DSL for differentiable programming}}
+
+\author{
+   Breandan Considine\\
+   McGill University\\
+%   \texttt{bre@ndan.co}
+   \And
+   Michalis Famelis\\
+   Universit{\'e} de Montr{\'e}al\\
+%   \texttt{famelis@iro.umontreal.ca}
+   \And
+   Liam Paull \\
+   Universit{\'e} de Montr{\'e}al\\
+%   \texttt{paull@iro.umontreal.ca}
+}
 
 \begin{document}
 
-\twocolumn[
-\sysmltitle{Kotlin$\mathbf{\nabla}$\\
-\large{A shape-safe DSL for differentiable functional programming}}
+\maketitle
 
-% It is OKAY to include author information, even for blind
-% submissions: the style file will automatically remove it for you
-% unless you've provided the [accepted] option to the ptml2019
-% package.
-
-% List of affiliations: The first argument should be a (short)
-% identifier you will use later to specify author affiliations
-% Academic affiliations should list Department, University, City, Region, Country
-% Industry affiliations should list Company, City, Region, Country
-
-% You can specify symbols, otherwise they are numbered in order.
-% Ideally, you should not use this facility. Affiliations will be numbered
-% in order of appearance and this is the preferred way.
-\sysmlsetsymbol{equal}{*}
-
-\begin{sysmlauthorlist}
-\sysmlauthor{Breandan Considine}{mcgill}
-\sysmlauthor{Liam Paull}{udem}
-\sysmlauthor{Michalis Famelis}{udem}
-
-\end{sysmlauthorlist}
-
-\sysmlaffiliation{udem}{Universit\'e de Montr\'eal}
-\sysmlaffiliation{mcgill}{McGill University}
-
-
-\sysmlcorrespondingauthor{Breandan Considine}{bre@ndan.co}
-
-% You may provide any keywords that you
-% find helpful for describing your paper; these are used to populate
-% the "keywords" metadata in the PDF but will not be shown in the document
-\sysmlkeywords{Machine Learning, SysML}
-
-\vskip 0.3in
-
-\begin{abstract}
- Kotlin is a statically-typed programming language with support for embedded domain specific languages, asynchronous programming, and multi-platform compilation. In this work, we present an algebraically-grounded implementation of forward- and reverse- mode automatic differentiation (AD) with shape-safe tensor operations, written in pure Kotlin. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use. A working prototype is available at: \url{https://github.com/breandan/kotlingrad}.
-\end{abstract}
-]
-
-% this must go after the closing bracket ] following \twocolumn[ ...
-
-% This command actually creates the footnote in the first column
-% listing the affiliations and the copyright notice.
-% The command takes one argument, which is text to display at the start of the footnote.
-% The \sysmlEqualContribution command is standard text for equal contribution.
-% Remove it (just {}) if you do not need this facility.
-
-\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
-% \printAffiliationsAndNotice{\sysmlEqualContribution} % otherwise use the standard text.
+\begin{abstract}Kotlin is a statically-typed programming language with support for embedded domain specific languages, asynchronous programming, and multi-platform compilation. In this work, we present an algebraically-based implementation of automatic differentiation (AD) with shape-safe tensor operations, written in pure Kotlin. Our approach differs from existing AD frameworks in that Kotlin$\mathbf{\nabla}$ is the first shape-safe AD library fully compatible with the Java type system, requiring no metaprogramming, reflection or compiler intervention to use. A working prototype is available: \url{https://github.com/breandan/kotlingrad}.\end{abstract}
 
 \section{Introduction}
-\label{submission}
 
-Existing AD frameworks for machine learning are implemented in Python, which is not a type-safe language. Some AD implementations are written in statically-typed languages, but only type check primitive data types (e.g. integers or floating point numbers), and are unable to check the shape of multidimensional arrays in their type system. Those which do are typically implemented in experimental programming languages with sophisticated type-level programming features. In our work, we demonstrate an automatic differentiation library with shape-checked array programming in a widely-used programming language.
+Many existing AD frameworks for machine learning are implemented in Python, which is not a type-safe language. Some AD implementations are written in statically-typed languages, but only type check primitive data types, and are unable to check the shape of multidimensional arrays in their type system. Those which do are typically implemented in experimental programming languages with sophisticated type-level programming features~\citep{pineyro2019structure}. In our work, we demonstrate a type-safe AD library which supports compile-time shape checking and inference in a widely-used programming language called Kotlin.
 
-Prior work has shown it is possible to encode a deterministic context-free grammar as a \textit{fluent interface} \cite{gil2016formal} in Java. This result was strengthened to prove Java's type system is Turing Complete \cite{grigore2017java}, allowing arbitrary computation to occur in the type system. As a practical consequence, we can use a similar technique to perform shape-safe automatic differentiation (AD) in Java, using type-level programming. A similar technique is feasible in any language with parametric polymorphism, such as C\# or TypeScript. We use \textit{Kotlin}, whose type system is strictly less expressive, but fully interoperable with Java.
+Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like \href{http://deeplearning.net/software/theano/}{Theano}~\citep{bergstra2010theano}, \href{http://torch.ch/}{Torch}~\citep{collobert2002torch}, and \href{http://tensorflow.org/}{TensorFlow}~\citep{abadi2016tensorflow}. Similar ideas have been implemented in statically-typed, functional languages, such as Haskell's \href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}~\citep{pearlmutter2008using}, \href{http://diffsharp.github.io/DiffSharp/}{DiffSharp} in F\#~\citep{baydin2015diffsharp} and recently \href{https://www.tensorflow.org/swift}{Swift}~\citep{lattner2018tensorflow}. However, the majority of existing AD libraries use a loosely- or dynamically- typed DSL, and few offer shape-safe tensor operations in a widely-used programming language. To our knowledge, Kotlin has no prior AD implementation. However, the language has several useful features for implementing a native AD framework. Kotlin$\nabla$ primarily relies on the following language features:
 
-Differentiable programming has a rich history among dynamic languages like Python, Lua and JavaScript, with early implementations including projects like Theano, Torch, and TensorFlow. Similar ideas have been implemented in statically typed, functional languages, such as Haskell's Stalin$\nabla$ \cite{pearlmutter2008using}, DiffSharp in F\# \cite{baydin2015diffsharp} and recently Swift \citelattner2018tensorflow. However, the majority of existing automatic differentiation (AD) frameworks use a loosely-typed DSL, and few offer shape-safe tensor operations in a widely-used programming language.
+\begin{itemize}
+    \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on algebraic structures, i.e.\ groups, rings and fields.~\citep{niculescu2011using}
+    \item \textbf{$\mathbf{\lambda}$-functions} support functional programming, following~\citet{pearlmutter2008reverse, pearlmutter2008using, siskind2008nesting, elliott2009beautiful, elliott2018simple}, et al.
+    \item \textbf{Extension functions} support extending classes with new fields and methods which can be exposed to external callers without requiring sub-classing or inheritance.
+\end{itemize}
 
-Existing AD implementations for the JVM include Lantern \cite{wang2018demystifying}, Nexus \cite{chen2017typesafe} and DeepLearning.scala, however these are Scala-based and do not interoperate with other JVM languages. Kotlin$\nabla$ is fully interoperable with vanilla Java, enabling broader adoption in neighboring languages. To our knowledge, Kotlin has no prior AD implementation. However, the language contains a number of desirable features for implementing a native AD framework. In addition to type-safety and interoperability, Kotlin$\nabla$ primarily relies on the following language features:
-\begin{enumerate}[itemsep=-0.5ex]
-  \item \textbf{Operator overloading and infix functions} allow a concise notation for defining arithmetic operations on tensor-algebraic structures, i.e. groups, rings and fields.
-  \item \textbf{$\mathbf{\lambda}$-functions and coroutines} support backpropogation with lambdas and shift-reset continuations, following \citealt{pearlmutter2008reverse} and \citealt{wang2018demystifying}.
-  \item \textbf{Extension functions} support extending classes with new fields and methods and can be exposed to external callers without requiring sub-classing or inheritance.
-\end{enumerate}
-\squeezeup\squeezeup
+\begin{figure}
+    \centering
+    \includegraphics[width=0.70\textwidth]{../figures/kotlingrad_diagram.png}
+    \vspace{10pt}\caption{Adapted from~\citet{van2018tangent}. Kotlin$\nabla$ models are data structures, constructed by an eDSL. These are compiled into dataflow graphs at runtime, which are eagerly optimized and lazily evaluated.}
+    \label{fig:kotlingrad_digram}
+\end{figure}
+
+Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs). Embedded programs may look and act different from the host language, but are really just sequencing carefully disguised functions to build an abstract syntax tree (AST). Often, these ASTs represent simple state machines, but can also be used to represent more general purpose programs, such as SQL/LINQ~\citep{meijer2006linq}, OptiML~\citep{sujeeth2011optiml} and other fluent interfaces~\citep{fowler05fluent}. In a sufficiently expressive host language, one can write any other language as a library, without needing to implement a lexer, parser, compiler or interpreter. And with static typing, users will receive code completion and static analysis from their existing development tools.
+
 \section{Usage}
 
-Kotlin$\nabla$ allows users to implement differentiable functions by composing operations on algebraic fields to form expressions. Operations on variables with incompatible shape will fail to compile. Valid expressions are lazily evaluated inside a type-safe numerical context and numerical evaluation only occurs when a function is passed concrete input values.
+Kotlin$\nabla$ allows users to implement differentiable programs by composing simple functions to form more complex ones. Operations on expressions with incompatible shape will fail to compile. Valid expressions are lazily evaluated inside a type-safe numerical context at runtime. Evaluation only occurs when a function is invoked with numerical input values.
 
-\squeezeup\begin{figure}[!htb]
-\includegraphics[width=0.50\textwidth]{../figures/../figures/kotlingrad_diagram.png}
-\squeezeup\caption{Kotlin$\nabla$ models are data structures, constructed by an embedded DSL, eagerly optimized, and lazily evaluated at runtime.}\squeezeup
+\begin{figure}[!htb]
+    \begin{lstlisting}
+    with(DoublePrecision) {                         // Use double-precision numerics
+        val x = variable("x")                       // Declare immutable input variables
+        val y = variable("y")                       // (these are just symbolic placeholders)
+        val z = sin(10 * (x * x + pow(y, 2))) / 10  // Lazy expression
+        val dz_dx = d(z) / d(x)                     // Leibniz derivative notation
+        val d2z_dxdy = d(dz_dx) / d(y)              // Mixing higher order partial
+        val d3z_d2xdy = grad(d2z_dxdy)[x]           // Gradient indexing operator
+        plot3D(d3z_d2xdy, -1.0, 1.0)                // Plot in -1 < x,y,z < 1
+    }
+    \end{lstlisting}
+
+    \caption{Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space.}
+    \label{label:fig1}
 \end{figure}
 
-\squeezeup\begin{figure}[!htb]
-\begin{lstlisting}
-import edu.umontreal.kotlingrad.numerics.DoublePrecision
-
-with(DoublePrecision) { // Use double-precision protocol
-  val x = variable("x") // Declare immutable vars (these
-  val y = variable("y") // are just symbolic constructs)
-  val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazy exp
-  val dz_dx = d(z) / d(x) // Leibniz derivative notation
-  val d2z_dxdy = d(dz_dx) / d(y) // Mixed higher partial
-  val d3z_d2xdy = grad(d2z_dxdy)[x] // Indexing gradient
-  plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in -1 < x,y,z < 1
-}
-\end{lstlisting}
-\squeezeup\squeezeup
-\caption{A basic Kotlin$\nabla$ program with two inputs and one output.}
-\label{label:fig1}
-\end{figure}
-
-\squeezeup Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. We can also plot higher dimensional manifolds (e.g. the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
-
-\squeezeup\begin{figure}[!htb]
-\centering $z = \sin{\big(10(x \times x + y^2)\big)} / 10$, \textbf{\texttt{ plot3D}}$\Big(\frac{\partial^3z}{\partial{x^2}\partial{y}}\Big)$
-\includegraphics[scale=0.43]{../figures/../figures/plot_result.png}
-\squeezeup\caption{Output generated by the program shown in Figure \ref{label:fig1}.}\squeezeup
+\begin{figure}[!htb]
+              \centering $z = \sin{\big(10(x \times x + y^2)\big)} / 10$, \textbf{\texttt{ plot3D}}$\Big(\frac{\partial^3z}{\partial{x^2}\partial{y}}\Big)$
+              \includegraphics[scale=0.43]{../figures/../figures/plot_result.png}
+              \caption{Output generated by the program shown in Figure~\ref{label:fig1}.}
 \end{figure}
 
 Kotlin$\nabla$ treats mathematical functions and programming functions with the same underlying abstraction. Expressions are composed recursively to form a data-flow graph (DFG). An expression is simply a \texttt{Function}, which is only evaluated once invoked with numerical values, e.g. \texttt{z(0, 0)}.
 
-\squeezeup\begin{figure}[!htb]
-\centering
-\begin{lstlisting}[basicstyle=\ttfamily\small]
- val z = sin(10 * (x * x + pow(y, 2))) / 10
-\end{lstlisting}
-\squeezeup\centering
-\begin{tikzpicture}[grow=left]
-\tikzset{level distance=45pt}\squeezeup\squeezeup
-\Tree [.$\div$ [.\texttt{sin} [.$\times$ \texttt{10} [.$+$ [.$\times$ \texttt{\textbf{x}} \texttt{\textbf{x}} ] [.\texttt{pow} \texttt{\textbf{y}} \texttt{2} ] ] ] ] \texttt{10} ]
-\end{tikzpicture}
-\squeezeup\squeezeup\squeezeup\caption{Implicit DFG constructed by the original expression, \texttt{z}.}
+\section{Type System}
+
+Early work in type-safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} which uses types to encode dimensionality and prevent common bugs related to dimension mismatch, later implemented in the F\# language~\citep{kennedy2010types}. \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} explore the application of dimension types for linear algebra. Later, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how manipulate arrays in more complex ways. Recently, with the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how encode shape-safety in various type systems.
+
+The problem we attempt to solve can be summarized as follows. Given two values \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when $\texttt{x} \in \mathbb{R}^{m \times n}$ and $\texttt{y} \in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer $\texttt{z} \in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator $\otimes: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{N}^q, \mathbf{b} \in \mathbb{N}^r, \mathbf{c} \in \mathbb{N}^s$ and $q, r, s \in \mathbb{N}$. For many linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we simply check the inner dimensions for equivalence ($\mathbf{a}_1 \stackrel{?}{=} \mathbf{b}_0$).
+%
+\begin{figure}[H]
+    \begin{lstlisting}
+            val vecA = Vec(1.0, 2.0)           // Inferred type: Vec<Int, `2`>
+            val vecB = Vec(1.0, 2.0, 3.0)      // Inferred type: Vec<Int, `3`>
+            val vecC = vecB + vecB
+            val vecD = (*\uwave{vecA + vecB}*) // Compile error: Expected Vec<2>, found Vec<3>
+    \end{lstlisting}
+    \caption{Attempting to sum two vectors whose shapes do not match will fail to compile.}
+
+    \vspace{10pt}\begin{lstlisting}
+    val matA = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
+    val matB = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
+    val matC = matA * matB
+    val matD = (*\uwave{matA *\ matC}*)          // Compile error: Expected Mat<4, *>, found Mat<1, 1>
+    \end{lstlisting}
+    \caption{Similarly, multiplying two matrices whose inner dimensions do not match will not compile.}
+\end{figure}
+%
+
+Shape checking matrix operations is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is undecidable~\citep{godel1931formal}. Addition, subtraction, indexing and comparison of integers are all known to be decidable~\citep{charlier2011enumeration} and equality checking is trivially decidable by introducing type-level integers.
+
+Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g.\ convolutional arithmetic) requires a dependently typed language~\citep{xi1998eliminating, pineyro2019structure}), but checking shape equality (e.g. ordinary arithmetic) is feasible in Java and its cousins.\footnote{Java's type system is known to be Turing Complete~\citep{grigore2017java}. Thus, emulation of dependent types in Java is theoretically possible, but likely intractable due to the practical limitations noted by Grigore.} Furthermore, we believe that shape checking ordinary matrix arithmetic is decidable in any type system loosely based on System F${}_{<:}$~\citep{cardelli1991extension}. We propose a type system for enforcing shape-safety which can be implemented in any language with subtyping and generics, such as \href{https://docs.oracle.com/javase/tutorial/java/generics/index.html}{Java}~\citep{naftalin2007java}, \href{https://kotlinlang.org/docs/reference/generics.html}{Kotlin}~\citep{tate2013mixed}, \href{https://www.typescriptlang.org/docs/handbook/advanced-types.html}{TypeScript}~\citep{bierman2014understanding} or \href{https://doc.rust-lang.org/1.7.0/book/generics.html}{Rust}~\citep{crozet2019nalgebra}.
+
+\section{Evaluation}
+\begin{figure}
+    \begin{tikzpicture}
+        \begin{axis}[title={Log errors between AD, SD and FD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
+            \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/adsd_comparison.csv};
+            \addlegendentry{$\Delta$(SD, IP) $\approx\Delta$(AD, IP)}
+            \addplot table [mark=none, x index=0, y index=2, col sep=comma] {../data/adsd_comparison.csv};
+            \addlegendentry{$\Delta$(AD, SD)}
+            \addplot table [mark=none, x index=0, y index=3, col sep=comma] {../data/adsd_comparison.csv};
+            \addlegendentry{$\Delta$(FD, IP)}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{We compare numerical drift between for three types of computational differentiation: (1) finite precision automatic differentiation (AD), (2) finite precision symbolic differentiation (SD) and (3) finite precision finite differences (FD) against infinite precision (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating point division. These results are consistent with the findings of ~\citet{laue2019equivalence}.}
+    \label{fig:pbt_comparison}
 \end{figure}
 
-\squeezeup Kotlin$\nabla$ supports shape-shafe tensor operations by encoding tensor rank as a parameter of the operand's type signature. By enumerating type-level integer literals, we can define tensor operations just once using the highest literal, and rely on Liskov substitution to preserve shape safety for subtypes.
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property}. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its AD implementation: \\
+%
+\begin{itemize}
+    \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
+    \item \textbf{Finite difference approximation}: sample the space of symbolic differentiable functions, comparing the numerical results suggested by the finite difference method and the equivalent AD result, up to a fixed-precision approximation. \\
+\end{itemize}
 
-\squeezeup\begin{figure}[!htb]
-\begin{lstlisting}
-// Literals have reified values for runtime comparison
-sealed class `0`(open val value: Int = 0)
-sealed class `1`(override val value: Int = 1): `0`(1)
-sealed class `2`(override val value: Int = 2): `1`(2)
-sealed class `3`(override val value: Int = 3): `2`(3)
-// <L: `1`> will accept 1<=L<=3 via Liskov substitution
-class Vec<E, L: `1`>(len: L, cts: List<E> = listOf())
-// Define addition for two vectors of type Vec<Int, L>
-operator fun <L: `1`, V: Vec<Int, L>> V.plus(v: V) =
-  Vec<Int, L>(len, cts.zip(v.cts).map { it.l + it.r })
-// Type-checked vector addition with shape inference
-val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
-val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
-\end{lstlisting}
-\caption{Shape safe tensor addition for rank-1 tensors, $\forall L\leq3.$}\squeezeup
-\end{figure}
-\squeezeup
-It is possible to enforce shape-safe vector construction as well as checked vector arithmetic up to a fixed \texttt{L}, but the full implementation is omitted for brevity. A similar pattern can be applied to matrices and higher rank tensors, where the type signature encodes the shape of the operand at runtime.
-
-With these basic ingredients, we have almost all the features necessary to build an expressive shape-safe AD, but unlike prior implementations using Scala or Haskell, in a language that is fully interoperable with Java, while also capable of compiling to JVM bytecode, JavaScript, and native code.
-
-In future work, we plan to implement a broader grammar of differentiable primitives including matrix convolution, as well as control flow and recursion. While Kotlin$\nabla$ currently implements matrix arithmetic directly, we plan to wrap a native linear algebra library for performance reasons.
-
-\squeezeup\bibliography{ptml_abstract}
+Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, graph-based AD which does not require any template metaprogramming, compiler augmentation or runtime reflection to ensure type safety. Its implementation makes leverages several features in the Kotlin language including operator overloading, infix functions and extension functions. It also introduces various functional programming concepts, like higher order functions, partial application and currying. The practical advantage of this approach is that it can be implemented as a simple library or embedded domain-specific language (eDSL), thereby leveraging the host language's type system to receive code completion and type inference for free.
 \bibliographystyle{ptml2019}
-
+\bibliography{ptml_abstract}
 \end{document}
