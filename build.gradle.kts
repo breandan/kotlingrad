@@ -1,22 +1,6 @@
-import com.github.csabasulyok.gradlelatex.LatexArtifact
-import com.github.csabasulyok.gradlelatex.PdfLatexTask
 import groovy.util.Node
 import groovy.util.NodeList
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-buildscript {
-  repositories {
-    jcenter()
-    mavenCentral()
-  }
-  dependencies {
-    classpath("com.github.csabasulyok:gradle-latex:1.0")
-  }
-}
-
-apply {
-  plugin("latex")
-}
 
 plugins {
   application
@@ -30,7 +14,6 @@ version = "0.2.1"
 
 repositories {
   jcenter()
-  mavenCentral()
   maven("https://dl.bintray.com/mipt-npm/scientifik")
 //  maven("https://dl.bintray.com/arrow-kt/arrow-kt/")
 //  mavenCentral()
@@ -64,14 +47,6 @@ tasks {
 
   val test by getting(Test::class) {
     useJUnitPlatform()
-  }
-
-  register("ptmlAbstract", PdfLatexTask::class) {
-    obj = LatexArtifact().apply {
-      pdf = File("latex/ptml/ptml_output.pdf")
-      bib = File("latex/ptml/abstract.bib")
-      tex = File("latex/ptml/ptml_abstract.tex")
-    }
   }
 }
 
