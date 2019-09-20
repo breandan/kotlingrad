@@ -15,6 +15,6 @@ apply {
 
 LatexExtension(project).apply {
   tex(mapOf("tex" to "ptml_abstract.tex",
-    "bib" to "ptml_abstract.bib",
+//    "bib" to "ptml_abstract.bib",
     "pdf" to "ptml_abstract.pdf"))
 }
