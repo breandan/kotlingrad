@@ -714,7 +714,7 @@ To the author's knowledge, Kotlin𝛁 is the first AD implementation in native K
 
 ### Libraries
 
-* [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp): An TensorFlow DSL in F# for writing numeric models with support for interactive tensor shape-checking
+* [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp): An eDSL for writing numerical models in F# with support for interactive tensor shape-checking
 * [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
 * [Autograd](https://github.com/hips/autograd) - Efficiently computes derivatives of NumPy code
 * [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
