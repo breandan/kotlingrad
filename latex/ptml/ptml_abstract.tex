@@ -141,7 +141,7 @@ In Kotlin$\nabla$, all expressions are composed of function(s) in the host langu
 
 \section{Type System}
 
-Early work in type-safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} which uses types to encode dimensionality and prevent common bugs related to dimension mismatch from arising, which was later realized in the F\# language~\citep{kennedy2010types}. \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} explore the application of dimension types for linear algebra. More recently, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to manipulate arrays in more complex ways. With the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how to encode shape-safety in various type systems.
+Early work in type-safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} which uses types to encode dimensionality and prevent common bugs related to dimension mismatch from arising, and was later realized in the F\# language~\citep{kennedy2010types}. \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} explore the application of dimension types for linear algebra. More recently, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to manipulate arrays in more complex ways. With the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how to encode shape-safety in various type systems.
 
 The problem we attempt to solve can be summarized as follows. Given two values \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when \inline{x} $\in \mathbb{R}^{m \times n}$ and \inline{y} $\in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer \inline{z} $\in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator \inline{@} $: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{N}^q, \mathbf{b} \in \mathbb{N}^r, \mathbf{c} \in \mathbb{N}^s$ and $q, r, s \in \mathbb{N}$. For many linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_1 \stackrel{?}{=} \mathbf{b}_0$).
 %
@@ -180,18 +180,18 @@ Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g
             \addlegendentry{$\Delta$(FD, IP)}
         \end{axis}
     \end{tikzpicture}
-    \caption{We compare numerical drift between three types of computational differentiation: (1) finite precision automatic differentiation (AD), (2) finite precision symbolic differentiation (SD) and (3) finite precision finite differences (FD) against infinite precision (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude below their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. FD exhibits significantly higher drift than AD and SD.}
+    \caption{We compare numerical drift between three types of computational differentiation: (1) finite precision automatic differentiation (AD), (2) finite precision symbolic differentiation (SD) and (3) finite precision finite differences (FD), against infinite precision (IP) symbolic differentiation. AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude below their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. FD exhibits significantly higher drift than AD and SD.}
     \label{fig:pbt_comparison}
 \end{figure}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method for checking is called property-based testing (PBT)~\citep{fink1997property}. PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin$\nabla$ uses two such equivalences to validate its own AD implementation: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method, called property-based testing (PBT)~\citep{fink1997property}, uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to to test Kotlin$\nabla$: \\
 %
 \begin{itemize}
     \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
     \item \textbf{Finite difference approximation}: sample the space of symbolic differentiable functions, comparing the numerical results suggested by the finite difference method and the equivalent AD result, up to a fixed-precision approximation. \\
 \end{itemize}
 
-We also compare the precision of symbolic differentiation, automatic differentiation and numerical differentiation, as shown in~\autoref{fig:pbt_comparison}. Our results are consistent with the findings of~\citet{laue2019equivalence}.
+We also compare the precision of symbolic differentiation, automatic differentiation and numerical differentiation, as shown in~\autoref{fig:pbt_comparison}. These results are consistent with the findings of~\citet{laue2019equivalence}.
 
 \section{Conclusion}
 
