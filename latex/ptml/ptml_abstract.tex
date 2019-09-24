@@ -184,10 +184,10 @@ Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g
     \label{fig:pbt_comparison}
 \end{figure}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method, called property-based testing (PBT)~\citep{fink1997property}, uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to to test Kotlin$\nabla$: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method, known as property-based testing (PBT)~\citep{fink1997property}, uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to test Kotlin$\nabla$: \\
 %
 \begin{itemize}
-    \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
+    \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating randomly chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
     \item \textbf{Finite difference approximation}: sample the space of symbolic differentiable functions, comparing the numerical results suggested by the finite difference method and the equivalent AD result, up to a fixed-precision approximation. \\
 \end{itemize}
 
@@ -195,7 +195,7 @@ We also compare the precision of symbolic differentiation, automatic differentia
 
 \section{Conclusion}
 
-Unlike most existing AD implementations, Kotlin$\nabla$ does not require any template metaprogramming, compiler augmentation or runtime reflection to ensure type safety. Its implementation leverages several features in the Kotlin language including operator overloading, infix functions and extension functions. It also incorporates various functional programming concepts, like higher order functions, partial application and currying. The practical advantage of this approach is that it can be implemented as a simple library or embedded domain-specific language (eDSL), reusing the host language's type system to receive code completion and type checking for free. In future work, we hope to extend Kotlin$\nabla$ by compiling to an common intermediate representation (e.g. LLVM IR), and explore the meaning of differentiation in other calculi (cf. \citet{considine2019programming}, Section 3.20).
+Unlike most existing AD implementations, Kotlin$\nabla$ does not require any template metaprogramming, compiler augmentation or runtime reflection to ensure type safety. Its implementation leverages several features in the Kotlin language including operator overloading, infix functions and extension functions. It also incorporates various functional programming concepts, like higher order functions, partial application and currying. The practical advantage of this approach is that it can be implemented as a simple library or embedded domain-specific language (eDSL), reusing the host language's type system to receive code completion and type checking for free. In future work, we hope to extend Kotlin$\nabla$ by compiling to a common intermediate representation (e.g. LLVM IR), and explore the meaning of differentiation in other calculi (cf. \citet{considine2019programming}, Section 3.20).
 
 \bibliographystyle{ptml2019}
 \bibliography{ptml_abstract}
