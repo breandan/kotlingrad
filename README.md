@@ -54,15 +54,29 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
-Gradle users should add a repository and dependency:
+First, generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
+
+Gradle users should write their credentials to the `./gradle/gradle.properties` file as follows:
+
+```
+mavenUser=<USERNAME>
+mavenPassword=<PERSONAL_ACCESS_TOKEN>
+```
+
+Ensure that `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
 
 ```kotlin
 repositories {
-    maven("https://maven.pkg.github.com/breandan/kotlingrad")
+    maven("https://maven.pkg.github.com/breandan/kotlingrad") {
+        credentials {
+            username = ext.properties["mavenUser"] as String?
+            password = ext.properties["mavenPassword"] as String?
+        }
+    }
 }
 
 dependencies {
-    implementation("edu.umontreal:kotlingrad:0.1")
+    implementation("edu.umontreal:kotlingrad:<VERSION>")
 }
 ```
 
