@@ -1,23 +1,18 @@
-import groovy.util.Node
-import groovy.util.NodeList
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   application
   kotlin("jvm") version "1.3.50"
   `maven-publish`
-  id("io.freefair.github.package-registry-maven-publish") version "4.1.0"
+  id("io.freefair.github.package-registry-maven-publish") version "4.1.1"
 }
 
 group = "edu.umontreal"
-version = "0.2.1"
+version = "0.2.2"
 
 repositories {
   jcenter()
   maven("https://dl.bintray.com/mipt-npm/scientifik")
-//  maven("https://dl.bintray.com/arrow-kt/arrow-kt/")
-//  mavenCentral()
-//  maven("https://oss.jfrog.org/artifactory/oss-snapshot-local/")
 }
 
 val kotlinVersion = "1.3.50"
@@ -68,19 +63,11 @@ dependencies {
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
 
-val fatJar by tasks.registering(Jar::class) {
-  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-  from(configurations.runtimeClasspath.get().map { file ->
-    if (file.isDirectory) file
-    else zipTree(file)
-  })
+val sourcesJar by tasks.creating(Jar::class) {
+  dependsOn(tasks.classes)
+  from(sourceSets.main.get().allSource)
   with(tasks["jar"] as CopySpec)
   exclude("**.png", "LICENSE.txt")
-  manifest {
-    attributes(mapOf(
-      "Main-Class" to "edu.umontreal.kotlingrad.samples.HelloKotlinGradKt"
-    ))
-  }
 }
 
 github {
@@ -92,7 +79,7 @@ github {
 
 publishing {
   publications.create<MavenPublication>("default") {
-    artifact(fatJar.get())
+    artifact(sourcesJar)
     pom {
       description.set("Kotlin∇: Differentiable Functional Programming with Algebraic Data Types")
       name.set("Kotlin∇")
@@ -114,14 +101,6 @@ publishing {
       }
       scm {
         url.set("https://github.com/breandan/kotlingrad")
-      }
-      withXml {
-        // Remove deps since we're publishing a fat jar
-        val pom = asNode()
-        val depNode: NodeList = pom.get("dependencies") as NodeList
-        for (child in depNode) {
-          pom.remove(child as Node)
-        }
       }
     }
   }
