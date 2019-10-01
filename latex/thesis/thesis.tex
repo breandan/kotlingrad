@@ -2689,12 +2689,12 @@ To address these issues, various container platforms, including Shifter~\citep{g
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \textit{The errors of TeX}\end{flushright}}
 
-As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the proposed toolchain. The code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
+As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the tools proposed in Chapters 2--5. The source code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
 
 \section{Design}
 
 Hatchery is compatible with most IDEs on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one. Then create a symbolic link inside the Android project's root directory to the location of the ROS project:
-
+%
 \begin{pclisting}
 ~$ ln -s /absolute/path/to/ros/project /android/project
 \end{pclisting}
@@ -2703,7 +2703,17 @@ Create a new project in Android Studio and import the ROS project. Now, the ROS 
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{hatchery_android.png}
-\end{centering}
+\end{centering}\vspace{10pt}
+%
+Running nodes on non-Android devices is no different than ordinary rospy projects. However, running ROS nodes on Android devices requires \href{http://wiki.ros.org/rosjava}{rosjava}, a pure Java implementation of the ROS messaging protocol. A few \href{https://github.com/rosjava/android_apps}{example applications} provide a basic Android UI and support communicating with networked ROS nodes.
+
+ROS Android applications can be run on a physical Android device or inside the emulator by launching an Android Virtual Device (AVD) and using the following commands, as described in the \href{https://developer.android.com/studio/run/emulator-networking#consoleredir}{Android developer documentation}:
+%
+\begin{pclisting}
+~$ telnet localhost 5554
+~$ redir add tcp:11311:11311
+\end{pclisting}
+%
 
 \section{Implementation}
 
