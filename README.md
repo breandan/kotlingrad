@@ -55,11 +55,11 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
+First, generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission in order to download from the [GitHub Package Registry](https://github.com/features/package-registry).
+
 #### Gradle
 
-First, generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
-
-Gradle users should write their credentials to the `./gradle/gradle.properties` file as follows:
+Gradle users should write their credentials to the `~/.gradle/gradle.properties` file as follows:
 
 ```
 mavenUser=<USERNAME>
@@ -83,7 +83,7 @@ dependencies {
 }
 ```
 
-Finally, run `gradle dependencies` to ensure that the requested dependency has been downloaded.
+Finally, run `gradle dependencies` to ensure the requested dependency can be downloaded.
 
 #### Maven
 
