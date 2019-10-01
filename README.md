@@ -10,6 +10,7 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
 * [Introduction](#introduction)
 * [Supported features](#features)
 * [Usage](#usage)
+  * [Installation](#installation)
   * [Notation](#notation)
   * [Shape Safety](#shape-safety)
   * [Example](#shape-safety)
@@ -54,6 +55,8 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
+#### Gradle
+
 First, generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
 
 Gradle users should write their credentials to the `./gradle/gradle.properties` file as follows:
@@ -63,7 +66,7 @@ mavenUser=<USERNAME>
 mavenPassword=<PERSONAL_ACCESS_TOKEN>
 ```
 
-Ensure that `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
+Ensure `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
 
 ```kotlin
 repositories {
@@ -79,6 +82,10 @@ dependencies {
     implementation("edu.umontreal:kotlingrad:<VERSION>")
 }
 ```
+
+Finally, run `gradle dependencies` to ensure that the requested dependency has been downloaded.
+
+#### Maven
 
 Maven users should refer to [these instructions](https://help.github.com/en/articles/configuring-apache-maven-for-use-with-github-package-registry#installing-a-package).
 
