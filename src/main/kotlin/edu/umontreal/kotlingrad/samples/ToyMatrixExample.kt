@@ -67,7 +67,7 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
   constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars, mFun.vVars, mFun.mVars)
 
   init {
-    if (numRows.i != rows.size) throw IllegalArgumentException("Declared rows, $numRows != ${rows.size}")
+    require(numRows.i == rows.size) { "Declared rows, $numRows != ${rows.size}" }
   }
 
   companion object {

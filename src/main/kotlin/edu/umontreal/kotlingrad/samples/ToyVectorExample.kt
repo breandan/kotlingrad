@@ -55,7 +55,7 @@ open class Vec<X: Fun<X>, E: `1`>(
   }
 
   init {
-    if (length.i != contents.size && contents.isNotEmpty()) throw IllegalArgumentException("Declared length, $length != ${contents.size}")
+    require(length.i == contents.size || contents.isEmpty()) { "Declared length, $length != ${contents.size}" }
   }
 
   val expand: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }

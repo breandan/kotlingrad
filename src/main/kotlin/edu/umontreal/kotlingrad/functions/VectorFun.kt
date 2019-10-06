@@ -84,7 +84,7 @@ package edu.umontreal.kotlingrad.functions
 //  override val length: Nat<MaxLength>,
 //  private val contents: List<X>): VectorFun<X, MaxLength>(length), List<X> by contents {
 //  init {
-//    if (length.i != contents.size) throw IllegalArgumentException("Declared $length, but found ${contents.size}")
+// require(length.i == contents.size) { "Declared $length, but found ${contents.size}" }
 //  }
 //
 ////  override operator fun invoke(map: Map<Var<X>, X>): VectorConst<X, MaxLength> = VectorConst(length, contents.map { it(map) })
