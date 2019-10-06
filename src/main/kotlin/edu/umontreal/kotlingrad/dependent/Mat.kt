@@ -27,8 +27,7 @@ open class Mat<T, Rows : `100`, Cols : `100`> : Vec<Vec<T, Cols>, Rows> {
     Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> filler(row, col) }) }))
 
   constructor(rowT: Nat<Rows>, colT: Nat<Cols>, ts: List<T>) : this(rowT, colT,
-    if (ts.size == rowT.i * colT.i) Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> ts[col + row * colT.i] }) }.toList())
-    else throw IllegalArgumentException("Declared $rowT x $colT, but found ${ts.size}"))
+    Vec(rowT, (0 until rowT.i).map { row -> Vec(colT, (0 until colT.i).map { col -> ts[col + row * colT.i] }) }.toList()))
 
   override fun toString() = "($numRows x $numCols)\n[${contents.joinToString("\n ") { it.contents.joinToString(" ") }}]"
 

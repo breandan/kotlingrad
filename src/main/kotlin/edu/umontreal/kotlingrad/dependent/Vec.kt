@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.dependent
 // Vec should not be a List or the concatenation operator + will conflict with vector addition
 open class Vec<E, MaxLength : `100`>(val length: Nat<MaxLength>, val contents: List<E> = arrayListOf()) {
   init {
-    if (length.i != contents.size) throw IllegalArgumentException("Declared $length, but found ${contents.size}")
+    require(length.i == contents.size) { "Declared $length, but found ${contents.size}" }
   }
 
   operator fun get(i: Int): E = contents[i]

@@ -201,7 +201,7 @@ class ScalarVar<X: ScalarFun<X>>: ScalarFun<X> {
   override val variables: Set<ScalarVar<X>>
 
   internal constructor(value: X, name: String = randomDefaultName()): super() {
-    if (name.contains(' ')) throw IllegalArgumentException("Variable name must not contain spaces")
+    require(' ' !in name) { "Variable name must not contain spaces" }
     this.value = value
     this.name = name.replace(" ", "")
     this.variables = setOf(this)
