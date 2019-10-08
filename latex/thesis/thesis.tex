@@ -819,7 +819,7 @@ CONSTANT_CHARACTER=[^\r\n\f#]
 COMMENT_CHARACTER=#[^\r\n\f]*
 \end{flexlisting}
 
-Grammar-Kit consumes these files and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more flexible error-recovery, but for parsing regular languages, such as the interface description languages (IDL) found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, and other domain-specific configuration languages the parser and lexer definitions provided are usually sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML files.
+Grammar-Kit consumes these files and generates Java source code for parsing ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} files. Generated sources can be manually refined to provide support for more advanced functionality such as more flexible error-recovery, but for parsing regular languages, such as the interface description languages (IDL) found in ROS \href{http://wiki.ros.org/msg}{\inline{.msg}} and \href{http://wiki.ros.org/srv}{\inline{.srv}} files, and other domain-specific configuration languages the parser and lexer definitions provided are usually sufficient. Hatchery is also capable of parsing \href{http://wiki.ros.org/urdf}{URDF}, \href{http://wiki.ros.org/Manifest}{package manifest} and \href{http://wiki.ros.org/roslaunch/XML}{roslaunch} XML.
 
 \subsection{Running and debugging}
 
@@ -995,28 +995,28 @@ In 1964, such an algorithm was first conceived in~\citet{wengert1964simple}, who
 Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P_k: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions, each with the same type:
 %
 \begin{equation}
-    P_k(x) = \begin{cases} p_0(x) = x &\text{if } k=0\\ (p_k\circ P_{k-1})(x)&\text{if } k > 0 \end{cases}
+    P_k(x) = \begin{cases} p_0 \circ x = x &\text{if } k=0\\ p_k\circ P_{k-1} \circ x&\text{if } k > 0 \end{cases}
 \end{equation}
 %
-From the chain rule of calculus, we recall that:
+From the chain rule, we recall the derivative of a composition is a product of the derivatives:
 %
-\begin{equation}
+\begin{equation} \label{eq:sfun_chain_rule}
     \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
 \end{equation}
 %
-Likewise, for a scalar function $Q(q_0, q_1, \dots, q_n): \mathbb{R}^m\rightarrow\mathbb{R}$, the \textit{gradient}, $\nabla Q$, tells us:
+Given $Q(q_1, \dots, q_m): \mathbb{R}^m\rightarrow\mathbb{R}$, the \textit{gradient} is a function $\nabla Q: \mathbb{R}^m\rightarrow\mathbb{R}\rightarrow\mathbb{R}^m$ defined as:
 %
 \begin{equation}
-    \nabla Q = \left( \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_m}\right)
+    \nabla Q = \left[ \frac{\partial Q}{\partial q_1}, \dots, \frac{\partial Q}{\partial q_m}\right]
 \end{equation}
 %
-Occasionally, we may wish to compute the second-order partials for $Q$, i.e.\ the \textit{Hessian}, $\mathbf{H}$:
+The \textit{Hessian} is a function $\mathbf{H}:\mathbb{R}^m\rightarrow\mathbb{R}\rightarrow\mathbb{R}^{m\times m}$ returning a matrix of second-order partials:
 %
 \begin{equation}
-\mathbf{H} = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{m}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{m}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{m}^{2}}}\end{bmatrix}
+\mathbf{H}(Q) = \begin{bmatrix}{\dfrac {\partial ^{2}Q}{\partial x_{1}^{2}}}&{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{1}\,\partial x_{m}}}\\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{2}^{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{2}\,\partial x_{m}}}\\[2.2ex]\vdots &\vdots &\ddots &\vdots \\[2.2ex]{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{1}}}&{\dfrac {\partial ^{2}Q}{\partial x_{m}\,\partial x_{2}}}&\cdots &{\dfrac {\partial ^{2}Q}{\partial x_{m}^{2}}}\end{bmatrix}
 \end{equation}
 %
-More generally, for a vector function $\mathbf{f}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, the \textit{Jacobian}, $\mathcal{J}_{\mathbf{f}}$, is defined as:
+For vector functions $\mathbf{f}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, the \textit{Jacobian}, $\mathcal{J}_{\mathbf{f}}: \mathbb{R}^m\rightarrow\mathbb{R}^n\rightarrow\mathbb{R}^{n \times m}$ is defined as:
 %
 \begin{equation}
 \mathcal{J}_{\mathbf{f}} =
@@ -1035,7 +1035,13 @@ More generally, for a vector function $\mathbf{f}: \mathbb{R}^m\rightarrow\mathb
 \end{bmatrix}
 \end{equation}
 %
-For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^m\rightarrow\mathbb{R}^n$, the chain rule still applies:
+For scalar functions, the transpose of the Hessian is equivalent to the Jacobian of the gradient:
+%
+\begin{equation}
+\mathbf{H}(Q)^\intercal = \mathcal{J}_\mathbf{q}(\nabla Q)
+\end{equation}
+%
+For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^m\rightarrow\mathbb{R}^n$, the chain rule from \autoref{eq:sfun_chain_rule} still applies:
 %
 \begin{equation} \label{eq:vfun_chain_rule}
 \mathcal{J}_\mathbf{P_k} = \displaystyle \prod_{i=1}^{k} \mathcal{J}_{p_i} = \underbrace{\bigg(\Big((\mathcal{J}_{p_k} \mathcal{J}_{p_{k-1}}) \dots \mathcal{J}_{p_2}\Big) \mathcal{J}_{p_1}\bigg)}_{\textit{``Reverse accumulation''}} = \underbrace{\bigg(\mathcal{J}_{p_k} \Big(\mathcal{J}_{p_{k-1}} \dots (\mathcal{J}_{p_2} \mathcal{J}_{p_1})\Big)\bigg)}_{\textit{``Forward accumulation''}}
@@ -1083,7 +1089,7 @@ There exists at the heart of machine learning a theorem that states a simple fam
 Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short number of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating each $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^n$. For further details, see \citet{schonfinkel1924bausteine, curry1958combinatory} et al.},
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\Theta_0)\circ\mathbf{x} &\text{if } k=0\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\mathbf{x}&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\Theta_0)\circ\mathbf{x} &\text{if } k=0\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\circ\mathbf{x}&\text{if } k > 0 \end{cases} \\
 \end{equation}
 %
 where $\mathbf\Theta = \{\Theta_0, \dots, \Theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^m$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
@@ -1099,13 +1105,13 @@ In the general case, we can solve for the gradient using \autoref{eq:vfun_chain_
 \begin{figure}
     \centering
     \includegraphics[width=0.90\textwidth]{../figures/diff_prob_prog.png}
-    \caption{\textit{Differentiable programming} includes neural networks, but more broadly, arbitrary differentiable programs which use automatic differentiation and gradient-based optimization to approximate a loss function. \textit{Probabilistic programming}~\citep{carpenter2017stan, gorinova2018slicstan} is an emerging generalization of probabilistic graphical models, and uses various forms of Markov chain Monte Carlo (MCMC) and differentiable inference to approximate a probability density function.}
+    \caption{\textit{Differentiable programming} includes neural networks, but more broadly, arbitrary programs which use automatic differentiation and gradient-based optimization to approximate a loss function. \textit{Probabilistic programming}~\citep{carpenter2017stan, gorinova2018slicstan} is a generalization of probabilistic graphical models which uses Markov chain Monte Carlo (MCMC) and differentiable inference to approximate a probability density function.}
     \label{fig:diff_prob_prog}
 \end{figure}
 
 The renaissance of modern deep learning is widely attributed to progress in three research areas: algorithms, data and hardware. Among algorithms, most research has focused on deep learning architectures and representation learning. Equally important, arguably, is the role that automatic differentiation (AD) has played in facilitating the implementation of these ideas. Prior to the advent of general-purpose AD libraries such as \href{http://deeplearning.net/software/theano/}{Theano}, \href{https://pytorch.org/}{PyTorch} and \href{http://tensorflow.org/}{TensorFlow}, gradients had to be derived manually. The widespread adoption of AD software simplified and accelerated the pace of gradient-based machine learning, allowing researchers to build deeper network architectures and new learning representations. Some of these ideas in turn, formed the basis for new methods in AD, which continues to be an \href{http://www.autodiff.org}{active area} of research in the programming language and scientific computing communities.
 
-A key aspect of the connectionist paradigm is gradient descent of a statistical loss function defined on a neural network with respect to its free parameters. For gradient descent to work, the representation must be differentiable almost everywhere. However, many representations are non-differentiable in their natural domain. For example, the structure of written language is not easily differentiable, as small changes to a word's symbolic representation can cause sudden changes to its semantic meaning. A key insight from representation learning is that many discrete data types can be mapped to a smoother latent space. For example, if we represent words as a vector of real numbers, then it is possible to learn a mapping from the textual domain to the vector representation so that semantic relations between words (as measured by their statistical co-occurrence in large language corpora) are geometrically preserved in vector space~\citep{pennington2014glove} -- words with similar meanings map to similar vectors. It so happens that many classes of discrete problems can be relaxed to continuous surrogates by learning such representations, or \textit{embeddings} in an unsupervised, or semi-supervised manner.
+A key aspect of the connectionist paradigm is gradient descent of a statistical loss function defined on a neural network with respect to its free parameters. For gradient descent to work, the representation must be differentiable almost everywhere. However, many representations are non-differentiable in their natural domain. For example, the structure of written language is not easily differentiable, as small changes to a word's symbolic form can cause sudden changes to its semantics~\citep{vanmerrienboer2018phd}. A key insight from representation learning is that many discrete data types can be mapped into a smoother latent space. For example, if we represent words as a vector of real numbers, $\mathbb R^N$, then it is possible to learn a mapping from words to $\mathbb R^N$ so that semantic relations between words (as defined by their statistical co-occurrence in large corpora) are geometrically preserved in vector space~\citep{pennington2014glove} -- words with similar meanings map to similar vectors. Many classes of discrete problems can be relaxed to continuous surrogates by learning such representations, or \textit{embeddings} in an unsupervised, or semi-supervised manner.
 
 Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using low-precision arithmetic such as 8-bit floating point~\citep{wang2018training} and integer~\citep{jacob2018quantization} quantization are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should have been less surprising, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, gradient descent is surprisingly resilient to quantization.
 
@@ -1237,7 +1243,7 @@ Early work in type-safe dimension analysis can be found in \citet{kennedy1994dim
 
 The problem we attempt to solve can be summarized as follows. Given two values \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when \inline{x} $\in \mathbb{R}^{m \times n}$ and \inline{y} $\in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer \inline{z} $\in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator \inline{@} $: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{N}^q, \mathbf{b} \in \mathbb{N}^r, \mathbf{c} \in \mathbb{N}^s$ and $q, r, s \in \mathbb{N}$. For many linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_1 \stackrel{?}{=} \mathbf{b}_0$).
 
-Shape checking operations on multidimensional arrays is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is undecidable~\citep{godel1931formal}. Addition, subtraction, indexing and comparison of integers are all decidable operations~\citep{charlier2011enumeration}. Equality checking is trivially decidable, and can be implemented in most static type systems.
+Shape checking operations on multidimensional arrays is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is undecidable~\citep{godel1931formal}. Addition, subtraction, indexing and comparison of integers are all decidable operations in Presburger arithmetic~\citep{suzuki1980verification, bradley2006decidable, charlier2011enumeration}. Equality checking is trivially decidable, and can be implemented in most static type systems.
 
 Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g.\ convolutional arithmetic) requires a dependently typed language~\citep{xi1998eliminating, pineyro2019structure}, but checking shape equality (e.g. ordinary arithmetic) is feasible in Java and its cousins.\footnote{Java's type system is known to be Turing Complete~\citep{grigore2017java}. Thus, emulation of dependent types in Java is theoretically possible, but likely intractable due to the practical limitations noted by Grigore.} Furthermore, we believe that shape checking ordinary matrix arithmetic is decidable in any type system loosely based on System F${}_{<:}$~\citep{cardelli1991extension}. We propose a type system for enforcing shape-safety which can be implemented in any language with subtyping and generics, such as \href{https://docs.oracle.com/javase/tutorial/java/generics/index.html}{Java}~\citep{naftalin2007java}, \href{https://kotlinlang.org/docs/reference/generics.html}{Kotlin}~\citep{tate2013mixed}, \href{https://www.typescriptlang.org/docs/handbook/advanced-types.html}{TypeScript}~\citep{bierman2014understanding} or \href{https://doc.rust-lang.org/1.7.0/book/generics.html}{Rust}~\citep{crozet2019nalgebra}.
 
@@ -1394,7 +1400,7 @@ Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know th
 %
 \begin{enumerate}
     \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
-    \item \textbf{Finite difference approximation}: sample the space of symbolic differentiable functions, comparing the numerical results suggested by the finite difference method and the equivalent AD result, up to a fixed-precision approximation. \\
+    \item \textbf{Finite difference approximation}: sample the space of symbolic differentiable functions, comparing the numerical results suggested by the \hyperref[sec:fdm]{finite difference method} and the equivalent AD result, up to a fixed-precision approximation. \\
 \end{enumerate}
 %
 For example, the following test checks whether the analytical derivative and the automatic derivative, when evaluated at random points, are equal to within numerical precision:
@@ -1416,7 +1422,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Manual derivative
 }
 \end{kotlinlisting}
 %
-PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test using the finite difference method, e.g. $f'(x)=\lim _{h\to 0}{\frac {f(x+h)-f(x)}{h}}$:
+PBT will search the input space for two numerical values \inline{x0} and \inline{y0}, which violate the specification, then ``shrink'' them to discover pass-fail boundary values. We can construct a similar test using the \hyperref[sec:fdm]{finite difference method}, e.g. $f'(x)=\lim _{h\to 0}{\frac {f(x+h)-f(x)}{h}}$:
 %
 \begin{kotlinlisting}
 val dx = 1E-8
@@ -1771,17 +1777,19 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \begin{tikzpicture}
 \begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
 \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(SD, IP) $\approx\Delta$(AD, IP)}
+\addlegendentry{$\Delta$(SD, AP) $\approx\Delta$(AD, IP)}
 \addplot table [mark=none, x index=0, y index=2, col sep=comma] {../data/adsd_comparison.csv};
 \addlegendentry{$\Delta$(AD, SD)}
 \addplot table [mark=none, x index=0, y index=3, col sep=comma] {../data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(FD, IP)}
+\addlegendentry{$\Delta$(FD, AP)}
 \end{axis}
 \end{tikzpicture}
-\caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and infinite precision (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
+\caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and arbitrary precision (AP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
 \label{fig:pbt_comparison}
 \end{figure}
 %
+Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures). To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and MacLaurin series expansion of sine and cosine. Property-based testing shows us how to compare algorithmically distinct but semantically equivalent differentiation algorithms.
+
 The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
 
 \section{Metamorphic testing}\label{subsec:metamorphic-testing}
@@ -1854,7 +1862,7 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each co
 
 As we can see, algorithm \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances or need to repeat the procedure multiple times. Clearly, if we want to find the best direction in which to update $\mathbf g$, we need to be more careful about how we perform the search.
 
-Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of its derivative. Consider algorithm \autoref{alg:fd_fuzz}, a refinement of algorithm \autoref{alg:bf_adversary} which uses the finite difference method to approximate the derivative with respect to each component of the input. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation.
+Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of its derivative. Consider algorithm \autoref{alg:fd_fuzz}, a refinement of algorithm \autoref{alg:bf_adversary} which uses the \hyperref[sec:fdm]{finite difference method} to approximate the derivative with respect to each component of the input. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation.
 
 \begin{algorithm}[H]
 \caption{Finite Difference Adversary}
@@ -1927,7 +1935,7 @@ Let us consider an extension of classical fuzzing methods to differentiable func
 
 We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge at all, a subset would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
-\begin{algorithm}[H]
+\begin{algorithm}[ht]
     \caption{Probabilistic Adversary}
     \label{alg:prob_adversary}
     \begin{algorithmic}[1]
@@ -1947,7 +1955,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
     \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[H]
+\begin{algorithm}[ht]
     \caption{Differential Adversary}
     \label{alg:diff_adversary}
     \begin{algorithmic}[1]
@@ -2072,7 +2080,7 @@ To install Docker itself, execute the following command on a POSIX-compliant she
 ~$ curl -sSL https://get.docker.com/ | sh
 \end{pclisting}
 %
-A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default {Docker Hub} repository:
+A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default \href[subsec:docker_hub]{Docker Hub} repository:
 
 \begin{pclisting}
 ~$ docker pull daphne/duck
@@ -2167,7 +2175,7 @@ Now suppose we would like to share the container \inline{shady\_giraffe} with so
 ~$ docker commit -m "forking daphne/duck" shady_giraffe user/duck:v2
 \end{pclisting}
 %
-To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady\_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the \href{http://hub.docker.com}{Docker Hub} registry:
+To refer to the container, we can either use \inline{18f13bb4571a} or the designated name (i.e. \inline{shady\_giraffe}). This image repository will be called \inline{user/duck}, and has an optional version identifier, \inline{:v2}, which can be pushed to the \href[subsec:docker_hub]{Docker Hub} registry:
 
 \begin{pclisting}
 ~$ docker push user/duck:v2
@@ -2459,7 +2467,7 @@ One application of multi-stage builds is compiling a project dependency from its
 
 \citet{white2017ros-docker} previously explored Dockerizing ROS, whose work forms the basis for our own, which extends their implementation to the Duckietown platform~\citep{paull2017duckietown}, a more hardware- and domain-specific set of ROS applications.
 
-The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \href{https://blog.hypriot.com/}{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
+The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \href[subsec:hypriot]{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
 
 \section{Duckiebot Development using Docker}
 
@@ -2861,7 +2869,7 @@ Our goal in ordinary least squares (OLS) linear regression is to minimize the lo
 \mathbf{\Theta}^* = \underset{\mathbf{\Theta}}{\operatorname{argmin}}\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta})
 \end{equation}
 
-\subsection{Finite difference method}
+\subsection{Finite difference method}\label{sec:fdm}
 
 First, we consider the scalar case, where $\mathbf{\hat f}(\mathbf{X}; \mathbf{\Theta}) = \hat f(x; \theta_1, \theta_0) = \theta_1 x + \theta_0$. Since $\mathbf{X}, \mathbf{Y}$ are considered to be fixed, we can rewrite $\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta})$ as simply:
 %
@@ -2902,7 +2910,7 @@ Using computer algebra, the above equations can be simplified considerably:
 \frac{\partial\mathcal{L}}{\partial \theta_1} & = \frac{\partial}{\partial \theta_1}\frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2 \\ & = \frac{1}{m}\sum_{i=0}^m 2(y_i - (\theta_1 x_i + \theta_0)) \frac{\partial}{\partial \theta_1}(y_i - (\theta_1 x_i + \theta_0)) \\ & = \frac{2}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))(-x_i) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)}
 \end{align}
 %
-Notice how analytical differentiation gives us the same answer as the finite difference method (this is not by accident), with much less algebra. We can rewrite these two solutions in gradient form, i.e. as a column vector of partial derivatives:
+Notice how analytical differentiation gives us the same answer as the \hyperref[sec:fdm]{finite difference method} (this is not by accident), with much less algebra. We can rewrite these two solutions in gradient form, i.e. as a column vector of partial derivatives:
 %
 \begin{equation}
 \nabla_\mathbf{\Theta}\mathcal{L} =
@@ -3036,7 +3044,7 @@ ROS.org builds nightly ARM and x86 images for robotics development. For each dis
 \includegraphics[width=\textwidth]{../figures/ros_docker_images.png}
 \end{centering}
 
-\subsection{\href{https://blog.hypriot.com/}{Hypriot}}
+\subsection{\href{https://blog.hypriot.com/}{Hypriot}}\label{subsec:hypriot}
 
 Hypriot, a base OS for RPi and other ARM devices, includes support for Docker straight out of the box. Hypriot is a lightweight Raspbian-based Linux distribution which \href{https://github.com/hypriot/image-builder-rpi}{builds} from the latest Raspberry Pi kernels and Raspbian releases.
 
@@ -3048,7 +3056,7 @@ Not all Python packages (especially if they wrap a native library) can be run on
 ~$ pip install opencv-python --index-url https://www.piwheels.org/simple
 \end{rpilisting}
 
-\subsection{\href{https://hub.docker.com/}{Docker Hub}}
+\subsection{\href{https://hub.docker.com/}{Docker Hub}}\label{subsec:docker_hub}
 
 Docker Hub is the central repository for Docker Images. Unless a separate registry has been configured, whenever users pull a Docker image tag, it will first query the Docker Hub for a matching image. The Docker Hub can be used to upload Docker images, and configure automated builds from GitHub (with a two hour build timeout). Docker Hub does not support layer caching of any kind, so the build will always take a fixed amount of time.\vspace{10pt}
 %
