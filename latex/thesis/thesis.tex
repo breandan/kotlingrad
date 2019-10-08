@@ -995,13 +995,13 @@ In 1964, such an algorithm was first conceived in~\citet{wengert1964simple}, who
 Given some input to a function, AD tells us how to change the input by a minimal amount, in order to maximally change the outputs. Suppose we are handed a function $P_k: \mathbb{R}\rightarrow\mathbb{R}$, composed of a series of nested functions, each with the same type:
 %
 \begin{equation}
-    P_k(x) = \begin{cases} p_0 \circ x = x &\text{if } k=0\\ p_k\circ P_{k-1} \circ x&\text{if } k > 0 \end{cases}
+    P_k(x) = \begin{cases} p_1 \circ x = x &\text{if } k=1\\ p_k\circ P_{k-1} \circ x&\text{if } k > 1 \end{cases}
 \end{equation}
 %
 From the chain rule, we recall the derivative of a composition is a product of the derivatives:
 %
 \begin{equation} \label{eq:sfun_chain_rule}
-    \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
+    \frac{dP}{dp_1} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_2}{dp_1}= {\displaystyle \prod_{i=1}^{k-1} \frac{dp_{i+1}}{dp_{i}}}
 \end{equation}
 %
 Given $Q(q_1, \dots, q_m): \mathbb{R}^m\rightarrow\mathbb{R}$, the \textit{gradient} is a function $\nabla Q: \mathbb{R}^m\rightarrow\mathbb{R}\rightarrow\mathbb{R}^m$ defined as:
@@ -1089,13 +1089,13 @@ There exists at the heart of machine learning a theorem that states a simple fam
 Where $\varphi_{\odot}$ indicates the nonlinear function $\varphi$ applied elementwise to a vector. This theorem only tells us that $\Theta$ exists, but does not tell us how to find it nor does it place an upper bound on the constant $n$, somewhat limiting its practical applicability. But for reasons not yet fully understood, empirical results suggest it is possible to approximate many naturally-arising functions in a relatively short number of steps by composing several \textit{layers} of $\Theta^\intercal \mathbf{x} + \mathbf{b}$ and $\varphi$ in an alternating fashion, and updating each $\Theta$ using a procedure based on gradient descent. The resulting model might be expressed as follows\footnote{The notation below assumes some familiarity with currying and partial function application, in which $\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}^n \equiv \underbrace{\mathbb R \rightarrow \ldots \rightarrow \mathbb R}_{m}\rightarrow \mathbb{R}^n$. For further details, see \citet{schonfinkel1924bausteine, curry1958combinatory} et al.},
 %
 \begin{equation} \label{eq:recursive_parametric_eq}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\Theta_0)\circ\mathbf{x} &\text{if } k=0\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\circ\mathbf{x}&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_1(\Theta_1)\circ\mathbf{x} &\text{if } k=1\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[1, k-1]})\circ\mathbf{x}&\text{if } k > 1 \end{cases} \\
 \end{equation}
 %
-where $\mathbf\Theta = \{\Theta_0, \dots, \Theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^m$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
+where $\mathbf\Theta = \{\Theta_1, \dots, \Theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^m$ is a single input. To approximate $\mathbf{P}(\mathbf x)$, one must obtain $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ in as great and varied a quantity as possible and repeat the following procedure until $\mathbf\Theta$ converges:
 %
 \begin{equation} \label{eq:stochastic_grad_descent}
-    \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
+    \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=1}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
 In the general case, we can solve for the gradient using \autoref{eq:vfun_chain_rule}. For most common $\mathcal{L}$, the complexity of this procedure is linear with $z$. As $z$ can be quite large in practice, and since obtaining the exact gradient is not important, we use a stochastic variant by resampling a \textit{minibatch} $\mathbf{X}', \mathbf{Y}'$ consisting of pairs $\mathbf{x}^{(i)}, \mathbf{y}^{(i)}$ for $i \sim \{0, ..., z\}$ without replacement on each update step. This is slightly noisier, but runs considerably more quickly.
@@ -1241,7 +1241,7 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 
 Early work in type-safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} which uses types to encode dimensionality and prevent common bugs related to dimension mismatch from arising, and was later realized in the F\# language~\citep{kennedy2010types}. \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} explore the application of dimension types for linear algebra. More recently, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to manipulate arrays in more complex ways. With the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how to encode shape-safety in various type systems.
 
-The problem we attempt to solve can be summarized as follows. Given two values \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when \inline{x} $\in \mathbb{R}^{m \times n}$ and \inline{y} $\in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer \inline{z} $\in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator \inline{@} $: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{N}^q, \mathbf{b} \in \mathbb{N}^r, \mathbf{c} \in \mathbb{N}^s$ and $q, r, s \in \mathbb{N}$. For many linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_1 \stackrel{?}{=} \mathbf{b}_0$).
+The problem we attempt to solve can be summarized as follows. Given two values \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when \inline{x} $\in \mathbb{R}^{m \times n}$ and \inline{y} $\in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer \inline{z} $\in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator \inline{@} $: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{N}^q, \mathbf{b} \in \mathbb{N}^r, \mathbf{c} \in \mathbb{N}^s$ and $q, r, s \in \mathbb{N}$. For many linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_2 \stackrel{?}{=} \mathbf{b}_1$).
 
 Shape checking operations on multidimensional arrays is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is undecidable~\citep{godel1931formal}. Addition, subtraction, indexing and comparison of integers are all decidable operations in Presburger arithmetic~\citep{suzuki1980verification, bradley2006decidable, charlier2011enumeration}. Equality checking is trivially decidable, and can be implemented in most static type systems.
 
@@ -1798,7 +1798,7 @@ It is often the case we would like to test the behavior of a program without pro
 
 First, let us consider the following concrete example, from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations applied to the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it encounters in an operational setting.
 
-Metamorphic testing can be expressed as follows: Given an oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation, e.g.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
+Metamorphic testing can be expressed as follows: Given an oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation, e.g.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
 
 Suppose our MR is $\forall \varphi \in \mathcal I: ||\mathbf\varphi|| \leq \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Given a program $\mathbf{\hat P}$ and a set of inputs $\mathbf X$ and outputs $\mathbf Y$ from our oracle, the MR suggests an $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from $\mathbf P$. If we can show that $\exists \mathbf x' \in \mathbf X' \mid \mathbf{\hat P}(\mathbf x') \not\approx \mathbf P(\mathbf x)$, then we can infer at least one of the following:
 
@@ -1842,19 +1842,19 @@ But this would be very inefficient and depending on the type of input and output
 
 This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input of a function, which produces the largest change to its output, relative to the original output.
 
-Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each component $g_0, ..., g_{m-1}$ of which we seek to change by a fixed amount so as to produce the largest output value $\mathbf{\hat P}(g'_1, ..., g'_{m-1})$ directly. Suppose for each input parameter $g_0, g_1, \ldots, g_{m-1}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, which tries every combination of variable perturbations and selects the input corresponding to the greatest output value:
+Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each component $g_1, ..., g_{m}$ of which we seek to change by a fixed amount so as to produce the largest output value $\mathbf{\hat P}(g'_1, ..., g'_{m})$ directly. Suppose for each input parameter $g_1, \ldots, g_{m}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, which tries every combination of variable perturbations and selects the input corresponding to the greatest output value:
 
 \begin{algorithm}[H]
 \caption{Brute Force Adversary}
 \label{alg:bf_adversary}
 \begin{algorithmic}[1]
-\Procedure{BfAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}$, $c: \mathbb R$, $g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{m-1}: \mathbb R$}: $\mathbb{R}^m$
+\Procedure{BfAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}$, $c: \mathbb R$, $g_1: \mathbb R$, $g_2: \mathbb R$, $\ldots$, $g_{m}: \mathbb R$}: $\mathbb{R}^m$
 \If {$m = 1$} \Comment{Evaluate $\mathbf{\hat P}$ and return the best variable perturbation}
-\State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_0 + c), \mathbf{\hat P}(g_0 - c), \mathbf{\hat P}(g_0)\}$
+\State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_1 + c), \mathbf{\hat P}(g_1 - c), \mathbf{\hat P}(g_1)\}$
 \Else \Comment{Partially apply candidate perturbation and recurse}
-\State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_0 + c) \circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0 + c), c, g_1, \ldots, g_{m-1}$},\newline
-\hspace*{10em} $\mathbf{\hat P}(g_0 - c)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0 - c), c, g_1, \ldots, g_{m-1}$},\newline
-\hspace*{10em} $\mathbf{\hat P}(g_0)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_0), c, g_1, \ldots, g_{m-1}$}$\}$
+\State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_1 + c) \circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_1 + c), c, g_2, \ldots, g_{m}$},\newline
+\hspace*{10em} $\mathbf{\hat P}(g_1 - c)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_1 - c), c, g_1, \ldots, g_{m}$},\newline
+\hspace*{10em} $\mathbf{\hat P}(g_1)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_1), c, g_2, \ldots, g_{m}$}$\}$
 \EndIf
 \EndProcedure
 \end{algorithmic}
@@ -1868,11 +1868,11 @@ Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\m
 \caption{Finite Difference Adversary}
 \label{alg:fd_fuzz}
 \begin{algorithmic}[1]
-\Procedure{FdAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}$, $c: \mathbb R$, $g_0: \mathbb R$, $g_1: \mathbb R$, $\ldots$, $g_{m-1}: \mathbb R$}: $\mathbb{R}^m$
+\Procedure{FdAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}$, $c: \mathbb R$, $g_1: \mathbb R$, $g_2: \mathbb R$, $\ldots$, $g_{m}: \mathbb R$}: $\mathbb{R}^m$
 \If {$m = 1$} \Comment{Compute finite (centered) difference and perform gradient ascent}
-\State \Return $g_0 + \frac{\mathbf{\hat P}(g_0 - c) - \mathbf{\hat P}(g_0 + c)}{2c}$
+\State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c) - \mathbf{\hat P}(g_1 + c)}{2c}$
 \Else \Comment{Apply single-step gradient ascent using componentwise finite difference}
-\State \Return $g_0 + \frac{\mathbf{\hat P}(g_0 - c, 0, \ldots) - \mathbf{\hat P}(g_0 + c, 0, \ldots)}{2c}$, \Call{FdAdversary}{$\mathbf{\hat P}, c, g_1, \ldots, g_{m-1}$}
+\State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c, 0, \ldots) - \mathbf{\hat P}(g_1 + c, 0, \ldots)}{2c}$, \Call{FdAdversary}{$\mathbf{\hat P}, c, g_1, \ldots, g_{m}$}
 \EndIf
 \EndProcedure
 \end{algorithmic}
@@ -1883,16 +1883,16 @@ We now have a procedure that is $\mathcal{O}(m)$ with respect to $\mathbf{\hat P
 During backpropogation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In gradient-based adversarial testing, we perform gradient ascent on a loss function with respect to the inputs using a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
 %
 \begin{equation} \tag{\autoref{eq:recursive_parametric_eq} revisited}
-    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_0(\Theta_0)\circ\mathbf{x} &\text{if } k=0\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k-1}(\mathbf{\Theta}_{[0, k-1]})\circ\mathbf{x}&\text{if } k > 0 \end{cases} \\
+    \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\Theta}) = \begin{cases} \mathbf{\hat p}_1(\Theta_1)\circ\mathbf{x} &\text{if } k=1\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k}(\mathbf{\Theta}_{[1, k]})\circ\mathbf{x}&\text{if } k > 1 \end{cases} \\
 \end{equation}
 %
-In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(0)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(0)} = \mathbf{P}(\mathbf{x}^{(0)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
+In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\mathbf{\Theta}^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
 %
 \begin{equation} \tag{\autoref{eq:stochastic_grad_descent} revisited}
-    \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
+    \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=1}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-We can solve for the gradient with respect to $\mathbf{\Theta}$ by multiplying the Jacobians (cf. \autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_0} \cdots \mathcal{J}_{\mathbf{p}_k}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
+We can solve for the gradient with respect to $\mathbf{\Theta}$ by multiplying the Jacobians (cf. \autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_1} \cdots \mathcal{J}_{\mathbf{p}_k}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropogation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}||_p    < \epsilon\}
@@ -1931,7 +1931,7 @@ One strategy, independent of how candidate inputs are selected, is to use some f
 % \end{equation}
 %
 
-Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we select $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniform random prior, or using a meta-learner $m: (\mathbb{R}^m \rightarrow \mathbb{R}^n) \times (\mathbb{R}^m \times \mathbb R \rightarrow \mathbb B) \rightarrow \mathbb{R}^m$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we update $\mathbf x$ following $\nabla_{\mathbf x}\mathcal{L}(\mathbf{x})$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from $\mathcal S_m$. $C$ ensures each gradient descent trajectory terminates before exhausting the allotted computational budget. This procedure is described in \autoref{alg:prob_adversary}.
+Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we select $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniform random prior, or using a meta-learner $\mathbf M: (\mathbb{R}^m \rightarrow \mathbb{R}^n) \times (\mathbb{R}^m \times \mathbb R \rightarrow \mathbb B) \rightarrow \mathbb{R}^m$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we update $\mathbf x$ following $\nabla_{\mathbf x}\mathcal{L}(\mathbf{x})$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from $\mathcal S_m$. $C$ ensures each gradient descent trajectory terminates before exhausting the allotted computational budget. This procedure is described in \autoref{alg:prob_adversary}.
 
 We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge at all, a subset would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
@@ -1959,17 +1959,17 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
     \caption{Differential Adversary}
     \label{alg:diff_adversary}
     \begin{algorithmic}[1]
-        \Procedure{DiffAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_0: \mathbb R^m$}
+        \Procedure{DiffAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$}
         \State $i \gets 1$
-        \State $t_0 \gets \mathbf T\big(\mathbf x_0, \mathcal L(\mathbf x_0)\big)$ \Comment{Store initial state to detect when test flips.}
+        \State $t_1 \gets \mathbf T\big(\mathbf x_1, \mathcal L(\mathbf x_1)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
             \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (cf. \autoref{eq:projected_gd})}
-            \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_0$} \Comment{Boundary value was found.}
+            \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_1$} \Comment{Boundary value was found.}
                 \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
             \EndIf
             \State $i \gets i + 1$
         \EndWhile
-        \State \Return \textbf{if } $\neg t_0$ \textbf{ then } $\{\mathbf x_{i-1}\}$ \textbf{ else } $\varnothing$ \Comment{Return last iterate or $\varnothing$ if test passed.}
+        \State \Return \textbf{if } $\neg t_1$ \textbf{ then } $\{\mathbf x_{i-1}\}$ \textbf{ else } $\varnothing$ \Comment{Return last iterate or $\varnothing$ if test passed.}
         \EndProcedure
     \end{algorithmic}
 \end{algorithm}
@@ -2847,13 +2847,13 @@ Imagine we are given the following dataset:
 \mathbf{x}_m
 \end{bmatrix} =
 \begin{pmatrix}
-1 & \ldots & x_{0n} \\
+1 & \ldots & x_{1n} \\
 \vdots & \ddots & \vdots \\
 1 & \ldots & x_{mn}
 \end{pmatrix},
 \mathbf{Y} =
 \begin{bmatrix}
-y_1 \\
+y_2 \\
 \vdots \\
 y_m
 \end{bmatrix}
@@ -2871,31 +2871,31 @@ Our goal in ordinary least squares (OLS) linear regression is to minimize the lo
 
 \subsection{Finite difference method}\label{sec:fdm}
 
-First, we consider the scalar case, where $\mathbf{\hat f}(\mathbf{X}; \mathbf{\Theta}) = \hat f(x; \theta_1, \theta_0) = \theta_1 x + \theta_0$. Since $\mathbf{X}, \mathbf{Y}$ are considered to be fixed, we can rewrite $\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta})$ as simply:
+First, we consider the scalar case, where $\mathbf{\hat f}(\mathbf{X}; \mathbf{\Theta}) = \hat f(x; \theta_2, \theta_1) = \theta_2 x + \theta_1$. Since $\mathbf{X}, \mathbf{Y}$ are considered to be fixed, we can rewrite $\mathcal{L}(\mathbf{X}, \mathbf{Y}; \mathbf{\Theta})$ as simply:
 %
 \begin{equation}
-\mathcal{L}(\mathbf{\Theta}) = \mathcal{L}(\theta_1, \theta_0) = \frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2
+\mathcal{L}(\mathbf{\Theta}) = \mathcal{L}(\theta_2, \theta_1) = \frac{1}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))^2
 \end{equation}
 %
-To find the minimizer of $\mathcal{L}(\mathbf{\Theta})$, we need $\nabla_\mathbf{\Theta}\mathcal{L} = \lbrack \frac{\partial\mathcal{L}}{\partial \theta_1}, \frac{\partial\mathcal{L}}{\partial \theta_0}\rbrack$. There are various ways to compute this. First, let's see FDM with centered differences:
+To find the minimizer of $\mathcal{L}(\mathbf{\Theta})$, we need $\nabla_\mathbf{\Theta}\mathcal{L} = \lbrack \frac{\partial\mathcal{L}}{\partial \theta_2}, \frac{\partial\mathcal{L}}{\partial \theta_1}\rbrack$. There are various ways to compute this. First, let's see FDM with centered differences:
 %
 \begin{align}
-\frac{\partial\mathcal{L}}{\partial \theta_0} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=0}^m\left(y_i - \left(\theta_1 x_i + \theta_0 + h\right)\right)^2 - \sum_{i=0}^m\left(y_i - \left(\theta_1 x_i + \theta_0 - h\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(y_i - \left(\theta_1 x_i + \theta_0 + h\right)\right)^2 - \left(y_i - \left(\theta_1 x_i + \theta_0 - h\right)\right)^2 \\
-\frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=0}^m\left(y_i - \left((\theta_1 + h) x_i + \theta_0\right)\right)^2 - \sum_{i=0}^m\left(y_i - \left(\left(\theta_1 - h\right) x_i + \theta_0\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(y_i - \left(\left(\theta_1 + h\right) x_i + \theta_0\right)\right)^2 - \left(y_i - \left(\left(\theta_1 - h\right) x_i + \theta_0\right)\right)^2
+\frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=1}^m\left(y_i - \left(\theta_2 x_i + \theta_1 + h\right)\right)^2 - \sum_{i=1}^m\left(y_i - \left(\theta_2 x_i + \theta_1 - h\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(y_i - \left(\theta_2 x_i + \theta_1 + h\right)\right)^2 - \left(y_i - \left(\theta_2 x_i + \theta_1 - h\right)\right)^2 \\
+\frac{\partial\mathcal{L}}{\partial \theta_2} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=1}^m\left(y_i - \left((\theta_2 + h) x_i + \theta_1\right)\right)^2 - \sum_{i=1}^m\left(y_i - \left(\left(\theta_2 - h\right) x_i + \theta_1\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(y_i - \left(\left(\theta_2 + h\right) x_i + \theta_1\right)\right)^2 - \left(y_i - \left(\left(\theta_2 - h\right) x_i + \theta_1\right)\right)^2
 \end{align}
 %
 Using computer algebra, the above equations can be simplified considerably:
 %
 \begin{align}
-\frac{\partial\mathcal{L}}{\partial \theta_0} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(4h ( \theta_0 +  \theta_1 x_i - y_i)\right) \label{eq:dL_dtheta0} \\
-& = \boxed{\frac{2}{m}\sum_{i=0}^m\left(\theta_0 + \theta_1 x_i - y_i\right)} \\
-\frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=0}^m\left(4hx_i (\theta_1 x_i + \theta_0 - y_i)\right) \label{eq:dL_dtheta1} \\
-& = \boxed{\frac{2}{m}\sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)}
+\frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(4h ( \theta_1 +  \theta_2 x_i - y_i)\right) \label{eq:dL_dtheta0} \\
+& = \boxed{\frac{2}{m}\sum_{i=1}^m\left(\theta_1 + \theta_2 x_i - y_i\right)} \\
+\frac{\partial\mathcal{L}}{\partial \theta_2} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(4hx_i (\theta_2 x_i + \theta_1 - y_i)\right) \label{eq:dL_dtheta1} \\
+& = \boxed{\frac{2}{m}\sum_{i=1}^m(x_i)(\theta_2 x_i + \theta_1 - y_i)}
 \end{align}
 %
 \begin{enumerate}
-    \item[] \autoref{eq:dL_dtheta0}: \url{https://www.wolframalpha.com/input/?i=(y_i-((%CE%B8_1%2Bh)x_i%2B%CE%B8_0))%5E2-(y_i-((%CE%B8_1-h)x_i%2B%CE%B8_0))%5E2}
-    \item[] \autoref{eq:dL_dtheta1}: \url{https://www.wolframalpha.com/input/?i=(y_i-(%CE%B8_1*x_i%2B%CE%B8_0%2Bh))%5E2%E2%88%92(y_i-(%CE%B8_1*x_i%2B%CE%B8_0-h))%5E2}
+    \item[] \autoref{eq:dL_dtheta0}: \url{https://www.wolframalpha.com/input/?i=(y_i-((%CE%B8_2%2Bh)x_i%2B%CE%B8_1))%5E2-(y_i-((%CE%B8_2-h)x_i%2B%CE%B8_1))%5E2}
+    \item[] \autoref{eq:dL_dtheta1}: \url{https://www.wolframalpha.com/input/?i=(y_i-(%CE%B8_2*x_i%2B%CE%B8_1%2Bh))%5E2%E2%88%92(y_i-(%CE%B8_2*x_i%2B%CE%B8_1-h))%5E2}
 \end{enumerate}
 
 \subsection{Partial differentiation}
@@ -2903,11 +2903,11 @@ Using computer algebra, the above equations can be simplified considerably:
 \noindent Alternatively, we can calculate the partials analytically, by applying the chain rule:
 %
 \begin{align}
-\frac{\partial\mathcal{L}}{\partial \theta_0} & = \frac{\partial}{\partial \theta_0}\frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2 \\ & = \frac{1}{m}\sum_{i=0}^m 2 (y_i - (\theta_1 x_i + \theta_0))\frac{\partial}{\partial \theta_0}(y_i - (\theta_1 x_i + \theta_0)) \\ & = \frac{2}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))(-1) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m(\theta_1 x_i + \theta_0 - y_i)}
+\frac{\partial\mathcal{L}}{\partial \theta_1} & = \frac{\partial}{\partial \theta_1}\frac{1}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))^2 \\ & = \frac{1}{m}\sum_{i=1}^m 2 (y_i - (\theta_2 x_i + \theta_1))\frac{\partial}{\partial \theta_1}(y_i - (\theta_2 x_i + \theta_1)) \\ & = \frac{2}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))(-1) \\ & = \boxed{\frac{2}{m}\sum_{i=1}^m(\theta_2 x_i + \theta_1 - y_i)}
 \end{align}
 %
 \begin{align}
-\frac{\partial\mathcal{L}}{\partial \theta_1} & = \frac{\partial}{\partial \theta_1}\frac{1}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))^2 \\ & = \frac{1}{m}\sum_{i=0}^m 2(y_i - (\theta_1 x_i + \theta_0)) \frac{\partial}{\partial \theta_1}(y_i - (\theta_1 x_i + \theta_0)) \\ & = \frac{2}{m}\sum_{i=0}^m(y_i - (\theta_1 x_i + \theta_0))(-x_i) \\ & = \boxed{\frac{2}{m}\sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)}
+\frac{\partial\mathcal{L}}{\partial \theta_2} & = \frac{\partial}{\partial \theta_2}\frac{1}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))^2 \\ & = \frac{1}{m}\sum_{i=1}^m 2(y_i - (\theta_2 x_i + \theta_1)) \frac{\partial}{\partial \theta_2}(y_i - (\theta_2 x_i + \theta_1)) \\ & = \frac{2}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))(-x_i) \\ & = \boxed{\frac{2}{m}\sum_{i=1}^m(x_i)(\theta_2 x_i + \theta_1 - y_i)}
 \end{align}
 %
 Notice how analytical differentiation gives us the same answer as the \hyperref[sec:fdm]{finite difference method} (this is not by accident), with much less algebra. We can rewrite these two solutions in gradient form, i.e. as a column vector of partial derivatives:
@@ -2915,11 +2915,11 @@ Notice how analytical differentiation gives us the same answer as the \hyperref[
 \begin{equation}
 \nabla_\mathbf{\Theta}\mathcal{L} =
 \begin{bmatrix}
-\frac{\partial\mathcal{L}}{\partial \theta_0} \\
-\frac{\partial\mathcal{L}}{\partial \theta_1}
+\frac{\partial\mathcal{L}}{\partial \theta_1} \\
+\frac{\partial\mathcal{L}}{\partial \theta_2}
 \end{bmatrix} = \frac{2}{m}
 \begin{bmatrix}
-\sum_{i=0}^m(\theta_1 x_i + \theta_0 - y_i) \\ \sum_{i=0}^m(x_i)(\theta_1 x_i + \theta_0 - y_i)
+\sum_{i=1}^m(\theta_2 x_i + \theta_1 - y_i) \\ \sum_{i=1}^m(x_i)(\theta_2 x_i + \theta_1 - y_i)
 \end{bmatrix}
 \end{equation}
 
@@ -2943,56 +2943,56 @@ For completeness, and to convince ourselves the matrix solution is indeed the sa
 & = \frac{2}{m}\left(
 \underbrace{\begin{bmatrix}
 1 & \ldots & 1 \\
-x_0 & \ldots & x_m \\
+x_1 & \ldots & x_m \\
 \end{bmatrix}}_{\mathbf{X}^\intercal}
 \underbrace{\begin{bmatrix}
-1 & x_0 \\
+1 & x_1 \\
 \vdots & \vdots \\
 1 & x_m
 \end{bmatrix}}_{\mathbf{X}}
 \underbrace{\begin{bmatrix}
-\theta_0 \\
-\theta_1
+\theta_1 \\
+\theta_2
 \end{bmatrix}}_{\mathbf{\Theta}} -
 \underbrace{\begin{bmatrix}
 1 & \ldots & 1 \\
-x_0 & \ldots & x_m \\
+x_1 & \ldots & x_m \\
 \end{bmatrix}}_{\mathbf{X}^\intercal}
 \underbrace{\begin{bmatrix}
-y_0 \\
+y_1 \\
 \vdots \\
 y_m
 \end{bmatrix}}_{\mathbf{Y}}\right) \\
 & = \frac{2}{m}\left(
 \underbrace{\begin{bmatrix}
-m & \sum_{i=0}^{m}x_i \\
-\sum_{i=0}^{m}x_i & \sum_{i=0}^{m}x_i^2 \\
+m & \sum_{i=1}^{m}x_i \\
+\sum_{i=1}^{m}x_i & \sum_{i=1}^{m}x_i^2 \\
 \end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{X}}
 \underbrace{\begin{bmatrix}
-\theta_0 \\
-\theta_1
+\theta_1 \\
+\theta_2
 \end{bmatrix}}_{\mathbf{\Theta}} -
 \underbrace{\begin{bmatrix}
-\sum_{i=0}^{m}y_i \\
-\sum_{i=0}^{m}x_iy_i
+\sum_{i=1}^{m}y_i \\
+\sum_{i=1}^{m}x_iy_i
 \end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{Y}}\right) \\
 & = \frac{2}{m}\left(
 \underbrace{\begin{bmatrix}
-m \theta_0 + \sum_{i=0}^{m}\theta_1x_i \\
-\sum_{i=0}^{m}\theta_0x_i + \sum_{i=0}^{m}\theta_1x_i^2
+m \theta_1 + \sum_{i=1}^{m}\theta_2x_i \\
+\sum_{i=1}^{m}\theta_1x_i + \sum_{i=1}^{m}\theta_2x_i^2
 \end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{X}\mathbf{\Theta}} -
 \underbrace{\begin{bmatrix}
-\sum_{i=0}^{m}y_i \\
-\sum_{i=0}^{m}x_iy_i
+\sum_{i=1}^{m}y_i \\
+\sum_{i=1}^{m}x_iy_i
 \end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{Y}}\right) \\
 & = \boxed{\frac{2}{m}
 \underbrace{\begin{bmatrix}
-\sum_{i=0}^{m}\theta_1x_i + \theta_0 - y_i \\
-\sum_{i=0}^{m}(x_i)(\theta_1x_i + \theta_0 - y_i)
+\sum_{i=1}^{m}\theta_2x_i + \theta_1 - y_i \\
+\sum_{i=1}^{m}(x_i)(\theta_2x_i + \theta_1 - y_i)
 \end{bmatrix}}_{\mathbf{X}^\intercal\mathbf{X}\mathbf{\Theta} - \mathbf{X}^\intercal\mathbf{Y}} =
 \begin{bmatrix}
-\frac{\partial\mathcal{L}}{\partial \theta_0} \\
-\frac{\partial\mathcal{L}}{\partial \theta_1}
+\frac{\partial\mathcal{L}}{\partial \theta_1} \\
+\frac{\partial\mathcal{L}}{\partial \theta_2}
 \end{bmatrix} = \nabla_{\mathbf{\Theta}}\mathcal{L}(\mathbf{\Theta})}
 \end{align}
 %
