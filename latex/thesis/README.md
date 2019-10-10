@@ -1,4 +1,4 @@
-# Master's Thesis
+# [Master's Thesis](thesis.pdf)
 
 To build this thesis, pdfLaTeX is required.
 Run the following command from the parent directory:
