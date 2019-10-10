@@ -16,6 +16,7 @@ fun main() {
     println(partialApp3) // Should be 4
 
     val t = X + Z + Z + Y + 0.0
+    val v = t(Y to 4.0)
     val l = t(X to 1.0)(Z to 2.0)
     val r = t(X to 1.0)(Z to 2.0)(Y to 3.0) // Full currying
 

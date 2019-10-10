@@ -11,7 +11,7 @@
 \usepackage{algpseudocode}
 \usepackage{amsmath}
 \usepackage{rail}
-
+\usepackage{hyperref}
 
 \usepackage{natbib}
 
@@ -454,7 +454,7 @@
 
 Programming tools are computer programs which help humans program computers. Tools come in all shapes and forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this thesis, we share some lessons learned designing four tools that facilitate the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe Kotlin$\nabla$, a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial and metamorphic testing. Fourth, we explore a container infrastructure based on Docker, which enables the development reproducible robotics software for the Duckietown platform. Finally, we present a brief case study on an application built with these four tools in mind and offer some concluding remarks about the past, present and future of programming tools for intelligent systems.
 
-\chapter*{Acknowledgements}
+\chapter*{Remerciements}
 \vspace{-60pt} I would like to thank Gimmey, Mom, Uncle Mark, and Dad for their unfailing love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming. Siyan Wang for his fellowship and adventures. \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics. Uncle Andy for watering the seed for many years. Aunt Shannon, Adam Devoe and Jacquie Kirrane for encouraging me to pursue grad school. \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me algorithmic differentiation a long time ago. \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science. \href{http://blog.locut.us}{Ian Clarke} for showing me a clever new language called Kotlin. \href{https://hadihariri.com/}{Hadi Hariri} for placing more trust than in me than I deserved. \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school. \href{https://github.com/rusi}{Rusi Hristov} for his patience and mentorship. \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for showing me what good research looks like. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for his excellent engineering and architectural advice. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} \href{https://bhairavmehta95.github.io/}{Bhairav Mehta}, \href{http://www.solomatov.me/}{Konstantin Solomatov} and \href{https://www.seas.upenn.edu/~xsi/}{Xujie Si} for the interesting conversations. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} and for lighting the path between ML and PL. \href{http://conal.net/}{Conal Elliott} for teaching me the importance of simplicity and denotational semantics. \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller} for their useful comments and feedback related to Kotlin$\nabla$. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for helping a stranger on a cold winter's eve in 2017. \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my rambling emails. \href{https://censi.science/}{Andrea Censi} for his advice and encouragement. Last but not least, I wish to thank my brilliant advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and giving me far more credit than I deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline. Thank you!
 
 %%------------------------------------------------- %
@@ -1396,7 +1396,7 @@ A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape
 
 \section{Testing}\label{sec:testing}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method, known as property-based testing (PBT)~\citep{fink1997property} (cf.~\autoref{subsec:property-based-testing}), which is borrowed from the Haskell community and closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (cf.~\autoref{subsec:metamorphic-testing}). Notable implementations include \href{http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html}{QuickCheck}~\citep{claessen2011quickcheck}, \href{https://hypothesis.readthedocs.io/en/latest/}{Hypothesis}~\citep{Hypothesis} and \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to test Kotlin$\nabla$: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method is known as property-based testing (PBT)~\citep{fink1997property} (cf.~\autoref{subsec:property-based-testing}), closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (cf.~\autoref{subsec:metamorphic-testing}). Notable implementations include \href{http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html}{QuickCheck}~\citep{claessen2011quickcheck}, \href{https://hypothesis.readthedocs.io/en/latest/}{Hypothesis}~\citep{Hypothesis} and \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to test Kotlin$\nabla$: \\
 %
 \begin{enumerate}
     \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
@@ -1695,7 +1695,7 @@ Finally, from a performance perspective, it would be advantageous to integrate w
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \href{https://www.ias.ac.in/article/fulltext/reso/004/01/0080-0088}{\textit{Some moral and technical consequences of automation}}~\end{flushright}}
 
-Today's deep neural networks are surprisingly effective when compared with handcrafted algorithms, but have known weaknesses. Training neural networks which can robustly transfer to new domains where the training and test distributions are highly dissimilar still poses a significant challenge. These models are often susceptible to failure when presented with carefully crafted inputs. However, the same gradient-based optimization techniques used for training neural networks can also be exploited to probe their failure modes.
+Today's deep neural networks are capable of learning a broad range of functions, but have specific weaknesses. Training neural networks which can robustly transfer to new domains where the training and test distributions are highly dissimilar poses a significant challenge. These models are often susceptible to failure when presented with carefully crafted inputs. However, the same gradient-based optimization techniques used for training neural networks can also be exploited to probe their failure modes.
 
 In software engineering, techniques for software testing are becoming increasingly automated and general-purpose. Tests help prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. While essential for validating a program's correctness, tests are often cumbersome to implement. Techniques in coverage-guided fuzzing have enabled developers to write fewer tests with higher coverage. This made is possible by automated testing.
 
@@ -1714,7 +1714,7 @@ fun <C, D> unitTest(subroutine: (C) -> D) {
 }
 \end{kotlinlisting}
 %
-When carefully applied, unit testing can be an effective method for detecting bugs and formalizing the author's belief of preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated when the program changes. This has the unintended side effect of decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
+When carefully applied, unit testing can be an effective method for detecting bugs and validating the author's belief of preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated when the program changes. This has the unintended side effect of decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
 
 \section{Integration Testing}
 
@@ -1738,7 +1738,7 @@ For simplicity, in the following sections, we will only consider examples of pro
 
 \section{Fuzz Testing}
 
-Fuzz testing is an automated software testing methodology which generates random inputs to test a given program. For example, consider the following test:
+Fuzz testing is an automated testing methodology which generates random inputs to test a given program. For example, consider the following test:
 %
 \begin{kotlinlisting}
 @Repeat(1000)
@@ -1748,7 +1748,7 @@ fun <reified T, Y> simpleFuzzTest(program: (T) -> Y, oracle: (T) -> Y) {
 }
 \end{kotlinlisting}
 %
-The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. Furthermore, even if we had an oracle, if the space of inputs is large, it can take a long time to find an input where they disagree. Since a single call to \inline{program(i)} can be be quite expensive in practice, this method can also be quite inefficient.
+The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be be quite expensive in practice, this method can also be quite inefficient.
 
 \section{Property-based Testing}\label{subsec:property-based-testing}
 
@@ -1788,13 +1788,13 @@ tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> B
 \label{fig:pbt_comparison}
 \end{figure}
 %
-Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures). To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and MacLaurin series expansion of sine and cosine. Property-based testing shows us how to compare algorithmically distinct but semantically equivalent differentiation algorithms.
+Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures).~\footnote{To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and MacLaurin series expansion of sine and cosine.} Given two algorithms for calculating the derivative, a property-based test might check whether the absolute difference is bounded over all inputs.
 
 The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
 
 \section{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the representation do not drastically change the label. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is a property testing methodology which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
 First, let us consider the following concrete example, from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations applied to the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it encounters in an operational setting.
 
@@ -1836,7 +1836,7 @@ fun <I, O> genLegalTx(program: (I) -> O, mr: (I, O, I, O) -> Boolean, input: I, 
 }
 \end{kotlinlisting}
 
-But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled way to mutate a given input in our dataset to discover invalid outputs, which does not consume a lot of computation or require as much domain-specific expertise to craft useful transformations.
+But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled way to mutate a given input in our dataset to discover invalid outputs that is computationally efficient and general purpose.
 
 \section{Adversarial Testing}
 
@@ -1860,7 +1860,7 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each co
 \end{algorithmic}
 \end{algorithm}
 
-As we can see, algorithm \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances or need to repeat the procedure multiple times. Clearly, if we want to find the best direction in which to update $\mathbf g$, we need to be more careful about how we perform the search.
+As we can see, algorithm \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances. Clearly, if we want to find the best direction to update $\mathbf g$, we need to be more careful about how we perform the search.
 
 Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of its derivative. Consider algorithm \autoref{alg:fd_fuzz}, a refinement of algorithm \autoref{alg:bf_adversary} which uses the \hyperref[sec:fdm]{finite difference method} to approximate the derivative with respect to each component of the input. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation.
 
@@ -1898,7 +1898,7 @@ We can solve for the gradient with respect to $\mathbf{\Theta}$ by multiplying t
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}||_p    < \epsilon\}
 \end{equation}
 %
- To do so, we initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient ascent on the loss:
+To do so, we initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient ascent on the loss:
 %
 \begin{equation}\label{eq:projected_gd}
     \mathbf x \leftarrow \mathbf{\Phi}_{CS}\Big(\mathbf x + \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)\Big) \text{, where }
@@ -2019,7 +2019,7 @@ In this chapter we have visited some interesting ideas for validating intelligen
 
 Type systems, compilers and fuzzers are all part of a broader class of validation and verification tools. The goal of these tools is to provide feedback as early as possible. Some errors (e.g. syntactical errors), are minor nuisances and can be quickly detected with a good incremental parser (cf.~\autoref{subsec:the-parser}). Others, as shown in~\autoref{fig:verification_complexity}, are more complex but can be detected by spending computation. We argue this computational cost is often justified as undetected bugs can have catastrophic consequences. Spending computation frees up valuable cognitive resources better spent on more challenging tasks downstream. Studies have shown bugs detected early in development are more likely to be fixed~\citep{distefano2019scaling} -- saving minutes in development could save lives during operation.
 
-Learning capabilities will play a crucial role in autonomous robotics. As today's engineers begin to incorporate learning in tomorrow's safety-critical robotic systems, we believe the increased assurance provided by intelligent validation and verification tools will be indispensable for the widespread deployment of these complex adaptive cyberphysical systems.
+Learning capabilities will play a crucial role in autonomous systems. As today's engineers begin to incorporate learning in tomorrow's safety-critical robotic systems, we believe the increased assurance provided by intelligent validation and verification tools will be indispensable for the widespread deployment of these complex adaptive cyberphysical systems.
 
 \chapter{Tools for reproducible robotics}\label{ch:ducker}
 
@@ -2034,7 +2034,7 @@ The contents of this chapter are organized as follows. In \autoref{sec:dependenc
 
 \section{Dependency management}\label{sec:dependency-management}
 
-One common source of variability in software development are software dependencies. For many years, developers struggled with dependency management before it was discovered the dependency resolution problem was NP-complete~\citep{abate2012dependency}. If we assume no two versions of the same dependency can be installed simultaneously, then for a given set of software packages which must be installed, and dependencies required to install them, determining the most recent consistient version of the dependencies is as hard as the hardest problems in NP. Informally, this problem is known as \textit{dependency hell} and becomes increasingly problematic as software projects grow and introduce new dependencies.
+One common source of variability in software development are software dependencies. For many years, developers struggled with dependency management before it was discovered the dependency resolution problem was NP-complete~\citep{abate2012dependency}. If we assume no two versions of the same dependency can be installed simultaneously, then for a given set of software packages which must be installed, and dependencies required to install them, determining the most recent consistent version of the dependencies is as hard as the hardest problems in NP. Informally, this problem is known as \textit{dependency hell} and becomes increasingly problematic as software projects grow and introduce new dependencies.
 
 Dependency hell does not just arise inside individual software projects, but across projects and development environments. Hundreds of package managers have been developed for various operating systems, programming languages, and development frameworks. Ubuntu has the \href{https://help.ubuntu.com/lts/serverguide/apt.html}{Advanced Package Tool} (\inline{apt}), macOS has \href{https://brew.sh/}{Homebrew} (\inline{brew}), Windows has \href{https://chocolatey.org/}{Chocolatey} (\inline{choco}). Most programming language ecosystems have their own bespoke package managers; \href{https://conan.io/}{Conan} for C/C++, \href{https://maven.apache.org}{Maven} for Java, and \href{https://www.haskell.org/cabal/}{Cabal} for Haskell. Python has developed many overlapping solutions for package management, including \href{https://pypi.org/project/pip/}{pip}, \href{https://www.anaconda.com/}{Anaconda}, \href{https://github.com/pyenv/pyenv}{PyEnv}, \href{https://virtualenv.pypa.io/}{Virtualenv}, and others. Some of these install system-wide packages, and others provide command line environments. Over the lifetime of a computer system, as packages are installed and removed it becomes difficult to keep track of changes and their effects.
 
@@ -2467,7 +2467,7 @@ One application of multi-stage builds is compiling a project dependency from its
 
 \citet{white2017ros-docker} previously explored Dockerizing ROS, whose work forms the basis for our own, which extends their implementation to the Duckietown platform~\citep{paull2017duckietown}, a more hardware- and domain-specific set of ROS applications.
 
-The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \href[subsec:hypriot]{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, we provide a unified interface, the Duckietown Shell (\inline{dts}), which wraps their functionality and runs common tasks.
+The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \href[subsec:hypriot]{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, a unified interface, the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell} (\inline{dts}), is provided to wrap their functionality and perform common tasks.
 
 \section{Duckiebot Development using Docker}
 
@@ -2507,11 +2507,11 @@ Now, with the \href{https://github.com/duckietown/duckietown-shell}{Duckietown S
 dt> init_sd_card [--hostname "DUCKIEBOT_NAME"] [--wifi "username:password"]
 \end{dtslisting}
 %
-Users insert an SD card and follow the instructions provided. When complete, the card must be removed and inserted into the SD card slot on the Raspberry Pi. On first boot, care should be taken to ensure the device is powered continuously for a minimum of ten minutes.
+Users insert an SD card and follow the instructions provided. When complete, the card is removed and inserted into the SD card slot on the Raspberry Pi. On first boot, care must be taken to ensure the device is powered continuously for a minimum of ten minutes.
 
 \subsection{Web interface}
 
-To access the DuckieOS web interface, users can visit the following URL in any JavaScript-enabled web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation process successfully completed and the network is properly configured, the web application displayed in~\autoref{fig:portainer_ui} should be accessible. This application allows users who are uncomfortable with the command line interface to manage containers on their Duckiebots from a browser.
+To access the DuckieOS web interface, users can visit the following URL in any JavaScript-enabled web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation process successfully completed and the network is properly configured, the web application displayed in~\autoref{fig:portainer_ui} should be accessible. This application allows users unfamiliar with the CLI to manage containers on their Duckiebots from within the browser.
 
 \begin{figure}
     \includegraphics[width=0.80\textwidth]{../figures/portainer_screenshot.png}
@@ -2528,7 +2528,7 @@ To access the DuckieOS web interface, users can visit the following URL in any J
    duckietown/rpi-ros-kinetic-base:master18
 \end{pclisting}
 %
-The \inline{-H} flag indicates a remote Docker host on the local area network where the Docker command should be executed. For the \inline{DUCKIEBOT\_NAME} address it to work, mDNS must be configured properly in the network settings beforehand, otherwise an IP address is required.
+The \inline{-H} flag indicates a remote Docker host on the local area network where the Docker command should be executed. For the \inline{DUCKIEBOT\_NAME} syntax to work, mDNS must be properly configured in the network settings, otherwise an IP address is required.
 
 \subsection{Build and deployment}
 
@@ -2675,7 +2675,7 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 %
 \section{Retrospective}\label{sec:retrospective}
 
-One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can still load source code in a shared volume and rebuild on container startup. Both approaches ensure reproducible artifacts, but Docker images become more interpretable when sources are included and launch more quickly when images are fully prebuilt.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to package source code directly inside the container, or to store the sources externally (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can still load source code in a shared volume and rebuild on container startup. Both approaches produce reproducible artifacts, but Docker images launch more quickly when images are fully prebuilt and tend to be more interpretable with sources included.
 
 Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, it also adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
 
@@ -2709,14 +2709,14 @@ To address these issues, various container platforms, including Shifter~\citep{g
 
 \section{Conclusion}
 
-In this chapter we have taken a guided tour through the process of containerization and demonstrated the effectiveness of containers for building reproducible robotics software -- a key step in the broader quest for scientific reproducibility. We offer a set of best practices and lessons learned during the design, development and deployment of Docker containers for the Duckietown~\citep{paull2017duckietown} platform. The author wishes to thank Rusi Hristov for his invaluable technical assistance during the preliminary stages of this project.
+In this chapter we have taken a guided tour through the process of containerization and demonstrated the effectiveness of containers for building reproducible robotics software -- a key step in the broader quest for experimental reproducibility. We offer a set of best practices and lessons learned during the design, development and deployment of Docker containers for the Duckietown~\citep{paull2017duckietown} platform. The author wishes to thank Rusi Hristov for his invaluable technical assistance during the preliminary stages of this project.
 
 \mediumrare{\chapter{An application for autonomous robotics}\label{ch:case-study}}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
 \epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \href{https://yurichev.com/mirrors/knuth1989.pdf}{\textit{The Errors of \TeX}}\end{flushright}}
 
-As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the tools proposed in Chapters 2--5. The source code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
+As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the tools proposed in \autoref{ch:hatchery}--\autoref{ch:ducker}. The source code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
 
 \section{Design}
 
@@ -2787,7 +2787,7 @@ By building tools and validating their effectiveness for toy applications, we ho
 
 By complementing the cognitive abilities of human programmers -- who excel at creative problem solving and high-level abstract reasoning -- with the low-level symbolic processing capabilities of programming tools, we can accelerate the design, development and validation of intelligent systems in real-world applications. This process, we argue, deserves more specific tools than general-purpose programming due to the unique opportunities and challenges which intelligent systems present and the unique interplay of human-machine intelligence.
 
-As we start to engineer autonomous systems which must take increasingly human decisions, programmers will play a critical role in shaping the behavior and dynamics of these systems. In order to build trustworthy autonomous systems, it will be important to have tools which enable humans to understand and inform their behavior in a more rigorous manner than monitoring training curves and performing hyperparameter sweeps. This requires us to actively rethink the programming model in machine learning to incorporate human knowledge, e.g. using differentiable programming and type theory (cf.~\autoref{ch:kotlingrad}) or building custom tools which incorporate visual feedback (e.g. customized run and debugging assistance, cf.~\autoref{ch:hatchery}). This process will also require sound build systems in the form of reproducible software installation and configuration (cf.~\autoref{ch:ducker}).
+As we start to engineer autonomous systems which must take increasingly human decisions, programmers will play a critical role in shaping the behavior and dynamics of these systems. In order to build trustworthy autonomous systems, it will be important to have tools which enable humans to understand and inform their behavior in a more rigorous manner than monitoring training curves and performing hyperparameter sweeps. This requires us to actively rethink the programming model in machine learning to incorporate human knowledge, e.g. using differentiable programming and type theory (cf.~\autoref{ch:kotlingrad}) or building custom tools which incorporate visual feedback (e.g. customized run and debugging assistance, cf.~\autoref{ch:hatchery}). This process will also require sound build systems and best practices for reproducible software installation and configuration (cf.~\autoref{ch:ducker}).
 
 \section{Future work}
 
