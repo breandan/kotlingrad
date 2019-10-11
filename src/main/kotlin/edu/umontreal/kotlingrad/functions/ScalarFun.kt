@@ -11,6 +11,7 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
   constructor(fn: ScalarFun<X>): this(fn.variables)
   constructor(vararg fns: ScalarFun<X>): this(fns.flatMap { it.variables }.toSet())
 
+
   @JvmName("substitutionInvoke")
   operator fun invoke(map: Map<ScalarVar<X>, ScalarFun<X>>): ScalarFun<X> = when (this) {
     is Exp -> exponent(map).exp()
