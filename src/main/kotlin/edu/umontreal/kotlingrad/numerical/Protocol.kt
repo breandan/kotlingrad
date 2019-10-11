@@ -68,9 +68,12 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   operator fun ScalarFun<X>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
   operator fun ScalarFun<X>.invoke(vararg number: X) = this(variables.zip(number).toMap()).proto.value
   operator fun ScalarFun<X>.invoke(vararg subs: ScalarFun<X>) = this(variables.zip(subs).toMap())
-  @JvmName("numInvoke") operator fun ScalarFun<X>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).proto.value
-  @JvmName("numInvoke") operator fun ScalarFun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).proto.value
-  @JvmName("subInvoke") operator fun ScalarFun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, ScalarFun<X>>) = this(pairs.map { it.first to it.second }.toMap())
+  @JvmName("numInvoke") operator fun ScalarFun<X>.invoke(pairs: Map<ScalarVar<X>, Number>) =
+    this(pairs.map { (it.key to wrap(it.value)) }.toMap()).proto.value
+  @JvmName("numInvoke") operator fun ScalarFun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) =
+    this(pairs.map { (it.first to wrap(it.second)) }.toMap()).proto.value
+  @JvmName("subInvoke") operator fun ScalarFun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, ScalarFun<X>>) =
+    this(pairs.map { it.first to it.second }.toMap())
   operator fun Number.invoke(n: Number) = this
 
   fun ScalarFun<X>.eval() = invoke(variables.map { Pair(it, it.value) }.toMap()).proto.value

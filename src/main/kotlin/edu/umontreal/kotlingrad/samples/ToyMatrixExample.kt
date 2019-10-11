@@ -1,26 +1,26 @@
-@file:Suppress("DuplicatedCode", "LocalVariableName")
+@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER")
 
 package edu.umontreal.kotlingrad.samples
 
 fun main() {
   with(DoublePrecision) {
-    val x = Var("x", DoubleReal(0.0))
-    val y = Var("y", DoubleReal(0.0))
+    val x = vrb("x")
+    val y = vrb("y")
 
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
-    val df_dx = f.diff(x)
+    val df_dx = f.df(x)
     println("f'(x) = $df_dx")
 
     val g = x pow x
     println("g(x) = $g")
-    val dg_dx = g.diff(x)
+    val dg_dx = g.df(x)
     println("g'(x) = $dg_dx")
 
     val h = x + y
     println("h(x) = $h")
-    val dh_dx = h.diff(x)
+    val dh_dx = h.df(x)
     println("h'(x) = $dh_dx")
 
     val vf1 = Vec(y + x, y * 2)
