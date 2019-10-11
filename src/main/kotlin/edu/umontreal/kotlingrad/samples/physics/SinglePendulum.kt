@@ -23,8 +23,8 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
   val pivot = Point(len.toInt() + 20, 0)
   val rod1 = Line(len, 0.0, len * 2, 0.0).apply { strokeWidth = 3.0 }
   val rod2 = Line(len, 0.0, len * 2, 0.0).apply { strokeWidth = 3.0 }
-  val bob1 = Circle(10.0, GREEN)
-  val bob2 = Circle(10.0, BLACK)
+  val bob1 = Circle(30.0, GREEN)
+  val bob2 = Circle(30.0, BLACK)
 
   override fun start(stage: Stage) {
     val canvas = Pane().apply { children.addAll(rod1, bob1, bob2, rod2) }
@@ -39,7 +39,7 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
       .apply { cycleCount = INDEFINITE }.play()
   }
 
-  val ms = 1.0
+  val ms = 20.0
   val G = 9.81
   val dt = 0.1
   var ω = 0.0

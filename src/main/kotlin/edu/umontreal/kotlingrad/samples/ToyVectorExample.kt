@@ -7,17 +7,17 @@ fun main() {
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
-    val df_dx = f.diff(x)
+    val df_dx = f.df(x)
     println("f'(x) = $df_dx")
 
     val g = x pow x
     println("g(x) = $g")
-    val dg_dx = g.diff(x)
+    val dg_dx = g.df(x)
     println("g'(x) = $dg_dx")
 
     val h = x + y
     println("h(x) = $h")
-    val dh_dx = h.diff(x)
+    val dh_dx = h.df(x)
     println("h'(x) = $dh_dx")
 
     val vf1 = Vec(y + x, y * 2)
@@ -72,11 +72,11 @@ open class Vec<X: Fun<X>, E: `1`>(
 
   open fun diff(variable: Var<X>): Vec<X, E> =
     when (this) {
-      is VConst -> VConst(length, *contents.map { it.zero }.toTypedArray())
+      is VConst -> VConst(length, *contents.map { Zero<X>() }.toTypedArray())
       is VSum -> left.diff(variable) + right.diff(variable)
       is VVProd -> left.diff(variable) * right + right.diff(variable) * left
 //    is SVProd -> left.diff(variable) * right + right.diff(variable) * left
-      else -> Vec(length, contents.map { it.diff(variable) })
+      else -> Vec(length, contents.map { it.df(variable) })
     }
 
   open operator fun unaryMinus(): Vec<X, E> = VNegative(this)
