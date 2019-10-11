@@ -5,6 +5,7 @@ plugins {
   kotlin("jvm") version "1.3.50"
   `maven-publish`
   id("io.freefair.github.package-registry-maven-publish") version "4.1.1"
+  id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 group = "edu.umontreal"
@@ -60,6 +61,8 @@ dependencies {
   api("org.knowm.xchart:xchart:3.5.4")
   api("ch.obermuhlner:big-math:2.1.0")
   api("scientifik:kmath-core:0.1.3")
+  implementation("org.openjfx:javafx-swing:11")
+  implementation("org.openjfx:javafx:11")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
 
@@ -107,4 +110,8 @@ publishing {
   repositories {
     maven("${project.rootDir}/releases")
   }
+}
+
+javafx {
+  modules("javafx.controls")
 }

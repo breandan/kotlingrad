@@ -1,6 +1,6 @@
 # [Master's Thesis](thesis.pdf)
 
-To build this thesis, pdfLaTeX is required.
+To build this thesis, a [TeX Live](https://www.latex-project.org/get/) distribution is required.
 Run the following command from the parent directory:
 
 ```
