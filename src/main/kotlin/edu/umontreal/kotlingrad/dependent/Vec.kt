@@ -8,6 +8,8 @@ open class Vec<E, MaxLength : `100`>(val length: Nat<MaxLength>, val contents: L
 
   operator fun get(i: Int): E = contents[i]
 
+  fun magnitude() : E = TODO()
+
   companion object {
     operator fun <T> invoke(): Vec<T, `0`> = Vec(`0`, arrayListOf())
     operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, arrayListOf(t))

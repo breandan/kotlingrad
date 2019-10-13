@@ -3,7 +3,6 @@ package edu.umontreal.kotlingrad.functions
 import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.utils.randomDefaultName
-import edu.umontreal.kotlingrad.utils.superscript
 
 sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = emptySet()):
   Field<ScalarFun<X>>, Differentiable<ScalarFun<X>> {
@@ -48,15 +47,14 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     this is Exp -> "exp($exponent)"
     this is Log -> "ln($logarithmand)"
     this is Negative -> "-$arg"
-    this is Power -> "$base${superscript(exponent)}"
-    this is SquareRoot && (radicand is ScalarConst || radicand is ScalarVar) -> "√$radicand"
-    this is SquareRoot -> "√($radicand)"
+    this is Power -> if (exponent == one) "$base" else "$base pow (${exponent})"
+    this is SquareRoot -> "sqrt($radicand)"
     this is Sine -> "sin($angle)"
     this is Cosine -> "cos($angle)"
     this is Tangent -> "tan($angle)"
-    this is ScalarProduct && multiplicand is ScalarSum -> "$multiplicator⋅($multiplicand)"
-    this is ScalarProduct && multiplicator is ScalarSum -> "($multiplicator)⋅$multiplicand"
-    this is ScalarProduct -> "$multiplicator⋅$multiplicand"
+    this is ScalarProduct && multiplicand is ScalarSum -> "$multiplicator * ($multiplicand)"
+    this is ScalarProduct && multiplicator is ScalarSum -> "($multiplicator) * $multiplicand"
+    this is ScalarProduct -> "$multiplicator * $multiplicand"
     this is ScalarSum && addend is Negative -> "$augend - ${addend.arg}"
     this is ScalarSum -> "$augend + $addend"
     this is ScalarVar -> name
@@ -185,12 +183,6 @@ class Power<X: ScalarFun<X>> internal constructor(
     one -> base.diff(ind)
     is ScalarConst -> exponent * base.pow(exponent - one) * base.diff(ind)
     else -> this * (exponent * base.ln()).diff(ind)
-  }
-
-  fun superscript(exponent: ScalarFun<X>) = when {
-    exponent == one -> ""
-    "$exponent".matches(Regex("[() a-pr-z0-9⋅+-]*")) -> "$exponent".superscript()
-    else -> "^($exponent)"
   }
 }
 

@@ -88,6 +88,8 @@ open class Vec<X: Fun<X>, E: `1`>(
   infix fun dot(multiplicand: Vec<X, E>): Fun<X> =
     contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
 
+  fun magnitude(): Fun<X> = contents.reduce { acc, p -> acc + p*p }.sqrt()
+
   operator fun get(index: Int) = contents[index]
 
   override fun toString() =
