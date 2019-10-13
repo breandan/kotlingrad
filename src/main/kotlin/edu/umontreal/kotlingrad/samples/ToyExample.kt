@@ -93,6 +93,8 @@ sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()) :
 
   override fun unaryMinus(): Fun<X> = Negative(this)
 
+  fun sqrt(): Fun<X> = this pow (One<X>() / (Two<X>()))
+
   override fun toString(): String = when {
     this is Log -> "ln($logarithmand)"
     this is Negative -> "-($value)"
@@ -142,6 +144,7 @@ class Df<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X
 data class Bindings<X: Fun<X>> (val map: Map<Fun<X>, Fun<X>>, 
                            val zero: Fun<X>,
                            val one: Fun<X>,
+                           val two: Fun<X>,
                            val E: Fun<X>)
 
 interface Variable { val name: String }
@@ -153,6 +156,7 @@ class Var<X : Fun<X>>(override val name: String) : Variable, Fun<X>() {
 open class SConst<X : Fun<X>> : Fun<X>()
 class Zero<X: Fun<X>> : SConst<X>()
 class One<X: Fun<X>> : SConst<X>()
+class Two<X: Fun<X>> : SConst<X>()
 class E<X: Fun<X>> : SConst<X>()
 
 abstract class RealNumber<X : Fun<X>>(open val value: Number) : SConst<X>()
@@ -205,9 +209,9 @@ object DoublePrecision : Protocol<DoubleReal>() {
   fun vrb(name: String) = Var<DoubleReal>(name)
 
   @JvmName("ValBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Var<DoubleReal>, Number>) =
-    this(Bindings(pairs.map { (it.first to wrap(it.second)) }.toMap(), wrap(0.0), wrap(1.0), wrap(kotlin.math.E)))
+    this(Bindings(pairs.map { (it.first to wrap(it.second)) }.toMap(), wrap(0.0), wrap(1.0), wrap(2.0), wrap(kotlin.math.E)))
   @JvmName("FunBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Fun<DoubleReal>, Fun<DoubleReal>>) =
-    this(Bindings(pairs.map { (it.first to it.second) }.toMap(), wrap(0.0), wrap(1.0), wrap(kotlin.math.E)))
+    this(Bindings(pairs.map { (it.first to it.second) }.toMap(), wrap(0.0), wrap(1.0), wrap(2.0), wrap(kotlin.math.E)))
 
   operator fun <Y : `1`> Vec<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
     this(sPairs.map { (it.first to wrap(it.second)) }.toMap())

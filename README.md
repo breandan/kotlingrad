@@ -251,17 +251,17 @@ fun main() {
 Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
 
 ```
-z(x, y)                         = x⋅(-sin(x⋅y) + y)⋅4
+z(x, y)                         = x * (-sin(x * y) + y) * 4
 z({x=0, y=1})                   = 0.0
-∂z({x=0, y=1})/∂x               = (-sin(x⋅y) + y - x⋅cos(x⋅y)⋅y)⋅4 
+∂z({x=0, y=1})/∂x               = (-sin(x * y) + y - x * cos(x * y) * y) * 4 
                                 = 4.0
-∂z({x=0, y=1})/∂y               = x⋅(1 - cos(x⋅y)⋅x)⋅4 
+∂z({x=0, y=1})/∂y               = x * (1 - cos(x * y) * x) * 4 
                                 = 0.0
-∂²z({x=0, y=1})/∂x²             = x⋅(1 - cos(x⋅y)⋅x)⋅4 
+∂²z({x=0, y=1})/∂x²             = x * (1 - cos(x * y) * x) * 4 
                                 = -8.0
-∂²z({x=0, y=1})/∂x∂y            = (-x⋅(-sin(x⋅y)⋅x⋅y + cos(x⋅y)) + 1 - cos(x⋅y)⋅x)⋅4 
+∂²z({x=0, y=1})/∂x∂y            = (-x * (-sin(x * y) * x * y + cos(x * y)) + 1 - cos(x * y) * x) * 4 
                                 = 4.0
-∇z({x=0, y=1})                  = {x=(-sin(x⋅y) + y - x⋅cos(x⋅y)⋅y)⋅4, y=x⋅(1 - cos(x⋅y)⋅x)⋅4} 
+∇z({x=0, y=1})                  = {x=(-sin(x * y) + y - x * cos(x * y) * y) * 4, y=x * (1 - cos(x * y) * x) * 4} 
                                 = [4.0, 0.0]ᵀ
 ```
 
