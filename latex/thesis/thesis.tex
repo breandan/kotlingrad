@@ -1493,7 +1493,7 @@ interface Field<X: Field<X>>: Group<X> {
     val e: X
     val one: X
     val zero: X
-    operator fun div(dividend: X): X = this * dividend.pow(-one)
+    operator fun div(divisor: X): X = this * divisor.pow(-one)
     infix fun pow(exp: X): X
     fun ln(): X
 }

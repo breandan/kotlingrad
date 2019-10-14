@@ -48,7 +48,7 @@ interface Group<X : Group<X>> {
 }
 
 interface Field<X : Field<X>> : Group<X> {
-  operator fun div(dividend: X): X
+  operator fun div(divisor: X): X
   infix fun pow(exp: X): X
   fun ln(): X
 }
@@ -65,8 +65,8 @@ sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()) :
 
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
-  override operator fun div(dividend: Fun<X>): Fun<X> = this * dividend.pow(-One<X>())
-  operator fun <E : `1`> times(multiplicand: Vec<X, E>): Vec<X, E> = SVProd(this, multiplicand)
+  override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
+  operator fun <E : `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
 
   override operator fun invoke(bnds: Bindings<X>): Fun<X> =
     bnds.map.getOrElse(this) {
@@ -213,20 +213,20 @@ object DoublePrecision : Protocol<DoubleReal>() {
   @JvmName("FunBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Fun<DoubleReal>, Fun<DoubleReal>>) =
     this(Bindings(pairs.map { (it.first to it.second) }.toMap(), wrap(0.0), wrap(1.0), wrap(2.0), wrap(kotlin.math.E)))
 
-  operator fun <Y : `1`> Vec<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
+  operator fun <Y : `1`> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
     this(sPairs.map { (it.first to wrap(it.second)) }.toMap())
 
   val x = vrb("x")
   val y = vrb("y")
   val z = vrb("z")
 
-  fun Vec(d0: Double) = Vec(DoubleReal(d0))
-  fun Vec(d0: Double, d1: Double): Vec<DoubleReal, `2`> = Vec(DoubleReal(d0), DoubleReal(d1))
-  fun Vec(d0: Double, d1: Double, d2: Double): Vec<DoubleReal, `3`> = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
+  fun Vec(d0: Double) = VFun(DoubleReal(d0))
+  fun Vec(d0: Double, d1: Double): VFun<DoubleReal, `2`> = VFun(DoubleReal(d0), DoubleReal(d1))
+  fun Vec(d0: Double, d1: Double, d2: Double): VFun<DoubleReal, `3`> = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
 }
