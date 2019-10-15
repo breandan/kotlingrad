@@ -57,11 +57,13 @@ interface Field<X : Field<X>> : Group<X> {
  * Scalar function.
  */
 
-sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()):
+sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
+                             //,open val vVars: Set<VVar<X, *>> = emptySet()
+):
   Field<Fun<X>>,
   (Bindings<X>) -> Fun<X> {
-  constructor(fn: Fun<X>) : this(fn.vars)
-  constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.vars }.toSet())
+  constructor(fn: Fun<X>) : this(fn.sVars)//, fn.vVars)
+  constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.sVars }.toSet()) //fns.flatMap { it.vVars }.toSet())
 
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
@@ -83,6 +85,8 @@ sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()):
         is Negative -> -value(bnds)
         is Log -> logarithmand(bnds).ln()
         is Df -> ad()(bnds)
+        is DProd -> DProd(left(bnds), right(bnds))
+        is VMagnitude -> VMagnitude(value(bnds))
       }
     }
 
@@ -111,6 +115,8 @@ sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()):
     this is One -> "\uD835\uDFD9"
     this is Two -> "\uD835\uDFDA"
     this is E -> "ⅇ"
+    this is VMagnitude -> "|$value|"
+    this is DProd -> "($left) dot ($right)"
     else -> super.toString()
   }
 }
@@ -126,7 +132,7 @@ class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun
 class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>) : Fun<X>(logarithmand)
 class Df<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X>) : Fun<X>(fn, *vrbs) {
   init {
-    vrbs.filter { it !in fn.vars }.let { require(it.isEmpty()) { "Variables: $it not in function!" } }
+    vrbs.filter { it !in fn.sVars }.let { require(it.isEmpty()) { "Variables: $it not in function!" } }
   }
 
   fun apply() = fn.ad()
@@ -140,11 +146,14 @@ class Df<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X
     is Negative -> -value.ad()
     is Log -> (logarithmand pow -One<X>()) * logarithmand.ad()
     is Df -> fn.ad()
+    is DProd -> DProd(left.diff(), right.diff())
+    is VMagnitude -> VMagnitude(value.diff())
   }
 }
 
 data class Bindings<X: Fun<X>>(
   val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
+//  val vMap: Map<VFun<X, *>, VFun<X, *>> = mapOf(),
   val zero: Fun<X>,
   val one: Fun<X>,
   val two: Fun<X>,
@@ -157,10 +166,14 @@ data class Bindings<X: Fun<X>>(
 //              E: Fun<X>): this(sMap, zero, one, two, E)
 }
 
+class DProd<X: Fun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): Fun<X>(left.sVars + right.sVars)//, left.vVars + right.vVars)
+
+class VMagnitude<X: Fun<X>>(val value: VFun<X, *>): Fun<X>(value.sVars)//, value.vVars)
+
 interface Variable { val name: String }
 
 class Var<X : Fun<X>>(override val name: String) : Variable, Fun<X>() {
-  override val vars: Set<Var<X>> = setOf(this)
+  override val sVars: Set<Var<X>> = setOf(this)
 }
 
 open class SConst<X : Fun<X>> : Fun<X>()
@@ -235,7 +248,7 @@ object DoublePrecision : Protocol<DoubleReal>() {
     this(Bindings(pairs.map { (it.first to it.second) }.toMap(), zero, one, two, e))
 
   operator fun <Y : `1`> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
-    this(VBindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), emptyMap(), zero, one, two, e))
+    this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
 
   val x = vrb("x")
   val y = vrb("y")
