@@ -21,10 +21,13 @@ fun main() {
     println("h'(x) = $dh_dx")
 
     val vf1 = Vec(y + x, y * 2)
+    println(vf1)
     val bh = x * vf1 + Vec(1.0, 3.0)
+    println(bh(y to 2.0, x to 4.0))
     val vf2 = Vec(x, y)
     val q = vf1 + vf2 + Vec(0.0, 0.0)
-    val z = q(x to 1.0, y to 2.0)
+    val z = q(x to 1.0).magnitude()(y to 2.0)
+    println(z)
   }
 }
 
@@ -32,15 +35,107 @@ fun main() {
  * Vector function.
  */
 
-open class Vec<X: Fun<X>, E: `1`>(
+open class VFun<X: Fun<X>, E: `1`>(
   open val length: Nat<E>,
-  val sVars: Set<Var<X>> = emptySet(),
-  open val vVars: Set<VVar<X, *>> = emptySet(),
-  open vararg val contents: Fun<X>
-) {
-  constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, contents.flatMap { it.vars }.toSet(), emptySet(), *contents.toTypedArray())
-  constructor(length: Nat<E>, vararg contents: Fun<X>): this(length, contents.flatMap { it.vars }.toSet(), emptySet(), *contents)
+  open val sVars: Set<Var<X>> = emptySet(),
+  open val vVars: Set<VVar<X, *>> = emptySet()): (VBindings<X>) -> VFun<X, E> {
   constructor(length: Nat<E>, vararg vFns: Vec<X, E>): this(length, vFns.flatMap { it.sVars }.toSet(), vFns.flatMap { it.vVars }.toSet())
+
+  constructor(length: Nat<E>, vararg vFns: VFun<X, E>): this(length, vFns.flatMap { it.sVars }.toSet(), vFns.flatMap { it.vVars }.toSet())
+//  val expand: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
+
+  override operator fun invoke(vBindings: VBindings<X>): VFun<X, E> =
+    when (this) {
+      is Vec<X, E> -> Vec(length, contents.map { it(vBindings.sBindings) })
+      is VMagnitude<X> -> value(vBindings).magnitude() as VFun<X, E>
+      is VNegative<X, E> -> -value(vBindings)
+      is VSum<X, E> -> left(vBindings) + right(vBindings)
+      is VVProd<X, E> -> left(vBindings) * right(vBindings)
+      is SVProd<X, E> -> left(vBindings.sBindings) * right(vBindings)
+      is DProd<X> -> DProd(left(vBindings), right(vBindings)) as VFun<X, E>
+      is VVar<X, E> -> vBindings.vMap.getOrElse(this) { this } as VFun<X, E>
+      else -> this
+    }
+
+  open fun diff(variable: Var<X>): VFun<X, E> =
+    when (this) {
+      is RealVector -> VZero(length)
+      is VVar -> VOne(length)
+      is VSum -> left.diff(variable) + right.diff(variable)
+      is VVProd -> left.diff(variable) * right + right.diff(variable) * left
+      is SVProd -> left.df(variable) * right + right.diff(variable) * left
+      else -> VFun(length, sVars, vVars)
+    }
+
+  open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
+  open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
+  open operator fun times(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
+  open operator fun times(multiplicand: Fun<X>): VFun<X, E> = VFun(length, sVars + multiplicand.vars, vVars)
+//  open operator fun <Q: `1`> times(multiplicand: MFun<X, E, Q>): VFun<X, Q> = (expand * multiplicand).rows.first()
+
+  open infix fun dot(multiplicand: VFun<X, E>): VFun<X, `1`> = DProd(this, multiplicand)
+
+  open fun magnitude(): VFun<X, `1`> = VMagnitude(this)
+
+  override fun toString() =
+    when (this) {
+      is Vec -> contents.joinToString(", ", "[", "]")
+      is VSum -> "$left + $right"
+      is VVProd -> "$left * $right"
+      is SVProd -> "$left * $right"
+      is VNegative -> "-($value)"
+      is VMagnitude -> "|$value|"
+      else -> super.toString()
+    }
+}
+
+class VMagnitude<X: Fun<X>>(val value: VFun<X, *>): VFun<X, `1`>(`1`, value.sVars, value.vVars)
+class VNegative<X: Fun<X>, E: `1`>(val value: VFun<X, E>): VFun<X, E>(value.length, value)
+class VSum<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
+//class VDot<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): Fun<X>(left.vars + right.vars)
+
+class VVProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
+class DProd<X: Fun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): VFun<X, `1`>(`1`, left.sVars + right.sVars, left.vVars + right.vVars)
+class SVProd<X: Fun<X>, E: `1`>(val left: Fun<X>, val right: VFun<X, E>): VFun<X, E>(right.length, left.vars + right.sVars, right.vVars)
+
+class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
+
+open class Vec<X: Fun<X>, E: `1`>(override val length: Nat<E>,
+                                  override val sVars: Set<Var<X>> = emptySet(),
+                                  open vararg val contents: Fun<X>): VFun<X, E>(length) {
+  constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, contents.flatMap { it.vars }.toSet(), *contents.toTypedArray())
+  constructor(length: Nat<E>, vararg contents: Fun<X>): this(length, contents.flatMap { it.vars }.toSet(), *contents)
+
+  init {
+    require(length.i == contents.size || contents.isEmpty()) { "Declared length, $length != ${contents.size}" }
+  }
+
+  override fun toString() = contents.joinToString(", ", "[", "]")
+
+  operator fun get(index: Int) = contents[index]
+
+  override fun plus(addend: VFun<X, E>) = when (addend) {
+    is Vec -> Vec(length, contents.mapIndexed { i, v -> v + addend.contents[i] })
+    else -> super.plus(addend)
+  }
+
+  override fun times(multiplicand: VFun<X, E>) = when(multiplicand) {
+    is Vec -> Vec(length, contents.mapIndexed { i, v -> v * multiplicand.contents[i] })
+    else -> super.times(multiplicand)
+  }
+
+  override fun times(multiplicand: Fun<X>) = Vec(length, contents.map {it * multiplicand})
+
+  override fun dot(multiplicand: VFun<X, E>) = when(multiplicand) {
+    is Vec -> Vec(`1`, contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] })
+    else -> super.dot(multiplicand)
+  }
+
+  override fun magnitude() = Vec(`1`, contents.reduce { acc, p -> acc + p*p }.sqrt())
+
+  override fun unaryMinus() = Vec(length, contents.map { -it })
+
+  override fun diff(variable: Var<X>) = Vec(length, contents.map { it.df(variable) })
 
   companion object {
     operator fun <T: Fun<T>> invoke(t: Fun<T>): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
@@ -53,70 +148,28 @@ open class Vec<X: Fun<X>, E: `1`>(
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>): Vec<T, `8`> = Vec(`8`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>, t8: Fun<T>): Vec<T, `9`> = Vec(`9`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
   }
-
-  init {
-    require(length.i == contents.size || contents.isEmpty()) { "Declared length, $length != ${contents.size}" }
-  }
-
-  val expand: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
-
-  operator fun invoke(sMap: Map<Var<X>, X> = emptyMap(), vMap: Map<VVar<X, E>, VConst<X, E>> = emptyMap()): Vec<X, E> =
-    when (this) {
-      is VNegative<X, E> -> Vec(length, value(sMap, vMap).contents.map { -it })
-      is VSum<X, E> -> left(sMap, vMap) + right(sMap, vMap)
-      is VVProd<X, E> -> left(sMap, vMap) * right(sMap, vMap)
-//    is VDot<X, E> -> VFun(`1`, contents.reduceIndexed { index, acc, element -> acc + element * right[index] })
-      is VVar<X, E> -> vMap.getOrElse(this) { this }
-      else -> this
-    }
-
-  open fun diff(variable: Var<X>): Vec<X, E> =
-    when (this) {
-      is VConst -> VConst(length, *contents.map { Zero<X>() }.toTypedArray())
-      is VSum -> left.diff(variable) + right.diff(variable)
-      is VVProd -> left.diff(variable) * right + right.diff(variable) * left
-//    is SVProd -> left.diff(variable) * right + right.diff(variable) * left
-      else -> Vec(length, contents.map { it.df(variable) })
-    }
-
-  open operator fun unaryMinus(): Vec<X, E> = VNegative(this)
-  open operator fun plus(addend: Vec<X, E>): Vec<X, E> = VSum(this, addend)
-  open operator fun times(multiplicand: Vec<X, E>): Vec<X, E> = VVProd(this, multiplicand)
-  open operator fun times(multiplicand: Fun<X>): Vec<X, E> = Vec(length, contents.map { it * multiplicand })
-  open operator fun <Q: `1`> times(multiplicand: MFun<X, E, Q>): Vec<X, Q> = (expand * multiplicand).rows.first()
-
-  infix fun dot(multiplicand: Vec<X, E>): Fun<X> =
-    contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
-
-  fun magnitude(): Fun<X> = contents.reduce { acc, p -> acc + p*p }.sqrt()
-
-  operator fun get(index: Int) = contents[index]
-
-  override fun toString() =
-    when (this) {
-      is VSum -> "$left + $right"
-      is VVProd -> "$left * $right"
-      else -> contents.joinToString(", ", "[", "]")
-    }
 }
 
-class VNegative<X: Fun<X>, E: `1`>(val value: Vec<X, E>): Vec<X, E>(value.length, value)
-class VSum<X: Fun<X>, E: `1`>(val left: Vec<X, E>, val right: Vec<X, E>): Vec<X, E>(left.length, left, right)
-//class VDot<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): Fun<X>(left.vars + right.vars)
+class VZero<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
+class VOne<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
 
-class VVProd<X: Fun<X>, E: `1`>(val left: Vec<X, E>, val right: Vec<X, E>): Vec<X, E>(left.length, left, right)
-class SVProd<X: Fun<X>, E: `1`>(val left: Fun<X>, val right: Vec<X, E>): Vec<X, E>(right.length, left.vars + right.sVars, right.vVars, *right.contents)
+abstract class RealVector<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
+class VDoubleReal<E: `1`>(length: Nat<E>): RealVector<DoubleReal, E>(length)
 
-class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>, vararg val value: X): Variable, Vec<X, E>(length, *value) { override val vVars: Set<VVar<X, *>> = setOf(this) }
-open class VConst<X: Fun<X>, E: `1`>(length: Nat<E>, override vararg val contents: SConst<X>): Vec<X, E>(length, *contents)
-abstract class RealVector<X: Fun<X>, E: `1`>(length: Nat<E>, override vararg val contents: SConst<X>): VConst<X, E>(length, *contents)
-//class VDoubleReal<E: `1`>(length: Nat<E>, override vararg val contents: DoubleReal): RealVector<DoubleReal, E>(length, *contents) {
-//  override fun plus(addend: VFun<DoubleReal, E>): VFun<DoubleReal, E> = VDoubleReal(length, *contents.zip(addend.contents).map { (it.first + it.second) }.toTypedArray())
-//}
+data class VBindings<X: Fun<X>> (
+  val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
+  val vMap: Map<VFun<X, *>, VFun<X, *>> = mapOf(),
+  val zero: Fun<X>,
+  val one: Fun<X>,
+  val two: Fun<X>,
+  val E: Fun<X>) {
+  val sBindings = Bindings(sMap, zero, one, two, E)
+}
 
 /**
  * Type level integers.
  */
+
 interface Nat<T: `0`> { val i: Int }
 sealed class `0`(open val i: Int = 0) {
   companion object: `0`(), Nat<`0`>

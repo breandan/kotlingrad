@@ -57,7 +57,7 @@ interface Field<X : Field<X>> : Group<X> {
  * Scalar function.
  */
 
-sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()) :
+sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()):
   Field<Fun<X>>,
   (Bindings<X>) -> Fun<X> {
   constructor(fn: Fun<X>) : this(fn.vars)
@@ -66,13 +66,14 @@ sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()) :
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
   override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
-  operator fun <E : `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
+  open operator fun <E : `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
 
   override operator fun invoke(bnds: Bindings<X>): Fun<X> =
-    bnds.map.getOrElse(this) {
+    bnds.sMap.getOrElse(this) {
       when (this) {
         is Zero -> bnds.zero
         is One -> bnds.one
+        is Two -> bnds.two
         is E -> bnds.E
         is Var -> this
         is SConst -> this
@@ -108,6 +109,7 @@ sealed class Fun<X : Fun<X>>(open val vars: Set<Var<X>> = emptySet()) :
     this is Df -> "d($fn) / d(${vrbs.joinToString(", ")})"
     this is Zero -> "\uD835\uDFD8"
     this is One -> "\uD835\uDFD9"
+    this is Two -> "\uD835\uDFDA"
     this is E -> "ⅇ"
     else -> super.toString()
   }
@@ -141,11 +143,19 @@ class Df<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X
   }
 }
 
-data class Bindings<X: Fun<X>> (val map: Map<Fun<X>, Fun<X>>, 
-                           val zero: Fun<X>,
-                           val one: Fun<X>,
-                           val two: Fun<X>,
-                           val E: Fun<X>)
+data class Bindings<X: Fun<X>>(
+  val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
+  val zero: Fun<X>,
+  val one: Fun<X>,
+  val two: Fun<X>,
+  val E: Fun<X>) {
+//  constructor(sMap: Map<Fun<X>, Fun<X>>,
+//              vMap: Map<VFun<X, *>, VFun<X, *>>,
+//              zero: Fun<X>,
+//              one: Fun<X>,
+//              two: Fun<X>,
+//              E: Fun<X>): this(sMap, zero, one, two, E)
+}
 
 interface Variable { val name: String }
 
@@ -180,6 +190,12 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
     else -> super.times(multiplicand)
   }
 
+  override operator fun <E : `1`> times(multiplicand: VFun<DoubleReal, E>): VFun<DoubleReal, E> =
+    when (multiplicand) {
+      is Vec<DoubleReal, E> -> Vec(multiplicand.length, multiplicand.contents.map { this * it })
+      else -> super.times(multiplicand)
+    }
+
   override fun pow(exp: Fun<DoubleReal>) = when (exp) {
     is DoubleReal -> DoubleReal(value.pow(exp.value))
     else -> super.pow(exp)
@@ -206,27 +222,32 @@ sealed class Protocol<X : RealNumber<X>> {
 object DoublePrecision : Protocol<DoubleReal>() {
   override fun wrap(default: Number): DoubleReal = DoubleReal(default.toDouble())
 
+  val one = wrap(1.0)
+  val zero = wrap(0.0)
+  val two = wrap(2.0)
+  val e = wrap(kotlin.math.E)
+
   fun vrb(name: String) = Var<DoubleReal>(name)
 
   @JvmName("ValBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Var<DoubleReal>, Number>) =
-    this(Bindings(pairs.map { (it.first to wrap(it.second)) }.toMap(), wrap(0.0), wrap(1.0), wrap(2.0), wrap(kotlin.math.E)))
+    this(Bindings(pairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
   @JvmName("FunBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Fun<DoubleReal>, Fun<DoubleReal>>) =
-    this(Bindings(pairs.map { (it.first to it.second) }.toMap(), wrap(0.0), wrap(1.0), wrap(2.0), wrap(kotlin.math.E)))
+    this(Bindings(pairs.map { (it.first to it.second) }.toMap(), zero, one, two, e))
 
   operator fun <Y : `1`> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
-    this(sPairs.map { (it.first to wrap(it.second)) }.toMap())
+    this(VBindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), emptyMap(), zero, one, two, e))
 
   val x = vrb("x")
   val y = vrb("y")
   val z = vrb("z")
 
-  fun Vec(d0: Double) = VFun(DoubleReal(d0))
-  fun Vec(d0: Double, d1: Double): VFun<DoubleReal, `2`> = VFun(DoubleReal(d0), DoubleReal(d1))
-  fun Vec(d0: Double, d1: Double, d2: Double): VFun<DoubleReal, `3`> = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = VFun(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
+  fun Vec(d0: Double) = Vec(DoubleReal(d0))
+  fun Vec(d0: Double, d1: Double) = Vec(DoubleReal(d0), DoubleReal(d1))
+  fun Vec(d0: Double, d1: Double, d2: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
 }
