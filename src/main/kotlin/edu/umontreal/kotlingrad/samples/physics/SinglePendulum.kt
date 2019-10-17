@@ -9,8 +9,7 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color.BLACK
-import javafx.scene.paint.Color.GREEN
+import javafx.scene.paint.Color.*
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.stage.Stage
@@ -21,13 +20,16 @@ import kotlin.math.*
 @Suppress("NonAsciiCharacters", "PropertyName", "LocalVariableName")
 class SinglePendulum(private val len: Double = 300.0) : Application(), EventHandler<ActionEvent> {
   val pivot = Point(len.toInt() + 20, 0)
+  val anchor = Circle(10.0, BLACK).apply {layoutX = len; layoutY = 0.0}
+
   val rod1 = Line(len, 0.0, len * 2, 0.0).apply { strokeWidth = 3.0 }
   val rod2 = Line(len, 0.0, len * 2, 0.0).apply { strokeWidth = 3.0 }
-  val bob1 = Circle(30.0, GREEN)
-  val bob2 = Circle(30.0, BLACK)
+
+  val bob1 = Circle(20.0, GREEN) // Ground truth
+  val bob2 = Circle(20.0, RED)   // Prediction
 
   override fun start(stage: Stage) {
-    val canvas = Pane().apply { children.addAll(rod1, bob1, bob2, rod2) }
+    val canvas = Pane().apply { children.addAll(anchor, rod1, rod2, bob2, bob1) }
 
     stage.apply {
       title = "Pendulum I"
@@ -94,7 +96,7 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
           velocity = gamma * velocity + α * d_dg(G1 to G1P)
           G1P -= velocity
           i++
-        } while (abs(velocity) > 0.00001 && i < 100)
+        } while (abs(velocity) > 0.00001 && i < 70)
         G1 = Var("G1", G1P)
         if(q % 10 == 0) println("G = $G1P")
       } else if(q % 100 == 0) println("Loss: ${l2.eval()}")
