@@ -79,7 +79,6 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VVProd -> "$left * $right"
       is SVProd -> "$left * $right"
       is VNegative -> "-($value)"
-//      else -> super.toString()
       is VDf -> "d($vfn) / d(${vrbs.joinToString(", ")})"
     }
 }
@@ -144,11 +143,21 @@ open class Vec<X: Fun<X>, E: `1`>(override val length: Nat<E>,
     else -> super.dot(multiplicand)
   }
 
-  override fun magnitude() = contents.reduce { acc, p -> acc + p*p }.sqrt()
+  override fun magnitude() = contents.reduce { acc, p -> acc + p * p }.sqrt()
 
   override fun unaryMinus() = Vec(length, contents.map { -it })
 
   companion object {
+    operator fun <T: Fun<T>> invoke(t: SConst<T>): VConst<T, `1`> = VConst(`1`, t)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>): VConst<T, `2`> = VConst(`2`, s0, s1)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>): VConst<T, `3`> = VConst(`3`, s0, s1, s2)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>): VConst<T, `4`> = VConst(`4`, s0, s1, s2, s3)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>): VConst<T, `5`> = VConst(`5`, s0, s1, s2, s3, s4)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>): VConst<T, `6`> = VConst(`6`, s0, s1, s2, s3, s4, s5)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>): VConst<T, `7`> = VConst(`7`, s0, s1, s2, s3, s4, s5, s6)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>): VConst<T, `8`> = VConst(`8`, s0, s1, s2, s3, s4, s5, s6, s7)
+    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>, s8: SConst<T>): VConst<T, `9`> = VConst(`9`, s0, s1, s2, s3, s4, s5, s6, s7, s8)
+
     operator fun <T: Fun<T>> invoke(t: Fun<T>): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>): Vec<T, `2`> = Vec(`2`, arrayListOf(t0, t1))
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>): Vec<T, `3`> = Vec(`3`, arrayListOf(t0, t1, t2))
@@ -161,8 +170,10 @@ open class Vec<X: Fun<X>, E: `1`>(override val length: Nat<E>,
   }
 }
 
-class VZero<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
-class VOne<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
+open class VConst<X: Fun<X>, E: `1`>(length: Nat<E>, vararg contents: SConst<X>): Vec<X, E>(length, emptySet(), *contents)
+
+class VZero<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
+class VOne<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
 
 abstract class RealVector<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
 class VDoubleReal<E: `1`>(length: Nat<E>): RealVector<DoubleReal, E>(length)

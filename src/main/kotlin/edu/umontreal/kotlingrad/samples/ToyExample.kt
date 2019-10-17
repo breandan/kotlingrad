@@ -98,7 +98,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
 
   override fun unaryMinus(): Fun<X> = Negative(this)
 
-  fun sqrt(): Fun<X> = this pow (One<X>() / (Two<X>()))
+  open fun sqrt(): Fun<X> = this pow (One<X>() / (Two<X>()))
 
   override fun toString(): String = when {
     this is Log -> "ln($logarithmand)"
@@ -193,12 +193,12 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
    * Constant propagation.
    */
 
-  override fun plus(addend: Fun<DoubleReal>): Fun<DoubleReal> = when (addend) {
+  override fun plus(addend: Fun<DoubleReal>) = when (addend) {
     is DoubleReal -> DoubleReal(value + addend.value)
     else -> super.plus(addend)
   }
 
-  override fun times(multiplicand: Fun<DoubleReal>): Fun<DoubleReal> = when (multiplicand) {
+  override fun times(multiplicand: Fun<DoubleReal>) = when (multiplicand) {
     is DoubleReal -> DoubleReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
@@ -213,6 +213,8 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
     is DoubleReal -> DoubleReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
+
+  override fun sqrt() = DoubleReal(kotlin.math.sqrt(value))
 }
 
 /**
@@ -249,6 +251,8 @@ object DoublePrecision : Protocol<DoubleReal>() {
 
   operator fun <Y : `1`> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
     this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
+
+  fun Fun<DoubleReal>.asDouble() = (this as DoubleReal).value
 
   val x = vrb("x")
   val y = vrb("y")
