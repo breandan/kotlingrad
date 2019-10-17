@@ -8,26 +8,35 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color
-import javafx.scene.paint.Color.BLUE
-import javafx.scene.paint.Color.GREEN
+import javafx.scene.paint.Color.*
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.stage.Stage
 import javafx.util.Duration
 import kotlin.math.*
 
-class DoublePendulum(private val len: Double = 600.0) : Application(), EventHandler<ActionEvent> {
+
+class DoublePendulum(private val len: Double = 900.0) : Application(), EventHandler<ActionEvent> {
   val rod1 = Line(len, 0.0, len, 0.0).apply { strokeWidth = 3.0 }
   val rod2 = Line(len, 0.0, len, 0.0).apply { strokeWidth = 3.0 }
-  val bob1 = Circle(30.0, Color.GREEN)
-  val bob2 = Circle(30.0, Color.BLACK)
+  lateinit var rod3: Line
+  lateinit var rod4: Line
+  val bob1 = Circle(30.0, GREEN)
+  val bob2 = Circle(30.0, BLACK)
+  val bob3 = Circle(30.0, BLACK)
+  val bob4 = Circle(30.0, BLACK)
+  lateinit var twin: DoublePendulum
+
 
   override fun start(stage: Stage) {
     val bob1 = Circle(10.0, GREEN)
     val bob2 = Circle(10.0, BLUE)
+    twin = DoublePendulum()
+    rod3 = twin.rod1
+    rod4 = twin.rod2
+    twin.G = 10.0
 
-    val canvas = Pane().apply { children.addAll(rod1, bob1, bob2, rod2) }
+    val canvas = Pane().apply { children.addAll(rod1, bob1, bob2, rod2, rod3, rod4) }
 
     stage.apply {
       title = "Pendulum II"
@@ -47,8 +56,8 @@ class DoublePendulum(private val len: Double = 600.0) : Application(), EventHand
   var m1 = 2.0
   var m2 = 2.0
 
-  var G: Double = 9.8
-  var µ: Double = 0.0
+  var G = 9.8
+  var µ = 0.0
 
   var r1 = DoublePrecision.Vec(1.0, 0.0)
   var r2 = DoublePrecision.Vec(1.0, 0.0)
@@ -60,37 +69,39 @@ class DoublePendulum(private val len: Double = 600.0) : Application(), EventHand
 
   val VConst<DoubleReal, `2`>.magn: Double
     get() = DoublePrecision.run { magnitude().asDouble() }
-  
+
   val VConst<DoubleReal, `2`>.angle: Double
     get() = DoublePrecision.run { atan2(this@angle.y, this@angle.x) }
 
   fun makeVec(magn: Double, angle: Double) =
     DoublePrecision.run { Vec(magn * cos(angle), magn * sin(angle)) }
 
-  fun VConst<DoubleReal, `2`>.render(rod: Line, maxLength: Double, maxMagnitude: Double) {
+  fun VConst<DoubleReal, `2`>.render(rod: Line, maxLength: Double, maxMagnitude: Double, xAdjust: Double = 0.0, yAdjust: Double = 0.0) {
     with(DoublePrecision) {
-      rod.startX = this@render.x
-      rod.startY = this@render.y
-      rod.endX = this@render.x + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
-      rod.endY = this@render.y - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
+      rod.startX = this@render.x + xAdjust
+      rod.startY = this@render.y + yAdjust
+      rod.endX = this@render.x + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0)) + xAdjust
+      rod.endY = this@render.y - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0)) + yAdjust
     }
   }
 
-  fun VConst<DoubleReal, `2`>.renderBobs(maxLength: Double, maxMagnitude: Double) {
-    with(DoublePrecision) {
-      bob1.centerX = this@renderBobs.x
-      bob1.centerY = this@renderBobs.y
-      bob2.centerX = this@renderBobs.x + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
-      bob2.centerY = this@renderBobs.y - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
-    }
+  fun renderBobs() {
+    bob1.layoutX = rod1.endX * 10
+    bob1.layoutY = rod1.endY * 10
+    bob2.layoutX = rod2.endX * 10
+    bob2.layoutY = rod2.endY * 10
   }
 
   override fun handle(t: ActionEvent) {
     update(0.02)
+    twin.update(0.02)
 
-    r1.render(rod1, 200.0, 1.0)
-    r2.render(rod2, 200.0, 1.0)
-    r2.renderBobs(200.0, 1.0)
+    r1.render(rod1, 200.0, 1.0, 450.0, 300.0)
+    r2.render(rod2, 200.0, 1.0, rod1.endX, rod1.endY)
+    twin.r1.render(rod3, 200.0, 1.0, 450.0, 300.0)
+    twin.r2.render(rod4, 200.0, 1.0, rod3.endX, rod3.endY)
+
+    renderBobs()
   }
 
 
@@ -124,4 +135,6 @@ class DoublePendulum(private val len: Double = 600.0) : Application(), EventHand
   }
 }
 
-fun main() = Application.launch(DoublePendulum::class.java)
+fun main() {
+  Application.launch(DoublePendulum::class.java)
+}
