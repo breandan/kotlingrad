@@ -8,7 +8,8 @@ import javafx.event.ActionEvent
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.layout.Pane
-import javafx.scene.paint.Color.*
+import javafx.scene.paint.Color.GREEN
+import javafx.scene.paint.Color.RED
 import javafx.scene.shape.Circle
 import javafx.scene.shape.Line
 import javafx.stage.Stage
@@ -21,22 +22,20 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   val rod2 = Line(len, 0.0, len, 0.0).apply { strokeWidth = 3.0 }
   lateinit var rod3: Line
   lateinit var rod4: Line
-  val bob1 = Circle(30.0, GREEN)
-  val bob2 = Circle(30.0, BLACK)
-  val bob3 = Circle(30.0, BLACK)
-  val bob4 = Circle(30.0, BLACK)
+  val bob1 = Circle(20.0, GREEN)
+  val bob2 = Circle(20.0, GREEN)
+  val bob3 = Circle(20.0, RED)
+  val bob4 = Circle(20.0, RED)
   lateinit var twin: DoublePendulum
 
 
   override fun start(stage: Stage) {
-    val bob1 = Circle(10.0, GREEN)
-    val bob2 = Circle(10.0, BLUE)
     twin = DoublePendulum()
     rod3 = twin.rod1
     rod4 = twin.rod2
-    twin.G = 10.0
+    twin.G = 9.9
 
-    val canvas = Pane().apply { children.addAll(rod1, bob1, bob2, rod2, rod3, rod4) }
+    val canvas = Pane().apply { children.addAll(rod1, rod2, rod3, rod4, bob3, bob4, bob1, bob2) }
 
     stage.apply {
       title = "Pendulum II"
@@ -57,7 +56,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   var m2 = 2.0
 
   var G = 9.8
-  var µ = 0.0
+  var µ = 0.1
 
   var r1 = DoublePrecision.Vec(1.0, 0.0)
   var r2 = DoublePrecision.Vec(1.0, 0.0)
@@ -86,10 +85,14 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   }
 
   fun renderBobs() {
-    bob1.layoutX = rod1.endX * 10
-    bob1.layoutY = rod1.endY * 10
-    bob2.layoutX = rod2.endX * 10
-    bob2.layoutY = rod2.endY * 10
+    bob1.layoutX = rod1.endX
+    bob1.layoutY = rod1.endY
+    bob2.layoutX = rod2.endX
+    bob2.layoutY = rod2.endY
+    bob3.layoutX = rod3.endX
+    bob3.layoutY = rod3.endY
+    bob4.layoutX = rod4.endX
+    bob4.layoutY = rod4.endY
   }
 
   override fun handle(t: ActionEvent) {
@@ -135,6 +138,4 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   }
 }
 
-fun main() {
-  Application.launch(DoublePendulum::class.java)
-}
+fun main() = Application.launch(DoublePendulum::class.java)
