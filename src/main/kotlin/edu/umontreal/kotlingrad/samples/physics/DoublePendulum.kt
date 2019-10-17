@@ -17,7 +17,7 @@ import javafx.stage.Stage
 import javafx.util.Duration
 import kotlin.math.*
 
-class DoublePendulum(private val len: Double = 300.0) : Application(), EventHandler<ActionEvent> {
+class DoublePendulum(private val len: Double = 600.0) : Application(), EventHandler<ActionEvent> {
   val rod1 = Line(len, 0.0, len, 0.0).apply { strokeWidth = 3.0 }
   val rod2 = Line(len, 0.0, len, 0.0).apply { strokeWidth = 3.0 }
   val bob1 = Circle(30.0, Color.GREEN)
@@ -53,37 +53,40 @@ class DoublePendulum(private val len: Double = 300.0) : Application(), EventHand
   var r1 = DoublePrecision.Vec(1.0, 0.0)
   var r2 = DoublePrecision.Vec(1.0, 0.0)
 
+  val VConst<DoubleReal, `2`>.x: Double
+    get() = DoublePrecision.run { this@x[0].asDouble() }
+  val VConst<DoubleReal, `2`>.y: Double
+    get() = DoublePrecision.run { this@y[1].asDouble() }
+
   val VConst<DoubleReal, `2`>.magn: Double
     get() = DoublePrecision.run { magnitude().asDouble() }
   
   val VConst<DoubleReal, `2`>.angle: Double
-    get() = DoublePrecision.run { atan2(this@angle[1].asDouble(), this@angle[0].asDouble()) }
+    get() = DoublePrecision.run { atan2(this@angle.y, this@angle.x) }
 
   fun makeVec(magn: Double, angle: Double) =
     DoublePrecision.run { Vec(magn * cos(angle), magn * sin(angle)) }
 
   fun VConst<DoubleReal, `2`>.render(rod: Line, maxLength: Double, maxMagnitude: Double) {
     with(DoublePrecision) {
-      rod.startX = this@render[0].asDouble()
-      rod.startY = this@render[1].asDouble()
-      rod.endX = this@render[0].asDouble() + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
-      rod.endY = this@render[1].asDouble().toInt() - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
+      rod.startX = this@render.x
+      rod.startY = this@render.y
+      rod.endX = this@render.x + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
+      rod.endY = this@render.y - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
     }
   }
 
   fun VConst<DoubleReal, `2`>.renderBobs(maxLength: Double, maxMagnitude: Double) {
     with(DoublePrecision) {
-      bob1.centerX = this@renderBobs[0].asDouble()
-      bob1.centerY = this@renderBobs[1].asDouble()
-      bob2.centerX = this@renderBobs[0].asDouble() + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
-      bob2.centerY = this@renderBobs[1].asDouble().toInt() - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
+      bob1.centerX = this@renderBobs.x
+      bob1.centerY = this@renderBobs.y
+      bob2.centerX = this@renderBobs.x + cos(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
+      bob2.centerY = this@renderBobs.y - sin(angle) * (maxLength * (magn / maxMagnitude).coerceAtMost(1.0))
     }
   }
 
   override fun handle(t: ActionEvent) {
     update(0.02)
-
-    println("$r1, $r2")
 
     r1.render(rod1, 200.0, 1.0)
     r2.render(rod2, 200.0, 1.0)
