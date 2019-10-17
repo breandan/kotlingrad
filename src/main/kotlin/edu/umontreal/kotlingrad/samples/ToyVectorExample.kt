@@ -143,7 +143,7 @@ open class Vec<X: Fun<X>, E: `1`>(override val length: Nat<E>,
     else -> super.dot(multiplicand)
   }
 
-  override fun magnitude() = contents.reduce { acc, p -> acc + p * p }.sqrt()
+  override fun magnitude() = contents.map { it * it }.reduce { acc, p -> acc + p }
 
   override fun unaryMinus() = Vec(length, contents.map { -it })
 
