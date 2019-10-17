@@ -64,6 +64,8 @@ sealed class VFun<X: Fun<X>, E: `1`>(
 
   open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
+  open operator fun minus(subtrahend: VFun<X, E>): VFun<X, E> = VSum(this, -subtrahend)
+
   open operator fun times(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
   open operator fun times(multiplicand: Fun<X>): VFun<X, E> = VVProd(this, Vec(length, *Array(length.i) { multiplicand }))
 //  open operator fun <Q: `1`> times(multiplicand: MFun<X, E, Q>): VFun<X, Q> = (expand * multiplicand).rows.first()
@@ -129,6 +131,11 @@ open class Vec<X: Fun<X>, E: `1`>(override val length: Nat<E>,
   override fun plus(addend: VFun<X, E>) = when (addend) {
     is Vec -> Vec(length, contents.mapIndexed { i, v -> v + addend.contents[i] })
     else -> super.plus(addend)
+  }
+
+  override fun minus(subtrahend: VFun<X, E>) = when (subtrahend) {
+    is Vec -> Vec(length, contents.mapIndexed { i, v -> v - subtrahend.contents[i] })
+    else -> super.plus(subtrahend)
   }
 
   override fun times(multiplicand: VFun<X, E>) = when(multiplicand) {

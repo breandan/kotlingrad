@@ -248,7 +248,7 @@ fun main() {
 }
 ```
 
-Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew demo` should print:
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew HelloKotlinGrad` should print:
 
 ```
 z(x, y)                         = x * (-sin(x * y) + y) * 4
@@ -269,9 +269,9 @@ z({x=0, y=1})                   = 0.0
 
 ![](src/main/resources/plot.png)
 
-To generate the above plot, run `./gradlew plot`.
+To generate the above plot, run `./gradlew Plot2D`.
 
-Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew plot3D` (no other libraries requried):
+Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew Plot3D` (no other libraries requried):
 
 ![](src/main/resources/ripple.png)
 ![](src/main/resources/pulsar.png)

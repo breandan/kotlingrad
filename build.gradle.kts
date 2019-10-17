@@ -19,23 +19,13 @@ repositories {
 val kotlinVersion = "1.3.50"
 
 tasks {
-  register("plot", JavaExec::class) {
-    main = "edu.umontreal.kotlingrad.samples.Plot2DKt"
-    classpath = sourceSets["main"].runtimeClasspath
-    description = "Generates 2D plots"
-  }
-
-  register("plot3D", JavaExec::class) {
-    main = "edu.umontreal.kotlingrad.samples.Plot3DKt"
-    classpath = sourceSets["main"].runtimeClasspath
-    description = "Generates 3D plots"
-  }
-
-  register("demo", JavaExec::class) {
-    main = "edu.umontreal.kotlingrad.samples.HelloKotlinGradKt"
-    classpath = sourceSets["main"].runtimeClasspath
-    description = "Runs demo script"
-  }
+  listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum")
+    .forEach {
+      register(it, JavaExec::class) {
+        main = "edu.umontreal.kotlingrad.samples.${it}Kt"
+        classpath = sourceSets["main"].runtimeClasspath
+      }
+    }
 
   withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
