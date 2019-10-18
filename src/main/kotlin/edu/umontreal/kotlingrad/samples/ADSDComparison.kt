@@ -17,7 +17,7 @@ fun main() {
   // Arbitrary precision (defaults to 30 significant figures)
   val bdvals = with(BigDecimalPrecision) {
     val x = Var("x")
-    val y = sin(x* cos(x* sin(x * cos(x))))
+    val y = sin(x * cos(x * sin(x * cos(x))))
     val `dy∕dx` = d(y) / d(x)
 
     xs.map { BigDecimal(it) }.run {
@@ -29,9 +29,9 @@ fun main() {
 
   // Automatic differentiation
   val advals = xs.run {
-    fun x1(d: Double = 0.0, x: D = D(d)): D = grad { sin(x* cos(x* sin(x * cos(x)))) }
+    fun x1(d: Double = 0.0, x: D = D(d)): D = grad { sin(x * cos(x * sin(x * cos(x)))) }
     fun d1(d: Double = 0.0, x: D = D(d)): D {
-      grad { sin(x* cos(x* sin(x * cos(x)))) }
+      grad { sin(x * cos(x * sin(x * cos(x)))) }
       return x
     }
 
@@ -41,7 +41,7 @@ fun main() {
   // Symbolic differentiation
   val sdvals = with(DoublePrecision) {
     val x = Var("x")
-    val y = sin(x* cos(x* sin(x * cos(x))))
+    val y = sin(x * cos(x * sin(x * cos(x))))
     val `dy∕dx` = d(y) / d(x)
 
 //    println("""
@@ -55,7 +55,7 @@ fun main() {
   // Numerical differentiation using centered differences
   val fdvals = with(DoublePrecision) {
     val x = Var("x")
-    val y = sin(x* cos(x* sin(x * cos(x))))
+    val y = sin(x * cos(x * sin(x * cos(x))))
     val h = 7E-13
     val `dy∕dx` = (y(x + h) - y(x - h)) / (2.0 * h)
 

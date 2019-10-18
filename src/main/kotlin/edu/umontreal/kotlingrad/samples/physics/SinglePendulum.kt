@@ -1,6 +1,11 @@
 package edu.umontreal.kotlingrad.samples.physics
 
+import edu.umontreal.kotlingrad.functions.ScalarFun
+import edu.umontreal.kotlingrad.functions.ScalarVar
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
+import edu.umontreal.kotlingrad.numerical.DoublePrecision.eval
+import edu.umontreal.kotlingrad.numerical.DoublePrecision.invoke
+import edu.umontreal.kotlingrad.numerical.DoubleReal
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.animation.Timeline.INDEFINITE
@@ -37,8 +42,7 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
       show()
     }
 
-    Timeline(KeyFrame(Duration.millis(ms), this))
-      .apply { cycleCount = INDEFINITE }.play()
+    Timeline(KeyFrame(Duration.millis(ms), this)).apply { cycleCount = INDEFINITE }.play()
   }
 
   val ms = 20.0
@@ -49,7 +53,6 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
   var ωP = ω
   var θP = θ
   var G1 = DoublePrecision.Var("G1", 1)
-  val α = 0.01
   var q = 0
   val sync = 180
 
@@ -58,7 +61,7 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
       ωP = ω
       θP = θ
     } else if (q == sync) {
-      println("GOING BLIND (OPEN LOOP)")
+      println("\nGOING BLIND (OPEN LOOP)\n")
     }
 
     val dω = -G / len * sin(θ) * dt
@@ -86,22 +89,24 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
       val delYPred = (bob1.layoutY - YPred) pow 2
       val l2 = sqrt(delXPred + delYPred)
       if(q < sync) {
-        val d_dg = d(l2) / d(G1)
-        var G1P = G1.eval()
-
-        var velocity = 0.0
-        val gamma = 0.9
-        var i = 0
-        do {
-          velocity = gamma * velocity + α * d_dg(G1 to G1P)
-          G1P -= velocity
-          i++
-        } while (abs(velocity) > 0.00001 && i < 70)
-        G1 = Var("G1", G1P)
-        if(q % 10 == 0) println("G = $G1P")
+        G1 = l2.descend(steps = 100, vinit = 0.0, gamma = 0.9, α = 0.01, variable = G1)
+        if(q % 10 == 0) println("G = ${G1.eval()}")
       } else if(q % 100 == 0) println("Loss: ${l2.eval()}")
       q++
     }
+  }
+
+  fun ScalarFun<DoubleReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.01, variable: ScalarVar<DoubleReal>): ScalarVar<DoubleReal> {
+    val d_dg = with(DoublePrecision) { d(this@descend) / d(variable) }
+    var G1P = variable.eval()
+    var velocity = vinit
+    var i = 0
+    do {
+      velocity = gamma * velocity + α * d_dg(variable to G1P)
+      G1P -= velocity
+      i++
+    } while (abs(velocity) > 0.00001 && i < steps)
+    return DoublePrecision.Var("G1", G1P)
   }
 }
 
