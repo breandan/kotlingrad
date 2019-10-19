@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm") version "1.3.50"
   `maven-publish`
-  id("io.freefair.github.package-registry-maven-publish") version "4.1.1"
   id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
@@ -67,12 +66,12 @@ val fatJar by tasks.creating(Jar::class) {
   exclude("**.png")
 }
 
-github {
-  slug
-  username.set(project.properties["githubUsername"]?.toString())
-  token.set(project.properties["githubToken"]?.toString())
-  tag.set(project.version.toString())
-}
+// github {
+//   slug
+//   username.set(project.properties["githubUsername"]?.toString())
+//   token.set(project.properties["githubToken"]?.toString())
+//   tag.set(project.version.toString())
+// }
 
 publishing {
   publications.create<MavenPublication>("default") {
@@ -102,6 +101,18 @@ publishing {
     }
   }
   repositories {
-    maven("${project.rootDir}/releases")
-  }
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/breandan/kotlingrad")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
+                password = project.findProperty("gpr.key") ?: System.getenv("GPR_API_KEY")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
