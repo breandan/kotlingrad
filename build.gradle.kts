@@ -61,17 +61,10 @@ val fatJar by tasks.creating(Jar::class) {
     attributes["Implementation-Version"] = version
     attributes["Main-Class"] = "edu.umontreal.kotlingrad.samples.Plot2DKt"
   }
-  from(configurations.runtimeClasspath.get().map({ if (it.isDirectory) it else zipTree(it) }))
+  from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
   with(tasks.jar.get() as CopySpec)
   exclude("**.png")
 }
-
-// github {
-//   slug
-//   username.set(project.properties["githubUsername"]?.toString())
-//   token.set(project.properties["githubToken"]?.toString())
-//   tag.set(project.version.toString())
-// }
 
 publishing {
   publications.create<MavenPublication>("default") {
