@@ -55,15 +55,15 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
-First, generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission in order to download from the [GitHub Package Registry](https://github.com/features/package-registry).
+Kotlin𝛁 is hosted on the [GitHub Package Registry](https://github.com/breandan/kotlingrad/packages/). If you have not already done so, first generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
 
 #### Gradle
 
-Gradle users should write their credentials to the `~/.gradle/gradle.properties` file as follows:
+Gradle users should write their GPR credentials to the `~/.gradle/gradle.properties` file as follows:
 
 ```
-mavenUser=<USERNAME>
-mavenPassword=<PERSONAL_ACCESS_TOKEN>
+gpr.user=<USERNAME>
+grp.key=<PERSONAL_ACCESS_TOKEN>
 ```
 
 Ensure `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
@@ -72,8 +72,8 @@ Ensure `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and depen
 repositories {
     maven("https://maven.pkg.github.com/breandan/kotlingrad") {
         credentials {
-            username = ext.properties["mavenUser"] as String?
-            password = ext.properties["mavenPassword"] as String?
+            username = ext.properties["gpr.user"] as String?
+            password = ext.properties["gpr.key"] as String?
         }
     }
 }
@@ -84,6 +84,8 @@ dependencies {
 ```
 
 Finally, run `gradle dependencies` to ensure the requested dependency can be downloaded.
+
+For additional help, please refer to the [GPR Gradle configuration instructions](https://help.github.com/en/articles/configuring-gradle-for-use-with-github-package-registry).
 
 #### Maven
 
