@@ -101,18 +101,18 @@ publishing {
     }
   }
   repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/breandan/kotlingrad")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-                password = project.findProperty("gpr.key") ?: System.getenv("GPR_API_KEY")
-            }
-        }
+    maven {
+      name = "GitHubPackages"
+      setUrl("https://maven.pkg.github.com/breandan/kotlingrad")
+      credentials {
+        username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
+        password = project.findProperty("gpr.key") as String? ?: System.getenv("GPR_API_KEY")
+      }
     }
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
-        }
+  }
+  publications {
+    register("gpr", MavenPublication::class) {
+      from(components["java"])
     }
+  }
 }
