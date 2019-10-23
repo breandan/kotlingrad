@@ -33,6 +33,6 @@ $ sudo mktexlsr
 
 When the rail has been installed, the following steps will regenerate the diagram.
 
-1. Run `latex mydoc`, which will create `mydoc.rai`.
-2. Run `rail mydoc` to generate `mydoc.rao` from `mydoc.rai`.
-3. Run `latex mydoc` for the final document.
+1. Run `latex thesis`, which will create `thesis.rai`.
+2. Run `rail thesis` to generate `thesis.rao` from `thesis.rai`.
+3. Run `latex thesis` for the final document.
