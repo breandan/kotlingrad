@@ -76,16 +76,16 @@ Universit\'e de Montr\'eal \\
             P'(x) = \lim _{h\to 0}{\frac {f(x+h)-f(x)}{h}} = \frac{\Delta y}{\Delta x} = \frac{dP}{dx}
         \end{equation}
         %
-        For $P(x_0, x_1, \dots, x_n): \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient is a vector of derivatives:
+        For $P(x_1, \dots, x_n): \mathbb{R}^n\rightarrow\mathbb{R}$, the gradient is a vector of derivatives:
         %
         \begin{equation}
-            \nabla P = \left[\frac{\partial P}{\partial x_0}, \frac{\partial P}{\partial x_1}, \dots, \dfrac{\partial P}{\partial x_n}\right]\text{ where }\frac{\partial P}{\partial x_i} = \frac{dP}{dx_i}
+            \nabla P = \left[\frac{\partial P}{\partial x_1}, \dots, \dfrac{\partial P}{\partial x_n}\right]\text{ where }\frac{\partial P}{\partial x_i} = \frac{dP}{dx_i}
         \end{equation}
         %
         For $\mathbf{P}(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the Jacobian is a vector of gradients:
         %
         \begin{equation}
-            \mathbf{J}_\mathbf{P} = \left[\nabla P_0, \nabla P_1, \dots, \nabla P_n \right] \text{ or equivalently, } \mathbf{J}_{ij} = \frac{\partial P_i}{\partial x_j}
+            \mathbf{J}_\mathbf{P} = \left[\nabla P_1, \dots, \nabla P_n \right] \text{ or equivalently, } \mathbf{J}_{ij} = \frac{\partial P_i}{\partial x_j}
         \end{equation}
     \end{frame}
 
@@ -98,13 +98,13 @@ Universit\'e de Montr\'eal \\
         Suppose we have a scalar function $P_k: \mathbb{R}\rightarrow\mathbb{R}$ such that:
         %
         \begin{align*}
-            P_k(x) = \begin{cases} p_0(x) = x &\text{if } k=0\\ (p_k\circ P_{k-1})(x)&\text{if } k > 0 \end{cases}
+            P_k(x) = \begin{cases} p_1(x) = x &\text{if } k=1\\ (p_k\circ P_{k-1})(x)&\text{if } k > 1 \end{cases}
         \end{align*}
         %
         From the chain rule of calculus, we know that:
         %
         \begin{align*}
-            \frac{dP}{dp_0} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_1}{dp_0}= {\displaystyle \prod_{i=1}^{k} \frac{dp_{i}}{dp_{i-1}}}
+            \frac{dP}{dp_1} = \frac{dp_k}{dp_{k-1}}\frac{dp_{k-1}}{dp_{k-2}}\dots\frac{dp_2}{dp_1}= {\displaystyle \prod_{i=1}^{k-1} \frac{dp_{i+1}}{dp_{i}}}
         \end{align*}
         %
         For a vector function $\mathbf{P}_k(\mathbf{x}): \mathbb{R}^n\rightarrow\mathbb{R}^m$, the chain rule still applies:
@@ -128,10 +128,10 @@ Universit\'e de Montr\'eal \\
         For parametric models, let us rewrite $\mathbf{P}_k(\mathbf{x})$ as:
         %
         \begin{align*}
-            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_0(\boldsymbol\theta_0)(\mathbf{x}) &\text{if } k=0\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{[0, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 0 \end{cases} \\
+            \mathbf{\hat P}_k(\mathbf{x}; \mathbf{\boldsymbol\Theta}) = \begin{cases} \mathbf{p}_1(\boldsymbol\theta_1)(\mathbf{x}) &\text{if } k=1\\ \big(\mathbf{p}_k(\boldsymbol\theta_k)\circ \mathbf{\hat P}_{k-1}(\boldsymbol\Theta_{[1, k-1]})\big)\big(\mathbf{x}\big)&\text{if } k > 1 \end{cases} \\
         \end{align*}
         %
-        Where $\boldsymbol\Theta = \{\boldsymbol\theta_0, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
+        Where $\boldsymbol\Theta = \{\boldsymbol\theta_1, \dots, \boldsymbol\theta_k\}$ are free parameters and $\mathbf{x} \in \mathbb{R}^n$ is a single input. Given $\mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ from an oracle, in order to approximate $\mathbf{P}(\mathbf x)$, repeat the following procedure until $\boldsymbol\Theta$ converges:
         %
         \begin{align*}
             \boldsymbol\Theta \leftarrow \boldsymbol\Theta - \frac{1}{z}\nabla_{\boldsymbol\Theta} \sum_{i=0}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}), \mathbf{y}^{(i)}\big)
