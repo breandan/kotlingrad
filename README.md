@@ -354,7 +354,7 @@ interface Group<T: Group<T>> {
 }
 ```
 
-Here, we specify a recursive type bound using a method known as [F-bounded quantification](http://staff.ustc.edu.cn/~xyfeng/teaching/FOPL/lectureNotes/CookFBound89.pdf) to ensure that operations return the concrete type variable `T`, rather than something more generic like `Group`. Imagine a class `Expr` which has implemented `Group`. It can be used as follows:
+Here, we specify a recursive type bound using a method known as [F-bounded quantification](http://staff.ustc.edu.cn/~xyfeng/teaching/FOPL/lectureNotes/CookFBound89.pdf) to ensure that operations return the concrete type variable `T`, rather than something more abstract like `Group`. Imagine a class `Expr` which has implemented `Group`. It can be used as follows:
 
 ```kotlin
 fun <T: Group<T>> cubed(t: T): T = t * t * t
