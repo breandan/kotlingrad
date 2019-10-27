@@ -90,7 +90,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
       }
     }
 
-  open fun df(vararg variable: Var<X>): Fun<X> = Df(this, *variable).apply()
+  open fun df(vararg variables: Var<X>): Fun<X> = Df(this, *variables)
 
   override fun ln(): Fun<X> = Log(this)
 
@@ -131,12 +131,6 @@ class Prod<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right
 class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : Fun<X>(base, exponent)
 class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>) : Fun<X>(logarithmand)
 class Df<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X>) : Fun<X>(fn, *vrbs) {
-  init {
-    vrbs.filter { it !in fn.sVars }.let { require(it.isEmpty()) { "Variables: $it not in function!" } }
-  }
-
-  fun apply() = fn.ad()
-
   fun Fun<X>.ad(): Fun<X> = when (this) {
     is Var -> if (this in vrbs) One() else Zero()
     is SConst -> Zero()
