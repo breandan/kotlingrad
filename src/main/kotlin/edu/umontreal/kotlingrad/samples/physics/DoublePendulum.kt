@@ -17,6 +17,7 @@ import javafx.stage.Stage
 import javafx.util.Duration
 import kotlin.math.*
 
+@Suppress("NonAsciiCharacters", "LocalVariableName")
 class DoublePendulum(private val len: Double = 900.0) : Application(), EventHandler<ActionEvent> {
   var ω1: Fun<DoubleReal> = DoublePrecision.wrap(0.0) // Angular velocities
   var ω2: Fun<DoubleReal> = DoublePrecision.wrap(0.0)
@@ -41,12 +42,8 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     if (iter == observationSteps) println("\nGOING BLIND\n")
 
     val dt = 0.01
-    val a1 = (r1.angle % (2.0 * PI)).let {
-      it + if (it < 0) 2 * PI else 0.0
-    } - 3 * PI / 2
-    val a2 = (r2.angle % (2.0 * PI)).let {
-      it + if (it < 0) 2 * PI else 0.0
-    } - 3 * PI / 2
+    val a1 = (r1.angle % (2.0 * PI)).let { it + if (it < 0) 2 * PI else 0.0 } - 3 * PI / 2
+    val a2 = (r2.angle % (2.0 * PI)).let { it + if (it < 0) 2 * PI else 0.0 } - 3 * PI / 2
 
     val j1 = -G * (2.0 * m1 + m2) * sin(a1)
     val j2 = -m2 * G * sin(a1 - 2 * a2)
@@ -175,7 +172,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     rod.endY = end.theta + yAdjust
   }
 
-  fun renderBobs() {
+  private fun renderBobs() {
     bob1.layoutX = rod1.endX
     bob1.layoutY = rod1.endY
     bob2.layoutX = rod2.endX
