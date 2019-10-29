@@ -43,13 +43,9 @@ sealed class VFun<X: Fun<X>, E: `1`>(
   open val sVars: Set<Var<X>> = emptySet()
 //  ,open val vVars: Set<VVar<X, *>> = emptySet()
 ): (Bindings<X>) -> VFun<X, E> {
-  constructor(length: Nat<E>, vararg vFns: Vec<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()
-//    , vFns.flatMap { it.vVars }.toSet()
-  )
+  constructor(length: Nat<E>, vararg vFns: Vec<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()) //, vFns.flatMap { it.vVars }.toSet())
 
-  constructor(length: Nat<E>, vararg vFns: VFun<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()
-    //, vFns.flatMap { it.vVars }.toSet()
-  )
+  constructor(length: Nat<E>, vararg vFns: VFun<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()) //, vFns.flatMap { it.vVars }.toSet())
 //  val expand: MFun<X, `1`, E> by lazy { MFun(`1`, length, this) }
 
   override operator fun invoke(bnds: Bindings<X>): VFun<X, E> =
@@ -62,6 +58,8 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd<X, E> -> left(bnds) * right(bnds)
 //      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
       is VDf -> df()(bnds)
+      is MVProd<X, *, E> -> TODO()
+      is VMProd<X, *, E> -> TODO()
     }
 
   open fun diff(vararg variables: Var<X>): VFun<X, E> = VDf(this, *variables)
@@ -72,7 +70,7 @@ sealed class VFun<X: Fun<X>, E: `1`>(
 
   open operator fun times(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
   open operator fun times(multiplicand: Fun<X>): VFun<X, E> = VSProd(this, multiplicand)
-//  open operator fun <Q: `1`> times(multiplicand: MFun<X, E, Q>): VFun<X, Q> = (expand * multiplicand).rows.first()
+  open operator fun <Q: `1`> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)//(expand * multiplicand).rows.first()
 
   open infix fun dot(multiplicand: VFun<X, E>): Fun<X> = DProd(this, multiplicand)
 
@@ -87,6 +85,8 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd -> "$left * $right"
       is VNegative -> "-($value)"
       is VDf -> "d($vfn) / d(${vars.joinToString(", ")})"
+      is MVProd<X, *, E> -> TODO()
+      is VMProd<X, *, E> -> TODO()
     }
 }
 
@@ -94,10 +94,10 @@ class VNegative<X: Fun<X>, E: `1`>(val value: VFun<X, E>): VFun<X, E>(value.leng
 class VSum<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
 
 class VVProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
-class SVProd<X: Fun<X>, E: `1`>(val left: Fun<X>, val right: VFun<X, E>): VFun<X, E>(right.length, left.sVars + right.sVars //  , right.vVars
-)
-class VSProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: Fun<X>): VFun<X, E>(left.length, left.sVars + right.sVars //  , right.vVars
-)
+class SVProd<X: Fun<X>, E: `1`>(val left: Fun<X>, val right: VFun<X, E>): VFun<X, E>(right.length, left.sVars + right.sVars) //  , right.vVars)
+class VSProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: Fun<X>): VFun<X, E>(left.length, left.sVars + right.sVars)  //  , right.vVars)
+class MVProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, C>(right.length, right)
+class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.length, left)
 
 //class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
 
@@ -112,8 +112,18 @@ class VDf<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg v
     is VNegative -> -value.df()
     is VDf -> vfn.df()
     is Vec -> Vec(length, contents.map { it.df(*vars) })
+    is MVProd<X, *, E> -> TODO()
+    is VMProd<X, *, E> -> TODO()
   }
 }
+
+open class VConst<X: Fun<X>, E: `1`>(length: Nat<E>, vararg contents: SConst<X>): Vec<X, E>(length, emptySet(), *contents)
+
+class VZero<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
+class VOne<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
+
+abstract class RealVector<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
+class VDoubleReal<E: `1`>(length: Nat<E>): RealVector<DoubleReal, E>(length)
 
 open class Vec<X: Fun<X>, E: `1`>(final override val length: Nat<E>,
                                   override val sVars: Set<Var<X>> = emptySet(),
@@ -166,7 +176,7 @@ open class Vec<X: Fun<X>, E: `1`>(final override val length: Nat<E>,
     operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>): VConst<T, `8`> = VConst(`8`, s0, s1, s2, s3, s4, s5, s6, s7)
     operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>, s8: SConst<T>): VConst<T, `9`> = VConst(`9`, s0, s1, s2, s3, s4, s5, s6, s7, s8)
 
-    operator fun <T: Fun<T>> invoke(t: Fun<T>): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
+    operator fun <T: Fun<T>> invoke(t0: Fun<T>): Vec<T, `1`> = Vec(`1`, arrayListOf(t0))
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>): Vec<T, `2`> = Vec(`2`, arrayListOf(t0, t1))
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>): Vec<T, `3`> = Vec(`3`, arrayListOf(t0, t1, t2))
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>): Vec<T, `4`> = Vec(`4`, arrayListOf(t0, t1, t2, t3))
@@ -177,14 +187,6 @@ open class Vec<X: Fun<X>, E: `1`>(final override val length: Nat<E>,
     operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>, t8: Fun<T>): Vec<T, `9`> = Vec(`9`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
   }
 }
-
-open class VConst<X: Fun<X>, E: `1`>(length: Nat<E>, vararg contents: SConst<X>): Vec<X, E>(length, emptySet(), *contents)
-
-class VZero<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
-class VOne<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
-
-abstract class RealVector<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
-class VDoubleReal<E: `1`>(length: Nat<E>): RealVector<DoubleReal, E>(length)
 
 /**
  * Type level integers.
