@@ -51,23 +51,28 @@ fun main() {
  * Matrix function.
  */
 
-open class MFun<X: Fun<X>, R: `1`, C: `1`>(
+sealed class MFun<X: Fun<X>, R: `1`, C: `1`>(
   open val numRows: Nat<R>,
   open val numCols: Nat<C>,
   open val sVars: Set<Var<X>> = emptySet()
 //open val vVars: Set<VVar<X, *>> = emptySet(),
 //open val mVars: Set<MVar<X, *, *>> = emptySet()
-) {
+): (Bindings<X>) -> MFun<X, R, C> {
   constructor(left: MFun<X, R, *>, right: MFun<X, *, C>): this(left.numRows, right.numCols, left.sVars + right.sVars) //, left.vVars + right.vVars, left.mVars + right.mVars)
   constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars) //, mFun.vVars, mFun.mVars)
 
   open val T: MFun<X, C, R> by lazy { MTranspose(this) }
 
-  operator fun invoke(sMap: Map<Var<X>, SConst<X>> = emptyMap()): MFun<X, R, C> =
-//                    vMap: Map<VVar<X, *>, Vec<X, *>> = emptyMap(),
-//                    mMap: Map<MVar<X, *, *>, MConst<X, *, *>> = emptyMap()): MFun<X, R, C> =
+  override operator fun invoke(bnds: Bindings<X>): MFun<X, R, C> =
     when (this) {
-      else -> TODO()
+      is MNegative -> -value(bnds)
+      is MTranspose -> value(bnds).T
+      is MSum -> left(bnds) + right(bnds)
+      is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, `1`> * right(bnds) as MFun<X, `1`, C>
+      is MSProd -> left(bnds) * right(bnds)
+      is SMProd -> left(bnds) * right(bnds)
+      is MConst -> MZero(numRows, numCols)
+      is Mat -> Mat(numRows, numCols, rows.map { it(bnds) as Vec<X, C> })
     }
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
@@ -91,13 +96,15 @@ class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, 
 //class MVar<X: Fun<X>, R: `1`, C: `1`>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
 //  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }
 open class MConst<X: Fun<X>, R: `1`, C: `1`>(numRows: Nat<R>, numCols: Nat<C>): MFun<X, R, C>(numRows, numCols)
+class MZero<X: Fun<X>, R: `1`, C: `1`>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
+class MOne<X: Fun<X>, R: `1`, C: `1`>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
 
-open class Mat<X: Fun<X>, R: `1`, C: `1`>(override val numRows: Nat<R>,
-                                     override val numCols: Nat<C>,
-                                     override val sVars: Set<Var<X>> = emptySet(),
+open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
+                                          final override val numCols: Nat<C>,
+                                          override val sVars: Set<Var<X>> = emptySet(),
 //                                   override val vVars: Set<VVar<X, *>> = emptySet(),
 //                                   override val mVars: Set<MVar<X, *>> = emptySet(),
-                                     vararg val rows: Vec<X, C>): MFun<X, R, C>(numRows, numCols) {
+                                          vararg val rows: Vec<X, C>): MFun<X, R, C>(numRows, numCols) {
   constructor(numRows: Nat<R>, numCols: Nat<C>, vararg rows: Vec<X, C>): this(numRows, numCols, rows.flatMap { it.sVars }.toSet(), *rows)
   constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<Vec<X, C>>): this(numRows, numCols, contents.flatMap { it.sVars }.toSet(), *contents.toTypedArray())
 
@@ -105,33 +112,33 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(override val numRows: Nat<R>,
     require(numRows.i == rows.size) { "Declared rows, $numRows != ${rows.size}" }
   }
 
-  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> Vec(numRows, rows.map { it[i] }) }.toTypedArray() }
+  override val T: Mat<X, C, R> by lazy { Mat(numCols, numRows, *(0 until numCols.i).map { i -> Vec(numRows, rows.map { it[i] }) }.toTypedArray()) }
 
   override operator fun unaryMinus() = Mat(numRows, numCols, rows.map { -it })
 
   override operator fun plus(addend: MFun<X, R, C>) =
-    when(addend) {
+    when (addend) {
       is Mat -> Mat(numRows, numCols, rows.mapIndexed { i, r -> (r + addend[i]) as Vec<X, C> })
       else -> super.plus(addend)
     }
 
   operator fun get(i: Int): VFun<X, C> = rows[i]
 
-  override operator fun times(multiplicand: Fun<X>): MFun<X, R, C> = Mat(numRows, numCols, rows.map { it * multiplicand })
+  override operator fun times(multiplicand: Fun<X>) = Mat(numRows, numCols, rows.map { it * multiplicand })
 
-  override operator fun times(multiplicand: VFun<X, C>): VFun<X, R> =
-    when(multiplicand) {
+  override operator fun times(multiplicand: VFun<X, C>) =
+    when (multiplicand) {
       is Vec -> Vec(numRows, rows.map { r -> r dot multiplicand })
       else -> super.times(multiplicand)
     }
 
-  override operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
-    when(multiplicand) {
+  override operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>) =
+    when (multiplicand) {
       is Mat -> Mat(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
-          Vec(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
-            rows[i] dot multiplicand.cols[j]
-          })
+        Vec(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
+          rows[i] dot multiplicand.T[j]
         })
+      })
       else -> super.times(multiplicand)
     }
 

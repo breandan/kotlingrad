@@ -59,9 +59,7 @@ interface Field<X : Field<X>> : Group<X> {
 
 sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
                              //,open val vVars: Set<VVar<X, *>> = emptySet()
-):
-  Field<Fun<X>>,
-  (Bindings<X>) -> Fun<X> {
+): Field<Fun<X>>, (Bindings<X>) -> Fun<X> {
   constructor(fn: Fun<X>) : this(fn.sVars)//, fn.vVars)
   constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.sVars }.toSet()) //fns.flatMap { it.vVars }.toSet())
 
@@ -69,6 +67,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
   override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
   open operator fun <E : `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
+  open operator fun <R : `1`, C: `1`> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
   override operator fun invoke(bnds: Bindings<X>): Fun<X> =
     bnds.sMap.getOrElse(this) {
