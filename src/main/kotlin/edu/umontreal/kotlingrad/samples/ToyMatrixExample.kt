@@ -1,7 +1,7 @@
-//@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER")
-//
-//package edu.umontreal.kotlingrad.samples
-//
+@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER")
+
+package edu.umontreal.kotlingrad.samples
+
 //fun main() {
 //  with(DoublePrecision) {
 //    val x = vrb("x")
@@ -40,43 +40,103 @@
 //    val mf4 = MFun(`2`, `2`, vf2, vf2)
 //
 //    println(mf1 * mf2) // 2*1 x 1*2
-////  println(mf1 * vf1) // 2*1 x 2
+//    println(mf1 * vf1) // 2*1 x 2
 //    println(mf2 * vf1) // 1*2 x 2
 //    println(mf3 * vf1) // 3*2 x 2
-////  println(mf3 * mf3) // 3*2 x 3*2
+//    println(mf3 * mf3) // 3*2 x 3*2
 //  }
 //}
-//
-///**
-// * Matrix function.
-// */
-//
-//open class MFun<X: Fun<X>, R: `1`, C: `1`>(
-//  open val numRows: Nat<R>,
-//  open val numCols: Nat<C>,
-//  open val sVars: Set<Var<X>> = emptySet(),
-//  open val vVars: Set<VVar<X, *>> = emptySet(),
-//  open val mVars: Set<MVar<X, *, *>> = emptySet(),
-//  open vararg val rows: VFun<X, C>
-//) {
-//  constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>):
-//    this(numRows, numCols, contents.flatMap { it.sVars }.toSet(), contents.flatMap { it.vVars }.toSet(), emptySet(), *contents.toTypedArray())
-//  constructor(numRows: Nat<R>, numCols: Nat<C>, vararg rows: VFun<X, C>):
-//    this(numRows, numCols, rows.flatMap { it.sVars }.toSet(), rows.flatMap { it.vVars }.toSet(), emptySet(), *rows)
-//
-//  constructor(left: MFun<X, R, *>, right: MFun<X, *, C>): this(left.numRows, right.numCols, left.sVars + right.sVars, left.vVars + right.vVars, left.mVars + right.mVars)
-//  constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars, mFun.vVars, mFun.mVars)
-//
-//  init {
-//    require(numRows.i == rows.size) { "Declared rows, $numRows != ${rows.size}" }
-//  }
-//
-//open class Mat<X: Fun<X>, R: `1`, C: `1`>(override val numRows: Nat<R>,
-//                                          override val numCols: Nat<C>,
-//                                          override val sVars: Set<Var<X>> = emptySet(),
-//                                          override val vVars: Set<VVar<X, *>> = emptySet(),
-//                                          override open vararg val rows: VFun<X, C>): MFun<X, R, C>(numRows, numCols) {
-//
+
+/**
+ * Matrix function.
+ */
+
+open class MFun<X: Fun<X>, R: `1`, C: `1`>(
+  open val numRows: Nat<R>,
+  open val numCols: Nat<C>,
+  open val sVars: Set<Var<X>> = emptySet()
+//open val vVars: Set<VVar<X, *>> = emptySet(),
+//open val mVars: Set<MVar<X, *, *>> = emptySet()
+) {
+  constructor(left: MFun<X, R, *>, right: MFun<X, *, C>): this(left.numRows, right.numCols, left.sVars + right.sVars) //, left.vVars + right.vVars, left.mVars + right.mVars)
+  constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars) //, mFun.vVars, mFun.mVars)
+
+  open val T: MFun<X, C, R> = MTranspose(this)
+
+  operator fun invoke(sMap: Map<Var<X>, SConst<X>> = emptyMap()): MFun<X, R, C> =
+//                    vMap: Map<VVar<X, *>, Vec<X, *>> = emptyMap(),
+//                    mMap: Map<MVar<X, *, *>, MConst<X, *, *>> = emptyMap()): MFun<X, R, C> =
+    when (this) {
+      else -> TODO()
+    }
+
+  open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
+
+  open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
+
+  open operator fun times(multiplicand: Fun<X>): MFun<X, R, C> = MSProd(this, multiplicand)
+
+  open operator fun times(multiplicand: VFun<X, C>): VFun<X, C> = MVProd(this, multiplicand)
+
+  open operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
+}
+
+class MNegative<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
+class MTranspose<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, C, R>(value.numCols, value.numRows, value.sVars)
+class MSum<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
+class MMProd<X: Fun<X>, R: `1`, C1: `1`, C2: `1`>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
+class MSProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
+class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
+
+//class MVar<X: Fun<X>, R: `1`, C: `1`>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
+//  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }
+open class MConst<X: Fun<X>, R: `1`, C: `1`>(numRows: Nat<R>, numCols: Nat<C>): MFun<X, R, C>(numRows, numCols)
+
+class Mat<X: Fun<X>, R: `1`, C: `1`>(override val numRows: Nat<R>,
+                                     override val numCols: Nat<C>,
+                                     override val sVars: Set<Var<X>> = emptySet(),
+//                                   override val vVars: Set<VVar<X, *>> = emptySet(),
+//                                   override val mVars: Set<MVar<X, *>> = emptySet(),
+                                     vararg val rows: Vec<X, C>): MFun<X, R, C>(numRows, numCols) {
+  constructor(numRows: Nat<R>, numCols: Nat<C>, vararg rows: VFun<X, C>): this(numRows, numCols, rows.flatMap { it.sVars }.toSet())
+  constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<VFun<X, C>>): this(numRows, numCols, contents.flatMap { it.sVars }.toSet())
+
+  init {
+    require(numRows.i == rows.size) { "Declared rows, $numRows != ${rows.size}" }
+  }
+
+  val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> Vec(numRows, rows.map { it[i] }) }.toTypedArray() }
+
+  override operator fun unaryMinus() = Mat(numRows, numCols, rows.map { -it })
+
+  override operator fun plus(addend: MFun<X, R, C>) =
+    when(addend) {
+      is Mat -> Mat(numRows, numCols, rows.mapIndexed { i, r -> r + addend[i] })
+      else -> super.plus(addend)
+    }
+
+  operator fun get(i: Int): VFun<X, C> = rows[i]
+
+  override operator fun times(multiplicand: Fun<X>): MFun<X, R, C> = Mat(numRows, numCols, rows.map { it * multiplicand })
+
+  override operator fun times(multiplicand: VFun<X, C>): VFun<X, C> =
+    when(multiplicand) {
+      is Vec -> Vec(numCols, rows.map { r -> r dot multiplicand })
+      else -> super.times(multiplicand)
+    }
+
+  override operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
+    when(multiplicand) {
+      is Mat -> Mat(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
+          Vec(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
+            rows[i] dot multiplicand.cols[j]
+          })
+        })
+      else -> super.times(multiplicand)
+    }
+
+  override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
+
 ////  companion object {
 ////    @JvmName("m1x1") private operator fun <T: Fun<T>, V: Vec<T, `1`>> invoke(t0: V): MFun<T, `1`, `1`> = MFun(`1`, `1`, t0)
 ////    @JvmName("m1x2") private operator fun <T: Fun<T>, V: Vec<T, `2`>> invoke(t0: V): MFun<T, `1`, `2`> = MFun(`1`, `2`, t0)
@@ -241,50 +301,4 @@
 ////    @JvmName("m9x8f") operator fun <T: Fun<T>> invoke(m: Nat<`9`>, n: Nat<`8`>, t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>, t8: Fun<T>, t9: Fun<T>, t10: Fun<T>, t11: Fun<T>, t12: Fun<T>, t13: Fun<T>, t14: Fun<T>, t15: Fun<T>, t16: Fun<T>, t17: Fun<T>, t18: Fun<T>, t19: Fun<T>, t20: Fun<T>, t21: Fun<T>, t22: Fun<T>, t23: Fun<T>, t24: Fun<T>, t25: Fun<T>, t26: Fun<T>, t27: Fun<T>, t28: Fun<T>, t29: Fun<T>, t30: Fun<T>, t31: Fun<T>, t32: Fun<T>, t33: Fun<T>, t34: Fun<T>, t35: Fun<T>, t36: Fun<T>, t37: Fun<T>, t38: Fun<T>, t39: Fun<T>, t40: Fun<T>, t41: Fun<T>, t42: Fun<T>, t43: Fun<T>, t44: Fun<T>, t45: Fun<T>, t46: Fun<T>, t47: Fun<T>, t48: Fun<T>, t49: Fun<T>, t50: Fun<T>, t51: Fun<T>, t52: Fun<T>, t53: Fun<T>, t54: Fun<T>, t55: Fun<T>, t56: Fun<T>, t57: Fun<T>, t58: Fun<T>, t59: Fun<T>, t60: Fun<T>, t61: Fun<T>, t62: Fun<T>, t63: Fun<T>, t64: Fun<T>, t65: Fun<T>, t66: Fun<T>, t67: Fun<T>, t68: Fun<T>, t69: Fun<T>, t70: Fun<T>, t71: Fun<T>) = MFun(Vec(t0, t1, t2, t3, t4, t5, t6, t7), Vec(t8, t9, t10, t11, t12, t13, t14, t15), Vec(t16, t17, t18, t19, t20, t21, t22, t23), Vec(t24, t25, t26, t27, t28, t29, t30, t31), Vec(t32, t33, t34, t35, t36, t37, t38, t39), Vec(t40, t41, t42, t43, t44, t45, t46, t47), Vec(t48, t49, t50, t51, t52, t53, t54, t55), Vec(t56, t57, t58, t59, t60, t61, t62, t63), Vec(t64, t65, t66, t67, t68, t69, t70, t71))
 ////    @JvmName("m9x9f") operator fun <T: Fun<T>> invoke(m: Nat<`9`>, n: Nat<`9`>, t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>, t8: Fun<T>, t9: Fun<T>, t10: Fun<T>, t11: Fun<T>, t12: Fun<T>, t13: Fun<T>, t14: Fun<T>, t15: Fun<T>, t16: Fun<T>, t17: Fun<T>, t18: Fun<T>, t19: Fun<T>, t20: Fun<T>, t21: Fun<T>, t22: Fun<T>, t23: Fun<T>, t24: Fun<T>, t25: Fun<T>, t26: Fun<T>, t27: Fun<T>, t28: Fun<T>, t29: Fun<T>, t30: Fun<T>, t31: Fun<T>, t32: Fun<T>, t33: Fun<T>, t34: Fun<T>, t35: Fun<T>, t36: Fun<T>, t37: Fun<T>, t38: Fun<T>, t39: Fun<T>, t40: Fun<T>, t41: Fun<T>, t42: Fun<T>, t43: Fun<T>, t44: Fun<T>, t45: Fun<T>, t46: Fun<T>, t47: Fun<T>, t48: Fun<T>, t49: Fun<T>, t50: Fun<T>, t51: Fun<T>, t52: Fun<T>, t53: Fun<T>, t54: Fun<T>, t55: Fun<T>, t56: Fun<T>, t57: Fun<T>, t58: Fun<T>, t59: Fun<T>, t60: Fun<T>, t61: Fun<T>, t62: Fun<T>, t63: Fun<T>, t64: Fun<T>, t65: Fun<T>, t66: Fun<T>, t67: Fun<T>, t68: Fun<T>, t69: Fun<T>, t70: Fun<T>, t71: Fun<T>, t72: Fun<T>, t73: Fun<T>, t74: Fun<T>, t75: Fun<T>, t76: Fun<T>, t77: Fun<T>, t78: Fun<T>, t79: Fun<T>, t80: Fun<T>) = MFun(Vec(t0, t1, t2, t3, t4, t5, t6, t7, t8), Vec(t9, t10, t11, t12, t13, t14, t15, t16, t17), Vec(t18, t19, t20, t21, t22, t23, t24, t25, t26), Vec(t27, t28, t29, t30, t31, t32, t33, t34, t35), Vec(t36, t37, t38, t39, t40, t41, t42, t43, t44), Vec(t45, t46, t47, t48, t49, t50, t51, t52, t53), Vec(t54, t55, t56, t57, t58, t59, t60, t61, t62), Vec(t63, t64, t65, t66, t67, t68, t69, t70, t71), Vec(t72, t73, t74, t75, t76, t77, t78, t79, t80))
 ////  }
-//
-//  fun transpose() = MTranspose(this)
-//  //by lazy { MFun(numCols, numRows, sVars, vVars, mVars, *cols) }
-//  //val cols: Array<VFun<X, R>> by lazy { (0 until numCols.i).map { i -> VFun(numRows, rows.map { it[i] }) }.toTypedArray() }
-//
-//  operator fun invoke(sMap: Map<Var<X>, SConst<X>> = emptyMap(),
-//                      vMap: Map<VVar<X, *>, Vec<X, *>> = emptyMap(),
-//                      mMap: Map<MVar<X, *, *>, MConst<X, *, *>> = emptyMap()): MFun<X, R, C> =
-//    when (this) {
-//      else -> TODO()
-//    }
-//
-//  operator fun unaryMinus() = MNegative(this)
-//    //MFun(numRows, numCols, rows.map { -it })
-//  operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
-////    MFun(numRows, numCols, rows.mapIndexed { i, r -> r + addend[i] })
-//
-//  operator fun get(i: Int): VFun<X, C> = rows[i]
-//
-//  operator fun times(multiplicand: Fun<X>): MFun<X, R, C> =
-//    MFun(numRows, numCols, rows.map { it * multiplicand })
-//
-//  operator fun times(multiplicand: VFun<X, C>): VFun<X, C> = MVProd(this, multiplicand)
-////    (this * multiplicand.expand.transpose).cols.first()
-//
-//  operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
-////    MFun(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
-////      VFun(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
-////        rows[i] dot multiplicand.cols[j]
-////      })
-////    })
-//
-////  override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
-//}
-//
-//class MNegative<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
-//class MTranspose<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
-//class MSum<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
-//class MMProd<X: Fun<X>, R: `1`, C1: `1`, C2: `1`>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
-//class MVProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, C>(right.length, right)
-//class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.length, left)
-//class MSProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
-//class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
-//
-//class MVar<X: Fun<X>, R: `1`, C: `1`>(override val name: String, numRows: Nat<R>, numCols: Nat<C>, vararg val value: VVar<X, C>):
-//  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }
-//open class MConst<X: Fun<X>, R: `1`, C: `1`>(numRows: Nat<R>, numCols: Nat<C>, override vararg val rows: Vec<X, C>): MFun<X, R, C>(numRows, numCols, *rows)
+}
