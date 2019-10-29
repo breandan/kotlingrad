@@ -85,8 +85,8 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd -> "$left * $right"
       is VNegative -> "-($value)"
       is VDf -> "d($vfn) / d(${vars.joinToString(", ")})"
-      is MVProd<X, E, *> -> TODO()
-      is VMProd<X, *, E> -> TODO()
+      is MVProd<X, E, *> -> "$left * $right"
+      is VMProd<X, *, E> -> "$left * $right"
     }
 }
 
@@ -103,7 +103,7 @@ class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X,
 
 class VDf<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg val vars: Var<X>) : VFun<X, E>(vfn.length, vfn) {
   fun VFun<X, E>.df(): VFun<X, E> = when (this) {
-    is RealVector -> VZero(length)
+    is VConst-> VZero(length)
 //    is VVar -> VOne(length)
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() * right + right.df() * left
@@ -121,9 +121,6 @@ open class VConst<X: Fun<X>, E: `1`>(length: Nat<E>, vararg contents: SConst<X>)
 
 class VZero<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
 class VOne<X: Fun<X>, E: `1`>(length: Nat<E>): VConst<X, E>(length)
-
-abstract class RealVector<X: Fun<X>, E: `1`>(length: Nat<E>): Vec<X, E>(length)
-class VDoubleReal<E: `1`>(length: Nat<E>): RealVector<DoubleReal, E>(length)
 
 open class Vec<X: Fun<X>, E: `1`>(final override val length: Nat<E>,
                                   override val sVars: Set<Var<X>> = emptySet(),
