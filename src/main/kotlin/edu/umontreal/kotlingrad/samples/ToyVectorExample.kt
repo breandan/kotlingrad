@@ -58,7 +58,7 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd<X, E> -> left(bnds) * right(bnds)
 //      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
       is VDf -> df()(bnds)
-      is MVProd<X, *, E> -> TODO()
+      is MVProd<X, E, *> -> TODO()
       is VMProd<X, *, E> -> TODO()
     }
 
@@ -85,7 +85,7 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd -> "$left * $right"
       is VNegative -> "-($value)"
       is VDf -> "d($vfn) / d(${vars.joinToString(", ")})"
-      is MVProd<X, *, E> -> TODO()
+      is MVProd<X, E, *> -> TODO()
       is VMProd<X, *, E> -> TODO()
     }
 }
@@ -94,10 +94,10 @@ class VNegative<X: Fun<X>, E: `1`>(val value: VFun<X, E>): VFun<X, E>(value.leng
 class VSum<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
 
 class VVProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
-class SVProd<X: Fun<X>, E: `1`>(val left: Fun<X>, val right: VFun<X, E>): VFun<X, E>(right.length, left.sVars + right.sVars) //  , right.vVars)
-class VSProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: Fun<X>): VFun<X, E>(left.length, left.sVars + right.sVars)  //  , right.vVars)
-class MVProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, C>(right.length, right)
-class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.length, left)
+class SVProd<X: Fun<X>, E: `1`>(val left: Fun<X>, val right: VFun<X, E>): VFun<X, E>(right.length, left.sVars + right.sVars)
+class VSProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: Fun<X>): VFun<X, E>(left.length, left.sVars + right.sVars)
+class MVProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, R>(left.numRows, left.sVars + right.sVars)
+class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.length, left.sVars + right.sVars)
 
 //class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
 
@@ -112,7 +112,7 @@ class VDf<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg v
     is VNegative -> -value.df()
     is VDf -> vfn.df()
     is Vec -> Vec(length, contents.map { it.df(*vars) })
-    is MVProd<X, *, E> -> TODO()
+    is MVProd<X, E, *> -> TODO()
     is VMProd<X, *, E> -> TODO()
   }
 }
@@ -132,7 +132,7 @@ open class Vec<X: Fun<X>, E: `1`>(final override val length: Nat<E>,
   constructor(length: Nat<E>, vararg contents: Fun<X>): this(length, contents.flatMap { it.sVars }.toSet(), *contents)
 
   init {
-    require(length.i == contents.size || contents.isEmpty()) { "Declared length, $length != ${contents.size}" }
+    require(length.i == contents.size || contents.isEmpty()) { "Declared length ($length) != content length (${contents.size}) : ${contents.joinToString(",")}" }
   }
 
   override fun toString() = contents.joinToString(", ", "[", "]")
