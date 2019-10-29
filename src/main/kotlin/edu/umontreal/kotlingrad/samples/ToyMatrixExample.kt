@@ -111,7 +111,7 @@ class Mat<X: Fun<X>, R: `1`, C: `1`>(override val numRows: Nat<R>,
 
   override operator fun plus(addend: MFun<X, R, C>) =
     when(addend) {
-      is Mat -> Mat(numRows, numCols, rows.mapIndexed { i, r -> r + addend[i] } as List<Vec<X, C>>)
+      is Mat -> Mat(numRows, numCols, rows.mapIndexed { i, r -> (r + addend[i]) as Vec<X, C> })
       else -> super.plus(addend)
     }
 
