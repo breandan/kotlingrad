@@ -58,8 +58,8 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd<X, E> -> left(bnds) * right(bnds)
 //      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
       is VDf -> df()(bnds)
-      is MVProd<X, E, *> -> TODO()
-      is VMProd<X, *, E> -> TODO()
+      is MVProd<X, E, *> -> TODO() //left(bnds) * right(bnds)
+      is VMProd<X, *, E> -> left(bnds) * right(bnds)
     }
 
   open fun diff(vararg variables: Var<X>): VFun<X, E> = VDf(this, *variables)
@@ -106,9 +106,9 @@ class VDf<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg v
     is VConst-> VZero(length)
 //    is VVar -> VOne(length)
     is VSum -> left.df() + right.df()
-    is VVProd -> left.df() * right + right.df() * left
-    is SVProd -> left.df(*vars) * right + right.df() * left
-    is VSProd -> left.df() * right + right.df(*vars) * left
+    is VVProd -> left.df() * right + left * right.df()
+    is SVProd -> left.df(*vars) * right + left * right.df()
+    is VSProd -> left.df() * right + left * right.df(*vars)
     is VNegative -> -value.df()
     is VDf -> vfn.df()
     is Vec -> Vec(length, contents.map { it.df(*vars) })

@@ -73,6 +73,7 @@ sealed class MFun<X: Fun<X>, R: `1`, C: `1`>(
       is SMProd -> left(bnds) * right(bnds)
       is MConst -> MZero(numRows, numCols)
       is Mat -> Mat(numRows, numCols, rows.map { it(bnds) as Vec<X, C> })
+//      is MDf -> df()(bnds)
     }
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
@@ -84,6 +85,18 @@ sealed class MFun<X: Fun<X>, R: `1`, C: `1`>(
   open operator fun times(multiplicand: VFun<X, C>): VFun<X, R> = MVProd(this, multiplicand)
 
   open operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
+
+  override fun toString() = when(this) {
+    is MNegative -> "-($value)"
+    is MTranspose -> "($value).T"
+    is MSum -> "$left + $right"
+    is MMProd<X, R, *, C> -> "$left * $right"
+    is MSProd -> "$left * $right"
+    is SMProd -> "$left * $right"
+    is MConst -> "TODO()"
+    is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ") { it.contents.joinToString(", ") }})"
+//    is MDf -> "d($mfn) / d($vars)"
+  }
 }
 
 class MNegative<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
@@ -92,6 +105,18 @@ class MSum<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X
 class MMProd<X: Fun<X>, R: `1`, C1: `1`, C2: `1`>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
 class MSProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
 class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
+
+//class MDf<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: MFun<X, R, C>, vararg val vars: Var<X>) : MFun<X, R, C>(mfn.numRows, mfn.numCols, mfn.sVars) {
+//  fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this) {
+//    is MSum -> left.df() + right.df()
+//    is MMProd<X, R, *, C> -> left.df() * right + left * right.df()
+//    is MVProd -> left.df(*vars) * right + left * right.df()
+//    is MSProd -> left.df() * right + left * right.df(*vars)
+//    is MNegative -> -value.df()
+//    is MDf -> mfn.df()
+//    is Mat -> Mat(numRows, numCols, rows.map { it.df(*vars) })
+//  }
+//}
 
 //class MVar<X: Fun<X>, R: `1`, C: `1`>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
 //  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }
@@ -141,8 +166,6 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
       })
       else -> super.times(multiplicand)
     }
-
-  override fun toString() = "($numRows x $numCols)\n[${rows.joinToString("\n ") { it.contents.joinToString(", ") }}]"
 }
 
 class Mat1x1<X: Fun<X>>(v0: Vec<X, `1`>): Mat<X, `1`, `1`>(`1`, `1`, v0) { constructor(f0: Fun<X>): this(Vec(f0)) }
