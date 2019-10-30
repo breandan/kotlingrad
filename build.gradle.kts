@@ -37,7 +37,7 @@ javafx {
 }
 
 tasks {
-  listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture")
+  listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture", "ToyExample", "ToyVectorExample", "ToyMatrixExample")
     .forEach {
       register(it, JavaExec::class) {
         main = "edu.umontreal.kotlingrad.samples.${it}Kt"
