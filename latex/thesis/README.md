@@ -35,4 +35,4 @@ When the rail has been installed, the following steps will regenerate the diagra
 
 1. Run `latex thesis`, which will create `thesis.rai`.
 2. Run `rail thesis` to generate `thesis.rao` from `thesis.rai`.
-3. Run `latex thesis` for the final document.
+3. Run `latex thesis` to generate the final document.
