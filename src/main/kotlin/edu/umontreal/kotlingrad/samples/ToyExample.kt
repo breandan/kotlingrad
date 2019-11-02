@@ -44,11 +44,12 @@ interface Group<X : Group<X>> {
   operator fun unaryMinus(): X
   operator fun plus(addend: X): X
   operator fun minus(subtrahend: X): X = this + -subtrahend
-  operator fun times(multiplicand: X): X
 }
 
 interface Field<X : Field<X>> : Group<X> {
   operator fun div(divisor: X): X
+  operator fun times(multiplicand: X): X
+
   infix fun pow(exp: X): X
   fun ln(): X
 }
@@ -83,13 +84,13 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
         is Power -> base(bnds) pow exponent(bnds)
         is Negative -> -value(bnds)
         is Log -> logarithmand(bnds).ln()
-        is Df -> ad()(bnds)
+        is Derivative -> df()(bnds)
         is DProd -> DProd(left(bnds), right(bnds))
         is VMagnitude -> VMagnitude(value(bnds))
       }
     }
 
-  open fun df(vararg variables: Var<X>): Fun<X> = Df(this, *variables)
+  open fun df(vararg variables: Var<X>): Fun<X> = Derivative(this, *variables)
 
   override fun ln(): Fun<X> = Log(this)
 
@@ -109,7 +110,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
     this is Sum && right is Negative -> "$left - ${right.value}"
     this is Sum -> "$left + $right"
     this is Var -> name
-    this is Df -> "d($fn) / d(${vrbs.joinToString(", ")})"
+    this is Derivative -> "d($fn) / d(${vrbs.joinToString(", ")})"
     this is Zero -> "\uD835\uDFD8"
     this is One -> "\uD835\uDFD9"
     this is Two -> "\uD835\uDFDA"
@@ -129,18 +130,19 @@ class Negative<X : Fun<X>>(val value: Fun<X>) : Fun<X>(value)
 class Prod<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right)
 class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : Fun<X>(base, exponent)
 class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>) : Fun<X>(logarithmand)
-class Df<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X>) : Fun<X>(fn, *vrbs) {
-  fun Fun<X>.ad(): Fun<X> = when (this) {
+class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X>) : Fun<X>(fn, *vrbs) {
+  fun Fun<X>.df(): Fun<X> = when (this) {
     is Var -> if (this in vrbs) One() else Zero()
     is SConst -> Zero()
-    is Sum -> left.ad() + right.ad()
-    is Prod -> left.ad() * right + left * right.ad()
-    is Power -> this * (exponent * Log(base)).ad()
-    is Negative -> -value.ad()
-    is Log -> (logarithmand pow -One<X>()) * logarithmand.ad()
-    is Df -> fn.ad()
-    is DProd -> DProd(left.diff(), right.diff())
-    is VMagnitude -> VMagnitude(value.diff())
+    is Sum -> left.df() + right.df()
+    is Prod -> left.df() * right + left * right.df()
+    is Power -> this * (exponent * Log(base)).df()
+    is Negative -> -value.df()
+    is Log -> (logarithmand pow -One<X>()) * logarithmand.df()
+    is Derivative -> fn.df()
+//    is DProd -> DProd(left.diff(), right.diff())
+//    is VMagnitude -> VMagnitude(value.diff())
+    else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
   }
 }
 
@@ -195,12 +197,6 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
     is DoubleReal -> DoubleReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
-
-  override operator fun <E : `1`> times(multiplicand: VFun<DoubleReal, E>): VFun<DoubleReal, E> =
-    when (multiplicand) {
-      is Vec<DoubleReal, E> -> Vec(multiplicand.length, multiplicand.contents.map { this * it })
-      else -> super.times(multiplicand)
-    }
 
   override fun pow(exp: Fun<DoubleReal>) = when (exp) {
     is DoubleReal -> DoubleReal(value.pow(exp.value))

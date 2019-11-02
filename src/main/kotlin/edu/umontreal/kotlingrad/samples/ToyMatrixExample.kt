@@ -1,4 +1,4 @@
-@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER")
+@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName")
 
 package edu.umontreal.kotlingrad.samples
 
@@ -33,12 +33,19 @@ fun main() {
     val mf1 = Mat2x1(
       y * y,
       x * y)
+
+
     val mf2 = Mat1x2(vf2)
     val mf3 = Mat3x2(x, x,
       y, x,
       x, x)
     val mf4 = Mat2x2(vf2, vf2)
+    val mf5 = Mat2x2(
+      y * y, x * x,
+      x * y, y * y)
+    val mf6 = mf4 * mf5 * mf1
 
+    mf6
     println(mf1 * mf2) // 2*1 x 1*2
 //    println(mf1 * vf1) // 2*1 x 2
     println(mf2 * vf1) // 1*2 x 2
@@ -51,7 +58,7 @@ fun main() {
  * Matrix function.
  */
 
-sealed class MFun<X: Fun<X>, R: `1`, C: `1`>(
+open class MFun<X: Fun<X>, R: `1`, C: `1`>(
   open val numRows: Nat<R>,
   open val numCols: Nat<C>,
   open val sVars: Set<Var<X>> = emptySet()
@@ -69,21 +76,20 @@ sealed class MFun<X: Fun<X>, R: `1`, C: `1`>(
       is MTranspose -> value(bnds).T
       is MSum -> left(bnds) + right(bnds)
       is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, `1`> * right(bnds) as MFun<X, `1`, C>
+      is HProd -> left(bnds) ʘ right(bnds)
       is MSProd -> left(bnds) * right(bnds)
       is SMProd -> left(bnds) * right(bnds)
       is MConst -> MZero(numRows, numCols)
       is Mat -> Mat(numRows, numCols, rows.map { it(bnds) as Vec<X, C> })
-//      is MDf -> df()(bnds)
+//      is Jacobian -> df()(bnds)
+      else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
-
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
-
   open operator fun times(multiplicand: Fun<X>): MFun<X, R, C> = MSProd(this, multiplicand)
-
   open operator fun times(multiplicand: VFun<X, C>): VFun<X, R> = MVProd(this, multiplicand)
-
+  open infix fun ʘ(multiplicand: MFun<X, R, C>): MFun<X, R, C> = HProd(this, multiplicand)
   open operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
 
   override fun toString() = when(this) {
@@ -91,11 +97,13 @@ sealed class MFun<X: Fun<X>, R: `1`, C: `1`>(
     is MTranspose -> "($value).T"
     is MSum -> "$left + $right"
     is MMProd<X, R, *, C> -> "$left * $right"
+    is HProd -> "$left ʘ $right"
     is MSProd -> "$left * $right"
     is SMProd -> "$left * $right"
     is MConst -> "TODO()"
     is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ") { it.contents.joinToString(", ") }})"
-//    is MDf -> "d($mfn) / d($vars)"
+    is Jacobian -> "d($mfn) / d($vars)"
+    else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
   }
 }
 
@@ -103,20 +111,31 @@ class MNegative<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, R,
 class MTranspose<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, C, R>(value.numCols, value.numRows, value.sVars)
 class MSum<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
 class MMProd<X: Fun<X>, R: `1`, C1: `1`, C2: `1`>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
+class HProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
 class MSProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
 class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
 
-//class MDf<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: MFun<X, R, C>, vararg val vars: Var<X>) : MFun<X, R, C>(mfn.numRows, mfn.numCols, mfn.sVars) {
-//  fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this) {
+class Jacobian<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, vararg val vars: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
+  fun VFun<X, R>.df(): VFun<X, R> = when (this) {
+    is VConst -> VZero(length)
+//    is VVar -> VOne(length)
+    is VSum -> left.df() + right.df()
+    is VVProd -> left.df() ʘ right + left ʘ right.df()
+    is SVProd -> left.df(*vars) * right + left * right.df()
+    is VSProd -> left.df() * right + left * right.df(*vars)
+    is VNegative -> -value.df()
+    is Gradient -> vfn.df()
+    is Vec -> Vec(length, contents.map { it.df(*vars) })
+    is MVProd<X, R, *> -> TODO()
+    is VMProd<X, *, R> -> TODO()
 //    is MSum -> left.df() + right.df()
-//    is MMProd<X, R, *, C> -> left.df() * right + left * right.df()
-//    is MVProd -> left.df(*vars) * right + left * right.df()
+    // Casting here is necessary because of type erasure (we loose the inner dimension when MMProd<X, R, C1, C2> is boxed as MFun<X, R, C2>)
+//    is MMProd<X, R, *, C> -> (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) + left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
 //    is MSProd -> left.df() * right + left * right.df(*vars)
 //    is MNegative -> -value.df()
-//    is MDf -> mfn.df()
-//    is Mat -> Mat(numRows, numCols, rows.map { it.df(*vars) })
-//  }
-//}
+//    is Mat -> Mat(numRows, numCols, rows.map { it.diff(*vars) as Vec<X, C> })
+  }
+}
 
 //class MVar<X: Fun<X>, R: `1`, C: `1`>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
 //  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }

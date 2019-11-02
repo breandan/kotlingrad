@@ -1,4 +1,4 @@
-@file:Suppress("ClassName", "LocalVariableName")
+@file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName")
 package edu.umontreal.kotlingrad.samples
 
 @Suppress("DuplicatedCode")
@@ -29,8 +29,8 @@ fun main() {
     val z = q(x to 1.0).magnitude()(y to 2.0)
     println(z)
 
-    val vf3 = vf2 * Vec(x, x)
-    println(vf3.diff(x)(y to 2.0))
+    val vf3 = vf2 ʘ Vec(x, x)
+//    println(vf3.diff(x)(y to 2.0))
   }
 }
 
@@ -40,9 +40,9 @@ fun main() {
 
 sealed class VFun<X: Fun<X>, E: `1`>(
   open val length: Nat<E>,
-  open val sVars: Set<Var<X>> = emptySet()
+  override val sVars: Set<Var<X>> = emptySet()
 //  ,open val vVars: Set<VVar<X, *>> = emptySet()
-): (Bindings<X>) -> VFun<X, E> {
+): MFun<X, E, `1`>(length, `1`, sVars) {
   constructor(length: Nat<E>, vararg vFns: Vec<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()) //, vFns.flatMap { it.vVars }.toSet())
 
   constructor(length: Nat<E>, vararg vFns: VFun<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()) //, vFns.flatMap { it.vVars }.toSet())
@@ -53,25 +53,26 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is Vec<X, E> -> Vec(length, contents.map { it(bnds) })
       is VNegative<X, E> -> -value(bnds)
       is VSum<X, E> -> left(bnds) + right(bnds)
-      is VVProd<X, E> -> left(bnds) * right(bnds)
+      is VVProd<X, E> -> left(bnds) ʘ right(bnds)
       is SVProd<X, E> -> left(bnds) * right(bnds)
       is VSProd<X, E> -> left(bnds) * right(bnds)
 //      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
-      is VDf -> df()(bnds)
+      is Gradient -> df()(bnds)
       is MVProd<X, E, *> -> TODO() //left(bnds) * right(bnds)
       is VMProd<X, *, E> -> left(bnds) * right(bnds)
     }
 
-  open fun diff(vararg variables: Var<X>): VFun<X, E> = VDf(this, *variables)
+//  open fun diff(v1: Var<X>): MFun<X, E, `1`> = Jacobian(this, v1)
+//  open fun diff(v1: Var<X>, v2: Var<X>): MFun<X, E, `1`> = Jacobian(this, v1, v2)
+//  open fun diff(v1: Var<X>, v2: Var<X>, v3: Var<X>): MFun<X, E, `1`> = Jacobian(this, v1, v2, v3)
 
-  open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
+  override operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
   open operator fun minus(subtrahend: VFun<X, E>): VFun<X, E> = VSum(this, -subtrahend)
 
-  open operator fun times(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
-  open operator fun times(multiplicand: Fun<X>): VFun<X, E> = VSProd(this, multiplicand)
+  open infix fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
+  override operator fun times(multiplicand: Fun<X>): VFun<X, E> = VSProd(this, multiplicand)
   open operator fun <Q: `1`> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)//(expand * multiplicand).rows.first()
-
   open infix fun dot(multiplicand: VFun<X, E>): Fun<X> = DProd(this, multiplicand)
 
   open fun magnitude(): Fun<X> = VMagnitude(this)
@@ -80,11 +81,11 @@ sealed class VFun<X: Fun<X>, E: `1`>(
     when (this) {
       is Vec -> contents.joinToString(", ", "[", "]")
       is VSum -> "$left + $right"
-      is VVProd -> "$left * $right"
+      is VVProd -> "$left ʘ $right"
       is SVProd -> "$left * $right"
       is VSProd -> "$left * $right"
       is VNegative -> "-($value)"
-      is VDf -> "d($vfn) / d(${vars.joinToString(", ")})"
+      is Gradient -> "d($vfn) / d(${vars.joinToString(", ")})"
       is MVProd<X, E, *> -> "$left * $right"
       is VMProd<X, *, E> -> "$left * $right"
     }
@@ -101,16 +102,16 @@ class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X,
 
 //class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
 
-class VDf<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg val vars: Var<X>) : VFun<X, E>(vfn.length, vfn) {
+class Gradient<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg val vars: Var<X>) : VFun<X, E>(vfn.length, vfn) {
   fun VFun<X, E>.df(): VFun<X, E> = when (this) {
-    is VConst-> VZero(length)
+    is VConst -> VZero(length)
 //    is VVar -> VOne(length)
     is VSum -> left.df() + right.df()
-    is VVProd -> left.df() * right + left * right.df()
+    is VVProd -> left.df() ʘ right + left ʘ right.df()
     is SVProd -> left.df(*vars) * right + left * right.df()
     is VSProd -> left.df() * right + left * right.df(*vars)
     is VNegative -> -value.df()
-    is VDf -> vfn.df()
+    is Gradient -> vfn.df()
     is Vec -> Vec(length, contents.map { it.df(*vars) })
     is MVProd<X, E, *> -> TODO()
     is VMProd<X, *, E> -> TODO()
@@ -146,9 +147,9 @@ open class Vec<X: Fun<X>, E: `1`>(final override val length: Nat<E>,
     else -> super.plus(subtrahend)
   }
 
-  override fun times(multiplicand: VFun<X, E>) = when(multiplicand) {
+  override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {
     is Vec -> Vec(length, contents.mapIndexed { i, v -> v * multiplicand.contents[i] })
-    else -> super.times(multiplicand)
+    else -> super.ʘ(multiplicand)
   }
 
   override fun times(multiplicand: Fun<X>) = Vec(length, contents.map { it * multiplicand })
