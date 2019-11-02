@@ -1244,23 +1244,26 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \newcommand{\bnfrl}[1]{\ensuremath{\langle#1\rangle}}
 \begin{eqnarray*}
 \bnfrl{type} & ::= & \code{Double} \mor \code{Int} \mor \code{Float} \mor \code{BigInteger} \mor \code{BigDouble} \\
-\bnfrl{typeInt} & ::= & \code{`1`} \mor \ldots \mor \code{`99`} \\
+\bnfrl{nat} & ::= & \code{1} \mor \ldots \mor \code{99} \\
+\bnfrl{int} & ::= & \bnfrl{nat} \mor \code{0} \mor \bnfrl{int} \\
+\bnfrl{flt} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
+\bnfrl{num} & ::= & \bnfrl{type}\code{(}\bnfrl{int}\code{)} \mor \bnfrl{type}\code{(}\bnfrl{float}\code{)} \\
 \bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \\
-\bnfrl{addOp} & ::= & \code{+} \mor \code{-} \\
-\bnfrl{binaryOp} & ::= & \bnfrl{addOp} \mor \code{*} \mor \code{/} \mor \code{pow} \\
-\bnfrl{unaryOp} & ::= & \bnfrl{addOp} \mor \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
-\bnfrl{expr} & ::= & \bnfrl{var} \mor \bnfrl{unaryOp}\bnfrl{expr} \mor \bnfrl{var}\bnfrl{binaryOp}\bnfrl{expr} \mor \code{(} \bnfrl{expr} \code{)} \\
+\bnfrl{sign} & ::= & \code{+} \mor \code{-} \\
+\bnfrl{binaryOp} & ::= & \bnfrl{sign} \mor \code{*} \mor \code{/} \mor \code{pow} \\
+\bnfrl{unaryOp} & ::= & \bnfrl{sign} \mor \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
+\bnfrl{expr} & ::= & \bnfrl{var} \mor \bnfrl{num} \mor \bnfrl{unaryOp}\bnfrl{expr} \mor \bnfrl{var}\bnfrl{binaryOp}\bnfrl{expr} \mor \code{(} \bnfrl{expr} \code{)} \\
 \bnfrl{exprList} & ::= & \bnfrl{expr} \mor \bnfrl{expr} \code{,} \bnfrl{exprList} \\
-\bnfrl{linearOp} & ::= & \bnfrl{addOp} \mor \code{*} \mor \code{ dot } \\
-\bnfrl{vec} & ::= & \code{Vec(} \bnfrl{exprList} \code{)} \mor \code{Vec(} \bnfrl{typeInt} \code{)(} \bnfrl{exprList} \code{)} \\
-\bnfrl{vecExpr} & ::= & \bnfrl{vec} \mor \bnfrl{addOp}\bnfrl{vecExpr} \mor \bnfrl{expr} \code{*} \bnfrl{vecExpr} \mor \bnfrl{vec} \bnfrl{linearOp} \bnfrl{vecExpr} \\
-\bnfrl{mat} & ::= & \code{Mat(} \bnfrl{typeInt} \code{,} \bnfrl{typeInt} \code{)(} \bnfrl{exprList} \code{)} \\
-\bnfrl{matExpr} & ::= & \bnfrl{mat} \mor \bnfrl{addOp}\bnfrl{matExpr} \mor \bnfrl{expr}\bnfrl{linearOp}\bnfrl{matExpr} \mor \\
+\bnfrl{linearOp} & ::= & \bnfrl{sign} \mor \code{*} \mor \code{ dot } \\
+\bnfrl{vec} & ::= & \code{Vec(} \bnfrl{exprList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{exprList} \code{)} \\
+\bnfrl{vecExpr} & ::= & \bnfrl{vec} \mor \bnfrl{sign}\bnfrl{vecExpr} \mor \bnfrl{expr} \code{*} \bnfrl{vecExpr} \mor \bnfrl{vec} \bnfrl{linearOp} \bnfrl{vecExpr} \\
+\bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{exprList} \code{)} \\
+\bnfrl{matExpr} & ::= & \bnfrl{mat} \mor \bnfrl{sign}\bnfrl{matExpr} \mor \bnfrl{expr}\bnfrl{linearOp}\bnfrl{matExpr} \mor \\
 &&\bnfrl{vecExpr}\bnfrl{linearOp}\bnfrl{matExpr} \mor \bnfrl{mat} \bnfrl{linearOp} \bnfrl{matExpr} \\
-\bnfrl{anyExpr} & ::= & \bnfrl{expr} \mor \bnfrl{vecExpr} \mor \bnfrl{matExpr} \\
+\bnfrl{anyExpr} & ::= & \bnfrl{expr} \mor \bnfrl{vecExpr} \mor \bnfrl{matExpr} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
 \bnfrl{bindings} & ::= & \bnfrl{expr} \code{ to } \bnfrl{expr} \mor \bnfrl{expr} \code{ to } \bnfrl{expr} \code{,} \bnfrl{bindings} \\
-\bnfrl{invoke} & ::= & \bnfrl{anyExpr} \code{(} \bnfrl{bindings} \code{)} \\
-\bnfrl{deriv} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.diff(} \bnfrl{expr} \code{)}
+\bnfrl{invocation} & ::= & \bnfrl{anyExpr} \code{(} \bnfrl{bindings} \code{)} \\
+\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.diff(} \bnfrl{expr} \code{)}
 \end{eqnarray*}
 
 \section{Type systems}\label{sec:type-systems}
@@ -1647,7 +1650,7 @@ with(DoubleContext) {
 
 \section{Automatic, Symbolic Differentiation}
 
-It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin-survey}. Many, including the author of this thesis, have suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical evaluation and symbolic differentiation at runtime, this interleaving is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}. Nor, as suggested by prior literature~\citep{baydin2014ad}, is the problem of expression swell unique to symbolic differentiation~\citep{laue2019equivalence}, whose findings we can numerically reproduce as shown in ~\autoref{fig:pbt_comparison}.
+It has long been claimed by the AD literature that automatic differentiation is not symbolic differentiation~\citep{baydin2015survey}. Many, including the author of this thesis, have suspected this claim to be misleading. Recently, the claim has been questioned~\citep{wang2018demystifying} and refuted~\citep{laue2019equivalence}. While it may be true that certain implementations of automatic differentiation interleave numerical evaluation and symbolic differentiation at runtime, this interleaving is certainly not a prerequisite for a differentiation library to be considered \textit{automatic}. Nor, as suggested by prior literature~\citep{baydin2014ad}, is the problem of expression swell unique to symbolic differentiation~\citep{laue2019equivalence}, whose findings we can numerically reproduce as shown in ~\autoref{fig:pbt_comparison}.
 
 The distinction between AD and SD becomes increasingly blurry when we consider more flexible execution models~\citep{wang2018demystifying} and hybrid ADs~\citep{abadi2016tensorflow} which are capable of both eager~\citep{agrawal2019tensorflow} and lazy evaluation. Instead, we take the view that symbolic differentiation is a type of automatic differentiation which the AD literature has been too quick to dismiss. SD in particular, affords the compiler far more flexibility to perform global optimizations such as algebraic simplification~\citep{bergstra2010theano}, loop vectorization~\citep{agarwal2019static} and tensor comprehension~\citep{vasilache2018tensor}. These optimizations would otherwise be impossible if their symbolic differentiation and numerical evaluation were performed in lockstep, when the dataflow graph is only partially available.
 
@@ -1710,7 +1713,7 @@ Many further examples of symbolic differentiation can be found in unrelated bodi
 
 The work described in this chapter establishes a framework for exploring symbolic differentiation using algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). In future work, we hope to explore the relationship between differentiable programming and symbolic differentiation in other topologies. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces, e.g. for learning boolean variables and other data structures like graphs and trees.
 
-As shown in prior literature~\citep{theano, baydin-survey, laue2019equivalence}, intermediate expression swell is a pernicious issue in computer algebra and automatic differentiation. The ad-hoc algebraic simplification procedure described in \autoref{sec:multiple-dispatch} is almost certainly inadequate for general use cases. One interesting direction would be training a model to minimize numerical drift, by applying general-purpose algebraic simplifications. There exists some prior work here, including \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} which explores this problem from a compiler perspective.
+As shown in prior literature~\citep{bergstra2010theano, baydin2015survey, laue2019equivalence}, intermediate expression swell is a pernicious issue in computer algebra and automatic differentiation. The ad-hoc algebraic simplification procedure described in \autoref{sec:multiple-dispatch} is almost certainly inadequate for general use cases. One interesting direction would be training a model to minimize numerical drift, by applying general-purpose algebraic simplifications. There exists some prior work here, including \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} which explores this problem from a compiler perspective.
 
 Providing a type for matrix structure (e.g.\ \inline{Singular}, \inline{Symmetric}, \inline{Orthogonal}) would allow specializations of the matrix derivative (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for differentiating structured matrices). In terms of enhancing the type system, \citet{makwana2018numlin} have developed a linearly-typed encoding of linear algebra which would also be interesting to explore.
 
