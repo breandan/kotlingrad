@@ -21,7 +21,7 @@ fun main() {
     println("g'(x) = $dg_dx")
 
     val q = y + z
-    val h = x + q
+    val h = x + q / x
     println("h(x) = $h")
     println("h(q = x^2) = ${h(q to (x pow 2))}")
     val dh_dx = h.d(x)
@@ -80,8 +80,8 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
         is Negative -> -value(bnds)
         is Log -> logarithmand(bnds).ln()
         is Derivative -> df()(bnds)
-        is DProd -> DProd(left(bnds), right(bnds))
-        is VMagnitude -> VMagnitude(value(bnds))
+        is DProd -> left(bnds) as Vec<X, `1`> dot right(bnds) as Vec<X, `1`>
+        is VMagnitude -> (value(bnds) as Vec<X, `1`>).magnitude()
       }
     }
 
@@ -91,13 +91,11 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, `2`> = Vec(Derivative(this, v1), Derivative(this, v2))
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, `3`> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
   open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
+  open fun grad(): Map<Var<X>, Fun<X>> = sVars.map { it to Derivative(this, it) }.toMap()
 
   override fun ln(): Fun<X> = Log(this)
-
   override fun pow(exp: Fun<X>): Fun<X> = Power(this, exp)
-
   override fun unaryMinus(): Fun<X> = Negative(this)
-
   open fun sqrt(): Fun<X> = this pow (One<X>() / (Two<X>()))
 
   override fun toString(): String = when {
@@ -203,6 +201,18 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
   }
 
   override fun sqrt() = DoubleReal(kotlin.math.sqrt(value))
+
+  override fun <E : `1`> times(multiplicand: VFun<DoubleReal, E>) =
+    when (multiplicand) {
+      is Vec -> Vec(multiplicand.length, multiplicand.contents.map { this * it })
+      else -> super.times(multiplicand)
+    }
+
+  override fun <R : `1`, C: `1`> times(multiplicand: MFun<DoubleReal, R, C>) =
+    when (multiplicand) {
+      is Mat -> Mat(multiplicand.numRows, multiplicand.numCols, multiplicand.rows.map { this * it } as List<Vec<DoubleReal, C>>)
+      else -> super.times(multiplicand)
+    }
 }
 
 /**

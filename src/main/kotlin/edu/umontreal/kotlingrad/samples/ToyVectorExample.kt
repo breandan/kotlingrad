@@ -59,8 +59,8 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is VSProd<X, E> -> left(bnds) * right(bnds)
 //      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
       is VDerivative -> df()(bnds)
-      is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>)(bnds)
-      is VMProd<X, *, *> -> (left as VFun<X, E>)(bnds) * (right as MFun<X, E, E>)(bnds)
+      is MVProd<X, *, *> -> left(bnds) as Mat<X, E, E> * (right as Vec<X, E>)(bnds)
+      is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as Mat<X, E, E>)(bnds)
       else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
@@ -78,6 +78,7 @@ sealed class VFun<X: Fun<X>, E: `1`>(
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>, v9: Var<X>) = Jacobian(this, `9`, v1, v2, v3, v4, v5, v6, v7, v8, v9)
   //...
   open fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
+  open fun grad(): Map<Var<X>, VFun<X, E>> = sVars.map { it to VDerivative(this, it) }.toMap()
 
   override operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
@@ -120,7 +121,7 @@ class Gradient<X : Fun<X>, E: `1`>(val fn: Fun<X>, val numVrbs: Nat<E>, vararg v
 
 //class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
 class Jacobian<X : Fun<X>, R: `1`, C: `1`>(val vfn: VFun<X, R>, val numVrbs: Nat<C>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn.length, numVrbs, vfn.sVars) {
-  override fun invoke(bnds: Bindings<X>) = Mat(numCols, numRows, vrbs.map { VDerivative(vfn, it)() }).T(bnds)
+  override fun invoke(bnds: Bindings<X>) = Mat(numCols, numRows, vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }
 
 class VDerivative<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vfn.length, vfn) {
@@ -136,7 +137,7 @@ class VDerivative<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, 
     is Vec -> Vec(length, contents.map { it.d(v1) })
     is MVProd<X, E, *> -> this().df()
     is VMProd<X, *, E> -> this().df()
-    is Gradient -> TODO()
+    is Gradient -> this()
   }
 }
 

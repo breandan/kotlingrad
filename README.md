@@ -523,17 +523,17 @@ open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val 
 The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
 
 ```kotlin
-val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
-val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
-val vec = Vec(`2`, 1, 2, 3)                       // Does not compile
-val sum = Vec(`2`, 1, 2) + add                    // Does not compile
+val one = Vec(1, 2, 3) + Vec(1, 2, 3)   // Always runs safely
+val add = Vec(1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
+val vec = Vec(1, 2, 3)                       // Does not compile
+val sum = Vec(1, 2) + add                    // Does not compile
 ```
 
-A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatExt.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 // Inferred type: Mat<Int, `4`, `4`>
-val l = Mat(`4`, `4`,
+val l = Mat4x4(
   1, 2, 3, 4,
   5, 6, 7, 8,
   9, 0, 0, 0,
@@ -541,7 +541,7 @@ val l = Mat(`4`, `4`,
 )
 
 // Inferred type: Mat<Int, `4`, `3`>
-val m = Mat(`4`, `3`,
+val m = Mat4x3(
   1, 1, 1,
   2, 2, 2,
   3, 3, 3,
@@ -572,8 +572,6 @@ Allowing users to specify a matrix's structure in its type signature, (e.g. `Sin
 A function's type would ideally encode arity, based on the number of unique variables:
 
 ```kotlin
-val x = Var(1.0)                                // x: Variable<Double> inferred type
-val y = Var(1.0)                                // x: Variable<Double> "
 val f = x * y + sin(2 * x + 3 * y)              // f: BinaryFunction<Double> "
 val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
