@@ -1263,7 +1263,7 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \bnfrl{anyExpr} & ::= & \bnfrl{expr} \mor \bnfrl{vecExpr} \mor \bnfrl{matExpr} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
 \bnfrl{bindings} & ::= & \bnfrl{expr} \code{ to } \bnfrl{expr} \mor \bnfrl{expr} \code{ to } \bnfrl{expr} \code{,} \bnfrl{bindings} \\
 \bnfrl{invocation} & ::= & \bnfrl{anyExpr} \code{(} \bnfrl{bindings} \code{)} \\
-\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.diff(} \bnfrl{expr} \code{)}
+\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{expr} \code{)}
 \end{eqnarray*}
 
 \section{Type systems}\label{sec:type-systems}
@@ -1293,7 +1293,7 @@ Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g
                $\log_b A$                                      & \tinline{a.log(b)}                                                               & \tinline{log(a, b)}                                                                       &                                                                                              & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})            $ \\ \hline
                 $A^{b}$                                        & \tinline{a.pow(b)}                                                               & \tinline{pow(a, b)}                                                                       &                                                                                              & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})            $ \\ \hline
 \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular}          & \begin{tabular}{@{}c@{}}\tinline{a.sqrt()}\\\tinline{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                                      $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \tinline{a.diff(b)}                                                              & \tinline{grad(a)[b]}                                                                      & \tinline{d(a) / d(b)}                                                                        & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                                                    $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \tinline{a.d(b)}                                                              & \tinline{grad(a)[b]}                                                                      & \tinline{d(a) / d(b)}                                                                        & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                                                    $ \\ \hline
                $\nabla a$                                      &                                                                                  & \tinline{grad(a)}                                                                         & \tinline{a.grad()}                                                                           & $                   \big(\texttt{a}: C(\mathbb{R}^{m})\big) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                                          $ \\ \hline
     \end{tabular}
 \caption{\label{tab:shape_system}Kotlin$\nabla$'s shape system specifies the output shape for matrix arithmetic.}
@@ -1557,12 +1557,12 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
         is Sum -> left(map) + right(map)
     }
 
-    fun diff(variable: Var<X>): Fun<X> = when(this) {
+    fun d(variable: Var<X>): Fun<X> = when(this) {
        is Const -> Zero
        is Var -> if (variable == this) One else Zero
        // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-       is Prod -> left.diff(variable) * right + left * right.diff(variable)
-       is Sum -> left.diff(variable) + right.diff(variable)
+       is Prod -> left.d(variable) * right + left * right.d(variable)
+       is Sum -> left.d(variable) + right.d(variable)
     }
 
     operator fun plus(addend: Fun<T>) = Sum(this, addend)

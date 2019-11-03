@@ -53,12 +53,9 @@ interface Field<X : Field<X>> : Group<X> {
  * Scalar function.
  */
 
-sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
-                             //,open val vVars: Set<VVar<X, *>> = emptySet()
-): Field<Fun<X>>, (Bindings<X>) -> Fun<X> {
-  constructor(fn: Fun<X>) : this(fn.sVars)//, fn.vVars)
-  constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.sVars }.toSet()) //fns.flatMap { it.vVars }.toSet())
-
+sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fun<X>>, (Bindings<X>) -> Fun<X> {
+  constructor(fn: Fun<X>) : this(fn.sVars)
+  constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.sVars }.toSet())
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
   override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
