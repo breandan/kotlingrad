@@ -7,17 +7,17 @@ fun main() {
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
-    val df_dx = f.df(x)
+    val df_dx = f.d(x)
     println("f'(x) = $df_dx")
 
     val g = x pow x
     println("g(x) = $g")
-    val dg_dx = g.df(x)
+    val dg_dx = g.d(x)
     println("g'(x) = $dg_dx")
 
     val h = x + y
     println("h(x) = $h")
-    val dh_dx = h.df(x)
+    val dh_dx = h.d(x)
     println("h'(x) = $dh_dx")
 
     val vf1 = Vec(y + x, y * 2)
@@ -30,6 +30,7 @@ fun main() {
     println(z)
 
     val vf3 = vf2 ʘ Vec(x, x)
+    val mf1 = vf3.d(x, y)
 //    println(vf3.diff(x)(y to 2.0))
   }
 }
@@ -57,14 +58,26 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is SVProd<X, E> -> left(bnds) * right(bnds)
       is VSProd<X, E> -> left(bnds) * right(bnds)
 //      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
-      is Gradient -> df()(bnds)
-      is MVProd<X, E, *> -> TODO() //left(bnds) * right(bnds)
-      is VMProd<X, *, E> -> left(bnds) * right(bnds)
+      is VDerivative -> df()(bnds)
+      is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>)(bnds)
+      is VMProd<X, *, *> -> (left as VFun<X, E>)(bnds) * (right as MFun<X, E, E>)(bnds)
+      else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
-//  open fun diff(v1: Var<X>): MFun<X, E, `1`> = Jacobian(this, v1)
-//  open fun diff(v1: Var<X>, v2: Var<X>): MFun<X, E, `1`> = Jacobian(this, v1, v2)
-//  open fun diff(v1: Var<X>, v2: Var<X>, v3: Var<X>): MFun<X, E, `1`> = Jacobian(this, v1, v2, v3)
+  // Materializes the concrete vector from the dataflow graph
+  operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
+
+  open fun d(v1: Var<X>) = VDerivative(this, v1)
+  open fun d(v1: Var<X>, v2: Var<X>) = Jacobian(this, `2`, v1, v2)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>) = Jacobian(this, `3`, v1, v2, v3)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>) = Jacobian(this, `4`, v1, v2, v3, v4)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>) = Jacobian(this, `5`, v1, v2, v3, v4, v5)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>) = Jacobian(this, `9`, v1, v2, v3, v4, v5, v6)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>) = Jacobian(this, `9`, v1, v2, v3, v4, v5, v6, v7)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>) = Jacobian(this, `9`, v1, v2, v3, v4, v5, v6, v7, v8)
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>, v9: Var<X>) = Jacobian(this, `9`, v1, v2, v3, v4, v5, v6, v7, v8, v9)
+  //...
+  open fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
 
   override operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
@@ -85,9 +98,10 @@ sealed class VFun<X: Fun<X>, E: `1`>(
       is SVProd -> "$left * $right"
       is VSProd -> "$left * $right"
       is VNegative -> "-($value)"
-      is Gradient -> "d($vfn) / d(${vars.joinToString(", ")})"
+      is VDerivative -> "d($vfn) / d($v1)"//d(${v1.joinToString(", ")})"
       is MVProd<X, E, *> -> "$left * $right"
       is VMProd<X, *, E> -> "$left * $right"
+      is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
     }
 }
 
@@ -100,21 +114,29 @@ class VSProd<X: Fun<X>, E: `1`>(val left: VFun<X, E>, val right: Fun<X>): VFun<X
 class MVProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, R>(left.numRows, left.sVars + right.sVars)
 class VMProd<X: Fun<X>, R: `1`, C: `1`>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.length, left.sVars + right.sVars)
 
-//class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
+class Gradient<X : Fun<X>, E: `1`>(val fn: Fun<X>, val numVrbs: Nat<E>, vararg val vrbs: Var<X>): VFun<X, E>(numVrbs, fn.sVars) {
+  override fun invoke(bnds: Bindings<X>) = Vec(numVrbs, vrbs.map { Derivative(fn, it)() })(bnds)
+}
 
-class Gradient<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, vararg val vars: Var<X>) : VFun<X, E>(vfn.length, vfn) {
+//class VVar<X: Fun<X>, E: `1`>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
+class Jacobian<X : Fun<X>, R: `1`, C: `1`>(val vfn: VFun<X, R>, val numVrbs: Nat<C>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn.length, numVrbs, vfn.sVars) {
+  override fun invoke(bnds: Bindings<X>) = Mat(numCols, numRows, vrbs.map { VDerivative(vfn, it)() }).T(bnds)
+}
+
+class VDerivative<X : Fun<X>, E: `1`> internal constructor(val vfn: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vfn.length, vfn) {
   fun VFun<X, E>.df(): VFun<X, E> = when (this) {
     is VConst -> VZero(length)
 //    is VVar -> VOne(length)
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
-    is SVProd -> left.df(*vars) * right + left * right.df()
-    is VSProd -> left.df() * right + left * right.df(*vars)
+    is SVProd -> left.d(v1) * right + left * right.df()
+    is VSProd -> left.df() * right + left * right.d(v1)
     is VNegative -> -value.df()
-    is Gradient -> vfn.df()
-    is Vec -> Vec(length, contents.map { it.df(*vars) })
-    is MVProd<X, E, *> -> TODO()
-    is VMProd<X, *, E> -> TODO()
+    is VDerivative -> vfn.df()
+    is Vec -> Vec(length, contents.map { it.d(v1) })
+    is MVProd<X, E, *> -> this().df()
+    is VMProd<X, *, E> -> this().df()
+    is Gradient -> TODO()
   }
 }
 
