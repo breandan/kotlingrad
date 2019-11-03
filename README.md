@@ -507,7 +507,7 @@ Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a pa
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
 
 ```kotlin
-open class Vec<E, MaxLength: `1`> constructor(val length: Nat<MaxLength>, val contents: List<E> = listOf()) {
+open class Vec<E, MaxLength: `1`> constructor(val length: Nat<MaxLength>, val contents: List<E>) {
   operator fun get(i: `1`): E = contents[i.i]
   operator fun get(i: Int): E = contents[i]
 
@@ -561,7 +561,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently variables are instantiated with default values, so when a function is invoked with missing values(s) (i.e. `z = x * y; z(x to 1) // y = ?`) the default value is applied. This is similar to [NumPy broadcasting](https://docs.scipy.org/doc/numpy-1.15.0/user/basics.broadcasting.html). However, we could encode the dimensionality of the function into the type. Instead of allowing default values, this would enforce passing mandatory values when invoking a function (similar to the [builder pattern](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68)). 
+The current API is experimental, but can be improved in many ways. Currently, Kotlin𝛁 does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
