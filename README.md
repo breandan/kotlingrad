@@ -109,7 +109,7 @@ Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/
 |            *log*<sub>b</sub>(**A**)             |          `a.log(b)`           |           `log(a, b)`            |                                     |        (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
 |                **A**<sup>b</sup>                |          `a.pow(b)`           |           `pow(a, b)`            |                                     |        (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
 |                    √a<br>∛a                     | `a.pow(1.0/2)`<br>`a.root(3)` |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ→ℝ<sup>m×m</sup>)                         |
-|   <sup>da</sup>&frasl;<sub>db</sub><br>a'(b)    |          `a.diff(b)`          |           `grad(a)[b]`           |            `d(a) / d(b)`            |                     (`a`: C(ℝ<sup>m</sup>)<sup>*</sup>, `b`: ℝ→ℝ) → (ℝ<sup>m</sup>→ℝ)                      |
+|   <sup>da</sup>&frasl;<sub>db</sub><br>a'(b)    |          `a.d(b)`          |           `grad(a)[b]`           |            `d(a) / d(b)`            |                     (`a`: C(ℝ<sup>m</sup>)<sup>*</sup>, `b`: ℝ→ℝ) → (ℝ<sup>m</sup>→ℝ)                      |
 |                       ∇a                        |                               |            `grad(a)`             |             `a.grad()`              |                    (`a`: C(ℝ<sup>m</sup>)<sup>*</sup>) → (ℝ<sup>m</sup>→ℝ<sup>m</sup>)                     |
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
@@ -440,12 +440,12 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
         is Sum -> left(map) + right(map)
     }
 
-    fun diff(variable: Var<X>): Fun<X> = when(this) {
+    fun d(variable: Var<X>): Fun<X> = when(this) {
        is Const -> Zero
        is Var -> if (variable == this) One else Zero
        // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-       is Prod -> left.diff(variable) * right + left * right.diff(variable)
-       is Sum -> left.diff(variable) + right.diff(variable)
+       is Prod -> left.d(variable) * right + left * right.d(variable)
+       is Sum -> left.d(variable) + right.d(variable)
     }
 
     operator fun plus(addend: Fun<T>) = Sum(this, addend)
@@ -485,30 +485,30 @@ This allows us to put all related control flow on a single abstract class which 
 
 While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
-First, we enumerate a list of integer type literals as a chain of subtypes, so that `0 <: 1 <: 2 <: 3 <: ... <: C`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
+First, we enumerate a list of integer type literals as a chain of subtypes, so that `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
 
 ```kotlin
 @file:Suppress("ClassName")
-open class `0`(override val i: Int = 0): `1`(i) { companion object: `0`(), Nat<`0`> }
-open class `1`(override val i: Int = 1): `2`(i) { companion object: `1`(), Nat<`1`> }
-open class `2`(override val i: Int = 2): `3`(i) { companion object: `2`(), Nat<`2`> }
-open class `3`(override val i: Int = 3): `4`(i) { companion object: `3`(), Nat<`3`> }
-//...This is generated
-sealed class `100`(open val i: Int = 100) { companion object: `100`(), Nat<`100`> }
-interface Nat<T: `100`> { val i: Int } // Used for certain type bounds
+interface Nat<T: `0`> { val i: Int } // Used for certain type bounds
+sealed class `0`(open val i: Int = 0) { companion object: `0`(), Nat<`0`> }
+sealed class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
+sealed class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
+sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
+//...
 ```
 
 Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
 
 ```kotlin
-@JvmName("floatVecPlus") infix operator fun <C: `100`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = Vec(length, contents.zip(v.contents).map { it.first + it.second })
+@JvmName("floatVecPlus") infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = 
+  Vec(length, contents.zip(v.contents).map { it.first + it.second })
 ```
 
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
 
 ```kotlin
-open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val contents: List<E> = listOf()) {
-  operator fun get(i: `100`): E = contents[i.i]
+open class Vec<E, MaxLength: `1`> constructor(val length: Nat<MaxLength>, val contents: List<E> = listOf()) {
+  operator fun get(i: `1`): E = contents[i.i]
   operator fun get(i: Int): E = contents[i]
 
   companion object {
@@ -523,7 +523,7 @@ open class Vec<E, MaxLength: `100`> constructor(val length: Nat<MaxLength>, val 
 The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
 
 ```kotlin
-val one = Vec(1, 2, 3) + Vec(1, 2, 3)   // Always runs safely
+val one = Vec(1, 2, 3) + Vec(1, 2, 3)        // Always runs safely
 val add = Vec(1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
 val vec = Vec(1, 2, 3)                       // Does not compile
 val sum = Vec(1, 2) + add                    // Does not compile
