@@ -92,7 +92,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
 
   fun Fun<DoubleReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DoubleReal>, DoubleReal>): Fun<DoubleReal> {
     with(DoublePrecision) {
-      val d_dg = this@descend.df(map.first)
+      val d_dg = this@descend.d(map.first)
       var G1P: Fun<DoubleReal> = map.second
       var velocity: Fun<DoubleReal> = wrap(vinit)
       var i = 0

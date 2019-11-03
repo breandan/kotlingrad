@@ -10,17 +10,17 @@ fun main() {
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
-    val df_dx = f.df(x)
+    val df_dx = f.d(x)
     println("f'(x) = $df_dx")
 
     val g = x pow x
     println("g(x) = $g")
-    val dg_dx = g.df(x)
+    val dg_dx = g.d(x)
     println("g'(x) = $dg_dx")
 
     val h = x + y
     println("h(x) = $h")
-    val dh_dx = h.df(x)
+    val dh_dx = h.d(x)
     println("h'(x) = $dh_dx")
 
     val vf1 = Vec(y + x, y * 2)
@@ -81,9 +81,11 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
       is SMProd -> left(bnds) * right(bnds)
       is MConst -> MZero(numRows, numCols)
       is Mat -> Mat(numRows, numCols, rows.map { it(bnds) as Vec<X, C> })
-//      is Jacobian -> df()(bnds)
       else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
+
+//  Materializes the concrete matrix from the dataflow graph
+//  operator fun invoke(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
@@ -102,7 +104,7 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
     is SMProd -> "$left * $right"
     is MConst -> "TODO()"
     is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ") { it.contents.joinToString(", ") }})"
-    is Jacobian -> "d($mfn) / d($vars)"
+    is MDerivative -> "d($mfn) / d($v1)"
     else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
   }
 }
@@ -115,19 +117,21 @@ class HProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<
 class MSProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
 class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
 
-class Jacobian<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, vararg val vars: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
+// TODO: Generalize tensor derivatives
+class MDerivative<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
   fun VFun<X, R>.df(): VFun<X, R> = when (this) {
     is VConst -> VZero(length)
 //    is VVar -> VOne(length)
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
-    is SVProd -> left.df(*vars) * right + left * right.df()
-    is VSProd -> left.df() * right + left * right.df(*vars)
+    is SVProd -> left.d(v1) * right + left * right.df()
+    is VSProd -> left.df() * right + left * right.d(v1)
     is VNegative -> -value.df()
-    is Gradient -> vfn.df()
-    is Vec -> Vec(length, contents.map { it.df(*vars) })
-    is MVProd<X, R, *> -> TODO()
-    is VMProd<X, *, R> -> TODO()
+    is VDerivative -> vfn.df()
+    is Vec -> Vec(length, contents.map { it.d(v1) })
+    is MVProd<X, R, *> -> this()
+    is VMProd<X, *, R> -> this()
+    is Gradient -> this()
 //    is MSum -> left.df() + right.df()
     // Casting here is necessary because of type erasure (we loose the inner dimension when MMProd<X, R, C1, C2> is boxed as MFun<X, R, C2>)
 //    is MMProd<X, R, *, C> -> (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) + left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)

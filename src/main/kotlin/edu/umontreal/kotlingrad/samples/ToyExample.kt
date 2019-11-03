@@ -11,28 +11,23 @@ fun main() {
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
-    val df_dx = f.df(x)
+    val df_dx = f.d(x)
     println("f'(x) = $df_dx")
     println("f'(3) = ${df_dx(x to 3.0)}")
 
     val g = x pow x
     println("g(x) = $g")
-    val dg_dx = g.df(x)
+    val dg_dx = g.d(x)
     println("g'(x) = $dg_dx")
 
     val q = y + z
     val h = x + q
     println("h(x) = $h")
     println("h(q = x^2) = ${h(q to (x pow 2))}")
-    val dh_dx = h.df(x)
+    val dh_dx = h.d(x)
     println("h'(x) = $dh_dx")
 
-    try {
-      g.df(x, y, z)
-      assert(false) { "An exception should have been thrown but wasn't!" }
-    } catch (e: IllegalArgumentException) {
-      println(e.localizedMessage)
-    }
+    val t = g.d(x, y, z)
   }
 }
 
@@ -76,7 +71,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
         is Zero -> bnds.zero
         is One -> bnds.one
         is Two -> bnds.two
-        is E -> bnds.E
+        is E -> bnds.e
         is Var -> this
         is SConst -> this
         is Prod -> left(bnds) * right(bnds)
@@ -90,7 +85,12 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
       }
     }
 
-  open fun df(vararg variables: Var<X>): Fun<X> = Derivative(this, *variables)
+  operator fun invoke(): Fun<X> = invoke(Bindings())
+
+  open fun d(v1: Var<X>): Fun<X> = Derivative(this, v1)
+  open fun d(v1: Var<X>, v2: Var<X>): Vec<X, `2`> = Vec(Derivative(this, v1), Derivative(this, v2))
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, `3`> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
+  open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
 
   override fun ln(): Fun<X> = Log(this)
 
@@ -110,7 +110,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()
     this is Sum && right is Negative -> "$left - ${right.value}"
     this is Sum -> "$left + $right"
     this is Var -> name
-    this is Derivative -> "d($fn) / d(${vrbs.joinToString(", ")})"
+    this is Derivative -> "d($fn) / d($vrb)"
     this is Zero -> "\uD835\uDFD8"
     this is One -> "\uD835\uDFD9"
     this is Two -> "\uD835\uDFDA"
@@ -130,9 +130,9 @@ class Negative<X : Fun<X>>(val value: Fun<X>) : Fun<X>(value)
 class Prod<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right)
 class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : Fun<X>(base, exponent)
 class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>) : Fun<X>(logarithmand)
-class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrbs: Var<X>) : Fun<X>(fn, *vrbs) {
+class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, val vrb: Var<X>) : Fun<X>(fn, vrb) {
   fun Fun<X>.df(): Fun<X> = when (this) {
-    is Var -> if (this in vrbs) One() else Zero()
+    is Var -> if (this == vrb) One() else Zero()
     is SConst -> Zero()
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
@@ -140,19 +140,18 @@ class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, vararg val vrb
     is Negative -> -value.df()
     is Log -> (logarithmand pow -One<X>()) * logarithmand.df()
     is Derivative -> fn.df()
-//    is DProd -> DProd(left.diff(), right.diff())
-//    is VMagnitude -> VMagnitude(value.diff())
-    else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
+    is DProd -> this().df()
+    is VMagnitude -> this().df()
   }
 }
 
 data class Bindings<X: Fun<X>>(
   val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
 //  val vMap: Map<VFun<X, *>, VFun<X, *>> = mapOf(),
-  val zero: Fun<X>,
-  val one: Fun<X>,
-  val two: Fun<X>,
-  val E: Fun<X>) {
+  val zero: Fun<X> = Zero(),
+  val one: Fun<X> = One(),
+  val two: Fun<X> = Two(),
+  val e: Fun<X> = E()) {
 //  constructor(sMap: Map<Fun<X>, Fun<X>>,
 //              vMap: Map<VFun<X, *>, VFun<X, *>>,
 //              zero: Fun<X>,
