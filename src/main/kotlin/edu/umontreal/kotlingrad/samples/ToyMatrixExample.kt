@@ -45,7 +45,6 @@ fun main() {
       x * y, y * y)
     val mf6 = mf4 * mf5 * mf1
 
-    mf6
     println(mf1 * mf2) // 2*1 x 1*2
 //    println(mf1 * vf1) // 2*1 x 2
     println(mf2 * vf1) // 1*2 x 2
@@ -68,12 +67,12 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
   constructor(left: MFun<X, R, *>, right: MFun<X, *, C>): this(left.numRows, right.numCols, left.sVars + right.sVars) //, left.vVars + right.vVars, left.mVars + right.mVars)
   constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars) //, mFun.vVars, mFun.mVars)
 
-  open val T: MFun<X, C, R> by lazy { MTranspose(this) }
+  open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override operator fun invoke(bnds: Bindings<X>): MFun<X, R, C> =
     when (this) {
       is MNegative -> -value(bnds)
-      is MTranspose -> value(bnds).T
+      is MTranspose -> value(bnds).ᵀ
       is MSum -> left(bnds) + right(bnds)
       is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, `1`> * right(bnds) as MFun<X, `1`, C>
       is HProd -> left(bnds) ʘ right(bnds)
@@ -84,13 +83,15 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
       else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
-//  Materializes the concrete matrix from the dataflow graph
-//  operator fun invoke(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
+// Materializes the concrete matrix from the dataflow graph
+  fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
   open operator fun times(multiplicand: Fun<X>): MFun<X, R, C> = MSProd(this, multiplicand)
   open operator fun times(multiplicand: VFun<X, C>): VFun<X, R> = MVProd(this, multiplicand)
+
+  // The Hadamard product
   open infix fun ʘ(multiplicand: MFun<X, R, C>): MFun<X, R, C> = HProd(this, multiplicand)
   open operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
 
@@ -119,25 +120,18 @@ class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, 
 
 // TODO: Generalize tensor derivatives
 class MDerivative<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
-  fun VFun<X, R>.df(): VFun<X, R> = when (this) {
-    is VConst -> VZero(length)
-//    is VVar -> VOne(length)
-    is VSum -> left.df() + right.df()
-    is VVProd -> left.df() ʘ right + left ʘ right.df()
-    is SVProd -> left.d(v1) * right + left * right.df()
-    is VSProd -> left.df() * right + left * right.d(v1)
-    is VNegative -> -value.df()
-    is VDerivative -> vfn.df()
-    is Vec -> Vec(length, contents.map { it.d(v1) })
-    is MVProd<X, R, *> -> this()
-    is VMProd<X, *, R> -> this()
-    is Gradient -> this()
-//    is MSum -> left.df() + right.df()
+  fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this) {
+    is MNegative -> -value.df()
+    is MTranspose -> (value as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
+    is MSum -> left.df() + right.df()
     // Casting here is necessary because of type erasure (we loose the inner dimension when MMProd<X, R, C1, C2> is boxed as MFun<X, R, C2>)
-//    is MMProd<X, R, *, C> -> (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) + left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
-//    is MSProd -> left.df() * right + left * right.df(*vars)
-//    is MNegative -> -value.df()
-//    is Mat -> Mat(numRows, numCols, rows.map { it.diff(*vars) as Vec<X, C> })
+    is MMProd<X, R, *, C> -> (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) + left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
+    is MSProd -> left.df() * right + left * right.d(v1)
+    is SMProd -> left.d(v1) * right + left * right.df()
+    is HProd -> left.df() ʘ right + left ʘ right.df()
+    is Mat -> Mat(numRows, numCols, rows.map { it.d(v1)() })
+    is MConst -> MZero(numRows, numCols)
+    else -> throw IllegalArgumentException("Unable to differentiate expression of type ${this::class.java.name}")
   }
 }
 
@@ -160,7 +154,7 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
     require(numRows.i == rows.size) { "Declared rows, $numRows != ${rows.size}" }
   }
 
-  override val T: Mat<X, C, R> by lazy { Mat(numCols, numRows, *(0 until numCols.i).map { i -> Vec(numRows, rows.map { it[i] }) }.toTypedArray()) }
+  override val ᵀ: Mat<X, C, R> by lazy { Mat(numCols, numRows, *(0 until numCols.i).map { i -> Vec(numRows, rows.map { it[i] }) }.toTypedArray()) }
 
   override operator fun unaryMinus() = Mat(numRows, numCols, rows.map { -it })
 
@@ -172,7 +166,7 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
 
   operator fun get(i: Int): VFun<X, C> = rows[i]
 
-  override operator fun times(multiplicand: Fun<X>) = Mat(numRows, numCols, rows.map { it * multiplicand })
+  override operator fun times(multiplicand: Fun<X>): Mat<X, R, C> = Mat(numRows, numCols, rows.map { it * multiplicand })
 
   override operator fun times(multiplicand: VFun<X, C>) =
     when (multiplicand) {
@@ -184,7 +178,7 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
     when (multiplicand) {
       is Mat -> Mat(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
         Vec(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
-          rows[i] dot multiplicand.T[j]
+          rows[i] dot multiplicand.ᵀ[j]
         })
       })
       else -> super.times(multiplicand)
