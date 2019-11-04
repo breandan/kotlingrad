@@ -1248,7 +1248,7 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \bnfrl{int} & ::= & \bnfrl{nat} \mor \code{0} \mor \bnfrl{int} \\
 \bnfrl{flt} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
 \bnfrl{num} & ::= & \bnfrl{type}\code{(}\bnfrl{int}\code{)} \mor \bnfrl{type}\code{(}\bnfrl{float}\code{)} \\
-\bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \\
+\bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \mor \code{Var()}} \\
 \bnfrl{sign} & ::= & \code{+} \mor \code{-} \\
 \bnfrl{binaryOp} & ::= & \bnfrl{sign} \mor \code{*} \mor \code{/} \mor \code{pow} \\
 \bnfrl{unaryOp} & ::= & \bnfrl{sign} \mor \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
@@ -1263,7 +1263,8 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \bnfrl{anyExpr} & ::= & \bnfrl{expr} \mor \bnfrl{vecExpr} \mor \bnfrl{matExpr} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
 \bnfrl{bindings} & ::= & \bnfrl{expr} \code{ to } \bnfrl{expr} \mor \bnfrl{expr} \code{ to } \bnfrl{expr} \code{,} \bnfrl{bindings} \\
 \bnfrl{invocation} & ::= & \bnfrl{anyExpr} \code{(} \bnfrl{bindings} \code{)} \\
-\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{expr} \code{)}
+\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{expr} \code{) \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{exprList} \code{)}
+\bnfrl{gradient} & ::= & \bnfrl{expr} \code{.grad()}
 \end{eqnarray*}
 
 \section{Type systems}\label{sec:type-systems}
