@@ -597,7 +597,7 @@ Below is the approximate BNF grammar for Kotlin𝛁. This is incomplete and subj
        nat = "1" | ... | "99";
        int = nat | "0" | int;
        flt = int "." int;
-       num = type "(" int ")" | type"("float")";
+       num = type "(" int ")" | type "(" float ")";
        var = "x" | "y" | "z" | "ONE" | "ZERO" | "E" | "Var()";
       sign = "+" | "-";
   binaryOp = sign | "*" | "/" | "pow";
