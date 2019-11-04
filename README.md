@@ -587,27 +587,6 @@ val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
 
-### Vector functions
-
-Vector functions should have a size type, to ensure all values are set:
-
-```kotlin
-val x = VVar(0.0, 0.0, 0.0) // x: VVariable<Double, `3`>
-val y = VVar(0.0, `3`)      // x: VVariable<Double, `3`>
-val f = 2 * x + x / 2       // f: UnaryVFunction<Double>
-val g = f(-2.0, 0.0, 2.0)   // g: ConstVector<`3`> == [-3. 0. 5.]
-```
-
-### Matrix functions
-
-Multiplying matrices `x = N x M` and `y = M x P` should yield matrix `z` of type `N x P`:
-
-```kotlin
-val x = VVar(0.0, `3`, `1`) // y: MVariable<Double, `3`, `1`>
-val y = VVar(0.0, 0.0)      // x: MVariable<Double, `1`, `2`>
-val z = x * y               // z: MVariable<Double, `3`, `2`>
-```
-
 ## Comparison
 
 |                              Framework                               | Language |         SD¹        |         AD²        |         DP³        |         FP⁴        |         TS⁵        |        SS⁶         |        DT⁷         |       MP⁸      |
