@@ -152,9 +152,9 @@ Attempting to sum two vectors whose shapes do not match will fail to compile, an
 
 ```kotlin
 // Inferred type: Mat<Double, `1`, `4`>
-val a = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0)
+val a = Mat1x4(1.0, 2.0, 3.0, 4.0)
 // Inferred type: Mat<Double, `4`, `1`>
-val b = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0)
+val b = Mat4x1(1.0, 2.0, 3.0, 4.0)
 
 val c = a * b
 
@@ -166,12 +166,12 @@ val c = a * b
 Similarly, attempting to multiply two matrices whose inner dimensions do not match will fail to compile.
 
 ```kotlin
-val a = Mat(`2`, `4`, 
+val a = Mat2x4( 
   1.0, 2.0, 3.0, 4.0,
   5.0, 6.0, 7.0, 8.0
 )
 
-val b = Mat(`4`, `2`, 
+val b = Mat4x2( 
   1.0, 2.0,
   3.0, 4.0,
   5.0, 6.0,
@@ -181,11 +181,11 @@ val b = Mat(`4`, `2`,
 // Types are optional, but encouraged
 val c: Mat<Double, `2`, `2`> = a * b 
 
-val d = Mat(`2`, `1`, 1.0, 2.0)
+val d = Mat2x1(1.0, 2.0)
 
 val e = c * d
 
-val f = Mat(`3`, `1`, 1.0, 2.0, 3.0)
+val f = Mat3x1(1.0, 2.0, 3.0)
 
 // Does not compile, inner dimension mismatch
 // e * f
