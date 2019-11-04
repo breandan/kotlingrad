@@ -587,6 +587,34 @@ val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
 
+## Grammar
+
+Below is the approximate BNF grammar for Kotlin𝛁. This is incomplete and subject to change without notice.
+
+```ebnf
+      type = "Double" | "Int" | "Float" | "BigInteger" | "BigDouble";
+       nat = "1" | ... | "99";
+       int = nat | "0" | int;
+       flt = int "." int;
+       num = type "(" int ")" | type"("float")";
+       var = "x" | "y" | "z" | "ONE" | "ZERO" | "E" | "Var()";
+      sign = "+" | "-";
+  binaryOp = sign | "*" | "/" | "pow";
+   unaryOp = sign | "sin" | "cos" | "tan" | "sqrt" | "log" | "ln" | "exp";
+      expr = var | num | unaryOp expr | var binaryOp expr | "(" expr ")";
+  exprList = expr | expr "," exprList;
+  linearOp = sign | "*" | "dot";
+       vec = "Vec(" exprList ")" | "Vec" nat "(" exprList ")";
+   vecExpr = vec | sign vecExpr | expr "*" vecExpr | vec linearOp vecExpr;
+       mat = "Mat" nat "x" nat "(" exprList ")";
+   matExpr = mat | sign matExpr | expr linearOp matExpr | vecExpr linearOp matExpr | mat linearOp matExpr;
+   anyExpr = expr | vecExpr | matExpr | derivative | invocation;
+  bindings = expr " to " expr | expr " to " expr "," bindings;
+invocation = anyExpr "(" bindings ")";
+derivative = "d(" anyExpr ") / d(" expr ")" | anyExpr ".diff(" expr ")" | anyExpr ".diff(" exprList ")";
+  gradient = expr ".grad()";
+```
+
 ## Comparison
 
 |                              Framework                               | Language |         SD¹        |         AD²        |         DP³        |         FP⁴        |         TS⁵        |        SS⁶         |        DT⁷         |       MP⁸      |
