@@ -24,6 +24,7 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
   * [Algebraic data types](#algebraic-data-types)
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
+* [Formal Grammar](#grammar)
 * [Comparison to other frameworks](#comparison)
 * [Citation](#citation)
 * [Special thanks](#special-thanks)
