@@ -48,7 +48,7 @@ Additionally, it aims to support:
 * PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
 * N-dimensional tensors and [higher-order tensor operators](https://en.wikipedia.org/wiki/Tensor_contraction)
 * Fully-general AD over control flow, variable reassignment
-(via [delgation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
+(via [delegation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
 
 All of these features are implemented without access to bytecode or special compiler tricks - just using [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf), embedded DSLs a la [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf), and [ordinary generics](https://kotlinlang.org/docs/reference/generics.html). See below for a more detailed [feature comparison](#comparison).
 
