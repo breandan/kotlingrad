@@ -1,9 +1,9 @@
 <!--- @file:Suppress("ClassName") --->
 <!--- @file:Suppress("PropertyName") --->
 
-# Kotlin𝛁: Type-safe Symbolic Differentiation for Kotlin
+# Kotlin∇: Type-safe Symbolic Differentiation for Kotlin
 
-Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin𝛁 strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin∇ is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
 ## Table of contents
 
@@ -31,11 +31,11 @@ Kotlin𝛁 is a framework for type-safe [automatic differentiation](https://en.w
 
 ## Introduction
 
-Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), [Lantern](https://github.com/feiwang3311/Lantern) et al., Kotlin𝛁 attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. It also adds a number of experimental ideas, including compile-time shape-safety, algebraic expression rewriting and numerical stability checking with property-based testing. We aim to provide an algebraically-grounded implementation of AD for shape-safe tensor operations. Tensors in Kotlin𝛁 are represented as [multidimensional arrays](https://en.wikipedia.org/wiki/Tensor#As_multidimensional_arrays).
+Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), [Lantern](https://github.com/feiwang3311/Lantern) et al., Kotlin∇ attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. It also adds a number of experimental ideas, including compile-time shape-safety, algebraic expression rewriting and numerical stability checking with property-based testing. We aim to provide an algebraically-grounded implementation of AD for shape-safe tensor operations. Tensors in Kotlin∇ are represented as [multidimensional arrays](https://en.wikipedia.org/wiki/Tensor#As_multidimensional_arrays).
 
 ## Features
 
-Kotlin𝛁 currently supports the following features:
+Kotlin∇ currently supports the following features:
 
 * Arithmetical operations on scalars, vectors and matrices
 * Shape-safe vector and matrix algebra
@@ -56,7 +56,7 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
-Kotlin𝛁 is hosted on the [GitHub Package Registry](https://github.com/breandan/kotlingrad/packages/). If you have not already done so, first generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
+Kotlin∇ is hosted on the [GitHub Package Registry](https://github.com/breandan/kotlingrad/packages/). If you have not already done so, first generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
 
 #### Gradle
 
@@ -94,7 +94,7 @@ Maven users should refer to [these instructions](https://help.github.com/en/arti
 
 ### Notation
 
-Kotlin𝛁 operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
+Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
 |             Math<sup>&dagger;</sup>             |             Infix             |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                         |
 |:-----------------------------------------------:|:-----------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------:|
@@ -129,13 +129,13 @@ More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized ope
 
 ### Shape Safety
 
-Shape safety is an important concept in Kotlin𝛁. There are three broad strategies for handling shape errors:
+Shape safety is an important concept in Kotlin∇. There are three broad strategies for handling shape errors:
 
 * Hide the error somehow by implicitly reshaping or [broadcasting](https://docs.scipy.org/doc/numpy-1.10.4/user/basics.broadcasting.html) arrays
 * Announce the error at runtime, with a relevant message, e.g. [`InvalidArgumentError`](https://www.tensorflow.org/api_docs/python/tf/errors/InvalidArgumentError)
 * Do not allow programs which can result in a shape error to compile
 
-In Kotlin𝛁, we use the last strategy to check the shape of tensor operations. Consider the following program:
+In Kotlin∇, we use the last strategy to check the shape of tensor operations. Consider the following program:
 
 ```kotlin
 // Inferred type: Vec<Double, `2`>
@@ -203,7 +203,7 @@ When writing a function, it is mandatory to declare the input type(s), but the r
 
 ### Variable Capture
 
-Kotlin𝛁 provides a DSL with support for type-safe variable capture with variadic currying. Consider the following example:
+Kotlin∇ provides a DSL with support for type-safe variable capture with variadic currying. Consider the following example:
 
 ```kotlin
 val q = X + Y * Z + Y + 0.0
@@ -285,7 +285,7 @@ Plotting is also possible in higher dimensions, [for example](src/main/kotlin/ed
 
 To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
-Kotlin𝛁 claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin𝛁 uses two such equivalences to validate its AD implementation:
+Kotlin∇ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin∇ uses two such equivalences to validate its AD implementation:
 
 * [Analytic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
 * [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
@@ -337,9 +337,9 @@ There are many other ways to independently verify the numerical gradient, such a
 
 ## How?
 
-To understand the core of Kotlin𝛁's AD implementation, please refer to the [toy example](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyExample.kt).
+To understand the core of Kotlin∇'s AD implementation, please refer to the [toy example](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyExample.kt).
 
-This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin𝛁:
+This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin∇:
 
 #### Operator overloading
  
@@ -363,13 +363,13 @@ fun <T: Group<T>> cubed(t: T): T = t * t * t
 fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
 ```
 
-Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html), which are evaluated using a [fixed precedence](https://kotlinlang.org/docs/reference/grammar.html#precedence). In the current version of Kotlin𝛁, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
+Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html), which are evaluated using a [fixed precedence](https://kotlinlang.org/docs/reference/grammar.html#precedence). In the current version of Kotlin∇, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
 
 #### First-class functions
 
 With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
-In Kotlin𝛁, all expressions can be treated as functions. For example:
+In Kotlin∇, all expressions can be treated as functions. For example:
 
 ```kotlin
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
@@ -388,7 +388,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) augment external classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin𝛁 can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) augment external classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Expr()
@@ -459,7 +459,7 @@ Kotlin's [smart-casting](https://kotlinlang.org/docs/reference/typecasts.html#sm
 
 #### Multiple Dispatch
 
-In conjunction with ADTs, Kotlin𝛁 also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
+In conjunction with ADTs, Kotlin∇ also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
 Building on the previous example, a common task in AD is to [simplify a graph](http://deeplearning.net/software/theano/extending/optimization.html). This is useful in order to minimize the total number of calculations required, improving numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 
@@ -498,7 +498,7 @@ sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat
 //...
 ```
 
-Kotlin𝛁 supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
+Kotlin∇ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
 
 ```kotlin
 @JvmName("floatVecPlus") infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = 
@@ -530,7 +530,7 @@ val vec = Vec(1, 2, 3)                       // Does not compile
 val sum = Vec(1, 2) + add                    // Does not compile
 ```
 
-A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin𝛁 can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 // Inferred type: Mat<Int, `4`, `4`>
@@ -562,7 +562,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently, Kotlin𝛁 does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is experimental, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
@@ -590,7 +590,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ## Grammar
 
-Below is the approximate BNF grammar for Kotlin𝛁. This is incomplete and subject to change without notice.
+Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subject to change without notice.
 
 ```ebnf
       type = "Double" | "Int" | "Float" | "BigInteger" | "BigDouble";
@@ -620,7 +620,7 @@ derivative = "d(" anyExpr ") / d(" expr ")" | anyExpr ".diff(" expr ")" | anyExp
 
 |                              Framework                               | Language |         SD¹        |         AD²        |         DP³        |         FP⁴        |         TS⁵        |        SS⁶         |        DT⁷         |       MP⁸      |
 |:--------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
-|                               Kotlin𝛁                                |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: |   :construction:   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
+|                               Kotlin∇                                |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: |   :construction:   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
 |          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 | [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
 |   [Deeplearning.scala](https://deeplearning.thoughtworks.school/)    |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
@@ -656,7 +656,7 @@ derivative = "d(" anyExpr ") / d(" expr ")" | anyExpr ".diff(" expr ")" | anyExp
 
 ## Citation
 
-If you would like to cite Kotlin𝛁, please use the following `bibtex` entry:
+If you would like to cite Kotlin∇, please use the following `bibtex` entry:
 
 ```
 @misc{considine2019kotlingrad,
@@ -671,7 +671,7 @@ If you would like to cite Kotlin𝛁, please use the following `bibtex` entry:
 
 ## References
 
-To the author's knowledge, Kotlin𝛁 is the first AD implementation in native Kotlin. While the particular synthesis of these ideas (i.e. shape-safe, functional AD, using generic types) is unique, it has been influenced by a long list of prior work in AD. Below is a list of projects and publications that helped inspire this work.
+To the author's knowledge, Kotlin∇ is the first AD implementation in native Kotlin. While the particular synthesis of these ideas (i.e. shape-safe, functional AD, using generic types) is unique, it has been influenced by a long list of prior work in AD. Below is a list of projects and publications that helped inspire this work.
 
 ### Automatic Differentiation
 

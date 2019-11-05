@@ -1,6 +1,6 @@
 # Program Transformations for Machine Learning
 
-Kotlin𝛁 has been [accepted](https://program-transformations.github.io/#poster-session) to PTML '19! 
+Kotlin∇ has been [accepted](https://program-transformations.github.io/#poster-session) to PTML '19! 
 
 ## Peer Reviews
 

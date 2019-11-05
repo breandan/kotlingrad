@@ -1,6 +1,6 @@
 # KotlinConf
 
-Kotlin𝛁 was [accepted](https://kotlinconf.com/talks/5-dec/127461) to KotlinConf '19! 
+Kotlin∇ was [accepted](https://kotlinconf.com/talks/5-dec/127461) to KotlinConf '19! 
 
 ## Schedule
 

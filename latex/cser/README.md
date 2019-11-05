@@ -1,6 +1,6 @@
 # Consortium for Software Engineering Research
 
-Kotlin𝛁 was [accepted](https://www.cser.ca/2019s/#theprogram) to CSER '19! 
+Kotlin∇ was [accepted](https://www.cser.ca/2019s/#theprogram) to CSER '19! 
 
 ## Schedule
 
