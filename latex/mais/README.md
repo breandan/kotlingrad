@@ -1,6 +1,6 @@
 # Languages for Inference Workshop at POPL 19
 
-Kotlin𝛁 was [accepted](http://montrealaisymposium.com/) to MAIS '19! 
+Kotlin∇ was [accepted](http://montrealaisymposium.com/) to MAIS '19! 
 
 ## Scheudle
 

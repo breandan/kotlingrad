@@ -1,6 +1,6 @@
 # Languages for Inference Workshop at POPL 19
 
-Kotlin𝛁 was [accepted](https://popl19.sigplan.org/track/lafi-2019#program) to LAFI '19! 
+Kotlin∇ was [accepted](https://popl19.sigplan.org/track/lafi-2019#program) to LAFI '19! 
 
 ## Scheudle
 
