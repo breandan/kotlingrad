@@ -190,18 +190,18 @@ Kotlin$\nabla$ treats mathematical functions and programming functions with the 
 \squeezeup\begin{figure}[!htb]
 \begin{lstlisting}
 // Literals have reified values for runtime comparison
-sealed class `0`(open val value: Int = 0)
-sealed class `1`(override val value: Int = 1): `0`(1)
-sealed class `2`(override val value: Int = 2): `1`(2)
-sealed class `3`(override val value: Int = 3): `2`(3)
-// <L: `1`> will accept 1<=L<=3 via Liskov substitution
-class Vec<E, L: `1`>(len: L, cts: List<E> = listOf())
+sealed class D0(open val value: Int = 0)
+sealed class D1(override val value: Int = 1): D0(1)
+sealed class D2(override val value: Int = 2): D1(2)
+sealed class D3(override val value: Int = 3): D2(3)
+// <L: D1> will accept 1<=L<=3 via Liskov substitution
+class Vec<E, L: D1>(len: L, cts: List<E> = listOf())
 // Define addition for two vectors of type Vec<Int, L>
-operator fun <L: `1`, V: Vec<Int, L>> V.plus(v: V) =
+operator fun <L: D1, V: Vec<Int, L>> V.plus(v: V) =
   Vec<Int, L>(len, cts.zip(v.cts).map { it.l + it.r })
 // Type-checked vector addition with shape inference
-val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4))
-val X = Vec(`1`, listOf(1, 2)) + Vec(`3`) // Undefined!
+val Y = Vec(D2, listOf(1, 2)) + Vec(D2, listOf(3, 4))
+val X = Vec(D1, listOf(1, 2)) + Vec(D3) // Undefined!
 \end{lstlisting}
 \caption{Shape safe tensor addition for rank-1 tensors, $\forall L\leq3.$}\squeezeup
 \end{figure}

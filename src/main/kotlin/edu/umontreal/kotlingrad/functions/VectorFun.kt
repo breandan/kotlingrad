@@ -7,21 +7,21 @@ package edu.umontreal.kotlingrad.functions
 //import java.util.*
 //
 //// VFun should not be a List or the concatenation operator + will conflict with vector addition
-//open class VectorFun<X: Function<X>, MaxLength: `100`> protected constructor(
+//open class VectorFun<X: Function<X>, MaxLength: D100> protected constructor(
 //  open val length: Nat<MaxLength>, val variables: Set<Var<X>> = emptySet()):
 //  AbelianGroup<VectorFun<X, MaxLength>> {
 //
 //  companion object {
-//    operator fun <T: Function<T>> invoke(): VectorConst<T, `0`> = VectorConst(`0`, arrayListOf())
-//    operator fun <T: Function<T>> invoke(t: T): VectorConst<T, `1`> = VectorConst(`1`, arrayListOf(t))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T): VectorConst<T, `2`> = VectorConst(`2`, arrayListOf(t0, t1))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T): VectorConst<T, `3`> = VectorConst(`3`, arrayListOf(t0, t1, t2))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T): VectorConst<T, `4`> = VectorConst(`4`, arrayListOf(t0, t1, t2, t3))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T): VectorConst<T, `5`> = VectorConst(`5`, arrayListOf(t0, t1, t2, t3, t4))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T): VectorConst<T, `6`> = VectorConst(`6`, arrayListOf(t0, t1, t2, t3, t4, t5))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T): VectorConst<T, `7`> = VectorConst(`7`, arrayListOf(t0, t1, t2, t3, t4, t5, t6))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T): VectorConst<T, `8`> = VectorConst(`8`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
-//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T): VectorConst<T, `9`> = VectorConst(`9`, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
+//    operator fun <T: Function<T>> invoke(): VectorConst<T, D0> = VectorConst(D0, arrayListOf())
+//    operator fun <T: Function<T>> invoke(t: T): VectorConst<T, D1> = VectorConst(D1, arrayListOf(t))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T): VectorConst<T, D2> = VectorConst(D2, arrayListOf(t0, t1))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T): VectorConst<T, D3> = VectorConst(D3, arrayListOf(t0, t1, t2))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T): VectorConst<T, D4> = VectorConst(D4, arrayListOf(t0, t1, t2, t3))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T): VectorConst<T, D5> = VectorConst(D5, arrayListOf(t0, t1, t2, t3, t4))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T): VectorConst<T, D6> = VectorConst(D6, arrayListOf(t0, t1, t2, t3, t4, t5))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T): VectorConst<T, D7> = VectorConst(D7, arrayListOf(t0, t1, t2, t3, t4, t5, t6))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T): VectorConst<T, D8> = VectorConst(D8, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
+//    operator fun <T: Function<T>> invoke(t0: T, t1: T, t2: T, t3: T, t4: T, t5: T, t6: T, t7: T, t8: T): VectorConst<T, D9> = VectorConst(D9, arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
 //  }
 //
 //  override val one: VectorConst<X, MaxLength>
@@ -61,26 +61,26 @@ package edu.umontreal.kotlingrad.functions
 //  }
 //}
 //
-//class VectorNeg<X: Function<X>, MaxLength: `100`> internal constructor(
+//class VectorNeg<X: Function<X>, MaxLength: D100> internal constructor(
 //  val argument: VectorFun<X, MaxLength>
 //): VectorFun<X, MaxLength>(argument.length, argument.variables)
 //
-//class VectorProduct<X: Function<X>, MaxLength: `100`> internal constructor(
+//class VectorProduct<X: Function<X>, MaxLength: D100> internal constructor(
 //  val multiplicator: VectorFun<X, MaxLength>,
 //  val multiplicand: VectorFun<X, MaxLength>
 //): VectorFun<X, MaxLength>(multiplicator.length, multiplicator.variables + multiplicand.variables)
 //
-//class VectorDotProduct<X: Function<X>, MaxLength: `100`> internal constructor(
+//class VectorDotProduct<X: Function<X>, MaxLength: D100> internal constructor(
 //  val multiplicator: VectorFun<X, MaxLength>,
 //  val multiplicand: VectorFun<X, MaxLength>
 //): VectorFun<X, MaxLength>(multiplicator.length, multiplicator.variables + multiplicand.variables)
 //
-//class VectorSum<X: Function<X>, MaxLength: `100`> internal constructor(
+//class VectorSum<X: Function<X>, MaxLength: D100> internal constructor(
 //  val augend: VectorFun<X, MaxLength>,
 //  val addend: VectorFun<X, MaxLength>
 //): VectorFun<X, MaxLength>(augend.length, augend.variables + addend.variables)
 //
-//class VectorConst<X: Function<X>, MaxLength: `100`> internal constructor(
+//class VectorConst<X: Function<X>, MaxLength: D100> internal constructor(
 //  override val length: Nat<MaxLength>,
 //  private val contents: List<X>): VectorFun<X, MaxLength>(length), List<X> by contents {
 //  init {

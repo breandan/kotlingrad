@@ -115,7 +115,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
 
-<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
+<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. D0, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
 <sup>&Dagger;</sup> For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
@@ -138,9 +138,9 @@ Shape safety is an important concept in Kotlin∇. There are three broad strateg
 In Kotlin∇, we use the last strategy to check the shape of tensor operations. Consider the following program:
 
 ```kotlin
-// Inferred type: Vec<Double, `2`>
+// Inferred type: Vec<Double, D2>
 val a = Vec(1.0, 2.0)
-// Inferred type: Vec<Double, `3`>
+// Inferred type: Vec<Double, D3>
 val b = Vec(1.0, 2.0, 3.0)
 
 val c = b + b
@@ -152,9 +152,9 @@ val c = b + b
 Attempting to sum two vectors whose shapes do not match will fail to compile, and they must be explicitly resized.
 
 ```kotlin
-// Inferred type: Mat<Double, `1`, `4`>
+// Inferred type: Mat<Double, D1, D4>
 val a = Mat1x4(1.0, 2.0, 3.0, 4.0)
-// Inferred type: Mat<Double, `4`, `1`>
+// Inferred type: Mat<Double, D4, D1>
 val b = Mat4x1(1.0, 2.0, 3.0, 4.0)
 
 val c = a * b
@@ -180,7 +180,7 @@ val b = Mat4x2(
 )
 
 // Types are optional, but encouraged
-val c: Mat<Double, `2`, `2`> = a * b 
+val c: Mat<Double, D2, D2> = a * b 
 
 val d = Mat2x1(1.0, 2.0)
 
@@ -195,8 +195,8 @@ val f = Mat3x1(1.0, 2.0, 3.0)
 Explicit types are optional but encouraged. [Type inference](https://www.youtube.com/watch?v=MyljSWm0Y_k) helps preserve shape information over long programs.
 
 ```kotlin
-fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
-fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
+fun someMatFun(m: Mat<Double, D3, D1>): Mat<Double, D3, D3> = ...
+fun someMatFun(m: Mat<Double, D2, D2>) = ...
 ```
 
 When writing a function, it is mandatory to declare the input type(s), but the return type [may be omitted](https://kotlinlang.org/docs/reference/functions.html#explicit-return-types). Shape-safety is currently supported up to rank-2 tensors, i.e. matrices.
@@ -490,32 +490,32 @@ First, we enumerate a list of integer type literals as a chain of subtypes, so t
 
 ```kotlin
 @file:Suppress("ClassName")
-interface Nat<T: `0`> { val i: Int } // Used for certain type bounds
-sealed class `0`(open val i: Int = 0) { companion object: `0`(), Nat<`0`> }
-sealed class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
-sealed class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
-sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
+interface Nat<T: D0> { val i: Int } // Used for certain type bounds
+sealed class D0(open val i: Int = 0) { companion object: D0(), Nat<D0> }
+sealed class D1(override val i: Int = 1): D0(i) { companion object: D1(), Nat<D1> }
+sealed class D2(override val i: Int = 2): D1(i) { companion object: D2(), Nat<D2> }
+sealed class D3(override val i: Int = 3): D2(i) { companion object: D3(), Nat<D3> }
 //...
 ```
 
 Kotlin∇ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
 
 ```kotlin
-@JvmName("floatVecPlus") infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = 
+@JvmName("floatVecPlus") infix operator fun <C: D1, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = 
   Vec(length, contents.zip(v.contents).map { it.first + it.second })
 ```
 
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
 
 ```kotlin
-open class Vec<E, MaxLength: `1`> constructor(val length: Nat<MaxLength>, val contents: List<E>) {
-  operator fun get(i: `1`): E = contents[i.i]
+open class Vec<E, MaxLength: D1> constructor(val length: Nat<MaxLength>, val contents: List<E>) {
+  operator fun get(i: D1): E = contents[i.i]
   operator fun get(i: Int): E = contents[i]
 
   companion object {
-    operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, arrayListOf(t))
-    operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, arrayListOf(t0, t1))
-    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(`3`, arrayListOf(t0, t1, t2))
+    operator fun <T> invoke(t: T): Vec<T, D1> = Vec(D1, arrayListOf(t))
+    operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(D2, arrayListOf(t0, t1))
+    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(D3, arrayListOf(t0, t1, t2))
     //...
   }
 }
@@ -525,7 +525,7 @@ The initializer may be omitted in favor of dynamic construction, although this m
 
 ```kotlin
 val one = Vec(1, 2, 3) + Vec(1, 2, 3)        // Always runs safely
-val add = Vec(1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
+val add = Vec(1, 2, 3) + Vec(D3, listOf(t)) // May fail at runtime
 val vec = Vec(1, 2, 3)                       // Does not compile
 val sum = Vec(1, 2) + add                    // Does not compile
 ```
@@ -533,7 +533,7 @@ val sum = Vec(1, 2) + add                    // Does not compile
 A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
-// Inferred type: Mat<Int, `4`, `4`>
+// Inferred type: Mat<Int, D4, D4>
 val l = Mat4x4(
   1, 2, 3, 4,
   5, 6, 7, 8,
@@ -541,7 +541,7 @@ val l = Mat4x4(
   9, 0, 0, 0
 )
 
-// Inferred type: Mat<Int, `4`, `3`>
+// Inferred type: Mat<Int, D4, D3>
 val m = Mat4x3(
   1, 1, 1,
   2, 2, 2,
@@ -549,7 +549,7 @@ val m = Mat4x3(
   4, 4, 4
 )
 
-// Inferred type: Mat<Int, `4`, `3`>
+// Inferred type: Mat<Int, D4, D3>
 val lm = l * m
 // m * m // Does not compile
 ```
@@ -583,7 +583,7 @@ However inferring arity for arbitrary expressions at compile-time would be diffi
 ```kotlin
 val x = Var(1.0)                                // x: Variable<Double> inferred type
 val y = Var(1.0)                                // x: Variable<Double> "
-val f = Fun(`2`) { x * y + sin(2 * x + 3 * y) } // f: BinaryFunction<Double> "
+val f = Fun(D2) { x * y + sin(2 * x + 3 * y) } // f: BinaryFunction<Double> "
 val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
