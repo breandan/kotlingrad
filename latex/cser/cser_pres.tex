@@ -386,22 +386,22 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Shape safe vector addition and inference (toy example)}
         \begin{lstlisting}[language=Kotlin, gobble=12, style=backtickstyle]
-            interface Nat<T: `0`> { val value: Int }
+            interface Nat<T: D0> { val value: Int }
             // Type level integer literals for shape checking
-            sealed class `0`(open val value: Int = 0)
-              { companion object: `0`(), Nat<`0`> }
-            open class `1`(override val value: Int = 1): `0`(2)
-              { companion object: `1`(), Nat<`1`> }
-            open class `2`(override val value: Int = 2): `1`(2)
-              { companion object: `2`(), Nat<`2`> }
+            sealed class D0(open val value: Int = 0)
+              { companion object: D0(), Nat<D0> }
+            open class D1(override val value: Int = 1): D0(2)
+              { companion object: D1(), Nat<D1> }
+            open class D2(override val value: Int = 2): D1(2)
+              { companion object: D2(), Nat<D2> }
 
-            // <L: `0`> accepts 0 <= L via Liskov substitution
-            class Vec<E, L: `0`>(val len: L, val es: List<E>)
-            operator fun <L: `0`, V: Vec<Int, L>> V.plus(v: V) =
+            // <L: D0> accepts 0 <= L via Liskov substitution
+            class Vec<E, L: D0>(val len: L, val es: List<E>)
+            operator fun <L: D0, V: Vec<Int, L>> V.plus(v: V) =
               Vec<Int, L>(len, es.zip(v.es).map { it.l + it.r })
 
-            val Y= Vec(`2`, listOf(1,2)) + Vec(`2`, listOf(3,4))
-            val X= Vec(`1`, listOf(1)) + Y // Compiler error!
+            val Y= Vec(D2, listOf(1,2)) + Vec(D2, listOf(3,4))
+            val X= Vec(D1, listOf(1)) + Y // Compiler error!
         \end{lstlisting}
     \end{frame}
 

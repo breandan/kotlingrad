@@ -50,15 +50,15 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   infix operator fun ScalarFun<X>.div(number: Number) = this / wrap(number)
   infix operator fun Number.div(fn: ScalarFun<X>) = wrap(this) / fn
 
-//  fun <Y: `100`> fill(length: Nat<Y>, n: Number) = VectorConst(length, (0 until length.i).map { ScalarConst(wrap(n)) })
+//  fun <Y: D100> fill(length: Nat<Y>, n: Number) = VectorConst(length, (0 until length.i).map { ScalarConst(wrap(n)) })
 //
-//  infix operator fun <Y: `100`> VectorFun<ScalarFun<X>, Y>.times(number: Number) = this * fill(length, number)
-//  infix operator fun <Y: `100`> Number.times(vector: VectorFun<ScalarFun<X>, Y>) = fill(vector.length, this) * vector
+//  infix operator fun <Y: D100> VectorFun<ScalarFun<X>, Y>.times(number: Number) = this * fill(length, number)
+//  infix operator fun <Y: D100> Number.times(vector: VectorFun<ScalarFun<X>, Y>) = fill(vector.length, this) * vector
 //
-//  fun <Y: `100`> fill(length: Nat<Y>, s: ScalarFun<X>) = VectorConst(length, (0 until length.i).map { s })
-//  infix operator fun <F: `100`> ScalarFun<X>.plus(addend: VectorFun<ScalarFun<X>, F>) = fill(addend.length, this) + addend
-//  infix operator fun <F: `100`> ScalarFun<X>.minus(subtrahend: VectorFun<ScalarFun<X>, F>) = fill(subtrahend.length, this) - subtrahend
-//  infix operator fun <F: `100`> ScalarFun<X>.times(multiplicand: VectorFun<ScalarFun<X>, F>) = fill(multiplicand.length, this) * multiplicand
+//  fun <Y: D100> fill(length: Nat<Y>, s: ScalarFun<X>) = VectorConst(length, (0 until length.i).map { s })
+//  infix operator fun <F: D100> ScalarFun<X>.plus(addend: VectorFun<ScalarFun<X>, F>) = fill(addend.length, this) + addend
+//  infix operator fun <F: D100> ScalarFun<X>.minus(subtrahend: VectorFun<ScalarFun<X>, F>) = fill(subtrahend.length, this) - subtrahend
+//  infix operator fun <F: D100> ScalarFun<X>.times(multiplicand: VectorFun<ScalarFun<X>, F>) = fill(multiplicand.length, this) * multiplicand
 
   @JvmName("prefixNumPowFun") fun pow(scalarFun: ScalarFun<X>, number: Number) = scalarFun.run { pow(wrap(number)) }
   @JvmName("prefixFunPowNum") fun pow(number: Number, scalarFun: ScalarFun<X>) = scalarFun.run { wrap(number) }
@@ -78,7 +78,7 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
 
   fun ScalarFun<X>.eval() = invoke(variables.map { Pair(it, it.value) }.toMap()).proto.value
 
-//  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
-//  operator fun <F: `100`> VectorFun<X, F>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
-//  operator fun <F: `100`> VectorFun<X, F>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
+//  operator fun <F: D100> VectorFun<X, F>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
+//  operator fun <F: D100> VectorFun<X, F>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
+//  operator fun <F: D100> VectorFun<X, F>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) = this(pairs.map { (it.first to wrap(it.second)) }.toMap()).value
 }

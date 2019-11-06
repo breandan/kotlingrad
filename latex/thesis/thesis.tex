@@ -1315,8 +1315,8 @@ Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g
 Most array programming libraries such as NumPy~\citep{van2011numpy} or TensorFlow~\citep{abadi2016tensorflow} use the first or second strategy. In Kotlin$\nabla$, we adopt the third, which allows an incremental type checker, such as those typically found in modern IDEs, to instantaneously detect when a matrix operation is invalid. Consider the following example:
 %
 \begin{kotlinlisting}
-val vecA = Vec(1.0, 2.0)      // Inferred type: Vec<Int, `2`>
-val vecB = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, `3`>
+val vecA = Vec(1.0, 2.0)      // Inferred type: Vec<Int, D2>
+val vecB = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, D3>
 val vecC = vecB + vecB
 val vecD = (*\uwave{vecA + vecB}*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
@@ -1324,8 +1324,8 @@ val vecD = (*\uwave{vecA + vecB}*) // Compile error: Expected Vec<2>, found Vec<
 Attempting to sum two vectors whose shapes do not match will fail to compile.
 %
 \begin{kotlinlisting}
-val matA = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
-val matB = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
+val matA = Mat1x4(1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D1, D4>
+val matB = Mat4x1(1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D4, D1>
 val matC = matA * matB
 val matD = (*\uwave{matA *\ matC}*) // Compile error: Expected Mat<4, *>, found Mat<1, 1>
 \end{kotlinlisting}
@@ -1333,46 +1333,44 @@ val matD = (*\uwave{matA *\ matC}*) // Compile error: Expected Mat<4, *>, found 
 Similarly, multiplying two matrices whose inner dimensions do not match will not compile.
 %
 \begin{kotlinlisting}
-val matA = Mat(`2`, `4`,
-               1.0, 2.0, 3.0, 4.0,
-               5.0, 6.0, 7.0, 8.0)
-val matB = Mat(`4`, `2`,
-               1.0, 2.0,
-               3.0, 4.0,
-               5.0, 6.0,
-               7.0, 8.0)
-val matC: Mat<Double, `2`, `2`> = a * b // Types are optional, but encouraged
-val matD = Mat(`2`, `1`, 1.0, 2.0)
+val matA = Mat2x4(1.0, 2.0, 3.0, 4.0,
+                  5.0, 6.0, 7.0, 8.0)
+val matB = Mat4x2(1.0, 2.0,
+                  3.0, 4.0,
+                  5.0, 6.0,
+                  7.0, 8.0)
+val matC: Mat<Double, D2, D2> = a * b // Types are optional, but encouraged
+val matD = Mat2x1(1.0, 2.0)
 val matE = matC * matD
-val matF = Mat(`3`, `1`, 1.0, 2.0, 3.0)
+val matF = Mat3x1(1.0, 2.0, 3.0)
 val matG = (*\uwave{matE *\ matF}*) // Compile error: Expected Mat<1, *>, found Mat<3, 1>
 \end{kotlinlisting}
 %
 It is required to specify the parameter types in a method signature. Explicit return types are optional but encouraged for readability. If omitted, the type system can often infer them:
 %
 \begin{kotlinlisting}
-fun someMatFun(m: Mat<Double, `3`, `1`>): Mat<Double, `3`, `3`> = ...
-fun someMatFun(m: Mat<Double, `2`, `2`>) = ...
+fun someMatFun(m: Mat<Double, D3, D1>): Mat<Double, D3, D3> = ...
+fun someMatFun(m: Mat<Double, D2, D2>) = ...
 \end{kotlinlisting}
 %
 Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To check shapes in our type system, we enumerate a list of integer type literals as a chain of subtypes, so that $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, who will need to regenerate the code.
 %
 \begin{kotlinlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall C\leq2.$}]
-interface Nat<T: `0`> { val i: Int }
+interface Nat<T: D0> { val i: Int }
 // Integer literals have reified Int values should we need to compare them at runtime
-sealed class `0`(open val i: Int = 0) { companion object: `0`(), Nat<`0`> }
-sealed class `1`(override val i: Int = 1): `0`(i) { companion object: `1`(), Nat<`1`> }
-sealed class `2`(override val i: Int = 2): `1`(i) { companion object: `2`(), Nat<`2`> }
-sealed class `3`(override val i: Int = 3): `2`(i) { companion object: `3`(), Nat<`3`> }
+sealed class D0(open val i: Int = 0) { companion object: D0(), Nat<D0> }
+sealed class D1(override val i: Int = 1): D0(i) { companion object: D1(), Nat<D1> }
+sealed class D2(override val i: Int = 2): D1(i) { companion object: D2(), Nat<D2> }
+sealed class D3(override val i: Int = 3): D2(i) { companion object: D3(), Nat<D3> }
 //...Code for integer literals should be generated
-sealed class `99`(override val i: Int = 99): `98`(i) { companion object: `99`(), Nat<`99`> }
+sealed class D99(override val i: Int = 99): D98(i) { companion object: D99(), Nat<D99> }
 \end{kotlinlisting}
 %
 Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution~\citep{liskov1987} to preserve shape safety for all subtypes. Consider the rank-1 tensor (i.e.\ vector) case:
 %
 \begin{kotlinlisting}
-// <C: `1`> will accept 1 <= C <= 99 via Liskov substitution
-infix operator fun <C: `1`, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
+// <C: D1> will accept 1 <= C <= 99 via Liskov substitution
+infix operator fun <C: D1, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
     Vec(length, contents.zip(v.contents).map { it.first + it.second })
 \end{kotlinlisting}
 %
@@ -1380,18 +1378,18 @@ The operator `\inline{+}' can now be used like so. Incompatible operands will ca
 %
 \begin{kotlinlisting}
 // Type-checked vector addition with shape inference
-val Y = Vec(`2`, listOf(1, 2)) + Vec(`2`, listOf(3, 4)) // Y: Vec<Float, `2`>
-val X = (*\uwave{Vec(`2`, listOf(1, 2)) + Vec(`5`, listOf(3, 4, 1, 2, 4))}*) // X: Vec<???>
+val Y = Vec(D2, listOf(1, 2)) + Vec(D2, listOf(3, 4)) // Y: Vec<Float, D2>
+val X = (*\uwave{Vec(D2, listOf(1, 2)) + Vec(D5, listOf(3, 4, 1, 2, 4))}*) // X: Vec<???>
 \end{kotlinlisting}
 %
 This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
 %
 \begin{kotlinlisting}
-open class Vec<E, Len: `1`> constructor(val len: Nat<Len>, val contents: List<E>) {
+open class Vec<E, Len: D1> constructor(val len: Nat<Len>, val contents: List<E>) {
   companion object {
-    operator fun <T> invoke(t: T): Vec<T, `1`> = Vec(`1`, listOf(t))
-    operator fun <T> invoke(t0: T, t1: T): Vec<T, `2`> = Vec(`2`, listOf(t0, t1))
-    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, `3`> = Vec(`3`, listOf(t0, t1, t2))
+    operator fun <T> invoke(t: T): Vec<T, D1> = Vec(D1, listOf(t))
+    operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(D2, listOf(t0, t1))
+    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(D3, listOf(t0, t1, t2))
   }
 }
 \end{kotlinlisting}
@@ -1399,26 +1397,24 @@ open class Vec<E, Len: `1`> constructor(val len: Nat<Len>, val contents: List<E>
 Dynamic length construction is possible, although it may fail at runtime. For example:
 %
 \begin{kotlinlisting}
-val one = Vec(`3`, 1, 2, 3) + Vec(`3`, 1, 2, 3)   // Always runs safely
-val add = Vec(`3`, 1, 2, 3) + Vec(`3`, listOf(t)) // May fail at runtime
+val one = Vec(D3, 1, 2, 3) + Vec(D3, 1, 2, 3)   // Always runs safely
+val add = Vec(D3, 1, 2, 3) + Vec(D3, listOf(t)) // May fail at runtime
 val vec = Vec(1, 2, 3) // Inferred type: Vec<3>
-val sum = (*\uwave{Vec(`2`, 1, 2) + add}*) // Compile error: Expected Vec<2>, found Vec<3>
+val sum = (*\uwave{Vec(D2, 1, 2) + add}*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
 %
 Matrices and tensors have a similar syntax. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if the arguments' inner dimensions disagree:
 %
 \begin{kotlinlisting}
-val matL = Mat(`4`, `4`, // Inferred type: Mat<Int, `4`, `4`>
-               1, 2, 3, 4,
-               5, 6, 7, 8,
-               9, 0, 0, 0,
-               9, 0, 0, 0)
-val matM = Mat(`4`, `3`, // Inferred type: Mat<Int, `4`, `3`>
-               1, 1, 1,
-               2, 2, 2,
-               3, 3, 3,
-               4, 4, 4)
-val matN = matL * matM // Inferred type: Mat<Int, `4`, `3`>
+val matL = Mat4x4(1, 2, 3, 4, // Inferred type: Mat<Int, D4, D4>
+                  5, 6, 7, 8,
+                  9, 0, 0, 0,
+                  9, 0, 0, 0)
+val matM = Mat4x3(1, 1, 1, // Inferred type: Mat<Int, D4, D3>
+                  2, 2, 2,
+                  3, 3, 3,
+                  4, 4, 4)
+val matN = matL * matM // Inferred type: Mat<Int, D4, D3>
 val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
 \end{kotlinlisting}
 %

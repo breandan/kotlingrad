@@ -59,8 +59,8 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
   override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
-  open operator fun <E : `1`> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
-  open operator fun <R : `1`, C: `1`> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
+  open operator fun <E : D1> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
+  open operator fun <R : D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
   override operator fun invoke(bnds: Bindings<X>): Fun<X> =
     bnds.sMap.getOrElse(this) {
@@ -77,16 +77,16 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
         is Negative -> -value(bnds)
         is Log -> logarithmand(bnds).ln()
         is Derivative -> df()(bnds)
-        is DProd -> left(bnds) as Vec<X, `1`> dot right(bnds) as Vec<X, `1`>
-        is VMagnitude -> (value(bnds) as Vec<X, `1`>).magnitude()
+        is DProd -> left(bnds) as Vec<X, D1> dot right(bnds) as Vec<X, D1>
+        is VMagnitude -> (value(bnds) as Vec<X, D1>).magnitude()
       }
     }
 
   operator fun invoke(): Fun<X> = invoke(Bindings())
 
   open fun d(v1: Var<X>): Fun<X> = Derivative(this, v1)
-  open fun d(v1: Var<X>, v2: Var<X>): Vec<X, `2`> = Vec(Derivative(this, v1), Derivative(this, v2))
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, `3`> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
+  open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(Derivative(this, v1), Derivative(this, v2))
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
   open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
   open fun grad(): Map<Var<X>, Fun<X>> = sVars.map { it to Derivative(this, it) }.toMap()
 
@@ -199,13 +199,13 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
 
   override fun sqrt() = DoubleReal(kotlin.math.sqrt(value))
 
-  override fun <E : `1`> times(multiplicand: VFun<DoubleReal, E>) =
+  override fun <E : D1> times(multiplicand: VFun<DoubleReal, E>) =
     when (multiplicand) {
       is Vec -> Vec(multiplicand.length, multiplicand.contents.map { this * it })
       else -> super.times(multiplicand)
     }
 
-  override fun <R : `1`, C: `1`> times(multiplicand: MFun<DoubleReal, R, C>) =
+  override fun <R : D1, C: D1> times(multiplicand: MFun<DoubleReal, R, C>) =
     when (multiplicand) {
       is Mat -> Mat(multiplicand.numRows, multiplicand.numCols, multiplicand.rows.map { this * it } as List<Vec<DoubleReal, C>>)
       else -> super.times(multiplicand)
@@ -244,7 +244,7 @@ object DoublePrecision : Protocol<DoubleReal>() {
   @JvmName("FunBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Fun<DoubleReal>, Fun<DoubleReal>>) =
     this(Bindings(pairs.map { (it.first to it.second) }.toMap(), zero, one, two, e))
 
-  operator fun <Y : `1`> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
+  operator fun <Y : D1> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
     this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
 
   fun Fun<DoubleReal>.asDouble() = (this as DoubleReal).value

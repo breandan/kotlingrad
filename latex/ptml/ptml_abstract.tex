@@ -147,16 +147,16 @@ The problem we attempt to solve can be summarized as follows. Given two values \
 %
 \begin{figure}[H]
     \begin{lstlisting}
-            val vecA = Vec(1.0, 2.0)           // Inferred type: Vec<Int, `2`>
-            val vecB = Vec(1.0, 2.0, 3.0)      // Inferred type: Vec<Int, `3`>
+            val vecA = Vec(1.0, 2.0)           // Inferred type: Vec<Int, D2>
+            val vecB = Vec(1.0, 2.0, 3.0)      // Inferred type: Vec<Int, D3>
             val vecC = vecB + vecB
             val vecD = (*\uwave{vecA + vecB}*) // Compile error: Expected Vec<2>, found Vec<3>
     \end{lstlisting}
     \caption{Attempting to sum two vectors whose shapes do not match will fail to compile.}
 
     \vspace{10pt}\begin{lstlisting}
-    val matA = Mat(`1`, `4`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `1`, `4`>
-    val matB = Mat(`4`, `1`, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, `4`, `1`>
+    val matA = Mat(D1, D4, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D1, D4>
+    val matB = Mat(D4, D1, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D4, D1>
     val matC = matA * matB
     val matD = (*\uwave{matA *\ matC}*)          // Compile error: Expected Mat<4, *>, found Mat<1, 1>
     \end{lstlisting}

@@ -57,7 +57,7 @@ fun main() {
  * Matrix function.
  */
 
-open class MFun<X: Fun<X>, R: `1`, C: `1`>(
+open class MFun<X: Fun<X>, R: D1, C: D1>(
   open val numRows: Nat<R>,
   open val numCols: Nat<C>,
   open val sVars: Set<Var<X>> = emptySet()
@@ -74,7 +74,7 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
       is MNegative -> -value(bnds)
       is MTranspose -> value(bnds).ᵀ
       is MSum -> left(bnds) + right(bnds)
-      is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, `1`> * right(bnds) as MFun<X, `1`, C>
+      is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, D1> * right(bnds) as MFun<X, D1, C>
       is HProd -> left(bnds) ʘ right(bnds)
       is MSProd -> left(bnds) * right(bnds)
       is SMProd -> left(bnds) * right(bnds)
@@ -93,7 +93,7 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
 
   // The Hadamard product
   open infix fun ʘ(multiplicand: MFun<X, R, C>): MFun<X, R, C> = HProd(this, multiplicand)
-  open operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
+  open operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
 
   override fun toString() = when(this) {
     is MNegative -> "-($value)"
@@ -110,16 +110,16 @@ open class MFun<X: Fun<X>, R: `1`, C: `1`>(
   }
 }
 
-class MNegative<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
-class MTranspose<X: Fun<X>, R: `1`, C: `1`>(val value: MFun<X, R, C>): MFun<X, C, R>(value.numCols, value.numRows, value.sVars)
-class MSum<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
-class MMProd<X: Fun<X>, R: `1`, C1: `1`, C2: `1`>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
-class HProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
-class MSProd<X: Fun<X>, R: `1`, C: `1`>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
-class SMProd<X: Fun<X>, R: `1`, C: `1`>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
+class MNegative<X: Fun<X>, R: D1, C: D1>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
+class MTranspose<X: Fun<X>, R: D1, C: D1>(val value: MFun<X, R, C>): MFun<X, C, R>(value.numCols, value.numRows, value.sVars)
+class MSum<X: Fun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
+class MMProd<X: Fun<X>, R: D1, C1: D1, C2: D1>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
+class HProd<X: Fun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
+class MSProd<X: Fun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: Fun<X>): MFun<X, R, C>(left)
+class SMProd<X: Fun<X>, R: D1, C: D1>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
 
 // TODO: Generalize tensor derivatives
-class MDerivative<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
+class MDerivative<X : Fun<X>, R: D1, C: D1> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this) {
     is MNegative -> -value.df()
     is MTranspose -> (value as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
@@ -135,13 +135,13 @@ class MDerivative<X : Fun<X>, R: `1`, C: `1`> internal constructor(val mfn: VFun
   }
 }
 
-//class MVar<X: Fun<X>, R: `1`, C: `1`>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
+//class MVar<X: Fun<X>, R: D1, C: D1>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
 //  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }
-open class MConst<X: Fun<X>, R: `1`, C: `1`>(numRows: Nat<R>, numCols: Nat<C>): MFun<X, R, C>(numRows, numCols)
-class MZero<X: Fun<X>, R: `1`, C: `1`>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
-class MOne<X: Fun<X>, R: `1`, C: `1`>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
+open class MConst<X: Fun<X>, R: D1, C: D1>(numRows: Nat<R>, numCols: Nat<C>): MFun<X, R, C>(numRows, numCols)
+class MZero<X: Fun<X>, R: D1, C: D1>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
+class MOne<X: Fun<X>, R: D1, C: D1>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
 
-open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
+open class Mat<X: Fun<X>, R: D1, C: D1>(final override val numRows: Nat<R>,
                                           final override val numCols: Nat<C>,
                                           override val sVars: Set<Var<X>> = emptySet(),
 //                                   override val vVars: Set<VVar<X, *>> = emptySet(),
@@ -174,7 +174,7 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
       else -> super.times(multiplicand)
     }
 
-  override operator fun <Q: `1`> times(multiplicand: MFun<X, C, Q>) =
+  override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>) =
     when (multiplicand) {
       is Mat -> Mat(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
         Vec(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->
@@ -185,14 +185,14 @@ open class Mat<X: Fun<X>, R: `1`, C: `1`>(final override val numRows: Nat<R>,
     }
 }
 
-class Mat1x1<X: Fun<X>>(v0: Vec<X, `1`>): Mat<X, `1`, `1`>(`1`, `1`, v0) { constructor(f0: Fun<X>): this(Vec(f0)) }
-class Mat2x1<X: Fun<X>>(v0: Vec<X, `1`>, v1: Vec<X, `1`>): Mat<X, `2`, `1`>(`2`, `1`, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>): this(Vec(f0), Vec(f1)) }
-class Mat3x1<X: Fun<X>>(v0: Vec<X, `1`>, v1: Vec<X, `1`>, v2: Vec<X, `1`>): Mat<X, `3`, `1`>(`3`, `1`, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>): this(Vec(f0), Vec(f1), Vec(f2)) }
+class Mat1x1<X: Fun<X>>(v0: Vec<X, D1>): Mat<X, D1, D1>(D1, D1, v0) { constructor(f0: Fun<X>): this(Vec(f0)) }
+class Mat2x1<X: Fun<X>>(v0: Vec<X, D1>, v1: Vec<X, D1>): Mat<X, D2, D1>(D2, D1, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>): this(Vec(f0), Vec(f1)) }
+class Mat3x1<X: Fun<X>>(v0: Vec<X, D1>, v1: Vec<X, D1>, v2: Vec<X, D1>): Mat<X, D3, D1>(D3, D1, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>): this(Vec(f0), Vec(f1), Vec(f2)) }
 
-class Mat1x2<X: Fun<X>>(v0: Vec<X, `2`>): Mat<X, `1`, `2`>(`1`, `2`, v0) { constructor(f0: Fun<X>, f1: Fun<X>): this(Vec(f0, f1)) }
-class Mat2x2<X: Fun<X>>(v0: Vec<X, `2`>, v1: Vec<X, `2`>): Mat<X, `2`, `2`>(`2`, `2`, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>): this(Vec(f0, f1), Vec(f2, f3)) }
-class Mat3x2<X: Fun<X>>(v0: Vec<X, `2`>, v1: Vec<X, `2`>, v2: Vec<X, `2`>): Mat<X, `3`, `2`>(`3`, `2`, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>): this(Vec(f0, f1), Vec(f2, f3), Vec(f4, f5)) }
+class Mat1x2<X: Fun<X>>(v0: Vec<X, D2>): Mat<X, D1, D2>(D1, D2, v0) { constructor(f0: Fun<X>, f1: Fun<X>): this(Vec(f0, f1)) }
+class Mat2x2<X: Fun<X>>(v0: Vec<X, D2>, v1: Vec<X, D2>): Mat<X, D2, D2>(D2, D2, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>): this(Vec(f0, f1), Vec(f2, f3)) }
+class Mat3x2<X: Fun<X>>(v0: Vec<X, D2>, v1: Vec<X, D2>, v2: Vec<X, D2>): Mat<X, D3, D2>(D3, D2, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>): this(Vec(f0, f1), Vec(f2, f3), Vec(f4, f5)) }
 
-class Mat1x3<X: Fun<X>>(v0: Vec<X, `3`>): Mat<X, `1`, `3`>(`1`, `3`, v0) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>): this(Vec(f0, f1, f3)) }
-class Mat2x3<X: Fun<X>>(v0: Vec<X, `3`>, v1: Vec<X, `3`>): Mat<X, `2`, `3`>(`2`, `3`, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>): this(Vec(f0, f1, f2), Vec(f3, f4, f5)) }
-class Mat3x3<X: Fun<X>>(v0: Vec<X, `3`>, v1: Vec<X, `3`>, v2: Vec<X, `3`>): Mat<X, `3`, `3`>(`3`, `3`, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>, f6: Fun<X>, f7: Fun<X>, f8: Fun<X>): this(Vec(f0, f1, f2), Vec(f3, f4, f5), Vec(f6, f7, f8)) }
+class Mat1x3<X: Fun<X>>(v0: Vec<X, D3>): Mat<X, D1, D3>(D1, D3, v0) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>): this(Vec(f0, f1, f3)) }
+class Mat2x3<X: Fun<X>>(v0: Vec<X, D3>, v1: Vec<X, D3>): Mat<X, D2, D3>(D2, D3, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>): this(Vec(f0, f1, f2), Vec(f3, f4, f5)) }
+class Mat3x3<X: Fun<X>>(v0: Vec<X, D3>, v1: Vec<X, D3>, v2: Vec<X, D3>): Mat<X, D3, D3>(D3, D3, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>, f6: Fun<X>, f7: Fun<X>, f8: Fun<X>): this(Vec(f0, f1, f2), Vec(f3, f4, f5), Vec(f6, f7, f8)) }

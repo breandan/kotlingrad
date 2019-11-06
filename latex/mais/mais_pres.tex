@@ -400,9 +400,9 @@ McGill University \\
         \begin{center}
             \begin{tabular}{c}
                 \begin{lstlisting}[language=Kotlin, gobble=20, style=backtickstyle]
-                    // Inferred type: Mat<Double, `1`, `4`>
+                    // Inferred type: Mat<Double, D1, D4>
                     val a = Mat(1.0, 2.0, 3.0, 4.0)
-                    // Inferred type: Mat<Double, `4`, `1`>
+                    // Inferred type: Mat<Double, D4, D1>
                     val b = Mat(1.0)(2.0)(3.0)(4.0)
                     val c = a * b
 
