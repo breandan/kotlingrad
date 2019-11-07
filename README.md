@@ -612,7 +612,7 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
    anyExpr = expr | vecExpr | matExpr | derivative | invocation;
   bindings = expr " to " expr | expr " to " expr "," bindings;
 invocation = anyExpr "(" bindings ")";
-derivative = "d(" anyExpr ") / d(" expr ")" | anyExpr ".diff(" expr ")" | anyExpr ".diff(" exprList ")";
+derivative = "d(" anyExpr ") / d(" expr ")" | anyExpr ".d(" expr ")" | anyExpr ".d(" exprList ")";
   gradient = expr ".grad()";
 ```
 

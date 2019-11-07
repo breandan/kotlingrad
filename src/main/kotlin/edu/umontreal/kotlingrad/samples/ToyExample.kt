@@ -262,4 +262,14 @@ object DoublePrecision : Protocol<DoubleReal>() {
   fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
   fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
   fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
+
+  fun Mat1x1(d0: Double) = Mat(D1, D1, Vec(d0))
+  fun Mat1x2(d0: Double, d1: Double) = Mat(D1, D2, Vec(d0, d1))
+  fun Mat1x3(d0: Double, d1: Double, d2: Double) = Mat(D1, D3, Vec(d0, d1, d2))
+  fun Mat2x1(d0: Double, d1: Double) = Mat(D2, D1, Vec(d0), Vec(d1))
+  fun Mat2x2(d0: Double, d1: Double, d2: Double, d3: Double) = Mat(D2, D2, Vec(d0, d1), Vec(d2, d3))
+  fun Mat2x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat(D2, D3, Vec(d0, d1, d2), Vec(d3, d4, d5))
+  fun Mat3x1(d0: Double, d1: Double, d2: Double) = Mat(D3, D1, Vec(d0), Vec(d1), Vec(d2))
+  fun Mat3x2(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat(D3, D2, Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
+  fun Mat3x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Mat(D3, D3, Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 }

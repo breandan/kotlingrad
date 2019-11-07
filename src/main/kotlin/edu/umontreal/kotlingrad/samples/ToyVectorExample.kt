@@ -61,14 +61,14 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is VDerivative -> df()(bnds)
       is MVProd<X, *, *> -> left(bnds) as Mat<X, E, E> * (right as Vec<X, E>)(bnds)
       is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as Mat<X, E, E>)(bnds)
-//      is VElwis<X, E> ->
+      is VElementwise<X, E> -> value(bnds).elementwise(ef)
       else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
 
-  fun elementwise(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VElementwise(this, ef)
+  open fun elementwise(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VElementwise(this, ef)
 
   open fun d(v1: Var<X>) = VDerivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>) = Jacobian(this, D2, v1, v2)
@@ -106,11 +106,12 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is MVProd<X, E, *> -> "$left * $right"
       is VMProd<X, *, E> -> "$left * $right"
       is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
+      is VElementwise -> "$value.elementwise { $ef }"
     }
 }
 
 class VNegative<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value.length, value)
-class VElementwise<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value.length, value)
+class VElementwise<X: Fun<X>, E: D1>(val value: VFun<X, E>, val ef: (Fun<X>) -> Fun<X>): VFun<X, E>(value.length, value)
 
 class VSum<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
 
@@ -143,6 +144,7 @@ class VDerivative<X : Fun<X>, E: D1> internal constructor(val vfn: VFun<X, E>, v
     is MVProd<X, E, *> -> this().df()
     is VMProd<X, *, E> -> this().df()
     is Gradient -> this()
+    is VElementwise -> this().df()
   }
 }
 
@@ -186,6 +188,8 @@ open class Vec<X: Fun<X>, E: D1>(final override val length: Nat<E>,
     is Vec -> contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
     else -> super.dot(multiplicand)
   }
+
+  override fun elementwise(ef: (Fun<X>) -> Fun<X>) = Vec(length, contents.map { ef(it) })
 
   override fun magnitude() = contents.map { it * it }.reduce { acc, p -> acc + p }.sqrt()
 

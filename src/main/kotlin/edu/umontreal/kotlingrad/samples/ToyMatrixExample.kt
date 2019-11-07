@@ -185,14 +185,22 @@ open class Mat<X: Fun<X>, R: D1, C: D1>(final override val numRows: Nat<R>,
     }
 }
 
-class Mat1x1<X: Fun<X>>(v0: Vec<X, D1>): Mat<X, D1, D1>(D1, D1, v0) { constructor(f0: Fun<X>): this(Vec(f0)) }
-class Mat2x1<X: Fun<X>>(v0: Vec<X, D1>, v1: Vec<X, D1>): Mat<X, D2, D1>(D2, D1, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>): this(Vec(f0), Vec(f1)) }
-class Mat3x1<X: Fun<X>>(v0: Vec<X, D1>, v1: Vec<X, D1>, v2: Vec<X, D1>): Mat<X, D3, D1>(D3, D1, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>): this(Vec(f0), Vec(f1), Vec(f2)) }
+fun <X: Fun<X>> Mat1x1(v0: Vec<X, D1>) = Mat<X, D1, D1>(D1, D1, v0)
+fun <X: Fun<X>> Mat2x1(v0: Vec<X, D1>, v1: Vec<X, D1>) = Mat<X, D2, D1>(D2, D1, v0, v1)
+fun <X: Fun<X>> Mat3x1(v0: Vec<X, D1>, v1: Vec<X, D1>, v2: Vec<X, D1>) = Mat<X, D3, D1>(D3, D1, v0, v1, v2)
+fun <X: Fun<X>> Mat1x2(v0: Vec<X, D2>) = Mat<X, D1, D2>(D1, D2, v0)
+fun <X: Fun<X>> Mat2x2(v0: Vec<X, D2>, v1: Vec<X, D2>) = Mat<X, D2, D2>(D2, D2, v0, v1)
+fun <X: Fun<X>> Mat3x2(v0: Vec<X, D2>, v1: Vec<X, D2>, v2: Vec<X, D2>) = Mat<X, D3, D2>(D3, D2, v0, v1, v2)
+fun <X: Fun<X>> Mat1x3(v0: Vec<X, D3>) = Mat<X, D1, D3>(D1, D3, v0)
+fun <X: Fun<X>> Mat2x3(v0: Vec<X, D3>, v1: Vec<X, D3>) = Mat<X, D2, D3>(D2, D3, v0, v1)
+fun <X: Fun<X>> Mat3x3(v0: Vec<X, D3>, v1: Vec<X, D3>, v2: Vec<X, D3>) = Mat<X, D3, D3>(D3, D3, v0, v1, v2)
 
-class Mat1x2<X: Fun<X>>(v0: Vec<X, D2>): Mat<X, D1, D2>(D1, D2, v0) { constructor(f0: Fun<X>, f1: Fun<X>): this(Vec(f0, f1)) }
-class Mat2x2<X: Fun<X>>(v0: Vec<X, D2>, v1: Vec<X, D2>): Mat<X, D2, D2>(D2, D2, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>): this(Vec(f0, f1), Vec(f2, f3)) }
-class Mat3x2<X: Fun<X>>(v0: Vec<X, D2>, v1: Vec<X, D2>, v2: Vec<X, D2>): Mat<X, D3, D2>(D3, D2, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>): this(Vec(f0, f1), Vec(f2, f3), Vec(f4, f5)) }
-
-class Mat1x3<X: Fun<X>>(v0: Vec<X, D3>): Mat<X, D1, D3>(D1, D3, v0) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>): this(Vec(f0, f1, f3)) }
-class Mat2x3<X: Fun<X>>(v0: Vec<X, D3>, v1: Vec<X, D3>): Mat<X, D2, D3>(D2, D3, v0, v1) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>): this(Vec(f0, f1, f2), Vec(f3, f4, f5)) }
-class Mat3x3<X: Fun<X>>(v0: Vec<X, D3>, v1: Vec<X, D3>, v2: Vec<X, D3>): Mat<X, D3, D3>(D3, D3, v0, v1, v2) { constructor(f0: Fun<X>, f1: Fun<X>, f2: Fun<X>, f3: Fun<X>, f4: Fun<X>, f5: Fun<X>, f6: Fun<X>, f7: Fun<X>, f8: Fun<X>): this(Vec(f0, f1, f2), Vec(f3, f4, f5), Vec(f6, f7, f8)) }
+fun <X: Fun<X>> Mat1x1(d0: Fun<X>) = Mat(D1, D1, Vec(d0))
+fun <X: Fun<X>> Mat1x2(d0: Fun<X>, d1: Fun<X>) = Mat(D1, D2, Vec(d0, d1))
+fun <X: Fun<X>> Mat1x3(d0: Fun<X>, d1: Fun<X>, d2: Fun<X>) = Mat(D1, D3, Vec(d0, d1, d2))
+fun <X: Fun<X>> Mat2x1(d0: Fun<X>, d1: Fun<X>) = Mat(D2, D1, Vec(d0), Vec(d1))
+fun <X: Fun<X>> Mat2x2(d0: Fun<X>, d1: Fun<X>, d2: Fun<X>, d3: Fun<X>) = Mat(D2, D2, Vec(d0, d1), Vec(d2, d3))
+fun <X: Fun<X>> Mat2x3(d0: Fun<X>, d1: Fun<X>, d2: Fun<X>, d3: Fun<X>, d4: Fun<X>, d5: Fun<X>) = Mat(D2, D3, Vec(d0, d1, d2), Vec(d3, d4, d5))
+fun <X: Fun<X>> Mat3x1(d0: Fun<X>, d1: Fun<X>, d2: Fun<X>) = Mat(D3, D1, Vec(d0), Vec(d1), Vec(d2))
+fun <X: Fun<X>> Mat3x2(d0: Fun<X>, d1: Fun<X>, d2: Fun<X>, d3: Fun<X>, d4: Fun<X>, d5: Fun<X>) = Mat(D3, D2, Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
+fun <X: Fun<X>> Mat3x3(d0: Fun<X>, d1: Fun<X>, d2: Fun<X>, d3: Fun<X>, d4: Fun<X>, d5: Fun<X>, d6: Fun<X>, d7: Fun<X>, d8: Fun<X>) = Mat(D3, D3, Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
