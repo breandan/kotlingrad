@@ -78,7 +78,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
         is Log -> logarithmand(bnds).ln()
         is Derivative -> df()(bnds)
         is DProd -> left(bnds) as Vec<X, D1> dot right(bnds) as Vec<X, D1>
-        is VMagnitude -> (value(bnds) as Vec<X, D1>).magnitude()
+        is VMagnitude -> value(bnds).magnitude()
       }
     }
 

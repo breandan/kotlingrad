@@ -61,11 +61,14 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is VDerivative -> df()(bnds)
       is MVProd<X, *, *> -> left(bnds) as Mat<X, E, E> * (right as Vec<X, E>)(bnds)
       is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as Mat<X, E, E>)(bnds)
+//      is VElwis<X, E> ->
       else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
+
+  fun elementwise(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VElementwise(this, ef)
 
   open fun d(v1: Var<X>) = VDerivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>) = Jacobian(this, D2, v1, v2)
@@ -107,6 +110,8 @@ sealed class VFun<X: Fun<X>, E: D1>(
 }
 
 class VNegative<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value.length, value)
+class VElementwise<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value.length, value)
+
 class VSum<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
 
 class VVProd<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
