@@ -1263,7 +1263,7 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \bnfrl{anyExpr} & ::= & \bnfrl{expr} \mor \bnfrl{vecExpr} \mor \bnfrl{matExpr} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
 \bnfrl{bindings} & ::= & \bnfrl{expr} \code{ to } \bnfrl{expr} \mor \bnfrl{expr} \code{ to } \bnfrl{expr} \code{,} \bnfrl{bindings} \\
 \bnfrl{invocation} & ::= & \bnfrl{anyExpr} \code{(} \bnfrl{bindings} \code{)} \\
-\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{expr} \code{) \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{exprList} \code{)}
+\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{exprList} \code{)} \\
 \bnfrl{gradient} & ::= & \bnfrl{expr} \code{.grad()}
 \end{eqnarray*}
 
