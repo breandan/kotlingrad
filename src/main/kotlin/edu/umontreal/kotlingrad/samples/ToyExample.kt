@@ -88,6 +88,11 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(Derivative(this, v1), Derivative(this, v2))
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
   open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
+  open fun <R: D1, C: D1> d(mv: Mat<X, R, C>) = d(*mv.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) {
+    index, acc: MutableList<MutableList<Fun<X>>>, p -> if(index % mv.numCols.i == 0) acc.add(mutableListOf(p)) else acc.last().add(p)
+    acc
+  }.map { Vec(mv.numCols, it) }.let { Mat(mv.numRows, mv.numCols, it) }
+
   open fun grad(): Map<Var<X>, Fun<X>> = sVars.map { it to Derivative(this, it) }.toMap()
 
   override fun ln(): Fun<X> = Log(this)
@@ -142,7 +147,6 @@ class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, val vrb: Var<X
 
 data class Bindings<X: Fun<X>>(
   val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
-//  val vMap: Map<VFun<X, *>, VFun<X, *>> = mapOf(),
   val zero: Fun<X> = Zero(),
   val one: Fun<X> = One(),
   val two: Fun<X> = Two(),
@@ -161,7 +165,7 @@ class VMagnitude<X: Fun<X>>(val value: VFun<X, *>): Fun<X>(value.sVars)//, value
 
 interface Variable { val name: String }
 
-class Var<X : Fun<X>>(override val name: String) : Variable, Fun<X>() {
+class Var<X : Fun<X>>(override val name: String = "") : Variable, Fun<X>() {
   override val sVars: Set<Var<X>> = setOf(this)
 }
 
@@ -225,6 +229,9 @@ sealed class Protocol<X : RealNumber<X>> {
   operator fun Number.plus(addend: Fun<X>) = addend + wrap(this)
   operator fun Fun<X>.plus(addend: Number) = wrap(addend) + this
 
+  operator fun Number.minus(subtrahend: Fun<X>) = subtrahend - wrap(this)
+  operator fun Fun<X>.minus(subtrahend: Number) = wrap(subtrahend) - this
+
   fun Number.pow(exp: Fun<X>) = wrap(this) pow exp
   infix fun Fun<X>.pow(exp: Number) = this pow wrap(exp)
 }
@@ -245,6 +252,9 @@ object DoublePrecision : Protocol<DoubleReal>() {
     this(Bindings(pairs.map { (it.first to it.second) }.toMap(), zero, one, two, e))
 
   operator fun <Y : D1> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
+    this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
+
+  operator fun <Rows : D1, Cols: D1> MFun<DoubleReal, Rows, Cols>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
     this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
 
   fun Fun<DoubleReal>.asDouble() = (this as DoubleReal).value
@@ -272,4 +282,14 @@ object DoublePrecision : Protocol<DoubleReal>() {
   fun Mat3x1(d0: Double, d1: Double, d2: Double) = Mat(D3, D1, Vec(d0), Vec(d1), Vec(d2))
   fun Mat3x2(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat(D3, D2, Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
   fun Mat3x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Mat(D3, D3, Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
+
+  fun Var2() = Vec(Var<DoubleReal>(), Var())
+  fun Var3() = Vec(Var<DoubleReal>(), Var(), Var())
+
+  fun Var2x1() = Mat(D2, D1, Vec(Var<DoubleReal>()), Vec(Var()))
+  fun Var2x2() = Mat(D2, D2, Vec(Var<DoubleReal>(), Var()), Vec(Var(), Var()))
+  fun Var2x3() = Mat(D2, D3, Vec(Var<DoubleReal>(), Var(), Var()), Vec(Var(), Var(), Var()))
+  fun Var3x1() = Mat(D3, D1, Vec(Var<DoubleReal>()), Vec(Var()), Vec(Var()))
+  fun Var3x2() = Mat(D3, D2, Vec(Var<DoubleReal>(), Var()), Vec(Var(), Var()), Vec(Var(), Var()))
+  fun Var3x3() = Mat(D3, D3, Vec(Var<DoubleReal>(), Var(), Var()), Vec(Var(), Var(), Var()), Vec(Var(), Var(), Var()))
 }

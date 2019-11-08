@@ -41,10 +41,8 @@ fun main() {
 
 sealed class VFun<X: Fun<X>, E: D1>(
   open val length: Nat<E>,
-  override val sVars: Set<Var<X>> = emptySet()
-//  ,open val vVars: Set<VVar<X, *>> = emptySet()
-): MFun<X, E, D1>(length, D1, sVars) {
-  constructor(length: Nat<E>, vararg vFns: Vec<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()) //, vFns.flatMap { it.vVars }.toSet())
+  override val sVars: Set<Var<X>> = emptySet()): MFun<X, E, D1>(length, D1, sVars) {
+  constructor(length: Nat<E>, vararg vFns: Vec<X, E>): this(length, vFns.flatMap { it.sVars }.toSet())
 
   constructor(length: Nat<E>, vararg vFns: VFun<X, E>): this(length, vFns.flatMap { it.sVars }.toSet()) //, vFns.flatMap { it.vVars }.toSet())
 //  val expand: MFun<X, D1, E> by lazy { MFun(D1, length, this) }
@@ -57,18 +55,17 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is VVProd<X, E> -> left(bnds) ʘ right(bnds)
       is SVProd<X, E> -> left(bnds) * right(bnds)
       is VSProd<X, E> -> left(bnds) * right(bnds)
-//      is VVar<X, E> -> bnds.vMap.getOrElse(this) { this } as VFun<X, E>
       is VDerivative -> df()(bnds)
       is MVProd<X, *, *> -> left(bnds) as Mat<X, E, E> * (right as Vec<X, E>)(bnds)
       is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as Mat<X, E, E>)(bnds)
-      is VElementwise<X, E> -> value(bnds).elementwise(ef)
+      is VMap<X, E> -> value(bnds).map(ef)
       else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
     }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
 
-  open fun elementwise(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VElementwise(this, ef)
+  open fun map(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VMap(this, ef)
 
   open fun d(v1: Var<X>) = VDerivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>) = Jacobian(this, D2, v1, v2)
@@ -106,12 +103,12 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is MVProd<X, E, *> -> "$left * $right"
       is VMProd<X, *, E> -> "$left * $right"
       is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
-      is VElementwise -> "$value.elementwise { $ef }"
+      is VMap -> "$value.map { $ef }"
     }
 }
 
 class VNegative<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value.length, value)
-class VElementwise<X: Fun<X>, E: D1>(val value: VFun<X, E>, val ef: (Fun<X>) -> Fun<X>): VFun<X, E>(value.length, value)
+class VMap<X: Fun<X>, E: D1>(val value: VFun<X, E>, val ef: (Fun<X>) -> Fun<X>): VFun<X, E>(value.length, value)
 
 class VSum<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left.length, left, right)
 
@@ -125,7 +122,7 @@ class Gradient<X : Fun<X>, E: D1>(val fn: Fun<X>, val numVrbs: Nat<E>, vararg va
   override fun invoke(bnds: Bindings<X>) = Vec(numVrbs, vrbs.map { Derivative(fn, it)() })(bnds)
 }
 
-//class VVar<X: Fun<X>, E: D1>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val vVars: Set<VVar<X, *>> = setOf(this) }
+//class VVar<X: Fun<X>, E: D1>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val sVars: Set<Var<X>> = Array(length.i) { Var<X>("") }.toSet() }
 class Jacobian<X : Fun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val numVrbs: Nat<C>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn.length, numVrbs, vfn.sVars) {
   override fun invoke(bnds: Bindings<X>) = Mat(numCols, numRows, vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }
@@ -133,7 +130,6 @@ class Jacobian<X : Fun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val numVrbs: Nat<C
 class VDerivative<X : Fun<X>, E: D1> internal constructor(val vfn: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vfn.length, vfn) {
   fun VFun<X, E>.df(): VFun<X, E> = when (this) {
     is VConst -> VZero(length)
-//    is VVar -> VOne(length)
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
     is SVProd -> left.d(v1) * right + left * right.df()
@@ -144,7 +140,7 @@ class VDerivative<X : Fun<X>, E: D1> internal constructor(val vfn: VFun<X, E>, v
     is MVProd<X, E, *> -> this().df()
     is VMProd<X, *, E> -> this().df()
     is Gradient -> this()
-    is VElementwise -> this().df()
+    is VMap -> this().df()
   }
 }
 
@@ -189,7 +185,7 @@ open class Vec<X: Fun<X>, E: D1>(final override val length: Nat<E>,
     else -> super.dot(multiplicand)
   }
 
-  override fun elementwise(ef: (Fun<X>) -> Fun<X>) = Vec(length, contents.map { ef(it) })
+  override fun map(ef: (Fun<X>) -> Fun<X>) = Vec(length, contents.map { ef(it) })
 
   override fun magnitude() = contents.map { it * it }.reduce { acc, p -> acc + p }.sqrt()
 

@@ -61,11 +61,9 @@ open class MFun<X: Fun<X>, R: D1, C: D1>(
   open val numRows: Nat<R>,
   open val numCols: Nat<C>,
   open val sVars: Set<Var<X>> = emptySet()
-//open val vVars: Set<VVar<X, *>> = emptySet(),
-//open val mVars: Set<MVar<X, *, *>> = emptySet()
 ): (Bindings<X>) -> MFun<X, R, C> {
-  constructor(left: MFun<X, R, *>, right: MFun<X, *, C>): this(left.numRows, right.numCols, left.sVars + right.sVars) //, left.vVars + right.vVars, left.mVars + right.mVars)
-  constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars) //, mFun.vVars, mFun.mVars)
+  constructor(left: MFun<X, R, *>, right: MFun<X, *, C>): this(left.numRows, right.numCols, left.sVars + right.sVars)
+  constructor(mFun: MFun<X, R, C>): this(mFun.numRows, mFun.numCols, mFun.sVars)
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
@@ -136,19 +134,19 @@ class MDerivative<X : Fun<X>, R: D1, C: D1> internal constructor(val mfn: VFun<X
 }
 
 //class MVar<X: Fun<X>, R: D1, C: D1>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
-//  Variable, MFun<X, R, C>(numRows, numCols) { override val mVars: Set<MVar<X, *, *>> = setOf(this) }
+//  Variable, MFun<X, R, C>(numRows, numCols) { override val sVars: Set<Var<X>> = Array(numRows.i * numCols.i) { Var<X>("") }.toSet() }
 open class MConst<X: Fun<X>, R: D1, C: D1>(numRows: Nat<R>, numCols: Nat<C>): MFun<X, R, C>(numRows, numCols)
 class MZero<X: Fun<X>, R: D1, C: D1>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
 class MOne<X: Fun<X>, R: D1, C: D1>(rows: Nat<R>, cols: Nat<C>): MConst<X, R, C>(rows, cols)
 
 open class Mat<X: Fun<X>, R: D1, C: D1>(final override val numRows: Nat<R>,
-                                          final override val numCols: Nat<C>,
-                                          override val sVars: Set<Var<X>> = emptySet(),
-//                                   override val vVars: Set<VVar<X, *>> = emptySet(),
-//                                   override val mVars: Set<MVar<X, *>> = emptySet(),
-                                          vararg val rows: Vec<X, C>): MFun<X, R, C>(numRows, numCols) {
+                                        final override val numCols: Nat<C>,
+                                        override val sVars: Set<Var<X>> = emptySet(),
+                                        vararg val rows: Vec<X, C>): MFun<X, R, C>(numRows, numCols) {
   constructor(numRows: Nat<R>, numCols: Nat<C>, vararg rows: Vec<X, C>): this(numRows, numCols, rows.flatMap { it.sVars }.toSet(), *rows)
   constructor(numRows: Nat<R>, numCols: Nat<C>, contents: List<Vec<X, C>>): this(numRows, numCols, contents.flatMap { it.sVars }.toSet(), *contents.toTypedArray())
+
+  val contents: List<Fun<X>> by lazy { rows.flatMap { it.contents.asList() } }
 
   init {
     require(numRows.i == rows.size) { "Declared rows, $numRows != ${rows.size}" }
