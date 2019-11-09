@@ -433,7 +433,7 @@ When branching on the type of a sealed class, consumers must explicitly handle e
 sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
-    // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
+    // Since the subclasses of Fun are a closed set, no `else  ...` is required.
     operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
         is Const -> this
         is Var -> map.getOrElse(this) { this } // Partial application is permitted
@@ -525,7 +525,7 @@ The initializer may be omitted in favor of dynamic construction, although this m
 
 ```kotlin
 val one = Vec(1, 2, 3) + Vec(1, 2, 3)        // Always runs safely
-val add = Vec(1, 2, 3) + Vec(D3, listOf(t)) // May fail at runtime
+val add = Vec(1, 2, 3) + Vec(D3, listOf(t))  // May fail at runtime
 val vec = Vec(1, 2, 3)                       // Does not compile
 val sum = Vec(1, 2) + add                    // Does not compile
 ```
@@ -583,7 +583,7 @@ However inferring arity for arbitrary expressions at compile-time would be diffi
 ```kotlin
 val x = Var(1.0)                                // x: Variable<Double> inferred type
 val y = Var(1.0)                                // x: Variable<Double> "
-val f = Fun(D2) { x * y + sin(2 * x + 3 * y) } // f: BinaryFunction<Double> "
+val f = Fun(D2) { x * y + sin(2 * x + 3 * y) }  // f: BinaryFunction<Double> "
 val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
