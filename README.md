@@ -599,7 +599,7 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
         int = "0" | nat int;
       float = int "." int;
         num = type "(" int ")" | type "(" float ")";
-        var = "x" | "y" | "z" | "ONE" | "ZERO" | "E" | "Var()"};
+        var = "x" | "y" | "z" | "ONE" | "ZERO" | "E" | "Var()";
      signOp = "+" | "-";
       binOp = signOp | "*" | "/" | "pow";
      trigOp = "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "asinh" | "acosh" | "atanh";
