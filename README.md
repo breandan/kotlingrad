@@ -605,7 +605,7 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
      trigOp = "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "asinh" | "acosh" | "atanh";
     unaryOp = signOp | trigOp | "sqrt" | "log" | "ln" | "exp";
         exp = var | num | unaryOp exp | var binOp exp | "(" exp ")";
-   expList  = exp | exp "," expList;
+    expList = exp | exp "," expList;
       linOp = signOp | "*" | " dot ";
         vec = "Vec(" expList ")" | "Vec" nat "(" expList ")";
      vecExp = vec | signOp vecExp | exp "*" vecExp | vec linOp vecExp | vecExp ".norm(" int ")";
