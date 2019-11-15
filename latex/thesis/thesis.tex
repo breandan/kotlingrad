@@ -1243,28 +1243,31 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \newcommand{\code}[1]{\ensuremath{\text{\inline{#1}}}}
 \newcommand{\bnfrl}[1]{\ensuremath{\langle#1\rangle}}
 \begin{eqnarray*}
-\bnfrl{type} & ::= & \code{Double} \mor \code{Int} \mor \code{Float} \mor \code{BigInteger} \mor \code{BigDouble} \\
+\bnfrl{type} & ::= & \code{Double} \mor \code{Float} \mor \code{Int} \mor \code{BigInteger} \mor \code{BigDouble} \\
 \bnfrl{nat} & ::= & \code{1} \mor \ldots \mor \code{99} \\
-\bnfrl{int} & ::= & \bnfrl{nat} \mor \code{0} \mor \bnfrl{int} \\
-\bnfrl{flt} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
+\bnfrl{output} & ::= & \code{Fun<}\bnfrl{type}\code{Real>} \mor \code{VFun<}\bnfrl{type}\code{Real,}\bnfrl{nat}\code{>} \mor \code{MFun<}\bnfrl{type}\code{Real,}\bnfrl{nat}\code{,}\bnfrl{nat}\code{>} \\
+\bnfrl{int} & ::= & \code{0} \mor \bnfrl{nat}\bnfrl{int} \\
+\bnfrl{float} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
 \bnfrl{num} & ::= & \bnfrl{type}\code{(}\bnfrl{int}\code{)} \mor \bnfrl{type}\code{(}\bnfrl{float}\code{)} \\
 \bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \mor \code{Var()}} \\
-\bnfrl{sign} & ::= & \code{+} \mor \code{-} \\
-\bnfrl{binaryOp} & ::= & \bnfrl{sign} \mor \code{*} \mor \code{/} \mor \code{pow} \\
-\bnfrl{unaryOp} & ::= & \bnfrl{sign} \mor \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
-\bnfrl{expr} & ::= & \bnfrl{var} \mor \bnfrl{num} \mor \bnfrl{unaryOp}\bnfrl{expr} \mor \bnfrl{var}\bnfrl{binaryOp}\bnfrl{expr} \mor \code{(} \bnfrl{expr} \code{)} \\
-\bnfrl{exprList} & ::= & \bnfrl{expr} \mor \bnfrl{expr} \code{,} \bnfrl{exprList} \\
-\bnfrl{linearOp} & ::= & \bnfrl{sign} \mor \code{*} \mor \code{ dot } \\
-\bnfrl{vec} & ::= & \code{Vec(} \bnfrl{exprList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{exprList} \code{)} \\
-\bnfrl{vecExpr} & ::= & \bnfrl{vec} \mor \bnfrl{sign}\bnfrl{vecExpr} \mor \bnfrl{expr} \code{*} \bnfrl{vecExpr} \mor \bnfrl{vec} \bnfrl{linearOp} \bnfrl{vecExpr} \\
-\bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{exprList} \code{)} \\
-\bnfrl{matExpr} & ::= & \bnfrl{mat} \mor \bnfrl{sign}\bnfrl{matExpr} \mor \bnfrl{expr}\bnfrl{linearOp}\bnfrl{matExpr} \mor \\
-&&\bnfrl{vecExpr}\bnfrl{linearOp}\bnfrl{matExpr} \mor \bnfrl{mat} \bnfrl{linearOp} \bnfrl{matExpr} \\
-\bnfrl{anyExpr} & ::= & \bnfrl{expr} \mor \bnfrl{vecExpr} \mor \bnfrl{matExpr} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
-\bnfrl{bindings} & ::= & \bnfrl{expr} \code{ to } \bnfrl{expr} \mor \bnfrl{expr} \code{ to } \bnfrl{expr} \code{,} \bnfrl{bindings} \\
-\bnfrl{invocation} & ::= & \bnfrl{anyExpr} \code{(} \bnfrl{bindings} \code{)} \\
-\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExpr} \code{) / d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{expr} \code{)} \mor \bnfrl{anyExpr} \code{.d(} \bnfrl{exprList} \code{)} \\
-\bnfrl{gradient} & ::= & \bnfrl{expr} \code{.grad()}
+\bnfrl{signOp} & ::= & \code{+} \mor \code{-} \\
+\bnfrl{binOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{/} \mor \code{pow} \\
+\bnfrl{trigOp} & ::= & \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{asin} \mor \code{acos} \mor \code{atan} \mor \code{asinh} \mor \code{acosh} \mor \code{atanh} \\
+\bnfrl{unaryOp} & ::= & \bnfrl{signOp} \mor \bnfrl{trigOp} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
+\bnfrl{exp} & ::= & \bnfrl{var} \mor \bnfrl{num} \mor \bnfrl{unaryOp}\bnfrl{exp} \mor \bnfrl{var}\bnfrl{binOp}\bnfrl{exp} \mor \code{(} \bnfrl{exp} \code{)} \\
+\bnfrl{expList} & ::= & \bnfrl{exp} \mor \bnfrl{exp} \code{,} \bnfrl{expList} \\
+\bnfrl{linOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{ dot } \\
+\bnfrl{vec} & ::= & \code{Vec(} \bnfrl{expList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
+\bnfrl{vecExp} & ::= & \bnfrl{vec} \mor \bnfrl{signOp}\bnfrl{vecExp} \mor \bnfrl{exp} \code{*} \bnfrl{vecExp} \mor \bnfrl{vec} \bnfrl{linOp} \bnfrl{vecExp} \\
+&&\bnfrl{vecExp}\code{norm(}\bnfrl{int}\code{)} \\
+\bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
+\bnfrl{matExp} & ::= & \bnfrl{mat} \mor \bnfrl{signOp}\bnfrl{matExp} \mor \bnfrl{exp}\bnfrl{linOp}\bnfrl{matExp} \mor \\
+&&\bnfrl{vecExp}\bnfrl{linOp}\bnfrl{matExp} \mor \bnfrl{mat} \bnfrl{linOp} \bnfrl{matExp} \\
+\bnfrl{anyExp} & ::= & \bnfrl{exp} \mor \bnfrl{vecExp} \mor \bnfrl{matExp} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
+\bnfrl{bindings} & ::= & \bnfrl{exp} \code{ to } \bnfrl{exp} \mor \bnfrl{exp} \code{ to } \bnfrl{exp} \code{,} \bnfrl{bindings} \\
+\bnfrl{invocation} & ::= & \bnfrl{anyExp} \code{(} \bnfrl{bindings} \code{)} \\
+\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExp} \code{) / d(} \bnfrl{exp} \code{)} \mor \bnfrl{anyExp} \code{.d(} \bnfrl{exp} \code{)} \mor \bnfrl{anyExp} \code{.d(} \bnfrl{expList} \code{)} \\
+\bnfrl{gradient} & ::= & \bnfrl{exp} \code{.grad()}
 \end{eqnarray*}
 
 \section{Type systems}\label{sec:type-systems}
@@ -1294,8 +1297,8 @@ Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g
                $\log_b A$                                      & \tinline{a.log(b)}                                                               & \tinline{log(a, b)}                                                                       &                                                                                              & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})            $ \\ \hline
                 $A^{b}$                                        & \tinline{a.pow(b)}                                                               & \tinline{pow(a, b)}                                                                       &                                                                                              & $       (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}, \texttt{b}: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})            $ \\ \hline
 \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular}          & \begin{tabular}{@{}c@{}}\tinline{a.sqrt()}\\\tinline{a.cbrt()}\end{tabular}                  & $                        (\texttt{a}: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})                                                      $ \\ \hline
-\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \tinline{a.d(b)}                                                              & \tinline{grad(a)[b]}                                                                      & \tinline{d(a) / d(b)}                                                                        & $                    (\texttt{a}: C(\mathbb{R}^{m})^{*}, \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R})                                                    $ \\ \hline
-               $\nabla a$                                      &                                                                                  & \tinline{grad(a)}                                                                         & \tinline{a.grad()}                                                                           & $                   \big(\texttt{a}: C(\mathbb{R}^{m})\big) \rightarrow (\mathbb{R}^{m}\rightarrow\mathbb{R}^{m})                                                                                          $ \\ \hline
+\begin{tabular}{@{}c@{}}$\frac{da}{db}$\\$a'(b)$\end{tabular}  & \tinline{a.d(b)}                                                              & \tinline{grad(a)[b]}                                                                      & \tinline{d(a) / d(b)}                                                                        & $                    (\texttt{a}: C(\mathbb{R}^{m}), \texttt{b}: \mathbb{R}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})                                                    $ \\ \hline
+               $\nabla a$                                      &                                                                                  & \tinline{grad(a)}                                                                         & \tinline{a.grad()}                                                                           & $                   \big(\texttt{a}: C(\mathbb{R}^{?})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{?})                                                                                          $ \\ \hline
     \end{tabular}
 \caption{\label{tab:shape_system}Kotlin$\nabla$'s shape system specifies the output shape for matrix arithmetic.}
 \end{table}
@@ -2716,7 +2719,7 @@ The root cause of this friction was a product of imprecise versioning and over-a
 
 \begin{figure}
     \includegraphics[width=0.40\textwidth]{../figures/aido_logo.png}
-    \caption{The AI Driving Olympics, a primary use case for the system described above.}
+    \caption{The \href{https://www.duckietown.org/research/ai-driving-olympics}{AI Driving Olympics}, a primary use case for the system described above.}
     \label{fig:aido_logo}
 \end{figure}
 
