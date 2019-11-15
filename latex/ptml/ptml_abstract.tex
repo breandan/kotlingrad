@@ -115,12 +115,12 @@ Kotlin$\nabla$ is an embedded domain-specific language (eDSL). Embedded programs
 Kotlin$\nabla$ allows users to implement differentiable programs by composing simple functions to form more complex ones. Operations on functions with an incompatible output shape will fail to compile. Valid expressions are lazily evaluated inside a type-safe numerical context at runtime.
 
 \begin{figure}[!htb]
-    \begin{lstlisting}
+    \begin{lstlisting}{escapeinside={(*}{*)}}
     with(DoublePrecision) {                         // Use double-precision numerics
         val x = variable("x")                       // Declare immutable input variables
         val y = variable("y")                       // (these are just symbolic placeholders)
         val z = sin(10 * (x * x + pow(y, 2))) / 10  // Lazy expression
-        val dz_dx = d(z) / d(x)                     // Leibniz derivative notation
+        val dz_dx = d(z) / d(x)                     // Leibniz notation(*~\citep{christianson2012leibniz}*)
         val d2z_dxdy = d(dz_dx) / d(y)              // Mixing higher-order partials
         val d3z_d2xdy = grad(d2z_dxdy)[x]           // Gradient indexing operator
         plot3D(d3z_d2xdy, -1.0, 1.0)                // Plot in -1 < x,y,z < 1
