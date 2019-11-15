@@ -608,7 +608,7 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
    expList  = exp | exp "," expList;
       linOp = signOp | "*" | " dot ";
         vec = "Vec(" expList ")" | "Vec" nat "(" expList ")";
-     vecExp = vec | signOp vecExp | exp "*" vecExp | vec linOp vecExp | vecExp "norm(" int ")";
+     vecExp = vec | signOp vecExp | exp "*" vecExp | vec linOp vecExp | vecExp ".norm(" int ")";
         mat = "Mat" nat "x" nat "(" expList ")";
      matExp = mat | signOp matExp | exp linOp matExp | vecExp linOp matExp | mat linOp matExp;
      anyExp = exp | vecExp | matExp | derivative | invocation;

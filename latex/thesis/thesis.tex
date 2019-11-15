@@ -159,6 +159,7 @@
         numbers=right,
         breaklines=true,
         inputencoding=utf8,
+        escapeinside={(*}{*)},
         #1
     },
     underlay={
@@ -1210,7 +1211,7 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
   val x = Var("x") // Declare immutable variables (these variables are
   val y = Var("y") // just symbolic constructs used for differentiation)
   val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazily evaluated
-  val dz_dx = d(z) / d(x) // Supports Leibniz's notation
+  val dz_dx = d(z) / d(x) // Supports Leibniz notation(*~\citep{christianson2012leibniz}*)
   val d2z_dxdy = d(dz_dx) / d(y) // Mixing higher order partials
   val d3z_d2xdy = grad(d2z_dxdy)[x] // Equivalent to d(f)/d(x)
   plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in 3-space (-1 < x, y, z < 1)
@@ -1239,6 +1240,8 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 
 \section{Grammar}
 
+Below is an approximately complete BNF grammar for Kotlin$\nabla$:
+
 \newcommand{\mor}{\ensuremath{\;\mid\;}}
 \newcommand{\code}[1]{\ensuremath{\text{\inline{#1}}}}
 \newcommand{\bnfrl}[1]{\ensuremath{\langle#1\rangle}}
@@ -1259,7 +1262,7 @@ An expression is simply a DSL for constructing \inline{Function}s. No numerical 
 \bnfrl{linOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{ dot } \\
 \bnfrl{vec} & ::= & \code{Vec(} \bnfrl{expList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
 \bnfrl{vecExp} & ::= & \bnfrl{vec} \mor \bnfrl{signOp}\bnfrl{vecExp} \mor \bnfrl{exp} \code{*} \bnfrl{vecExp} \mor \bnfrl{vec} \bnfrl{linOp} \bnfrl{vecExp} \\
-&&\bnfrl{vecExp}\code{norm(}\bnfrl{int}\code{)} \\
+&&\bnfrl{vecExp}\code{.norm(}\bnfrl{int}\code{)} \\
 \bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
 \bnfrl{matExp} & ::= & \bnfrl{mat} \mor \bnfrl{signOp}\bnfrl{matExp} \mor \bnfrl{exp}\bnfrl{linOp}\bnfrl{matExp} \mor \\
 &&\bnfrl{vecExp}\bnfrl{linOp}\bnfrl{matExp} \mor \bnfrl{mat} \bnfrl{linOp} \bnfrl{matExp} \\
