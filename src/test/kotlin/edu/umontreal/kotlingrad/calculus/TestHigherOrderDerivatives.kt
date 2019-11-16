@@ -34,5 +34,12 @@ class TestHigherOrderDerivatives: StringSpec({
         `d²f∕dx²`(x to ẋ) shouldBeAbout (x * 6)(x to ẋ)
       }
     }
+
+    "d²(sin(x * cos(x * sin(x * cos(x))))) / dx² should be about -13.81" {
+      val f = sin(x * cos(x * sin(x * cos(x))))
+      val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
+
+      `d²f∕dx²`(x to 2.0) shouldBeAbout -13.81831095
+    }
   }
 })
