@@ -75,7 +75,7 @@
 \edef\partnamefr{Partie}
 \edef\partnameen{Part}
 
-\edef\dmschapternamefr{Chapitre}
+\edef\dmschapternamefr{Chapter}
 \edef\dmschapternameen{Chapter}
 
 \edef\appendixnamefr{Annexe}
@@ -87,10 +87,10 @@
 \edef\dms@etfr{ et}
 \edef\dms@eten{, and}
 
-\edef\dmslistfigurenamefr{Liste des figures}
+\edef\dmslistfigurenamefr{List of figures}
 \edef\dmslistfigurenameen{List of figures}
 
-\edef\dmslisttablenamefr{Liste des tableaux}
+\edef\dmslisttablenamefr{List of tables}
 \edef\dmslisttablenameen{List of tables}
 
 \edef\lemmanamefr{Lemme}
@@ -108,7 +108,7 @@
 \edef\tablenamefr{Tableau}
 \edef\tablenameen{Table}
 
-\edef\dmscontentsnamefr{Table des mati\noexpand\`eres} %\'e car on ne sait pas si inputenc sera chargé
+\edef\dmscontentsnamefr{Contents} %\'e car on ne sait pas si inputenc sera chargé
 \edef\dmscontentsnameen{Contents}
 
 \edef\revuemsgfr{Cet article a \noexpand\'et\noexpand\'e soumis dans }
@@ -140,10 +140,10 @@
 \edef\keywordsfr{Mots cl\'es}
 \edef\keywordsen{Keywords}
 
-\edef\dmscontentsnamefr{Table des mati\`eres} %\'e car on ne sait pas si inputenc sera chargé
+\edef\dmscontentsnamefr{Contents} %\'e car on ne sait pas si inputenc sera chargé
 \edef\dmscontentsnameen{Contents}
 
-\edef\abstractnamefr{R\'esum\'e}
+\edef\abstractnamefr{Abstract}
 \edef\abstractnameen{Abstract}
 
 \edef\theoremnamefr{Th\'eor\`eme}

@@ -450,12 +450,13 @@
 %%------------------------------------------------- %
 %%              pages iv                            %
 %%------------------------------------------------- %
+\anglais
 
-\chapter*{R\'esum\'e}
+\chapter*{Abstract}
 
 Programming tools are computer programs which help humans program computers. Tools come in all shapes and forms, from editors and compilers to debuggers and issue trackers. Each of these facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this thesis, we share some lessons learned designing four tools that facilitate the development of intelligent software systems, particularly in robotics settings. First, we introduce an integrated development environment (IDE) for programming in the Robot Operating System (ROS), called Hatchery. Second, we describe Kotlin$\nabla$, a language and type system for differentiable programming, an emerging programming paradigm in intelligent systems. Third, we present an automated test suite for differentiable programming, based on adversarial and metamorphic testing. Fourth, we explore a container infrastructure based on Docker, which enables the development of reproducible robotics software for the Duckietown platform. Finally, we present a brief case study on an application built with these four tools in mind and offer some concluding remarks about the past, present and future of programming tools for intelligent systems.
 
-\chapter*{Remerciements}
+\chapter*{Acknowledgements}
 \vspace{-60pt} I would like to thank Gimmey, Mom, Uncle Mark, and Dad for their unfailing love and support. \href{http://hannelita.com/}{Hanneli Tavante} for teaching me type theory and the beauty of functional programming. Siyan Wang for his fellowship and adventures. \href{https://laverne.edu/directory/person/xiaoyan-liu/}{Xiaoyan Liu} for planting in me the seed of mathematics. Uncle Andy for watering the seed for many years. Aunt Shannon, Adam Devoe and Jacquie Kirrane for encouraging me to pursue grad school. \href{https://www.cs.rit.edu/~anh/}{Arthur Nunes-Harwitt} for teaching me algorithmic differentiation a long time ago. \href{http://www.sas.rochester.edu/bcs/people/faculty/miller_renee/index.html}{Renee Miller} for sparking my interest in neural science. \href{http://blog.locut.us}{Ian Clarke} for showing me a clever new language called Kotlin. \href{https://hadihariri.com/}{Hadi Hariri} for placing more trust in me than I deserved. \href{http://www.jooq.org/}{Lukas Eder} and \href{https://jonnyzzz.com/}{Eugene Petrenko} for showing me the magic of type-safe DSLs and giving me advice about grad school. \href{https://github.com/rusi}{Rusi Hristov} for his patience and mentorship. \href{https://scholar.google.ca/citations?user=PsKlNzUAAAAJ}{Dmitry Serdyuk} for introducing me to Montr\'eal. \href{https://scholar.google.ca/citations?user=-Ss9QGkAAAAJ}{Isabela Albuquerque} and \href{https://scholar.google.ca/citations?user=hkO47vsAAAAJ}{Jo\~ao Monteiro} for showing me what good research looks like. \href{https://takeitallsource.github.io}{Manfred Diaz} and \href{https://pointersgonewild.com/}{Maxime Chevalier Boisvert} for the inspiration, conversations and feedback. \href{https://fgolemo.github.io/}{Florian Golemo} for his excellent engineering and architectural advice. \href{http://TurnerComputing.com}{Ryan Turner}, \href{https://saikrishna-1996.github.io}{Saikrishna Gottipati}, \href{http://maivincent.github.io}{Vincent Mai}, \href{https://krrish94.github.io/}{Krishna Murthy} \href{https://bhairavmehta95.github.io/}{Bhairav Mehta}, \href{http://www.solomatov.me/}{Konstantin Solomatov} and \href{https://www.seas.upenn.edu/~xsi/}{Xujie Si} for the interesting conversations. \href{https://scholar.google.ca/citations?user=bn4xHHIAAAAJ}{Pascal Lamblin}, \href{http://breuleux.net}{Olivier Breleux} and \href{https://scholar.google.ca/citations?user=XE9SDzgAAAAJ}{Bart van Merri\"enboer} and for lighting the path between ML and PL. \href{http://conal.net/}{Conal Elliott} for teaching me the importance of simplicity and denotational semantics. \href{http://christianperone.com}{Christian Perone} for introducing me to PyTorch, \href{https://research.jetbrains.org/researchers/altavir}{Alexander Nozik}, \href{https://twitter.com/headinthebox}{Erik Meijer}, \href{https://scholar.google.com/citations?user=IcuGXgcAAAAJ}{Kiran Gopinathan}, \href{https://medium.com/@elizarov}{Roman Elizarov} and \href{https://cquic.unm.edu/member/jacob.miller/}{Jacob Miller} for their useful comments and feedback related to Kotlin$\nabla$. \href{https://miltos.allamanis.com/}{Miltos Allamanis} for showing me there is room for SE in ML. \href{https://diro.umontreal.ca/accueil/}{Celine Begin} at the Universit\'e de Montr\'eal for helping a stranger on a cold winter's eve in 2017. \href{https://www.iro.umontreal.ca/~monnier/}{Stefan Monnier} for thoughtfully and thoroughly replying to my rambling emails. \href{https://censi.science/}{Andrea Censi} for his advice and encouragement. Last but not least, I wish to thank my brilliant advisors \href{http://liampaull.ca/}{Liam Paull} for taking a chance on an out-of-distribution sample, providing strong gradients and giving me far more credit than I deserved, and \href{https://michalis.famelis.info/}{Michalis Famelis} for teaching me the value of intuitionistic logic, formal methods, and self-discipline. Thank you!
 
 %%------------------------------------------------- %
@@ -465,7 +466,6 @@ Programming tools are computer programs which help humans program computers. Too
 % Pour un mémoire en anglais, changer pour
 % \anglais. Noter qu'il faut une permission
 % pour écrire son mémoire en anglais.
-\anglais
 % \cleardoublepage termine la page actuel et force TeX
 % a poussé les éléments flottant (fig., tables, etc.) sur
 % la page (normalement TeX les garde en suspend jusqu'à ce
@@ -1275,7 +1275,7 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 
 \section{Type systems}\label{sec:type-systems}
 
-Early work in type-safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} which uses types to encode dimensionality and prevent common bugs related to dimension mismatch from arising, and was later realized in the F\# language~\citep{kennedy2010types}. \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} explore the application of dimension types for linear algebra. More recently, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to manipulate arrays in more complex ways. With the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} explore how to encode shape-safety in various type systems.
+Early work in type-safe dimension analysis can be found in \citet{kennedy1994dimension, kennedy1996programming} which uses types to encode dimensionality and prevent common bugs related to dimension mismatch from arising, and was later realized in the F\# language~\citep{kennedy2010types}. \citet{jay1996shape}, \citet{rittri1995dimension}, and \citet{zenger1997indexed} explore the application of dimension types for linear algebra. More recently, \citet{kiselyov2005number, kiselyov2010fun} and \citet{griffioen2015type}, show how to manipulate arrays in more complex ways. With the resurgence of interest in tensor algebra and array programming, \citet{chen2017typesafe} and \citet{rink2018modeling} demonstrate how to encode shape-safety for tensor algebra in various type systems.
 
 The problem we attempt to solve can be summarized as follows. Given two values \inline{x} and \inline{y}, and operator \inline{\$}, how do we determine whether the expression \inline{z = x \$ y} is valid, and if so, what is the result type of \inline{z}? For matrix multiplication, when \inline{x} $\in \mathbb{R}^{m \times n}$ and \inline{y} $\in \mathbb{R}^{n \times p}$, the expression is well-typed and we can infer \inline{z} $\in \mathbb{R}^{m \times p}$. More generally, we would like to infer the type of \inline{z} for some operator \inline{@} $: (\mathbb{R}^\mathbf{a}, \mathbb{R}^\mathbf{b}) \rightarrow \mathbb{R}^\mathbf{c}$ where $\mathbf{a} \in \mathbb{N}^q, \mathbf{b} \in \mathbb{N}^r, \mathbf{c} \in \mathbb{N}^s$ and $q, r, s \in \mathbb{N}$. For many linear algebra operations such as matrix multiplication, $\mathcal{T}(\mathbf a, \mathbf b) \stackrel{?}{=} \mathbf c$ is computable in $\mathcal{O}(1)$ -- we can simply check the inner dimensions for equivalence ($\mathbf{a}_2 \stackrel{?}{=} \mathbf{b}_1$).
 
@@ -1400,11 +1400,11 @@ open class Vec<E, Len: D1> constructor(val len: Nat<Len>, val contents: List<E>)
 }
 \end{kotlinlisting}
 %
-Dynamic length construction is possible, although it may fail at runtime. For example:
+Dynamic length construction is allowed, although it may fail at runtime. For example:
 %
 \begin{kotlinlisting}
 val one = Vec(D3, 1, 2, 3) + Vec(D3, 1, 2, 3)   // Always runs safely
-val add = Vec(D3, 1, 2, 3) + Vec(D3, listOf(t)) // May fail at runtime
+val add = Vec(D3, 1, 2, 3) + Vec(D3, listOf(t)) // Compiles, but may fail at runtime
 val vec = Vec(1, 2, 3) // Inferred type: Vec<3>
 val sum = (*\uwave{Vec(D2, 1, 2) + add}*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
@@ -1551,7 +1551,6 @@ When branching on the type of a sealed class, consumers must explicitly handle e
 \begin{kotlinlisting}
 sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()) : Group<Fun<X>> {
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
-
     // Since the subclasses of Fun are a closed set, no `else -> ...` is required.
     operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
         is Const -> this
@@ -1569,7 +1568,6 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()) : Grou
     }
 
     operator fun plus(addend: Fun<T>) = Sum(this, addend)
-
     operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
 }
 \end{kotlinlisting}
@@ -1618,7 +1616,7 @@ Now, we can use the context to define another extension, \inline{Fun.multiplyByT
 fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this }
 \end{kotlinlisting}
 %
-Extensions can also be defined in another file or context and imported on demand, an approach borrowed from \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019acat}, another mathematical library for Kotlin. This approach is also suitable for defining convenience methods for variable assignment and type adapters for numerical primitives in a context sensitive manner. For example:
+Extensions can also be defined in another file or context and imported on demand, an approach borrowed from \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019kmath}, another mathematical library for Kotlin. This approach is also suitable for defining convenience methods for variable assignment and type adapters for numerical primitives in a context sensitive manner. For example:
 %
 \begin{kotlinlisting}
 object DoubleContext: Proto<DConst, Double>() {
@@ -1709,7 +1707,7 @@ Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, gr
 %\epigraph{``It is well known that the central problem of the whole of modern mathematics is the study of the transcendental functions defined by differential equations.''}{\begin{flushright}--Felix \citet{klein1893lectures}, \textit{Lectures on mathematics}\end{flushright}}
 
 \vspace{2pt}\setlength{\epigraphwidth}{0.65\textwidth}
-\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1985calculi}, \href{https://archive.org/details/AnnalsOfMathematicalStudies6ChurchAlonzoTheCalculiOfLambdaConversionPrincetonUniversityPress1941}{\textit{The Calculi of Lambda Conversion}}\end{flushright}}
+\epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1941calculi}, \href{https://archive.org/details/AnnalsOfMathematicalStudies6ChurchAlonzoTheCalculiOfLambdaConversionPrincetonUniversityPress1941}{\textit{The Calculi of Lambda Conversion}}\end{flushright}}
 
 The derivative, as it is most commonly used, is usually associated with the calculus of infinitesimals. But the same rules for symbolic differentiation introduced by Leibniz and Newton over three centuries ago has reappeared in strange and marvelous places throughout computer science. In \citet{brzozowski1964derivatives}, we encounter an example of symbolic differentiation in a discrete setting, i.e. regular expressions. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and incremental parsing \citep{might2011parsing, moss2014derivatives}. Later in \citet{thayse1981boolean} the boolean differential calculus was first introduced~\footnote{Although early work on the subject can be traced back to \citet{talantsev1959analysis} and \citet{sellers1968analyzing}}, a branch of boolean algebra which has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. Symbolic differentiation has useful applications in other mathematical settings, including $\lambda$-calculus~\citep{ehrhard2003differential, cai2014theory, kelly2016evolving, brunel2020backpropagation}, incremental computation~\citep{alvarez2019fixing, alvarez2019change}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential, blute2009cartesian}, domain theory~\citep{edalat2002domain}, probability theory~\citep{kac1951probability} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
 
