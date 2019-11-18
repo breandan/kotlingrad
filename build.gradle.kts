@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
   implementation(kotlin("stdlib"))
-  implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+  implementation(kotlin("stdlib-jdk8"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.4.0")
   api("org.jzy3d:jzy3d-api:1.0.2")
