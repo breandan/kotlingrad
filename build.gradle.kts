@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version "1.3.50"
+  kotlin("jvm") version "1.3.60"
   `maven-publish`
   id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
-val kotlinVersion = "1.3.50"
+val kotlinVersion = "1.3.60"
 group = "edu.umontreal"
 version = "0.2.3"
 
@@ -21,7 +21,7 @@ repositories {
 dependencies {
   implementation(kotlin("stdlib"))
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0-M1")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
   testCompile("io.kotlintest:kotlintest-runner-junit5:3.4.0")
   api("org.jzy3d:jzy3d-api:1.0.2")
   api("org.knowm.xchart:xchart:3.5.4")
