@@ -31,7 +31,7 @@ Kotlin∇ is a framework for type-safe [automatic differentiation](https://en.wi
 
 ## Introduction
 
-Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), [Lantern](https://github.com/feiwang3311/Lantern) et al., Kotlin∇ attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in numerical optimization and machine learning. It also adds a number of experimental ideas, including compile-time shape-safety, algebraic expression rewriting and numerical stability checking with property-based testing. We aim to provide an algebraically-grounded implementation of AD for shape-safe tensor operations. Tensors in Kotlin∇ are represented as [multidimensional arrays](https://en.wikipedia.org/wiki/Tensor#As_multidimensional_arrays).
+Inspired by [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), [Autograd](https://github.com/hips/autograd), [DiffSharp](https://github.com/DiffSharp/DiffSharp), [Myia](https://github.com/mila-udem/myia), [Nexus](https://github.com/ctongfei/nexus), [Tangent](https://github.com/google/tangent), [Lantern](https://github.com/feiwang3311/Lantern) et al., Kotlin∇ attempts to port recent advancements in automatic differentiation (AD) to the Kotlin language. AD is useful for [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) and has a variety of applications in [numerical optimization](https://uhra.herts.ac.uk/bitstream/handle/2299/4342/903843.pdf) and [machine learning](http://www.jmlr.org/papers/volume18/17-468/17-468.pdf). Our implementation adds a number of experimental ideas, including compile-time [shape-safety](#shape-safety), [algebraic simplification](#multiple-dispatch) and numerical [stability checking](#testing) with property-based testing. We aim to provide an [algebraically-grounded](#operator-overloading) implementation of AD for shape-safe tensor operations. Tensors in Kotlin∇ are represented as [multidimensional arrays](https://en.wikipedia.org/wiki/Tensor#As_multidimensional_arrays).
 
 ## Features
 
@@ -45,12 +45,12 @@ Kotlin∇ currently supports the following features:
 
 Additionally, it aims to support:
 
-* PyTorch-style [define-by-run](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html) semantics
+* PyTorch-style [define-by-run](https://openreview.net/pdf?id=BJJsrmfCZ#section.1) semantics
 * N-dimensional tensors and [higher-order tensor operators](https://en.wikipedia.org/wiki/Tensor_contraction)
 * Fully-general AD over control flow, variable reassignment
 (via [delegation](https://kotlinlang.org/docs/reference/delegated-properties.html)), and array programming, possibly using a typed IR such as [Myia](https://github.com/mila-udem/myia)
 
-All of these features are implemented without access to bytecode or special compiler tricks - just using [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf), embedded DSLs a la [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf), and [ordinary generics](https://kotlinlang.org/docs/reference/generics.html). See below for a more detailed [feature comparison](#comparison).
+All of these features are implemented without access to bytecode or special compiler tricks - just using [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html) as shown in [Lambda the Ultimate Backpropogator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf), embedded DSLs a la [Lightweight Modular Staging](https://infoscience.epfl.ch/record/150347/files/gpce63-rompf.pdf), and [ordinary generics](https://kotlinlang.org/docs/reference/generics.html). Please see below for a more detailed [feature comparison](#comparison).
 
 ## Usage
 
@@ -251,21 +251,21 @@ fun main() {
 }
 ```
 
-Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew HelloKotlinGrad` should print:
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew HelloKotlinGrad` should produce the following output:
 
 ```
-z(x, y)                         = x * (-sin(x * y) + y) * 4
-z({x=0, y=1})                   = 0.0
-∂z({x=0, y=1})/∂x               = (-sin(x * y) + y - x * cos(x * y) * y) * 4 
-                                = 4.0
-∂z({x=0, y=1})/∂y               = x * (1 - cos(x * y) * x) * 4 
-                                = 0.0
-∂²z({x=0, y=1})/∂x²             = x * (1 - cos(x * y) * x) * 4 
-                                = -8.0
-∂²z({x=0, y=1})/∂x∂y            = (-x * (-sin(x * y) * x * y + cos(x * y)) + 1 - cos(x * y) * x) * 4 
-                                = 4.0
-∇z({x=0, y=1})                  = {x=(-sin(x * y) + y - x * cos(x * y) * y) * 4, y=x * (1 - cos(x * y) * x) * 4} 
-                                = [4.0, 0.0]ᵀ
+z(x, y)              = x * (-sin(x * y) + y) * 4
+z({x=0, y=1})        = 0.0
+∂z({x=0, y=1})/∂x    = (-sin(x * y) + y - x * cos(x * y) * y) * 4 
+                     = 4.0
+∂z({x=0, y=1})/∂y    = x * (1 - cos(x * y) * x) * 4 
+                     = 0.0
+∂²z({x=0, y=1})/∂x²  = x * (1 - cos(x * y) * x) * 4 
+                     = -8.0
+∂²z({x=0, y=1})/∂x∂y = (-x * (-sin(x * y) * x * y + cos(x * y)) + 1 - cos(x * y) * x) * 4 
+                     = 4.0
+∇z({x=0, y=1})       = {x=(-sin(x * y) + y - x * cos(x * y) * y) * 4, y=x * (1 - cos(x * y) * x) * 4} 
+                     = [4.0, 0.0]ᵀ
 ```
 
 ## Plotting
