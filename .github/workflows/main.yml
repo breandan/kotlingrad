@@ -1,6 +1,9 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    paths:
+    - '**.kt'
 
 jobs:
   build:
@@ -14,4 +17,4 @@ jobs:
         with:
           java-version: 11
       - name: Build with Gradle
-        run: ./gradlew build --stacktrace
+        run: ./gradlew test --stacktrace
