@@ -8,7 +8,7 @@ plugins {
 
 val kotlinVersion = "1.3.60"
 group = "edu.umontreal"
-version = "0.2.3"
+version = "0.2.4"
 
 repositories {
   jcenter()
