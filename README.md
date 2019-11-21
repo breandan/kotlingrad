@@ -231,7 +231,7 @@ fun main() {
     val y = Var("y")
 
     val z = x * (-sin(x * y) + y) * 4  // Infix notation
-    val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation
+    val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]
     val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
     val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
     val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
@@ -685,6 +685,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Automatic differentiation in machine learning: a survey](http://jmlr.org/papers/volume18/17-468/17-468.pdf)
 * [The (JAX) Autodiff Cookbook](https://colab.research.google.com/github/google/jax/blob/master/notebooks/autodiff_cookbook.ipynb)
 * [Automatic differentiation in ML: Where we are and where we should be going](https://papers.nips.cc/paper/8092-automatic-differentiation-in-ml-where-we-are-and-where-we-should-be-going.pdf)
+* [A Leibniz Notation for Automatic Differentiation](https://uhra.herts.ac.uk/bitstream/handle/2299/8933/904722.pdf)
 
 ### Differentiable Programming
 
