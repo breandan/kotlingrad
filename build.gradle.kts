@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version "1.3.60"
+  kotlin("jvm") version "1.3.61"
   `maven-publish`
   id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
-val kotlinVersion = "1.3.60"
+val kotlinVersion = "1.3.61"
 group = "edu.umontreal"
 version = "0.2.4"
 
@@ -22,7 +22,7 @@ dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk8"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
-  testCompile("io.kotlintest:kotlintest-runner-junit5:3.4.0")
+  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   api("org.jzy3d:jzy3d-api:1.0.2")
   api("org.knowm.xchart:xchart:3.5.4")
   api("ch.obermuhlner:big-math:2.1.0")
@@ -37,10 +37,11 @@ javafx {
 }
 
 tasks {
-  listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture", "ToyExample", "ToyVectorExample", "ToyMatrixExample")
-    .forEach {
-      register(it, JavaExec::class) {
-        main = "edu.umontreal.kotlingrad.samples.${it}Kt"
+  listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture",
+          "ToyExample", "ToyVectorExample", "ToyMatrixExample")
+    .forEach { fileName ->
+      register(fileName, JavaExec::class) {
+        main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
         classpath = sourceSets["main"].runtimeClasspath
       }
     }
@@ -49,13 +50,13 @@ tasks {
     kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
   }
 
-  val test by getting(Test::class) {
+  test {
     useJUnitPlatform()
   }
 }
 
 val fatJar by tasks.creating(Jar::class) {
-  baseName = "${project.name}-fat"
+  archiveBaseName.set("${project.name}-fat")
   manifest {
     attributes["Implementation-Title"] = "kotlingrad"
     attributes["Implementation-Version"] = version
