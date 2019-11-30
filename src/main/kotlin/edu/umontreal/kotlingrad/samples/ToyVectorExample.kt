@@ -1,4 +1,4 @@
-@file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName")
+@file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate")
 package edu.umontreal.kotlingrad.samples
 
 @Suppress("DuplicatedCode")
@@ -99,7 +99,7 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is SVProd -> "$left * $right"
       is VSProd -> "$left * $right"
       is VNegative -> "-($value)"
-      is VDerivative -> "d($vfn) / d($v1)"//d(${v1.joinToString(", ")})"
+      is VDerivative -> "d($vFun) / d($v1)"//d(${v1.joinToString(", ")})"
       is MVProd<X, E, *> -> "$left * $right"
       is VMProd<X, *, E> -> "$left * $right"
       is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
@@ -127,7 +127,7 @@ class Jacobian<X : Fun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val numVrbs: Nat<C
   override fun invoke(bnds: Bindings<X>) = Mat(numCols, numRows, vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }
 
-class VDerivative<X : Fun<X>, E: D1> internal constructor(val vfn: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vfn.length, vfn) {
+class VDerivative<X : Fun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vFun.length, vFun) {
   fun VFun<X, E>.df(): VFun<X, E> = when (this) {
     is VConst -> VZero(length)
     is VSum -> left.df() + right.df()
@@ -135,7 +135,7 @@ class VDerivative<X : Fun<X>, E: D1> internal constructor(val vfn: VFun<X, E>, v
     is SVProd -> left.d(v1) * right + left * right.df()
     is VSProd -> left.df() * right + left * right.d(v1)
     is VNegative -> -value.df()
-    is VDerivative -> vfn.df()
+    is VDerivative -> vFun.df()
     is Vec -> Vec(length, contents.map { it.d(v1) })
     is MVProd<X, E, *> -> this().df()
     is VMProd<X, *, E> -> this().df()
@@ -150,8 +150,8 @@ class VZero<X: Fun<X>, E: D1>(length: Nat<E>): VConst<X, E>(length)
 class VOne<X: Fun<X>, E: D1>(length: Nat<E>): VConst<X, E>(length)
 
 open class Vec<X: Fun<X>, E: D1>(final override val length: Nat<E>,
-                                  override val sVars: Set<Var<X>> = emptySet(),
-                                  vararg val contents: Fun<X>): VFun<X, E>(length) {
+                                 override val sVars: Set<Var<X>> = emptySet(),
+                                 vararg val contents: Fun<X>): VFun<X, E>(length) {
   constructor(length: Nat<E>, contents: List<Fun<X>>): this(length, contents.flatMap { it.sVars }.toSet(), *contents.toTypedArray())
   constructor(length: Nat<E>, vararg contents: Fun<X>): this(length, contents.flatMap { it.sVars }.toSet(), *contents)
 
@@ -170,7 +170,7 @@ open class Vec<X: Fun<X>, E: D1>(final override val length: Nat<E>,
 
   override fun minus(subtrahend: VFun<X, E>) = when (subtrahend) {
     is Vec -> Vec(length, contents.mapIndexed { i, v -> v - subtrahend.contents[i] })
-    else -> super.plus(subtrahend)
+    else -> super.minus(subtrahend)
   }
 
   override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {

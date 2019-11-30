@@ -1,4 +1,4 @@
-@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName")
+@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName", "PropertyName", "MemberVisibilityCanBePrivate")
 
 package edu.umontreal.kotlingrad.samples
 
@@ -36,6 +36,9 @@ fun main() {
 
 
     val mf2 = Mat1x2(vf2)
+
+    val qr = mf2 * Vec(x, y)
+
     val mf3 = Mat3x2(x, x,
       y, x,
       x, x)
@@ -103,7 +106,7 @@ open class MFun<X: Fun<X>, R: D1, C: D1>(
     is SMProd -> "$left * $right"
     is MConst -> "TODO()"
     is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ") { it.contents.joinToString(", ") }})"
-    is MDerivative -> "d($mfn) / d($v1)"
+    is MDerivative -> "d($mFun) / d($v1)"
     else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
   }
 }
@@ -117,7 +120,7 @@ class MSProd<X: Fun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: Fun<X>
 class SMProd<X: Fun<X>, R: D1, C: D1>(val left: Fun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
-class MDerivative<X : Fun<X>, R: D1, C: D1> internal constructor(val mfn: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>) : MFun<X, R, C>(mfn.numRows, numCols, mfn.sVars) {
+class MDerivative<X : Fun<X>, R: D1, C: D1> internal constructor(val mFun: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>) : MFun<X, R, C>(mFun.numRows, numCols, mFun.sVars) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this) {
     is MNegative -> -value.df()
     is MTranspose -> (value as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>

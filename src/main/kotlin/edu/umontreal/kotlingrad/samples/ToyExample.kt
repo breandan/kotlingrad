@@ -111,10 +111,10 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
     this is Sum -> "$left + $right"
     this is Var -> name
     this is Derivative -> "d($fn) / d($vrb)"
-    this is Zero -> "\uD835\uDFD8"
-    this is One -> "\uD835\uDFD9"
-    this is Two -> "\uD835\uDFDA"
-    this is E -> "ⅇ"
+    this is Zero -> "\uD835\uDFD8" // 𝟘
+    this is One -> "\uD835\uDFD9"  // 𝟙
+    this is Two -> "\uD835\uDFDA"  // 𝟚
+    this is E -> "\u2147" // ⅇ
     this is VMagnitude -> "|$value|"
     this is DProd -> "($left) dot ($right)"
     else -> super.toString()
