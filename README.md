@@ -119,7 +119,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 |                    **J**(A)                     |                               |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
 |             **J**<sub><b>B</b></sub>(A)         |    `a.d(b)`<br>`a.grad(b)`    |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
 
-More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
+More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
 
 <sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. D0, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
@@ -626,41 +626,44 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
 
 ## Comparison
 
-|                              Framework                               | Language |         SD¹        |         AD²        |         DP³        |         FP⁴        |         TS⁵        |        SS⁶         |        DT⁷         |       MP⁸      |
-|:--------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
-|                               Kotlin∇                                |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: |   :construction:   | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
-|          [DiffSharp](http://diffsharp.github.io/DiffSharp/)          |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp) |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
-|   [Deeplearning.scala](https://deeplearning.thoughtworks.school/)    |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|                  [Nexus](http://tongfei.me/nexus/)                   |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
-|          [Lantern](https://feiwang3311.github.io/Lantern/)           |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|          [Grenade](https://github.com/HuwCampbell/grenade)           |  Haskell |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
-|          [Tensor Safe](https://github.com/leopiney/tensor-safe)      |  Haskell |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |       :x:      |
-|          [HaskTorch](https://github.com/hasktorch/hasktorch)         |  Haskell |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
-|             [Eclipse DL4J](https://deeplearning4j.org/)              |  Java    |         :x:        | :heavy_check_mark: |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|          [JAutoDiff](https://github.com/uniker9/JAutoDiff/)          |  Java    | :heavy_check_mark: | :heavy_check_mark: |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|                  [Halide](http://halide-lang.org/)                   |  C++     | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|     [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)     |  Scheme  |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: |         :x:        |        :x:         |        :x:         |       :x:      |
-|              [Myia](https://github.com/mila-udem/myia)               |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        |        :x:         |        :x:         | :construction: |
-|            [Autograd](https://github.com/HIPS/autograd/)             |  Python  |         :x:        | :heavy_check_mark: |         :x:        |         :x:        |         :x:        |        :x:         |        :x:         |       :x:      |
-|                 [JAX](https://github.com/google/jax)                 |  Python  |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        |        :x:         |        :x:         | :construction: |
-|             [Tangent](https://github.com/google/tangent)             |  Python  |         :x:        | :heavy_check_mark: |         :x:        |         :x:        |         :x:        |        :x:         |        :x:         |       :x:      |
+Unlike certain frameworks which simply wrap an existing AD library in a type-safe DSL, Kotlin∇ contains a fully shape-safe implementation of algorithmic differentiation, written in pure Kotlin. By doing so, it can leverage Kotlin language features such as typed functional programming, as well as interoperability with other languages on the JVM platform. Furthermore, it implements symbolic differentiation, which unlike Wengert tape or dual-number based ADs, allows it to calculate derivatives of arbitrarily high order with zero extra engineering required. Further details can be found below.
+
+|                             Framework                                  | Language |         SD¹        |         AD²        |         HO³        |         DP⁴        |         FP⁵        |         TS⁶        |        SS⁷         |        DT⁸         |       MP⁹      |
+|:----------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
+|                              Kotlin∇                                   |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
+|         [DiffSharp](http://diffsharp.github.io/DiffSharp/)             |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+| [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp)   |  F#      |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
+|             [Nexus](http://tongfei.me/nexus/)                          |  Scala   |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
+|           [Lantern](https://feiwang3311.github.io/Lantern/)            |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|         [JAutoDiff](https://github.com/uniker9/JAutoDiff/)             |  Java    | :heavy_check_mark: | :heavy_check_mark: |         :x:        |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|      [Eclipse DL4J](https://deeplearning4j.org/)                       |  Java    |         :x:        |   :construction:   |         :x:        |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|            [Halide](http://halide-lang.org/)                           |  C++     |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|       [Tensor Safe](https://github.com/leopiney/tensor-safe)           |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |       :x:      |
+|         [HaskTorch](https://github.com/hasktorch/hasktorch)            |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
+|           [Grenade](https://github.com/HuwCampbell/grenade)            |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
+|           [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD) |  Scheme  |         :x:        | :heavy_check_mark: |         :x:        |         :x:        | :heavy_check_mark: |         :x:        |        :x:         |        :x:         |       :x:      |
+|              [Myia](https://github.com/mila-udem/myia)                 |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        |        :x:         |        :x:         | :construction: |
+|          [Autograd](https://github.com/HIPS/autograd/)                 |  Python  |         :x:        | :heavy_check_mark: |         :x:        |         :x:        |         :x:        |         :x:        |        :x:         |        :x:         |       :x:      |
+|               [JAX](https://github.com/google/jax)                     |  Python  |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: |         :x:        |        :x:         |        :x:         | :construction: |
+|           [Tangent](https://github.com/google/tangent)                 |  Python  |         :x:        | :heavy_check_mark: |         :x:        |         :x:        |         :x:        |         :x:        |        :x:         |        :x:         |       :x:      |
 
 ¹ Symbolic differentiation
 
 ² Automatic differentiation
 
-³ Differentiable programming
+³ Higher order differentiation
 
-⁴ Functional programming
+⁴ Differentiable programming
 
-⁵ Type-safe
+⁵ Functional programming
 
-⁶ Shape-safe
+⁶ Compile-time type safety
 
-⁷ Dependently Typed
+⁷ Compile-time shape safety
 
-⁸ Multiplatform
+⁸ Dependently Typed
+
+⁹ Multiplatform
 
 ## Citation
 
