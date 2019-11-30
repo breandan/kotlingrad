@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version "1.3.61"
   `maven-publish`
+  kotlin("jvm") version "1.3.61"
   id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
@@ -59,7 +59,7 @@ val fatJar by tasks.creating(Jar::class) {
   archiveBaseName.set("${project.name}-fat")
   manifest {
     attributes["Implementation-Title"] = "kotlingrad"
-    attributes["Implementation-Version"] = version
+    attributes["Implementation-Version"] = archiveVersion
     attributes["Main-Class"] = "edu.umontreal.kotlingrad.samples.Plot2DKt"
   }
   from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
