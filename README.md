@@ -805,5 +805,5 @@ The following individuals have helped shape this project through their enthusias
 [curl]: https://render.githubusercontent.com/render/math?math=\nabla\times{A}
 [jacobian]: https://render.githubusercontent.com/render/math?math=\mathcal{J}\mathbf{A}
 [jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}\mathbf{A}
-[hessian]: https://render.githubusercontent.com/render/math?math=\mathbf{H}(\nabla{a})
-[laplacian]: https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla\cdot\nabla{a},\nabla^{2}a
+[hessian]: https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
+[laplacian]: https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
