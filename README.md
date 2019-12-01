@@ -284,7 +284,7 @@ Kotlin∇ provides various graphical tools that can be used for visual debugging
 
 ### Dataflow
 
-Kotlin∇ function are directed acyclic graphs, called dataflow graphs (DFGs). For example, the expression `((1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2).render()` produces the following DFG:
+Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph), called dataflow graphs (DFGs). For example, running the expression `((1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2).render()` will display the following DFG:
 
 ![](src/main/resources/dataflow.svg)
 
