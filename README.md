@@ -99,25 +99,23 @@ Maven users should refer to [these instructions](https://help.github.com/en/arti
 
 Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
-|             Math<sup>&dagger;</sup>             |             Infix             |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
-|:-----------------------------------------------:|:-----------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
-|                  **A**(**B**)                   |            `a(b)`             |                                  |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)   |
-|                  **A** + **B**                  |    `a + b`<br>`a.plus(b)`     |           `plus(a, b)`           |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)   |
-|                  **A** - **B**                  |    `a - b`<br>`a.minus(b)`    |          `minus(a, b)`           |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)   |
-|                   **A** **B**                   |    `a * b`<br>`a.times(b)`    |          `times(a, b)`           |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
-| **A** / **B**<sup>&sect;</sup><br>**A** **B**⁻¹ |     `a / b`<br>`a.div(b)`     |           `div(a, b)`            |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
-|                -**A**<br>+**A**                 |                               |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                           (`a`: ℝ<sup>τ</sup>→ℝ<sup>π</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>π</sup>)                     |
-|         **A** + **1**<br>**A** - **1**          |    `a + one`<br>`a - one`     |          `++a`<br>`--a`          | `a++`,`a.inc()`<br>`a--`,`a.dec()`  |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)                   |
-|        *sin*(a)<br>*cos*(a)<br>*tan*(a)         |                               | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                                   (`a`: ℝ→ℝ) → (ℝ→ℝ)                                             |
-|                   *ln*(**A**)                   |                               |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)                   |
-|            *log*<sub>b</sub>(**A**)             |          `a.log(b)`           |           `log(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
-|                **A**<sup>b</sup>                |          `a.pow(b)`           |           `pow(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
-|                    √a<br>∛a                     | `a.pow(1.0/2)`<br>`a.root(3)` |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
-|   <sup>da</sup>&frasl;<sub>db</sub><br><sup>∂a</sup>&frasl;<sub>∂b</sub><br>D<sub>b</sub>a<br>a<sub>b</sub><br>    |           `a.d(b)`            |            `grad(a)[b]`          |            `d(a) / d(b)`            |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
-|                       ∇a                        |                               |            `grad(a)`             |             `a.grad()`              |                          (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                               |
-|             ∇<sub><b>B</b></sub>a               |    `a.d(b)`<br>`a.grad(b)`    |            `grad(a, b)`          |                                     |       (`a`: C(ℝ<sup>τ</sup>→ℝ), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>n</sup>)             |
-|                    **J**(A)                     |                               |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
-|             **J**<sub><b>B</b></sub>(A)         |    `a.d(b)`<br>`a.grad(b)`    |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
+|             Math<sup>&dagger;</sup>                |             Infix                           |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
+|:--------------------------------------------------:|:-------------------------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
+|                  ![][compose]                      |                   `a(b)`                    |                                  |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)   |
+|                  ![][plus-minus]                   | `a + b` `a.plus(b)`<br>`a - b` `a.minus(b)` | `plus(a, b)`<br>`minus(a, b)`    |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)   |
+|                  ![][mul]                          |           `a * b`<br>`a.times(b)`           |          `times(a, b)`           |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
+|              ![][div]<br>![][inv]                  |            `a / b`<br>`a.div(b)`            |           `div(a, b)`            |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
+|                  ![][pos-neg]                      |                                             |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                           (`a`: ℝ<sup>τ</sup>→ℝ<sup>π</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>π</sup>)                     |
+|      ![][sin]<br>![][cos]<br>![][tan]              |                                             | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                                   (`a`: ℝ→ℝ) → (ℝ→ℝ)                                             |
+|                  ![][ln]                           |                                             |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)                   |
+|                  ![][log]                          |                 `a.log(b)`                  |           `log(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
+|                  ![][power]                        |                 `a.pow(b)`                  |           `pow(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
+|            ![][sqrt]<br>![][cbrt]                  |        `a.pow(1.0/2)`<br>`a.root(3)`        |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
+| ![][leibniz]<br>![][leibniz-part]<br>![][euler]    |                  `a.d(b)`                   |            `grad(a)[b]`          |            `d(a) / d(b)`            |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
+|                 ![][gradient]                      |                                             |            `grad(a)`             |             `a.grad()`              |                          (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                               |
+|              ![][gradient_wrt]                     |           `a.d(b)`<br>`a.grad(b)`           |            `grad(a, b)`          |                                     |       (`a`: C(ℝ<sup>τ</sup>→ℝ), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>n</sup>)             |
+|                 ![][jacobian]                      |                                             |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
+|              ![][jacobian_wrt]                     |           `a.d(b)`<br>`a.grad(b)`           |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
 
 More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
 
@@ -778,3 +776,26 @@ The following individuals have helped shape this project through their enthusias
 * [Erik Meijer](https://twitter.com/headinthebox/)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
+
+<!-- equations -->
+[compose]: https://render.githubusercontent.com/render/math?math=\mathbf{A}(\mathbf{B})
+[plus-minus]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\pm\mathbf{B}
+[mul]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}
+[pos-neg]: https://render.githubusercontent.com/render/math?math=\pm\mathbf{A}
+[div]: https://render.githubusercontent.com/render/math?math=\frac{\mathbf{A}}{\mathbf{B}}
+[inv]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}^{-1}
+[sin]: https://render.githubusercontent.com/render/math?math=\sin{a}
+[cos]: https://render.githubusercontent.com/render/math?math=\cos{a}
+[tan]: https://render.githubusercontent.com/render/math?math=\tan{a}
+[ln]: https://render.githubusercontent.com/render/math?math=\ln{a}
+[log]: https://render.githubusercontent.com/render/math?math=\log_{b}a
+[power]: https://render.githubusercontent.com/render/math?math=\mathbf{A}^b
+[sqrt]: https://render.githubusercontent.com/render/math?math=\sqrt{A}
+[cbrt]: https://render.githubusercontent.com/render/math?math=\sqrt[3]{A}
+[leibniz]: https://render.githubusercontent.com/render/math?math=\frac{da}{db}
+[leibniz-part]: https://render.githubusercontent.com/render/math?math=\frac{\partial{a}}{\partial{b}}
+[euler]: https://render.githubusercontent.com/render/math?math=D_b{a}
+[gradient]: https://render.githubusercontent.com/render/math?math=\nabla{a}
+[gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
+[jacobian]: https://render.githubusercontent.com/render/math?math=\mathcal{J}\mathbf{A}
+[jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}\mathbf{A}
