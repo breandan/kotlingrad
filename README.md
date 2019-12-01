@@ -782,28 +782,29 @@ The following individuals have helped shape this project through their enthusias
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
 
-<!-- equations -->
-[compose]: https://render.githubusercontent.com/render/math?math=\mathbf{A}(\mathbf{B})
-[plus-minus]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\pm\mathbf{B}
-[mul]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}
-[pos-neg]: https://render.githubusercontent.com/render/math?math=\pm\mathbf{A}
-[div]: https://render.githubusercontent.com/render/math?math=\frac{\mathbf{A}}{\mathbf{B}}
-[inv]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}^{-1}
-[sin]: https://render.githubusercontent.com/render/math?math=\sin{a}
-[cos]: https://render.githubusercontent.com/render/math?math=\cos{a}
-[tan]: https://render.githubusercontent.com/render/math?math=\tan{a}
-[ln]: https://render.githubusercontent.com/render/math?math=\ln{a}
-[log]: https://render.githubusercontent.com/render/math?math=\log_{b}a
-[power]: https://render.githubusercontent.com/render/math?math=\mathbf{A}^b
-[sqrt]: https://render.githubusercontent.com/render/math?math=\sqrt{A}
-[cbrt]: https://render.githubusercontent.com/render/math?math=\sqrt[3]{A}
-[leibniz]: https://render.githubusercontent.com/render/math?math=\frac{da}{db},\frac{\partial{a}}{\partial{b}}
-[euler]: https://render.githubusercontent.com/render/math?math=D_b{a}
-[gradient]: https://render.githubusercontent.com/render/math?math=\nabla{a}
+<!-- Equations -->
+
+[compose]:      https://render.githubusercontent.com/render/math?math=\mathbf{A}(\mathbf{B})
+[plus-minus]:   https://render.githubusercontent.com/render/math?math=\mathbf{A}\pm\mathbf{B}
+[mul]:          https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}
+[pos-neg]:      https://render.githubusercontent.com/render/math?math=\pm\mathbf{A}
+[div]:          https://render.githubusercontent.com/render/math?math=\frac{\mathbf{A}}{\mathbf{B}}
+[inv]:          https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}^{-1}
+[sin]:          https://render.githubusercontent.com/render/math?math=\sin{a}
+[cos]:          https://render.githubusercontent.com/render/math?math=\cos{a}
+[tan]:          https://render.githubusercontent.com/render/math?math=\tan{a}
+[ln]:           https://render.githubusercontent.com/render/math?math=\ln{a}
+[log]:          https://render.githubusercontent.com/render/math?math=\log_{b}a
+[power]:        https://render.githubusercontent.com/render/math?math=\mathbf{A}^b
+[sqrt]:         https://render.githubusercontent.com/render/math?math=\sqrt{A}
+[cbrt]:         https://render.githubusercontent.com/render/math?math=\sqrt[3]{A}
+[leibniz]:      https://render.githubusercontent.com/render/math?math=\frac{da}{db},\frac{\partial{a}}{\partial{b}}
+[euler]:        https://render.githubusercontent.com/render/math?math=D_b{a}
+[gradient]:     https://render.githubusercontent.com/render/math?math=\nabla{a}
 [gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
-[divg]: https://render.githubusercontent.com/render/math?math=\nabla\cdot{A}
-[curl]: https://render.githubusercontent.com/render/math?math=\nabla\times{A}
-[jacobian]: https://render.githubusercontent.com/render/math?math=\mathcal{J}\mathbf{A}
-[jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}\mathbf{A}
-[hessian]: https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
-[laplacian]: https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
+[divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{A}
+[curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{A}
+[jacobian]:     https://render.githubusercontent.com/render/math?math=\mathcal{J}(\mathbf{A})
+[jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}(\mathbf{A})
+[hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
+[laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a

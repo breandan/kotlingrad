@@ -1,6 +1,12 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate")
 package edu.umontreal.kotlingrad.samples
 
+import guru.nidi.graphviz.*
+import guru.nidi.graphviz.attribute.*
+import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.model.Link
+import java.io.File
+
 @Suppress("DuplicatedCode")
 fun main() {
   with(DoublePrecision) {
@@ -105,6 +111,7 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
       is VMap -> "$value.map { $ef }"
     }
+
 }
 
 class VNegative<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value.length, value)

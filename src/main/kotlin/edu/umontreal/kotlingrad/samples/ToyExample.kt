@@ -2,6 +2,12 @@
 
 package edu.umontreal.kotlingrad.samples
 
+
+import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.*
+import guru.nidi.graphviz.model.*
+import guru.nidi.graphviz.model.Factory.mutNode
+import guru.nidi.graphviz.model.Factory.node
 import kotlin.math.ln
 import kotlin.math.pow
 
@@ -118,6 +124,30 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
     this is VMagnitude -> "|$value|"
     this is DProd -> "($left) dot ($right)"
     else -> super.toString()
+  }
+
+  val opStr: String = when(this) {
+    is Log -> "ln"
+    is Negative -> "-"
+    is Power -> "pow"
+    is Prod -> "*"
+    is Sum -> "+"
+    is Derivative -> "d"
+    else -> super.toString()
+  }
+
+  fun toGraph(): MutableNode = mutNode(if(this is Var) "$this" else "${this.hashCode()}").apply {
+    when (this@Fun) {
+      is Negative -> { value.toGraph() - this; add(Label.of("neg")) }
+      is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
+      is Power -> { base.toGraph() - this; exponent.toGraph() - this; add(Label.of("pow")) }
+      is Prod -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("*")) }
+      is Sum -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("+")) }
+      is RealNumber -> add(Label.of("$value"))
+      is One -> add(Label.of("one"))
+      is Zero -> add(Label.of("zero"))
+      else -> {}
+    }
   }
 }
 
