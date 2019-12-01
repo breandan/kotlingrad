@@ -99,7 +99,7 @@ Maven users should refer to [these instructions](https://help.github.com/en/arti
 
 Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
-|             Math<sup>&dagger;</sup>                |             Infix                           |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
+|                     Math                           |            Infix <sup>&dagger;</sup>        |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
 |:--------------------------------------------------:|:-------------------------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
 |                  ![][compose]                      |                   `a(b)`                    |                                  |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)   |
 |                  ![][plus-minus]                   |             `a + b`<br>`a - b`              | `plus(a, b)`<br>`minus(a, b)`    |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)   |
@@ -111,15 +111,17 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 |                  ![][log]                          |                 `a.log(b)`                  |           `log(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
 |                  ![][power]                        |                 `a.pow(b)`                  |           `pow(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
 |            ![][sqrt]<br>![][cbrt]                  |        `a.pow(1.0/2)`<br>`a.root(3)`        |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
-| ![][leibniz]<br>![][euler]    |                  `a.d(b)`                   |            `grad(a)[b]`          |            `d(a) / d(b)`            |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
+|         ![][leibniz]<br>![][euler]                 |                  `a.d(b)`                   |            `grad(a)[b]`          |            `d(a) / d(b)`            |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
 |                 ![][gradient]                      |                                             |            `grad(a)`             |             `a.grad()`              |                          (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                               |
 |              ![][gradient_wrt]                     |           `a.d(b)`<br>`a.grad(b)`           |            `grad(a, b)`          |                                     |       (`a`: C(ℝ<sup>τ</sup>→ℝ), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>n</sup>)             |
 |                 ![][jacobian]                      |                                             |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
 |              ![][jacobian_wrt]                     |           `a.d(b)`<br>`a.grad(b)`           |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
+|                  ![][curl]                         |                 `a.curl(b)`                 |            `curl(a, b)`          |                                     |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
+|                  ![][divg]                         |                 `a.divg()`                  |            `divg(a, b)`          |                                     |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
 
-More concretely, ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
+ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
 
-<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. D0, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
+<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
 <sup>&Dagger;</sup> For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
@@ -626,7 +628,7 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
 
 Unlike certain frameworks which simply wrap an existing AD library in a type-safe DSL, Kotlin∇ contains a fully shape-safe implementation of algorithmic differentiation, written in pure Kotlin. By doing so, it can leverage Kotlin language features such as typed functional programming, as well as interoperability with other languages on the JVM platform. Furthermore, it implements symbolic differentiation, which unlike Wengert tape or dual-number based ADs, allows it to calculate derivatives of arbitrarily high order with zero extra engineering required. Further details can be found below.
 
-|                             Framework                                  | Language |         SD¹        |         AD²        |         HO³        |         DP⁴        |         FP⁵        |         TS⁶        |        SS⁷         |        DT⁸         |       MP⁹      |
+|                             Framework                                  | Language |         SD¹        |         AD²        |         HD³        |         DP⁴        |         FP⁵        |         TS⁶        |        SS⁷         |        DT⁸         |       MP⁹      |
 |:----------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
 |                              Kotlin∇                                   |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
 |         [DiffSharp](http://diffsharp.github.io/DiffSharp/)             |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
@@ -711,6 +713,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
 * [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf)
 * [Matrix derivatives](http://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#derivatives), from the Matrix Cookbook
+* [Div, Grad, Curl and All That](https://archive.org/details/H.M.ScheyDivGradCurlAndAllThat)
 
 ### Computer Algebra
 
@@ -798,3 +801,5 @@ The following individuals have helped shape this project through their enthusias
 [gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
 [jacobian]: https://render.githubusercontent.com/render/math?math=\mathcal{J}\mathbf{A}
 [jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}\mathbf{A}
+[curl]: https://render.githubusercontent.com/render/math?math=\nabla\times{A}
+[divg]: https://render.githubusercontent.com/render/math?math=\nabla\cdot{A}
