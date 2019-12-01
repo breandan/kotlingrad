@@ -17,7 +17,8 @@ Kotlin∇ is a framework for type-safe [automatic differentiation](https://en.wi
   * [Notation](#notation)
   * [Shape Safety](#shape-safety)
   * [Example](#shape-safety)
-* [Plotting functions](#plotting)
+* [Visualization](#visualization)
+  * [Plotting functions](#plotting)
 * [Testing and gradient checking](#testing)
 * [How does it work?](#how)
   * [Operator overloading](#operator-overloading)
@@ -276,7 +277,17 @@ z({x=0, y=1})        = 0.0
                      = [4.0, 0.0]ᵀ
 ```
 
-## Plotting
+## Visualization
+
+Kotlin∇ provides various graphical tools that can be used for visual debugging.
+
+### Dataflow visualization
+
+All Kotlin∇ expressions form directed acyclic graphs. For example, the expression `((1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2).render()` produces the following plot:
+
+![](src/main/resources/dataflow.svg)
+
+### Plotting functions
 
 ![](src/main/resources/plot.png)
 
