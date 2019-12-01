@@ -23,12 +23,13 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
-  api("org.jzy3d:jzy3d-api:1.0.2")
-  api("org.knowm.xchart:xchart:3.5.4")
-  api("ch.obermuhlner:big-math:2.1.0")
-  api("scientifik:kmath-core:0.1.3")
+  implementation("org.jzy3d:jzy3d-api:1.0.2")
+  implementation("org.knowm.xchart:xchart:3.5.4")
+  implementation("ch.obermuhlner:big-math:2.1.0")
+  implementation("scientifik:kmath-core:0.1.3")
   implementation("org.openjfx:javafx-swing:11")
   implementation("org.openjfx:javafx:11")
+  implementation("guru.nidi:graphviz-kotlin:0.12.1")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
 
