@@ -4,12 +4,10 @@ package edu.umontreal.kotlingrad.samples
 
 
 import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.*
-import guru.nidi.graphviz.model.*
+import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.mutNode
-import guru.nidi.graphviz.model.Factory.node
-import kotlin.math.ln
-import kotlin.math.pow
+import guru.nidi.graphviz.model.MutableNode
+import kotlin.math.*
 
 @Suppress("DuplicatedCode")
 fun main() {
@@ -259,8 +257,8 @@ sealed class Protocol<X : RealNumber<X>> {
   operator fun Number.plus(addend: Fun<X>) = addend + wrap(this)
   operator fun Fun<X>.plus(addend: Number) = wrap(addend) + this
 
-  operator fun Number.minus(subtrahend: Fun<X>) = subtrahend - wrap(this)
-  operator fun Fun<X>.minus(subtrahend: Number) = wrap(subtrahend) - this
+  operator fun Number.minus(subtrahend: Fun<X>) = -subtrahend + wrap(this)
+  operator fun Fun<X>.minus(subtrahend: Number) = -wrap(subtrahend) + this
 
   fun Number.pow(exp: Fun<X>) = wrap(this) pow exp
   infix fun Fun<X>.pow(exp: Number) = this pow wrap(exp)
