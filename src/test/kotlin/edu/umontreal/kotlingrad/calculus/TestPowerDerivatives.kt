@@ -11,7 +11,7 @@ class TestPowerDerivatives: StringSpec({
     val x = Var("x")
 
     "d(1/x) / dx should be -1/x²" {
-      NumericalGenerator.assertAll { ẋ ->
+      DoubleGenerator.assertAll { ẋ ->
         val f1 = 1 / x
         val f2 = pow(x, -1)
         val manualDeriv = -1 / pow(x, 2)
@@ -24,7 +24,7 @@ class TestPowerDerivatives: StringSpec({
     }
 
     "d(√x) / dx should be 1/(2√x)" {
-      NumericalGenerator.assertAll { ẋ ->
+      DoubleGenerator.assertAll { ẋ ->
         val f1 = sqrt(x)
         val f2 = pow(x, 0.5)
         val manualDeriv = 1 / (2 * sqrt(x))
@@ -37,7 +37,7 @@ class TestPowerDerivatives: StringSpec({
     }
 
     "d(x¹) / dx should be 1" {
-      NumericalGenerator.assertAll { ẋ ->
+      DoubleGenerator.assertAll { ẋ ->
         val f1 = x
         val f2 = pow(x, 1)
         val manualDeriv = 1
@@ -50,7 +50,7 @@ class TestPowerDerivatives: StringSpec({
     }
 
     "d(x⁰) / dx should be 0" {
-      NumericalGenerator.assertAll { ẋ ->
+      DoubleGenerator.assertAll { ẋ ->
         println("xx $ẋ")
         val f1 = x / x
         val f2 = pow(x, 0)

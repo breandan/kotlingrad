@@ -4,15 +4,14 @@ import edu.umontreal.kotlingrad.algebra.Field
 import edu.umontreal.kotlingrad.calculus.Differentiable
 import edu.umontreal.kotlingrad.utils.randomDefaultName
 
-sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = emptySet()):
-  Field<ScalarFun<X>>, Differentiable<ScalarFun<X>> {
+sealed class Fun<X: Fun<X>>(open val variables: Set<ScalarVar<X>> = emptySet()):
+  Field<Fun<X>>, Differentiable<Fun<X>> {
   open val name: String = randomDefaultName()
-  constructor(fn: ScalarFun<X>): this(fn.variables)
-  constructor(vararg fns: ScalarFun<X>): this(fns.flatMap { it.variables }.toSet())
-
+  constructor(fn: Fun<X>): this(fn.variables)
+  constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
   @JvmName("substitutionInvoke")
-  operator fun invoke(map: Map<ScalarVar<X>, ScalarFun<X>>): ScalarFun<X> = when (this) {
+  operator fun invoke(map: Map<ScalarVar<X>, Fun<X>>): Fun<X> = when (this) {
     is Exp -> exponent(map).exp()
     is Log -> logarithmand(map).log()
     is Negative -> -arg(map)
@@ -28,7 +27,7 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
   }
 
   @JvmName("numericalInvoke")
-  operator fun invoke(map: Map<ScalarVar<X>, X>): ScalarFun<X> = when (this) {
+  operator fun invoke(map: Map<ScalarVar<X>, X>): Fun<X> = when (this) {
     is Exp -> exponent(map).exp()
     is Log -> logarithmand(map).log()
     is Negative -> -arg(map)
@@ -61,9 +60,9 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     else -> "UNKNOWN"
   }
 
-  override fun grad(): Map<ScalarFun<X>, ScalarFun<X>> = variables.associateWith { diff(it) }
+  override fun grad(): Map<Fun<X>, Fun<X>> = variables.associateWith { diff(it) }
 
-  override fun diff(ind: ScalarFun<X>): ScalarFun<X> = when {
+  override fun diff(ind: Fun<X>): Fun<X> = when {
     this == ind -> one
     this is ScalarConst -> zero // breaks TestSimpleDerivatives
     this is ScalarSum -> addend.diff(ind) + augend.diff(ind)
@@ -80,14 +79,14 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     else -> zero
   }
 
-  override fun plus(addend: ScalarFun<X>): ScalarFun<X> = when {
+  override fun plus(addend: Fun<X>): Fun<X> = when {
     this == zero -> addend
     addend == zero -> this
     this == addend -> two * this
     else -> ScalarSum(this, addend)
   }
 
-  override fun times(multiplicand: ScalarFun<X>): ScalarFun<X> = when {
+  override fun times(multiplicand: Fun<X>): Fun<X> = when {
     this == zero -> this
     this == one -> multiplicand
     multiplicand == one -> this
@@ -102,7 +101,7 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     else -> ScalarProduct(this, multiplicand)
   }
 
-  override fun div(divisor: ScalarFun<X>): ScalarFun<X> = when {
+  override fun div(divisor: Fun<X>): Fun<X> = when {
     this == zero -> this
     this == one -> divisor.inverse()
     divisor == one -> this
@@ -116,19 +115,19 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
     //TODO implement tree comparison for semantic equals
     else super.equals(other)
 
-  override fun inverse(): ScalarFun<X> = when {
+  override fun inverse(): Fun<X> = when {
     this == one -> this
     this is Power -> base.pow(-exponent)
     else -> pow(-one)
   }
 
-  override fun unaryMinus(): ScalarFun<X> = when {
+  override fun unaryMinus(): Fun<X> = when {
     this == zero -> this
     this is Negative -> arg
     else -> Negative(this)
   }
 
-  override fun pow(exp: ScalarFun<X>): ScalarFun<X> = when {
+  override fun pow(exp: Fun<X>): Fun<X> = when {
     exp == zero -> one
     exp is ScalarConst && exp == (one / two) -> sqrt()
     this is Power && exp is ScalarConst -> base pow exponent * exp
@@ -136,12 +135,12 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
   }
 
   fun ln() = Log(this)
-  override fun log(): ScalarFun<X> = Log(this)
-  override fun sin(): ScalarFun<X> = Sine(this)
-  override fun cos(): ScalarFun<X> = Cosine(this)
-  override fun tan(): ScalarFun<X> = Tangent(this)
-  override fun exp(): ScalarFun<X> = Exp(this)
-  override fun sqrt(): ScalarFun<X> = SquareRoot(this)
+  override fun log(): Fun<X> = Log(this)
+  override fun sin(): Fun<X> = Sine(this)
+  override fun cos(): Fun<X> = Cosine(this)
+  override fun tan(): Fun<X> = Tangent(this)
+  override fun exp(): Fun<X> = Exp(this)
+  override fun sqrt(): Fun<X> = SquareRoot(this)
 
   open val proto: X by lazy { variables.first().value }
   override val one: ScalarConst<X> by lazy { proto.one }
@@ -151,44 +150,44 @@ sealed class ScalarFun<X: ScalarFun<X>>(open val variables: Set<ScalarVar<X>> = 
 }
 
 //TODO: Replace roots with fractional powers
-class SquareRoot<X: ScalarFun<X>> internal constructor(val radicand: ScalarFun<X>): ScalarFun<X>(radicand)
+class SquareRoot<X: Fun<X>> internal constructor(val radicand: Fun<X>): Fun<X>(radicand)
 
-class Sine<X: ScalarFun<X>> internal constructor(val angle: ScalarFun<X>): ScalarFun<X>(angle)
+class Sine<X: Fun<X>> internal constructor(val angle: Fun<X>): Fun<X>(angle)
 
-class Cosine<X: ScalarFun<X>> internal constructor(val angle: ScalarFun<X>): ScalarFun<X>(angle)
+class Cosine<X: Fun<X>> internal constructor(val angle: Fun<X>): Fun<X>(angle)
 
-class Tangent<X: ScalarFun<X>> internal constructor(val angle: ScalarFun<X>): ScalarFun<X>(angle)
+class Tangent<X: Fun<X>> internal constructor(val angle: Fun<X>): Fun<X>(angle)
 
-class Exp<X: ScalarFun<X>> internal constructor(val exponent: ScalarFun<X>): ScalarFun<X>(exponent)
+class Exp<X: Fun<X>> internal constructor(val exponent: Fun<X>): Fun<X>(exponent)
 
-class Log<X: ScalarFun<X>> internal constructor(val logarithmand: ScalarFun<X>): ScalarFun<X>(logarithmand)
+class Log<X: Fun<X>> internal constructor(val logarithmand: Fun<X>): Fun<X>(logarithmand)
 
-class Negative<X: ScalarFun<X>> internal constructor(val arg: ScalarFun<X>): ScalarFun<X>(arg)
+class Negative<X: Fun<X>> internal constructor(val arg: Fun<X>): Fun<X>(arg)
 
-class ScalarProduct<X: ScalarFun<X>> internal constructor(
-  val multiplicator: ScalarFun<X>,
-  val multiplicand: ScalarFun<X>
-): ScalarFun<X>(multiplicator, multiplicand)
+class ScalarProduct<X: Fun<X>> internal constructor(
+    val multiplicator: Fun<X>,
+    val multiplicand: Fun<X>
+): Fun<X>(multiplicator, multiplicand)
 
-class ScalarSum<X: ScalarFun<X>> internal constructor(
-  val augend: ScalarFun<X>,
-  val addend: ScalarFun<X>
-): ScalarFun<X>(augend, addend)
+class ScalarSum<X: Fun<X>> internal constructor(
+    val augend: Fun<X>,
+    val addend: Fun<X>
+): Fun<X>(augend, addend)
 
-class Power<X: ScalarFun<X>> internal constructor(
-  val base: ScalarFun<X>,
-  val exponent: ScalarFun<X>
-): ScalarFun<X>(base, exponent) {
-  override fun diff(ind: ScalarFun<X>) = when (exponent) {
+class Power<X: Fun<X>> internal constructor(
+    val base: Fun<X>,
+    val exponent: Fun<X>
+): Fun<X>(base, exponent) {
+  override fun diff(ind: Fun<X>) = when (exponent) {
     one -> base.diff(ind)
     is ScalarConst -> exponent * base.pow(exponent - one) * base.diff(ind)
     else -> this * (exponent * base.ln()).diff(ind)
   }
 }
 
-open class ScalarConst<X: ScalarFun<X>>: ScalarFun<X>()
+open class ScalarConst<X: Fun<X>>: Fun<X>()
 
-class ScalarVar<X: ScalarFun<X>>: ScalarFun<X> {
+class ScalarVar<X: Fun<X>>: Fun<X> {
   val value: X
   override val name: String
   override val variables: Set<ScalarVar<X>>

@@ -2,11 +2,11 @@
 
 package edu.umontreal.kotlingrad.samples
 
-
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
+import kotlin.contracts.*
 import kotlin.math.*
 
 @Suppress("DuplicatedCode")
@@ -139,7 +139,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
       is Negative -> { value.toGraph() - this; add(Label.of("neg")) }
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
       is Power -> { base.toGraph() - this; exponent.toGraph() - this; add(Label.of("pow")) }
-      is Prod -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("*")) }
+      is Prod -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("×")) }
       is Sum -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("+")) }
       is RealNumber -> add(Label.of("$value"))
       is One -> add(Label.of("one"))
@@ -270,7 +270,7 @@ object DoublePrecision : Protocol<DoubleReal>() {
   val one = wrap(1.0)
   val zero = wrap(0.0)
   val two = wrap(2.0)
-  val e = wrap(kotlin.math.E)
+  val e = wrap(E)
 
   fun vrb(name: String) = Var<DoubleReal>(name)
 
@@ -287,9 +287,9 @@ object DoublePrecision : Protocol<DoubleReal>() {
 
   fun Fun<DoubleReal>.asDouble() = (this as DoubleReal).value
 
-  val x = vrb("x")
-  val y = vrb("y")
-  val z = vrb("z")
+  val x = vrb("X")
+  val y = vrb("Y")
+  val z = vrb("Z")
 
   fun Vec(d0: Double) = Vec(DoubleReal(d0))
   fun Vec(d0: Double, d1: Double) = Vec(DoubleReal(d0), DoubleReal(d1))

@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples.physics
 
-import edu.umontreal.kotlingrad.functions.ScalarFun
+import edu.umontreal.kotlingrad.functions.Fun
 import edu.umontreal.kotlingrad.functions.ScalarVar
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision.eval
@@ -96,7 +96,7 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
     }
   }
 
-  fun ScalarFun<DoubleReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.01, variable: ScalarVar<DoubleReal>): ScalarVar<DoubleReal> {
+  fun Fun<DoubleReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.01, variable: ScalarVar<DoubleReal>): ScalarVar<DoubleReal> {
     val d_dg = with(DoublePrecision) { d(this@descend) / d(variable) }
     var G1P = variable.eval()
     var velocity = vinit

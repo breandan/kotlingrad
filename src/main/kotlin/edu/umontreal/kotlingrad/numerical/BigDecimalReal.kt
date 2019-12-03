@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.numerical
 
 import ch.obermuhlner.math.big.BigDecimalMath.*
-import edu.umontreal.kotlingrad.functions.ScalarFun
+import edu.umontreal.kotlingrad.functions.Fun
 import java.math.BigDecimal
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
@@ -35,31 +35,31 @@ class BigDecimalReal(number: Number, sigFigs: Int = 30): RealNumber<BigDecimalRe
 
   override fun unaryMinus() = BigDecimalReal(-value)
 
-  override fun plus(addend: ScalarFun<BigDecimalReal>) = when (addend) {
+  override fun plus(addend: Fun<BigDecimalReal>) = when (addend) {
     is BigDecimalReal -> BigDecimalReal(value + addend.value)
     else -> super.plus(addend)
   }
   infix operator fun plus(addend: Number) = BigDecimalReal(value + BigDecimal(addend.toDouble()))
 
-  override fun minus(subtrahend: ScalarFun<BigDecimalReal>) = when (subtrahend) {
+  override fun minus(subtrahend: Fun<BigDecimalReal>) = when (subtrahend) {
     is BigDecimalReal -> BigDecimalReal(value - subtrahend.value)
     else -> super.minus(subtrahend)
   }
   infix operator fun minus(subtrahend: Number) = BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
 
-  override fun times(multiplicand: ScalarFun<BigDecimalReal>) = when (multiplicand) {
+  override fun times(multiplicand: Fun<BigDecimalReal>) = when (multiplicand) {
     is BigDecimalReal -> BigDecimalReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
   infix operator fun times(multiplicand: Number) = BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
 
-  override fun div(divisor: ScalarFun<BigDecimalReal>) = when(divisor) {
+  override fun div(divisor: Fun<BigDecimalReal>) = when(divisor) {
     is BigDecimalReal -> BigDecimalReal(value / divisor.value)
     else -> super.div(divisor)
   }
   infix operator fun div(divisor: Number) = BigDecimalReal(value / BigDecimal(divisor.toDouble()))
 
-  override fun pow(exp: ScalarFun<BigDecimalReal>) = when(exp) {
+  override fun pow(exp: Fun<BigDecimalReal>) = when(exp) {
     is BigDecimalReal -> BigDecimalReal(pow(value, exp.value, mc))
     else -> super.pow(exp)
   }

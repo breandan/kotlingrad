@@ -15,11 +15,19 @@ fun main() {
   }
 }
 
+val DARKMODE = true
+val THICKNESS = 2
+
 fun Fun<*>.render(filename: String? = null) {
   val image = graph(directed = true) {
-    edge["color" eq "black", Arrow.NORMAL]
+    val color = if (DARKMODE) Color.WHITE else Color.BLACK
 
-    graph[Rank.dir(LEFT_TO_RIGHT)]
+    edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
+
+    graph[Rank.dir(LEFT_TO_RIGHT), Color.TRANSPARENT.background()]
+
+    node[color, color.font(), Font.config("Helvetica", 20),
+        Style.lineWidth(THICKNESS)]
 
     toGraph()
   }.toGraphviz().render(SVG).run {
