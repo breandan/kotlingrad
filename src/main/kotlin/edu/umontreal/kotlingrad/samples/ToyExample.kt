@@ -6,18 +6,18 @@ import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
-import kotlin.contracts.*
 import kotlin.math.*
 
 @Suppress("DuplicatedCode")
 fun main() {
   with(DoublePrecision) {
-    val f = x pow 2
+    val f = x pow 3
     println(f(x to 3.0))
     println("f(x) = $f")
     val df_dx = f.d(x)
     println("f'(x) = $df_dx")
-    println("f'(3) = ${df_dx(x to 3.0)}")
+    println("f'(3) = ${df_dx.invoke(x to 3.0)}")
+    println("f''(2) = ${df_dx.d(x)(x to 2.0)}")
 
     val g = x pow x
     println("g(x) = $g")
@@ -27,9 +27,13 @@ fun main() {
     val q = y + z
     val h = x + q / x
     println("h(x) = $h")
-    println("h(q = x^2) = ${h(q to (x pow 2))}")
+    val j = h(q to (x pow 2))
+    println("h(q = x^2) = j = $j")
+    val k = j(x to 3)
+    println("j(x = 2) = $k")
     val dh_dx = h.d(x)
     println("h'(x) = $dh_dx")
+    println("h'(1, 2, 3) = ${dh_dx(x to 1, y to 2, z to 3)}")
 
     val t = g.d(x, y, z)
   }
@@ -57,43 +61,27 @@ interface Field<X : Field<X>> : Group<X> {
  * Scalar function.
  */
 
-sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fun<X>>, (Bindings<X>) -> Fun<X> {
+sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<Fun<X>>, (Bindings<X>) -> Fun<X> {
   constructor(fn: Fun<X>) : this(fn.sVars)
   constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.sVars }.toSet())
+
   override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
   override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
   override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
   open operator fun <E : D1> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
-  open operator fun <R : D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
+  open operator fun <R : D1, C : D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
   override operator fun invoke(bnds: Bindings<X>): Fun<X> =
-    bnds.sMap.getOrElse(this) {
-      when (this) {
-        is Zero -> bnds.zero
-        is One -> bnds.one
-        is Two -> bnds.two
-        is E -> bnds.e
-        is Var -> this
-        is SConst -> this
-        is Prod -> left(bnds) * right(bnds)
-        is Sum -> left(bnds) + right(bnds)
-        is Power -> base(bnds) pow exponent(bnds)
-        is Negative -> -value(bnds)
-        is Log -> logarithmand(bnds).ln()
-        is Derivative -> df()(bnds)
-        is DProd -> left(bnds) as Vec<X, D1> dot right(bnds) as Vec<X, D1>
-        is VMagnitude -> value(bnds).magnitude()
-      }
-    }
+      Composition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
 
-  operator fun invoke(): Fun<X> = invoke(Bindings())
+  open operator fun invoke(): Fun<X> = invoke(Bindings())
 
   open fun d(v1: Var<X>): Fun<X> = Derivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(Derivative(this, v1), Derivative(this, v2))
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
   open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
-  open fun <R: D1, C: D1> d(mv: Mat<X, R, C>) = d(*mv.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) {
-    index, acc: MutableList<MutableList<Fun<X>>>, p -> if(index % mv.numCols.i == 0) acc.add(mutableListOf(p)) else acc.last().add(p)
+  open fun <R : D1, C : D1> d(mv: Mat<X, R, C>) = d(*mv.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) { index, acc: MutableList<MutableList<Fun<X>>>, p ->
+    if (index % mv.numCols.i == 0) acc.add(mutableListOf(p)) else acc.last().add(p)
     acc
   }.map { Vec(mv.numCols, it) }.let { Mat(mv.numRows, mv.numCols, it) }
 
@@ -121,10 +109,11 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
     this is E -> "\u2147" // ⅇ
     this is VMagnitude -> "|$value|"
     this is DProd -> "($left) dot ($right)"
+    this is Composition -> "($fn) comp $bindings"
     else -> super.toString()
   }
 
-  val opStr: String = when(this) {
+  val opStr: String = when (this) {
     is Log -> "ln"
     is Negative -> "-"
     is Power -> "pow"
@@ -134,7 +123,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
     else -> super.toString()
   }
 
-  fun toGraph(): MutableNode = mutNode(if(this is Var) "$this" else "${this.hashCode()}").apply {
+  fun toGraph(): MutableNode = mutNode(if (this is Var) "$this" else "${this.hashCode()}").apply {
     when (this@Fun) {
       is Negative -> { value.toGraph() - this; add(Label.of("neg")) }
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
@@ -144,7 +133,8 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
       is RealNumber -> add(Label.of("$value"))
       is One -> add(Label.of("one"))
       is Zero -> add(Label.of("zero"))
-      else -> {}
+      is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
+      else -> TODO()
     }
   }
 }
@@ -154,11 +144,12 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()): Field<Fu
  */
 
 class Sum<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right)
+
 class Negative<X : Fun<X>>(val value: Fun<X>) : Fun<X>(value)
 class Prod<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right)
 class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : Fun<X>(base, exponent)
 class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>) : Fun<X>(logarithmand)
-class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, val vrb: Var<X>) : Fun<X>(fn, vrb) {
+class Derivative<X : Fun<X>>(val fn: Fun<X>, val vrb: Var<X>) : Fun<X>(fn, vrb) {
   fun Fun<X>.df(): Fun<X> = when (this) {
     is Var -> if (this == vrb) One() else Zero()
     is SConst -> Zero()
@@ -170,21 +161,66 @@ class Derivative<X : Fun<X>> internal constructor(val fn: Fun<X>, val vrb: Var<X
     is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
+    is Composition -> bindings.curried().fold(One()) { acc: Fun<X>, binding ->
+      acc * fn.df()(binding) * binding.sMap.entries.first().value.df()
+    }
   }
 }
 
-data class Bindings<X: Fun<X>>(
-  val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
-  val zero: Fun<X> = Zero(),
-  val one: Fun<X> = One(),
-  val two: Fun<X> = Two(),
-  val e: Fun<X> = E()) {
-//  constructor(sMap: Map<Fun<X>, Fun<X>>,
+class Composition<X : Fun<X>>(val fn: Fun<X>, val bindings: Bindings<X>) : Fun<X>() {
+  val evaluate by lazy { apply() }
+  override val sVars: Set<Var<X>> by lazy { evaluate.sVars }
+
+//  private fun calculateFixpoint(): Fun<X> {
+//    var result = apply()
+//    var previous = result.toString()
+//    while(true) {
+//      result = result.apply()
+//      val q1 = result.toString()
+//      if(previous == q1) break else previous = q1
+//    }
+//    return result
+//  }
+
+  fun Fun<X>.apply(): Fun<X> =
+    bindings.sMap.getOrElse(this) {
+      when (this) {
+        is Zero -> bindings.zero
+        is One -> bindings.one
+        is Two -> bindings.two
+        is E -> bindings.e
+        is Var -> this
+        is SConst -> this
+        is Prod -> left.apply() * right.apply()
+        is Sum -> left.apply() + right.apply()
+        is Power -> base.apply() pow exponent.apply()
+        is Negative -> -value.apply()
+        is Log -> logarithmand.apply().ln()
+        is Derivative -> df().apply()
+        is DProd -> left(bindings) as Vec<X, D1> dot right(bindings) as Vec<X, D1>
+        is VMagnitude -> value(bindings).magnitude()
+        is Composition -> fn.apply().apply()
+      }
+    }
+}
+
+data class Bindings<X : Fun<X>>(
+    val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
+    val zero: Fun<X> = Zero(),
+    val one: Fun<X> = One(),
+    val two: Fun<X> = Two(),
+    val e: Fun<X> = E()) {
+  //  constructor(sMap: Map<Fun<X>, Fun<X>>,
 //              vMap: Map<VFun<X, *>, VFun<X, *>>,
 //              zero: Fun<X>,
 //              one: Fun<X>,
 //              two: Fun<X>,
 //              E: Fun<X>): this(sMap, zero, one, two, E)
+  val isReassignmentFree = sMap.values.all { it.sVars.isEmpty() }
+  fun determines(fn: Fun<X>) = fn.sVars.all { it in sMap }
+  override fun toString() = sMap.toString()
+  operator fun contains(v: Var<X>) = v in sMap
+  fun curried() = sMap.entries.map { Bindings(mapOf(it.key to it.value), zero, one, two, e) }
 }
 
 class DProd<X: Fun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): Fun<X>(left.sVars + right.sVars)//, left.vVars + right.vVars)
