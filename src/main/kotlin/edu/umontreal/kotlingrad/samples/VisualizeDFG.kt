@@ -15,7 +15,7 @@ fun main() {
   }
 }
 
-val DARKMODE = true
+val DARKMODE = false
 val THICKNESS = 2
 
 fun Fun<*>.render(filename: String? = null) {
