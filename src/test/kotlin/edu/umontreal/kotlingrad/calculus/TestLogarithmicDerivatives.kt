@@ -7,7 +7,7 @@ import io.kotlintest.specs.StringSpec
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestLogarithmicDerivatives: StringSpec({
-  val gen = NumericalGenerator(0)
+  val gen = DoubleGenerator(0)
   with(DoublePrecision) {
     val n = Var("n")
 

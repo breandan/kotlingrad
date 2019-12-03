@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.functions.ScalarFun
+import edu.umontreal.kotlingrad.functions.Fun
 import kotlin.Double.Companion.NaN
 import kotlin.math.*
 
@@ -28,31 +28,31 @@ class DoubleReal(number: Number = 0.0): RealNumber<DoubleReal, Double>(when (num
 
   override fun unaryMinus() = DoubleReal(-value)
 
-  override fun plus(addend: ScalarFun<DoubleReal>) = when (addend) {
+  override fun plus(addend: Fun<DoubleReal>) = when (addend) {
     is DoubleReal -> DoubleReal(value + addend.value)
     else -> super.plus(addend)
   }
   infix operator fun plus(addend: Number) = DoubleReal(value + addend.toDouble())
 
-  override fun minus(subtrahend: ScalarFun<DoubleReal>) = when (subtrahend) {
+  override fun minus(subtrahend: Fun<DoubleReal>) = when (subtrahend) {
     is DoubleReal -> DoubleReal(value - subtrahend.value)
     else -> super.minus(subtrahend)
   }
   infix operator fun minus(subtrahend: Number) = DoubleReal(value - subtrahend.toDouble())
 
-  override fun times(multiplicand: ScalarFun<DoubleReal>) = when (multiplicand) {
+  override fun times(multiplicand: Fun<DoubleReal>) = when (multiplicand) {
     is DoubleReal -> DoubleReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
   infix operator fun times(multiplicand: Number) = DoubleReal(value * multiplicand.toDouble())
 
-  override fun div(divisor: ScalarFun<DoubleReal>) = when(divisor) {
+  override fun div(divisor: Fun<DoubleReal>) = when(divisor) {
     is DoubleReal -> DoubleReal(value / divisor.value)
     else -> super.div(divisor)
   }
   infix operator fun div(divisor: Number) = DoubleReal(value / divisor.toDouble())
 
-  override fun pow(exp: ScalarFun<DoubleReal>) = when(exp) {
+  override fun pow(exp: Fun<DoubleReal>) = when(exp) {
     is DoubleReal -> DoubleReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
