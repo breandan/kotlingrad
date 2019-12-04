@@ -6,7 +6,7 @@
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 
-Kotlin∇ is a framework for type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) framework in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
 ## Table of contents
 
@@ -103,7 +103,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 |                     Math                           |            Infix <sup>&dagger;</sup>        |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
 |:--------------------------------------------------:|:-------------------------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
-|                  ![][compose]                      |                   `a(b)`                    |                                  |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)   |
+|          ![][compose]<br>![][circ-compose]         |             `a(b)`<br>`a of b`              |                                  |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)   |
 |                  ![][plus-minus]                   |             `a + b`<br>`a - b`              | `plus(a, b)`<br>`minus(a, b)`    |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)   |
 |                  ![][mul]                          |           `a * b`<br>`a.times(b)`           |          `times(a, b)`           |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
 |              ![][div]<br>![][inv]                  |            `a / b`<br>`a.div(b)`            |           `div(a, b)`            |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
@@ -113,7 +113,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 |                  ![][log]                          |                 `a.log(b)`                  |           `log(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
 |                  ![][power]                        |                 `a.pow(b)`                  |           `pow(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
 |            ![][sqrt]<br>![][cbrt]                  |        `a.pow(1.0/2)`<br>`a.root(3)`        |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
-|         ![][leibniz]<br>![][euler]                 |                  `a.d(b)`                   |            `grad(a)[b]`          |            `d(a) / d(b)`            |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
+|         ![][leibniz]<br>![][euler]                 |        `a.d(b)`<br>`d(a) / d(b)`            |            `grad(a)[b]`          |                                     |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
 |                  ![][gradient]                     |                                             |            `grad(a)`             |             `a.grad()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
 |                  ![][gradient_wrt]                 |           `a.d(b)`<br>`a.grad(b)`           |            `grad(a, b)`          |                                     |       (`a`: C(ℝ<sup>τ</sup>→ℝ), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>n</sup>)             |
 |                  ![][divg]                         |                 `a.divg()`                  |            `divg(a, b)`          |                                     |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
@@ -122,6 +122,34 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 |                  ![][jacobian_wrt]                 |           `a.d(b)`<br>`a.grad(b)`           |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
 |                  ![][hessian]                      |                                             |            `hess(a)`             |             `a.hess()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ×τ</sup>)                            |
 |                  ![][laplacian]                    |                                             |            `lapl(a)`             |             `a.lapl()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
+
+<!-- Equations -->
+
+[compose]:      https://render.githubusercontent.com/render/math?math=\mathbf{A}(\mathbf{B})
+[circ-compose]: https://render.githubusercontent.com/render/math?math=\mathbf{A}\circ\mathbf{B}
+[plus-minus]:   https://render.githubusercontent.com/render/math?math=\mathbf{A}\pm\mathbf{B}
+[mul]:          https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}
+[pos-neg]:      https://render.githubusercontent.com/render/math?math=\pm\mathbf{A}
+[div]:          https://render.githubusercontent.com/render/math?math=\frac{\mathbf{A}}{\mathbf{B}}
+[inv]:          https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}^{-1}
+[sin]:          https://render.githubusercontent.com/render/math?math=\sin{a}
+[cos]:          https://render.githubusercontent.com/render/math?math=\cos{a}
+[tan]:          https://render.githubusercontent.com/render/math?math=\tan{a}
+[ln]:           https://render.githubusercontent.com/render/math?math=\ln{a}
+[log]:          https://render.githubusercontent.com/render/math?math=\log_{b}a
+[power]:        https://render.githubusercontent.com/render/math?math=\mathbf{A}^b
+[sqrt]:         https://render.githubusercontent.com/render/math?math=\sqrt{A}
+[cbrt]:         https://render.githubusercontent.com/render/math?math=\sqrt[3]{A}
+[leibniz]:      https://render.githubusercontent.com/render/math?math=\frac{da}{db},\frac{\partial{a}}{\partial{b}}
+[euler]:        https://render.githubusercontent.com/render/math?math=D_b{a}
+[gradient]:     https://render.githubusercontent.com/render/math?math=\nabla{a}
+[gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
+[divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{A}
+[curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{A}
+[jacobian]:     https://render.githubusercontent.com/render/math?math=\mathcal{J}(\mathbf{A})
+[jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}(\mathbf{A})
+[hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
+[laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
 
 ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
 
@@ -794,29 +822,3 @@ The following individuals have helped shape this project through their enthusias
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
 
-<!-- Equations -->
-
-[compose]:      https://render.githubusercontent.com/render/math?math=\mathbf{A}(\mathbf{B})
-[plus-minus]:   https://render.githubusercontent.com/render/math?math=\mathbf{A}\pm\mathbf{B}
-[mul]:          https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}
-[pos-neg]:      https://render.githubusercontent.com/render/math?math=\pm\mathbf{A}
-[div]:          https://render.githubusercontent.com/render/math?math=\frac{\mathbf{A}}{\mathbf{B}}
-[inv]:          https://render.githubusercontent.com/render/math?math=\mathbf{A}\mathbf{B}^{-1}
-[sin]:          https://render.githubusercontent.com/render/math?math=\sin{a}
-[cos]:          https://render.githubusercontent.com/render/math?math=\cos{a}
-[tan]:          https://render.githubusercontent.com/render/math?math=\tan{a}
-[ln]:           https://render.githubusercontent.com/render/math?math=\ln{a}
-[log]:          https://render.githubusercontent.com/render/math?math=\log_{b}a
-[power]:        https://render.githubusercontent.com/render/math?math=\mathbf{A}^b
-[sqrt]:         https://render.githubusercontent.com/render/math?math=\sqrt{A}
-[cbrt]:         https://render.githubusercontent.com/render/math?math=\sqrt[3]{A}
-[leibniz]:      https://render.githubusercontent.com/render/math?math=\frac{da}{db},\frac{\partial{a}}{\partial{b}}
-[euler]:        https://render.githubusercontent.com/render/math?math=D_b{a}
-[gradient]:     https://render.githubusercontent.com/render/math?math=\nabla{a}
-[gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
-[divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{A}
-[curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{A}
-[jacobian]:     https://render.githubusercontent.com/render/math?math=\mathcal{J}(\mathbf{A})
-[jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}(\mathbf{A})
-[hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
-[laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
