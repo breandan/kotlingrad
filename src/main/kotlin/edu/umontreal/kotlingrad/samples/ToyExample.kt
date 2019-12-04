@@ -16,8 +16,8 @@ fun main() {
     println("f(x) = $f")
     val df_dx = f.d(x)
     println("f'(x) = $df_dx")
-    println("f'(3) = ${df_dx.invoke(x to 3.0)}")
-    println("f''(2) = ${df_dx.d(x)(x to 2.0)}")
+    println("f'(3) = ${df_dx.invoke(x to 3.0)}") // Should be 27
+    println("f''(2) = ${df_dx.d(x)(x to 2.0)}")  // Should be 12
 
     val g = x pow x
     println("g(x) = $g")
