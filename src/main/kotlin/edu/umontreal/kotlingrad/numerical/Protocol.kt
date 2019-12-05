@@ -2,6 +2,7 @@ package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.functions.Fun
 import edu.umontreal.kotlingrad.functions.ScalarVar
+import edu.umontreal.kotlingrad.samples.DoublePrecision
 import java.math.BigDecimal
 
 object BigDecimalPrecision: Protocol<BigDecimalReal, BigDecimal>() {
@@ -20,6 +21,10 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   fun Var(name: String, default: X) = ScalarVar(default, name)
   fun Var(default: Number) = Var(wrap(default))
   fun Var(name: String, default: Number) = ScalarVar(wrap(default), name)
+
+  val x = Var("X")
+  val y = Var("Y")
+  val z = Var("Z")
 
   abstract fun wrap(default: Number): X
 
