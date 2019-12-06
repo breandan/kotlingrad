@@ -8,9 +8,6 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPartialDerivatives: StringSpec({
   with(DoublePrecision) {
-    val x = Var("x")
-    val y = Var("y")
-
     "∂x / ∂y should be 0" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val f = cos(x)
