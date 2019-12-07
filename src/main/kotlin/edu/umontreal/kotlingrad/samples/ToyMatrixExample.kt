@@ -4,9 +4,6 @@ package edu.umontreal.kotlingrad.samples
 
 fun main() {
   with(DoublePrecision) {
-    val x = vrb("x")
-    val y = vrb("y")
-
     val f = x pow 2
     println(f(x to 3.0))
     println("f(x) = $f")
