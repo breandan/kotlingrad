@@ -3,6 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
 import org.knowm.xchart.*
+import org.knowm.xchart.VectorGraphicsEncoder.VectorGraphicsFormat.SVG
 import java.awt.Color
 
 @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
@@ -38,7 +39,7 @@ fun main() {
     val chart = QuickChart.getChart("Derivatives of y=$y", "x", "y", labels, xs, ys)
 
     chart.styler.chartBackgroundColor = Color.WHITE
-    SwingWrapper(chart).displayChart()
-    BitmapEncoder.saveBitmapWithDPI(chart, "src/main/resources/plot.png", BitmapEncoder.BitmapFormat.PNG, 300)
+//    SwingWrapper(chart).displayChart()
+    VectorGraphicsEncoder.saveVectorGraphic(chart, "src/main/resources/plot.svg", SVG)
   }
 }
