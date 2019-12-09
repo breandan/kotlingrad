@@ -145,7 +145,7 @@
 \usepackage{lipsum}
 \tcbuselibrary{listings,breakable}
 
-\newtcblisting{unbreakablelisting}[1][]{%
+\newtcblisting{unbreakablekotlin}[1][]{%
     breakable=false,
     listing only,
     boxsep=-1.5pt,
@@ -1207,7 +1207,7 @@ Kotlin$\nabla$ models are embedded domain-specific languages (eDSLs). These lang
 Kotlin$\nabla$ allows users to implement differentiable programs by composing expressions. Consider the following Kotlin$\nabla$ program with two inputs and one output:
 %
 \begin{figure}[H] \label{fig:basic_kotlingrad}
-\begin{unbreakablelisting}
+\begin{unbreakablekotlin}
 with(DoublePrecision) { // Uses double precision numerics for evaluation
   val x = Var("x") // Declare immutable variables (these variables are
   val y = Var("y") // just symbolic constructs used for differentiation)
@@ -1217,7 +1217,7 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
   val d3z_d2xdy = grad(d2z_dxdy)[x] // Equivalent to d(f)/d(x)
   plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in 3-space (-1 < x, y, z < 1)
 }
-\end{unbreakablelisting}
+\end{unbreakablekotlin}
 %    \centering $z = \sin{\big(10(x*x + y^2)\big)} / 10$, \texttt{plot}$\Big\left(\frac{\partial^{3z}}{\partial{x^2}\partial{y}}\Big\right)$ \\
 \includegraphics[scale=0.43]{../figures/plot_result.png}
 \end{figure}
@@ -1225,9 +1225,9 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
 Above, we define a function with two variables and take a series of partial derivatives with respect to each variable. Expressions are lazily evaluated inside a numerical context, which may be imported on a per-file basis or lexically scoped for finer-grained control over the runtime behavior. The function is numerically evaluated on the interval $(-1, 1)$ in each dimension and rendered in 3-space. % We can also plot higher dimensional manifolds (e.g.\ the loss surface of a neural network), projected into four dimensions, and rendered in three, where one axis is represented by time.
 %
 \begin{figure}
-\begin{unbreakablelisting}
+\begin{unbreakablekotlin}
 val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
-\end{unbreakablelisting}
+\end{unbreakablekotlin}
 \centering
 \begin{tikzpicture}[grow=left]
     \tikzset{level distance=60pt}

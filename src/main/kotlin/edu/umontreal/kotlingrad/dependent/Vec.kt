@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.dependent
 
-// Vec should not be a List or the concatenation operator + will conflict with vector addition
+// Vec should not delegate to List or the concatenation operator + will conflict with vector addition
 open class Vec<E, MaxLength : D100>(val length: Nat<MaxLength>, val contents: List<E> = arrayListOf()) {
   init {
     require(length.i == contents.size) { "Declared $length, but found ${contents.size}" }

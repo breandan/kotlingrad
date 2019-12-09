@@ -4,6 +4,7 @@ import edu.umontreal.kotlingrad.numerical.BigDecimalPrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
 import org.knowm.xchart.*
+import org.knowm.xchart.VectorGraphicsEncoder.VectorGraphicsFormat.SVG
 import java.awt.Color
 import java.math.BigDecimal
 import kotlin.math.abs
@@ -80,9 +81,9 @@ fun main() {
 
   val eqn = "sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
-  val chart = QuickChart.getChart("Log errors between AD and SD on f(x) = $eqn", "x", "log₁₀(Δ)", labels, xs, errors)
+  val chart = QuickChart.getChart("f(x) = $eqn", "x", "log₁₀(Δ)", labels, xs, errors)
 
   chart.styler.chartBackgroundColor = Color.WHITE
-  SwingWrapper(chart).displayChart()
-  BitmapEncoder.saveBitmapWithDPI(chart, "src/main/resources/comparison.png", BitmapEncoder.BitmapFormat.PNG, 300)
+//  SwingWrapper(chart).displayChart()
+  VectorGraphicsEncoder.saveVectorGraphic(chart, "src/main/resources/comparison.svg", SVG)
 }
