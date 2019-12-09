@@ -23,7 +23,7 @@ fun main() {
                d³y/dx³=$`d³y∕dx³`
                d⁴y/dx⁴=$`d⁴y∕dx⁴`""".trimIndent())
 
-    val xs = (-9.0..9.0 step 0.0087).toList().toDoubleArray()
+    val xs = (-6.0..6.0 step 0.0087).toList().toDoubleArray()
     val ys = xs.run {
       arrayOf(
         map { y(it) },
@@ -38,7 +38,10 @@ fun main() {
     val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
     val chart = QuickChart.getChart("Derivatives of y=$y", "x", "y", labels, xs, ys)
 
-    chart.styler.chartBackgroundColor = Color.WHITE
+    val transparent = Color(1f, 1f, 1f, .1f)
+    chart.styler.chartBackgroundColor = transparent
+    chart.styler.plotBackgroundColor = transparent
+    chart.styler.legendBackgroundColor = transparent
 //    SwingWrapper(chart).displayChart()
     VectorGraphicsEncoder.saveVectorGraphic(chart, "src/main/resources/plot.svg", SVG)
   }
