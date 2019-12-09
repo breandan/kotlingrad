@@ -83,7 +83,13 @@ fun main() {
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
   val chart = QuickChart.getChart("f(x) = $eqn", "x", "log₁₀(Δ)", labels, xs, errors)
 
-  chart.styler.chartBackgroundColor = Color.WHITE
+  chart.styler.apply {
+    val transparent = Color(1f, 1f, 1f, .0f)
+    chartBackgroundColor = transparent
+    plotBackgroundColor = transparent
+    legendBackgroundColor = transparent
+  }
+
 //  SwingWrapper(chart).displayChart()
   VectorGraphicsEncoder.saveVectorGraphic(chart, "src/main/resources/comparison.svg", SVG)
 }
