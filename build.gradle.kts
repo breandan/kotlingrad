@@ -16,6 +16,7 @@ repositories {
   maven("https://jitpack.io")
   maven("http://maven.jzy3d.org/releases")
   maven("https://dl.bintray.com/mipt-npm/scientifik")
+  maven("https://jetbrains.bintray.com/lets-plot-maven")
 }
 
 dependencies {
@@ -30,6 +31,8 @@ dependencies {
   implementation("org.openjfx:javafx-swing:11")
   implementation("org.openjfx:javafx:11")
   implementation("guru.nidi:graphviz-kotlin:0.12.1")
+  implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.0.1-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 }
 
