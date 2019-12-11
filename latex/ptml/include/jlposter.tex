@@ -1,0 +1,365 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% myfig
+%
+% \myfig - replacement for \figure
+% necessary, since in multicol-environment
+% \figure won't work
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\myfig}[3][0]{
+\begin{center}
+    \vspace{1.5cm}
+    \includegraphics[width=#3\hsize,angle=#1]{#2}
+    \nobreak\medskip
+\end{center}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% mycaption
+%
+% \mycaption - replacement for \caption
+% necessary, since in multicol-environment \figure and
+% therefore \caption won't work
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newcounter{figure}
+\setcounter{figure}{1}
+\newcommand{\mycaption}[1]{
+\vspace{0.5cm}
+\begin{quote}
+{{\sc Figure} \arabic{figure}: #1}
+\end{quote}
+\vspace{1cm}
+\stepcounter{figure}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Some standard colours
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{camlightblue}{rgb}{0.601 , 0.8, 1}
+\definecolor{camdarkblue}{rgb}{0, 0.203, 0.402}
+\definecolor{camred}{rgb}{1, 0.203, 0}
+\definecolor{camyellow}{rgb}{1, 0.8, 0}
+\definecolor{lightblue}{rgb}{0, 0, 0.80}
+\definecolor{white}{rgb}{1, 1, 1}
+\definecolor{whiteblue}{rgb}{0.80, 0.80, 1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Some look and feel definitions
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\columnsep}{0.03\textwidth}
+\setlength{\columnseprule}{0.0018\textwidth}
+\setlength{\parindent}{0.0cm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \mysection - replacement for \section*
+%
+% Puts a pretty box around some text
+% TODO - any other thoughts for what this box should look like
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tikzstyle{mysection} = [rectangle,
+draw=none,
+shade,
+outer color=camlightblue!30,
+inner color=camlightblue!30,
+text width=0.965\columnwidth,
+text centered,
+rounded corners=20pt,
+minimum height=0.09\columnwidth]
+
+\newcommand{\mysection}[1]
+{
+\begin{center}
+    \begin{tikzpicture}
+        \node[mysection] {\sffamily\bfseries\LARGE#1};
+    \end{tikzpicture}
+\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Set the font
+%
+% TODO - Not sure what a canonical choice is - feel free to modify
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\familydefault}{cmss}
+\sffamily
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%               Background                     %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\background}[3]{
+%\definecolor{cgradbegin}{#1}
+%\definecolor{cgradend}{#2}
+% \psframe[fillstyle=gradient,gradend=cgradend,
+% gradbegin=cgradbegin,gradmidpoint=#3](0.,0.)(1.\textwidth,-1.\textheight)
+}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                pcolumn                       %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{pcolumn}[1]{
+\begin{minipage}{#1\textwidth}
+\begin{center}
+}{
+\end{center}
+\end{minipage}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                pbox                          %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{lcolor}{rgb}{0, 0, 0.80}
+\definecolor{gcolor1}{rgb}{1, 1, 1}
+\definecolor{gcolor2}{rgb}{.80, .80, 1}
+
+% \def\fc{fillcolor}
+% \def\getfc #1=#2\par{\def\ffc{#1} \ifx\ffc\fc #2\fi}
+% \def\getfillcolor #1,#2\par{\getfc #1\par \getfc #2\par}
+
+%  \newcommand{\psshadowbox}[2]{%[2][magenta]{
+%      \fbox{Input arg: #1}
+%      \fbox{#1}
+%      \fbox {\getfillcolor #1\par}
+%      \def\col{\getfillcolor #1\par}
+
+%      \let\coll=\col
+%       \coll
+%     \colorbox{\col}{#2}
+%       \mbox
+%   \coloredshadowbox{black}{\coll}{#2}
+%   }
+
+\newcommand{\pbox}[4]{
+%\psshadowbox[#3]{
+%\fbox{
+\mbox{
+\begin{minipage}[t][#2][t]{#1}
+#4
+\end{minipage}
+}%}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Poster environment
+%
+% Centres everything and can be used to define the width of the content
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{poster}{
+\begin{center}
+\begin{minipage}[c]{\textwidth}
+}{
+\end{minipage}
+\end{center}
+}
+
+\def\newarrow{\mbox{\begin{tikzpicture}
+\useasboundingbox{(-3pt,-4.5pt) rectangle (19pt,1pt)};
+\draw[->] (0,-0.07)--(17pt,-0.07);\end{tikzpicture}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Bottom box
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newlength{\bottomboxheight}
+\setlength{\bottomboxheight}{0.1\paperheight}
+
+\newcommand{\bottombox}[1]{\vfill
+\noindent\colorbox{white}{
+\begin{minipage}[c][\bottomboxheight][c]{\textwidth}
+\centering
+\begin{minipage}{0.9\textwidth}
+\vfill{
+
+\fontsizesection\color{black}
+#1
+}
+
+\end{minipage}
+\end{minipage}
+
+}
+}
+
+%% Bottom box logo
+\newcommand{\bottomboxlogo}[2][width=\textwidth]{
+\begin{minipage}[c][\bottomboxheight][c]{0.3\textwidth}
+\raggedleft\includegraphics[#1]{#2}
+\end{minipage}
+}
+
+\newcommand{\bottomboxlogoleft}[2][width=\textwidth]{
+\begin{minipage}[l][\bottomboxheight][c]{0.3\textwidth}
+\raggedleft\includegraphics[#1]{#2}
+\end{minipage}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{slightgray}{rgb}{0.90, 0.90, 0.90}
+
+\usepackage{soul}
+\makeatletter
+\def\SOUL@hlpreamble{%
+\setul{}{3.0ex}%
+\let\SOUL@stcolor\SOUL@hlcolor%
+\SOUL@stpreamble%
+}
+\makeatother
+
+\newcommand{\inline}[1]{%
+\begingroup%
+\sethlcolor{slightgray}%
+\hl{\ttfamily\small #1}%
+\endgroup
+}
+
+\newcommand{\tinline}[1]{%
+\begingroup%
+\sethlcolor{slightgray}%
+\hl{\ttfamily #1}%
+\endgroup
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Kotlin syntax highlighting
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[skins,breakable,listings]{tcolorbox}
+
+\usepackage[dvipsnames]{xcolor}
+\lstdefinelanguage{kotlin}{
+comment=[l]{//},
+commentstyle={\color{gray}\ttfamily},
+emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, @Repeat, return@},
+emphstyle={\color{OrangeRed}},
+identifierstyle=\color{black},
+keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec, reified},
+keywordstyle={\color{blue}\bfseries},
+morecomment=[s]{/*}{*/},
+morestring=[b]",
+morestring=[s]{"""*}{*"""},
+ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
+ndkeywordstyle={\color{BurntOrange}\bfseries},
+sensitive=true,
+stringstyle={\color{ForestGreen}\ttfamily},
+literate={`}{{\char0}}1
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Color boxes
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tcbset{
+enhanced jigsaw,
+breakable,
+listing only,
+boxsep=-1pt,
+top=-1pt,
+bottom=-0.5pt,
+right=-0.5pt,
+overlay first={
+\node[black!50] (S) at (frame.south) {\Large\ding{34}};
+\draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
+},
+overlay middle={
+\node[black!50] (S) at (frame.south) {\Large\ding{34}};
+\draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
+\node[black!50] (S) at (frame.north) {\Large\ding{34}};
+\draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+},
+overlay last={
+\node[black!50] (S) at (frame.north) {\Large\ding{34}};
+\draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+},
+before={\par\vspace{10pt}},
+after={\par\vspace{\parskip}\noindent}
+}
+
+\newtcblisting{kotlinlisting}[1][]{%
+hbox,
+right=40pt,
+left=20pt,
+top=10pt,
+bottom=10pt,
+listing options={
+language=kotlin,
+basicstyle=\ttfamily\normalsize,
+%numberstyle=\footnotesize,
+showstringspaces=false,
+tabsize=2,
+breaklines=true,
+numbers=none,
+inputencoding=utf8,
+escapeinside={(*}{*)},
+#1
+},
+underlay unbroken and first={%
+\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=9mm]{../figures/kotlin_file.png}} ([xshift=-15mm,yshift=-15mm]interior.north west);
+}
+}
+
+\newtcblisting{pythonlisting}[1][]{%
+#1,
+listing options={
+language=Python,
+basicstyle=\ttfamily\normalsize,
+upquote=true,
+breaklines=true,
+showstringspaces=false,
+keywordstyle=\color{blue}\bfseries,
+escapeinside={(*}{*)}
+},
+fonttitle=\ttfamily\small,
+underlay unbroken and first={%
+\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=9mm]{../figures/python_icon.png}} ([xshift=-15mm,yshift=-15mm]interior.north west);
+}
+}
+
+% Imitate syntax error
+\usepackage{ulem}
+\makeatletter
+\def\uwave{\bgroup \markoverwith{\lower7.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+\makeatother
+
+\usepackage{tikz}
+\usepackage[skins,breakable,listings]{tcolorbox}
+\usepackage{pgfplots}
+\usepackage{tikz-qtree}
+\usepackage{graphicx}

@@ -43,6 +43,7 @@ fun main() {
     chart.styler.plotBackgroundColor = transparent
     chart.styler.legendBackgroundColor = transparent
 //    SwingWrapper(chart).displayChart()
+//    BitmapEncoder.saveBitmapWithDPI(chart, "latex/figures/plot.png", BitmapEncoder.BitmapFormat.PNG, 300)
     VectorGraphicsEncoder.saveVectorGraphic(chart, "src/main/resources/plot.svg", SVG)
   }
 }

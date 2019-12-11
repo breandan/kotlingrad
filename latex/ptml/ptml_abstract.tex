@@ -155,10 +155,10 @@ The problem we attempt to solve can be summarized as follows. Given two values \
     \caption{Attempting to sum two vectors whose shapes do not match will fail to compile.}
 
     \vspace{10pt}\begin{lstlisting}
-    val matA = Mat(D1, D4, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D1, D4>
-    val matB = Mat(D4, D1, 1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D4, D1>
+    val matA = Mat1x4(1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D1, D4>
+    val matB = Mat4x1(1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D4, D1>
     val matC = matA * matB
-    val matD = (*\uwave{matA *\ matC}*)          // Compile error: Expected Mat<4, *>, found Mat<1, 1>
+    val matD = (*\uwave{matA *\ matC}*)         // Compile error: Expected Mat<4, *>, found Mat<1, 1>
     \end{lstlisting}
     \caption{Similarly, multiplying two matrices whose inner dimensions do not match will not compile.}
 \end{figure}
