@@ -116,8 +116,8 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 |     ![][leibniz]<br>![][euler]          |  `a.d(b)`<br>`d(a) / d(b)`      |            `grad(a)[b]`          |                                     |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
 |              ![][gradient]              |                                 |            `grad(a)`             |             `a.grad()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
 |              ![][gradient_wrt]          |     `a.d(b)`<br>`a.grad(b)`     |            `grad(a, b)`          |                                     |       (`a`: C(ℝ<sup>τ</sup>→ℝ), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>n</sup>)             |
-|              ![][divg]                  |           `a.divg()`            |            `divg(a, b)`          |                                     |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
-|              ![][curl]                  |           `a.curl(b)`           |            `curl(a, b)`          |                                     |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
+|              ![][divg]                  |                                 |            `divg(a)`             |             `a.divg()`              |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
+|              ![][curl]                  |                                 |            `curl(a)`             |             `a.curl()`             |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
 |              ![][jacobian]              |                                 |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
 |              ![][jacobian_wrt]          |     `a.d(b)`<br>`a.grad(b)`     |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
 |              ![][hessian]               |                                 |            `hess(a)`             |             `a.hess()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ×τ</sup>)                            |
@@ -144,8 +144,8 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 [euler]:        https://render.githubusercontent.com/render/math?math=D_b{a}
 [gradient]:     https://render.githubusercontent.com/render/math?math=\nabla{a}
 [gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
-[divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{A}
-[curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{A}
+[divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{\mathbf{A}}
+[curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{\mathbf{A}}
 [jacobian]:     https://render.githubusercontent.com/render/math?math=\mathcal{J}(\mathbf{A})
 [jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}(\mathbf{A})
 [hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
