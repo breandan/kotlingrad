@@ -313,11 +313,9 @@ after={\par\vspace{\parskip}\noindent}
 }
 
 \newtcblisting{kotlinlisting}[1][]{%
-hbox,
-right=40pt,
+width=20.5cm,
 left=20pt,
-top=10pt,
-bottom=10pt,
+top=5pt,
 listing options={
 language=kotlin,
 basicstyle=\ttfamily\normalsize,
@@ -331,12 +329,14 @@ escapeinside={(*}{*)},
 #1
 },
 underlay unbroken and first={%
-\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=9mm]{../figures/kotlin_file.png}} ([xshift=-15mm,yshift=-15mm]interior.north west);
+\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=10mm]{../figures/kotlin_file.png}} ([xshift=-18mm,yshift=-20mm]interior.north west);
 }
 }
 
-\newtcblisting{pythonlisting}[1][]{%
-#1,
+\newtcblisting{pythonlisting}[1][]{
+width=17cm,
+left=20pt,
+top=5pt,
 listing options={
 language=Python,
 basicstyle=\ttfamily\normalsize,
@@ -344,11 +344,12 @@ upquote=true,
 breaklines=true,
 showstringspaces=false,
 keywordstyle=\color{blue}\bfseries,
-escapeinside={(*}{*)}
+escapeinside={(*}{*)},
+#1
 },
 fonttitle=\ttfamily\small,
-underlay unbroken and first={%
-\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=9mm]{../figures/python_icon.png}} ([xshift=-15mm,yshift=-15mm]interior.north west);
+underlay unbroken and first={
+\path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=10mm]{../figures/python_icon.png}} ([xshift=-18mm,yshift=-20mm]interior.north west);
 }
 }
 
