@@ -193,14 +193,14 @@ Similarly, when the inner dimensions of two matrices do not match:
 \null\hspace*{2cm}\begin{minipage}[c]{0.40\columnwidth}
 \begin{pythonlisting}
 d = np.matrix('0 1 2; 3 4 5')
-e = np.matrix('6 7; 8')
+e = np.matrix('6 7; 8 9')
 f = d @ e
                           \end{pythonlisting}
       \end{minipage}
       \null\hspace*{2cm}\begin{minipage}[c]{0.42\columnwidth}
                           \begin{kotlinlisting}
 val d = Matrix2x3(0, 1, 2, 3, 4, 5)
-val e = (*\uwave{Matrix2x2(6, 7, 8)}*)
+val e = Matrix2x2(6, 7, 8, 9)
 val f = (*\uwave{d *\ e}*)
                           \end{kotlinlisting}
       \end{minipage}
@@ -228,7 +228,7 @@ We can detect the presence and location of the error within the editor.
         $\log_b \mathbf{A}$  & \tinline{a.log(b)} & \tinline{log(a, b)} &  & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m},~$\tinline{b}$: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})$ \\ \hline
         $\mathbf{A}^{b}$  & \tinline{a.pow(b)} & \tinline{pow(a, b)} &  & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m},~$\tinline{b}$: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})$ \\ \hline
         %  \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular}     & \begin{tabular}{@{}c@{}}\tinline{a.sqrt()}\\\tinline{a.cbrt()}\end{tabular} & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})$ \\ \hline
-        %  \begin{tabular}{@{}c@{}}$\frac{da}{db}$, $\frac{\partial{a}}{\partial{b}}$\\$D_{b}a$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{d(a)/d(b)}\end{tabular}                               & \tinline{grad(a)[b]}                                   &                                    & $          \big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R}),~$\tinline{b}$: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})                          $ \\ \hline
+          \begin{tabular}{@{}c@{}}$\frac{da}{db}$, $\frac{\partial{a}}{\partial{b}}$\\$D_{b}a$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{d(a)/d(b)}\end{tabular}                               & \tinline{grad(a)[b]}                                   &                                    & $          \big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R}),~$\tinline{b}$: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})                          $ \\ \hline
         $\nabla a$  &  & \tinline{grad(a)} & \tinline{a.grad()} & $\big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R})\big) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\tau})$ \\ \hline
         $\nabla_{\mathbf{B}} a$  & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{a.grad(b)}\end{tabular} & \tinline{grad(a, b)} &  & $\big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R}),~$\tinline{b}$: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{n})$ \\ \hline
         $\nabla\cdot{\mathbf{A}}$ & & \tinline{divg(a)} & \tinline{a.divg()} & $\big($\tinline{a}$: C(\mathbb{R}^\tau \rightarrow \mathbb{R}^m)\big) \rightarrow (\mathbb{R}^\tau \rightarrow \mathbb{R})$\\ \hline
@@ -284,19 +284,20 @@ plot3D(-1..1, d3Z_d2xdy)
       \jointspacing
 
 
-      \mysection{Differentiable Physics}
+      \mysection{Physical Simulation}
 
       %      \null\hspace*{3cm}\begin{minipage}[c]{0.85\columnwidth}We simulate a double pendulum described by the following equations:\end{minipage}\\
 
       \centering
-      ${\displaystyle {\begin{aligned}{{\dot {\theta }}_{1}}&={\frac {6}{ml^{2}}}{\frac {2p_{\theta _{1}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{2}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\\{{\dot {\theta }}_{2}}&={\frac {6}{ml^{2}}}{\frac {8p_{\theta _{2}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{1}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\end{aligned}}}$\\
-      ${\displaystyle {\begin{aligned}{{\dot {p}}_{\theta _{1}}}&={\frac {\partial L}{\partial \theta _{1}}}=-{\tfrac {1}{2}}ml^{2}\left({{\dot {\theta }}_{1}}{{\dot {\theta }}_{2}}\sin(\theta _{1}-\theta _{2})+3{\frac {g}{l}}\sin \theta _{1}\right)\\{{\dot {p}}_{\theta _{2}}}&={\frac {\partial L}{\partial \theta _{2}}}=-{\tfrac {1}{2}}ml^{2}\left(-{{\dot {\theta }}_{1}}{{\dot {\theta }}_{2}}\sin(\theta _{1}-\theta _{2})+{\frac {g}{l}}\sin \theta _{2}\right)\end{aligned}}}$\\
+      ${\displaystyle L={\tfrac {1}{6}}ml^{2}\left({{\omega}_{2}}^{2}+4{{\omega}_{1}}^{2}+3{{\omega}_{1}}{{\omega}_{2}}\cos(\theta _{1}-\theta _{2})\right)+{\tfrac {1}{2}}mgl\left(3\cos \theta _{1}+\cos \theta _{2}\right)}$
+      ${\displaystyle {\begin{aligned}{{\omega}_{1}}&={\frac {6}{ml^{2}}}{\frac {2p_{\theta _{1}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{2}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\\{{\omega}_{2}}&={\frac {6}{ml^{2}}}{\frac {8p_{\theta _{2}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{1}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\end{aligned}}}$\\
+      ${\displaystyle {\begin{aligned}{{{p}}_{\theta _{1}}}&={\frac {\partial L}{\partial \omega _{1}}}, {{{p}}_{\theta_{2}}}&={\frac {\partial L}{\partial \omega_{2}}}, {{\dot {p}}_{\theta _{1}}}&={\frac {\partial L}{\partial \theta _{1}}}, {{\dot {p}}_{\theta _{2}}}&={\frac {\partial L}{\partial \theta _{2}}}\end{aligned}}}$\\
       \null\hspace*{2cm}\begin{minipage}[c]{0.80\columnwidth}\center\resizebox{0.85\linewidth}{!}{\includegraphics{../figures/double_pendulum.png}}
       \end{minipage}
 
       \jointspacing
 
-      \mysection{Property-based Testing}
+      \mysection{Numerical Precision}
 
       \begin{tikzpicture}
       \begin{axis}[title={Log errors evaluating $f(x) = \frac{\sin\sin\sin x}{x} + x \sin x + \cos x + x$}, height=20cm, width=35cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, xmin=-1000, xmax=1000, xtick={-1000,-750,...,1000}, legend pos=south east, legend style={font=\small}, align=center, compat=newest]
