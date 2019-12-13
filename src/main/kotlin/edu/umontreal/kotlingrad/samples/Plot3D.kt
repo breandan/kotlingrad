@@ -22,12 +22,15 @@ object Plot3D: AbstractAnalysis() {
           val x = Var()
           val y = Var()
 
-          val f = sin(10 * (x * x + pow(y, 2))) / 10
-          val z = d(f) / d(x)
-          val m = d(z) / d(y)
-          val n = d(d(z) / d(y)) /d(x)
+          val Z = x * x + pow(y, 2)
+          val Z10 = Z * 10
+          val sinZ = sin(Z10)
+          val sinZ_10 = sinZ / 10
+          val dZ_dx = d(sinZ_10) / d(x)
+          val d2Z_dxdy = d(dZ_dx) / d(y)
+          val d3Z_d2xdy = d(d2Z_dxdy) / d(x)
 
-          n(xc, yc)
+          d3Z_d2xdy(xc, yc)
         }
     }
 

@@ -147,11 +147,11 @@
 
       \vspace*{-1cm}
       \null\hspace*{3cm}\begin{minipage}[c]{0.85\columnwidth}
-                          \begin{itemize}
-                            \item We create an embedded DSL for differentiable programming in Kotlin
-                            \item Supports shape checking and inference for multi-dimensional arrays
-                            \item Implementable in any language with first-class functions and generics
-                          \end{itemize}
+      \begin{itemize}
+        \item We create an embedded DSL for differentiable programming in Kotlin
+        \item Supports shape checking and inference for multi-dimensional arrays
+        \item Implementable in any language with first-class functions and generics
+      \end{itemize}
       \end{minipage}
 
       \jointspacing
@@ -160,7 +160,7 @@
       \vspace*{-1cm}
       \null\hspace*{3cm}\begin{minipage}[c]{0.85\columnwidth}
 
-      There are three broad strategies for handling shape errors:
+      There are three broad strategies for handling array shape errors:
       \begin{itemize}[leftmargin=1in]
         \item Perform type coercion by implicitly broadcasting or reshaping arrays
         \item Raise a runtime error (e.g. \tinline{tf.errors.InvalidArgumentError})
@@ -173,14 +173,14 @@
 \null\hspace*{2cm}\begin{minipage}[c]{0.40\columnwidth}
 \begin{pythonlisting}
 a = np.array('0 1 2 3 4 5')
-b = np.array('6 7 8 9')
+b = np.array([6, 7, 8])
 c = a + b
 \end{pythonlisting}
 \end{minipage}
 \null\hspace*{2cm}\begin{minipage}[c]{0.45\columnwidth}
 \begin{kotlinlisting}
-val a = Vec(0, 1, 2, 3, 4, 5)
-val b = Vec(6, 7, 8, 9)
+val a = Vector(0, 1, 2, 3, 4, 5)
+val b = Vector4(arrayOf(6, 7, 8))
 val c = (*\uwave{a +\ b}*)
 \end{kotlinlisting}
 \end{minipage}
@@ -192,16 +192,16 @@ Similarly, when the inner dimensions of two matrices do not match:
 \vspace*{-1cm}
 \null\hspace*{2cm}\begin{minipage}[c]{0.40\columnwidth}
 \begin{pythonlisting}
-a = np.matrix('0 1 2 ; 3 4 5')
-b = np.matrix('6 7; 8 9')
-c = a @ b
+d = np.matrix('0 1 2; 3 4 5')
+e = np.matrix('6 7; 8')
+f = d @ e
                           \end{pythonlisting}
       \end{minipage}
       \null\hspace*{2cm}\begin{minipage}[c]{0.42\columnwidth}
                           \begin{kotlinlisting}
-val a = Mat2x3(0, 1, 2, 3, 4, 5)
-val b = Mat2x2(6, 7, 8, 9)
-val c = (*\uwave{a *\ b}*)
+val d = Matrix2x3(0, 1, 2, 3, 4, 5)
+val e = (*\uwave{Matrix2x2(6, 7, 8)}*)
+val f = (*\uwave{d *\ e}*)
                           \end{kotlinlisting}
       \end{minipage}
 
@@ -218,7 +218,7 @@ We can detect the presence and location of the error within the editor.
       \resizebox{\linewidth}{!}{%
       \begin{tabular}{|c|c|c|c|l|}
         \hline Math & Infix & Prefix & Postfix & Operator Type Signature  \\ \hline
-        \begin{tabular}{@{}c@{}}$\mathbf{\mathbf{A}}(\mathbf{\mathbf{B}})$\\$\mathbf{\mathbf{A}}\circ\mathbf{\mathbf{B}}$\end{tabular} & \tinline{a(b)} & & & $($\tinline{a}$:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi}$, \tinline{b}$: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi})$ \\ \hline
+        \begin{tabular}{@{}c@{}}$\mathbf{\mathbf{A}}(\mathbf{\mathbf{B}})$\\$\mathbf{\mathbf{A}}\circ\mathbf{\mathbf{B}}$\end{tabular} & \tinline{a(b)} & & & $($\tinline{a}$:  \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi},~$\tinline{b}$: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\tau}) \rightarrow (\mathbb{R}^{\lambda}\rightarrow \mathbb{R}^{\pi})$ \\ \hline
         $\mathbf{\mathbf{A}}\pm\mathbf{\mathbf{B}}$ &  \begin{tabular}{@{}c@{}}\tinline{a + b}\\\tinline{a - b}\end{tabular} &  \begin{tabular}{@{}c@{}}\tinline{plus(a, b)}\\\tinline{minus(a, b)}\end{tabular} &  & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\pi},~$\tinline{b}$: \mathbb{R}^{\lambda} \rightarrow \mathbb{R}^{\pi}) \rightarrow (\mathbb{R}^{?}\rightarrow \mathbb{R}^{\pi})$ \\ \hline
         $\mathbf{A}  \mathbf{B}$ & \begin{tabular}{@{}c@{}}\tinline{a * b}\\\tinline{a.times(b)}\end{tabular}    & \tinline{times(a, b)} & & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n},~$\tinline{b}$: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n \times p})  \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})$ \\ \hline
         \begin{tabular}{@{}c@{}}$\frac{\mathbf{A}}{\mathbf{B}}$\\$\mathbf{A}\mathbf{B}^{-1}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a / b}\\\tinline{a.div(b)}\end{tabular}     & \tinline{div(a, b)}                                    &                                               & $ ($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times n},~$\tinline{b}$: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{p \times n}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times p})   $ \\ \hline
@@ -228,13 +228,13 @@ We can detect the presence and location of the error within the editor.
         $\log_b \mathbf{A}$  & \tinline{a.log(b)} & \tinline{log(a, b)} &  & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m},~$\tinline{b}$: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})$ \\ \hline
         $\mathbf{A}^{b}$  & \tinline{a.pow(b)} & \tinline{pow(a, b)} &  & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m},~$\tinline{b}$: \mathbb{R}^{\lambda}\rightarrow\mathbb{R}) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{m \times m})$ \\ \hline
         %  \begin{tabular}{@{}c@{}}$\sqrt{a}$\\$\sqrt[3]{a}$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.pow(1.0/2)}\\\tinline{a.root(3)}\end{tabular}     & \begin{tabular}{@{}c@{}}\tinline{a.sqrt()}\\\tinline{a.cbrt()}\end{tabular} & $($\tinline{a}$: \mathbb{R}^{\tau}\rightarrow\mathbb{R}^{m \times m}) \rightarrow (\mathbb{R}\rightarrow\mathbb{R}^{m \times m})$ \\ \hline
-        %  \begin{tabular}{@{}c@{}}$\frac{da}{db}$, $\frac{\partial{a}}{\partial{b}}$\\$D_{b}a$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{d(a)/d(b)}\end{tabular}                               & \tinline{grad(a)[b]}                                   &                                    & $          \big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R})$, $\tinline{b}: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})                          $ \\ \hline
+        %  \begin{tabular}{@{}c@{}}$\frac{da}{db}$, $\frac{\partial{a}}{\partial{b}}$\\$D_{b}a$\end{tabular} & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{d(a)/d(b)}\end{tabular}                               & \tinline{grad(a)[b]}                                   &                                    & $          \big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R}),~$\tinline{b}$: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R})                          $ \\ \hline
         $\nabla a$  &  & \tinline{grad(a)} & \tinline{a.grad()} & $\big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R})\big) \rightarrow (\mathbb{R}^{\tau}\rightarrow\mathbb{R}^{\tau})$ \\ \hline
-        $\nabla_{\mathbf{B}} a$  & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{a.grad(b)}\end{tabular} & \tinline{grad(a, b)} &  & $\big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R})$, \tinline{b}$: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{n})$ \\ \hline
+        $\nabla_{\mathbf{B}} a$  & \begin{tabular}{@{}c@{}}\tinline{a.d(b)}\\\tinline{a.grad(b)}\end{tabular} & \tinline{grad(a, b)} &  & $\big($\tinline{a}$: C(\mathbb{R}^{\tau}\rightarrow\mathbb{R}),~$\tinline{b}$: C(\mathbb{R}^{\lambda}\rightarrow\mathbb{R}^{n})\big) \rightarrow (\mathbb{R}^{?}\rightarrow\mathbb{R}^{n})$ \\ \hline
         $\nabla\cdot{\mathbf{A}}$ & & \tinline{divg(a)} & \tinline{a.divg()} & $\big($\tinline{a}$: C(\mathbb{R}^\tau \rightarrow \mathbb{R}^m)\big) \rightarrow (\mathbb{R}^\tau \rightarrow \mathbb{R})$\\ \hline
         $\nabla\times{\mathbf{A}}$ & & \tinline{curl(a)} & \tinline{a.curl()} & $\big($\tinline{a}$: C(\mathbb{R}^3 \rightarrow \mathbb{R}^3)\big) \rightarrow (\mathbb{R}^3 \rightarrow \mathbb{R}^3)$\\ \hline
 %        $\mathcal{J}(\mathbf{A})$ & & \tinline{grad(a)} & \tinline{divg(a)} & $\big($\tinline{a}$: C(\mathbb{R}^\tau \rightarrow \mathbb{R}^m)\big) \rightarrow (\mathbb{R}^\tau \rightarrow \mathbb{R}^{m\times\tau})$\\ \hline
-%        $\mathcal{J}_{\mathbf{B}}(\mathbf{A})$ & & & & $ \big($\tinline{a}$: C(\mathbb{R}^\tau \rightarrow \mathbb{R}^m)$, \tinline{b}$: C(\mathbb{R}^\lambda \rightarrow \mathbb{R}^n)\big) \rightarrow (\mathbb{R}^{?} \rightarrow \mathbb{R}^{m\times n})$\\ \hline
+%        $\mathcal{J}_{\mathbf{B}}(\mathbf{A})$ & & & & $ \big($\tinline{a}$: C(\mathbb{R}^\tau \rightarrow \mathbb{R}^m),~$\tinline{b}$: C(\mathbb{R}^\lambda \rightarrow \mathbb{R}^n)\big) \rightarrow (\mathbb{R}^{?} \rightarrow \mathbb{R}^{m\times n})$\\ \hline
 %        $\mathbf{H}(a)$ & & & & \\ \hline
 %        $\Delta{a},\nabla^{2}a$ & & & & \\ \hline
       \end{tabular}
@@ -243,10 +243,16 @@ We can detect the presence and location of the error within the editor.
 
       \jointspacing
 
+      \mysection{Differentiable Programming}
+
+      \null\hspace*{2cm}\begin{minipage}[c]{0.90\columnwidth}\center\resizebox{0.95\linewidth}{!}{\includegraphics{../figures/diff_prob_prog.png}}
+      \end{minipage}
+
+      \jointspacing
+
       \mysection{Visualization}
-      \null\hspace*{3cm}\begin{minipage}[c]{0.85\columnwidth}
-                            Kotlin$\nabla$ is capable of computing arbitrarily high order derivatives.
-      \end{minipage}\\
+      \vspace*{-2cm}
+%      \null\hspace*{3cm}\begin{minipage}[c]{0.85\columnwidth}Kotlin$\nabla$ is capable of computing arbitrarily high order derivatives.\end{minipage}\\
 \null\hspace*{2cm}\begin{minipage}[c]{0.48\columnwidth}
 \begin{kotlinlisting}
 val y = sin(sin(sin(x))) / x
@@ -259,74 +265,49 @@ val d5 = d(d4) / d(x)
 plot2D(-6..6, z, d1, d2, d3, d4, d5)
 \end{kotlinlisting}
 \end{minipage}
-\null\hspace*{2cm}\begin{minipage}[c]{0.40\columnwidth}
-                          \vspace*{1.5cm}
+    \null\hspace*{2cm}\begin{minipage}[c]{0.40\columnwidth} \vspace*{1.5cm}\center\resizebox{0.95\linewidth}{!}{\includegraphics{../figures/plot.png}}\end{minipage}
 
-                    \center\resizebox{0.95\linewidth}{!}{%
-                    \includegraphics{../figures/plot.png}
-                    }
-\end{minipage}
-
-\null\hspace*{2cm}\begin{minipage}[c]{0.50\columnwidth}
+\null\hspace*{2cm}\begin{minipage}[c]{0.515\columnwidth}
 \begin{kotlinlisting}
-val Z = 10 * (x * x + pow(y, 2))
-val sinZ = sin(Z)
+val Z = x * x + pow(y, 2)
+val Z10 = Z * 10
+val sinZ = sin(Z10)
 val sinZ_10 = sinZ / 10
 val dZ_dx = d(sinZ_10) / d(x)
 val d2Z_dxdy = d(dZ_dx) / d(y)
-val d3Z_d2xdy = grad(d2Z_dxdy)[x]
+val d3Z_d2xdy = d(d2Z_dxdy) / d(x)
 plot3D(-1..1, d3Z_d2xdy)
 \end{kotlinlisting}
 \end{minipage}
-      \null\hspace*{2cm}\begin{minipage}[c]{0.30\columnwidth}
-    \center\resizebox{0.95\linewidth}{!}{%
-      \includegraphics{../figures/plot3d.png}
-      }
-      \end{minipage}
-
+      \null\hspace*{2cm}\begin{minipage}[c]{0.30\columnwidth}\center\resizebox{0.95\linewidth}{!}{\includegraphics{../figures/plot3d.png}}\end{minipage}
 
       \jointspacing
 
-      \mysection{Testing}
 
-\null\hspace*{2cm}\begin{minipage}[c]{0.5\columnwidth}
-\begin{tikzpicture}
-\begin{axis}[title={Log errors evaluating $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, height=20cm, width=35cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, xtick={-1000,-750,...,1000}, legend pos=south east, align=center, compat=newest]
-\addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(SD, AP) $\approx\Delta$(AD, IP)}
-\addplot table [mark=none, x index=0, y index=2, col sep=comma] {../data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(AD, SD)}
-\addplot table [mark=none, x index=0, y index=3, col sep=comma] {../data/adsd_comparison.csv};
-\addlegendentry{$\Delta$(FD, AP)}
-\end{axis}
-\end{tikzpicture}
-\end{minipage}
+      \mysection{Differentiable Physics}
 
-      \jointspacing
-
-      \mysection{Differentiable Programming}
-
-      \null\hspace*{2cm}\begin{minipage}[c]{0.90\columnwidth}
-                            \center\resizebox{0.95\linewidth}{!}{%
-                            \includegraphics{../figures/diff_prob_prog.png}
-                            }
-      \end{minipage}
-
-      \jointspacing
-
-      \mysection{Double Pendulum}
-
-      \vspace{0.5in}
+      %      \null\hspace*{3cm}\begin{minipage}[c]{0.85\columnwidth}We simulate a double pendulum described by the following equations:\end{minipage}\\
 
       \centering
-      {\displaystyle {\begin{aligned}{{\dot {\theta }}_{1}}&={\frac {6}{ml^{2}}}{\frac {2p_{\theta _{1}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{2}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\\{{\dot {\theta }}_{2}}&={\frac {6}{ml^{2}}}{\frac {8p_{\theta _{2}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{1}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}.\end{aligned}}}\\
-      {\displaystyle {\begin{aligned}{{\dot {p}}_{\theta _{1}}}&={\frac {\partial L}{\partial \theta _{1}}}=-{\tfrac {1}{2}}ml^{2}\left({{\dot {\theta }}_{1}}{{\dot {\theta }}_{2}}\sin(\theta _{1}-\theta _{2})+3{\frac {g}{l}}\sin \theta _{1}\right)\\{{\dot {p}}_{\theta _{2}}}&={\frac {\partial L}{\partial \theta _{2}}}=-{\tfrac {1}{2}}ml^{2}\left(-{{\dot {\theta }}_{1}}{{\dot {\theta }}_{2}}\sin(\theta _{1}-\theta _{2})+{\frac {g}{l}}\sin \theta _{2}\right).\end{aligned}}}\\
-      \null\hspace*{2cm}\begin{minipage}[c]{0.80\columnwidth}
-                            \center\resizebox{0.85\linewidth}{!}{%
-                            \includegraphics{../figures/double_pendulum.png}
-                            }
+      ${\displaystyle {\begin{aligned}{{\dot {\theta }}_{1}}&={\frac {6}{ml^{2}}}{\frac {2p_{\theta _{1}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{2}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\\{{\dot {\theta }}_{2}}&={\frac {6}{ml^{2}}}{\frac {8p_{\theta _{2}}-3\cos(\theta _{1}-\theta _{2})p_{\theta _{1}}}{16-9\cos ^{2}(\theta _{1}-\theta _{2})}}\end{aligned}}}$\\
+      ${\displaystyle {\begin{aligned}{{\dot {p}}_{\theta _{1}}}&={\frac {\partial L}{\partial \theta _{1}}}=-{\tfrac {1}{2}}ml^{2}\left({{\dot {\theta }}_{1}}{{\dot {\theta }}_{2}}\sin(\theta _{1}-\theta _{2})+3{\frac {g}{l}}\sin \theta _{1}\right)\\{{\dot {p}}_{\theta _{2}}}&={\frac {\partial L}{\partial \theta _{2}}}=-{\tfrac {1}{2}}ml^{2}\left(-{{\dot {\theta }}_{1}}{{\dot {\theta }}_{2}}\sin(\theta _{1}-\theta _{2})+{\frac {g}{l}}\sin \theta _{2}\right)\end{aligned}}}$\\
+      \null\hspace*{2cm}\begin{minipage}[c]{0.80\columnwidth}\center\resizebox{0.85\linewidth}{!}{\includegraphics{../figures/double_pendulum.png}}
       \end{minipage}
 
+      \jointspacing
+
+      \mysection{Property-based Testing}
+
+      \begin{tikzpicture}
+      \begin{axis}[title={Log errors evaluating $f(x) = \frac{\sin\sin\sin x}{x} + x \sin x + \cos x + x$}, height=20cm, width=35cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, xmin=-1000, xmax=1000, xtick={-1000,-750,...,1000}, legend pos=south east, legend style={font=\small}, align=center, compat=newest]
+      \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/adsd_comparison.csv};
+      \addlegendentry{$\Delta$(SD, AP) $\approx\Delta$(AD, IP)}
+      \addplot table [mark=none, x index=0, y index=2, col sep=comma] {../data/adsd_comparison.csv};
+      \addlegendentry{$\Delta$(AD, SD)}
+      \addplot table [mark=none, x index=0, y index=3, col sep=comma] {../data/adsd_comparison.csv};
+      \addlegendentry{$\Delta$(FD, AP)}
+      \end{axis}
+      \end{tikzpicture}
       \jointspacing
 
     \end{multicols}
@@ -346,7 +327,6 @@ plot3D(-1..1, d3Z_d2xdy)
     % where \textwidth is actually the width of a minipage which is defined in the \bottombox command of
     % betterportaitposter.cls It's a standard \includegraphics command in there, so easy to change if
     % you need to add a border etc.
-
     }
 \end{poster}
 \end{document}
