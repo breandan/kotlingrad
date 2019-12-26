@@ -27,7 +27,8 @@ fun XYChart.saveAs(filename: String) {
 
 private fun Fun<DoubleReal>.andDerivatives(): Array<Fun<DoubleReal>> {
   with(DoublePrecision) {
-    val `dy∕dx` = d(this@andDerivatives) / d(x)
+    val y = this@andDerivatives
+    val `dy∕dx` = d(y) / d(x)
     val `d²y∕dx²` = d(`dy∕dx`) / d(x)
     val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
     val `d⁴y∕dx⁴` = d(`d³y∕dx³`) / d(x)
@@ -39,7 +40,7 @@ private fun Fun<DoubleReal>.andDerivatives(): Array<Fun<DoubleReal>> {
 //               d³y/dx³=$`d³y∕dx³`
 //               d⁴y/dx⁴=$`d⁴y∕dx⁴`""".trimIndent())
 
-    return arrayOf( `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
+    return arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
   }
 }
 
@@ -49,7 +50,7 @@ private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
   val ys = funs.map { xs.map { x -> it(x) }.toDoubleArray() }.toTypedArray()
 
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
-  return QuickChart.getChart("Derivatives of y=$y", "x", "y", labels, xs, ys)
+  return QuickChart.getChart("Derivatives of y=${funs[0]}", "x", "y", labels, xs, ys)
     .apply {
       val transparent = Color(1f, 1f, 1f, .1f)
       styler.chartBackgroundColor = transparent
