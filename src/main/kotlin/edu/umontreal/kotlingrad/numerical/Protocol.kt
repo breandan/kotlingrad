@@ -2,7 +2,6 @@ package edu.umontreal.kotlingrad.numerical
 
 import edu.umontreal.kotlingrad.functions.Fun
 import edu.umontreal.kotlingrad.functions.ScalarVar
-import edu.umontreal.kotlingrad.samples.DoublePrecision
 import java.math.BigDecimal
 
 object BigDecimalPrecision: Protocol<BigDecimalReal, BigDecimal>() {
@@ -36,9 +35,9 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
 
   class IndVar<X: Fun<X>> constructor(val variable: ScalarVar<X>)
 
-  class Differential<X: Fun<X>>(private val `fun`: Fun<X>) {
+  class Differential<X: Fun<X>>(private val fn: Fun<X>) {
     // TODO: make sure this notation works for arbitrary nested functions using the Chain rule
-    infix operator fun div(arg: Differential<X>) = `fun`.diff(arg.`fun`.variables.first())
+    infix operator fun div(arg: Differential<X>) = fn.diff(arg.fn.variables.first())
   }
 
   fun <X: Fun<X>> d(`fun`: Fun<X>) = Differential(`fun`)

@@ -2,6 +2,7 @@
 
 package edu.umontreal.kotlingrad.samples
 
+import edu.umontreal.kotlingrad.functions.ScalarVar
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.mutNode
@@ -285,6 +286,14 @@ class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
  */
 
 sealed class Protocol<X : RealNumber<X>> {
+  class IndVar<X: Fun<X>> constructor(val fn: Fun<X>)
+
+  class Differential<X: Fun<X>>(private val fx: Fun<X>) {
+    // TODO: make sure this notation works for arbitrary nested functions using the Chain rule
+    infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.sVars.first())
+  }
+
+  fun <X: Fun<X>> d(fn: Fun<X>) = Differential(fn)
   abstract fun wrap(default: Number): X
 
   operator fun Number.times(multiplicand: Fun<X>) = multiplicand * wrap(this)

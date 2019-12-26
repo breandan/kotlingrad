@@ -8,7 +8,7 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestHigherOrderDerivatives: StringSpec({
   with(DoublePrecision) {
-    "d²x² / dx² should be 0" {
+    "d²x² / dx² should be 2" {
       DoubleGenerator.assertAll { ẋ: Double ->
         val f = x * x
         val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
@@ -18,7 +18,7 @@ class TestHigherOrderDerivatives: StringSpec({
 
     "d²(x² + x) / dx² should be 2" {
       DoubleGenerator.assertAll { ẋ: Double ->
-        val f = pow(x, 2) + x
+        val f = x.pow(2) + x
         val `df∕dx` = d(f) / d(x)
         val `d²f∕dx²` = d(`df∕dx`) / d(x)
         `d²f∕dx²`(x to ẋ) shouldBeAbout 2
@@ -27,7 +27,7 @@ class TestHigherOrderDerivatives: StringSpec({
 
     "d²x³ / dx² should be 6x" {
       DoubleGenerator.assertAll { ẋ: Double ->
-        val f = pow(x, 3)
+        val f = x.pow(3)
         val `d²f∕dx²` = d(d(f) / d(x)) / d(x)
         `d²f∕dx²`(x to ẋ) shouldBeAbout (x * 6)(x to ẋ)
       }
