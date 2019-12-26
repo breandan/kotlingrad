@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.evaluation
 
 import edu.umontreal.kotlingrad.calculus.DoubleGenerator
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
+import edu.umontreal.kotlingrad.samples.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
@@ -17,13 +17,13 @@ class TestArithmetic: StringSpec({
 
     "test subtraction" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x - y)(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
+        (x - y).invoke(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
     "test exponentiation" {
-      DoubleGenerator.assertAll { ẋ, ẏ ->
-        pow(y, 3)(ẋ) shouldBeAbout (y * y * y)(ẋ)
+      DoubleGenerator.assertAll { ẏ ->
+        (y pow 3)(y to ẏ) shouldBeAbout (y * y * y)(y to ẏ)
       }
     }
 
@@ -41,42 +41,37 @@ class TestArithmetic: StringSpec({
 
     "test multiplication with numerical type" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x * 2)(ẋ) shouldBeAbout ẋ * 2
+        (x * 2)(x to ẋ) shouldBeAbout ẋ * 2
       }
     }
 
     "test division" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        val values = mapOf(x to ẋ, y to ẏ)
-        (x / y)(values) shouldBeAbout x(values) / y(values)
+        (x / y)(x to ẋ, y to ẏ) shouldBeAbout x(x to ẋ).asDouble() / y(y to ẏ).asDouble()
       }
     }
 
     "test inverse" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        val values = mapOf(x to ẋ, y to ẏ)
-        (x * y.inverse())(values) shouldBeAbout (x / y)(values)
+        (x * 1 / y).invoke(x to ẋ, y to ẏ) shouldBeAbout (x / y)(x to ẋ, y to ẏ)
       }
     }
 
     "test associativity" {
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
-        val values = mapOf(x to ẋ, y to ẏ, z to ż)
-        (x * (y * z))(values) shouldBeAbout ((x * y) * z)(values)
+        (x * (y * z))(x to ẋ, y to ẏ, z to ż) shouldBeAbout ((x * y) * z)(x to ẋ, y to ẏ, z to ż)
       }
     }
 
     "test commutativity" {
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
-        val values = mapOf(x to ẋ, y to ẏ, z to ż)
-        (x * y * z)(values) shouldBeAbout (z * y * x)(values)
+        (x * y * z)(x to ẋ, y to ẏ, z to ż) shouldBeAbout (z * y * x)(x to ẋ, y to ẏ, z to ż)
       }
     }
 
     "test distributivity" {
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
-        val values = mapOf(x to ẋ, y to ẏ, z to ż)
-        (x * (y + z))(values) shouldBeAbout (x * y + x * z)(values)
+        (x * (y + z))(x to ẋ, y to ẏ, z to ż) shouldBeAbout (x * y + x * z)(x to ẋ, y to ẏ, z to ż)
       }
     }
   }
