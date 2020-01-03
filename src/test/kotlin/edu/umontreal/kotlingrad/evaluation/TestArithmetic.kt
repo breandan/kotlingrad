@@ -53,25 +53,33 @@ class TestArithmetic: StringSpec({
 
     "test inverse" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x * 1 / y).invoke(x to ẋ, y to ẏ) shouldBeAbout (x / y)(x to ẋ, y to ẏ)
+        val f = x * 1 / y
+        val g = x / y
+        f(x to ẋ, y to ẏ) shouldBeAbout g(x to ẋ, y to ẏ)
       }
     }
 
     "test associativity" {
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
-        (x * (y * z))(x to ẋ, y to ẏ, z to ż) shouldBeAbout ((x * y) * z)(x to ẋ, y to ẏ, z to ż)
+        val f = x * (y * z)
+        val g = (x * y) * z
+        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
       }
     }
 
     "test commutativity" {
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
-        (x * y * z)(x to ẋ, y to ẏ, z to ż) shouldBeAbout (z * y * x)(x to ẋ, y to ẏ, z to ż)
+        val f = x * y * z
+        val g = z * y * x
+        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
       }
     }
 
     "test distributivity" {
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
-        (x * (y + z))(x to ẋ, y to ẏ, z to ż) shouldBeAbout (x * y + x * z)(x to ẋ, y to ẏ, z to ż)
+        val f = x * (y + z)
+        val g = x * y + x * z
+        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
       }
     }
   }

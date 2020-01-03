@@ -2,7 +2,6 @@
 
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.functions.ScalarVar
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.mutNode
@@ -97,16 +96,16 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
     this is Log -> "ln($logarithmand)"
     this is Negative -> "-($value)"
     this is Power -> "($base) pow ($exponent)"
-    this is Prod && right is Sum -> "$left * ($right)"
-    this is Prod && left is Sum -> "($left) * $right"
+//    this is Prod && right is Sum -> "$left * ($right)"
+//    this is Prod && left is Sum -> "($left) * $right"
     this is Prod -> "($left) * ($right)"
     this is Sum && right is Negative -> "$left - ${right.value}"
     this is Sum -> "$left + $right"
     this is Var -> name
     this is Derivative -> "d($fn) / d($vrb)"
-    this is Zero -> "\uD835\uDFD8" // 𝟘
-    this is One -> "\uD835\uDFD9"  // 𝟙
-    this is Two -> "\uD835\uDFDA"  // 𝟚
+    this is Zero -> "0" //"\uD835\uDFD8" // 𝟘
+    this is One -> "1" //"\uD835\uDFD9"  // 𝟙
+    this is Two -> "2" //"\uD835\uDFDA"  // 𝟚
     this is E -> "\u2147" // ⅇ
     this is VMagnitude -> "|$value|"
     this is DProd -> "($left) dot ($right)"
