@@ -15,8 +15,8 @@ fun main() {
   }
 }
 
-val DARKMODE = false
-val THICKNESS = 2
+const val DARKMODE = false
+const val THICKNESS = 2
 
 fun Fun<*>.render(filename: String? = null) {
   val image = graph(directed = true) {

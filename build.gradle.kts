@@ -34,6 +34,12 @@ dependencies {
   implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.0.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
+
+  testCompile("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
+  testCompile("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+  testCompile("org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion")
+  testCompile("net.java.dev.jna:jna:4.2.2")
+  testRuntime("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion")
 }
 
 javafx {
