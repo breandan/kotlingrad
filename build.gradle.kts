@@ -32,6 +32,7 @@ dependencies {
   implementation("org.openjfx:javafx:13")
   implementation("guru.nidi:graphviz-kotlin:0.12.1")
   implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.1.1-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot:lets-plot-common:1.1.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:kotlin-frontend-api:0.0.8-SNAPSHOT")
 
