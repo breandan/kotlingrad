@@ -22,27 +22,35 @@ repositories {
 dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk8"))
-  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
-  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
-  implementation("org.jzy3d:jzy3d-api:1.0.2")
-  implementation("org.knowm.xchart:xchart:3.6.0")
+//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+
+  // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
 //  implementation("scientifik:kmath-core:0.1.3")
+//  implementation("com.ionspin.kotlin:bignum:0.1.0")
+
+  // Graphical libraries
   implementation("org.openjfx:javafx-swing:13")
   implementation("org.openjfx:javafx:13")
   implementation("guru.nidi:graphviz-kotlin:0.12.1")
+  implementation("org.jzy3d:jzy3d-api:1.0.2")
+  implementation("org.knowm.xchart:xchart:3.6.0")
+
+  // Lets-Plot dependencies: https://github.com/JetBrains/lets-plot-kotlin/issues/5
   implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.1.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-common:1.1.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:kotlin-frontend-api:0.0.8-SNAPSHOT")
 
-//  implementation("com.ionspin.kotlin:bignum:0.1.0")
+  // Property-based testing
+  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 
-  testCompile("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
-  testCompile("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
-  testCompile("org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion")
-  testCompile("net.java.dev.jna:jna:4.2.2")
-  testRuntime("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion")
+  // Symbolic fuzzing dependencies
+  testImplementation("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
+  testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+  testImplementation("org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion")
+  testImplementation("net.java.dev.jna:jna:4.2.2")
+  testRuntimeOnly("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion")
 }
 
 javafx {
