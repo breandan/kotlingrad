@@ -31,8 +31,11 @@ dependencies {
   implementation("org.openjfx:javafx-swing:13")
   implementation("org.openjfx:javafx:13")
   implementation("guru.nidi:graphviz-kotlin:0.12.1")
-  implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.0.1-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.1.1-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot:lets-plot-common:1.1.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot:kotlin-frontend-api:0.0.8-SNAPSHOT")
+
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 
   testCompile("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
@@ -43,12 +46,12 @@ dependencies {
 }
 
 javafx {
-  modules("javafx.controls")
+  modules("javafx.controls" ,"javafx.swing")
 }
 
 tasks {
   listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture",
-          "ToyExample", "ToyVectorExample", "ToyMatrixExample")
+         "ToyExample", "ToyVectorExample", "ToyMatrixExample", "LetsPlot")
     .forEach { fileName ->
       register(fileName, JavaExec::class) {
         main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
