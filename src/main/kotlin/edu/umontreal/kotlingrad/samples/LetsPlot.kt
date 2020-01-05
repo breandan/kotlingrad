@@ -6,7 +6,7 @@ import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.jfx.SceneMapperJfxPanel
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.letsPlot.geom.geom_histogram
+import jetbrains.letsPlot.geom.geom_path
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.ggtitle
 import jetbrains.letsPlot.intern.toSpec
@@ -15,46 +15,33 @@ import javax.swing.*
 
 // Setup
 val COMPONENT_FACTORY_JFX = { svg: SvgSvgElement -> SceneMapperJfxPanel(svg, listOf(Style.JFX_PLOT_STYLESHEET)) }
+
 val EXECUTOR_JFX = { r: () -> Unit ->
-  if (Platform.isFxApplicationThread()) {
-    r.invoke()
-  } else {
-    Platform.runLater(r)
-  }
+  if (Platform.isFxApplicationThread()) r() else Platform.runLater(r)
 }
 
-fun main() {
+fun main() =
   SwingUtilities.invokeLater {
-
-    // Generate random data-points
-    val rand = java.util.Random()
     val data = mapOf<String, Any>(
-      "x" to List(500) { rand.nextGaussian() } + List(500) { rand.nextGaussian() + 1.0 },
-      "c" to List(500) { "A" } + List(500) { "B" }
+      "x" to List(10) { it },
+      "y" to List(10) { it * it }
     )
 
     // Create plot specs using Lets-Plot Kotlin API
-    val geom = geom_histogram(alpha = 0.3, size = 0.0) {
-      x = "x"; fill = "c"
-    }
-    val p = ggplot(data) + geom + ggtitle("The normal distribution")
+    val geom = geom_path(alpha = 1.0, size = 2.0) { x = "x"; y= "y" }
+    val plot = ggplot(data) + geom + ggtitle("y = x^2")
 
     // Create JFXPanel showing the plot.
-    val plotSpec = p.toSpec()
-    val plotSize = DoubleVector(600.0, 300.0)
+    val plotSpec = plot.toSpec()
+    val plotSize = DoubleVector(1000.0, 500.0)
 
-    val component =
-      MonolithicAwt.buildPlotFromRawSpecs(plotSpec, plotSize, COMPONENT_FACTORY_JFX, EXECUTOR_JFX) {
-        for (message in it) {
-          println("PLOT MESSAGE: $message")
-        }
-      }
+    val component = MonolithicAwt.buildPlotFromRawSpecs(plotSpec, plotSize, COMPONENT_FACTORY_JFX, EXECUTOR_JFX) {}
 
     // Show plot in Swing frame.
-    val frame = JFrame("The Minimal")
-    frame.contentPane.add(component)
-    frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
-    frame.size = Dimension(plotSize.x.toInt() + 100, plotSize.y.toInt() + 100)
-    frame.isVisible = true
+    JFrame("Minimal Function").apply {
+      contentPane.add(component)
+      defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+      size = Dimension(plotSize.x.toInt() + 100, plotSize.y.toInt() + 100)
+      isVisible = true
+    }
   }
-}
