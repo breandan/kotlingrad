@@ -17,7 +17,7 @@ class TestSymbolic : StringSpec({
 
   with(DoublePrecision) {
     "test symbolic evaluation" {
-      ExpressionGenerator.assertAll(10) { f: Fun<DoubleReal> ->
+      ExpressionGenerator.assertAll(100) { f: Fun<DoubleReal> ->
         try {
           f(x to 1, y to 1, z to 1) shouldBeAbout ktEval(f, x to 1, y to 1, z to 1)
         } catch (e: Exception) {

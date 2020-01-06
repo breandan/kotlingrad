@@ -45,12 +45,8 @@ dependencies {
   // Property-based testing
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
 
-  // Symbolic fuzzing dependencies
-  testImplementation("org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion")
-  testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
-  testImplementation("org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion")
-  testImplementation("net.java.dev.jna:jna:4.2.2")
-  testRuntimeOnly("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion")
+  // Symbolic fuzzing interpreter
+  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:$kotlinVersion")
 }
 
 javafx {
