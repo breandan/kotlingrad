@@ -5,6 +5,7 @@ import edu.umontreal.kotlingrad.samples.DoublePrecision.x
 import edu.umontreal.kotlingrad.samples.DoublePrecision.y
 import edu.umontreal.kotlingrad.samples.DoublePrecision.z
 import io.kotlintest.properties.Gen
+import io.kotlintest.properties.shrinking.Shrinker
 
 abstract class ExpressionGenerator<X: Fun<X>>: Gen<Fun<X>> {
   companion object: ExpressionGenerator<DoubleReal>() {
@@ -22,8 +23,17 @@ abstract class ExpressionGenerator<X: Fun<X>>: Gen<Fun<X>> {
 
   override fun random(): Sequence<Fun<X>> = generateSequence { randomBiTree() }
 
+  override fun shrinker() = object: Shrinker<Fun<X>> {
+    override fun shrink(failure: Fun<X>): List<Fun<X>> =
+      when(failure) {
+        is Sum -> listOf(failure.left, failure.right)
+        is Prod -> listOf(failure.left, failure.right)
+        else -> emptyList()
+      }
+  }
+
   private fun randomBiTree(level: Int = 1): Fun<X> =
-    if(2 < level)
+    if(5 < level)
       if(Math.random() < 0.5) constants.random() else variables.random()
     else operators.random()(randomBiTree(level + 1), randomBiTree(level + 1))
 }
