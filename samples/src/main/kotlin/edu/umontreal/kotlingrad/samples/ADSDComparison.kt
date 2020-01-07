@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.samples
+ package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.numerical.BigDecimalPrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision

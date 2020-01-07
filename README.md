@@ -161,7 +161,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt). Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
+<sup>?</sup> While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt). Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
 
 <sup>τ, λ</sup> Arbitrarily shaped tensors.
 
@@ -253,7 +253,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-For further details, please refer to [the implementation](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt).
+For further details, please refer to [the implementation](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt).
 
 ### Example
 
@@ -289,7 +289,7 @@ fun main() {
 }
 ```
 
-Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew HelloKotlinGrad` should produce the following output:
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) via `./gradlew HelloKotlinGrad` should produce the following output:
 
 ```
 z(x, y)              = x * (-sin(x * y) + y) * 4
@@ -314,25 +314,25 @@ Kotlin∇ provides various graphical tools that can be used for visual debugging
 
 Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph), called dataflow graphs (DFGs). For example, running the expression `((1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2).render()` will display the following DFG:
 
-![](src/main/resources/dataflow.svg)
+![](samples/src/main/resources/dataflow.svg)
 
 ### Plotting
 
-To generate the [sample 2D plots](src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot2D.kt) below, run `./gradlew Plot2D`.
+To generate the [sample 2D plots](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot2D.kt) below, run `./gradlew Plot2D`.
 
 <p align="center"><img src="src/main/resources/plot.svg"></p>
 <p align="center"><img src="src/main/resources/hermite.svg"></p>
 
-Plotting is also possible in higher dimensions, [for example](src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew Plot3D`:
+Plotting is also possible in higher dimensions, [for example](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew Plot3D`:
 
-![](src/main/resources/ripple.png)
-![](src/main/resources/pulsar.png)
-![](src/main/resources/starquake.png)
-![](src/main/resources/novaflux.png)
+![](samples/src/main/resources/ripple.png)
+![](samples/src/main/resources/pulsar.png)
+![](samples/src/main/resources/starquake.png)
+![](samples/src/main/resources/novaflux.png)
 
 ## Testing
 
-To run [the tests](src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
+To run [the tests](core/src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
 Kotlin∇ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin∇ uses two such equivalences to validate its AD implementation:
 
@@ -378,21 +378,21 @@ PBT will search the input space for two numerical values `ẋ` and `ẏ`, which 
 }
 ```
 
-![](src/main/resources/comparison.svg)
+![](samples/src/main/resources/comparison.svg)
 
-Above, we [compare numerical errors](src/main/kotlin/edu/umontreal/kotlingrad/samples/ADSDComparison.kt) for three types of computational differentiation: (1) finite precision automatic differentiation (AD), (2) finite precision symbolic differentiation (SD) and (3) finite precision finite differences (FD) against infinite precision symbolic differentiation (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. As expected, FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating point division.
+Above, we [compare numerical errors](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/ADSDComparison.kt) for three types of computational differentiation: (1) finite precision automatic differentiation (AD), (2) finite precision symbolic differentiation (SD) and (3) finite precision finite differences (FD) against infinite precision symbolic differentiation (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. As expected, FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating point division.
 
 There are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
 ## How?
 
-To understand the core of Kotlin∇'s AD implementation, please refer to the [toy example](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyExample.kt).
+To understand the core of Kotlin∇'s AD implementation, please refer to the [toy example](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyExample.kt).
 
 This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin∇:
 
 #### Operator overloading
  
-[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](core/src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](core/src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](core/src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
 For example, suppose we have an interface `Group`, which overloads the operators `+` and `*`, and is defined like so:
 
@@ -437,7 +437,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) augment external classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) augment external classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlinGrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Expr()
@@ -579,7 +579,7 @@ val vec = Vec(1, 2, 3)                       // Does not compile
 val sum = Vec(1, 2) + add                    // Does not compile
 ```
 
-A similar syntax is possible for [matrices](src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is possible for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 // Inferred type: Mat<Int, D4, D4>
@@ -603,7 +603,7 @@ val lm = l * m
 // m * m // Does not compile
 ```
 
-[Further examples](src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+[Further examples](core/src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
@@ -611,9 +611,9 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is experimental, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
-When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
+When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](core/src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
 Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 

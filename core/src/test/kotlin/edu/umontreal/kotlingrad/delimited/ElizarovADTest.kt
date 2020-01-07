@@ -1,8 +1,8 @@
 package edu.umontreal.kotlingrad.delimited
 
 import edu.umontreal.kotlingrad.samples.*
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import kotlin.math.*
 
 class ADTest {
