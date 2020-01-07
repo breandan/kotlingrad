@@ -320,8 +320,8 @@ Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.
 
 To generate the [sample 2D plots](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot2D.kt) below, run `./gradlew Plot2D`.
 
-<p align="center"><img src="src/main/resources/plot.svg"></p>
-<p align="center"><img src="src/main/resources/hermite.svg"></p>
+<p align="center"><img src="samples/src/main/resources/plot.svg"></p>
+<p align="center"><img src="samples/src/main/resources/hermite.svg"></p>
 
 Plotting is also possible in higher dimensions, [for example](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew Plot3D`:
 
