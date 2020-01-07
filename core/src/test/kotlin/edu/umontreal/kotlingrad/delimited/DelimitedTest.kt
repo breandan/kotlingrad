@@ -1,8 +1,8 @@
 package edu.umontreal.kotlingrad.delimited
 
 import edu.umontreal.kotlingrad.coroutines.*
-import junit.framework.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 
 class DelimitedTest {
