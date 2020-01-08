@@ -1,11 +1,5 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate")
-package edu.umontreal.kotlingrad.samples
-
-import guru.nidi.graphviz.*
-import guru.nidi.graphviz.attribute.*
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.model.Link
-import java.io.File
+package edu.umontreal.kotlingrad.experimental
 
 @Suppress("DuplicatedCode")
 fun main() {

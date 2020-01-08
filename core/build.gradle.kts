@@ -3,6 +3,10 @@ plugins {
   `maven-publish`
 }
 
+repositories {
+  maven("https://dl.bintray.com/mipt-npm/scientifik")
+}
+
 val kotlinVersion = "1.3.61"
 dependencies {
   implementation(kotlin("stdlib"))

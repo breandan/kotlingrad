@@ -2,7 +2,7 @@ package edu.umontreal.kotlingrad.evaluation
 
 import edu.umontreal.kotlingrad.calculus.DoubleGenerator
 import edu.umontreal.kotlingrad.calculus.ExpressionGenerator
-import edu.umontreal.kotlingrad.samples.*
+import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec

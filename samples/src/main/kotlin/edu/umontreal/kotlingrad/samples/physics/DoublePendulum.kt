@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples.physics
 
-import edu.umontreal.kotlingrad.samples.*
+import edu.umontreal.kotlingrad.experimental.*
 import javafx.animation.KeyFrame
 import javafx.animation.Timeline
 import javafx.application.Application

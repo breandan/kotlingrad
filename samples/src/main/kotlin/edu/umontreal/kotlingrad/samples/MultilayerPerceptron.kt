@@ -1,5 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
+import edu.umontreal.kotlingrad.experimental.*
+
 fun <X: Fun<X>> sigmoid(x: Fun<X>) = One<X>() / (One<X>() + E<X>().pow(-x))
 
 fun <X: Fun<X>> layer(x: VFun<X, D3>) = x.map { sigmoid(it) }
@@ -7,12 +9,12 @@ fun <X: Fun<X>> layer(x: VFun<X, D3>) = x.map { sigmoid(it) }
 fun main() {
   with(DoublePrecision) {
     var weights1 = Mat3x3(1.0, 1.0, 1.0,
-                          1.0, 1.0, 1.0,
-                          1.0, 1.0, 1.0)
+      1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0)
 
     var weights2 = Mat3x3(1.0, 1.0, 1.0,
-                          1.0, 1.0, 1.0,
-                          1.0, 1.0, 1.0)
+      1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0)
 
     while(true) {
       val inputs = Vec(1.0, 2.0, 3.0)

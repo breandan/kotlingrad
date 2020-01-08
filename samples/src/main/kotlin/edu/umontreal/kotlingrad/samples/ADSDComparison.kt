@@ -91,5 +91,5 @@ fun main() {
   }
 
 //  SwingWrapper(chart).displayChart()
-  VectorGraphicsEncoder.saveVectorGraphic(chart, "src/main/resources/comparison.svg", SVG)
+  VectorGraphicsEncoder.saveVectorGraphic(chart, "$resourcesPath/comparison.svg", SVG)
 }

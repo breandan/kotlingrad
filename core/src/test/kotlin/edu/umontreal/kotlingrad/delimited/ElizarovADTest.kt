@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.delimited
 
-import edu.umontreal.kotlingrad.samples.*
+import edu.umontreal.kotlingrad.experimental.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import kotlin.math.*

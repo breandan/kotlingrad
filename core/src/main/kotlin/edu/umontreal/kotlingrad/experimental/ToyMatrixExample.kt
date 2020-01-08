@@ -1,6 +1,6 @@
 @file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName", "PropertyName", "MemberVisibilityCanBePrivate")
 
-package edu.umontreal.kotlingrad.samples
+package edu.umontreal.kotlingrad.experimental
 
 fun main() {
   with(DoublePrecision) {

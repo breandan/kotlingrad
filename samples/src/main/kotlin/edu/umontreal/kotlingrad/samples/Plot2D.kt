@@ -22,7 +22,7 @@ fun main() {
 }
 
 fun XYChart.saveAs(filename: String) {
-  VectorGraphicsEncoder.saveVectorGraphic(this, "src/main/resources/$filename", SVG)
+  VectorGraphicsEncoder.saveVectorGraphic(this, "$resourcesPath/$filename", SVG)
 }
 
 private fun Fun<DoubleReal>.andDerivatives(): Array<Fun<DoubleReal>> {

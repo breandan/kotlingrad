@@ -161,7 +161,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt). Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
+<sup>?</sup> While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt). Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
 
 <sup>τ, λ</sup> Arbitrarily shaped tensors.
 
@@ -253,7 +253,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-For further details, please refer to [the implementation](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt).
+For further details, please refer to [the implementation](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt).
 
 ### Example
 
@@ -386,7 +386,7 @@ There are many other ways to independently verify the numerical gradient, such a
 
 ## How?
 
-To understand the core of Kotlin∇'s AD implementation, please refer to the [toy example](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyExample.kt).
+To understand the core of Kotlin∇'s AD implementation, please refer to the [toy example](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyExample.kt).
 
 This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin∇:
 
@@ -579,7 +579,7 @@ val vec = Vec(1, 2, 3)                       // Does not compile
 val sum = Vec(1, 2) + add                    // Does not compile
 ```
 
-A similar syntax is possible for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is possible for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 // Inferred type: Mat<Int, D4, D4>
@@ -611,7 +611,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 ## Ideal API (WIP)
 
-The current API is experimental, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](core/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is experimental, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](core/src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
