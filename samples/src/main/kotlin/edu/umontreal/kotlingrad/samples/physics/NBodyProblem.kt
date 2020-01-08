@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.samples.physics
 
+import edu.umontreal.kotlingrad.samples.resourcesPath
 import javafx.animation.*
 import javafx.application.Application
 import javafx.event.*
