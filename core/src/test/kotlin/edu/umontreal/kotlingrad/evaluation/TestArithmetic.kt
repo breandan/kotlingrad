@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.evaluation
 
 import edu.umontreal.kotlingrad.calculus.DoubleGenerator
-import edu.umontreal.kotlingrad.samples.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec

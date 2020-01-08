@@ -1,4 +1,4 @@
-//package edu.umontreal.kotlingrad.samples
+//package edu.umontreal.kotlingrad.experimental
 //
 //open class Vr
 //object x: Vr() {

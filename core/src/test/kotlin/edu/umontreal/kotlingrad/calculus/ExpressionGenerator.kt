@@ -1,9 +1,9 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.samples.*
-import edu.umontreal.kotlingrad.samples.DoublePrecision.x
-import edu.umontreal.kotlingrad.samples.DoublePrecision.y
-import edu.umontreal.kotlingrad.samples.DoublePrecision.z
+import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.x
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.y
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.z
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 

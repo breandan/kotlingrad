@@ -1,5 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.Fun
 import guru.nidi.graphviz.*
 import guru.nidi.graphviz.attribute.*
 import guru.nidi.graphviz.attribute.Rank.RankDir.LEFT_TO_RIGHT
@@ -11,7 +13,7 @@ import javax.swing.*
 fun main() {
   with(DoublePrecision) {
     val t = (1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2
-    t.render("src/main/resources/dataflow.svg")
+    t.render("$resourcesPath/dataflow.svg")
   }
 }
 

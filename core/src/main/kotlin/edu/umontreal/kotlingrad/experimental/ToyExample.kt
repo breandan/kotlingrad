@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName", "LocalVariableName", "unused")
 
-package edu.umontreal.kotlingrad.samples
+package edu.umontreal.kotlingrad.experimental
 
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
@@ -123,8 +123,9 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
     else -> super.toString()
   }
 
-  fun toGraph(): MutableNode = mutNode(if (this is Var) "$this" else "${this.hashCode()}").apply {
+  fun toGraph(): MutableNode = mutNode(if (this is Var) "$this" else "${hashCode()}").apply {
     when (this@Fun) {
+      is Var -> name
       is Negative -> { value.toGraph() - this; add(Label.of("neg")) }
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
       is Power -> { base.toGraph() - this; exponent.toGraph() - this; add(Label.of("pow")) }
@@ -134,7 +135,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
       is One -> add(Label.of("one"))
       is Zero -> add(Label.of("zero"))
       is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
-      else -> TODO()
+      else -> TODO(this@Fun.javaClass.toString())
     }
   }
 }

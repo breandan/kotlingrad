@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package edu.umontreal.kotlingrad.samples
+package edu.umontreal.kotlingrad.experimental
 
 fun main() {
   with(DoubleContext) {

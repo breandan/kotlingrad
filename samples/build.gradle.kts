@@ -3,6 +3,12 @@ plugins {
   id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
+repositories {
+  maven("https://jitpack.io")
+  maven("http://maven.jzy3d.org/releases")
+  maven("https://jetbrains.bintray.com/lets-plot-maven")
+}
+
 dependencies {
   implementation(project(":core"))
   implementation(kotlin("stdlib-jdk8"))
