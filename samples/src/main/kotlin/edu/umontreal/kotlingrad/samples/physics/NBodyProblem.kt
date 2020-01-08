@@ -23,7 +23,7 @@ class Vector3D(val x: Double, val y: Double, val z: Double) {
 
 val origin = Vector3D(0.0, 0.0, 0.0)
 
-class NBodySimulator(fileName: String = "$resourcesPathnbody.txt"): Application(), EventHandler<ActionEvent> {
+class NBodySimulator(fileName: String = "$resourcesPath/nbody.txt"): Application(), EventHandler<ActionEvent> {
   val gc: Double
   val bodies: Int
   val timeSteps: Int
