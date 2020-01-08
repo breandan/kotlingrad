@@ -1,5 +1,5 @@
 plugins {
-  kotlin("jvm")
+  kotlin("jvm") version "1.3.61"
   id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
@@ -14,7 +14,7 @@ dependencies {
   implementation("org.jzy3d:jzy3d-api:1.0.2")
   implementation("org.knowm.xchart:xchart:3.6.0")
 
-// Lets-Plot dependencies: https://github.com/JetBrains/lets-plot-kotlin/issues/5
+  // Lets-Plot dependencies: https://github.com/JetBrains/lets-plot-kotlin/issues/5
   implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.1.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-common:1.1.1-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
@@ -25,8 +25,8 @@ tasks {
   compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
-
   }
+
   compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
   }
