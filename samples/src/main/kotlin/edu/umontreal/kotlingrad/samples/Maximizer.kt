@@ -30,5 +30,3 @@ tailrec fun <T : Field<T>> minimizeField(
     else minimizeField(fn, a,
       least - (fn(least) - fn(least + a)) / a,
       budget - 1)
-
-val t: (Int, Int) -> Pair<Int, Int>? = { i, x -> null }

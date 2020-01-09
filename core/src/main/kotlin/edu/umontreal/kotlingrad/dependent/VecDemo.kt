@@ -21,4 +21,8 @@ fun main() {
   val v = Vec(D100, IntArray(100) { 0 }.toList())
   v + v
 //  v - Vec(1, 2, 3) // Does not compile
+
+  val q = Vec(1, 2, 3, 4)
+  val q_2 = q[D2]
+  //q[D5]
 }

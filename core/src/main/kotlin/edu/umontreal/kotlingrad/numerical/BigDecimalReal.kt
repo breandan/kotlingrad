@@ -39,25 +39,29 @@ class BigDecimalReal(number: Number, sigFigs: Int = 30): RealNumber<BigDecimalRe
     is BigDecimalReal -> BigDecimalReal(value + addend.value)
     else -> super.plus(addend)
   }
-  infix operator fun plus(addend: Number) = BigDecimalReal(value + BigDecimal(addend.toDouble()))
+  infix operator fun plus(addend: Number) =
+    BigDecimalReal(value + BigDecimal(addend.toDouble()))
 
   override fun minus(subtrahend: Fun<BigDecimalReal>) = when (subtrahend) {
     is BigDecimalReal -> BigDecimalReal(value - subtrahend.value)
     else -> super.minus(subtrahend)
   }
-  infix operator fun minus(subtrahend: Number) = BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
+  infix operator fun minus(subtrahend: Number) =
+    BigDecimalReal(value - BigDecimal(subtrahend.toDouble()))
 
   override fun times(multiplicand: Fun<BigDecimalReal>) = when (multiplicand) {
     is BigDecimalReal -> BigDecimalReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
-  infix operator fun times(multiplicand: Number) = BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
+  infix operator fun times(multiplicand: Number) =
+    BigDecimalReal(value * BigDecimal(multiplicand.toDouble()))
 
   override fun div(divisor: Fun<BigDecimalReal>) = when(divisor) {
     is BigDecimalReal -> BigDecimalReal(value / divisor.value)
     else -> super.div(divisor)
   }
-  infix operator fun div(divisor: Number) = BigDecimalReal(value / BigDecimal(divisor.toDouble()))
+  infix operator fun div(divisor: Number) =
+    BigDecimalReal(value / BigDecimal(divisor.toDouble()))
 
   override fun pow(exp: Fun<BigDecimalReal>) = when(exp) {
     is BigDecimalReal -> BigDecimalReal(pow(value, exp.value, mc))
