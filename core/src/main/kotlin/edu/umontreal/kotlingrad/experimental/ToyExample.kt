@@ -117,7 +117,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
     is Log -> "ln"
     is Negative -> "-"
     is Power -> "pow"
-    is Prod -> "*"
+    is Prod -> "×"
     is Sum -> "+"
     is Derivative -> "d"
     else -> super.toString()
@@ -128,9 +128,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
       is Var -> name
       is Negative -> { value.toGraph() - this; add(Label.of("neg")) }
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
-      is Power -> { base.toGraph() - this; exponent.toGraph() - this; add(Label.of("pow")) }
-      is Prod -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("×")) }
-      is Sum -> { left.toGraph() - this; right.toGraph() - this; add(Label.of("+")) }
+      is BiFun -> { left.toGraph() - this; right.toGraph() - this; add(Label.of(opStr)) }
       is RealNumber -> add(Label.of("$value"))
       is One -> add(Label.of("one"))
       is Zero -> add(Label.of("zero"))
@@ -144,12 +142,14 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
  * Symbolic operators.
  */
 
-class Sum<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right)
+sealed class BiFun<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)
+
+class Sum<X : Fun<X>>(val addend: Fun<X>, val augend: Fun<X>): BiFun<X>(addend, augend)
 
 class Negative<X : Fun<X>>(val value: Fun<X>) : Fun<X>(value)
-class Prod<X : Fun<X>>(val left: Fun<X>, val right: Fun<X>) : Fun<X>(left, right)
-class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : Fun<X>(base, exponent)
-class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>) : Fun<X>(logarithmand)
+class Prod<X : Fun<X>>(val multiplicand: Fun<X>, val multiplicator: Fun<X>): BiFun<X>(multiplicand, multiplicator)
+class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : BiFun<X>(base, exponent)
+class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>, val base: Fun<X> = E()) : BiFun<X>(logarithmand, base)
 class Derivative<X : Fun<X>>(val fn: Fun<X>, val vrb: Var<X>) : Fun<X>(fn, vrb) {
   fun Fun<X>.df(): Fun<X> = when (this) {
     is Var -> if (this == vrb) One() else Zero()
