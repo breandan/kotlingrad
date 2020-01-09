@@ -156,7 +156,7 @@ open class Mat<X: Fun<X>, R: D1, C: D1>(final override val numRows: Nat<R>,
 
   override operator fun unaryMinus() = Mat(numRows, numCols, rows.map { -it })
 
-  override operator fun plus(addend: MFun<X, R, C>) =
+  override operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> =
     when (addend) {
       is Mat -> Mat(numRows, numCols, rows.mapIndexed { i, r -> (r + addend[i]) as Vec<X, C> })
       else -> super.plus(addend)
@@ -166,13 +166,13 @@ open class Mat<X: Fun<X>, R: D1, C: D1>(final override val numRows: Nat<R>,
 
   override operator fun times(multiplicand: Fun<X>): Mat<X, R, C> = Mat(numRows, numCols, rows.map { it * multiplicand })
 
-  override operator fun times(multiplicand: VFun<X, C>) =
+  override operator fun times(multiplicand: VFun<X, C>): VFun<X, R> =
     when (multiplicand) {
       is Vec -> Vec(numRows, rows.map { r -> r dot multiplicand })
       else -> super.times(multiplicand)
     }
 
-  override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>) =
+  override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
     when (multiplicand) {
       is Mat -> Mat(numRows, multiplicand.numCols, (0 until numRows.i).map { i ->
         Vec(multiplicand.numCols, (0 until multiplicand.numCols.i).map { j ->

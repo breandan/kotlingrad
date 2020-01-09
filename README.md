@@ -535,7 +535,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
-First, we enumerate a list of integer type literals as a chain of subtypes, so that `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. `C` can be specified by the user, but they will need to rebuild this project from scratch.
+Shape safety is currently supported up to rank-2 tensors, i.e. matrices. To perform dimension checking in our type system, first we enumerate a list of integer type literals as a chain of subtypes, `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
 
 ```kotlin
 @file:Suppress("ClassName")
@@ -547,41 +547,43 @@ sealed class D3(override val i: Int = 3): D2(i) { companion object: D3(), Nat<D3
 //...
 ```
 
-Kotlin∇ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand’s type signature. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution to preserve shape safety for all subtypes. For instance, consider the rank-1 tensor (i.e. vector) case:
+Next, we overload the call operator to emulate instantiating a collection literal, using arity to infer its dimensionality. Consider the rank-1 case for length inference on vector literals:
+
+```kotlin
+open class Vec<E, Len: D1> constructor(val contents: List<E>) {
+    companion object {
+        operator fun <T> invoke(t: T): Vec<T, D1> = Vec(listOf(t))
+        operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(listOf(t0, t1))
+        operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(listOf(t0, t1, t2))
+    }
+}
+```
+
+Finally, we encode length as a parameter of the operand type. Since integer literals are a chain of subtypes, we only need to define one operator using the highest literal, and can rely on [Liskov substitution](https://en.wikipedia.org/wiki/Liskov_substitution_principle) to preserve shape safety for all subtypes.
 
 ```kotlin
 @JvmName("floatVecPlus") infix operator fun <C: D1, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = 
   Vec(length, contents.zip(v.contents).map { it.first + it.second })
 ```
 
-This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object like so:
+The operator `+` can now be used like so. Incompatible operands will cause a type error:
 
 ```kotlin
-open class Vec<E, MaxLength: D1> constructor(val length: Nat<MaxLength>, val contents: List<E>) {
-  operator fun get(i: D1): E = contents[i.i]
-  operator fun get(i: Int): E = contents[i]
-
-  companion object {
-    operator fun <T> invoke(t: T): Vec<T, D1> = Vec(D1, arrayListOf(t))
-    operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(D2, arrayListOf(t0, t1))
-    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(D3, arrayListOf(t0, t1, t2))
-    //...
-  }
-}
+val one = Vec(1, 2, 3) + Vec(1, 2, 3)          // Always runs safely
+val add = Vec(1, 2, 3) + Vec(D3, listOf(...))  // May fail at runtime
+val vec = Vec(1, 2, 3)                         // Does not compile
+val sum = Vec(1, 2) + add                      // Does not compile
 ```
 
-The initializer may be omitted in favor of dynamic construction, although this may fail at runtime. For example:
+A similar syntax is available for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyMatrixExample.kt) and higher-rank [tensors](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyTensorExample.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
-val one = Vec(1, 2, 3) + Vec(1, 2, 3)        // Always runs safely
-val add = Vec(1, 2, 3) + Vec(D3, listOf(t))  // May fail at runtime
-val vec = Vec(1, 2, 3)                       // Does not compile
-val sum = Vec(1, 2) + add                    // Does not compile
-```
+open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
+fun <X> Mat1x2(d0: X, d1: X): Mat<X, D1, D2> = Mat(Vec(d0, d1))
+fun <X> Mat2x1(d0: X, d1: X): Mat<X, D2, D1> = Mat(Vec(d0), Vec(d1))
+// ...
+operator fun <Q: D1, R: D1, S: D1> Mat<Int, Q, R>.times(m: Mat<Int, R, S>): Mat<Int, Q, S> = TODO()
 
-A similar syntax is possible for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyMatrixExample.kt) and higher-rank tensors. For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
-
-```kotlin
 // Inferred type: Mat<Int, D4, D4>
 val l = Mat4x4(
   1, 2, 3, 4,
@@ -600,10 +602,10 @@ val m = Mat4x3(
 
 // Inferred type: Mat<Int, D4, D3>
 val lm = l * m
-// m * m // Does not compile
+// m * m // Compile error: Expected Mat<3, *>, found Mat<4, 3>
 ```
 
-[Further examples](core/src/main/kotlin/edu/umontreal/kotlingrad/dependent/MatDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+[Further examples](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyMatrixExample.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
