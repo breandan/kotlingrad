@@ -1,3 +1,5 @@
+@file:Suppress("NonAsciiCharacters", "LocalVariableName")
+
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.functions.Fun
@@ -8,7 +10,6 @@ import org.knowm.xchart.*
 import org.knowm.xchart.VectorGraphicsEncoder.VectorGraphicsFormat.SVG
 import java.awt.Color
 
-@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main() {
   with(DoublePrecision) {
     val y0 = exp(-x * x / 2)
