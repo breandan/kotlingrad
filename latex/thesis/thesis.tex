@@ -575,7 +575,7 @@ Towards that end, in \autoref{ch:difftest} we present preliminary work in advers
 
 One of the challenges of building intelligent systems and programming in general, is the problem of reproducibility. Software reproducibility has several challenging aspects, including hardware compatibility, operating systems, file systems, build systems, and runtime determinism. While writing programs and feeding them directly into a computer may have once been common practice, today's source code is far too removed from its mechanical realization to be meaningfully executed in isolation. Today's handwritten programs are like schematics for a traffic light -- built inside a factory, and which require a city's-worth of infrastructure, cars, and traffic laws to serve their intended purpose. Like traffic lights, source code does not exist in a vacuum -- built by compilers, interpreted by virtual machines, executed inside an operating system, and which follow a specific communication protocol -- programs are essentially meaningless abstractions outside this context.
 
-As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{cf. \url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction of the information corresponds to the source code itself.
+As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{\url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction of the information corresponds to the source code itself.
 
 Applied machine learning shares many of the same practical challenges as traditional software development, with source code, release and dependency management. The current process of training a deep learning model can be seen as particularly long compilation step, but it differs significantly in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\citep{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
@@ -836,7 +836,7 @@ The process of compiling and running ROS applications often requires several ste
    roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
 \end{pclisting}
 %
-Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and command line flags are written to an internal model called the ``Run Configuration'' (cf. ~\autoref{fig:ros_run_config}). When a run configuration is manually triggered, Hatchery's internal model is serialized to a \inline{String}, representing the command to be executed. This \inline{String} is then sent to a terminal emulator, which invokes the command and displays the corresponding output.
+Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and command line flags are written to an internal model called the ``Run Configuration'' (\autoref{fig:ros_run_config}). When a run configuration is manually triggered, Hatchery's internal model is serialized to a \inline{String}, representing the command to be executed. This \inline{String} is then sent to a terminal emulator, which invokes the command and displays the corresponding output.
 
 \begin{figure}
 \centering
@@ -1117,7 +1117,7 @@ A key aspect of the connectionist paradigm is gradient descent of a statistical 
 
 Around the same time, the deep learning community realized that perhaps strict differentiability was not so important all along. It was shown in practice, that computers using 8-bit floating point~\citep{wang2018training} and integer~\citep{wu2018training, jacob2018quantization} arithmetic are able to train neural networks without sacrificing performance. Strong assumptions like Lipschitz-continuity and $\beta$-smoothness once thought to be indispensable for gradient-based learning could be relaxed, as long as the noise introduced by quantization was negligible compared to stochastic gradient methods. In hindsight, this should have been less surprising, since all digital computers use discrete representations anyway and were capable of training neural networks for nearly half a century. This suggests strict differentiability was not as important as having a good metric. As long as the loss surface permits metric learning, gradient descent is surprisingly resilient to quantization.
 
-As deep learning solved problems across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming}~\citep{olah2015neural} (DP) was born. Today, DP has many applications, from protein folding~\citep{alquraishi2018end}, to physics engines~\citep{hu2019difftaichi, de2018end, degrave2016differentiable} and graphics rendering~\citep{loper2014opendr} to meta-learning~\citep{liu2018darts}. These domains all have parameters that are tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required, but given a smooth metric, DP promises to learn these parameters for a broad class of models, more or less automatically. Discrete optimization, however, remains an open question. To ``learn'' discrete relations without ad hoc embedding, additional techniques (cf.~\autoref{sec:future-work}), such as probabilistic programming, are likely needed. As seen in \autoref{fig:diff_prob_prog}, these two fields have developed many productive collaborations in recent years.
+As deep learning solved problems across various domains, researchers observed that neural networks were part of a broader class of differentiable architectures that could be designed, implemented and analyzed in a manner not unlike computer programs. Hence the term \textit{differentiable programming}~\citep{olah2015neural} (DP) was born. Today, DP has many applications, from protein folding~\citep{alquraishi2018end}, to physics engines~\citep{hu2019difftaichi, de2018end, degrave2016differentiable} and graphics rendering~\citep{loper2014opendr} to meta-learning~\citep{liu2018darts}. These domains all have parameters that are tuned via gradient descent. Traditionally, handcrafted optimization algorithms were required, but given a smooth metric, DP promises to learn these parameters for a broad class of models, more or less automatically. Discrete optimization, however, remains an open question. To ``learn'' discrete relations without ad hoc embedding, additional techniques (\autoref{sec:future-work}), such as probabilistic programming, are likely needed. As seen in \autoref{fig:diff_prob_prog}, these two fields have developed many productive collaborations in recent years.
 
 \section{Static and dynamic languages}
 
@@ -1131,7 +1131,7 @@ One frequent objection to using strongly-typed languages is attributed to the ad
 
 Most programs today are written in the imperative style, due the prevalence of the Turing Machine and von Neumann architecture~\citep{backus2007can}. $\lambda$-calculus provides an equivalent\footnote{In the sense that the Turing Machine and $\lambda$-calculus are both Turing Complete.} language for computing, which we argue, is a more appropriate notation for expressing mathematical functions and computing their derivatives. In imperative programming the sole purpose of using a function is to pass it values, and there is no way to refer to a function without doing so. More troubling in the case of AD, is that imperative programs have mutable state, which requires taking extra precautions when computing their derivatives.
 
-The mathematical notion for function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a program composed with another program, we simply apply the chain rule (cf.~\autoref{sec:automatic-differentiation}). Since there is no mutable state in FP, no exotic data structures or compiler tricks are required.
+The mathematical notion for function composition is a first-class citizen in functional programming. Just like in calculus, to take the derivative of a program composed with another program, we simply apply the chain rule (\autoref{sec:automatic-differentiation}). Since there is no mutable state in FP, no exotic data structures or compiler tricks are required.
 
 For example, consider the vector function $f(l_1, l_2) = l_1 \cdot l_2$, seen in \autoref{fig:fp_vs_ip}. Imperative programs, by allowing mutation, are effectively destroying intermediate information. In order to recover the computation graph for reverse-mode AD, we either need to override the assignment operator, or use a tape to store the intermediate values. In pure functional programming, mutable variables do not exist, which makes our lives much easier.
 
@@ -1360,7 +1360,7 @@ fun someMatFun(m: Mat<Double, D3, D1>): Mat<Double, D3, D3> = ...
 fun someMatFun(m: Mat<Double, D2, D2>) = ...
 \end{kotlinlisting}
 %
-Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To check shapes in our type system, we enumerate a list of integer type literals as a chain of subtypes, so that $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent. Using this encoding, we are guaranteed linear growth in space and time for subtype checking. $C$ can be specified by the user, who will need to regenerate the code.
+Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To perform dimension checking in our type system, first we enumerate a list of integer type literals as a chain of subtypes, $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
 %
 \begin{kotlinlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall C\leq2.$}]
 interface Nat<T: D0> { val i: Int }
@@ -1373,63 +1373,60 @@ sealed class D3(override val i: Int = 3): D2(i) { companion object: D3(), Nat<D3
 sealed class D99(override val i: Int = 99): D98(i) { companion object: D99(), Nat<D99> }
 \end{kotlinlisting}
 %
-Kotlin$\nabla$ supports shape-safe tensor operations by encoding tensor rank as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define tensor operations once using the highest literal, and can rely on Liskov substitution~\citep{liskov1987} to preserve shape safety for all subtypes. Consider the rank-1 tensor (i.e.\ vector) case:
+Next, we overload the call operator to emulate instantiating a collection literal, using arity to infer its dimensionality. Consider the rank-1 case for length inference on vector literals:
 %
 \begin{kotlinlisting}
-// <C: D1> will accept 1 <= C <= 99 via Liskov substitution
-infix operator fun <C: D1, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> =
-    Vec(length, contents.zip(v.contents).map { it.first + it.second })
-\end{kotlinlisting}
-%
-The operator `\inline{+}' can now be used like so. Incompatible operands will cause a type error:
-%
-\begin{kotlinlisting}
-// Type-checked vector addition with shape inference
-val Y = Vec(D2, listOf(1, 2)) + Vec(D2, listOf(3, 4)) // Y: Vec<Float, D2>
-val X = (*\uwave{Vec(D2, listOf(1, 2)) + Vec(D5, listOf(3, 4, 1, 2, 4))}*) // X: Vec<???>
-\end{kotlinlisting}
-%
-This technique can be easily extended to additional infix operators. We can also define a shape-safe vector initializer by overloading the invoke operator on a companion object:
-%
-\begin{kotlinlisting}
-open class Vec<E, Len: D1> constructor(val len: Nat<Len>, val contents: List<E>) {
-  companion object {
-    operator fun <T> invoke(t: T): Vec<T, D1> = Vec(D1, listOf(t))
-    operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(D2, listOf(t0, t1))
-    operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(D3, listOf(t0, t1, t2))
-  }
+open class Vec<E, Len: D1> constructor(val contents: List<E>) {
+    companion object {
+        operator fun <T> invoke(t: T): Vec<T, D1> = Vec(listOf(t))
+        operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(listOf(t0, t1))
+        operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(listOf(t0, t1, t2))
+    }
 }
 \end{kotlinlisting}
 %
-Dynamic length construction is allowed, although it may fail at runtime. For example:
+Finally, we overload arithmetical operators using generic shape constraints. Since our type-level integers are a chain of subtypes, we only need to define one operator and can rely on Liskov substitution~\citep{liskov1987} to preserve shape safety for all subtypes.
 %
 \begin{kotlinlisting}
-val one = Vec(D3, 1, 2, 3) + Vec(D3, 1, 2, 3)   // Always runs safely
-val add = Vec(D3, 1, 2, 3) + Vec(D3, listOf(t)) // Compiles, but may fail at runtime
-val vec = Vec(1, 2, 3) // Inferred type: Vec<3>
-val sum = (*\uwave{Vec(D2, 1, 2) + add}*) // Compile error: Expected Vec<2>, found Vec<3>
+// <C: D1> will accept 1 <= C <= 99 via Liskov substitution
+operator fun <E, C: D1, V: Vec<X, C>> V.plus(v: V): V = TODO()
+\end{kotlinlisting}
+%
+The operator \inline{+} can now be used like so. Incompatible operands will cause a type error:
+%
+\begin{kotlinlisting}
+// Type-checked vector addition with shape inference
+val Y = Vec(0, 0) + Vec(0, 0) // Y: Vec<Float, D2>
+val X = (*\uwave{Vec(0, 0) + Vec(0, 0, 0)}*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
+\end{kotlinlisting}
+%
+Dynamic length construction is also permitted, although it may fail at runtime. For example:
+%
+\begin{kotlinlisting}
+val one = Vec(0, 0, 0) + Vec(0, 0, 0)   // Always runs safely
+val add = Vec(0, 0, 0) + Vec<Int, D3>(listOf(...)) // Compiles, but may fail at runtime
+val vec = Vec(0, 0, 0) // Inferred type: Vec<3>
+val sum = (*\uwave{Vec(0, 0) + add}*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
 \end{kotlinlisting}
 %
 Matrices and tensors have a similar syntax. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if the arguments' inner dimensions disagree:
 %
 \begin{kotlinlisting}
-val matL = Mat4x4(1, 2, 3, 4, // Inferred type: Mat<Int, D4, D4>
-                  5, 6, 7, 8,
-                  9, 0, 0, 0,
-                  9, 0, 0, 0)
-val matM = Mat4x3(1, 1, 1, // Inferred type: Mat<Int, D4, D3>
-                  2, 2, 2,
-                  3, 3, 3,
-                  4, 4, 4)
-val matN = matL * matM // Inferred type: Mat<Int, D4, D3>
-val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<3, *>, found Mat<4, 4>
+open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
+fun <X> Mat1x2(d0: X, d1: X): Mat<X, D1, D2> = Mat(Vec(d0, d1))
+fun <X> Mat2x1(d0: X, d1: X): Mat<X, D2, D1> = Mat(Vec(d0), Vec(d1))
+// ...
+operator fun <Q: D1, R: D1, S: D1> Mat<Int, Q, R>.times(m: Mat<Int, R, S>): Mat<Int, Q, S> = TODO()
+
+val matM = Mat1x2(0, 0)
+val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<2, *>, found Mat<1, 2>
 \end{kotlinlisting}
 %
-A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which, like Kotlin$\nabla$, also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic would make it easy to express array concatenation, convolutional arithmetic~\citep{dumoulin2016guide} and other arithmetical operations, which are currently impossible to express in Kotlin$\nabla$, or highly impractical as each binary operator requires enumerating $C^2$ functions to accept only valid combinations of integer operands.
+A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic simplifies array concatenation, convolutional arithmetic~\citep{dumoulin2016guide} and other operations which are currently difficult to express in Kotlin$\nabla$, where arbitrary type-level functions $\mathcal{T}(\mathbf a, \mathbf b)$ (ref.~\autoref{sec:type-systems}) can require enumerating up to $C^{q + r}$ Kotlin functions to compute.
 
 \section{Testing}\label{sec:testing}
 
-Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method is known as property-based testing (PBT)~\citep{fink1997property} (cf.~\autoref{subsec:property-based-testing}), closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (cf.~\autoref{subsec:metamorphic-testing}). Notable implementations include \href{http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html}{QuickCheck}~\citep{claessen2011quickcheck}, \href{https://hypothesis.readthedocs.io/en/latest/}{Hypothesis}~\citep{Hypothesis} and \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to test Kotlin$\nabla$: \\
+Kotlin$\nabla$ claims to eliminate certain runtime errors, but how do we know the implementation is not incorrect? One method is known as property-based testing (PBT)~\citep{fink1997property} (\autoref{subsec:property-based-testing}), closely related to the notion of metamorphic testing~\citep{chen1998metamorphic} (\autoref{subsec:metamorphic-testing}). Notable implementations include \href{http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html}{QuickCheck}~\citep{claessen2011quickcheck}, \href{https://hypothesis.readthedocs.io/en/latest/}{Hypothesis}~\citep{Hypothesis} and \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest}, on which our test suite is based. PBT uses algebraic properties to verify the result of a calculation by constructing semantically equivalent but syntactically distinct expressions. When evaluated on the same inputs, these should produce the same answer, to within numerical precision. Two such equivalences are used to test Kotlin$\nabla$: \\
 %
 \begin{enumerate}
     \item \textbf{Analytical differentiation}: manually differentiate selected functions and compare the numerical result of evaluating random chosen inputs from their domain with the numerical result obtained by evaluating AD on the same inputs.
@@ -1477,7 +1474,7 @@ There are many other ways to independently verify the numerical gradient, such a
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
-\noindent Operator overloading~\citep{corliss1993operator} is one of the simplest ways to implement automatic differentiation. We use Kotlin's \href{https://kotlinlang.org/docs/reference/operator-overloading.html}{operator overloading} functionality on a numeric tower (cf. ~\autoref{sec:numeric-tower}) to provide a concise notation for abstract algebraic operations. For example, suppose we have an interface \inline{Group}, which overloads the operators \inline{+} and \inline{*}:
+\noindent Operator overloading~\citep{corliss1993operator} is one of the simplest ways to implement automatic differentiation. We use Kotlin's \href{https://kotlinlang.org/docs/reference/operator-overloading.html}{operator overloading} functionality on a numeric tower (ref. ~\autoref{sec:numeric-tower}) to provide a concise notation for abstract algebraic operations. For example, suppose we have an interface \inline{Group}, which overloads the operators \inline{+} and \inline{*}:
 %
 \begin{kotlinlisting}
 interface Group<T: Group<T>> {
@@ -1714,17 +1711,17 @@ The derivative, as it is most commonly used, is usually associated with the calc
 
 Many further examples of symbolic differentiation can be found in unrelated bodies of literature. This pattern seems unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for differentiable programming and the study of change propagation in computation graphs.
 
-The work described in this chapter establishes a framework for exploring symbolic differentiation using algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (cf. \autoref{sec:numeric-tower}). In future work, we hope to explore the relationship between differentiable programming and symbolic differentiation in other topologies. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces, e.g. for learning boolean variables and other data structures like graphs and trees.
+The work described in this chapter establishes a framework for exploring symbolic differentiation using algebraic structures like \inline{Group}, \inline{Ring}, and \inline{Field} (\autoref{sec:numeric-tower}). In future work, we hope to explore the relationship between differentiable programming and symbolic differentiation in other topologies. Perhaps there exists an analogous mechanism to gradient descent which can be exploited to accelerate optimization in such spaces, e.g. for learning boolean variables and other data structures like graphs and trees.
 
 As shown in prior literature~\citep{bergstra2010theano, baydin2015survey, laue2019equivalence}, intermediate expression swell is a pernicious issue in computer algebra and automatic differentiation. The ad-hoc algebraic simplification procedure described in \autoref{sec:multiple-dispatch} is almost certainly inadequate for general use cases. One interesting direction would be training a model to minimize numerical drift, by applying general-purpose rewriting rules. There exists a long list of prior work in rewriting algorithms for numerical stability, dating back to \citet{kahan1965summation, dekker1971floating, ogita2005accurate} and more recently explored by \citet{zaremba2014learning, zaremba2016learning} and ~\citet{wang2019global} from a machine learning perspective.
 
-Providing a type for matrix structure (e.g.\ \inline{Singular}, \inline{Symmetric}, \inline{Orthogonal}) would allow specializations of the matrix derivative (cf. section 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for differentiating structured matrices). In terms of enhancing the type system, \citet{makwana2018numlin} have developed a linearly-typed encoding of linear algebra which would also be interesting to explore.
+Providing a type for matrix structure (e.g.\ \inline{Singular}, \inline{Symmetric}, \inline{Orthogonal}) would allow specializations of the matrix derivative (\S 2.8 of~\citet{petersen2012matrix} for a detailed review of specific techniques for differentiating structured matrices). In terms of enhancing the type system, \citet{makwana2018numlin} have developed a linearly-typed encoding of linear algebra which would also be interesting to explore.
 
 From a performance standpoint, migrating to a dedicated linear algebra backend such as \href{https://deeplearning4j.org/docs/latest/nd4j-overview}{ND4J}~\citep{team2016nd4j}, \href{https://commons.apache.org/proper/commons-math/}{Apache Commons Math}~\citep{developers2012apache}, \href{http://ejml.org}{EJML}~\citep{abeles2010efficient} or \href{http://jblas.org/}{JBlas}~\citep{braun2011jblas} would likely yield some speedup. Ultimately, we plan to compile to a dedicated intermediate representation such as \href{https://docs.tvm.ai/dev/relay_intro.html}{RelayIR}~\citep{roesch2018relay} in order to receive hardware acceleration on other platforms.
 
 \section{Conclusion}
 
-In this chapter, we have demonstrated Kotlin$nabla$, an embedded domain specific language for differentiable programming and its implementation in the Kotlin programming language. Using our DSL as a vehicle, we explored some interesting topics in automatic differentiation and shape safe array programming. The author wishes to thank Hanneli Tavante, Alexander Nozik, Erik Meijer, Maxime Chevalier-Boisvert and Kiran Gopinathan for their valuable feedback during the development of this project.
+In this chapter, we have demonstrated Kotlin$\nabla$, an embedded domain specific language for differentiable programming and its implementation in the Kotlin programming language. Using our DSL as a vehicle, we explored some interesting topics in automatic differentiation and shape safe array programming. The author wishes to thank Hanneli Tavante, Alexander Nozik, Erik Meijer, Maxime Chevalier-Boisvert and Kiran Gopinathan for their valuable feedback during the development of this project.
 
 \chapter{Testing intelligent systems}\label{ch:difftest}
 
@@ -1928,7 +1925,7 @@ In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(1)}, \dots, \mathbf{x
     \mathbf\Theta \leftarrow \mathbf\Theta - \alpha\frac{1}{z}\nabla_{\mathbf\Theta} \sum_{i=1}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \mathbf{\Theta}), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-We can solve for the gradient with respect to $\mathbf{\Theta}$ by multiplying the Jacobians (cf. \autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_1} \cdots \mathcal{J}_{\mathbf{p}_k}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropagation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
+We can solve for the gradient with respect to $\mathbf{\Theta}$ by multiplying the Jacobians (\autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_1} \cdots \mathcal{J}_{\mathbf{p}_k}$. In white box adversarial learning, we are given a fixed $\mathbf \Theta$\footnote{In contrast with backpropagation, where the parameters $\mathbf\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\mathbf\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}||_p    < \epsilon\}
@@ -1999,7 +1996,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
         \State $i \gets 1$
         \State $t_1 \gets \mathbf T\big(\mathbf x_1, \mathcal L(\mathbf x_1)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
-            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (cf. \autoref{eq:projected_gd})}
+            \State $\mathbf x_i \gets \mathbf{\Phi}_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
             \If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_1$} \Comment{Boundary value was found.}
                 \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
             \EndIf
@@ -2053,7 +2050,7 @@ In this chapter we have visited some interesting ideas for validating intelligen
 \label{fig:verification_complexity}
 \end{figure}
 
-Type systems, compilers and fuzzers are all part of a broader class of validation and verification tools. The goal of these tools is to provide feedback as early as possible. Some errors (e.g. syntactical errors), are minor nuisances and can be quickly detected with a good incremental parser (cf.~\autoref{subsec:the-parser}). Others, as shown in~\autoref{fig:verification_complexity}, are more complex but can be detected by spending computation. We argue this computational cost is often justified as undetected bugs can have catastrophic consequences. Spending computation frees up valuable cognitive resources better spent on more challenging tasks downstream. Studies have shown bugs detected early in development are more likely to be fixed~\citep{distefano2019scaling} -- saving minutes in development could save lives during operation.
+Type systems, compilers and fuzzers are all part of a broader class of validation and verification tools. The goal of these tools is to provide feedback as early as possible. Some errors (e.g. syntactical errors), are minor nuisances and can be quickly detected with a good incremental parser (\autoref{subsec:the-parser}). Others, as shown in~\autoref{fig:verification_complexity}, are more complex but can be detected by spending computation. We argue this computational cost is often justified as undetected bugs can have catastrophic consequences. Spending computation frees up valuable cognitive resources better spent on more challenging tasks downstream. Studies have shown bugs detected early in development are more likely to be fixed~\citep{distefano2019scaling} -- saving minutes in development could save lives during operation.
 
 Learning capabilities will play a crucial role in autonomous systems. As today's engineers begin to incorporate learning in tomorrow's safety-critical robotic systems, we believe the increased assurance provided by intelligent validation and verification tools will be indispensable for the widespread deployment of these complex adaptive cyberphysical systems.
 
@@ -2100,7 +2097,7 @@ One of the challenges of distributed software development across heterogeneous p
     \label{fig:user_kernel_hardware}
 \end{figure}
 
-Docker containers are sandboxed runtime environments that are portable, reproducible and version-controlled. Each environment fully contains its dependencies, but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and provisions a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization tools like Docker are suitable for portable SBCs and can run with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of simultaneously running hundreds of containers with no noticeable degradation in performance\footnote{cf. \url{https://blog.docker.com/2015/09/update-raspberry-pi-dockercon-challenge/}}.
+Docker containers are sandboxed runtime environments that are portable, reproducible and version-controlled. Each environment fully contains its dependencies, but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and provisions a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization tools like Docker are suitable for portable SBCs and can run with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of simultaneously running hundreds of containers with no noticeable degradation in performance\footnote{\url{https://blog.docker.com/2015/09/update-raspberry-pi-dockercon-challenge/}}.
 
 While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity in the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images are typically constructed as a sequence of layers, each of which must periodically be updated. Care is required when designing the development pipeline to ensure that such updates do not silently break a subsequent layer, as we describe in \autoref{sec:retrospective}.
 
@@ -2823,7 +2820,7 @@ By building tools and validating their effectiveness for toy applications, we ho
 
 By complementing the cognitive abilities of human programmers -- who excel at creative problem solving and high-level abstract reasoning -- with the low-level symbolic processing capabilities of programming tools, we can accelerate the design, development and validation of intelligent systems in real-world applications. This process, we argue, deserves more specific tools than general-purpose programming due to the unique opportunities and challenges which intelligent systems present and the unique interplay of human-machine intelligence.
 
-As we start to engineer autonomous systems which must take increasingly human decisions, programmers will play a critical role in shaping the behavior and dynamics of these systems. In order to build trustworthy autonomous systems, it will be important to have tools which enable humans to understand and inform their behavior in a more rigorous manner than monitoring training curves and performing hyperparameter sweeps. This requires us to actively rethink the programming model in machine learning to incorporate human knowledge, e.g. using differentiable programming and type theory (cf.~\autoref{ch:kotlingrad}) or building custom tools which incorporate visual feedback (e.g. customized run and debugging assistance, cf.~\autoref{ch:hatchery}). This process will also require sound build systems and best practices for reproducible software installation and configuration (cf.~\autoref{ch:ducker}).
+As we start to engineer autonomous systems which must take increasingly human decisions, programmers will play a critical role in shaping the behavior and dynamics of these systems. In order to build trustworthy autonomous systems, it will be important to have tools which enable humans to understand and inform their behavior in a more rigorous manner than monitoring training curves and performing hyperparameter sweeps. This requires us to actively rethink the programming model in machine learning to incorporate human knowledge, e.g. using differentiable programming and type theory (\autoref{ch:kotlingrad}) or building custom tools which incorporate visual feedback (e.g. customized run and debugging assistance \autoref{ch:hatchery}). This process will also require sound build systems and best practices for reproducible software installation and configuration (\autoref{ch:ducker}).
 
 \section{Future work}
 
@@ -3066,7 +3063,7 @@ RUN [ "cross-build-end" ]
 CMD <DEFAULT_START_COMMAND>
 \end{dockerlisting}
 %
-Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-build images~\footnote{cf. \href{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}}. When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
+Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-build images~\footnote{\href{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}}. When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
 %
 \begin{pclisting}
 ~$ docker run (*\hl{--entrypoint=qemu-arm-static}*) -it your/arm-image bash
