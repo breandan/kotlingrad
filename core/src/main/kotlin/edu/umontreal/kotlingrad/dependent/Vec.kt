@@ -8,6 +8,8 @@ open class Vec<E, MaxLength : D100>(val length: Nat<MaxLength>, val contents: Li
 
   operator fun get(i: Int): E = contents[i]
 
+  operator fun <L: MaxLength> get(i: L) = contents[i.i - 1]
+
   fun magnitude() : E = TODO()
 
   companion object {
