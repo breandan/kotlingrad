@@ -1,5 +1,9 @@
  package edu.umontreal.kotlingrad.samples
 
+import edu.umontreal.kotlingrad.experimental.D
+import edu.umontreal.kotlingrad.experimental.cos
+import edu.umontreal.kotlingrad.experimental.grad
+import edu.umontreal.kotlingrad.experimental.sin
 import edu.umontreal.kotlingrad.numerical.BigDecimalPrecision
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.utils.step
