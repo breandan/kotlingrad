@@ -65,7 +65,7 @@
 \lstdefinelanguage{kotlin}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
-    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, @Repeat, return@},
+    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, repeat, assert, return@},
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
     keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec, reified},
@@ -1749,11 +1749,11 @@ In this chapter, we will explore the relationship between testing in machine lea
 \noindent In traditional unit testing, most tests are written in the following manner:
 %
 \begin{kotlinlisting}
-fun <C, D> unitTest(subroutine: (C) -> D) {
-    val input = C(...) // Construct an input
-    val expectedOutput = D(...) // Construct an output
+fun unitTest(subroutine: (Input) -> Output) {
+    val input = Input() // Construct an input
+    val expectedOutput = Output() // Construct an output
     val actualOutput = subroutine(input)
-    assertEquals(expectedOutput, actualOutput)
+    assert(expectedOutput == actualOutput) { "Expected $expectedOutput, got $actualOutput"}
 }
 \end{kotlinlisting}
 %
@@ -1764,13 +1764,13 @@ When carefully applied, unit testing can be an effective method for detecting bu
 \noindent In integration testing, we are more concerned about the overall behavior of a program, rather than the specific behavior of its subroutines. Consider the following example:
 
 \begin{kotlinlisting}
-fun <T, Y> integrationTest(program: (T) -> Y, inputs: Set<T>) =
+fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -> Boolean) =
     inputs.forEach { input ->
         try {
-            if (checkPostCondition(program(input)))
-                assert("Postcondition failed on $input")
-        } catch (exception: SomeException) {
-            assert(exception)
+            val output = program(input)
+            assert(checkOutput(output)) { "Postcondition failed on $input, $output" }
+        } catch (exception: Exception) {
+            assert(false) { exception }
         }
     }
 \end{kotlinlisting}
@@ -1784,11 +1784,11 @@ For simplicity, in the following sections, we will only consider examples of pro
 Fuzz testing is an automated testing methodology which generates random inputs to test a given program. For example, consider the following test:
 %
 \begin{kotlinlisting}
-@Repeat(1000)
-fun <reified T, Y> simpleFuzzTest(program: (T) -> Y, oracle: (T) -> Y) {
-        val input = generateRandomInput(T::class)
-        assertEquals(program(i), oracle(i))
-}
+fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
+    repeat(1000) {
+        val input = rand()
+        assert(program(input) == oracle(input)) { "Oracle and program disagree on $input" }
+    }
 \end{kotlinlisting}
 %
 The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be quite expensive in practice, this method can also be quite inefficient.
@@ -1798,22 +1798,29 @@ The trouble is, we need an oracle, an often unreasonable assumption. This is kno
 Property-based testing~\citep{fink1997property} (PBT) attempts to mitigate the test oracle problem by using \textit{properties}. It consists of two phases, searching and shrinking. Users specify a property over all outputs and the test fails if a counterexample can be found:
 %
 \begin{kotlinlisting}
-@Repeat(1000)
-fun <reified T, Y> propertyTest(program: (T) -> Y, hasProperty: (Y) -> Boolean) {
-    val input = generateRandomInput(T::class)
-    if (!hasProperty(program(input))) {
-        val shrunken = shrink(input, program, property)
-        assert("Minimal counterexample of $property: $shrunken")
+fun <I, O> gen(program: (I) -> O, property: (O) -> Boolean, rand: () -> I) =
+    repeat(1000) {
+        val randomInput = rand()
+
+        assert(property(program(randomInput))) {
+            val shrunken = shrink(randomInput, program, property)
+            "Minimal input counterexample of property: $shrunken"
+        }
     }
-}
 \end{kotlinlisting}
 %
-Roughly speaking, \inline{shrink} attempts to simplify the counterexample. For example, given a \inline{program: (Float) -> Float}, a na\"ive shrinker might be implemented as follows:
+Roughly speaking, \inline{shrink} attempts to minimize the counterexample.
 %
 \begin{kotlinlisting}
-tailrec fun <T: Float> shrink(input: T, program: (T) -> T, hasProperty: (T) -> Boolean): T =
-    if (hasProperty(program(input - input / 2.0f)) return input
-    else shrink(input - input / 2.0f, program, hasProperty)
+tailrec fun <I, O> shrink(failure: I, program: (I) -> O, property: (O) -> Boolean): I =
+    if (property(program(decrease(failure)))) failure // Property holds once again
+    else shrink(decrease(failure), program, property) // Decrease until property holds
+\end{kotlinlisting}
+%
+For example, given a \inline{program: (Float) -> Any}, we might implement \inline{decrease} like so:
+%
+\begin{kotlinlisting}
+fun decrease(failure: Float) = failure - failure / 2
 \end{kotlinlisting}
 %
 \begin{figure}
@@ -1855,26 +1862,27 @@ In either case, we have obtained useful information. If our assumptions were inc
 Consider the following example of an MT which uses an equivalence-based MR:
 
 \begin{kotlinlisting}
-@Repeat(value = 1000)
-fun <I, O> metamorphicTest(program: (I) -> O, mr: (I, O, I, O) -> Boolean) {
-    val (input: I, output: O) = drawSampleFromData()
-    val tx: (I) -> I = genLegalTx(program, mr, input, output)
-    val txInput: I = tx(input)
-    val txOutput: O = program(txIn)
-    if (!mr(input, output, txInput, txOutput))
-        assert("<$input, $output> not related to <$txInput, $txOutput> by $mr ($tx)")
-}
+fun <I, O> mrTest(program: (I) -> O, mr: (I, O, I, O) -> Boolean, rand: () -> Pair<I, O>) =
+    repeat(1000) {
+        val (input: I, output: O) = rand()
+        val tx: (I) -> I = genTX(program, mr, input, output)
+        val txInput: I = tx(input)
+        val txOutput: O = program(txInput)
+        assert(mr(input, output, txInput, txOutput)) {
+            "<$input, $output> not related to <$txInput, $txOutput> by $mr ($tx)"
+        }
+    }
 \end{kotlinlisting}
 %
 The trouble is, generating valid transformations is a non-trivial exercise. We could try to generate random transformations until we find one which meets our criteria:
 %
 \begin{kotlinlisting}
-fun <I, O> genLegalTx(program: (I) -> O, mr: (I, O, I, O) -> Boolean, input: I, output: O) {
+fun <I, O> genTX(program: (I) -> O, mr: (I, O, I, O) -> Boolean, i: I, o: O): (I) -> I {
     while (true) {
-        val tx: (I) -> O = genRandomTx() // Samples a random transformation
-        val txInput: I = tx(input)
-        val txOutput: O = program(txIn)
-        if (mr(input, output, txInput, txOutput)) return tx
+        val tx: (I) -> I = sampleRandomTX()
+        val txInput: I = tx(i)
+        val txOutput: O = program(txInput)
+        if (mr(i, o, txInput, txOutput)) return tx
     }
 }
 \end{kotlinlisting}
