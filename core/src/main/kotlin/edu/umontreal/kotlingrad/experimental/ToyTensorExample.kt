@@ -9,10 +9,10 @@ fun main() {
 
   val q = Vt(0) cc Vt(0, 0)
 
-  val z = Vt(0, 0, 0).rev().take(T2)
+  val z = Vt(0, 0, 0).rev().take(T2).take(T1)
 
-  val y = z[T2]
-//val x = z[T3]
+  val y = z[T1]
+//val x = z[T2]
 }
 
 open class Vt<E, L: N9> constructor(val contents: List<E>) {
