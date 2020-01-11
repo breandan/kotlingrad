@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "https://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:xlink="https://www.w3.org/1999/xlink" height="400px" version="1.1" viewBox="0 0 600 400" width="600px" x="0px" y="0px" xmlns="https://www.w3.org/2000/svg">
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="400px" version="1.1" viewBox="0 0 600 400" width="600px" x="0px" y="0px" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <clipPath id="clip864716506">
             <rect height="318.9013671875" width="424.26220703125" x="61.4921875" y="33.6650390625"/>
