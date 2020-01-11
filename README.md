@@ -360,7 +360,7 @@ val manualDx = y * (cos(x * y) * y - 1) // Analytical derivative
 }
 ```
 
-PBT will search the input space for two numerical values `ẋ` and `ẏ`, which violate the specification, then ["shrink"](http://hackage.haskell.org/package/QuickCheck-2.12.6.1/docs/Test-QuickCheck-Arbitrary.html#v:shrink) them to discover pass-fail boundary values. We can construct a similar test using finite differences:
+PBT will search the input space for two numerical values `ẋ` and `ẏ`, which violate the specification, then ["shrink"](https://hackage.haskell.org/package/QuickCheck-2.12.6.1/docs/Test-QuickCheck-Arbitrary.html#v:shrink) them to discover pass-fail boundary values. We can construct a similar test using finite differences:
 
 ```kotlin
 "d(sin x)/dx should be equal to (sin(x + dx) - sin(x)) / dx" {
@@ -416,7 +416,7 @@ Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin support
 
 #### First-class functions
 
-With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
+With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
 In Kotlin∇, all expressions can be treated as functions. For example:
 
@@ -433,7 +433,7 @@ Currently, it is only possible to represent functions where all inputs and outpu
 
 #### Coroutines
 
-[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. Delimited continuations [can be implemented](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. Delimited continuations [can be implemented](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
 
 #### Extension Functions
 
@@ -676,13 +676,13 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 |                             Framework                                  | Language |         SD¹        |         AD²        |         HD³        |         DP⁴        |         FP⁵        |         TS⁶        |        SS⁷         |        DT⁸         |       MP⁹      |
 |:----------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
 |                              Kotlin∇                                   |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
-|         [DiffSharp](http://diffsharp.github.io/DiffSharp/)             |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|         [DiffSharp](https://diffsharp.github.io/DiffSharp/)             |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 | [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp)   |  F#      |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
-|             [Nexus](http://tongfei.me/nexus/)                          |  Scala   |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
+|             [Nexus](https://tongfei.me/nexus/)                          |  Scala   |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
 |           [Lantern](https://feiwang3311.github.io/Lantern/)            |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 |         [JAutoDiff](https://github.com/uniker9/JAutoDiff/)             |  Java    | :heavy_check_mark: | :heavy_check_mark: |         :x:        |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 |      [Eclipse DL4J](https://deeplearning4j.org/)                       |  Java    |         :x:        |   :construction:   |         :x:        |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|            [Halide](http://halide-lang.org/)                           |  C++     |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|            [Halide](https://halide-lang.org/)                           |  C++     |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 |       [Tensor Safe](https://github.com/leopiney/tensor-safe)           |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |       :x:      |
 |         [HaskTorch](https://github.com/hasktorch/hasktorch)            |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
 |           [Grenade](https://github.com/HuwCampbell/grenade)            |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
@@ -743,13 +743,13 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 
 ### Differentiable Programming
 
-* [Neural Networks, Types, and Functional Programming](http://colah.github.io/posts/2015-09-NN-Types-FP/)
-* [Backpropagation with Continuation Callbacks: Foundations for Efficient and Expressive Differentiable Programming](http://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)
+* [Neural Networks, Types, and Functional Programming](https://colah.github.io/posts/2015-09-NN-Types-FP/)
+* [Backpropagation with Continuation Callbacks: Foundations for Efficient and Expressive Differentiable Programming](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)
 * [Backprop as Functor: A compositional perspective on supervised learning](https://arxiv.org/pdf/1711.10455.pdf)
 * [Demystifying Differentiable Programming: Shift/Reset the Penultimate Backpropagator](https://www.cs.purdue.edu/homes/rompf/papers/wang-preprint201811.pdf)
 * [Efficient Differentiable Programming in a Functional Array-Processing Language](https://arxiv.org/pdf/1806.02136.pdf)
 * [Operational Calculus for Differentiable Programming](https://arxiv.org/pdf/1610.07690.pdf)
-* [Differentiable Functional Programming](http://www.robots.ox.ac.uk/~gunes/assets/pdf/baydin-2016-slides-functionallondoners.pdf)
+* [Differentiable Functional Programming](https://www.robots.ox.ac.uk/~gunes/assets/pdf/baydin-2016-slides-functionallondoners.pdf)
 * [Differentiable Programming for Image Processing and Deep Learning in Halide](https://people.csail.mit.edu/tzumao/gradient_halide/gradient_halide.pdf)
 * [Software 2.0](https://medium.com/@karpathy/software-2-0-a64152b37c35)
 
@@ -757,13 +757,13 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 
 * [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
 * [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf)
-* [Matrix derivatives](http://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#derivatives), from the Matrix Cookbook
+* [Matrix derivatives](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#derivatives), from the Matrix Cookbook
 * [Div, Grad, Curl and All That](https://archive.org/details/H.M.ScheyDivGradCurlAndAllThat)
 
 ### Computer Algebra
 
 * [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
-* [On Using Generics for Implementing Algebraic Structures](http://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
+* [On Using Generics for Implementing Algebraic Structures](https://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
 * [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
 * [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
 * [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
@@ -775,11 +775,11 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
 * [An introduction to context-oriented programming in Kotlin](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2)
 * [COJAC](https://github.com/Cojac/Cojac) - Numerical sniffing tool and Enriching number wrapper for Java
-* [chebfun](http://www.chebfun.org/) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
+* [chebfun](https://www.chebfun.org/) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
 
 ### Neural Networks
 
-* [Hacker's Guide to Neural Networks](http://karpathy.github.io/neuralnets/)
+* [Hacker's Guide to Neural Networks](https://karpathy.github.io/neuralnets/)
 * [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
 * [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html)
 * [A guide to convolutional arithmetic for deep learning](https://arxiv.org/pdf/1603.07285.pdf)
