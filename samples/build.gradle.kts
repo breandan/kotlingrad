@@ -5,7 +5,7 @@ plugins {
 
 repositories {
   maven("https://jitpack.io")
-  maven("http://maven.jzy3d.org/releases")
+  maven("https://maven.jzy3d.org/releases")
   maven("https://jetbrains.bintray.com/lets-plot-maven")
 }
 
