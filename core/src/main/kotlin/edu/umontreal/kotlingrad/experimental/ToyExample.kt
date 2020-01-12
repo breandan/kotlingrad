@@ -80,6 +80,10 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(Derivative(this, v1), Derivative(this, v2))
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
   open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
+
+  open fun <L: D1> d(vVar: VVar<X, L>): VFun<X, L> = TODO()
+  open fun <R: D1, C: D1> d(mVar: MVar<X, R, C>): MFun<X, R, C> = TODO()
+
   open fun <R : D1, C : D1> d(mv: Mat<X, R, C>) = d(*mv.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) { index, acc: MutableList<MutableList<Fun<X>>>, p ->
     if (index % mv.numCols == 0) acc.add(mutableListOf(p)) else acc.last().add(p)
     acc
@@ -242,41 +246,41 @@ class E<X: Fun<X>> : SConst<X>()
 
 abstract class RealNumber<X : Fun<X>>(open val value: Number) : SConst<X>()
 
-class DoubleReal(override val value: Double) : RealNumber<DoubleReal>(value) {
-  override fun unaryMinus() = DoubleReal(-value)
-  override fun ln() = DoubleReal(ln(value))
+class DReal(override val value: Double) : RealNumber<DReal>(value) {
+  override fun unaryMinus() = DReal(-value)
+  override fun ln() = DReal(ln(value))
   override fun toString() = value.toString()
 
   /**
    * Constant propagation.
    */
 
-  override fun plus(addend: Fun<DoubleReal>) = when (addend) {
-    is DoubleReal -> DoubleReal(value + addend.value)
+  override fun plus(addend: Fun<DReal>) = when (addend) {
+    is DReal -> DReal(value + addend.value)
     else -> super.plus(addend)
   }
 
-  override fun times(multiplicand: Fun<DoubleReal>) = when (multiplicand) {
-    is DoubleReal -> DoubleReal(value * multiplicand.value)
+  override fun times(multiplicand: Fun<DReal>) = when (multiplicand) {
+    is DReal -> DReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
 
-  override fun pow(exp: Fun<DoubleReal>) = when (exp) {
-    is DoubleReal -> DoubleReal(value.pow(exp.value))
+  override fun pow(exp: Fun<DReal>) = when (exp) {
+    is DReal -> DReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
 
-  override fun sqrt() = DoubleReal(sqrt(value))
+  override fun sqrt() = DReal(sqrt(value))
 
-  override fun <E : D1> times(multiplicand: VFun<DoubleReal, E>) =
+  override fun <E : D1> times(multiplicand: VFun<DReal, E>) =
     when (multiplicand) {
       is Vec -> Vec(multiplicand.contents.map { this * it })
       else -> super.times(multiplicand)
     }
 
-  override fun <R : D1, C: D1> times(multiplicand: MFun<DoubleReal, R, C>) =
+  override fun <R : D1, C: D1> times(multiplicand: MFun<DReal, R, C>) =
     when (multiplicand) {
-      is Mat -> Mat(multiplicand.rows.map { this * it } as List<Vec<DoubleReal, C>>)
+      is Mat -> Mat(multiplicand.rows.map { this * it } as List<Vec<DReal, C>>)
       else -> super.times(multiplicand)
     }
 }
@@ -309,60 +313,60 @@ sealed class Protocol<X : RealNumber<X>> {
   infix fun Fun<X>.pow(exp: Number) = this pow wrap(exp)
 }
 
-object DoublePrecision : Protocol<DoubleReal>() {
-  override fun wrap(default: Number): DoubleReal = DoubleReal(default.toDouble())
+object DoublePrecision : Protocol<DReal>() {
+  override fun wrap(default: Number): DReal = DReal(default.toDouble())
 
   val one = wrap(1.0)
   val zero = wrap(0.0)
   val two = wrap(2.0)
   val e = wrap(E)
 
-  fun vrb(name: String) = Var<DoubleReal>(name)
+  fun vrb(name: String) = Var<DReal>(name)
 
-  @JvmName("ValBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Var<DoubleReal>, Number>) =
+  @JvmName("ValBnd") operator fun Fun<DReal>.invoke(vararg pairs: Pair<Var<DReal>, Number>) =
     this(Bindings(pairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
-  @JvmName("FunBnd") operator fun Fun<DoubleReal>.invoke(vararg pairs: Pair<Fun<DoubleReal>, Fun<DoubleReal>>) =
+  @JvmName("FunBnd") operator fun Fun<DReal>.invoke(vararg pairs: Pair<Fun<DReal>, Fun<DReal>>) =
     this(Bindings(pairs.map { (it.first to it.second) }.toMap(), zero, one, two, e))
 
-  operator fun <Y : D1> VFun<DoubleReal, Y>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
+  operator fun <Y : D1> VFun<DReal, Y>.invoke(vararg sPairs: Pair<Var<DReal>, Number>) =
     this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
 
-  operator fun <Rows : D1, Cols: D1> MFun<DoubleReal, Rows, Cols>.invoke(vararg sPairs: Pair<Var<DoubleReal>, Number>) =
+  operator fun <Rows : D1, Cols: D1> MFun<DReal, Rows, Cols>.invoke(vararg sPairs: Pair<Var<DReal>, Number>) =
     this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
 
-  fun Fun<DoubleReal>.asDouble() = (this as DoubleReal).value
+  fun Fun<DReal>.asDouble() = (this as DReal).value
 
   val x = vrb("X")
   val y = vrb("Y")
   val z = vrb("Z")
 
-  fun Vec(d0: Double) = Vec(DoubleReal(d0))
-  fun Vec(d0: Double, d1: Double) = Vec(DoubleReal(d0), DoubleReal(d1))
-  fun Vec(d0: Double, d1: Double, d2: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DoubleReal(d0), DoubleReal(d1), DoubleReal(d2), DoubleReal(d3), DoubleReal(d4), DoubleReal(d5), DoubleReal(d6), DoubleReal(d7), DoubleReal(d8))
+  fun Vec(d0: Double) = Vec(DReal(d0))
+  fun Vec(d0: Double, d1: Double) = Vec(DReal(d0), DReal(d1))
+  fun Vec(d0: Double, d1: Double, d2: Double) = Vec(DReal(d0), DReal(d1), DReal(d2))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5), DReal(d6))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5), DReal(d6), DReal(d7))
+  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5), DReal(d6), DReal(d7), DReal(d8))
 
-  fun Mat1x1(d0: Double) = Mat<DoubleReal, D1, D1>(Vec(d0))
-  fun Mat1x2(d0: Double, d1: Double) = Mat<DoubleReal, D1, D2>(Vec(d0, d1))
-  fun Mat1x3(d0: Double, d1: Double, d2: Double) = Mat<DoubleReal, D1, D3>(Vec(d0, d1, d2))
-  fun Mat2x1(d0: Double, d1: Double) = Mat<DoubleReal, D2, D1>(Vec(d0), Vec(d1))
-  fun Mat2x2(d0: Double, d1: Double, d2: Double, d3: Double) = Mat<DoubleReal, D2, D2>(Vec(d0, d1), Vec(d2, d3))
-  fun Mat2x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat<DoubleReal, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
-  fun Mat3x1(d0: Double, d1: Double, d2: Double) = Mat<DoubleReal, D3, D1>(listOf(Vec(d0), Vec(d1), Vec(d2)) )
-  fun Mat3x2(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat<DoubleReal, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
-  fun Mat3x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Mat<DoubleReal, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
+  fun Mat1x1(d0: Double) = Mat<DReal, D1, D1>(Vec(d0))
+  fun Mat1x2(d0: Double, d1: Double) = Mat<DReal, D1, D2>(Vec(d0, d1))
+  fun Mat1x3(d0: Double, d1: Double, d2: Double) = Mat<DReal, D1, D3>(Vec(d0, d1, d2))
+  fun Mat2x1(d0: Double, d1: Double) = Mat<DReal, D2, D1>(Vec(d0), Vec(d1))
+  fun Mat2x2(d0: Double, d1: Double, d2: Double, d3: Double) = Mat<DReal, D2, D2>(Vec(d0, d1), Vec(d2, d3))
+  fun Mat2x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat<DReal, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
+  fun Mat3x1(d0: Double, d1: Double, d2: Double) = Mat<DReal, D3, D1>(listOf(Vec(d0), Vec(d1), Vec(d2)) )
+  fun Mat3x2(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat<DReal, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
+  fun Mat3x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Mat<DReal, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
-  fun Var2() = Vec(Var<DoubleReal>(), Var())
-  fun Var3() = Vec(Var<DoubleReal>(), Var(), Var())
+  fun Var2() = Vec(Var<DReal>(), Var())
+  fun Var3() = Vec(Var<DReal>(), Var(), Var())
 
-  fun Var2x1() = Mat2x1(Var<DoubleReal>(), Var())
-  fun Var2x2() = Mat2x2(Var<DoubleReal>(), Var(), Var(), Var())
-  fun Var2x3() = Mat2x3(Var<DoubleReal>(), Var(), Var(), Var(), Var(), Var())
-  fun Var3x1() = Mat3x1(Var<DoubleReal>(), Var(), Var())
-  fun Var3x2() = Mat3x2(Var<DoubleReal>(), Var(), Var(), Var(), Var(), Var())
-  fun Var3x3() = Mat3x3(Var<DoubleReal>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
+  fun Var2x1() = Mat2x1(Var<DReal>(), Var())
+  fun Var2x2() = Mat2x2(Var<DReal>(), Var(), Var(), Var())
+  fun Var2x3() = Mat2x3(Var<DReal>(), Var(), Var(), Var(), Var(), Var())
+  fun Var3x1() = Mat3x1(Var<DReal>(), Var(), Var())
+  fun Var3x2() = Mat3x2(Var<DReal>(), Var(), Var(), Var(), Var(), Var())
+  fun Var3x3() = Mat3x3(Var<DReal>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
 }

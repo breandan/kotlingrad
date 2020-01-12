@@ -118,6 +118,8 @@ class SMProd<X: Fun<X>, R: D1, C: D1>(val left: Fun<X>, val right: MFun<X, R, C>
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 class MDerivative<X: Fun<X>, R: D1, C: D1> internal constructor(val mFun: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>): MFun<X, R, C>(mFun.sVars) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this) {
+    is MConst -> MZero()
+    is MVar -> MZero()
     is MNegative -> -value.df()
     is MTranspose -> (value as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
     is MSum -> left.df() + right.df()
@@ -127,13 +129,11 @@ class MDerivative<X: Fun<X>, R: D1, C: D1> internal constructor(val mFun: VFun<X
     is SMProd -> left.d(v1) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
     is Mat -> Mat(rows.map { it.d(v1)() })
-    is MConst -> MZero()
     else -> throw IllegalArgumentException("Unable to differentiate expression of type ${this::class.java.name}")
   }
 }
 
-//class MVar<X: Fun<X>, R: D1, C: D1>(override val name: String, numRows: Nat<R>, numCols: Nat<C>):
-//  Variable, MFun<X, R, C>(numRows, numCols) { override val sVars: Set<Var<X>> = Array(numRows.i * numCols.i) { Var<X>("") }.toSet() }
+class MVar<X: Fun<X>, R: D1, C: D1>(override val name: String = ""): Variable, MFun<X, R, C>()
 open class MConst<X: Fun<X>, R: D1, C: D1>: MFun<X, R, C>()
 
 class MZero<X: Fun<X>, R: D1, C: D1>: MConst<X, R, C>()

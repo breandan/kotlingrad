@@ -3,50 +3,74 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.experimental.*
 import kotlin.random.Random
 
-fun <X: Fun<X>> sigmoid(x: Fun<X>) = One<X>() / (One<X>() + E<X>().pow(-x))
+@Suppress("NonAsciiCharacters")
+class MultilayerPerceptron<T: Fun<T>>(
+  val x: Var<T> = Var(),
+  val y: Var<T> = Var(),
+  val p1v: VVar<T, D3> = VVar(),
+  val p2v: MVar<T, D3, D3> = MVar(),
+  val p3v: VVar<T, D3> = VVar()
+): (VFun<T, D3>,
+    MFun<T, D3, D3>,
+    VFun<T, D3>) -> Fun<T> {
+  override operator fun invoke(
+    p1: VFun<T, D3>,
+    p2: MFun<T, D3, D3>,
+    p3: VFun<T, D3>
+  ): Fun<T> {
+    val layer1 = layer(p1 * x)
+    val layer2 = layer(p2 * layer1)
+    val output = layer2 dot p3
+    val lossFun = (output - y) pow Two()
+    return lossFun
+  }
 
-fun <X: Fun<X>, D: D1> layer(x: VFun<X, D>): VFun<X, D> = x.map { sigmoid(it) }
+  private fun sigmoid(x: Fun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 
-fun main() {
-  val XY = { Random.nextDouble().let { Pair(it, it * it) } }
+  private fun layer(x: VFun<T, D3>): VFun<T, D3> = x.map { sigmoid(it) }
 
-  with(DoublePrecision) {
-    var weights1 = Mat3x3(
-      1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0
-    )
+  companion object {
+    @JvmStatic
+    fun main(args: Array<String>) {
+      with(DoublePrecision) {
+        var w1: VFun<DReal, D3> = Vec(1.0, 1.0, 1.0)
 
-    var weights2 = Mat3x3(
-      1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0
-    )
+        var w2: MFun<DReal, D3, D3> = Mat3x3(
+          1.0, 1.0, 1.0,
+          1.0, 1.0, 1.0,
+          1.0, 1.0, 1.0
+        )
 
-    var i = 0.0
-    var totalLoss = 0.0
+        var w3: VFun<DReal, D3> = Vec(1.0, 1.0, 1.0)
 
-    while(i < 1000 || 0.5 < totalLoss / i) {
-      val (X, Y) = XY()
-      val inputs = Vec(1.0)
-      val target = 1.0
+        val oracle = { it: Double -> it * it }
+        val drawSample = { Random.nextDouble().let { Pair(it, oracle(it)) } }
+        val mlp = MultilayerPerceptron<DReal>()
 
-      val w1 = Var3()
-      val w2 = Var3x3()
-      val w3 = Var3x3()
-      val w4 = Var3()
+        var i = 1.0
+        var totalLoss = 0.0
+        val α = DReal(0.01)
 
-      val layer1 = layer(w1 * inputs)
-      val layer2 = layer(w2 * layer1)
-      val layer3 = layer(w3 * layer2)
-      val output = layer3 dot w4
+        do {
+          val (X, Y) = drawSample()
+          val m = mlp(
+            p1 = w1,
+            p2 = w2,
+            p3 = w3
+          )
 
-      val loss = (output - target) pow 2.0
-      totalLoss += loss(x to X, y to Y).asDouble()
-      i++
-//      val dl_dw1 = loss.d(w1)//(Bindings(w1.contents.zip(weights1.contents).toMap()))
+          totalLoss += m(mlp.x to X, mlp.y to Y).asDouble()
+
+          val dw1 = m.d(mlp.p1v)(mlp.x to X, mlp.y to Y)
+          val dw2 = m.d(mlp.p2v)(mlp.x to X, mlp.y to Y)
+          val dw3 = m.d(mlp.p3v)(mlp.x to X, mlp.y to Y)
+
+          w1 += α * dw1
+          w2 += α * dw2
+          w3 += α * dw3
+          val avgLoss = totalLoss / i
+        } while (i++ < 1000 || 0.5 < avgLoss)
+      }
     }
-
-    // TODO: Gradient descent
   }
 }

@@ -8,8 +8,8 @@ import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 
 abstract class ExpressionGenerator<X: Fun<X>>: Gen<Fun<X>> {
-  companion object: ExpressionGenerator<DoubleReal>() {
-    override val variables: List<Var<DoubleReal>> = listOf(x, y, z)
+  companion object: ExpressionGenerator<DReal>() {
+    override val variables: List<Var<DReal>> = listOf(x, y, z)
   }
 
   val sum = { x: Fun<X>, y: Fun<X> -> Sum(x, y) }

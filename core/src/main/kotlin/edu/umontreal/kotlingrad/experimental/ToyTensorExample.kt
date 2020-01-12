@@ -1,17 +1,18 @@
 package edu.umontreal.kotlingrad.experimental
 
 fun main() {
-  val v = Vt(1, 2) + Vt(1, 3)
+  val v: Vt<Int, N2> = Vt(1, 2) + Vt(1, 3)
 //val w = Vt(1, 2) + Vt(0, 0, 0)
 
-  val m = Mt1x2(0, 0) * Mt2x1(0, 0)
+  val m: Mt<Int, N1, N1> = Mt1x2(0, 0) * Mt2x1(0, 0)
 //val n = Mt1x2(0, 0) * Mt1x2(0, 0)
 
-  val q = Vt(0) cc Vt(0, 0)
+  val q: Vt<Int, N3> = Vt(0) cc Vt(0, 0)
 
-  val z = Vt(0, 0, 0).rev().take(T2).take(T1)
+  val s: Vt<Int, N2> = Vt(0, 0, 0).rev().take(T2)
+  val z: Vt<Int, N1> = s.take(T1)
 
-  val y = z[T1]
+  val y: Int = z[T1]
 //val x = z[T2]
 }
 

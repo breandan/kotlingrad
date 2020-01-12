@@ -19,19 +19,19 @@ import kotlin.math.*
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class DoublePendulum(private val len: Double = 900.0) : Application(), EventHandler<ActionEvent> {
-  var ω1: Fun<DoubleReal> = DoublePrecision.wrap(0.0) // Angular velocities
-  var ω2: Fun<DoubleReal> = DoublePrecision.wrap(0.0)
+  var ω1: Fun<DReal> = DoublePrecision.wrap(0.0) // Angular velocities
+  var ω2: Fun<DReal> = DoublePrecision.wrap(0.0)
   val m1 = 2.0 // Masses
   val m2 = 2.0
-  var G: Fun<DoubleReal> = DoublePrecision.wrap(9.81) // Gravity
-  var µ: Fun<DoubleReal> = DoublePrecision.wrap(0.01) // Friction
+  var G: Fun<DReal> = DoublePrecision.wrap(9.81) // Gravity
+  var µ: Fun<DReal> = DoublePrecision.wrap(0.01) // Friction
   val Gp = 0.01  // Simulate measurement error
   val µp = -0.01
   var r1 = DoublePrecision.Vec(1.0, 0.0) // Polar vector
   var r2 = DoublePrecision.Vec(1.0, 0.0)
   val observationSteps = 30
   var priorVal = 5.0
-  fun step(obs: Fun<DoubleReal>? = null, groundTruth: Pair<VConst<DoubleReal, D2>, VConst<DoubleReal, D2>>? = null) = with(DoublePrecision) {
+  fun step(obs: Fun<DReal>? = null, groundTruth: Pair<VConst<DReal, D2>, VConst<DReal, D2>>? = null) = with(DoublePrecision) {
     val isObserving = false
 //    val priorVal = if(G is Var) G.asDouble()
     if (isObserving) {
@@ -63,21 +63,21 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
 
     if(isObserving && obs != null) {
       val loss = (ω2 - obs) pow 2
-      G = loss.descend(100, 0.0, 0.9, 0.1, G as Var<DoubleReal> to wrap(priorVal))
+      G = loss.descend(100, 0.0, 0.9, 0.1, G as Var<DReal> to wrap(priorVal))
       priorVal = G.asDouble()
       println(G)
     }
 
     val r1a = (r1.angle + (ω1 * dt + .5 * α1 * dt * dt)).run {
-      if(G is Var) this(G as Var<DoubleReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(sVars.first() to priorVal).asDouble() }
     }
     val r2a = (r2.angle + - (ω2 * dt + .5 * α2 * dt * dt)).run {
-      if(G is Var) this(G as Var<DoubleReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(sVars.first() to priorVal).asDouble() }
     }
 
     if(G is Var) {
-      ω1 = ω1(G as Var<DoubleReal> to priorVal)
-      ω2 = ω2(G as Var<DoubleReal> to priorVal)
+      ω1 = ω1(G as Var<DReal> to priorVal)
+      ω2 = ω2(G as Var<DReal> to priorVal)
     }
 
     r1 = Vec(r1.magn * cos(r1a), r1.magn * sin(r1a))
@@ -90,11 +90,11 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     }
   }
 
-  fun Fun<DoubleReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DoubleReal>, DoubleReal>): Fun<DoubleReal> {
+  fun Fun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DReal>, DReal>): Fun<DReal> {
     with(DoublePrecision) {
       val d_dg = this@descend.d(map.first)
-      var G1P: Fun<DoubleReal> = map.second
-      var velocity: Fun<DoubleReal> = wrap(vinit)
+      var G1P: Fun<DReal> = map.second
+      var velocity: Fun<DReal> = wrap(vinit)
       var i = 0
       do {
         velocity = gamma * velocity + d_dg(map.first to G1P) * α
@@ -150,21 +150,21 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     Timeline(KeyFrame(Duration.millis(20.0), this)).apply { cycleCount = Timeline.INDEFINITE }.play()
   }
 
-  val VConst<DoubleReal, D2>.r: Double
+  val VConst<DReal, D2>.r: Double
     get() = DoublePrecision.run { this@r[0].asDouble() }
-  val VConst<DoubleReal, D2>.theta: Double
+  val VConst<DReal, D2>.theta: Double
     get() = DoublePrecision.run { this@theta[1].asDouble() }
 
-  val VConst<DoubleReal, D2>.end: VConst<DoubleReal, D2>
+  val VConst<DReal, D2>.end: VConst<DReal, D2>
     get() = DoublePrecision.run { Vec(this@end.r + rodLen * magn * cos(angle), this@end.theta - rodLen * magn * sin(angle)) }
 
-  val VConst<DoubleReal, D2>.magn: Double
+  val VConst<DReal, D2>.magn: Double
     get() = DoublePrecision.run { magnitude().asDouble() }
 
-  val VConst<DoubleReal, D2>.angle: Double
+  val VConst<DReal, D2>.angle: Double
     get() = DoublePrecision.run { atan2(this@angle.theta, this@angle.r) }
 
-  fun VConst<DoubleReal, D2>.render(rod: Line, xAdjust: Double = 0.0, yAdjust: Double = 0.0) {
+  fun VConst<DReal, D2>.render(rod: Line, xAdjust: Double = 0.0, yAdjust: Double = 0.0) {
     rod.startX = this@render.r + xAdjust
     rod.startY = this@render.theta + yAdjust
     val end = this@render.end
