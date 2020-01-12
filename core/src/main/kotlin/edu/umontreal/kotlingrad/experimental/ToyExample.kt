@@ -359,10 +359,10 @@ object DoublePrecision : Protocol<DoubleReal>() {
   fun Var2() = Vec(Var<DoubleReal>(), Var())
   fun Var3() = Vec(Var<DoubleReal>(), Var(), Var())
 
-//  fun Var2x1() = Mat<D2, D1>(Vec(Var<DoubleReal>()), Vec(Var()))
-//  fun Var2x2() = Mat<D2, D2>(Vec(Var<DoubleReal>(), Var()), Vec(Var(), Var()))
-//  fun Var2x3() = Mat<D2, D3>(Vec(Var<DoubleReal>(), Var(), Var()), Vec(Var(), Var(), Var()))
-//  fun Var3x1() = Mat<D3, D1>(Vec(Var<DoubleReal>()), Vec(Var()), Vec(Var()))
-//  fun Var3x2() = Mat<D3, D2>(Vec(Var<DoubleReal>(), Var()), Vec(Var(), Var()), Vec(Var(), Var()))
-//  fun Var3x3() = Mat<D3, D3>(Vec(Var<DoubleReal>(), Var(), Var()), Vec(Var(), Var(), Var()), Vec(Var(), Var(), Var()))
+  fun Var2x1() = Mat2x1(Var<DoubleReal>(), Var())
+  fun Var2x2() = Mat2x2(Var<DoubleReal>(), Var(), Var(), Var())
+  fun Var2x3() = Mat2x3(Var<DoubleReal>(), Var(), Var(), Var(), Var(), Var())
+  fun Var3x1() = Mat3x1(Var<DoubleReal>(), Var(), Var())
+  fun Var3x2() = Mat3x2(Var<DoubleReal>(), Var(), Var(), Var(), Var(), Var())
+  fun Var3x3() = Mat3x3(Var<DoubleReal>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
 }
