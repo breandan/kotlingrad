@@ -63,18 +63,18 @@ sealed class VFun<X: Fun<X>, E: D1>(
 
   open fun map(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VMap(this, ef)
 
-  open fun d(v1: Var<X>) = VDerivative(this, v1)
-  open fun d(v1: Var<X>, v2: Var<X>) = Jacobian<X, E, D2>(this, v1, v2)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>) = Jacobian<X, E, D3>(this, v1, v2, v3)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>) = Jacobian<X, E, D4>(this, v1, v2, v3, v4)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>) = Jacobian<X, E, D5>(this, v1, v2, v3, v4, v5)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>) = Jacobian<X, E, D6>(this, v1, v2, v3, v4, v5, v6)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>) = Jacobian<X, E, D7>(this, v1, v2, v3, v4, v5, v6, v7)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>) = Jacobian<X, E, D8>(this, v1, v2, v3, v4, v5, v6, v7, v8)
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>, v9: Var<X>) = Jacobian<X, E, D9>(this, v1, v2, v3, v4, v5, v6, v7, v8, v9)
+  fun d(v1: Var<X>) = VDerivative(this, v1)
+  fun d(v1: Var<X>, v2: Var<X>) = Jacobian<X, E, D2>(this, v1, v2)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>) = Jacobian<X, E, D3>(this, v1, v2, v3)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>) = Jacobian<X, E, D4>(this, v1, v2, v3, v4)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>) = Jacobian<X, E, D5>(this, v1, v2, v3, v4, v5)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>) = Jacobian<X, E, D6>(this, v1, v2, v3, v4, v5, v6)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>) = Jacobian<X, E, D7>(this, v1, v2, v3, v4, v5, v6, v7)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>) = Jacobian<X, E, D8>(this, v1, v2, v3, v4, v5, v6, v7, v8)
+  fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>, v9: Var<X>) = Jacobian<X, E, D9>(this, v1, v2, v3, v4, v5, v6, v7, v8, v9)
   //...
-  open fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
-  open fun grad(): Map<Var<X>, VFun<X, E>> = sVars.map { it to VDerivative(this, it) }.toMap()
+  fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
+  fun grad(): Map<Var<X>, VFun<X, E>> = sVars.map { it to VDerivative(this, it) }.toMap()
 
   override operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
@@ -100,6 +100,7 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is VMProd<X, *, E> -> "$left * $right"
       is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
       is VMap -> "$value.map { $ef }"
+      is VVar -> "VVar($name)"
     }
 }
 
@@ -118,14 +119,15 @@ class Gradient<X : Fun<X>, E: D1>(val fn: Fun<X>, vararg val vrbs: Var<X>): VFun
   override fun invoke(bnds: Bindings<X>) = Vec<X, E>(vrbs.map { Derivative(fn, it)() })(bnds)
 }
 
-//class VVar<X: Fun<X>, E: D1>(override val name: String, override val length: Nat<E>): Variable, VFun<X, E>(length) { override val sVars: Set<Var<X>> = Array(length.i) { Var<X>("") }.toSet() }
+class VVar<X: Fun<X>, E: D1>(override val name: String = ""): Variable, VFun<X, E>()
 class Jacobian<X : Fun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn.sVars) {
   override fun invoke(bnds: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }
 
 class VDerivative<X : Fun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vFun) {
   fun VFun<X, E>.df(): VFun<X, E> = when (this) {
-    is VConst -> VZero(contents.size)
+    is VConst -> VZero()
+    is VVar -> VZero()
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
     is SVProd -> left.d(v1) * right + left * right.df()
@@ -142,17 +144,12 @@ class VDerivative<X : Fun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, 
 
 open class VConst<X: Fun<X>, E: D1>(vararg contents: SConst<X>): Vec<X, E>(emptySet(), contents.asList())
 
-class VZero<X: Fun<X>, E: D1>(length: Int): VConst<X, E>()
-class VOne<X: Fun<X>, E: D1>(length: Int): VConst<X, E>()
+class VZero<X: Fun<X>, E: D1>: VConst<X, E>()
+class VOne<X: Fun<X>, E: D1>: VConst<X, E>()
 
 open class Vec<X: Fun<X>, E: D1>(override val sVars: Set<Var<X>> = emptySet(),
                                  val contents: List<Fun<X>>): VFun<X, E>() {
   constructor(contents: List<Fun<X>>): this(contents.flatMap { it.sVars }.toSet(), contents)
-//  constructor(vararg contents: Fun<X>): this(contents.flatMap { it.sVars }.toSet(), *contents)
-
-//  init {
-//    require(length.i == contents.size || contents.isEmpty()) { "Declared length ($length) != content length (${contents.size}) : ${contents.joinToString(",")}" }
-//  }
 
   override fun toString() = contents.joinToString(", ", "[", "]")
 
