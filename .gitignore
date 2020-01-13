@@ -2,6 +2,8 @@ build
 .idea
 .gradle
 *.iml
+*.ipr
+*.iws
 .attach_*
 out
 .kotlintest

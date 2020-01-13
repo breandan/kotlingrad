@@ -1,6 +1,14 @@
 plugins {
+  idea
   kotlin("jvm") version "1.3.61"
   `maven-publish`
+}
+
+idea {
+  module {
+    isDownloadJavadoc = true
+    isDownloadSources = true
+  }
 }
 
 repositories {

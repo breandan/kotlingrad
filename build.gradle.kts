@@ -11,3 +11,9 @@ allprojects {
     mavenCentral()
   }
 }
+
+idea {
+  module {
+    excludeDirs.add(file("latex"))
+  }
+}
