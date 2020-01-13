@@ -14,17 +14,17 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 
   // Graphical libraries
-  implementation("org.openjfx:javafx-swing:13")
-  implementation("org.openjfx:javafx:13")
-  implementation("guru.nidi:graphviz-kotlin:0.12.1")
-  implementation("org.jzy3d:jzy3d-api:1.0.2")
-  implementation("org.knowm.xchart:xchart:3.6.0")
+  implementation("org.openjfx:javafx-swing:_")
+  implementation("org.openjfx:javafx:_")
+  implementation("guru.nidi:graphviz-kotlin:_")
+  implementation("org.jzy3d:jzy3d-api:_")
+  implementation("org.knowm.xchart:xchart:_")
 
   // Lets-Plot dependencies: https://github.com/JetBrains/lets-plot-kotlin/issues/5
-  implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.1.1-SNAPSHOT")
-  implementation("org.jetbrains.lets-plot:lets-plot-common:1.1.1-SNAPSHOT")
-  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.8-SNAPSHOT")
-  implementation("org.jetbrains.lets-plot:kotlin-frontend-api:0.0.8-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot:lets-plot-jfx:_")
+  implementation("org.jetbrains.lets-plot:lets-plot-common:_")
+  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:_")
+  implementation("org.jetbrains.lets-plot:kotlin-frontend-api:_")
 }
 
 tasks {
