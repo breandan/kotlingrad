@@ -73,7 +73,7 @@
     morecomment=[s]{/*}{*/},
     morestring=[b]",
     morestring=[s]{"""*}{*"""},
-    ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String},
+    ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Boolean, Int, Integer, Iterable, Long, Runnable, Short, String},
     ndkeywordstyle={\color{BurntOrange}\bfseries},
     sensitive=true,
     stringstyle={\color{ForestGreen}\ttfamily},
@@ -1767,7 +1767,7 @@ When carefully applied, unit testing can be an effective method for detecting bu
 fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -> Boolean) =
     inputs.forEach { input ->
         try {
-            val output = program(input)
+            val output: O = program(input)
             assert(checkOutput(output)) { "Postcondition failed on $input, $output" }
         } catch (exception: Exception) {
             assert(false) { exception }
@@ -1786,7 +1786,7 @@ Fuzz testing is an automated testing methodology which generates random inputs t
 \begin{kotlinlisting}
 fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
     repeat(1000) {
-        val input = rand()
+        val input: I = rand()
         assert(program(input) == oracle(input)) { "Oracle and program disagree on $input" }
     }
 \end{kotlinlisting}
@@ -1800,7 +1800,7 @@ Property-based testing~\citep{fink1997property} (PBT) attempts to mitigate the t
 \begin{kotlinlisting}
 fun <I, O> gen(program: (I) -> O, property: (O) -> Boolean, rand: () -> I) =
     repeat(1000) {
-        val randomInput = rand()
+        val randomInput: I = rand()
 
         assert(property(program(randomInput))) {
             val shrunken = shrink(randomInput, program, property)
@@ -1820,7 +1820,7 @@ tailrec fun <I, O> shrink(failure: I, program: (I) -> O, property: (O) -> Boolea
 For example, given a \inline{program: (Float) -> Any}, we might implement \inline{decrease} like so:
 %
 \begin{kotlinlisting}
-fun decrease(failure: Float) = failure - failure / 2
+fun decrease(failure: Float): Float = failure - failure / 2
 \end{kotlinlisting}
 %
 \begin{figure}
@@ -1850,14 +1850,14 @@ First, let us consider the following concrete example, from \citet{tian2018deept
 
 Metamorphic testing can be expressed as follows: Given an oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation $\mathcal R$, i.e.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
 
-Suppose our MR is $\forall \varphi \in \mathcal I: ||\mathbf\varphi|| \leq \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Given a program $\mathbf{\hat P}$ and a set of inputs $\mathbf X$ and outputs $\mathbf Y$ from our oracle, the MR suggests an $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from $\mathbf P$. If we can show that $\exists \mathbf x' \in \mathbf X' \mid \mathbf{\hat P}(\mathbf x') \not\approx \mathbf P(\mathbf x)$, then we can infer at least one of the following:
+Suppose our MR is $\forall \varphi \in \mathcal I: ||\mathbf\varphi|| \leq \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Given a program $\mathbf{\hat P}$ and a comparatively small set of inputs $\mathbf X$ and outputs $\mathbf Y$ from our oracle $\mathbf P$, the MR produces a set $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from $\mathbf P$. If we can show $\exists \mathbf x' \in \mathbf X' \mid \mathbf{\hat P}(\mathbf x') \not\approx \mathbf P(\mathbf x)$, this implies at least one of the following:
 
 \begin{enumerate}
 \item $\langle \mathbf x, \mathbf P(\mathbf x), \mathbf x', \mathbf P(\mathbf x')\rangle \notin \mathcal R$, i.e. our assumptions were invalid
 \item $\mathbf{\hat P}(\mathbf x') \not\approx \mathbf{P}(\mathbf x')$, i.e. the program under test is unsound
 \end{enumerate}
 %
-In either case, we have obtained useful information. If our assumptions were invalid, we can update our world model. Otherwise, we have obtained a counterexample, and should update the program's implementation accordingly -- both of these are useful outcomes.
+In either case, we have obtained useful information. If our assumptions were invalid, we can strengthen the invariant, $\mathcal R$, by removing the counterexample. Otherwise, we have detected an error and can adjust the program to ensure compliance -- both are useful outcomes.
 
 Consider the following example of an MT which uses an equivalence-based MR:
 
@@ -2055,7 +2055,7 @@ This can be achieved by using a variant of hypervolume maximization:
 \nabla_\Theta \mathcal{L}_G = \sum_{k=1}^K \frac{1}{\eta - l_k}\nabla_\Theta l_k
 \end{equation}
 
-Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the vanilla GAN to improve stability and sample diversity. GANs have been successfully applied in various domains from speech synthesis~\citep{donahue2019wavegan} to graphs~\citep{wang2018graphgan}. It would be interesting to explore whether GANs could also be used for program synthesis and compiler optimization, following~\citep{adams2019learning}.
+Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the vanilla GAN to improve stability and sample diversity. GANs have been successfully applied in various domains from speech synthesis~\citep{donahue2019wavegan} to graphs~\citep{wang2018graphgan}. It would be interesting to explore whether GANs could also be used for program synthesis and compiler optimization, following~\citep{adams2019learning, mendis2019compiler}.
 
 \section{Conclusion}
 
@@ -2255,7 +2255,7 @@ CMD ls -l             # Default command run when container is started
 Now, to build the image, we can simply run:
 
 \begin{pclisting}
-~$ docker build -t user/duck:v3 .
+~$ docker build -t user/duck:v3 (*\hl{.}*)
 \end{pclisting}
 %
 The \inline{.} indicates the current directory, which should be the same one containing our \inline{Dockerfile}. This command should produce something like the following output:
