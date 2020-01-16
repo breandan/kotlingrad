@@ -81,7 +81,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
   open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
 
-  open fun <L: D1> d(vVar: VVar<X, L>): VFun<X, L> = TODO()
+  open fun <L: D1> d(vVar: VVar<X, L>): VFun<X, L> = Gradient(this, vVar)
   open fun <R: D1, C: D1> d(mVar: MVar<X, R, C>): MFun<X, R, C> = TODO()
 
   open fun <R : D1, C : D1> d(mv: Mat<X, R, C>) = d(*mv.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) { index, acc: MutableList<MutableList<Fun<X>>>, p ->

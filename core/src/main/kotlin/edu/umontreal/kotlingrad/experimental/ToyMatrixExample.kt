@@ -24,8 +24,8 @@ fun main() {
     val bh = x * vf1
     val vf2 = Vec(x, y)
     val q = vf1 + vf2
-    val z = q(x to 1.0, y to 2.0)
-    println("z: $z")
+    val r = q(x to 1.0, y to 2.0)
+    println("r: $r")
 
     val mf1 = Mat2x1(
       y * y,
@@ -144,18 +144,20 @@ open class Mat<X: Fun<X>, R: D1, C: D1>(override val sVars: Set<Var<X>> = emptyS
   constructor(rows: List<Vec<X, C>>): this(rows.flatMap { it.sVars }.toSet(), rows)
   constructor(vararg rows: Vec<X, C>): this(rows.flatMap { it.sVars }.toSet(), rows.asList())
 
-//  constructor(): this(contents.flatMap { it.sVars }.toSet(), *contents.toTypedArray())
+  val flatContents: List<Fun<X>> by lazy { rows.flatMap { it.contents } }
 
-  val contents: List<Fun<X>> by lazy { rows.flatMap { it.contents } }
-
+  val indices = rows.indices
+  val cols by lazy { indices.map { i -> Vec<X, R>(rows.map { it[i] }) } }
   val numCols = rows.first().contents.size
   val numRows = rows.size
 
   init {
-    require(rows.all { it.contents.size == numCols }) { "Declared rows, $numRows != ${rows.size}" }
+    rows.indices.zip(rows).filter { it.second.size != numCols }.run {
+      require(isEmpty()) { "Declared $numCols cols but row(s) ${map { it.first }} contain(s) ${map { it.second }} values, respectively" }
+    }
   }
 
-  override val ᵀ: Mat<X, C, R> by lazy { Mat((0 until numCols).map { i -> Vec<X, R>(rows.map { it[i] }) }) }
+  override val ᵀ: Mat<X, C, R> by lazy { Mat(cols) }
 
   override operator fun unaryMinus(): Mat<X, R, C> = Mat(rows.map { -it })
 
@@ -177,9 +179,9 @@ open class Mat<X: Fun<X>, R: D1, C: D1>(override val sVars: Set<Var<X>> = emptyS
 
   override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
     when (multiplicand) {
-      is Mat -> Mat((0 until numRows).map { i ->
-        Vec((0 until multiplicand.numCols).map { j ->
-          rows[i] dot multiplicand.ᵀ[j]
+      is Mat -> Mat(indices.map { i ->
+        Vec(multiplicand.cols.indices.map { j ->
+          rows[i] dot multiplicand.cols[j]
         })
       })
       else -> super.times(multiplicand)
