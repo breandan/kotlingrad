@@ -41,7 +41,8 @@ fun <X> Mt1x1(d0: X): Mt<X, N1, N1> = Mt(Vt(d0))
 fun <X> Mt1x2(d0: X, d1: X): Mt<X, N1, N2> = Mt(Vt(d0, d1))
 fun <X> Mt2x1(d0: X, d1: X): Mt<X, N2, N1> = Mt(Vt(d0), Vt(d1))
 
-operator fun <X, Q: N9, R: N9, S: N9> Mt<X, Q, R>.times(m: Mt<X, R, S>): Mt<X, Q, S> = TODO()
+operator fun <X, Q: N9, R: N9, S: N9> Mt<X, Q, R>.times(m: Mt<X, R, S>): Mt<X, Q, S> =
+  Mt(*(vecs.indices).map { i -> TODO() }.toTypedArray())
 
 open class Cb<X, M: N9, R: N9, C: N9>(vararg val mats: Mt<X, R, C>)
 

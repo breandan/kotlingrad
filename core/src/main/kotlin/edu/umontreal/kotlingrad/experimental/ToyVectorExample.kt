@@ -115,8 +115,20 @@ class VSProd<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: Fun<X>): VFun<X,
 class MVProd<X: Fun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, R>(left.sVars + right.sVars)
 class VMProd<X: Fun<X>, R: D1, C: D1>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.sVars + right.sVars)
 
-class Gradient<X : Fun<X>, E: D1>(val fn: Fun<X>, vararg val vrbs: Var<X>): VFun<X, E>(fn.sVars) {
-  override fun invoke(bnds: Bindings<X>) = Vec<X, E>(vrbs.map { Derivative(fn, it)() })(bnds)
+class Gradient<X : Fun<X>, E: D1>: VFun<X, E> {
+
+  val fn: Fun<X>
+  val vrbs: Array<out Var<X>>
+
+  constructor(fn: Fun<X>, vararg vrbs: Var<X>): super(fn.sVars) {
+    this.fn = fn
+    this.vrbs = vrbs
+  }
+
+  //  constructor(fn: Fun<X>, vVar: VVar<X, E>): super(fn.sVars, vVar)
+override fun invoke(bnds: Bindings<X>) = Vec<X, E>(vrbs.map { Derivative(fn, it)() })(bnds)
+  //  override fun invoke(bnds: Bindings<X>) =
+  //    if(Vec<X, E>(vrbs.map { Derivative(fn, it)() })(bnds)
 }
 
 class VVar<X: Fun<X>, E: D1>(override val name: String = ""): Variable, VFun<X, E>()
@@ -150,6 +162,9 @@ class VOne<X: Fun<X>, E: D1>: VConst<X, E>()
 open class Vec<X: Fun<X>, E: D1>(override val sVars: Set<Var<X>> = emptySet(),
                                  val contents: List<Fun<X>>): VFun<X, E>() {
   constructor(contents: List<Fun<X>>): this(contents.flatMap { it.sVars }.toSet(), contents)
+
+  val size = contents.size
+  val indices = contents.indices
 
   override fun toString() = contents.joinToString(", ", "[", "]")
 

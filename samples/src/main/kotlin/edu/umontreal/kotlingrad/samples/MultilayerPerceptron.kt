@@ -31,46 +31,41 @@ class MultilayerPerceptron<T: Fun<T>>(
 
   companion object {
     @JvmStatic
-    fun main(args: Array<String>) {
-      with(DoublePrecision) {
-        var w1: VFun<DReal, D3> = Vec(1.0, 1.0, 1.0)
+    fun main(args: Array<String>) = with(DoublePrecision) {
+      var w1: VFun<DReal, D3> = Vec(1.0, 1.0, 1.0)
 
-        var w2: MFun<DReal, D3, D3> = Mat3x3(
-          1.0, 1.0, 1.0,
-          1.0, 1.0, 1.0,
-          1.0, 1.0, 1.0
-        )
+      var w2: MFun<DReal, D3, D3> = Mat3x3(
+        1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0,
+        1.0, 1.0, 1.0
+      )
 
-        var w3: VFun<DReal, D3> = Vec(1.0, 1.0, 1.0)
+      var w3: VFun<DReal, D3> = Vec(1.0, 1.0, 1.0)
 
-        val oracle = { it: Double -> it * it }
-        val drawSample = { Random.nextDouble().let { Pair(it, oracle(it)) } }
-        val mlp = MultilayerPerceptron<DReal>()
+      val oracle = { it: Double -> it * it }
+      val drawSample = { Random.nextDouble().let { Pair(it, oracle(it)) } }
+      val mlp = MultilayerPerceptron<DReal>()
 
-        var i = 1.0
-        var totalLoss = 0.0
-        val α = DReal(0.01)
+      var i = 1.0
+      var totalLoss = 0.0
+      val α = DReal(0.01)
 
-        do {
-          val (X, Y) = drawSample()
-          val m = mlp(
-            p1 = w1,
-            p2 = w2,
-            p3 = w3
-          )
+      do {
+        val (X, Y) = drawSample()
+        val m = mlp(p1 = w1, p2 = w2, p3 = w3)
 
-          totalLoss += m(mlp.x to X, mlp.y to Y).asDouble()
+        totalLoss += m(mlp.x to X, mlp.y to Y).asDouble()
 
-          val dw1 = m.d(mlp.p1v)(mlp.x to X, mlp.y to Y)
-          val dw2 = m.d(mlp.p2v)(mlp.x to X, mlp.y to Y)
-          val dw3 = m.d(mlp.p3v)(mlp.x to X, mlp.y to Y)
+        val dw1 = m.d(mlp.p1v)(mlp.x to X, mlp.y to Y)
+        val dw2 = m.d(mlp.p2v)(mlp.x to X, mlp.y to Y)
+        val dw3 = m.d(mlp.p3v)(mlp.x to X, mlp.y to Y)
 
-          w1 += α * dw1
-          w2 += α * dw2
-          w3 += α * dw3
-          val avgLoss = totalLoss / i
-        } while (i++ < 1000 || 0.5 < avgLoss)
-      }
+        w1 += α * dw1
+        w2 += α * dw2
+        w3 += α * dw3
+        val avgLoss = totalLoss / i
+        println(avgLoss)
+      } while (i++ < 100 || 0.5 < avgLoss)
     }
   }
 }
