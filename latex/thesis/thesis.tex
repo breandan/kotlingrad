@@ -60,12 +60,23 @@
 
 \usepackage{menukeys}
 \usepackage{relsize}
-\usepackage[skins,breakable,listings]{tcolorbox}
+
 % Code listings
+
+\usepackage[skins,breakable,listings]{tcolorbox}
+
+\usepackage{accsupp}
+\newcommand{\noncopyable}[1]{%
+\BeginAccSupp{method=escape,ActualText={}}%
+#1%
+\EndAccSupp{}%
+}
+
 \lstdefinelanguage{kotlin}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
     emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, repeat, assert, return@},
+    numberstyle=\noncopyable,
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
     keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec, reified},
@@ -83,6 +94,7 @@
 \lstdefinelanguage{docker}{
     keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
     keywordstyle=\color{blue}\bfseries,
+    numberstyle=\noncopyable,
     identifierstyle=\color{black},
     sensitive=true,
     comment=[l]{\#},
@@ -95,18 +107,19 @@
 \lstdefinelanguage{BashPrompt}{%
     keywordstyle=\color{blue},
     basicstyle=\ttfamily,
-    literate={\$}{{\bfseries\textcolor{blue}{\$}}}1
-    {~}{{\bfseries\textcolor{blue}{\textasciitilde}}}1,
+    literate={\$}{{\bfseries\textcolor{blue}{\noncopyable\$}}}1
+    {~}{{\bfseries\textcolor{blue}{\noncopyable\textasciitilde}}}1,
 }
 
 \lstdefinelanguage{DtsPrompt}{%
     keywordstyle=\color{blue},
     basicstyle=\ttfamily,
-    literate={dt> }{{\bfseries\textcolor{blue}{dt> }}}1
+    literate={dt> }{{\bfseries\textcolor{blue}{\noncopyable{dt> }}}}1
 }
 
 \lstdefinelanguage{XML}{
     basicstyle=\ttfamily,
+    numberstyle=\noncopyable,
     morestring=[s][\color{black}]{"}{"},
     morestring=[s][\color{black}]{>}{<},
     stringstyle=\color{black},
@@ -119,6 +132,7 @@
 \lstdefinelanguage{bnf}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
+    numberstyle=\noncopyable,
     basicstyle=\ttfamily,
     morestring=[s][\color{RoyalPurple}\bfseries]{"}{"},
     emphstyle={\color{ForestGreen}\bfseries},
@@ -135,7 +149,7 @@
 \lstdefinestyle{barelisting}{
     language=kotlin,
     basicstyle=\ttfamily\scriptsize,
-    numberstyle=\footnotesize,
+    numberstyle=\footnotesize\noncopyable,
     backgroundcolor=\color{slightgray},
     frame=single,
     tabsize=2,
@@ -156,7 +170,7 @@
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\small,
-        numberstyle=\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
         tabsize=2,
         numbers=right,
         breaklines=true,
@@ -173,7 +187,7 @@
     listing options={
         language=kotlin,
         basicstyle=\ttfamily\scriptsize,
-        numberstyle=\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
         showstringspaces=false,
         tabsize=2,
         breaklines=true,
@@ -191,6 +205,7 @@
     listing options={
         language=BashPrompt,
         basicstyle=\ttfamily\small,
+        numberstyle=\noncopyable,
         tabsize=2,
         numbers=right,
         inputencoding=utf8,
@@ -207,6 +222,7 @@
     listing options={
         language=DtsPrompt,
         basicstyle=\ttfamily\small,
+        numberstyle=\noncopyable,
         numbers=right,
         tabsize=2,
         inputencoding=utf8,
@@ -240,7 +256,7 @@
     listing options={
         language=XML,
         basicstyle=\ttfamily\small,
-        numberstyle=\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
         tabsize=2,
         numbers=right,
         breaklines=true,
@@ -257,7 +273,7 @@
     listing options={
         language=docker,
         basicstyle=\ttfamily\small,
-        numberstyle=\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
         tabsize=2,
         numbers=right,
         breaklines=true,
@@ -274,6 +290,7 @@
     listing options={
         language=bnf,
         basicstyle=\ttfamily\small,
+        numberstyle=\noncopyable,
         breaklines=true,
         numbers=right,
         showstringspaces=false,
@@ -289,6 +306,7 @@
     listing options={
         language=Python,
         basicstyle=\ttfamily\small,
+        numberstyle=\noncopyable,
         breaklines=true,
         numbers=right,
         showstringspaces=false,
@@ -305,6 +323,7 @@
     listing options={
         language=BashPrompt,
         basicstyle=\ttfamily\small,
+        numberstyle=\noncopyable,
         tabsize=2,
         inputencoding=utf8,
         #1
@@ -563,7 +582,7 @@ Most existing AD frameworks for machine learning are written in dynamically-type
 
 \section{Verification: Testing intelligent systems}
 
-Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the ``curse of dimensionality''. Our physical universe is populated by problems which are simple to pose, but impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^{120}$, more than the number of atoms in the universe by approximately forty orders of magnitude~\citep{shannon1950chess}. At the time, it was believed that such problems would be insurmountable without fundamental breakthroughs in algorithms and computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before solutions to problems with the same order of complexity, first solved in the Cambrian explosion 541 million years ago, were approximated to a competitive margin in modern computers~\citep{pratt2015cambrian}.
+Most naturally arising phenomena, particularly those related to vision, planning and locomotion are high dimensional creatures. Richard Bellman famously coined this problem as the ``curse of dimensionality''. Our physical universe is populated with problems which are simple to pose, but seemingly impossible to solve inside of it. Claude Shannon, a contemporary of Bellman, calculated the number of unique chess games to exceed $10^{120}$, more than the number of atoms in the universe by approximately forty orders of magnitude~\citep{shannon1950chess}. At the time, it was believed that such problems would be insurmountable without fundamental breakthroughs in algorithms and computing machinery. Indeed, while Bellman or Shannon did not live to see the day, it took only half a century of progress in computer science before solutions to problems with the same order of complexity, first discovered in the Cambrian explosion 541 million years ago, were implemented to a competitive margin in modern computers~\citep{pratt2015cambrian}.
 
 While computer science has made enormous strides in solving the common cases, Bellman's curse of dimensionality still haunts the long tail of machine learning, particularly for distributions that are highly dispersed. Because the dimensionality of many real-world functions that we would like to approximate is intractably large, it is difficult to verify the behavior of a candidate solution in all regimes, especially in settings where failure is rare but catastrophic. According to some studies, humans drivers average 1.09 fatalities per hundred million miles~\citep{kalra2016driving}. A new software build for an autonomous vehicle would need to accumulate 8.8 billion miles of driving in order to approximate the fatality rate of a human operator to within 20\% with a 95\% confidence interval. Deploying such a scheme in the real-world would be logistically, not to mention ethically, problematic.
 
@@ -1413,7 +1432,7 @@ val X = (*\uwave{Vec(0, 0) + Vec(0, 0, 0)}*) // Compile error: Expected Vec<Int,
 Dynamic length construction is also permitted, although it may fail at runtime. For example:
 %
 \begin{kotlinlisting}
-val one = Vec(0, 0, 0) + Vec(0, 0, 0)   // Always runs safely
+val one = Vec(0, 0, 0) + Vec(0, 0, 0) // Always runs safely
 val add = Vec(0, 0, 0) + Vec<Int, D3>(listOf(...)) // Compiles, but may fail at runtime
 val vec = Vec(0, 0, 0) // Inferred type: Vec<3>
 val sum = (*\uwave{Vec(0, 0) + add}*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
@@ -1425,8 +1444,9 @@ Matrices and tensors have a similar syntax. For example, Kotlin$\nabla$ can infe
 open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
 fun <X> Mat1x2(d0: X, d1: X): Mat<X, D1, D2> = Mat(Vec(d0, d1))
 fun <X> Mat2x1(d0: X, d1: X): Mat<X, D2, D1> = Mat(Vec(d0), Vec(d1))
-// ...
-operator fun <Q: D1, R: D1, S: D1> Mat<Int, Q, R>.times(m: Mat<Int, R, S>): Mat<Int, Q, S> = TODO()
+
+operator fun <X, Q: D1, R: D1, S: D1> Mat<X, Q, R>.times(m: Mat<X, R, S>): Mat<X, Q, S> =
+    Mt( *(rows.indices).map { i -> /* ... */ }.toTypedArray() )
 
 val matM = Mat1x2(0, 0)
 val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<2, *>, found Mat<1, 2>
@@ -1987,7 +2007,7 @@ Let us consider an extension of classical fuzzing methods to differentiable func
 We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge at all, a subset would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
 \begin{algorithm}[ht]
-    \caption{Probabilistic Adversary}
+    \caption{Probabilistic Generator}
     \label{alg:prob_adversary}
     \begin{algorithmic}[1]
         \Procedure{ProbAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, budget: $\mathbb Z^+$}
@@ -1995,9 +2015,9 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
         \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
             \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from S}
             \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, perform gradient ascent}
-                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
+                \State $D_\mathbf T \gets D_\mathbf T$ $\cup$ \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
             \Else \Comment{Outside feasible set, perform gradient descent}
-                \State $D_\mathbf T \gets D_\mathbf T $ + \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
+                \State $D_\mathbf T \gets D_\mathbf T$ $\cup$  \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
             \EndIf
             \State $j \gets j + 1$
         \EndWhile
@@ -2007,10 +2027,10 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
 \end{algorithm}
 
 \begin{algorithm}[ht]
-    \caption{Differential Adversary}
+    \caption{Differential Shrinker}
     \label{alg:diff_adversary}
     \begin{algorithmic}[1]
-        \Procedure{DiffAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$}
+        \Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$}
         \State $i \gets 1$
         \State $t_1 \gets \mathbf T\big(\mathbf x_1, \mathcal L(\mathbf x_1)\big)$ \Comment{Store initial state to detect when test flips.}
         \While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
@@ -2752,7 +2772,7 @@ One of the primary use cases for the Duckietown container infrastructure is a bi
 
 An unfortunate technical shortcoming of the Docker system is its reliance on superuser privileges. While Docker takes a variety of preventative measures to ensure container inhabitants cannot gain escalated privileges, numerous breakout attacks have been discovered~\citep{martin2018docker} in the wild. Any process which can circumvent container security gains unfettered access to the host OS, making Docker especially unsuitable for deployment on cloud, grid, and cluster computing environments.
 
-Furthermore, Docker provides a mechanism to bypass its own security measures, allowing container applications to run as if they were root processes on the host OS: the \href{https://docs.docker.com/engine/reference/run/#security-configuration}{\inline{-{}-privileged} flag}. This feature, alongside with the fact that most Docker users are unqualified to audit upstream images, which are liable to include packages of dubious provenance~\citep{martin2018docker}, is particularly concerning.
+Furthermore, Docker provides a mechanism to bypass its own security measures, allowing container applications to run as if they were root processes on the host OS: the \href{https://docs.docker.com/engine/reference/run/#security-configuration}{\inline{-{}-privileged} flag}. This feature, alongside the fact that most Docker users are unqualified to audit upstream images, which are liable to include packages of dubious provenance~\citep{martin2018docker}, makes Docker particularly troublesome for shared-computing environments.
 
 Docker's unnecessarily high privileges and susceptibility for misuse are serious issues. While operator error may be partly at fault, these vulnerabilities are primarily the result of poor implementation choices. Docker's flagrant violation of the principle of least privilege~\citep{saltzer1975protection} effectively compromises the entire Linux security model.
 
