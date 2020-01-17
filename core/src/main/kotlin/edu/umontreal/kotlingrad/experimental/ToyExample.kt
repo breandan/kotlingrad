@@ -57,63 +57,82 @@ interface Field<X : Field<X>> : Group<X> {
   fun ln(): X
 }
 
+interface Fun<X: SFun<X>> {
+  val inputs: Inputs<X>
+}
+
+/**
+ * TODO: Figure out how to merge with
+ * @see Bindings
+ */
+
+data class Inputs<X: SFun<X>>(
+  val sVars: Set<Var<X>> = emptySet(),
+  val vVars: Set<VVar<X, *>> = emptySet(),
+  val mVars: Set<MVar<X, *, *>> = emptySet()
+) {
+  constructor(inputs: List<Inputs<X>>): this(
+    inputs.flatMap { it.sVars }.toSet(),
+    inputs.flatMap { it.vVars }.toSet(),
+    inputs.flatMap { it.mVars }.toSet()
+  )
+
+  constructor(vararg funs: Fun<X>): this(funs.map { it.inputs })
+}
+
 /**
  * Scalar function.
  */
 
-sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<Fun<X>>, (Bindings<X>) -> Fun<X> {
-  constructor(fn: Fun<X>) : this(fn.sVars)
-  constructor(vararg fns: Fun<X>) : this(fns.flatMap { it.sVars }.toSet())
+sealed class SFun<X: SFun<X>>(override val inputs: Inputs<X>): Fun<X>, Field<SFun<X>>, (Bindings<X>) -> SFun<X> {
+  constructor(vararg funs: Fun<X>) : this(Inputs(*funs))
 
-  override operator fun plus(addend: Fun<X>): Fun<X> = Sum(this, addend)
-  override operator fun times(multiplicand: Fun<X>): Fun<X> = Prod(this, multiplicand)
-  override operator fun div(divisor: Fun<X>): Fun<X> = this * divisor.pow(-One<X>())
+  override operator fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
+  override operator fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
+  override operator fun div(divisor: SFun<X>): SFun<X> = this * divisor.pow(-One<X>())
   open operator fun <E : D1> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
   open operator fun <R : D1, C : D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
-  override operator fun invoke(bnds: Bindings<X>): Fun<X> =
+  override operator fun invoke(bnds: Bindings<X>): SFun<X> =
       Composition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
 
-  open operator fun invoke(): Fun<X> = invoke(Bindings())
+  open operator fun invoke(): SFun<X> = invoke(Bindings())
 
-  open fun d(v1: Var<X>): Fun<X> = Derivative(this, v1)
+  open fun d(v1: Var<X>): SFun<X> = Derivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(Derivative(this, v1), Derivative(this, v2))
   open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
-  open fun d(vararg vars: Var<X>): Map<Var<X>, Fun<X>> = vars.map { it to Derivative(this, it) }.toMap()
+  open fun d(vararg vars: Var<X>): Map<Var<X>, SFun<X>> = vars.map { it to Derivative(this, it) }.toMap()
 
   open fun <L: D1> d(vVar: VVar<X, L>): VFun<X, L> = Gradient(this, vVar)
   open fun <R: D1, C: D1> d(mVar: MVar<X, R, C>): MFun<X, R, C> = TODO()
 
-  open fun <R : D1, C : D1> d(mv: Mat<X, R, C>) = d(*mv.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) { index, acc: MutableList<MutableList<Fun<X>>>, p ->
+  open fun <R : D1, C : D1> d(mv: Mat<X, R, C>) = d(*mv.inputs.sVars.toTypedArray()).values.foldIndexed(mutableListOf()) { index, acc: MutableList<MutableList<SFun<X>>>, p ->
     if (index % mv.numCols == 0) acc.add(mutableListOf(p)) else acc.last().add(p)
     acc
   }.map { Vec<X, C>(it) }.let { Mat<X, R, C>(it) }
 
-  open fun grad(): Map<Var<X>, Fun<X>> = sVars.map { it to Derivative(this, it) }.toMap()
+  open fun grad(): Map<Var<X>, SFun<X>> = inputs.sVars.map { it to Derivative(this, it) }.toMap()
 
-  override fun ln(): Fun<X> = Log(this)
-  override fun pow(exp: Fun<X>): Fun<X> = Power(this, exp)
-  override fun unaryMinus(): Fun<X> = Negative(this)
-  open fun sqrt(): Fun<X> = this pow (One<X>() / (Two<X>()))
+  override fun ln(): SFun<X> = Log(this)
+  override fun pow(exp: SFun<X>): SFun<X> = Power(this, exp)
+  override fun unaryMinus(): SFun<X> = Negative(this)
+  open fun sqrt(): SFun<X> = this pow (One<X>() / Two())
 
-  override fun toString(): String = when {
-    this is Log -> "ln($logarithmand)"
-    this is Negative -> "-($value)"
-    this is Power -> "($base) pow ($exponent)"
-//    this is Prod && right is Sum -> "$left * ($right)"
-//    this is Prod && left is Sum -> "($left) * $right"
-    this is Prod -> "($left) * ($right)"
-    this is Sum && right is Negative -> "$left - ${right.value}"
-    this is Sum -> "$left + $right"
-    this is Var -> name
-    this is Derivative -> "d($fn) / d($vrb)"
-    this is Zero -> "0" //"\uD835\uDFD8" // 𝟘
-    this is One -> "1" //"\uD835\uDFD9"  // 𝟙
-    this is Two -> "2" //"\uD835\uDFDA"  // 𝟚
-    this is E -> "\u2147" // ⅇ
-    this is VMagnitude -> "|$value|"
-    this is DProd -> "($left) dot ($right)"
-    this is Composition -> "($fn) comp $bindings"
+  override fun toString(): String = when (this) {
+    is Log -> "ln($logarithmand)"
+    is Negative -> "- ($value)"
+    is Power -> "($base) pow ($exponent)"
+    is Prod -> "($left) * ($right)"
+    is Sum -> if(right is Negative) "$left $right" else "$left + $right"
+    is Var -> name
+    is Derivative -> "d($fn) / d($vrb)"
+    is Zero -> "0" //"\uD835\uDFD8" // 𝟘
+    is One -> "1"  //"\uD835\uDFD9" // 𝟙
+    is Two -> "2"  //"\uD835\uDFDA" // 𝟚
+    is E -> "E()"  //"\u2147"       // ⅇ
+    is VMagnitude -> "|$value|"
+    is DProd -> "($left) dot ($right)"
+    is Composition -> "($fn)($bindings)"
     else -> super.toString()
   }
 
@@ -128,7 +147,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
   }
 
   fun toGraph(): MutableNode = mutNode(if (this is Var) "$this" else "${hashCode()}").apply {
-    when (this@Fun) {
+    when (this@SFun) {
       is Var -> name
       is Negative -> { value.toGraph() - this; add(Label.of("neg")) }
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
@@ -137,7 +156,7 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
       is One -> add(Label.of("one"))
       is Zero -> add(Label.of("zero"))
       is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
-      else -> TODO(this@Fun.javaClass.toString())
+      else -> TODO(this@SFun.javaClass.toString())
     }
   }
 }
@@ -146,16 +165,16 @@ sealed class Fun<X : Fun<X>>(open val sVars: Set<Var<X>> = emptySet()) : Field<F
  * Symbolic operators.
  */
 
-sealed class BiFun<X: Fun<X>>(val left: Fun<X>, val right: Fun<X>): Fun<X>(left, right)
+sealed class BiFun<X: SFun<X>>(val left: SFun<X>, val right: SFun<X>): SFun<X>(left, right)
 
-class Sum<X : Fun<X>>(val addend: Fun<X>, val augend: Fun<X>): BiFun<X>(addend, augend)
+class Sum<X : SFun<X>>(val addend: SFun<X>, val augend: SFun<X>): BiFun<X>(addend, augend)
 
-class Negative<X : Fun<X>>(val value: Fun<X>) : Fun<X>(value)
-class Prod<X : Fun<X>>(val multiplicand: Fun<X>, val multiplicator: Fun<X>): BiFun<X>(multiplicand, multiplicator)
-class Power<X : Fun<X>> internal constructor(val base: Fun<X>, val exponent: Fun<X>) : BiFun<X>(base, exponent)
-class Log<X : Fun<X>> internal constructor(val logarithmand: Fun<X>, val base: Fun<X> = E()) : BiFun<X>(logarithmand, base)
-class Derivative<X : Fun<X>>(val fn: Fun<X>, val vrb: Var<X>) : Fun<X>(fn, vrb) {
-  fun Fun<X>.df(): Fun<X> = when (this) {
+class Negative<X : SFun<X>>(val value: SFun<X>) : SFun<X>(value)
+class Prod<X : SFun<X>>(val multiplicand: SFun<X>, val multiplicator: SFun<X>): BiFun<X>(multiplicand, multiplicator)
+class Power<X : SFun<X>> internal constructor(val base: SFun<X>, val exponent: SFun<X>) : BiFun<X>(base, exponent)
+class Log<X : SFun<X>> internal constructor(val logarithmand: SFun<X>, val base: SFun<X> = E()) : BiFun<X>(logarithmand, base)
+class Derivative<X : SFun<X>>(val fn: SFun<X>, val vrb: Var<X>) : SFun<X>(fn, vrb) {
+  fun SFun<X>.df(): SFun<X> = when (this@df) {
     is Var -> if (this == vrb) One() else Zero()
     is SConst -> Zero()
     is Sum -> left.df() + right.df()
@@ -166,15 +185,15 @@ class Derivative<X : Fun<X>>(val fn: Fun<X>, val vrb: Var<X>) : Fun<X>(fn, vrb) 
     is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
-    is Composition -> bindings.curried().fold(One()) { acc: Fun<X>, binding ->
+    is Composition -> bindings.curried().fold(One()) { acc: SFun<X>, binding ->
       acc * fn.df()(binding) * binding.sMap.entries.first().value.df()
     }
   }
 }
 
-class Composition<X : Fun<X>>(val fn: Fun<X>, val bindings: Bindings<X>) : Fun<X>() {
-  val evaluate by lazy { apply() }
-  override val sVars: Set<Var<X>> by lazy { evaluate.sVars }
+class Composition<X : SFun<X>>(val fn: SFun<X>, val bindings: Bindings<X>) : SFun<X>(fn) {
+  val evaluate by lazy { call() }
+  override val inputs: Inputs<X> by lazy { evaluate.inputs }
 
 //  private fun calculateFixpoint(): Fun<X> {
 //    var result = apply()
@@ -187,64 +206,63 @@ class Composition<X : Fun<X>>(val fn: Fun<X>, val bindings: Bindings<X>) : Fun<X
 //    return result
 //  }
 
-  fun Fun<X>.apply(): Fun<X> =
-    bindings.sMap.getOrElse(this) {
-      when (this) {
-        is Zero -> bindings.zero
-        is One -> bindings.one
-        is Two -> bindings.two
-        is E -> bindings.e
-        is Var -> this
-        is SConst -> this
-        is Prod -> left.apply() * right.apply()
-        is Sum -> left.apply() + right.apply()
-        is Power -> base.apply() pow exponent.apply()
-        is Negative -> -value.apply()
-        is Log -> logarithmand.apply().ln()
-        is Derivative -> df().apply()
-        is DProd -> left(bindings) as Vec<X, D1> dot right(bindings) as Vec<X, D1>
-        is VMagnitude -> value(bindings).magnitude()
-        is Composition -> fn.apply().apply()
-      }
-    }
+  fun SFun<X>.call(): SFun<X> = bindings.sMap.getOrElse(this@call) { bind() }
+
+  fun SFun<X>.bind() = when (this@bind) {
+    is Zero -> bindings.zero
+    is One -> bindings.one
+    is Two -> bindings.two
+    is E -> bindings.e
+    is Var -> this
+    is SConst -> this
+    is Prod -> left.call() * right.call()
+    is Sum -> left.call() + right.call()
+    is Power -> base.call() pow exponent.call()
+    is Negative -> -value.call()
+    is Log -> logarithmand.call().ln()
+    is Derivative -> df().call()
+    is DProd -> left(bindings) as Vec<X, D1> dot right(bindings) as Vec<X, D1>
+    is VMagnitude -> value(bindings).magnitude()
+    is Composition -> fn.call().call()
+  }
 }
 
-data class Bindings<X : Fun<X>>(
-    val sMap: Map<Fun<X>, Fun<X>> = mapOf(),
-    val zero: Fun<X> = Zero(),
-    val one: Fun<X> = One(),
-    val two: Fun<X> = Two(),
-    val e: Fun<X> = E()) {
+data class Bindings<X : SFun<X>>(
+  val sMap: Map<SFun<X>, SFun<X>> = mapOf(),
+  val zero: SFun<X> = Zero(),
+  val one: SFun<X> = One(),
+  val two: SFun<X> = Two(),
+  val e: SFun<X> = E()) {
   //  constructor(sMap: Map<Fun<X>, Fun<X>>,
 //              vMap: Map<VFun<X, *>, VFun<X, *>>,
 //              zero: Fun<X>,
 //              one: Fun<X>,
 //              two: Fun<X>,
 //              E: Fun<X>): this(sMap, zero, one, two, E)
-  val isReassignmentFree = sMap.values.all { it.sVars.isEmpty() }
-  fun determines(fn: Fun<X>) = fn.sVars.all { it in sMap }
+  val isReassignmentFree = sMap.values.all { it.inputs.sVars.isEmpty() }
+  fun fullyDetermines(fn: SFun<X>) = fn.inputs.sVars.all { it in sMap }
   override fun toString() = sMap.toString()
   operator fun contains(v: Var<X>) = v in sMap
   fun curried() = sMap.entries.map { Bindings(mapOf(it.key to it.value), zero, one, two, e) }
 }
 
-class DProd<X: Fun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): Fun<X>(left.sVars + right.sVars)//, left.vVars + right.vVars)
+class DProd<X: SFun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): SFun<X>(left, right)
 
-class VMagnitude<X: Fun<X>>(val value: VFun<X, *>): Fun<X>(value.sVars)//, value.vVars)
+class VMagnitude<X: SFun<X>>(val value: VFun<X, *>): SFun<X>(value)//, value.vVars)
 
 interface Variable { val name: String }
 
-class Var<X : Fun<X>>(override val name: String = "") : Variable, Fun<X>() {
-  override val sVars: Set<Var<X>> = setOf(this)
+class Var<X : SFun<X>>(override val name: String = "") : Variable, SFun<X>() {
+  override val inputs: Inputs<X> = Inputs(setOf(this))
 }
 
-open class SConst<X : Fun<X>> : Fun<X>()
-class Zero<X: Fun<X>> : SConst<X>()
-class One<X: Fun<X>> : SConst<X>()
-class Two<X: Fun<X>> : SConst<X>()
-class E<X: Fun<X>> : SConst<X>()
+open class SConst<X : SFun<X>> : SFun<X>()
+class Zero<X: SFun<X>> : SConst<X>()
+class One<X: SFun<X>> : SConst<X>()
+class Two<X: SFun<X>> : SConst<X>()
+class E<X: SFun<X>> : SConst<X>()
 
-abstract class RealNumber<X : Fun<X>>(open val value: Number) : SConst<X>()
+abstract class RealNumber<X : SFun<X>>(open val value: Number) : SConst<X>()
 
 class DReal(override val value: Double) : RealNumber<DReal>(value) {
   override fun unaryMinus() = DReal(-value)
@@ -255,17 +273,17 @@ class DReal(override val value: Double) : RealNumber<DReal>(value) {
    * Constant propagation.
    */
 
-  override fun plus(addend: Fun<DReal>) = when (addend) {
+  override fun plus(addend: SFun<DReal>) = when (addend) {
     is DReal -> DReal(value + addend.value)
     else -> super.plus(addend)
   }
 
-  override fun times(multiplicand: Fun<DReal>) = when (multiplicand) {
+  override fun times(multiplicand: SFun<DReal>) = when (multiplicand) {
     is DReal -> DReal(value * multiplicand.value)
     else -> super.times(multiplicand)
   }
 
-  override fun pow(exp: Fun<DReal>) = when (exp) {
+  override fun pow(exp: SFun<DReal>) = when (exp) {
     is DReal -> DReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
@@ -290,27 +308,27 @@ class DReal(override val value: Double) : RealNumber<DReal>(value) {
  */
 
 sealed class Protocol<X : RealNumber<X>> {
-  class IndVar<X: Fun<X>> constructor(val fn: Fun<X>)
+  class IndVar<X: SFun<X>> constructor(val fn: SFun<X>)
 
-  class Differential<X: Fun<X>>(private val fx: Fun<X>) {
-    // TODO: make sure this notation works for arbitrary nested functions using the Chain rule
-    infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.sVars.first())
+  class Differential<X: SFun<X>>(private val fx: SFun<X>) {
+    // TODO: ensure correctness for arbitrary nested functions using the Chain rule
+    infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.inputs.sVars.first())
   }
 
-  fun <X: Fun<X>> d(fn: Fun<X>) = Differential(fn)
+  fun <X: SFun<X>> d(fn: SFun<X>) = Differential(fn)
   abstract fun wrap(default: Number): X
 
-  operator fun Number.times(multiplicand: Fun<X>) = multiplicand * wrap(this)
-  operator fun Fun<X>.times(multiplicand: Number) = wrap(multiplicand) * this
+  operator fun Number.times(multiplicand: SFun<X>) = multiplicand * wrap(this)
+  operator fun SFun<X>.times(multiplicand: Number) = wrap(multiplicand) * this
 
-  operator fun Number.plus(addend: Fun<X>) = addend + wrap(this)
-  operator fun Fun<X>.plus(addend: Number) = wrap(addend) + this
+  operator fun Number.plus(addend: SFun<X>) = addend + wrap(this)
+  operator fun SFun<X>.plus(addend: Number) = wrap(addend) + this
 
-  operator fun Number.minus(subtrahend: Fun<X>) = -subtrahend + wrap(this)
-  operator fun Fun<X>.minus(subtrahend: Number) = -wrap(subtrahend) + this
+  operator fun Number.minus(subtrahend: SFun<X>) = -subtrahend + wrap(this)
+  operator fun SFun<X>.minus(subtrahend: Number) = -wrap(subtrahend) + this
 
-  fun Number.pow(exp: Fun<X>) = wrap(this) pow exp
-  infix fun Fun<X>.pow(exp: Number) = this pow wrap(exp)
+  fun Number.pow(exp: SFun<X>) = wrap(this) pow exp
+  infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
 }
 
 object DoublePrecision : Protocol<DReal>() {
@@ -323,9 +341,9 @@ object DoublePrecision : Protocol<DReal>() {
 
   fun vrb(name: String) = Var<DReal>(name)
 
-  @JvmName("ValBnd") operator fun Fun<DReal>.invoke(vararg pairs: Pair<Var<DReal>, Number>) =
+  @JvmName("ValBnd") operator fun SFun<DReal>.invoke(vararg pairs: Pair<Var<DReal>, Number>) =
     this(Bindings(pairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
-  @JvmName("FunBnd") operator fun Fun<DReal>.invoke(vararg pairs: Pair<Fun<DReal>, Fun<DReal>>) =
+  @JvmName("FunBnd") operator fun SFun<DReal>.invoke(vararg pairs: Pair<SFun<DReal>, SFun<DReal>>) =
     this(Bindings(pairs.map { (it.first to it.second) }.toMap(), zero, one, two, e))
 
   operator fun <Y : D1> VFun<DReal, Y>.invoke(vararg sPairs: Pair<Var<DReal>, Number>) =
@@ -334,7 +352,7 @@ object DoublePrecision : Protocol<DReal>() {
   operator fun <Rows : D1, Cols: D1> MFun<DReal, Rows, Cols>.invoke(vararg sPairs: Pair<Var<DReal>, Number>) =
     this(Bindings(sPairs.map { (it.first to wrap(it.second)) }.toMap(), zero, one, two, e))
 
-  fun Fun<DReal>.asDouble() = (this as DReal).value
+  fun SFun<DReal>.asDouble() = (this as DReal).value
 
   val x = vrb("X")
   val y = vrb("Y")

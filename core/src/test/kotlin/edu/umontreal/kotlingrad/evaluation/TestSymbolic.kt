@@ -14,7 +14,7 @@ import javax.script.SimpleBindings
 class TestSymbolic : StringSpec({
   val engine = ScriptEngineManager().getEngineByExtension("kts")
 
-  fun ktEval(f: Fun<DReal>, vararg kgBnds: Pair<Var<DReal>, Number>) =
+  fun ktEval(f: SFun<DReal>, vararg kgBnds: Pair<Var<DReal>, Number>) =
     engine.run {
       val bindings = kgBnds.map { it.first.name to it.second.toDouble() }.toMap()
       setBindings(SimpleBindings(bindings), ScriptContext.ENGINE_SCOPE)
@@ -23,7 +23,7 @@ class TestSymbolic : StringSpec({
 
   with(DoublePrecision) {
     "test symbolic evaluation" {
-      ExpressionGenerator.assertAll(10) { f: Fun<DReal> ->
+      ExpressionGenerator.assertAll(10) { f: SFun<DReal> ->
         try {
           DoubleGenerator.assertAll(10) { ẋ, ẏ, ż ->
             f(x to ẋ, y to ẏ, z to ż) shouldBeAbout ktEval(f, x to ẋ, y to ẏ, z to ż)

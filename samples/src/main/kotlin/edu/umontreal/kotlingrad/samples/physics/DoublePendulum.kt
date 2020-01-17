@@ -19,19 +19,19 @@ import kotlin.math.*
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class DoublePendulum(private val len: Double = 900.0) : Application(), EventHandler<ActionEvent> {
-  var ω1: Fun<DReal> = DoublePrecision.wrap(0.0) // Angular velocities
-  var ω2: Fun<DReal> = DoublePrecision.wrap(0.0)
+  var ω1: SFun<DReal> = DoublePrecision.wrap(0.0) // Angular velocities
+  var ω2: SFun<DReal> = DoublePrecision.wrap(0.0)
   val m1 = 2.0 // Masses
   val m2 = 2.0
-  var G: Fun<DReal> = DoublePrecision.wrap(9.81) // Gravity
-  var µ: Fun<DReal> = DoublePrecision.wrap(0.01) // Friction
+  var G: SFun<DReal> = DoublePrecision.wrap(9.81) // Gravity
+  var µ: SFun<DReal> = DoublePrecision.wrap(0.01) // Friction
   val Gp = 0.01  // Simulate measurement error
   val µp = -0.01
   var r1 = DoublePrecision.Vec(1.0, 0.0) // Polar vector
   var r2 = DoublePrecision.Vec(1.0, 0.0)
   val observationSteps = 30
   var priorVal = 5.0
-  fun step(obs: Fun<DReal>? = null, groundTruth: Pair<VConst<DReal, D2>, VConst<DReal, D2>>? = null) = with(DoublePrecision) {
+  fun step(obs: SFun<DReal>? = null, groundTruth: Pair<VConst<DReal, D2>, VConst<DReal, D2>>? = null) = with(DoublePrecision) {
     val isObserving = false
 //    val priorVal = if(G is Var) G.asDouble()
     if (isObserving) {
@@ -69,10 +69,10 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     }
 
     val r1a = (r1.angle + (ω1 * dt + .5 * α1 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(inputs.sVars.first() to priorVal).asDouble() }
     }
     val r2a = (r2.angle + - (ω2 * dt + .5 * α2 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(inputs.sVars.first() to priorVal).asDouble() }
     }
 
     if(G is Var) {
@@ -90,11 +90,11 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     }
   }
 
-  fun Fun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DReal>, DReal>): Fun<DReal> {
+  fun SFun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DReal>, DReal>): SFun<DReal> {
     with(DoublePrecision) {
       val d_dg = this@descend.d(map.first)
-      var G1P: Fun<DReal> = map.second
-      var velocity: Fun<DReal> = wrap(vinit)
+      var G1P: SFun<DReal> = map.second
+      var velocity: SFun<DReal> = wrap(vinit)
       var i = 0
       do {
         velocity = gamma * velocity + d_dg(map.first to G1P) * α
