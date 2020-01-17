@@ -4,7 +4,7 @@ import edu.umontreal.kotlingrad.experimental.*
 import kotlin.random.Random
 
 @Suppress("NonAsciiCharacters")
-class MultilayerPerceptron<T: Fun<T>>(
+class MultilayerPerceptron<T: SFun<T>>(
   val x: Var<T> = Var(),
   val y: Var<T> = Var(),
   val p1v: VVar<T, D3> = VVar(),
@@ -12,12 +12,12 @@ class MultilayerPerceptron<T: Fun<T>>(
   val p3v: VVar<T, D3> = VVar()
 ): (VFun<T, D3>,
     MFun<T, D3, D3>,
-    VFun<T, D3>) -> Fun<T> {
+    VFun<T, D3>) -> SFun<T> {
   override operator fun invoke(
     p1: VFun<T, D3>,
     p2: MFun<T, D3, D3>,
     p3: VFun<T, D3>
-  ): Fun<T> {
+  ): SFun<T> {
     val layer1 = layer(p1 * x)
     val layer2 = layer(p2 * layer1)
     val output = layer2 dot p3
@@ -25,7 +25,7 @@ class MultilayerPerceptron<T: Fun<T>>(
     return lossFun
   }
 
-  private fun sigmoid(x: Fun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
+  private fun sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 
   private fun layer(x: VFun<T, D3>): VFun<T, D3> = x.map { sigmoid(it) }
 

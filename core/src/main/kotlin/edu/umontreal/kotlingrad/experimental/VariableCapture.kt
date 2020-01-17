@@ -77,7 +77,7 @@ open class X<P: Const<P, in Number>>(override val left: BiFn<*>,
     op(left(X), right(X))
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is X<*> -> (this as X<P>)(X)
       else -> throw IllegalStateException(toString())
@@ -128,7 +128,7 @@ open class Y<P: Const<P, in Number>>(override val left: BiFn<*>,
     op(left(Y), right(Y))
 
   private operator fun BiFn<*>.invoke(Y: YBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is Y<*> -> (this as Y<P>)(Y)
       else -> throw IllegalStateException(toString())
@@ -178,7 +178,7 @@ open class Z<P: Const<P, in Number>>(override val left: BiFn<*>,
   open operator fun invoke(Z: ZBnd<P>): P = op(left(Z), right(Z))
 
   private operator fun BiFn<*>.invoke(Z: ZBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is Z<*> -> (this as Z<P>)(Z)
       else -> throw IllegalStateException(toString())
@@ -226,7 +226,7 @@ class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>, Y: YBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is XY<*> -> (this as XY<P>)(X, Y)
       is X<*> -> (this as X<P>)(X)
@@ -237,7 +237,7 @@ class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(X: XBnd<P>, Y: YBnd<P>): P = op(left(X, Y), right(X, Y))
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>): Y<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> Y(this as P)
       is XY<*> -> (this as XY<P>)(X)
       is X<*> -> Y((this as X<P>)(X))
@@ -246,7 +246,7 @@ class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
     }
 
   private operator fun BiFn<*>.invoke(Y: YBnd<P>): X<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> X(this as P)
       is XY<*> -> (this as XY<P>)(Y)
       is Y<*> -> X((this as Y<P>)(Y))
@@ -299,7 +299,7 @@ class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>, Z: ZBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is XZ<*> -> (this as XZ<P>)(X, Z)
       is X<*> -> (this as X<P>)(X)
@@ -310,7 +310,7 @@ class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(X: XBnd<P>, Z: ZBnd<P>): P = op(left(X, Z), right(X, Z))
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>): Z<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> Z(this as P)
       is XZ<*> -> (this as XZ<P>)(X)
       is X<*> -> Z((this as X<P>)(X))
@@ -319,7 +319,7 @@ class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     }
 
   private operator fun BiFn<*>.invoke(Z: ZBnd<P>): X<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> X(this as P)
       is XZ<*> -> (this as XZ<P>)(Z)
       is Z<*> -> X((this as Z<P>)(Z))
@@ -372,7 +372,7 @@ class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
 
   private operator fun BiFn<*>.invoke(Y: YBnd<P>, Z: ZBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is YZ<*> -> (this as YZ<P>)(Y, Z)
       is Y<*> -> (this as Y<P>)(Y)
@@ -384,7 +384,7 @@ class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     op(left(Y, Z), right(Y, Z))
 
   private operator fun BiFn<*>.invoke(Y: YBnd<P>): Z<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> Z(this as P)
       is YZ<*> -> (this as YZ<P>)(Y)
       is Y<*> -> Z((this as Y<P>)(Y))
@@ -393,7 +393,7 @@ class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     }
 
   private operator fun BiFn<*>.invoke(Z: ZBnd<P>): Y<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> Y(this as P)
       is YZ<*> -> (this as YZ<P>)(Z)
       is Z<*> -> Y((this as Z<P>)(Z))
@@ -444,7 +444,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>, Y: YBnd<P>, Z: ZBnd<P>): P =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> this as P
       is XYZ<*> -> (this as XYZ<P>)(X, Y, Z)
       is XY<*> -> (this as XY<P>)(X, Y)
@@ -460,7 +460,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     op(left(X, Y, Z), right(X, Y, Z))
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>, Z: ZBnd<P>): Y<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> Y(this as P)
       is XYZ<*> -> (this as XYZ<P>)(X, Z)
       is XY<*> -> (this as XY<P>)(X)
@@ -476,7 +476,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     Y(left(X, Z), right(X, Z), op)
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>, Y: YBnd<P>): Z<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> Z(this as P)
       is XYZ<*> -> (this as XYZ<P>)(X, Y)
       is XY<*> -> Z((this as XY<P>)(X, Y))
@@ -492,7 +492,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     Z(left(X, Y), right(X, Y), op)
 
   private operator fun BiFn<*>.invoke(Y: YBnd<P>, Z: ZBnd<P>): X<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> X(this as P)
       is XYZ<*> -> (this as XYZ<P>)(Y, Z)
       is XY<*> -> (this as XY<P>)(Y)
@@ -508,7 +508,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
     X(left(Y, Z), right(Y, Z), op)
 
   private operator fun BiFn<*>.invoke(X: XBnd<P>): YZ<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> YZ(this as P)
       is XYZ<*> -> (this as XYZ<P>)(X)
       is XY<*> -> YZ((this as XY<P>)(X))
@@ -523,7 +523,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(X: XBnd<P>): YZ<P> = YZ(left(X), right(X), op)
 
   private operator fun BiFn<*>.invoke(Y: YBnd<P>): XZ<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> XZ(this as P)
       is XYZ<*> -> (this as XYZ<P>)(Y)
       is XY<*> -> XZ((this as XY<P>)(Y))
@@ -538,7 +538,7 @@ class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
   operator fun invoke(Y: YBnd<P>): XZ<P> = XZ(left(Y), right(Y), op)
 
   private operator fun BiFn<*>.invoke(Z: ZBnd<P>): XY<P> =
-    when (this) {
+    when (this@invoke) {
       is Const<*, *> -> XY(this as P)
       is XYZ<*> -> (this as XYZ<P>)(Z)
       is XY<*> -> this as XY<P>

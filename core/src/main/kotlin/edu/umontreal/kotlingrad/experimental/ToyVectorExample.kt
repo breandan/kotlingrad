@@ -39,9 +39,10 @@ fun main() {
  * Vector function.
  */
 
-sealed class VFun<X: Fun<X>, E: D1>(
-  override val sVars: Set<Var<X>> = emptySet()): MFun<X, E, D1>(sVars) {
-  constructor(vararg vFns: VFun<X, E>): this(vFns.flatMap { it.sVars }.toSet())
+
+
+sealed class VFun<X: SFun<X>, E: D1>(override val inputs: Inputs<X>): Fun<X>, MFun<X, E, D1>(inputs) {
+  constructor(vararg funs: Fun<X>): this(Inputs(*funs))
 
   override operator fun invoke(bnds: Bindings<X>): VFun<X, E> =
     when (this) {
@@ -52,16 +53,17 @@ sealed class VFun<X: Fun<X>, E: D1>(
       is SVProd<X, E> -> left(bnds) * right(bnds)
       is VSProd<X, E> -> left(bnds) * right(bnds)
       is VDerivative -> df()(bnds)
+      is Gradient -> df()(bnds)
       is MVProd<X, *, *> -> left(bnds) as Mat<X, E, E> * (right as Vec<X, E>)(bnds)
       is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as Mat<X, E, E>)(bnds)
       is VMap<X, E> -> value(bnds).map(ef)
-      else -> throw IllegalArgumentException("Type ${this::class.java.name} unknown")
+      else -> TODO(this::class.java.name)
     }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
 
-  open fun map(ef: (Fun<X>) -> Fun<X>): VFun<X, E> = VMap(this, ef)
+  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
 
   fun d(v1: Var<X>) = VDerivative(this, v1)
   fun d(v1: Var<X>, v2: Var<X>) = Jacobian<X, E, D2>(this, v1, v2)
@@ -74,70 +76,71 @@ sealed class VFun<X: Fun<X>, E: D1>(
   fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>, v9: Var<X>) = Jacobian<X, E, D9>(this, v1, v2, v3, v4, v5, v6, v7, v8, v9)
   //...
   fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
-  fun grad(): Map<Var<X>, VFun<X, E>> = sVars.map { it to VDerivative(this, it) }.toMap()
+  fun grad(): Map<Var<X>, VFun<X, E>> = inputs.sVars.map { it to VDerivative(this, it) }.toMap()
 
   override operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
   open operator fun minus(subtrahend: VFun<X, E>): VFun<X, E> = VSum(this, -subtrahend)
 
   open infix fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
-  override operator fun times(multiplicand: Fun<X>): VFun<X, E> = VSProd(this, multiplicand)
+  override operator fun times(multiplicand: SFun<X>): VFun<X, E> = VSProd(this, multiplicand)
   open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)//(expand * multiplicand).rows.first()
-  open infix fun dot(multiplicand: VFun<X, E>): Fun<X> = DProd(this, multiplicand)
+  open infix fun dot(multiplicand: VFun<X, E>): SFun<X> = DProd(this, multiplicand)
 
-  open fun magnitude(): Fun<X> = VMagnitude(this)
+  open fun magnitude(): SFun<X> = VMagnitude(this)
 
-  override fun toString() =
-    when (this) {
-      is Vec -> contents.joinToString(", ", "[", "]")
-      is VSum -> "$left + $right"
-      is VVProd -> "$left ʘ $right"
-      is SVProd -> "$left * $right"
-      is VSProd -> "$left * $right"
-      is VNegative -> "-($value)"
-      is VDerivative -> "d($vFun) / d($v1)"//d(${v1.joinToString(", ")})"
-      is MVProd<X, E, *> -> "$left * $right"
-      is VMProd<X, *, E> -> "$left * $right"
-      is Gradient -> "($fn).d(${vrbs.joinToString(", ")})"
-      is VMap -> "$value.map { $ef }"
-      is VVar -> "VVar($name)"
-    }
-}
-
-class VNegative<X: Fun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value)
-class VMap<X: Fun<X>, E: D1>(val value: VFun<X, E>, val ef: (Fun<X>) -> Fun<X>): VFun<X, E>(value)
-
-class VSum<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
-
-class VVProd<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
-class SVProd<X: Fun<X>, E: D1>(val left: Fun<X>, val right: VFun<X, E>): VFun<X, E>(right.sVars + right.sVars)
-class VSProd<X: Fun<X>, E: D1>(val left: VFun<X, E>, val right: Fun<X>): VFun<X, E>(left.sVars + right.sVars)
-class MVProd<X: Fun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, R>(left.sVars + right.sVars)
-class VMProd<X: Fun<X>, R: D1, C: D1>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left.sVars + right.sVars)
-
-class Gradient<X : Fun<X>, E: D1>: VFun<X, E> {
-
-  val fn: Fun<X>
-  val vrbs: Array<out Var<X>>
-
-  constructor(fn: Fun<X>, vararg vrbs: Var<X>): super(fn.sVars) {
-    this.fn = fn
-    this.vrbs = vrbs
+  override fun toString() = when (this) {
+    is Vec -> contents.joinToString(", ", "[", "]")
+    is VSum -> "$left + $right"
+    is VVProd -> "$left ʘ $right"
+    is SVProd -> "$left * $right"
+    is VSProd -> "$left * $right"
+    is VNegative -> "-($value)"
+    is VDerivative -> "d($vFun) / d($v1)"//d(${v1.joinToString(", ")})"
+    is MVProd<X, E, *> -> "$left * $right"
+    is VMProd<X, *, E> -> "$left * $right"
+    is Gradient -> "($fn).d($vVar)"
+    is VMap -> "$value.map { $ef }"
+    is VVar -> "VVar($name)"
   }
-
-  //  constructor(fn: Fun<X>, vVar: VVar<X, E>): super(fn.sVars, vVar)
-override fun invoke(bnds: Bindings<X>) = Vec<X, E>(vrbs.map { Derivative(fn, it)() })(bnds)
-  //  override fun invoke(bnds: Bindings<X>) =
-  //    if(Vec<X, E>(vrbs.map { Derivative(fn, it)() })(bnds)
 }
 
-class VVar<X: Fun<X>, E: D1>(override val name: String = ""): Variable, VFun<X, E>()
-class Jacobian<X : Fun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn.sVars) {
+class VNegative<X: SFun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value)
+class VMap<X: SFun<X>, E: D1>(val value: VFun<X, E>, val ef: (SFun<X>) -> SFun<X>): VFun<X, E>(value)
+
+class VSum<X: SFun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
+
+class VVProd<X: SFun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
+class SVProd<X: SFun<X>, E: D1>(val left: SFun<X>, val right: VFun<X, E>): VFun<X, E>(left, right)
+class VSProd<X: SFun<X>, E: D1>(val left: VFun<X, E>, val right: SFun<X>): VFun<X, E>(left, right)
+class MVProd<X: SFun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, R>(left, right)
+class VMProd<X: SFun<X>, R: D1, C: D1>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left, right)
+
+class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<X, E>(fn) {
+  fun df() = fn.df()
+  fun SFun<X>.df(): VFun<X, E> = when (this@df) {
+    is VVar<*, *> -> if (this == vVar) VOne() else VZero()
+    is Var -> VZero()
+    is SConst -> VZero()
+    is Sum -> left.df() + right.df()
+    is Prod -> left.df() * right + left * right.df()
+    is Power -> this * (exponent * Log(base)).df()
+    is Negative -> -value.df()
+    is Log -> (logarithmand pow -One<X>()) * logarithmand.df()
+//    is Derivative -> fn.df()
+    is DProd -> this().df()
+    is VMagnitude -> this().df()
+    else -> TODO(this@df::class.java.name)
+  }
+}
+
+class VVar<X: SFun<X>, E: D1>(override val name: String = ""): Variable, VFun<X, E>()
+class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn) {
   override fun invoke(bnds: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }
 
-class VDerivative<X : Fun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vFun) {
-  fun VFun<X, E>.df(): VFun<X, E> = when (this) {
+class VDerivative<X : SFun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vFun) {
+  fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VConst -> VZero()
     is VVar -> VZero()
     is VSum -> left.df() + right.df()
@@ -154,15 +157,12 @@ class VDerivative<X : Fun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, 
   }
 }
 
-open class VConst<X: Fun<X>, E: D1>(vararg contents: SConst<X>): Vec<X, E>(emptySet(), contents.asList())
+open class VConst<X: SFun<X>, E: D1>(vararg contents: SConst<X>): Vec<X, E>(contents.asList())
 
-class VZero<X: Fun<X>, E: D1>: VConst<X, E>()
-class VOne<X: Fun<X>, E: D1>: VConst<X, E>()
+class VZero<X: SFun<X>, E: D1>: VConst<X, E>()
+class VOne<X: SFun<X>, E: D1>: VConst<X, E>()
 
-open class Vec<X: Fun<X>, E: D1>(override val sVars: Set<Var<X>> = emptySet(),
-                                 val contents: List<Fun<X>>): VFun<X, E>() {
-  constructor(contents: List<Fun<X>>): this(contents.flatMap { it.sVars }.toSet(), contents)
-
+open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>): VFun<X, E>(*contents.toTypedArray()) {
   val size = contents.size
   val indices = contents.indices
 
@@ -185,39 +185,39 @@ open class Vec<X: Fun<X>, E: D1>(override val sVars: Set<Var<X>> = emptySet(),
     else -> super.ʘ(multiplicand)
   }
 
-  override fun times(multiplicand: Fun<X>): Vec<X, E> = Vec(contents.map { it * multiplicand })
+  override fun times(multiplicand: SFun<X>): Vec<X, E> = Vec(contents.map { it * multiplicand })
 
   override fun dot(multiplicand: VFun<X, E>) = when(multiplicand) {
     is Vec -> contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
     else -> super.dot(multiplicand)
   }
 
-  override fun map(ef: (Fun<X>) -> Fun<X>): Vec<X, E> = Vec(contents.map { ef(it) })
+  override fun map(ef: (SFun<X>) -> SFun<X>): Vec<X, E> = Vec(contents.map { ef(it) })
 
   override fun magnitude() = contents.map { it * it }.reduce { acc, p -> acc + p }.sqrt()
 
   override fun unaryMinus(): Vec<X, E> = Vec(contents.map { -it })
 
   companion object {
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>): VConst<T, D1> = VConst(s0)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>): VConst<T, D2> = VConst(s0, s1)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>): VConst<T, D3> = VConst(s0, s1, s2)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>): VConst<T, D4> = VConst(s0, s1, s2, s3)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>): VConst<T, D5> = VConst(s0, s1, s2, s3, s4)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>): VConst<T, D6> = VConst(s0, s1, s2, s3, s4, s5)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>): VConst<T, D7> = VConst(s0, s1, s2, s3, s4, s5, s6)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>): VConst<T, D8> = VConst(s0, s1, s2, s3, s4, s5, s6, s7)
-    operator fun <T: Fun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>, s8: SConst<T>): VConst<T, D9> = VConst(s0, s1, s2, s3, s4, s5, s6, s7, s8)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>): VConst<T, D1> = VConst(s0)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>): VConst<T, D2> = VConst(s0, s1)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>): VConst<T, D3> = VConst(s0, s1, s2)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>): VConst<T, D4> = VConst(s0, s1, s2, s3)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>): VConst<T, D5> = VConst(s0, s1, s2, s3, s4)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>): VConst<T, D6> = VConst(s0, s1, s2, s3, s4, s5)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>): VConst<T, D7> = VConst(s0, s1, s2, s3, s4, s5, s6)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>): VConst<T, D8> = VConst(s0, s1, s2, s3, s4, s5, s6, s7)
+    operator fun <T: SFun<T>> invoke(s0: SConst<T>, s1: SConst<T>, s2: SConst<T>, s3: SConst<T>, s4: SConst<T>, s5: SConst<T>, s6: SConst<T>, s7: SConst<T>, s8: SConst<T>): VConst<T, D9> = VConst(s0, s1, s2, s3, s4, s5, s6, s7, s8)
 
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>): Vec<T, D1> = Vec(arrayListOf(t0))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>): Vec<T, D2> = Vec(arrayListOf(t0, t1))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>): Vec<T, D3> = Vec(arrayListOf(t0, t1, t2))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>): Vec<T, D4> = Vec(arrayListOf(t0, t1, t2, t3))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>): Vec<T, D5> = Vec(arrayListOf(t0, t1, t2, t3, t4))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>): Vec<T, D6> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>): Vec<T, D7> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5, t6))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>): Vec<T, D8> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
-    operator fun <T: Fun<T>> invoke(t0: Fun<T>, t1: Fun<T>, t2: Fun<T>, t3: Fun<T>, t4: Fun<T>, t5: Fun<T>, t6: Fun<T>, t7: Fun<T>, t8: Fun<T>): Vec<T, D9> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>): Vec<T, D1> = Vec(arrayListOf(t0))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>): Vec<T, D2> = Vec(arrayListOf(t0, t1))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>): Vec<T, D3> = Vec(arrayListOf(t0, t1, t2))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>, t3: SFun<T>): Vec<T, D4> = Vec(arrayListOf(t0, t1, t2, t3))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>, t3: SFun<T>, t4: SFun<T>): Vec<T, D5> = Vec(arrayListOf(t0, t1, t2, t3, t4))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>, t3: SFun<T>, t4: SFun<T>, t5: SFun<T>): Vec<T, D6> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>, t3: SFun<T>, t4: SFun<T>, t5: SFun<T>, t6: SFun<T>): Vec<T, D7> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5, t6))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>, t3: SFun<T>, t4: SFun<T>, t5: SFun<T>, t6: SFun<T>, t7: SFun<T>): Vec<T, D8> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7))
+    operator fun <T: SFun<T>> invoke(t0: SFun<T>, t1: SFun<T>, t2: SFun<T>, t3: SFun<T>, t4: SFun<T>, t5: SFun<T>, t6: SFun<T>, t7: SFun<T>, t8: SFun<T>): Vec<T, D9> = Vec(arrayListOf(t0, t1, t2, t3, t4, t5, t6, t7, t8))
   }
 }
 

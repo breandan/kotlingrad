@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.DoublePrecision
-import edu.umontreal.kotlingrad.experimental.Fun
+import edu.umontreal.kotlingrad.experimental.SFun
 import guru.nidi.graphviz.*
 import guru.nidi.graphviz.attribute.*
 import guru.nidi.graphviz.attribute.Rank.RankDir.LEFT_TO_RIGHT
@@ -20,7 +20,7 @@ fun main() {
 const val DARKMODE = false
 const val THICKNESS = 2
 
-fun Fun<*>.render(filename: String? = null) {
+fun SFun<*>.render(filename: String? = null) {
   val image = graph(directed = true) {
     val color = if (DARKMODE) Color.WHITE else Color.BLACK
 
