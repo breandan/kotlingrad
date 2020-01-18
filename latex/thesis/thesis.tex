@@ -4,7 +4,9 @@
 \usepackage[utf8]{inputenc} %Obligatoires
 %\usepackage[T1]{fontenc}    %
 \usepackage[dvipsnames]{xcolor}
-\usepackage[scaled]{beramono}
+%\usepackage[scaled]{beramono}
+\usepackage{fontspec}
+\setmonofont{JetBrains Mono}[Contextuals=Alternate]
 \usepackage{ocr}
 \usepackage[T1]{fontenc}
 \usepackage{array}
@@ -75,7 +77,7 @@
 \lstdefinelanguage{kotlin}{
     comment=[l]{//},
     commentstyle={\color{gray}\ttfamily},
-    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, repeat, assert, return@},
+    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, repeat, assert, with, return@},
     numberstyle=\noncopyable,
     emphstyle={\color{OrangeRed}},
     identifierstyle=\color{black},
@@ -169,7 +171,7 @@
     bottom=-0.5pt,
     listing options={
         language=kotlin,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\footnotesize\noncopyable,
         tabsize=2,
         numbers=right,
@@ -186,7 +188,7 @@
 \newtcblisting{kotlinlisting}[1][]{%
     listing options={
         language=kotlin,
-        basicstyle=\ttfamily\scriptsize,
+        basicstyle=\ttfamily\tiny,
         numberstyle=\footnotesize\noncopyable,
         showstringspaces=false,
         tabsize=2,
@@ -204,7 +206,7 @@
 \newtcblisting{pclisting}[1][]{%
     listing options={
         language=BashPrompt,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\noncopyable,
         tabsize=2,
         numbers=right,
@@ -221,7 +223,7 @@
     left=20pt,
     listing options={
         language=DtsPrompt,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\noncopyable,
         numbers=right,
         tabsize=2,
@@ -234,7 +236,7 @@
     left=20pt,
     listing options={
         language=DtsPrompt,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         tabsize=2,
         inputencoding=utf8,
         #1
@@ -255,7 +257,7 @@
     #1,
     listing options={
         language=XML,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\footnotesize\noncopyable,
         tabsize=2,
         numbers=right,
@@ -272,7 +274,7 @@
 \newtcblisting{dockerlisting}[1][]{%
     listing options={
         language=docker,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\footnotesize\noncopyable,
         tabsize=2,
         numbers=right,
@@ -289,7 +291,7 @@
     #1,
     listing options={
         language=bnf,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\noncopyable,
         breaklines=true,
         numbers=right,
@@ -305,7 +307,7 @@
     #1,
     listing options={
         language=Python,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\noncopyable,
         breaklines=true,
         numbers=right,
@@ -322,7 +324,7 @@
 \newtcblisting{rpilisting}[1][]{%
     listing options={
         language=BashPrompt,
-        basicstyle=\ttfamily\small,
+        basicstyle=\ttfamily\footnotesize,
         numberstyle=\noncopyable,
         tabsize=2,
         inputencoding=utf8,
@@ -383,7 +385,7 @@
 \newcommand{\inline}[1]{%
     \begingroup%
     \sethlcolor{slightgray}%
-    \hl{\ttfamily\small #1}%
+    \hl{\ttfamily\footnotesize #1}%
     \endgroup
 }
 
@@ -537,7 +539,9 @@ In recent years, computer science and software engineering has made significant 
 
 Intelligent systems are widely deployed in virtual settings like data science and cloud services. But even with the tremendous success of machine learning algorithms in fully-observable domains like image recognition and speech processing, intelligent systems have yet to be widely adopted in robotics (at the time of writing this thesis). This dilemma can be partly attributed to various theoretical problems such as domain adaption and transfer learning. Yet with the proven capabilities of modern learning algorithms, exponential increase in processing power, and decades-long effort in building physically-embodied intelligent agents, we should have more progress to show. Why has this goal evaded researchers for so long? One reason, we conjecture, is a lack of programming tools and abstractions for designing, developing, deploying and evaluating intelligent systems. In practice, these activities consume a large amount of cognitive effort without the right set of tools and abstractions.
 
-In this thesis, we explore several tools that facilitate the process of building intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (\autoref{ch:case-study}).
+In this thesis, we explore several tools that facilitate the process of building intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, we offer some concluding remarks and lessons learned for incorporating these programming tools in (\autoref{ch:conclusion}).
+
+% Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (\autoref{ch:case-study}).
 
 \section{Stages in the software development lifecycle}\label{sec:sldc-stages}
 
@@ -1173,7 +1177,7 @@ fun dot(l1, l2) {
 }
         \end{lstlisting}}
          &
-        {\begin{lstlisting}[style=barelisting, linewidth=5.5cm, numbers=none]
+        {\begin{lstlisting}[style=barelisting, linewidth=6.1cm, numbers=none]
 fun dot(l1, l2) {
   return if (len(l1) != len(l2))
     error
@@ -1262,11 +1266,9 @@ val z = (1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2
 %    \Tree [.$\div$ [.\inline{sin} [.$\times$ \inline{10} [.$+$ [.$\times$ \inline{\textbf{x}} \inline{\textbf{x}} ] [.\inline{pow} \inline{\textbf{y}} \inline{2} ] ] ] ] \inline{10} ]
 %\end{tikzpictre}
 \includegraphics[scale=0.60]{../figures/dataflow.png}
-\caption{Implicit DFG constructed by the original expression, shown above. Expressions are only evaluated once invoked with numerical values, e.g. \inline{z(0, 0)}}
+\caption{Implicit DFG constructed by the original expression, shown above.}
 \label{lst:edsl}
 \end{figure}\\\\
-
-%An expression is simply a DSL for constructing \inline{Function}s. No numerical calculations, save for constant folding and algebraic simplification, are performed at this stage. Functions are only evaluated once invoked with numerical values, e.g. \inline{z(0, 0)}.
 
 \section{Grammar}
 
@@ -1710,18 +1712,18 @@ Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, gr
 \href{https://github.com/breandan/kotlingrad}{Kotlin$\nabla$}                    & Kotlin  & \cmark & \cmark & \wmark & \cmark & \cmark & \cmark & \xmark & \wmark \\
 \href{https://diffsharp.github.io/DiffSharp/}{DiffSharp}                          & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark & \xmark \\
 \href{https://github.com/fsprojects/fsharp-ai-tools}{TensorFlow.FSharp}          & F\#     & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
-\href{https://github.com/ThoughtWorksInc/DeepLearning.scala}{DeepLearning.scala} & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark & \xmark \\
+%\href{https://github.com/ThoughtWorksInc/DeepLearning.scala}{DeepLearning.scala} & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark & \xmark \\
 \href{https://tongfei.me/nexus/}{Nexus}                                          & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
 \href{https://feiwang3311.github.io/Lantern/}{Lantern}                           & Scala   & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark & \xmark \\
-\href{https://github.com/HuwCampbell/grenade}{Grenade}                           & Haskell & \xmark & \cmark & \xmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
+%\href{https://github.com/HuwCampbell/grenade}{Grenade}                           & Haskell & \xmark & \cmark & \xmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
 \href{https://github.com/leopiney/tensor-safe}{Tensor Safe}                      & Haskell & \xmark & \cmark & \xmark & \cmark & \cmark & \cmark & \cmark & \xmark \\
 \href{https://github.com/hasktorch/hasktorch}{Hasktorch}                         & Haskell & \xmark & \cmark & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark \\
 \href{https://deeplearning4j.org}{Eclipse DL4J}                                  & Java    & \xmark & \cmark & \xmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
 \href{https://uniker9.github.io/JAutoDiff/}{JAutoDiff}                            & Java    & \cmark & \cmark & \xmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
-\href{https://halide-lang.org}{Halide}                                           & C++     & \xmark & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
+%\href{https://halide-lang.org}{Halide}                                           & C++     & \xmark & \cmark & \cmark & \xmark & \cmark & \xmark & \xmark & \xmark \\
 \href{https://github.com/Functional-AutoDiff/STALINGRAD}{Stalin$\nabla$}         & Scheme  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
 \href{https://github.com/mila-iqia/myia}{Myia}                                   & Python  & \cmark & \cmark & \cmark & \cmark & \xmark & \xmark & \xmark & \wmark \\
-\href{https://github.com/HIPS/autograd/}{Autograd}                               & Python  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
+% \href{https://github.com/HIPS/autograd/}{Autograd}                               & Python  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
 \href{https://github.com/google/jax}{JAX}                                        & Python  & \xmark & \cmark & \cmark & \cmark & \xmark & \xmark & \xmark & \wmark \\
 \href{https://github.com/google/tangent}{Tangent}                                & Python  & \xmark & \cmark & \xmark & \xmark & \xmark & \xmark & \xmark & \xmark \\
 
@@ -2782,71 +2784,71 @@ To address these issues, various container platforms, including Shifter~\citep{g
 
 In this chapter we have taken a guided tour through the process of containerization and demonstrated the effectiveness of containers for building reproducible robotics software -- a key step in the broader quest for experimental reproducibility. We offer a set of best practices and lessons learned during the design, development and deployment of Docker containers for the Duckietown~\citep{paull2017duckietown} platform. The author wishes to thank Rusi Hristov for his invaluable technical assistance during the preliminary stages of this project.
 
-\mediumrare{\chapter{An application for autonomous robotics}\label{ch:case-study}}
-
-\setlength{\epigraphwidth}{0.80\textwidth}
-\epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \href{https://yurichev.com/mirrors/knuth1989.pdf}{\textit{The Errors of \TeX}}\end{flushright}}
-
-As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the tools proposed in \autoref{ch:hatchery}--\autoref{ch:ducker}. The source code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
-
-\section{Design}
-
-Hatchery is compatible with most IDEs built on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS-specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one from version control. Then create a symbolic link inside the Android project's root directory to the ROS project:
+%\mediumrare{\chapter{An application for autonomous robotics}\label{ch:case-study}}
 %
-\begin{pclisting}
-~$ ln -s /absolute/path/to/ros/project /android/project
-\end{pclisting}
+%\setlength{\epigraphwidth}{0.80\textwidth}
+%\epigraph{``Thus, I came to the conclusion that the designer of a new system must not only be the implementor and the first large-scale user; the designer should also write the first user manual. The separation of any of these four components would have hurt TeX significantly. If I had not participated fully in all these activities, literally hundreds of improvements would never have been made, because I would never have thought of them or perceived why they were important.''}{\begin{flushright}-- Donald E.~\citet{knutherrors}, \href{https://yurichev.com/mirrors/knuth1989.pdf}{\textit{The Errors of \TeX}}\end{flushright}}
 %
-Import the project in Android Studio via \menu{File > New > Project from Existing sources\textellipsis}.  Now, the ROS project can be managed from within Android Studio.\vspace{10pt}\\
+%As a case study, we have implemented a mobile application using ROS, Docker, and Android, using the tools proposed in \autoref{ch:hatchery}--\autoref{ch:ducker}. The source code for this section can be found at the following URL: \url{https://github.com/breandan/duckietown-rc}
 %
-\begin{centering}
-\includegraphics[width=\textwidth]{../figures/hatchery_android.png}
-\end{centering}\vspace{10pt}
+%\section{Design}
 %
-Running ROS nodes on desktop or embedded devices follows the same procedure as ordinary rospy projects. Running ROS nodes on Android devices, however, requires the use of \href{https://wiki.ros.org/rosjava}{rosjava}, a pure Java implementation of the ROS messaging protocol. The rosjava project provides examples of various \href{https://github.com/rosjava/android_apps}{Android applications}, including a basic Android UI and support for communicating with networked ROS nodes.
-
-ROS Android applications can be run on either a physical Android or Android Virtual Device (AVD). To enable bidirectional communication between an external node and AVD ROS node, use the following commands to open a \inline{telnet} connection and configure port forwarding, as described in the \href{https://developer.android.com/studio/run/emulator-networking#consoleredir}{Android developer documentation}:
+%Hatchery is compatible with most IDEs built on the IntelliJ Platform, including \href{https://developer.android.com/studio}{Android Studio}, the official IDE for Android mobile development. To use ROS-specific features from within Android Studio, ensure the Hatchery plugin is installed as described in ~\autoref{subsec:installation}. First create a new ROS Android project or clone an existing one from version control. Then create a symbolic link inside the Android project's root directory to the ROS project:
+%%
+%\begin{pclisting}
+%~$ ln -s /absolute/path/to/ros/project /android/project
+%\end{pclisting}
+%%
+%Import the project in Android Studio via \menu{File > New > Project from Existing sources\textellipsis}.  Now, the ROS project can be managed from within Android Studio.\vspace{10pt}\\
+%%
+%\begin{centering}
+%\includegraphics[width=\textwidth]{../figures/hatchery_android.png}
+%\end{centering}\vspace{10pt}
+%%
+%Running ROS nodes on desktop or embedded devices follows the same procedure as ordinary rospy projects. Running ROS nodes on Android devices, however, requires the use of \href{https://wiki.ros.org/rosjava}{rosjava}, a pure Java implementation of the ROS messaging protocol. The rosjava project provides examples of various \href{https://github.com/rosjava/android_apps}{Android applications}, including a basic Android UI and support for communicating with networked ROS nodes.
 %
-\begin{pclisting}
-~$ telnet localhost 5554
-~$ redir add tcp:11311:11311
-\end{pclisting}
-
-\section{Implementation}
-
-Due to Android's Kotlin interoperability, Kotlin libraries are directly usable inside Android projects. To use Kotlin$\nabla$ in an Android project, first add a custom Maven repository to the project's \inline{build.gradle.kts} file:
+%ROS Android applications can be run on either a physical Android or Android Virtual Device (AVD). To enable bidirectional communication between an external node and AVD ROS node, use the following commands to open a \inline{telnet} connection and configure port forwarding, as described in the \href{https://developer.android.com/studio/run/emulator-networking#consoleredir}{Android developer documentation}:
+%%
+%\begin{pclisting}
+%~$ telnet localhost 5554
+%~$ redir add tcp:11311:11311
+%\end{pclisting}
 %
-\begin{kotlinlisting}
-repositories {
-    maven("https://maven.pkg.github.com/breandan/kotlingrad")
-}
-\end{kotlinlisting}
+%\section{Implementation}
 %
-Then add the \href{https://github.com/breandan/kotlingrad/packages}{latest version of Kotlin$\nabla$} to \inline{dependencies} in the \inline{build.gradle.kts} file:
+%Due to Android's Kotlin interoperability, Kotlin libraries are directly usable inside Android projects. To use Kotlin$\nabla$ in an Android project, first add a custom Maven repository to the project's \inline{build.gradle.kts} file:
+%%
+%\begin{kotlinlisting}
+%repositories {
+%    maven("https://maven.pkg.github.com/breandan/kotlingrad")
+%}
+%\end{kotlinlisting}
+%%
+%Then add the \href{https://github.com/breandan/kotlingrad/packages}{latest version of Kotlin$\nabla$} to \inline{dependencies} in the \inline{build.gradle.kts} file:
+%%
+%\begin{kotlinlisting}
+%dependencies {
+%    compile("edu.umontreal:kotlingrad:<VERSION>")
+%}
+%\end{kotlinlisting}
+%%
+%Kotlin$\nabla$ can now be used just like an ordinary library in any Android application.
 %
-\begin{kotlinlisting}
-dependencies {
-    compile("edu.umontreal:kotlingrad:<VERSION>")
-}
-\end{kotlinlisting}
+%\section{Testing and validation}
 %
-Kotlin$\nabla$ can now be used just like an ordinary library in any Android application.
-
-\section{Testing and validation}
-
-Verified using property-based testing.\vspace{10pt}\\
+%Verified using property-based testing.\vspace{10pt}\\
+%%
+%\begin{centering}
+%\includegraphics[width=\textwidth]{../figures/android_screenshot.png}
+%\end{centering}
 %
-\begin{centering}
-\includegraphics[width=\textwidth]{../figures/android_screenshot.png}
-\end{centering}
-
-\section{Containerization}
-
-Deployed and CI-tested using Docker.
-
-\section{Conclusion}
-
-In this chapter, we illustrate one feasible application of the toolchain previously proposed. As a toy example, it is primarily intended to be illustrative in nature.
+%\section{Containerization}
+%
+%Deployed and CI-tested using Docker.
+%
+%\section{Conclusion}
+%
+%In this chapter, we illustrate one feasible application of the toolchain previously proposed. As a toy example, it is primarily intended to be illustrative in nature.
 
 \mediumrare{\chapter{Conclusion}\label{ch:conclusion}}
 \setlength{\epigraphwidth}{0.90\textwidth}
