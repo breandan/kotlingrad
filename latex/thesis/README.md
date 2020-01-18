@@ -4,7 +4,7 @@ To build this thesis, a [TeX Live](https://www.latex-project.org/get/) distribut
 Run the following command from the parent directory:
 
 ```
-pdflatex -file-line-error -interaction=nonstopmode -output-directory=$(pwd) thesis.tex
+xelatex -file-line-error -interaction=nonstopmode -synctex=1 -output-directory=$(pwd) thesis.tex
 ```
 
 ## Rail diagrams
