@@ -15,7 +15,17 @@
 \usepackage{algpseudocode}
 \usepackage{amsmath}
 \usepackage{rail}
-\usepackage{hyperref}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\renewcommand{\UrlFont}{\rmfamily}
+
 \usepackage{bm}
 
 \usepackage{natbib}
@@ -426,7 +436,7 @@
 
 \renewcommand{\baselinestretch}{1.5}
 
-\AtBeginDocument{\hypersetup{pdfborderstyle={/S/S/W 1}}}
+%\AtBeginDocument{\hypersetup{pdfborderstyle={/S/S/W 1}}}
 \begin{document}
 
 \version{1}
@@ -522,7 +532,7 @@ Programming tools are computer programs which help humans program computers. Too
 \setlength{\epigraphwidth}{0.85\textwidth}
 \epigraph{``There is a race between the increasing complexity of the systems we build and our ability to develop intellectual tools for understanding their complexity. If the race is won by our tools, then systems will eventually become easier to use and more reliable. If not, they will continue to become harder to use and less reliable for all but a relatively small set of common tasks. Given how hard thinking is, if those intellectual tools are to succeed, they will have to substitute calculation for thought.''}{\begin{flushright}--Leslie \citet{lamport2002discussion}, \href{https://www.microsoft.com/en-us/research/uploads/prod/2016/12/A-Discussion-With-Leslie-Lamport.pdf}{\textit{A Discussion with Leslie Lamport}}\end{flushright}}
 
-Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today's software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity of building software systems.
+Computational complexity is of such concern in computer science that a great deal of the field is dedicated to understanding it through the lens of function analysis and information theory. In software engineering, researchers are primarily interested in the complexity of building software -- the digital manifestation of algorithms on physical hardware. One kind of software complexity is the cognitive effort required to understand a program.\hspace{-.08em}\footnote{This can be approximated by various metrics like cyclomatic or Halstead complexity.} While today's software is becoming rapidly more intelligent, it shows few signs of becoming more intelligible. Better tools are needed for managing the complexity of building software systems.
 
 \textit{The objective of this thesis is to develop methods that reduce the cognitive effort required to build intelligent systems, using developer tools, programming language abstractions, automated testing, and virtualization technology.}
 
@@ -601,7 +611,7 @@ Towards that end, in \autoref{ch:difftest} we present preliminary work in advers
 
 One of the challenges of building intelligent systems and programming in general, is the problem of reproducibility. Software reproducibility has several challenging aspects, including hardware compatibility, operating systems, file systems, build systems, and runtime determinism. While writing programs and feeding them directly into a computer may have once been common practice, today's source code is far too removed from its mechanical realization to be meaningfully executed in isolation. Today's handwritten programs are like schematics for a traffic light -- built inside a factory, and which require a city's-worth of infrastructure, cars, and traffic laws to serve their intended purpose. Like traffic lights, source code does not exist in a vacuum -- built by compilers, interpreted by virtual machines, executed inside an operating system, and which follow a specific communication protocol -- programs are essentially meaningless abstractions outside this context.
 
-As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository\footnote{\url{https://help.github.com/en/articles/what-is-my-disk-quota}}, a vanishingly small fraction of the information corresponds to the source code itself.
+As necessary in any good schematic, much of the information required to build a program is divided into layers of abstraction. Most low-level instructions carried out by a computer during the execution of a program were not written nor intended to be read by the programmer and have since been automated and forgotten. In a modern programming language like Java, C\# or Python, the total information required to run a simple program often numbers in the trillions of bits. A portion of that data pertains to the software for building and running programs, including the build system, software dependencies, and development tools. Part of the data pertains to the operating system, firmware, drivers, and embedded software. For most programs, such as those found in a typical GitHub repository,\hspace{-.08em}\footnote{\url{https://help.github.com/en/articles/what-is-my-disk-quota}} a vanishingly small fraction of the information corresponds to the source code itself.
 
 Applied machine learning shares many of the same practical challenges as traditional software development, with source code, release and dependency management. The current process of training a deep learning model can be seen as particularly long compilation step, but it differs significantly in that the source code is a high-level language which does not directly describe the computation being performed, but is a kind of meta-meta-program. The first meta-program describes the connectivity of a large directed graph (i.e.~ a computation graph or probabilistic graphical model), parameterized by weights and biases. The tuning of those parameters is another meta-program, describing the sequence of operations required to approximate a program which we do not have access, save for some input-output examples. Emerging techniques in meta-learning and hyper-parameter optimization (e.g.~differentiable architecture search~\citep{liu2018darts}) add even further meta-programming layers to this stack, by searching over the space of directed graphs themselves.
 
@@ -625,11 +635,11 @@ Throughout this thesis, the following iconography is used to denote: \\
 \item[] \inlineimg{../figures/laptop_icon.png} &  Shell commands intended for a personal computer, or output derived thereof. \\
 \item[] \inlineimg{../figures/bnf_file.png} & GrammarKit's \inline{.bnf} parsing expression grammar (PEG)~\footnote{GrammarKit usage notes: \url{https://github.com/JetBrains/Grammar-Kit/blob/master/HOWTO.md}} \\
 \item[] \inlineimg{../figures/docker_icon.jpg} &  Either \inline{Dockerfile}~\footnote{Dockerfile reference: \url{https://docs.docker.com/engine/reference/builder/}} or Docker Compose~\footnote{Compose file reference: \url{https://docs.docker.com/compose/compose-file/}} syntax. \\
-\item[] \inlineimg{../figures/raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi~\footnote{Raspberry Pi: \url{https://www.raspberrypi.org/}}. \\
-\item[] \inlineimg{../figures/duckietown.png}  &  Duckietown Shell (\inline{dts}) commands~\footnote{Duckietown Shell: \url{https://github.com/duckietown/duckietown-shell-commands}}. \\
-\item[] \inlineimg{../figures/launch_icon.png}  &  roslaunch \inline{.launch} files~\footnote{ROS Launch XML: \url{https://wiki.ros.org/roslaunch/XML}}. \\
-\item[] \inlineimg{../figures/python_icon.png}  &  Python source code~\footnote{Python documentation: \url{https://www.python.org/doc/}}. \\
-\item[] \inlineimg{../figures/kotlin_file.png}  &  Kotlin source code~\footnote{Kotlin documentation: \url{https://kotlinlang.org/docs/reference/}}.
+\item[] \inlineimg{../figures/raspi_icon.png}  &  Shell commands which should be run on a Raspberry Pi.\hspace{-.08em}\footnote{Raspberry Pi: \url{https://www.raspberrypi.org/}} \\
+\item[] \inlineimg{../figures/duckietown.png}  &  Duckietown Shell (\inline{dts}) commands.\hspace{-.08em}\footnote{Duckietown Shell: \url{https://github.com/duckietown/duckietown-shell-commands}} \\
+\item[] \inlineimg{../figures/launch_icon.png}  &  roslaunch \inline{.launch} files.\hspace{-.08em}\footnote{ROS Launch XML: \url{https://wiki.ros.org/roslaunch/XML}} \\
+\item[] \inlineimg{../figures/python_icon.png}  &  Python source code.\hspace{-.08em}\footnote{Python documentation: \url{https://www.python.org/doc/}} \\
+\item[] \inlineimg{../figures/kotlin_file.png}  &  Kotlin source code.\hspace{-.08em}\footnote{Kotlin documentation: \url{https://kotlinlang.org/docs/reference/}}
 \end{enumerate}
 
 \chapter{Programming tools for robotics}\label{ch:hatchery}
@@ -686,7 +696,7 @@ The ROS middleware provides several language front-ends for polyglot programming
 \caption{A typical ROS application contains a large graph of dependencies.}
 \end{figure}
 
-A typical ROS project has several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, several steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.\footnote{Detailed installation instructions may be found here: \url{https://wiki.ros.org/ROS/Installation}}
+A typical ROS project has several components, including the source code, configuration files, build infrastructure, compiled artifacts and the deployment environment. To build a simple ROS application, several steps are necessary. First, one must install the ROS system, which is only officially supported on Debian-based Linux distributions.\hspace{-.08em}\footnote{Detailed installation instructions may be found here: \url{https://wiki.ros.org/ROS/Installation}}
 %
 Assuming ROS has been installed to the default location, it can be sourced like so:
 %
@@ -1314,7 +1324,7 @@ The problem we attempt to solve can be summarized as follows. Given two values \
 
 Shape checking operations on multidimensional arrays is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is undecidable~\citep{godel1931formal}. Addition, subtraction, indexing and comparison of integers are all decidable operations in Presburger arithmetic~\citep{suzuki1980verification, bradley2006decidable, charlier2011enumeration}. Equality checking is trivially decidable, and can be implemented in most static type systems.
 
-Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g.\ convolutional arithmetic) requires a dependently typed language~\citep{xi1998eliminating, pineyro2019structure}, but checking shape equality (e.g. ordinary arithmetic) is feasible in Java and its cousins.\footnote{Java's type system is known to be Turing Complete~\citep{grigore2017java}. Thus, emulation of dependent types in Java is theoretically possible, but likely intractable due to the practical limitations noted by Grigore.} Furthermore, we believe that shape checking ordinary matrix arithmetic is decidable in any type system loosely based on System F${}_{<:}$~\citep{cardelli1991extension}. We propose a type system for enforcing shape-safety which can be implemented in any language with subtyping and generics, such as \href{https://docs.oracle.com/javase/tutorial/java/generics/index.html}{Java}~\citep{naftalin2007java}, \href{https://kotlinlang.org/docs/reference/generics.html}{Kotlin}~\citep{tate2013mixed}, \href{https://www.typescriptlang.org/docs/handbook/advanced-types.html}{TypeScript}~\citep{bierman2014understanding} or \href{https://doc.rust-lang.org/1.7.0/book/generics.html}{Rust}~\citep{crozet2019nalgebra}.
+Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g.\ convolutional arithmetic) requires a dependently typed language~\citep{xi1998eliminating, pineyro2019structure}, but checking shape equality (e.g. ordinary arithmetic) is feasible in Java and its cousins.\hspace{-.08em}\footnote{Java's type system is known to be Turing Complete~\citep{grigore2017java}. Thus, emulation of dependent types in Java is theoretically possible, but likely intractable due to the practical limitations noted by Grigore.} Furthermore, we believe that shape checking ordinary matrix arithmetic is decidable in any type system loosely based on System F${}_{<:}$~\citep{cardelli1991extension}. We propose a type system for enforcing shape-safety which can be implemented in any language with subtyping and generics, such as \href{https://docs.oracle.com/javase/tutorial/java/generics/index.html}{Java}~\citep{naftalin2007java}, \href{https://kotlinlang.org/docs/reference/generics.html}{Kotlin}~\citep{tate2013mixed}, \href{https://www.typescriptlang.org/docs/handbook/advanced-types.html}{TypeScript}~\citep{bierman2014understanding} or \href{https://doc.rust-lang.org/1.7.0/book/generics.html}{Rust}~\citep{crozet2019nalgebra}.
 
 {\tiny
 \begin{table}
@@ -1562,7 +1572,7 @@ interface Field<X: Field<X>> : Group<X> {
 }
 \end{kotlinlisting}
 %
-The numeric tower allows us to define common behavior such as subtraction and division on abstract algebraic structures, e.g. \inline{Group}, \inline{Ring}, and \inline{Field}. These abstractions are extensible to concrete number systems, such as complex numbers and quaternions. For example, to later define a field over complex numbers or quaternions,~\footnote{ex. In order to calculate derivatives in a quaternion neural network. \citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined in terms of a small set of primitive operators, which can be differentiated in a generic fashion, rather than on an ad hoc basis.
+The numeric tower allows us to define common behavior such as subtraction and division on abstract algebraic structures, e.g. \inline{Group}, \inline{Ring}, and \inline{Field}. These abstractions are extensible to concrete number systems, such as complex numbers and quaternions. For example, to later define a field over complex numbers or quaternions,\hspace{-.08em}\footnote{ex. In order to calculate derivatives in a quaternion neural network. \citep{isokawa2003quaternion}} one must simply extend the numeric tower and override the default implementation. Most mathematical operations can be defined in terms of a small set of primitive operators, which can be differentiated in a generic fashion, rather than on an ad hoc basis.
 
 \section{Algebraic data types}\label{sec:adts}
 
@@ -1740,7 +1750,7 @@ Unlike most existing AD implementations, Kotlin$\nabla$ is a purely symbolic, gr
 \vspace{2pt}\setlength{\epigraphwidth}{0.65\textwidth}
 \epigraph{``The derivative, as this notion appears in the elementary differential calculus, is a familiar mathematical example of a function for which both [the domain and the range] consist of functions.''}{\begin{flushright}--Alonzo \citet{church1941calculi}, \href{https://archive.org/details/AnnalsOfMathematicalStudies6ChurchAlonzoTheCalculiOfLambdaConversionPrincetonUniversityPress1941}{\textit{The Calculi of Lambda Conversion}}\end{flushright}}
 
-The derivative, as it is most commonly used, is usually associated with the calculus of infinitesimals. But the same rules for symbolic differentiation introduced by Leibniz and Newton over three centuries ago has reappeared in strange and marvelous places throughout computer science. In \citet{brzozowski1964derivatives}, we encounter an example of symbolic differentiation in a discrete setting, i.e. regular expressions. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and incremental parsing \citep{might2011parsing, moss2014derivatives}. Later in \citet{thayse1981boolean} the boolean differential calculus was first introduced~\footnote{Although early work on the subject can be traced back to \citet{talantsev1959analysis} and \citet{sellers1968analyzing}}, a branch of boolean algebra which has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. Symbolic differentiation has useful applications in other mathematical settings, including $\lambda$-calculus~\citep{ehrhard2003differential, cai2014theory, kelly2016evolving, brunel2020backpropagation}, incremental computation~\citep{alvarez2019fixing, alvarez2019change}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential, blute2009cartesian}, domain theory~\citep{edalat2002domain}, probability theory~\citep{kac1951probability} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
+The derivative, as it is most commonly used, is usually associated with the calculus of infinitesimals. But the same rules for symbolic differentiation introduced by Leibniz and Newton over three centuries ago has reappeared in strange and marvelous places throughout computer science. In \citet{brzozowski1964derivatives}, we encounter an example of symbolic differentiation in a discrete setting, i.e. regular expressions. Brzozowski's work has important and far-reaching applications in automata theory~\citep{berry1986regex, antimirov1996partial, champarnaud1999regular} and incremental parsing \citep{might2011parsing, moss2014derivatives}. Later in \citet{thayse1981boolean} the boolean differential calculus was first introduced,\hspace{-.08em}\footnote{Although early work on the subject can be traced back to \citet{talantsev1959analysis} and \citet{sellers1968analyzing}} a branch of boolean algebra which has important applications in switching theory~\citep{thayse1973boolean} and synthesis of digital circuits~\citep{steinbach2017boolean}. Symbolic differentiation has useful applications in other mathematical settings, including $\lambda$-calculus~\citep{ehrhard2003differential, cai2014theory, kelly2016evolving, brunel2020backpropagation}, incremental computation~\citep{alvarez2019fixing, alvarez2019change}, type theory~\citep{mcbride2001derivative, mcbride2008clowns, chen2012type}, category theory~\citep{blute2006differential, blute2009cartesian}, domain theory~\citep{edalat2002domain}, probability theory~\citep{kac1951probability} and linear logic~\citep{ehrhard2018introduction, clift2018derivatives}.
 
 Many further examples of symbolic differentiation can be found in unrelated bodies of literature. This pattern seems unlikely to be mere coincidence, and suggests an unrealized connection between differential and algebraic geometry, perhaps holding important insights for differentiable programming and the study of change propagation in computation graphs.
 
@@ -1861,7 +1871,7 @@ fun decrease(failure: Float): Float = failure - failure / 2
 \label{fig:pbt_comparison}
 \end{figure}
 %
-Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures).~\footnote{To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and MacLaurin series expansion of sine and cosine.} Given two algorithms for calculating the derivative, a property-based test might check whether the absolute difference is bounded over all inputs.
+Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures).\hspace{-.08em}\footnote{To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and MacLaurin series expansion of sine and cosine.} Given two algorithms for calculating the derivative, a property-based test might check whether the absolute difference is bounded over all inputs.
 
 The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
 
@@ -2138,7 +2148,7 @@ One of the challenges of distributed software development across heterogeneous p
     \label{fig:user_kernel_hardware}
 \end{figure}
 
-Docker containers are sandboxed runtime environments that are portable, reproducible and version-controlled. Each environment fully contains its dependencies, but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and provisions a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization tools like Docker are suitable for portable SBCs and can run with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of simultaneously running hundreds of containers with no noticeable degradation in performance\footnote{\url{https://blog.docker.com/2015/09/update-raspberry-pi-dockercon-challenge/}}.
+Docker containers are sandboxed runtime environments that are portable, reproducible and version-controlled. Each environment fully contains its dependencies, but remains isolated from the host OS and file system. Docker provides a mechanism to control the resources each container is permitted to access, and provisions a separate Linux namespace for each container, effectively isolating the network, users, and file system mounts from the host OS. Unlike virtual machines, container-based virtualization tools like Docker are suitable for portable SBCs and can run with close to zero overhead compared to native Linux processes. A single Raspberry Pi is capable of simultaneously running hundreds of containers with no noticeable degradation in performance.\hspace{-.08em}\footnote{\url{https://blog.docker.com/2015/09/update-raspberry-pi-dockercon-challenge/}}
 
 While containerization considerably simplifies the process of building and deploying applications, it also introduces some additional complexity in the software development lifecycle. Docker, like most container platforms, uses a layered filesystem. This enables Docker to take an existing ``image'' and change it by installing new dependencies or modifying its functionality. Images are typically constructed as a sequence of layers, each of which must periodically be updated. Care is required when designing the development pipeline to ensure that such updates do not silently break a subsequent layer, as we describe in \autoref{sec:retrospective}.
 
@@ -2541,7 +2551,7 @@ One application of multi-stage builds is compiling a project dependency from its
 
 \citet{white2017ros-docker} previously explored Dockerizing ROS, whose work forms the basis for our own, which extends their implementation to the Duckietown platform~\citep{paull2017duckietown}, a more hardware- and domain-specific set of ROS applications.
 
-The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \hyperref[subsec:hypriot]{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, a unified interface, the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell} (\inline{dts}), is provided to wrap their functionality and perform common tasks.
+The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\hspace{-.08em}\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \hyperref[subsec:hypriot]{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, a unified interface, the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell} (\inline{dts}), is provided to wrap their functionality and perform common tasks.
 
 \section{Duckiebot Development using Docker}
 
@@ -2589,7 +2599,7 @@ To access the DuckieOS web interface, users can visit the following URL in any J
 
 \begin{figure}
     \includegraphics[width=0.80\textwidth]{../figures/portainer_screenshot.png}
-    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a RESTful web dashboard, which wraps the Docker CLI and offers support for container management, configuration, networking and terminal emulation (shown above). \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``Console''}}
+    \caption{Browser interface for individual Duckiebots. It is provided by \href{https://www.portainer.io/}{Portainer}, a RESTful web dashboard, which wraps the Docker CLI and offers support for container management, configuration, networking and terminal emulation (shown above). \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > ``\underline{Console}'' \faMousePointer}}
     \label{fig:portainer_ui}
 \end{figure}
 
@@ -2620,7 +2630,7 @@ Alternately, it is possible to build directly on ARM devices by creating a file 
 %
 \subsection{Multi-architecture support}
 
-As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build on x86 machines\footnote{With the exception of the Mac OS Docker client, which offers multi-architecture support. Further details on multiarch support can be found here: \url{https://docs.docker.com/docker-for-mac/multi-arch/}. More recent versions of Docker Desktop for Mac OS and Windows have introduced native ARM emulation: \url{https://engineering.docker.com/2019/04/multi-arch-images/}}, and attempting to build one will produce the following error when running \inline{docker build}:
+As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build on x86 machines.\hspace{-.08em}\footnote{With the exception of the Mac OS Docker client, which offers multi-architecture support. Further details on multiarch support can be found here: \url{https://docs.docker.com/docker-for-mac/multi-arch/} More recent versions of Docker Desktop for Mac OS and Windows have introduced native ARM emulation: \url{https://engineering.docker.com/2019/04/multi-arch-images/}}, and attempting to build one will produce the following error when running \inline{docker build}:
 
 \begin{pclisting}
 standard_init_linux.go:175: exec user process caused "exec format error"
@@ -2664,7 +2674,7 @@ dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
 %
 \subsection{Graphical User Interface tools}
 
-To use GUI tools, one must first allow incoming X connections from the host. On Linux hosts, this can be done by running \inline{xhost +} outside Docker.\footnote{See \url{https://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
+To use GUI tools, one must first allow incoming X connections from the host. On Linux hosts, this can be done by running \inline{xhost +} outside Docker.\hspace{-.08em}\footnote{See \url{https://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
 
 \begin{pclisting}
 ~$ docker run -it --rm --net host \
@@ -3104,7 +3114,7 @@ RUN [ "cross-build-end" ]
 CMD <DEFAULT_START_COMMAND>
 \end{dockerlisting}
 %
-Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-build images~\footnote{\href{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}}. When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
+Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-build images.\hspace{-.08em}\footnote{\url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}} When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
 %
 \begin{pclisting}
 ~$ docker run (*\hl{--entrypoint=qemu-arm-static}*) -it your/arm-image bash
