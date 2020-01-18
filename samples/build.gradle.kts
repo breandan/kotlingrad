@@ -1,7 +1,13 @@
 plugins {
   idea
-  kotlin("jvm") version "1.3.61"
+  kotlin("jvm")
   id("org.openjfx.javafxplugin") version "0.0.8"
+  id("com.palantir.graal") version "0.6.0-67-gaa8ea65"
+}
+
+graal {
+  mainClass("edu.umontreal.kotlingrad.samples.HelloKotlingradKt")
+  outputName("hello-kotlingrad")
 }
 
 idea {

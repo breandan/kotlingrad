@@ -40,7 +40,7 @@ fun unitTest(subroutine: (Input) -> Output) {
 }
 
 fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -> Boolean) =
-  inputs.forEach { input ->
+  inputs.forEach { input: I ->
     try {
       val output = program(input)
       assert(checkOutput(output)) { "Postcondition failed on $input, $output" }
