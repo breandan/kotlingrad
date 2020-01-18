@@ -39,9 +39,7 @@ fun main() {
  * Vector function.
  */
 
-
-
-sealed class VFun<X: SFun<X>, E: D1>(override val inputs: Inputs<X>): Fun<X>, MFun<X, E, D1>(inputs) {
+sealed class VFun<X: SFun<X>, E: D1>(override val inputs: Inputs<X>): Fun<X>, (Bindings<X>) -> VFun<X, E> {
   constructor(vararg funs: Fun<X>): this(Inputs(*funs))
 
   override operator fun invoke(bnds: Bindings<X>): VFun<X, E> =
@@ -78,13 +76,13 @@ sealed class VFun<X: SFun<X>, E: D1>(override val inputs: Inputs<X>): Fun<X>, MF
   fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
   fun grad(): Map<Var<X>, VFun<X, E>> = inputs.sVars.map { it to VDerivative(this, it) }.toMap()
 
-  override operator fun unaryMinus(): VFun<X, E> = VNegative(this)
+  open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
   open operator fun minus(subtrahend: VFun<X, E>): VFun<X, E> = VSum(this, -subtrahend)
 
   open infix fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
-  override operator fun times(multiplicand: SFun<X>): VFun<X, E> = VSProd(this, multiplicand)
-  open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)//(expand * multiplicand).rows.first()
+  open operator fun times(multiplicand: SFun<X>): VFun<X, E> = VSProd(this, multiplicand)
+  open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)
   open infix fun dot(multiplicand: VFun<X, E>): SFun<X> = DProd(this, multiplicand)
 
   open fun magnitude(): SFun<X> = VMagnitude(this)

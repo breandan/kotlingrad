@@ -1,5 +1,6 @@
 plugins {
   idea
+  kotlin("jvm") version "1.3.61"
   id("de.fayard.refreshVersions") version "0.8.6"
 }
 
