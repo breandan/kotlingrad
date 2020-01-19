@@ -69,10 +69,10 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     }
 
     val r1a = (r1.angle + (ω1 * dt + .5 * α1 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(inputs.sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).asDouble() }
     }
     val r2a = (r2.angle + - (ω2 * dt + .5 * α2 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(inputs.sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).asDouble() }
     }
 
     if(G is Var) {

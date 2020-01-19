@@ -56,8 +56,8 @@ fun main() {
  * Matrix function.
  */
 
-open class MFun<X: SFun<X>, R: D1, C: D1>(override val inputs: Inputs<X>): Fun<X>, (Bindings<X>) -> MFun<X, R, C> {
-  constructor(vararg funs: Fun<X>): this(Inputs(*funs))
+open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): Fun<X>, (Bindings<X>) -> MFun<X, R, C> {
+  constructor(vararg funs: Fun<X>): this(Bindings(*funs))
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
