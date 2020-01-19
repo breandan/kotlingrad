@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
+
 package edu.umontreal.kotlingrad.experimental
 
 fun main() {

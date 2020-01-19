@@ -42,10 +42,7 @@ javafx.modules("javafx.controls", "javafx.swing")
 
 tasks {
   compileKotlin {
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_1_8.toString()
-      freeCompilerArgs += "-XXLanguage:+NewInference"
-    }
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
   }
 
   listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture",

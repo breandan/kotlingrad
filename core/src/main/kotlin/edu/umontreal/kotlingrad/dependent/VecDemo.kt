@@ -1,3 +1,5 @@
+@file:Suppress("LocalVariableName", "UNUSED_VARIABLE", "UNUSED_PARAMETER")
+
 package edu.umontreal.kotlingrad.dependent
 
 fun main() {
