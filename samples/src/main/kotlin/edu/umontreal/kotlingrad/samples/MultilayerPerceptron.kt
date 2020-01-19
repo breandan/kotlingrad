@@ -18,11 +18,11 @@ class MultilayerPerceptron<T: SFun<T>>(
     p2: MFun<T, D3, D3>,
     p3: VFun<T, D3>
   ): SFun<T> {
-    val layer1 = layer(p1 * x)
-    val layer2 = layer(p2 * layer1)
-    val output = layer2 dot p3
+    val layer1 = layer(p1v * x)
+    val layer2 = layer(p2v * layer1)
+    val output = layer2 dot p3v
     val lossFun = (output - y) pow Two()
-    return lossFun
+    return lossFun(p1v to p1)(p2v to p2)(p3v to p3)
   }
 
   private fun sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
@@ -56,13 +56,14 @@ class MultilayerPerceptron<T: SFun<T>>(
 
         totalLoss += m(mlp.x to X, mlp.y to Y).asDouble()
 
-        val dw1 = m.d(mlp.p1v)(mlp.x to X, mlp.y to Y)
-        val dw2 = m.d(mlp.p2v)(mlp.x to X, mlp.y to Y)
-        val dw3 = m.d(mlp.p3v)(mlp.x to X, mlp.y to Y)
+        val dw1 = m.d(mlp.p1v)
+        val dw2 = m.d(mlp.p2v)
+        val dw3 = m.d(mlp.p3v)
 
-        w1 += α * dw1
-        w2 += α * dw2
-        w3 += α * dw3
+        w1 += α * dw1(mlp.x to X, mlp.y to Y)
+        w2 += α * dw2(mlp.x to X, mlp.y to Y)
+        w3 += α * dw3(mlp.x to X, mlp.y to Y)
+
         val avgLoss = totalLoss / i
         println(avgLoss)
       } while (i++ < 100 || 0.5 < avgLoss)
