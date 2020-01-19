@@ -1,20 +1,17 @@
 plugins {
   idea
+  application
   kotlin("jvm")
   id("org.openjfx.javafxplugin") version "0.0.8"
   id("com.palantir.graal") version "0.6.0-67-gaa8ea65"
 }
 
-graal {
-  mainClass("edu.umontreal.kotlingrad.samples.HelloKotlingradKt")
-  outputName("hello-kotlingrad")
-}
+val entrypoint = "edu.umontreal.kotlingrad.samples.HelloKotlingradKt"
 
-idea {
-  module {
-    isDownloadJavadoc = true
-    isDownloadSources = true
-  }
+application.mainClassName = entrypoint
+graal {
+  mainClass(entrypoint)
+  outputName("hello-kotlingrad")
 }
 
 repositories {
@@ -41,14 +38,14 @@ dependencies {
   implementation("org.jetbrains.lets-plot:kotlin-frontend-api:_")
 }
 
+javafx.modules("javafx.controls", "javafx.swing")
+
 tasks {
   compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
-  }
-
-  compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions {
+      jvmTarget = JavaVersion.VERSION_1_8.toString()
+      freeCompilerArgs += "-XXLanguage:+NewInference"
+    }
   }
 
   listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture",
@@ -59,8 +56,4 @@ tasks {
         classpath = sourceSets["main"].runtimeClasspath
       }
     }
-}
-
-javafx {
-  modules("javafx.controls", "javafx.swing")
 }

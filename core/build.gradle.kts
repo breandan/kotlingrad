@@ -4,16 +4,9 @@ plugins {
   `maven-publish`
 }
 
-idea {
-  module {
-    isDownloadJavadoc = true
-    isDownloadSources = true
-  }
-}
-
-repositories {
-  maven("https://dl.bintray.com/mipt-npm/scientifik")
-}
+//repositories {
+//  maven("https://dl.bintray.com/mipt-npm/scientifik")
+//}
 
 dependencies {
   implementation(kotlin("stdlib"))
@@ -36,12 +29,13 @@ dependencies {
 }
 
 tasks {
+  val jvmTarget = JavaVersion.VERSION_1_8.toString()
   compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = jvmTarget
     kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
   }
   compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = jvmTarget
   }
   test {
     useJUnitPlatform()

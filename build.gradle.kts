@@ -13,8 +13,8 @@ allprojects {
   }
 }
 
-idea {
-  module {
-    excludeDirs.add(file("latex"))
-  }
+idea.module {
+  excludeDirs.add(file("latex"))
+  isDownloadJavadoc = true
+  isDownloadSources = true
 }
