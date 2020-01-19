@@ -1,4 +1,4 @@
-@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName", "PropertyName", "MemberVisibilityCanBePrivate")
+@file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName", "PropertyName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 
 package edu.umontreal.kotlingrad.experimental
 
@@ -61,6 +61,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val inputs: Inputs<X>): Fun<X
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
+  @Suppress("UNCHECKED_CAST")
   override operator fun invoke(bnds: Bindings<X>): MFun<X, R, C> =
     when (this) {
       is MNegative -> -value(bnds)
@@ -112,6 +113,7 @@ class MSProd<X: SFun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: SFun<
 class SMProd<X: SFun<X>, R: D1, C: D1>(val left: SFun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
+@Suppress("UNCHECKED_CAST")
 class MDerivative<X: SFun<X>, R: D1, C: D1> internal constructor(val mFun: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>): MFun<X, R, C>(mFun) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
     is MConst -> MZero()

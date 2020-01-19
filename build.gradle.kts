@@ -1,6 +1,6 @@
 plugins {
   idea
-  kotlin("jvm") version "1.3.61"
+  kotlin("jvm") version "1.4.0-dev-1148"
   id("de.fayard.refreshVersions") version "0.8.6"
 }
 
@@ -10,6 +10,7 @@ allprojects {
 
   repositories {
     mavenCentral()
+    maven("https://dl.bintray.com/kotlin/kotlin-dev")
   }
 }
 

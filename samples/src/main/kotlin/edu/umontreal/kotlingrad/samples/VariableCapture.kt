@@ -1,4 +1,4 @@
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "UNUSED_VARIABLE")
 
 package edu.umontreal.kotlingrad.samples
 

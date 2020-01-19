@@ -1,4 +1,4 @@
-@file:Suppress("FunctionName", "LocalVariableName", "unused")
+@file:Suppress("FunctionName", "LocalVariableName", "unused", "UNUSED_VARIABLE")
 
 package edu.umontreal.kotlingrad.experimental
 
@@ -208,6 +208,7 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val bindings: Bindings<X>) : SFu
 
   fun SFun<X>.call(): SFun<X> = bindings.sMap.getOrElse(this@call) { bind() }
 
+  @Suppress("UNCHECKED_CAST")
   fun SFun<X>.bind() = when (this@bind) {
     is Zero -> bindings.zero
     is One -> bindings.one
@@ -296,6 +297,7 @@ class DReal(override val value: Double) : RealNumber<DReal>(value) {
       else -> super.times(multiplicand)
     }
 
+  @Suppress("UNCHECKED_CAST")
   override fun <R : D1, C: D1> times(multiplicand: MFun<DReal, R, C>) =
     when (multiplicand) {
       is Mat -> Mat(multiplicand.rows.map { this * it } as List<Vec<DReal, C>>)

@@ -1,4 +1,4 @@
-@file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate")
+@file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
 @Suppress("DuplicatedCode")
@@ -42,6 +42,7 @@ fun main() {
 sealed class VFun<X: SFun<X>, E: D1>(override val inputs: Inputs<X>): Fun<X>, (Bindings<X>) -> VFun<X, E> {
   constructor(vararg funs: Fun<X>): this(Inputs(*funs))
 
+  @Suppress("UNCHECKED_CAST")
   override operator fun invoke(bnds: Bindings<X>): VFun<X, E> =
     when (this) {
       is Vec<X, E> -> Vec(contents.map { it(bnds) })

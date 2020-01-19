@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package edu.umontreal.kotlingrad.dependent
 
 fun main() {
