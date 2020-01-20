@@ -16,21 +16,21 @@ class TestSymbolic : StringSpec({
 
   fun ktEval(f: SFun<DReal>, vararg kgBnds: Pair<Var<DReal>, Number>) =
     engine.run {
-      val bindings = kgBnds.map { it.first.name to it.second.toDouble() }.toMap()
-      setBindings(SimpleBindings(bindings), ScriptContext.ENGINE_SCOPE)
-      eval(f.toString())
+      try {
+        val bnds = kgBnds.map { it.first.name to it.second.toDouble() }.toMap()
+        setBindings(SimpleBindings(bnds), ScriptContext.ENGINE_SCOPE)
+        eval("import kotlin.math.*; $f")
+      } catch (e: Exception) {
+        System.err.println("Failed to evaluate expression: $f")
+        throw e
+      }
     }
 
   with(DoublePrecision) {
     "test symbolic evaluation" {
-      ExpressionGenerator.assertAll(10) { f: SFun<DReal> ->
-        try {
-          DoubleGenerator.assertAll(10) { ẋ, ẏ, ż ->
-            f(x to ẋ, y to ẏ, z to ż) shouldBeAbout ktEval(f, x to ẋ, y to ẏ, z to ż)
-          }
-        } catch (e: Exception) {
-          System.err.println("Failed on expression: $f")
-          throw e
+      ExpressionGenerator(DoublePrecision).assertAll(20) { f: SFun<DReal> ->
+        DoubleGenerator.assertAll(20) { ẋ, ẏ, ż ->
+          f(x to ẋ, y to ẏ, z to ż) shouldBeAbout ktEval(f, x to ẋ, y to ẏ, z to ż)
         }
       }
     }

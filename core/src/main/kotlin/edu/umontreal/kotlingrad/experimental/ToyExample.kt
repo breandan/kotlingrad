@@ -164,7 +164,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   override fun toString(): String = when (this) {
     is Log -> "ln($logarithmand)"
     is Negative -> "- ($value)"
-    is Power -> "($base) pow ($exponent)"
+    is Power -> "($base).pow($exponent)"
     is Prod -> "($left) * ($right)"
     is Sum -> if(right is Negative) "$left $right" else "$left + $right"
     is Var -> name
@@ -345,7 +345,14 @@ class DReal(override val value: Double) : RealNumber<DReal>(value) {
  * Numerical context.
  */
 
-sealed class Protocol<X : RealNumber<X>> {
+sealed class Protocol<X : SFun<X>> {
+  val x = makeVar("x")
+  val y = makeVar("y")
+  val z = makeVar("z")
+  val variables = listOf(x, y, z)
+
+  open fun makeVar(name: String) = Var<X>(name)
+
   class IndVar<X: SFun<X>> constructor(val fn: SFun<X>)
 
   class Differential<X: SFun<X>>(private val fx: SFun<X>) {
@@ -353,7 +360,7 @@ sealed class Protocol<X : RealNumber<X>> {
     infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
   }
 
-  fun <X: SFun<X>> d(fn: SFun<X>) = Differential(fn)
+  fun d(fn: SFun<X>) = Differential(fn)
   abstract fun wrap(default: Number): X
 
   operator fun Number.times(multiplicand: SFun<X>) = multiplicand * wrap(this)
@@ -379,7 +386,7 @@ object DoublePrecision : Protocol<DReal>() {
     E<DReal>() to E
   )
 
-  fun vrb(name: String) = Var<DReal>(name)
+  override fun makeVar(name: String) = Var<DReal>(name)
 
   operator fun SFun<DReal>.invoke(vararg pairs: Pair<Var<DReal>, Number>) = this(pairs.bind())
 
@@ -390,10 +397,6 @@ object DoublePrecision : Protocol<DReal>() {
   private fun <T: Pair<Var<DReal>, Number>> Array<T>.bind() = Bindings((constants + this@bind).map { it.first to wrap(it.second) }.toMap())
 
   fun SFun<DReal>.asDouble() = (this as DReal).value
-
-  val x = vrb("X")
-  val y = vrb("Y")
-  val z = vrb("Z")
 
   fun Vec(d0: Double) = Vec(DReal(d0))
   fun Vec(d0: Double, d1: Double) = Vec(DReal(d0), DReal(d1))
