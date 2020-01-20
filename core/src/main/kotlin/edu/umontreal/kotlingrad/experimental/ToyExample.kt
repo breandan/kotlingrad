@@ -36,6 +36,16 @@ fun main() {
     println("h'(1, 2, 3) = ${dh_dx(x to 1, y to 2, z to 3)}")
 
     val t = g.d(x, y, z)
+
+    val r = x + 1
+    val m = x + 2
+    val s = x + 3
+    val ro_mos = r(x to m(x to s))
+    val rom_os = r(x to m)(x to s)
+
+    val i = 0
+    println("r ∘ (m ∘ s) ∘ $i = $ro_mos ∘ $i = ${ro_mos(x to 0)}")
+    println("(r ∘ m) ∘ s ∘ $i = $rom_os ∘ $i = ${rom_os(x to 0)}")
   }
 }
 
@@ -165,7 +175,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     is E -> "E()"  //"\u2147"       // ⅇ
     is VMagnitude -> "|$value|"
     is DProd -> "($left) dot ($right)"
-    is Composition -> "($fn)($inputs)"
+    is Composition -> "($fn)$inputs"
     else -> super.toString()
   }
 
