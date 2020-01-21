@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+
 plugins {
   idea
   kotlin("jvm")
@@ -38,7 +41,17 @@ tasks {
     kotlinOptions.jvmTarget = jvmTarget
   }
   test {
+    minHeapSize = "1024m"
+    maxHeapSize = "4096m"
+
     useJUnitPlatform()
+    testLogging {
+      events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT, STANDARD_ERROR)
+      exceptionFormat = FULL
+      showExceptions = true
+      showCauses = true
+      showStackTraces = true
+    }
   }
 }
 
