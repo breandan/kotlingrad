@@ -82,5 +82,18 @@ class TestArithmetic: StringSpec({
         f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
       }
     }
+
+//    "test compositional associativity" {
+//      DoubleGenerator.assertAll { ẋ, ẏ, ż ->
+//        val f = 4 * z + x
+//        val g = 3 * y + z
+//        val h = 2 * x + y
+//        val fogoho = f(x to g, y to h)
+//        val fo_goh = f(x to g(y to h))
+//        val fog_oh = f(x to g)(y to h)
+//
+//        fo_goh(x to ẋ, y to ẏ, z to ż) shouldBeAbout fog_oh(x to ẋ, y to ẏ, z to ż)
+//      }
+//    }
   }
 })
