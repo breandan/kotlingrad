@@ -9,22 +9,26 @@ import edu.umontreal.kotlingrad.utils.step
 import org.knowm.xchart.*
 import org.knowm.xchart.VectorGraphicsEncoder.VectorGraphicsFormat.SVG
 import java.awt.Color
+import java.io.File
 
 fun main() {
   with(DoublePrecision) {
     val y0 = exp(-x * x / 2)
 
-    plot2D(-6.0..6.0, *y0.andDerivatives()).saveAs("hermite.svg")
+    val hermite = plot2D(-6.0..6.0, *y0.andDerivatives())
 
     val y1 = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
 
-    plot2D(-6.0..6.0, *y1.andDerivatives()).saveAs("plot.svg")
+    val sinusoid = plot2D(-6.0..6.0, *y1.andDerivatives())
+
+    hermite.saveAs("hermite.svg").viewInBrowser()
+    sinusoid.saveAs("plot.svg").viewInBrowser()
   }
 }
 
-fun XYChart.saveAs(filename: String) {
+fun XYChart.saveAs(filename: String) =
   VectorGraphicsEncoder.saveVectorGraphic(this, "$resourcesPath/$filename", SVG)
-}
+    .run { File("$resourcesPath/$filename") }
 
 private fun Fun<DoubleReal>.andDerivatives(): Array<Fun<DoubleReal>> {
   with(DoublePrecision) {
@@ -57,6 +61,5 @@ private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
       styler.chartBackgroundColor = transparent
       styler.plotBackgroundColor = transparent
       styler.legendBackgroundColor = transparent
-//  SwingWrapper(this).displayChart()
     }
 }
