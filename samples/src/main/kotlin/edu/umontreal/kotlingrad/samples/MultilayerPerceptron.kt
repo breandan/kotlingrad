@@ -10,9 +10,7 @@ class MultilayerPerceptron<T: SFun<T>>(
   val p1v: VVar<T, D3> = VVar(),
   val p2v: MVar<T, D3, D3> = MVar(),
   val p3v: VVar<T, D3> = VVar()
-): (VFun<T, D3>,
-    MFun<T, D3, D3>,
-    VFun<T, D3>) -> SFun<T> {
+): (VFun<T, D3>, MFun<T, D3, D3>, VFun<T, D3>) -> SFun<T> {
   override operator fun invoke(
     p1: VFun<T, D3>,
     p2: MFun<T, D3, D3>,
@@ -25,7 +23,6 @@ class MultilayerPerceptron<T: SFun<T>>(
     return lossFun(p1v to p1)(p2v to p2)(p3v to p3)
   }
 
-  private fun sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 
   private fun layer(x: VFun<T, D3>): VFun<T, D3> = x.map { sigmoid(it) }
 
@@ -70,3 +67,5 @@ class MultilayerPerceptron<T: SFun<T>>(
     }
   }
 }
+
+fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
