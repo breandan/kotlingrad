@@ -2,9 +2,9 @@
 
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.functions.Fun
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
-import edu.umontreal.kotlingrad.numerical.DoubleReal
+import edu.umontreal.kotlingrad.experimental.DReal
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.SFun
 import edu.umontreal.kotlingrad.utils.step
 import org.knowm.xchart.*
 import org.knowm.xchart.VectorGraphicsEncoder.VectorGraphicsFormat.SVG
@@ -21,8 +21,13 @@ fun main() {
 
     val sinusoid = plot2D(-6.0..6.0, *y1.andDerivatives())
 
+    val y2 = sigmoid(x)
+
+    val sigmoid = plot2D(-6.0..6.0, *y2.andDerivatives())
+
     hermite.saveAs("hermite.svg").viewInBrowser()
     sinusoid.saveAs("plot.svg").viewInBrowser()
+    sigmoid.saveAs("sigmoid.svg").viewInBrowser()
   }
 }
 
@@ -30,7 +35,7 @@ fun XYChart.saveAs(filename: String) =
   VectorGraphicsEncoder.saveVectorGraphic(this, "$resourcesPath/$filename", SVG)
     .run { File("$resourcesPath/$filename") }
 
-private fun Fun<DoubleReal>.andDerivatives(): Array<Fun<DoubleReal>> {
+private fun SFun<DReal>.andDerivatives(): Array<SFun<DReal>> {
   with(DoublePrecision) {
     val y = this@andDerivatives
     val `dy∕dx` = d(y) / d(x)
@@ -50,9 +55,9 @@ private fun Fun<DoubleReal>.andDerivatives(): Array<Fun<DoubleReal>> {
 }
 
 private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
-                                   vararg funs: Fun<DoubleReal>): XYChart {
+                                   vararg funs: SFun<DReal>): XYChart {
   val xs = (range step 0.0087).toList().toDoubleArray()
-  val ys = funs.map { xs.map { x -> it(x) }.toDoubleArray() }.toTypedArray()
+  val ys = funs.map { xs.map { xv -> it(x to xv).asDouble() }.toDoubleArray() }.toTypedArray()
 
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
   return QuickChart.getChart("Derivatives of y=${funs[0]}", "x", "y", labels, xs, ys)
