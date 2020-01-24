@@ -280,7 +280,7 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
     is Tangent -> angle.call().tan()
     is Log -> logarithmand.call().ln()
     is Derivative -> df().call()
-    is DProd -> left(inputs) as Vec<X, D1> dot right(inputs) as Vec<X, D1>
+    is DProd -> left(inputs) as VFun<X, D1> dot right(inputs) as VFun<X, D1>
     is VMagnitude -> value(inputs).magnitude()
     is Composition -> fn.call().call()
   }
@@ -313,17 +313,38 @@ class One<X: SFun<X>> : Special<X>()
 class Two<X: SFun<X>> : Special<X>()
 class E<X: SFun<X>> : Special<X>()
 
-abstract class RealNumber<X : SFun<X>, Y>(open val value: Y) : SConst<X>()
+abstract class RealNumber<X : SFun<X>, Y>(open val value: Y) : SConst<X>() {
+  override fun toString() = value.toString()
+  abstract fun wrap(value: Number): X
+
+  override val ZERO by lazy { wrap(0) }
+  override val ONE by lazy { wrap(1) }
+  override val TWO by lazy { wrap(2) }
+  override val E by lazy { wrap(Math.E) }
+
+  override fun <E : D1> times(multiplicand: VFun<X, E>) =
+    when (multiplicand) {
+      is Vec -> Vec(multiplicand.contents.map { this * it })
+      else -> super.times(multiplicand)
+    }
+
+  @Suppress("UNCHECKED_CAST")
+  override fun <R : D1, C: D1> times(multiplicand: MFun<X, R, C>) =
+    when (multiplicand) {
+      is Mat -> Mat(multiplicand.rows.map { this * it } as List<Vec<X, C>>)
+      else -> super.times(multiplicand)
+    }
+}
 
 class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
-  override val ZERO by lazy { DReal(0.0) }
-  override val ONE by lazy { DReal(1.0) }
-  override val TWO by lazy { DReal(2.0) }
-  override val E by lazy { DReal(Math.E) }
+  override fun wrap(value: Number) = DReal(value.toDouble())
 
+  override fun sin() = DReal(sin(value))
+  override fun cos() = DReal(cos(value))
+  override fun tan() = DReal(tan(value))
+  override fun sqrt() = DReal(sqrt(value))
   override fun unaryMinus() = DReal(-value)
   override fun ln() = DReal(ln(value))
-  override fun toString() = value.toString()
 
   /**
    * Constant propagation.
@@ -343,25 +364,6 @@ class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
     is DReal -> DReal(value.pow(exp.value))
     else -> super.pow(exp)
   }
-
-  override fun sin() = DReal(sin(value))
-  override fun cos() = DReal(cos(value))
-  override fun tan() = DReal(tan(value))
-
-  override fun sqrt() = DReal(sqrt(value))
-
-  override fun <E : D1> times(multiplicand: VFun<DReal, E>) =
-    when (multiplicand) {
-      is Vec -> Vec(multiplicand.contents.map { this * it })
-      else -> super.times(multiplicand)
-    }
-
-  @Suppress("UNCHECKED_CAST")
-  override fun <R : D1, C: D1> times(multiplicand: MFun<DReal, R, C>) =
-    when (multiplicand) {
-      is Mat -> Mat(multiplicand.rows.map { this * it } as List<Vec<DReal, C>>)
-      else -> super.times(multiplicand)
-    }
 }
 
 /**
@@ -386,7 +388,7 @@ sealed class Protocol<X : SFun<X>> {
     infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
   }
 
-  abstract val constants: List<Pair<SConst<X>, Number>>
+  abstract val constants: List<Pair<Special<X>, Number>>
 
   protected fun <T: Pair<Var<X>, Number>> Array<T>.bind() = 
     Bindings((constants + this@bind).map { it.first to wrap(it.second) }.toMap())
@@ -449,7 +451,7 @@ sealed class Protocol<X : SFun<X>> {
 object DoublePrecision : Protocol<DReal>() {
   override fun wrap(default: Number): DReal = DReal(default.toDouble())
   
-  override val constants: List<Pair<SConst<DReal>, Number>> = listOf(
+  override val constants: List<Pair<Special<DReal>, Number>> = listOf(
     Zero<DReal>() to 0,
     One<DReal>() to 1,
     Two<DReal>() to 2,
@@ -462,7 +464,7 @@ object DoublePrecision : Protocol<DReal>() {
 object BigDecimalPrecision : Protocol<BDReal>() {
   override fun wrap(default: Number): BDReal = BDReal(default.toDouble())
 
-  override val constants: List<Pair<SConst<BDReal>, Number>> = listOf(
+  override val constants: List<Pair<Special<BDReal>, Number>> = listOf(
     Zero<BDReal>() to 0,
     One<BDReal>() to 1,
     Two<BDReal>() to 2,

@@ -73,6 +73,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
       is SMProd -> left(bnds) * right(bnds)
       is MConst -> MZero()
       is Mat -> Mat(rows.map { it(bnds) as Vec<X, C> })
+      is MVar -> bnds.mMap.getOrElse(this) { this } as MFun<X, R, C>
       else -> TODO(this::class.java.name)
     }
 
