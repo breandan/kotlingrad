@@ -374,7 +374,22 @@ sealed class Protocol<X : SFun<X>> {
   val x = Var<X>("x")
   val y = Var<X>("y")
   val z = Var<X>("z")
+
   val variables = listOf(x, y, z)
+
+  val zero = Zero<X>()
+  val one = One<X>()
+  val two = Two<X>()
+  val e = E<X>()
+
+  val constants: Map<Special<X>, Number> = mapOf(zero to 0, one to 1, two to 2, e to E)
+
+  private fun <T: Map<Var<X>, Number>> T.bind() =
+    Bindings((constants + this@bind).map { it.key to wrap(it.value) }.toMap())
+
+  abstract fun wrap(number: Number): X
+  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwap() = (this as X).value
+  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwap().toDouble()
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
   fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
@@ -388,19 +403,13 @@ sealed class Protocol<X : SFun<X>> {
     infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
   }
 
-  abstract val constants: List<Pair<Special<X>, Number>>
+  operator fun SFun<X>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.toMap().bind())
 
-  protected fun <T: Pair<Var<X>, Number>> Array<T>.bind() = 
-    Bindings((constants + this@bind).map { it.first to wrap(it.second) }.toMap())
+  operator fun <E : D1> VFun<X, E>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.toMap().bind())
 
-  operator fun SFun<X>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.bind())
-
-  operator fun <Y : D1> VFun<X, Y>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.bind())
-
-  operator fun <Rows : D1, Cols: D1> MFun<X, Rows, Cols>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.bind())
+  operator fun <R : D1, C: D1> MFun<X, R, C>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.toMap().bind())
 
   fun d(fn: SFun<X>) = Differential(fn)
-  abstract fun wrap(default: Number): X
 
   operator fun Number.times(multiplicand: SFun<X>) = wrap(this) * multiplicand
   operator fun SFun<X>.times(multiplicand: Number) = this * wrap(multiplicand)
@@ -449,27 +458,9 @@ sealed class Protocol<X : SFun<X>> {
 }
 
 object DoublePrecision : Protocol<DReal>() {
-  override fun wrap(default: Number): DReal = DReal(default.toDouble())
-  
-  override val constants: List<Pair<Special<DReal>, Number>> = listOf(
-    Zero<DReal>() to 0,
-    One<DReal>() to 1,
-    Two<DReal>() to 2,
-    E<DReal>() to E
-  )
-
-  fun SFun<DReal>.asDouble() = (this as DReal).value
+  override fun wrap(number: Number): DReal = DReal(number.toDouble())
 }
 
 object BigDecimalPrecision : Protocol<BDReal>() {
-  override fun wrap(default: Number): BDReal = BDReal(default.toDouble())
-
-  override val constants: List<Pair<Special<BDReal>, Number>> = listOf(
-    Zero<BDReal>() to 0,
-    One<BDReal>() to 1,
-    Two<BDReal>() to 2,
-    E<BDReal>() to E
-  )
-
-  fun SFun<BDReal>.asDouble() = (this as BDReal).value.toDouble()
+  override fun wrap(number: Number): BDReal = BDReal(number.toDouble())
 }

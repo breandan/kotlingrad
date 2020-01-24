@@ -7,7 +7,6 @@ import jetbrains.letsPlot.geom.geom_path
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.ggtitle
 import jetbrains.letsPlot.intern.toSpec
-import java.io.File
 import kotlin.math.*
 
 fun main() {

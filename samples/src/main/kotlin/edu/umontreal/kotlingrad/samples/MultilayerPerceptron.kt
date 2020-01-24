@@ -23,7 +23,6 @@ class MultilayerPerceptron<T: SFun<T>>(
     return lossFun(p1v to p1)(p2v to p2)(p3v to p3)
   }
 
-
   private fun layer(x: VFun<T, D3>): VFun<T, D3> = x.map { sigmoid(it) }
 
   companion object {
@@ -51,7 +50,7 @@ class MultilayerPerceptron<T: SFun<T>>(
         val (X, Y) = drawSample()
         val m = mlp(p1 = w1, p2 = w2, p3 = w3)
 
-        totalLoss += m(mlp.x to X, mlp.y to Y).asDouble()
+        totalLoss += m(mlp.x to X, mlp.y to Y).toDouble()
 
         val dw1 = m.d(mlp.p1v)
         val dw2 = m.d(mlp.p2v)
