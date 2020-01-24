@@ -28,8 +28,8 @@ fun main() {
     val `dy∕dx` = d(y) / d(x)
 
     xs.map { BigDecimal(it) }.run {
-      val f = map { y(x to it).asDouble() }
-      val df = map { `dy∕dx`(x to it).asDouble() }
+      val f = map { y(x to it).toDouble() }
+      val df = map { `dy∕dx`(x to it).toDouble() }
       arrayOf(f, df)
     }.map { it.toDoubleArray() }.toTypedArray()
   }
@@ -55,7 +55,7 @@ fun main() {
 //      dy/dx=$`dy∕dx`
 //      """.trimIndent())
 
-    xs.run { arrayOf(map { y(x to it).asDouble() }, map { `dy∕dx`(x to it).asDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
+    xs.run { arrayOf(map { y(x to it).toDouble() }, map { `dy∕dx`(x to it).toDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
   }
 
   // Numerical differentiation using centered differences
@@ -64,7 +64,7 @@ fun main() {
     val h = 7E-13
     val `dy∕dx` = (y(x to x + h) - y(x to x - h)) / (2.0 * h)
 
-    xs.run { arrayOf(map { y(x to it).asDouble() }, map { `dy∕dx`(x to it).asDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
+    xs.run { arrayOf(map { y(x to it).toDouble() }, map { `dy∕dx`(x to it).toDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
   }
 
   val t = { i: Double, d: Double -> log10(abs(i - d)).let { if (it < -20) -20.0 else it } }

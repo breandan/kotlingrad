@@ -59,7 +59,7 @@ private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
                                    vararg funs: SFun<DReal>): String {
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
   val xs = (range step 0.0087).toList()
-  val ys = funs.map { xs.map { xv -> it(x to xv).asDouble() } }
+  val ys = funs.map { xs.map { xv -> it(x to xv).toDouble() } }
   val data = (labels.zip(ys) + ("x" to xs)).toMap()
   val colors = listOf("dark_green", "gray", "black", "red", "orange", "dark_blue")
   val geoms = labels.zip(colors).map { geom_path(size = 2.0, color = it.second) { x = "x"; y = it.first } }

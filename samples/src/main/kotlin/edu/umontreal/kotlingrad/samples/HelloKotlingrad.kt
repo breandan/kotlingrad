@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main() {
+fun main() =
   with(DoublePrecision) {
     val x = Var("x")
     val y = Var("y")
@@ -26,4 +26,3 @@ fun main() {
         "∂²z($values)/∂x∂y \t\t= $`∂²z∕∂x∂y` \n\t\t\t\t= " + `∂²z∕∂x∂y`(values) + "\n" +
         "∇z($values) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
   }
-}

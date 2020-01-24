@@ -24,7 +24,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   val m1 = 2.0 // Masses
   val m2 = 2.0
   var G: SFun<DReal> = DoublePrecision.wrap(9.81) // Gravity
-  var µ: SFun<DReal> = DoublePrecision.wrap(0.01) // Friction
+  var µ = 0.01 // Friction
   val Gp = 0.01  // Simulate measurement error
   val µp = -0.01
   var r1 = DoublePrecision.Vec(1.0, 0.0) // Polar vector
@@ -64,15 +64,19 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     if(isObserving && obs != null) {
       val loss = (ω2 - obs) pow 2
       G = loss.descend(100, 0.0, 0.9, 0.1, G as Var<DReal> to wrap(priorVal))
-      priorVal = G.asDouble()
+      priorVal = G.toDouble()
       println(G)
     }
 
     val r1a = (r1.angle + (ω1 * dt + .5 * α1 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).toDouble() else try {
+        toDouble()
+      } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).toDouble() }
     }
     val r2a = (r2.angle + - (ω2 * dt + .5 * α2 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).asDouble() else try { asDouble() } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).asDouble() }
+      if(G is Var) this(G as Var<DReal> to priorVal).toDouble() else try {
+        toDouble()
+      } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).toDouble() }
     }
 
     if(G is Var) {
@@ -100,7 +104,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
         velocity = gamma * velocity + d_dg(map.first to G1P) * α
         G1P -= velocity
         i++
-      } while (abs(velocity.asDouble()) > 0.00001 && i < steps)
+      } while (abs(velocity.toDouble()) > 0.00001 && i < steps)
 
       return G1P
     }
@@ -126,12 +130,14 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
 
   override fun start(stage: Stage) {
     twin = DoublePendulum().apply {
-      G += DoublePrecision.wrap(Gp) // Perturb gravity and friction
-      µ += DoublePrecision.wrap(µp)
+      with(DoublePrecision) {
+        G += Gp // Perturb gravity and friction
+        µ += µp
 
-      // TODO: Erase these parameters -- should be fully learned
+        // TODO: Erase these parameters -- should be fully learned
 //    µ = 0.0
 //    G = 0.0
+      }
     }
 
     rod3 = twin.rod1
@@ -151,15 +157,15 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   }
 
   val Vec<DReal, D2>.r: Double
-    get() = DoublePrecision.run { this@r[0].asDouble() }
+    get() = DoublePrecision.run { this@r[0].toDouble() }
   val Vec<DReal, D2>.theta: Double
-    get() = DoublePrecision.run { this@theta[1].asDouble() }
+    get() = DoublePrecision.run { this@theta[1].toDouble() }
 
   val Vec<DReal, D2>.end: Vec<DReal, D2>
     get() = DoublePrecision.run { Vec(this@end.r + rodLen * magn * cos(angle), this@end.theta - rodLen * magn * sin(angle)) }
 
   val Vec<DReal, D2>.magn: Double
-    get() = DoublePrecision.run { magnitude().asDouble() }
+    get() = DoublePrecision.run { magnitude().toDouble() }
 
   val Vec<DReal, D2>.angle: Double
     get() = DoublePrecision.run { atan2(this@angle.theta, this@angle.r) }
