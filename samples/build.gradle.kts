@@ -29,7 +29,6 @@ dependencies {
   implementation("org.openjfx:javafx:_")
   implementation("guru.nidi:graphviz-kotlin:_")
   implementation("org.jzy3d:jzy3d-api:_")
-  implementation("org.knowm.xchart:xchart:_")
 
   // Lets-Plot dependencies: https://github.com/JetBrains/lets-plot-kotlin/issues/5
   implementation("org.jetbrains.lets-plot:lets-plot-jfx:_")

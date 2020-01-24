@@ -3,6 +3,10 @@ import kotlin.math.*
 
 /*
  * Implementation of backward-mode automatic differentiation.
+ *
+ * @author Roman Elizarov
+ *
+ * https://gist.github.com/elizarov/1ad3a8583e88cb6ea7a0ad09bb591d3d
  */
 
 /**

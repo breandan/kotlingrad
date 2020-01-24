@@ -2,6 +2,7 @@ package edu.umontreal.kotlingrad.calculus
 
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.DoubleShrinker
+import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -16,7 +17,9 @@ open class DoubleGenerator(vararg exclude: Number, val positive: Boolean = false
       val r = Random.nextDouble()
       val e = 10.0.pow((-100..100).random().toDouble())
       if (positive) r * e else -e + 2 * e * r
-    }
+    } - excluding
 
-  override fun shrinker() = DoubleShrinker
+  override fun shrinker() = object : Shrinker<Double> {
+    override fun shrink(failure: Double) = DoubleShrinker.shrink(failure) - excluding
+  }
 }

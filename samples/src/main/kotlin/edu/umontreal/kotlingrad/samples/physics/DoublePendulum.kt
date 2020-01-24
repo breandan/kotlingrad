@@ -31,7 +31,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
   var r2 = DoublePrecision.Vec(1.0, 0.0)
   val observationSteps = 30
   var priorVal = 5.0
-  fun step(obs: SFun<DReal>? = null, groundTruth: Pair<VConst<DReal, D2>, VConst<DReal, D2>>? = null) = with(DoublePrecision) {
+  fun step(obs: SFun<DReal>? = null, groundTruth: Pair<Vec<DReal, D2>, Vec<DReal, D2>>? = null) = with(DoublePrecision) {
     val isObserving = false
 //    val priorVal = if(G is Var) G.asDouble()
     if (isObserving) {
@@ -150,21 +150,21 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     Timeline(KeyFrame(Duration.millis(20.0), this)).apply { cycleCount = Timeline.INDEFINITE }.play()
   }
 
-  val VConst<DReal, D2>.r: Double
+  val Vec<DReal, D2>.r: Double
     get() = DoublePrecision.run { this@r[0].asDouble() }
-  val VConst<DReal, D2>.theta: Double
+  val Vec<DReal, D2>.theta: Double
     get() = DoublePrecision.run { this@theta[1].asDouble() }
 
-  val VConst<DReal, D2>.end: VConst<DReal, D2>
+  val Vec<DReal, D2>.end: Vec<DReal, D2>
     get() = DoublePrecision.run { Vec(this@end.r + rodLen * magn * cos(angle), this@end.theta - rodLen * magn * sin(angle)) }
 
-  val VConst<DReal, D2>.magn: Double
+  val Vec<DReal, D2>.magn: Double
     get() = DoublePrecision.run { magnitude().asDouble() }
 
-  val VConst<DReal, D2>.angle: Double
+  val Vec<DReal, D2>.angle: Double
     get() = DoublePrecision.run { atan2(this@angle.theta, this@angle.r) }
 
-  fun VConst<DReal, D2>.render(rod: Line, xAdjust: Double = 0.0, yAdjust: Double = 0.0) {
+  fun Vec<DReal, D2>.render(rod: Line, xAdjust: Double = 0.0, yAdjust: Double = 0.0) {
     rod.startX = this@render.r + xAdjust
     rod.startY = this@render.theta + yAdjust
     val end = this@render.end
