@@ -46,13 +46,13 @@ class TestArithmetic: StringSpec({
     }
 
     "test division" {
-      DoubleGenerator.assertAll { ẋ, ẏ ->
+      DoubleGenerator(0).assertAll { ẋ, ẏ ->
         (x / y)(x to ẋ, y to ẏ) shouldBeAbout x(x to ẋ).asDouble() / y(y to ẏ).asDouble()
       }
     }
 
     "test inverse" {
-      DoubleGenerator.assertAll { ẋ, ẏ ->
+      DoubleGenerator(0).assertAll { ẋ, ẏ ->
         val f = x * 1 / y
         val g = x / y
         f(x to ẋ, y to ẏ) shouldBeAbout g(x to ẋ, y to ẏ)

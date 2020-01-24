@@ -111,7 +111,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 
 sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>>, (Bindings<X>) -> SFun<X> {
   constructor(vararg funs: Fun<X>) : this(Bindings(*funs))
-  
+
   protected open val ZERO: SFun<X> by lazy { Zero() }
   protected open val ONE: SFun<X> by lazy { One() }
   protected open val TWO: SFun<X> by lazy { Two() }
@@ -203,7 +203,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
       is BiFun -> { left.toGraph() - this; right.toGraph() - this; add(Label.of(opStr)) }
       is UnFun -> { input.toGraph() - this; add(Label.of(opStr)) }
-      is RealNumber -> add(Label.of("$value"))
+      is RealNumber<*, *> -> add(Label.of("$value"))
       is One -> add(Label.of("one"))
       is Zero -> add(Label.of("zero"))
       is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
@@ -313,9 +313,9 @@ class One<X: SFun<X>> : Special<X>()
 class Two<X: SFun<X>> : Special<X>()
 class E<X: SFun<X>> : Special<X>()
 
-abstract class RealNumber<X : SFun<X>>(open val value: Number) : SConst<X>()
+abstract class RealNumber<X : SFun<X>, Y>(open val value: Y) : SConst<X>()
 
-class DReal(override val value: Double) : RealNumber<DReal>(value) {
+class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
   override val ZERO by lazy { DReal(0.0) }
   override val ONE by lazy { DReal(1.0) }
   override val TWO by lazy { DReal(2.0) }
@@ -386,6 +386,17 @@ sealed class Protocol<X : SFun<X>> {
     infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
   }
 
+  abstract val constants: List<Pair<SConst<X>, Number>>
+
+  protected fun <T: Pair<Var<X>, Number>> Array<T>.bind() = 
+    Bindings((constants + this@bind).map { it.first to wrap(it.second) }.toMap())
+
+  operator fun SFun<X>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.bind())
+
+  operator fun <Y : D1> VFun<X, Y>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.bind())
+
+  operator fun <Rows : D1, Cols: D1> MFun<X, Rows, Cols>.invoke(vararg pairs: Pair<Var<X>, Number>) = this(pairs.bind())
+
   fun d(fn: SFun<X>) = Differential(fn)
   abstract fun wrap(default: Number): X
 
@@ -403,48 +414,60 @@ sealed class Protocol<X : SFun<X>> {
 
   fun Number.pow(exp: SFun<X>) = wrap(this) pow exp
   infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
+
+  fun Vec(d0: Number) = Vec(wrap(d0))
+  fun Vec(d0: Number, d1: Number) = Vec(wrap(d0), wrap(d1))
+  fun Vec(d0: Number, d1: Number, d2: Number) = Vec(wrap(d0), wrap(d1), wrap(d2))
+  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3))
+  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4))
+  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5))
+  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6))
+  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7))
+  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number, d8: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7), wrap(d8))
+
+  fun Mat1x1(d0: Number) = Mat<X, D1, D1>(Vec(d0))
+  fun Mat1x2(d0: Number, d1: Number) = Mat<X, D1, D2>(Vec(d0, d1))
+  fun Mat1x3(d0: Number, d1: Number, d2: Number) = Mat<X, D1, D3>(Vec(d0, d1, d2))
+  fun Mat2x1(d0: Number, d1: Number) = Mat<X, D2, D1>(Vec(d0), Vec(d1))
+  fun Mat2x2(d0: Number, d1: Number, d2: Number, d3: Number) = Mat<X, D2, D2>(Vec(d0, d1), Vec(d2, d3))
+  fun Mat2x3(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Mat<X, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
+  fun Mat3x1(d0: Number, d1: Number, d2: Number) = Mat<X, D3, D1>(listOf(Vec(d0), Vec(d1), Vec(d2)) )
+  fun Mat3x2(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
+  fun Mat3x3(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number, d8: Number) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
+
+  fun Var2() = Vec(Var<X>(), Var())
+  fun Var3() = Vec(Var<X>(), Var(), Var())
+
+  fun Var2x1() = Mat2x1(Var<X>(), Var())
+  fun Var2x2() = Mat2x2(Var<X>(), Var(), Var(), Var())
+  fun Var2x3() = Mat2x3(Var<X>(), Var(), Var(), Var(), Var(), Var())
+  fun Var3x1() = Mat3x1(Var<X>(), Var(), Var())
+  fun Var3x2() = Mat3x2(Var<X>(), Var(), Var(), Var(), Var(), Var())
+  fun Var3x3() = Mat3x3(Var<X>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
 }
 
 object DoublePrecision : Protocol<DReal>() {
   override fun wrap(default: Number): DReal = DReal(default.toDouble())
-
-  operator fun SFun<DReal>.invoke(vararg pairs: Pair<Var<DReal>, Number>) = this(pairs.bind())
-
-  operator fun <Y : D1> VFun<DReal, Y>.invoke(vararg pairs: Pair<Var<DReal>, Number>) = this(pairs.bind())
-
-  operator fun <Rows : D1, Cols: D1> MFun<DReal, Rows, Cols>.invoke(vararg pairs: Pair<Var<DReal>, Number>) = this(pairs.bind())
-
-  private fun <T: Pair<Var<DReal>, Number>> Array<T>.bind() = Bindings(this@bind.map { it.first to wrap(it.second) }.toMap())
+  
+  override val constants: List<Pair<SConst<DReal>, Number>> = listOf(
+    Zero<DReal>() to 0,
+    One<DReal>() to 1,
+    Two<DReal>() to 2,
+    E<DReal>() to E
+  )
 
   fun SFun<DReal>.asDouble() = (this as DReal).value
+}
 
-  fun Vec(d0: Double) = Vec(DReal(d0))
-  fun Vec(d0: Double, d1: Double) = Vec(DReal(d0), DReal(d1))
-  fun Vec(d0: Double, d1: Double, d2: Double) = Vec(DReal(d0), DReal(d1), DReal(d2))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5), DReal(d6))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5), DReal(d6), DReal(d7))
-  fun Vec(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Vec(DReal(d0), DReal(d1), DReal(d2), DReal(d3), DReal(d4), DReal(d5), DReal(d6), DReal(d7), DReal(d8))
+object BigDecimalPrecision : Protocol<BDReal>() {
+  override fun wrap(default: Number): BDReal = BDReal(default.toDouble())
 
-  fun Mat1x1(d0: Double) = Mat<DReal, D1, D1>(Vec(d0))
-  fun Mat1x2(d0: Double, d1: Double) = Mat<DReal, D1, D2>(Vec(d0, d1))
-  fun Mat1x3(d0: Double, d1: Double, d2: Double) = Mat<DReal, D1, D3>(Vec(d0, d1, d2))
-  fun Mat2x1(d0: Double, d1: Double) = Mat<DReal, D2, D1>(Vec(d0), Vec(d1))
-  fun Mat2x2(d0: Double, d1: Double, d2: Double, d3: Double) = Mat<DReal, D2, D2>(Vec(d0, d1), Vec(d2, d3))
-  fun Mat2x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat<DReal, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
-  fun Mat3x1(d0: Double, d1: Double, d2: Double) = Mat<DReal, D3, D1>(listOf(Vec(d0), Vec(d1), Vec(d2)) )
-  fun Mat3x2(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double) = Mat<DReal, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
-  fun Mat3x3(d0: Double, d1: Double, d2: Double, d3: Double, d4: Double, d5: Double, d6: Double, d7: Double, d8: Double) = Mat<DReal, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
+  override val constants: List<Pair<SConst<BDReal>, Number>> = listOf(
+    Zero<BDReal>() to 0,
+    One<BDReal>() to 1,
+    Two<BDReal>() to 2,
+    E<BDReal>() to E
+  )
 
-  fun Var2() = Vec(Var<DReal>(), Var())
-  fun Var3() = Vec(Var<DReal>(), Var(), Var())
-
-  fun Var2x1() = Mat2x1(Var<DReal>(), Var())
-  fun Var2x2() = Mat2x2(Var<DReal>(), Var(), Var(), Var())
-  fun Var2x3() = Mat2x3(Var<DReal>(), Var(), Var(), Var(), Var(), Var())
-  fun Var3x1() = Mat3x1(Var<DReal>(), Var(), Var())
-  fun Var3x2() = Mat3x2(Var<DReal>(), Var(), Var(), Var(), Var(), Var())
-  fun Var3x3() = Mat3x3(Var<DReal>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
+  fun SFun<BDReal>.asDouble() = (this as BDReal).value.toDouble()
 }

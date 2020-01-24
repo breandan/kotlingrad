@@ -6,24 +6,29 @@ import edu.umontreal.kotlingrad.experimental.DReal
 import edu.umontreal.kotlingrad.experimental.DoublePrecision
 import edu.umontreal.kotlingrad.experimental.SFun
 import edu.umontreal.kotlingrad.utils.step
-import org.knowm.xchart.*
-import org.knowm.xchart.VectorGraphicsEncoder.VectorGraphicsFormat.SVG
-import java.awt.Color
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.MonolithicAwt
+import jetbrains.letsPlot.geom.geom_path
+import jetbrains.letsPlot.ggplot
+import jetbrains.letsPlot.ggtitle
+import jetbrains.letsPlot.intern.toSpec
 import java.io.File
+
+val X_RANGE = -10.0..10.0
 
 fun main() {
   with(DoublePrecision) {
     val y0 = exp(-x * x / 2)
 
-    val hermite = plot2D(-6.0..6.0, *y0.andDerivatives())
+    val hermite = plot2D(X_RANGE, *y0.andDerivatives())
 
     val y1 = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
 
-    val sinusoid = plot2D(-6.0..6.0, *y1.andDerivatives())
+    val sinusoid = plot2D(X_RANGE, *y1.andDerivatives())
 
     val y2 = sigmoid(x)
 
-    val sigmoid = plot2D(-6.0..6.0, *y2.andDerivatives())
+    val sigmoid = plot2D(X_RANGE, *y2.andDerivatives())
 
     hermite.saveAs("hermite.svg").viewInBrowser()
     sinusoid.saveAs("plot.svg").viewInBrowser()
@@ -31,11 +36,7 @@ fun main() {
   }
 }
 
-fun XYChart.saveAs(filename: String) =
-  VectorGraphicsEncoder.saveVectorGraphic(this, "$resourcesPath/$filename", SVG)
-    .run { File("$resourcesPath/$filename") }
-
-private fun SFun<DReal>.andDerivatives(): Array<SFun<DReal>> {
+private fun SFun<DReal>.andDerivatives() =
   with(DoublePrecision) {
     val y = this@andDerivatives
     val `dy∕dx` = d(y) / d(x)
@@ -50,21 +51,29 @@ private fun SFun<DReal>.andDerivatives(): Array<SFun<DReal>> {
 //               d³y/dx³=$`d³y∕dx³`
 //               d⁴y/dx⁴=$`d⁴y∕dx⁴`""".trimIndent())
 
-    return arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
+    arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
   }
-}
+
 
 private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
-                                   vararg funs: SFun<DReal>): XYChart {
-  val xs = (range step 0.0087).toList().toDoubleArray()
-  val ys = funs.map { xs.map { xv -> it(x to xv).asDouble() }.toDoubleArray() }.toTypedArray()
-
+                                   vararg funs: SFun<DReal>): String {
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
-  return QuickChart.getChart("Derivatives of y=${funs[0]}", "x", "y", labels, xs, ys)
-    .apply {
-      val transparent = Color(1f, 1f, 1f, .1f)
-      styler.chartBackgroundColor = transparent
-      styler.plotBackgroundColor = transparent
-      styler.legendBackgroundColor = transparent
-    }
+  val xs = (range step 0.0087).toList()
+  val ys = funs.map { xs.map { xv -> it(x to xv).asDouble() } }
+  val data = (labels.zip(ys) + ("x" to xs)).toMap()
+  val colors = listOf("dark_green", "gray", "black", "red", "orange", "dark_blue")
+  val geoms = labels.zip(colors).map { geom_path(size = 2.0, color = it.second) { x = "x"; y = it.first } }
+  val plot = geoms.foldRight(ggplot(data)) { it, acc -> acc + it } + ggtitle("Derivatives of y=${funs[0]}")
+
+  val plotSpec = plot.toSpec()
+  val plotSize = DoubleVector(1000.0, 500.0)
+
+  val result = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, plotSize) {}.first()
+  val resultWithAttributes = result.lines().first().replace(">",
+    " xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">") +
+    "\n" + result.lines().drop(1).joinToString("\n")
+  return resultWithAttributes
 }
+
+fun String.saveAs(filename: String) =
+  File("$resourcesPath/$filename").also { it.writeText(this) }
