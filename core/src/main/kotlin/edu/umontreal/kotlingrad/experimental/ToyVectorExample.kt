@@ -57,11 +57,19 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
       is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as MFun<X, E, E>)(bnds)
       is VMap<X, E> -> value(bnds).map(ef)
       is VVar<X, E> ->  bnds.vMap.getOrElse(this) { this } as VFun<X, E>
-      else -> TODO(this::class.java.name)
     }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
+
+  @JvmName("sFunReassign")
+  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): VFun<X, E> = invoke(Bindings(mapOf(*ps)))
+
+  @JvmName("vFunReassign")
+  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): VFun<X, E> = invoke(Bindings(mapOf(pair)))
+
+  @JvmName("mFunReassign")
+  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): VFun<X, E> = invoke(Bindings(mapOf(pair)))
 
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
 
@@ -130,9 +138,7 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
 //    is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
-//    is Composition -> bindings.curried().fold(VOne()) { acc: VFun<X, E>, binding ->
-//      acc ʘ fn.df()(binding) + (binding.vMap.entries.first().value as VFun<X, E>)
-//    }
+    is Composition -> evaluate.df()
     else -> TODO(this@df::class.java.name)
   }
 }

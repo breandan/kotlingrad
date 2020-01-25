@@ -74,8 +74,18 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
       is MConst -> MZero()
       is Mat -> Mat(rows.map { it(bnds) as Vec<X, C> })
       is MVar -> bnds.mMap.getOrElse(this) { this } as MFun<X, R, C>
+      is MGradient -> df()(bnds)
       else -> TODO(this::class.java.name)
     }
+
+  @JvmName("sFunReassign")
+  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>) = invoke(Bindings(mapOf(*ps)))
+
+  @JvmName("vFunReassign")
+  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>) = invoke(Bindings(mapOf(pair)))
+
+  @JvmName("mFunReassign")
+  operator fun <R: D1, C: D1, M: MFun<X, R, C>> invoke(pair: Pair<M, M>) = invoke(Bindings(mapOf(pair)))
 
   // Materializes the concrete matrix from the dataflow graph
   fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
@@ -146,6 +156,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val fn: SFun<X>, val mVar: MVar<X, R,
 //    is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
+    is Composition -> evaluate.df()
     else -> TODO(this@df::class.java.name)
   }
 }

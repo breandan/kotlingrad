@@ -127,13 +127,13 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       Composition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
 
   @JvmName("sFunReassign")
-  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): SFun<X> = Composition(this, Bindings(mapOf(*ps)))
+  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): SFun<X> = invoke(Bindings(mapOf(*ps)))
 
   @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): SFun<X> = Composition(this, Bindings(mapOf(pair)))
+  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): SFun<X> = invoke(Bindings(mapOf(pair)))
 
   @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): SFun<X> = Composition(this, Bindings(mapOf(pair)))
+  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): SFun<X> = invoke(Bindings(mapOf(pair)))
 
   open operator fun invoke(): SFun<X> = invoke(Bindings())
 
@@ -172,10 +172,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     is Sum -> if(right is Negative) "$left $right" else "$left + $right"
     is Var -> name
     is Derivative -> "d($fn) / d($vrb)"
-    is Zero -> "0" //"\uD835\uDFD8" // 𝟘
-    is One -> "1"  //"\uD835\uDFD9" // 𝟙
-    is Two -> "2"  //"\uD835\uDFDA" // 𝟚
-    is E -> "E()"  //"\u2147"       // ⅇ
+    is Special -> javaClass.simpleName
     is BiFun<*> -> "($left) $opStr ($right)"
     is UnFun<*> -> "$opStr($input)"
     is VMagnitude -> "|$value|"
@@ -204,8 +201,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is BiFun -> { left.toGraph() - this; right.toGraph() - this; add(Label.of(opStr)) }
       is UnFun -> { input.toGraph() - this; add(Label.of(opStr)) }
       is RealNumber<*, *> -> add(Label.of("$value"))
-      is One -> add(Label.of("one"))
-      is Zero -> add(Label.of("zero"))
+      is Special -> add(Label.of(this@SFun.toString()))
       is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
       else -> TODO(this@SFun.javaClass.toString())
     }
@@ -243,9 +239,7 @@ class Derivative<X : SFun<X>>(val fn: SFun<X>, val vrb: Var<X>) : SFun<X>(fn, vr
     is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
-    is Composition -> bindings.curried().fold(ONE) { acc: SFun<X>, binding ->
-      acc * fn.df()(binding) * binding.sMap.entries.first().value.df()
-    }
+    is Composition -> evaluate.df()
   }
 }
 
@@ -280,7 +274,7 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
     is Tangent -> angle.call().tan()
     is Log -> logarithmand.call().ln()
     is Derivative -> df().call()
-    is DProd -> left(inputs) as VFun<X, D1> dot right(inputs) as VFun<X, D1>
+    is DProd -> left(inputs) as Vec<X, D1> dot right(inputs) as Vec<X, D1>
     is VMagnitude -> value(inputs).magnitude()
     is Composition -> fn.call().call()
   }
@@ -389,6 +383,7 @@ sealed class Protocol<X : SFun<X>> {
 
   abstract fun wrap(number: Number): X
   fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwap() = (this as X).value
+
   fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwap().toDouble()
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
