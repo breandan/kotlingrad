@@ -386,7 +386,7 @@ There are many other ways to independently verify the numerical gradient, such a
 
 ## How?
 
-To understand the core of Kotlin∇'s AD implementation, please refer to the [toy example](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyExample.kt).
+To understand the core of Kotlin∇'s AD implementation, please refer to the [scalar example](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/Scalar.kt).
 
 This project relies on a few Kotlin-native language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin∇:
 
@@ -580,7 +580,7 @@ val vec = Vec(1, 2, 3)                         // Does not compile
 val sum = Vec(1, 2) + add                      // Does not compile
 ```
 
-A similar syntax is available for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyMatrixExample.kt) and higher-rank [tensors](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyTensorExample.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is available for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/Matrix.kt) and higher-rank [tensors](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/Tensor.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
@@ -610,7 +610,7 @@ val lm = l * m
 // m * m // Compile error: Expected Mat<3, *>, found Mat<4, 3>
 ```
 
-[Further examples](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/ToyMatrixExample.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+[Further examples](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/Matrix.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
@@ -681,13 +681,13 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 |                             Framework                                  | Language |         SD¹        |         AD²        |         HD³        |         DP⁴        |         FP⁵        |         TS⁶        |        SS⁷         |        DT⁸         |       MP⁹      |
 |:----------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
 |                              Kotlin∇                                   |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
-|         [DiffSharp](https://diffsharp.github.io/DiffSharp/)             |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|         [DiffSharp](https://diffsharp.github.io/DiffSharp/)            |  F#      |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 | [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp)   |  F#      |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
-|             [Nexus](https://tongfei.me/nexus/)                          |  Scala   |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
+|             [Nexus](https://tongfei.me/nexus/)                         |  Scala   |         :x:        | :heavy_check_mark: |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
 |           [Lantern](https://feiwang3311.github.io/Lantern/)            |  Scala   |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 |         [JAutoDiff](https://github.com/uniker9/JAutoDiff/)             |  Java    | :heavy_check_mark: | :heavy_check_mark: |         :x:        |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 |      [Eclipse DL4J](https://deeplearning4j.org/)                       |  Java    |         :x:        |   :construction:   |         :x:        |         :x:        |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
-|            [Halide](https://halide-lang.org/)                           |  C++     |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
+|            [Halide](https://halide-lang.org/)                          |  C++     |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |         :x:        | :heavy_check_mark: |        :x:         |        :x:         |       :x:      |
 |       [Tensor Safe](https://github.com/leopiney/tensor-safe)           |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |       :x:      |
 |         [HaskTorch](https://github.com/hasktorch/hasktorch)            |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
 |           [Grenade](https://github.com/HuwCampbell/grenade)            |  Haskell |         :x:        |         :x:        |         :x:        |         :x:        | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |       :x:      |
@@ -829,4 +829,3 @@ The following individuals have helped shape this project through their enthusias
 * [Erik Meijer](https://twitter.com/headinthebox/)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
-

@@ -54,7 +54,6 @@ private fun SFun<DReal>.andDerivatives() =
     arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
   }
 
-
 private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
                                    vararg funs: SFun<DReal>): String {
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
