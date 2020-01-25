@@ -2,56 +2,6 @@
 
 package edu.umontreal.kotlingrad.experimental
 
-fun main() {
-  with(DoublePrecision) {
-    val f = x pow 2
-    println(f(x to 3.0))
-    println("f(x) = $f")
-    val df_dx = f.d(x)
-    println("f'(x) = $df_dx")
-
-    val g = x pow x
-    println("g(x) = $g")
-    val dg_dx = g.d(x)
-    println("g'(x) = $dg_dx")
-
-    val h = x + y
-    println("h(x) = $h")
-    val dh_dx = h.d(x)
-    println("h'(x) = $dh_dx")
-
-    val vf1 = Vec(y + x, y * 2)
-    val bh = x * vf1
-    val vf2 = Vec(x, y)
-    val q = vf1 + vf2
-    val r = q(x to 1.0, y to 2.0)
-    println("r: $r")
-
-    val mf1 = Mat2x1(
-      y * y,
-      x * y)
-
-    val mf2 = Mat1x2(vf2)
-
-    val qr = mf2 * Vec(x, y)
-
-    val mf3 = Mat3x2(x, x,
-      y, x,
-      x, x)
-    val mf4 = Mat2x2(vf2, vf2)
-    val mf5 = Mat2x2(
-      y * y, x * x,
-      x * y, y * y)
-    val mf6 = mf4 * mf5 * mf1
-
-    println(mf1 * mf2) // 2*1 x 1*2
-//    println(mf1 * vf1) // 2*1 x 2
-    println(mf2 * vf1) // 1*2 x 2
-    println(mf3 * vf1) // 3*2 x 2
-//    println(mf3 * mf3) // 3*2 x 3*2
-  }
-}
-
 /**
  * Matrix function.
  */
@@ -61,22 +11,8 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
-  @Suppress("UNCHECKED_CAST")
   override operator fun invoke(bnds: Bindings<X>): MFun<X, R, C> =
-    when (this) {
-      is MNegative -> -value(bnds)
-      is MTranspose -> value(bnds).ᵀ
-      is MSum -> left(bnds) + right(bnds)
-      is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, D1> * right(bnds) as MFun<X, D1, C>
-      is HProd -> left(bnds) ʘ right(bnds)
-      is MSProd -> left(bnds) * right(bnds)
-      is SMProd -> left(bnds) * right(bnds)
-      is MConst -> MZero()
-      is Mat -> Mat(rows.map { it(bnds) as Vec<X, C> })
-      is MVar -> bnds.mMap.getOrElse(this) { this } as MFun<X, R, C>
-      is MGradient -> df()(bnds)
-      else -> TODO(this::class.java.name)
-    }
+    MComposition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
 
   @JvmName("sFunReassign")
   operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>) = invoke(Bindings(mapOf(*ps)))
@@ -101,36 +37,56 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
 
   override fun toString() = when (this) {
-    is MNegative -> "-($value)"
-    is MTranspose -> "($value).T"
-    is MSum -> "$left + $right"
-    is MMProd<X, R, *, C> -> "$left * $right"
-    is HProd -> "$left ʘ $right"
-    is MSProd -> "$left * $right"
-    is SMProd -> "$left * $right"
+    is MNegative -> "-($input)"
+    is MTranspose -> "($input).T"
+    is BiFun<*> -> "$left ${opCode()} $right"
+    is UnFun<*> -> "${opCode()} $input"
     is MConst -> "${javaClass.name}()"
     is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ") { it.contents.joinToString(", ") }})"
     is MDerivative -> "d($mFun) / d($v1)"
-    else -> TODO(this::class.java.name)
+    else -> TODO(this.javaClass.name)
   }
 }
 
-class MNegative<X: SFun<X>, R: D1, C: D1>(val value: MFun<X, R, C>): MFun<X, R, C>(value)
-class MTranspose<X: SFun<X>, R: D1, C: D1>(val value: MFun<X, R, C>): MFun<X, C, R>(value)
-class MSum<X: SFun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
-class MMProd<X: SFun<X>, R: D1, C1: D1, C2: D1>(val left: MFun<X, R, C1>, val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right)
-class HProd<X: SFun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: MFun<X, R, C>): MFun<X, R, C>(left, right)
-class MSProd<X: SFun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: SFun<X>): MFun<X, R, C>(left)
-class SMProd<X: SFun<X>, R: D1, C: D1>(val left: SFun<X>, val right: MFun<X, R, C>): MFun<X, R, C>(right)
+class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
+class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
+class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
+class MMProd<X: SFun<X>, R: D1, C1: D1, C2: D1>(override val left: MFun<X, R, C1>, override val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right), BiFun<X>
+class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
+class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
+class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
+
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs: Bindings<X>): MFun<X, R, C>(Bindings(mFun.bindings, inputs)){
+  val evaluate: MFun<X, R, C> by lazy { call() }
+  override val bindings: Bindings<X> by lazy { evaluate.bindings }
+
+  fun MFun<X, R, C>.call(): MFun<X, R, C> = inputs.mMap.getOrElse(this@call) { bind() } as  MFun<X, R, C>
+
+  @Suppress("UNCHECKED_CAST")
+  fun  MFun<X, R, C>.bind():  MFun<X, R, C> = when (this@bind) {
+    is MNegative -> -input(inputs)
+    is MTranspose -> input(inputs).ᵀ
+    is MSum -> left(inputs) + right(inputs)
+    is MMProd<X, R, *, C> -> left(inputs) as MFun<X, R, D1> * right(inputs) as MFun<X, D1, C>
+    is HProd -> left(inputs) ʘ right(inputs)
+    is MSProd -> left(inputs) * right(inputs)
+    is SMProd -> left(inputs) * right(inputs)
+    is MConst -> MZero()
+    is Mat -> Mat(rows.map { it(inputs) as Vec<X, C> })
+    is MVar -> inputs.mMap.getOrElse(this) { this } as MFun<X, R, C>
+    is MGradient -> df()(inputs)
+    else -> TODO(this.javaClass.name)
+  }
+}
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
-class MDerivative<X: SFun<X>, R: D1, C: D1> internal constructor(val mFun: VFun<X, R>, numCols: Nat<C>, val v1: Var<X>): MFun<X, R, C>(mFun) {
+class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val v1: Var<X>): MFun<X, R, C>(mFun) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
     is MConst -> MZero()
     is MVar -> MZero()
-    is MNegative -> -value.df()
-    is MTranspose -> (value as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
+    is MNegative -> -input.df()
+    is MTranspose -> (input as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
     is MSum -> left.df() + right.df()
     // Casting here is necessary because of type erasure (we loose the inner dimension when MMProd<X, R, C1, C2> is boxed as MFun<X, R, C2>)
     is MMProd<X, R, *, C> -> (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) + left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
@@ -138,7 +94,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1> internal constructor(val mFun: VFun<
     is SMProd -> left.d(v1) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
     is Mat -> Mat(rows.map { it.d(v1)() })
-    else -> TODO(this@df::class.java.name)
+    else -> TODO(this@df.javaClass.name)
   }
 }
 
@@ -150,14 +106,14 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val fn: SFun<X>, val mVar: MVar<X, R,
     is SConst -> MZero()
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
-    is Power -> this * (exponent * Log(base)).df()
-    is Negative -> -value.df()
-    is Log -> (logarithmand pow -One<X>()) * logarithmand.df()
+    is Power -> this * (right * Log(left)).df()
+    is Negative -> -input.df()
+    is Log -> (left pow -One<X>()) * left.df()
 //    is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
     is Composition -> evaluate.df()
-    else -> TODO(this@df::class.java.name)
+    else -> TODO(this@df.javaClass.name)
   }
 }
 
@@ -172,14 +128,14 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, 
 
   val flatContents: List<SFun<X>> by lazy { rows.flatMap { it.contents } }
 
-  val indices = rows.indices
-  val cols by lazy { indices.map { i -> Vec<X, R>(rows.map { it[i] }) } }
-  val numCols = rows.first().contents.size
   val numRows = rows.size
+  val numCols = rows.first().contents.size
+  val indices = rows.indices.take(numRows)
+  val cols by lazy { indices.map { i -> Vec<X, R>(rows.map { it[i] }) } }
 
   init {
     rows.indices.zip(rows).filter { it.second.size != numCols }.run {
-      require(isEmpty()) { "Declared $numCols cols but row(s) ${map { it.first }} contain(s) ${map { it.second }} values, respectively" }
+      require(isEmpty()) { "Declared $numCols cols but row(s) ${map { it.first }} contain(s) ${map { it.second }} inputs, respectively" }
     }
   }
 

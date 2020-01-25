@@ -1,40 +1,6 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
-@Suppress("DuplicatedCode")
-fun main() {
-  with(DoublePrecision) {
-    val f = x pow 2
-    println(f(x to 3.0))
-    println("f(x) = $f")
-    val df_dx = f.d(x)
-    println("f'(x) = $df_dx")
-
-    val g = x pow x
-    println("g(x) = $g")
-    val dg_dx = g.d(x)
-    println("g'(x) = $dg_dx")
-
-    val h = x + y
-    println("h(x) = $h")
-    val dh_dx = h.d(x)
-    println("h'(x) = $dh_dx")
-
-    val vf1 = Vec(y + x, y * 2)
-    println(vf1)
-    val bh = x * vf1 + Vec(1.0, 3.0)
-    println(bh(y to 2.0, x to 4.0))
-    val vf2 = Vec(x, y)
-    val q = vf1 + vf2 + Vec(0.0, 0.0)
-    val z = q(x to 1.0).magnitude()(y to 2.0)
-    println(z)
-
-    val vf3 = vf2 ʘ Vec(x, x)
-    val mf1 = vf3.d(x, y)
-//    println(vf3.d(x)(y to 2.0))
-  }
-}
-
 /**
  * Vector function.
  */
@@ -44,20 +10,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   @Suppress("UNCHECKED_CAST")
   override operator fun invoke(bnds: Bindings<X>): VFun<X, E> =
-    when (this) {
-      is Vec<X, E> -> Vec(contents.map { it(bnds) })
-      is VNegative<X, E> -> -value(bnds)
-      is VSum<X, E> -> left(bnds) + right(bnds)
-      is VVProd<X, E> -> left(bnds) ʘ right(bnds)
-      is SVProd<X, E> -> left(bnds) * right(bnds)
-      is VSProd<X, E> -> left(bnds) * right(bnds)
-      is VDerivative -> df()(bnds)
-      is Gradient -> df()(bnds)
-      is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>)(bnds)
-      is VMProd<X, *, *> -> (left as Vec<X, E>)(bnds) * (right as MFun<X, E, E>)(bnds)
-      is VMap<X, E> -> value(bnds).map(ef)
-      is VVar<X, E> ->  bnds.vMap.getOrElse(this) { this } as VFun<X, E>
-    }
+    VComposition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
@@ -99,30 +52,27 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
-    is VSum -> "$left + $right"
-    is VVProd -> "$left ʘ $right"
-    is SVProd -> "$left * $right"
-    is VSProd -> "$left * $right"
-    is VNegative -> "-($value)"
     is VDerivative -> "d($vFun) / d($v1)"//d(${v1.joinToString(", ")})"
-    is MVProd<X, E, *> -> "$left * $right"
-    is VMProd<X, *, E> -> "$left * $right"
+    is BiFun<*> -> "($left) ${opCode()} ($right)"
+    is UnFun<*> -> "${opCode()}($input)"
     is Gradient -> "($fn).d($vVar)"
     is VMap -> "$value.map { $ef }"
     is VVar -> "VVar($name)"
+    is VComposition -> "($vFun)$inputs"
+    else -> TODO(this.javaClass.name)
   }
 }
 
-class VNegative<X: SFun<X>, E: D1>(val value: VFun<X, E>): VFun<X, E>(value)
+class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
 class VMap<X: SFun<X>, E: D1>(val value: VFun<X, E>, val ef: (SFun<X>) -> SFun<X>): VFun<X, E>(value)
 
-class VSum<X: SFun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
+class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
 
-class VVProd<X: SFun<X>, E: D1>(val left: VFun<X, E>, val right: VFun<X, E>): VFun<X, E>(left, right)
-class SVProd<X: SFun<X>, E: D1>(val left: SFun<X>, val right: VFun<X, E>): VFun<X, E>(left, right)
-class VSProd<X: SFun<X>, E: D1>(val left: VFun<X, E>, val right: SFun<X>): VFun<X, E>(left, right)
-class MVProd<X: SFun<X>, R: D1, C: D1>(val left: MFun<X, R, C>, val right: VFun<X, C>): VFun<X, R>(left, right)
-class VMProd<X: SFun<X>, R: D1, C: D1>(val left: VFun<X, C>, val right: MFun<X, R, C>): VFun<X, C>(left, right)
+class VVProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
+class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
+class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): VFun<X, E>(left, right), BiFun<X>
+class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): VFun<X, R>(left, right), BiFun<X>
+class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, C>(left, right), BiFun<X>
 
 class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<X, E>(fn) {
   fun df() = fn.df()
@@ -132,20 +82,44 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
     is SConst -> VZero()
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
-    is Power -> this * (exponent * Log(base)).df()
-    is Negative -> -value.df()
-    is Log -> (logarithmand pow -One<X>()) * logarithmand.df()
+    is Power -> this * (right * Log(left)).df()
+    is Negative -> -input.df()
+    is Log -> (left pow -One<X>()) * left.df()
 //    is Derivative -> fn.df()
     is DProd -> this().df()
     is VMagnitude -> this().df()
     is Composition -> evaluate.df()
-    else -> TODO(this@df::class.java.name)
+    else -> TODO(this@df.javaClass.name)
   }
 }
 
 class VVar<X: SFun<X>, E: D1>(override val name: String = ""): Variable, VFun<X, E>()
 class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn) {
   override fun invoke(bnds: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
+}
+
+class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(Bindings(vFun.bindings, inputs)){
+  val evaluate: VFun<X, E> by lazy { call() }
+  override val bindings: Bindings<X> by lazy { evaluate.bindings }
+
+  fun VFun<X, E>.call(): VFun<X, E> = inputs.vMap.getOrElse(this@call) { bind() } as VFun<X, E>
+
+  @Suppress("UNCHECKED_CAST")
+  fun VFun<X, E>.bind(): VFun<X, E> = when (this@bind) {
+    is Vec<X, E> -> Vec(contents.map { it(inputs) })
+    is VNegative<X, E> -> -input(inputs)
+    is VSum<X, E> -> left(inputs) + right(inputs)
+    is VVProd<X, E> -> left(inputs) ʘ right(inputs)
+    is SVProd<X, E> -> left(inputs) * right(inputs)
+    is VSProd<X, E> -> left(inputs) * right(inputs)
+    is VDerivative -> df()(inputs)
+    is Gradient -> df()(inputs)
+    is MVProd<X, *, *> -> left(inputs) as MFun<X, E, E> * (right as VFun<X, E>)(inputs)
+    is VMProd<X, *, *> -> (left as Vec<X, E>)(inputs) * (right as MFun<X, E, E>)(inputs)
+    is VMap<X, E> -> value(inputs).map(ef)
+    is VVar<X, E> -> inputs.vMap.getOrElse(this) { this } as VFun<X, E>
+    is VComposition -> vFun.call().call()
+  }
 }
 
 class VDerivative<X : SFun<X>, E: D1> internal constructor(val vFun: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vFun) {
@@ -156,13 +130,14 @@ class VDerivative<X : SFun<X>, E: D1> internal constructor(val vFun: VFun<X, E>,
     is VVProd -> left.df() ʘ right + left ʘ right.df()
     is SVProd -> left.d(v1) * right + left * right.df()
     is VSProd -> left.df() * right + left * right.d(v1)
-    is VNegative -> -value.df()
+    is VNegative -> -input.df()
     is VDerivative -> vFun.df()
     is Vec -> Vec(contents.map { it.d(v1) })
     is MVProd<X, E, *> -> this().df()
     is VMProd<X, *, E> -> this().df()
     is Gradient -> this()
     is VMap -> this().df()
+    is VComposition -> evaluate.df()
   }
 }
 

@@ -44,12 +44,14 @@ tasks {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
   }
 
-  listOf("Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum", "physics.SinglePendulum", "VariableCapture",
-    "ToyExample", "ToyVectorExample", "ToyMatrixExample", "LetsPlot", "MLP")
-    .forEach { fileName ->
-      register(fileName, JavaExec::class) {
-        main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
-        classpath = sourceSets["main"].runtimeClasspath
-      }
+  listOf(
+    "Plot2D", "Plot3D", "HelloKotlinGrad", "physics.DoublePendulum",
+    "physics.SinglePendulum", "VariableCapture",
+    "ScalarDemo", "VectorDemo", "MatrixDemo", "LetsPlot", "MLP"
+  ).forEach { fileName ->
+    register(fileName, JavaExec::class) {
+      main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
+      classpath = sourceSets["main"].runtimeClasspath
     }
+  }
 }
