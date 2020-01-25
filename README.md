@@ -429,7 +429,12 @@ val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
 ```
 
-Currently, it is only possible to represent functions where all inputs and outputs share a single type. In future iterations, it is possible to extend support for building functions with varying input/output types and enforce constraints on both, using [covariant and contravariant](https://kotlinlang.org/docs/reference/generics.html) type bounds.
+Additionally, it is possible to build functions consisting of varying dimensional inputs:
+
+```kotlin
+fun <T: Fun<T>> mlp(p1: VFun<T, D3>, p2: MFun<T, D3, D3>, p3: T) =
+  ((p1 * p2 + p1 * p2 * p2 dot p1 + p1) - p3) pow p3
+```
 
 #### Coroutines
 
