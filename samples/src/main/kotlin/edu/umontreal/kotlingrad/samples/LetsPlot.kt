@@ -15,20 +15,23 @@ fun main() {
 
   val data = mapOf<String, Any>(
     "x" to xs,
-    "y" to xs.map { sin(it) },
-    "z" to xs.map { cos(it) }
+    "y" to xs.map { sin(it) }
   )
 
+  data.plot("y = sin(x)", "hello_lets-plot.svg")
+}
+
+fun Map<String, Any>.plot(title: String, filename: String) {
   // Create plot specs using Lets-Plot Kotlin API
   val geom1 = geom_path(size = 2.0, color = "dark_green") { x = "x"; y = "y" }
-  val geom2 = geom_path(size = 2.0, color = "dark_blue") { x = "x"; y = "z" }
+//  val geom2 = geom_path(size = 2.0, color = "dark_blue") { x = "x"; y = "z" }
 
-  val plot = ggplot(data) + geom1 + geom2 + ggtitle("y = x^2")
+  val plot = ggplot(this) + geom1 + ggtitle(title)
 
   // Create JFXPanel showing the plot.
   val plotSpec = plot.toSpec()
   val plotSize = DoubleVector(1000.0, 500.0)
 
   val component = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, plotSize) {}
-  component.first().saveAs("letsPlot.html").viewInBrowser()
+  component.first().patchLetsPlot().saveAs(filename).viewInBrowser()
 }

@@ -94,8 +94,10 @@ fun main() {
   val plotSize = DoubleVector(1000.0, 500.0)
 
   val result = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, plotSize) {}.first()
-  val resultWithAttributes = result.lines().first().replace(">",
-    " xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">") +
-    "\n" + result.lines().drop(1).joinToString("\n")
+  val resultWithAttributes = result.patchLetsPlot()
   resultWithAttributes.saveAs("comparison.svg").viewInBrowser()
 }
+
+ fun String.patchLetsPlot() = lines().first().replace(">",
+   " xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">") +
+   "\n" + lines().drop(1).joinToString("\n")

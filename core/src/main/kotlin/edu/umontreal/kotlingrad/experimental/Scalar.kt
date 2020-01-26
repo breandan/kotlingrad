@@ -40,7 +40,7 @@ interface Fun<X: SFun<X>> {
 
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
-data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
+data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fun<X>, Fun<X>> by fMap {
   constructor(inputs: List<Bindings<X>>): this(
     mapOf(*inputs.flatMap { it.fMap.entries }.map { Pair(it.key, it.value) }.toTypedArray())
   )
@@ -105,9 +105,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   open operator fun invoke(): SFun<X> = invoke(Bindings())
 
   open fun d(v1: Var<X>): SFun<X> = Derivative(this, v1)
-  open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(Derivative(this, v1), Derivative(this, v2))
-  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(Derivative(this, v1), Derivative(this, v2), Derivative(this, v3))
-  open fun d(vararg vars: Var<X>): Map<Var<X>, SFun<X>> = vars.map { it to Derivative(this, it) }.toMap()
+  open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(d(v1), d(v2))
+  open fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>): Vec<X, D3> = Vec(d(v1), d(v2), d(v3))
+  open fun d(vararg vars: Var<X>): Map<Var<X>, SFun<X>> = vars.map { it to d(it) }.toMap()
 
   open fun sin(): SFun<X> = Sine(this)
   open fun cos(): SFun<X> = Cosine(this)
@@ -253,12 +253,15 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
 
 class DProd<X: SFun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): SFun<X>(left, right)
 
-class VMagnitude<X: SFun<X>>(val value: VFun<X, *>): SFun<X>(value)//, value.vVars)
+class VMagnitude<X: SFun<X>>(val value: VFun<X, *>): SFun<X>(value)
 
 interface Variable { val name: String }
 
 class Var<X : SFun<X>>(override val name: String = "") : Variable, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  override fun equals(other: Any?) =
+    if(other is Var<*>) name == other.name
+    else super.equals(other)
 }
 
 open class SConst<X : SFun<X>> : SFun<X>()
@@ -412,6 +415,7 @@ sealed class Protocol<X : SFun<X>> {
   fun Mat3x2(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
   fun Mat3x3(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number, d8: Number) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
+  fun Var(name: String) = Var<X>(name)
   fun Var2() = Vec(Var<X>(), Var())
   fun Var3() = Vec(Var<X>(), Var(), Var())
 

@@ -8,8 +8,8 @@ class MLP<T: SFun<T>>(
   val x: Var<T> = Var("x"),
   val y: Var<T> = Var("y"),
   val p1v: VVar<T, D3> = VVar("p1v", D3),
-  val p2v: MVar<T, D3, D3> = MVar(),
-  val p3v: VVar<T, D3> = VVar("p2v", D3)
+  val p2v: MVar<T, D3, D3> = MVar("p2v", D3, D3),
+  val p3v: VVar<T, D3> = VVar("p3v", D3)
 ) {
   operator fun invoke(p1: VFun<T, D3>, p2: MFun<T, D3, D3>, p3: VFun<T, D3>) =
     asFun()(p1v to p1)(p2v to p2)(p3v to p3)
