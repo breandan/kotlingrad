@@ -32,7 +32,8 @@ fun main() = with(DoublePrecision) {
       rand.nextDouble(), rand.nextDouble(),
       rand.nextDouble(), rand.nextDouble()
     )
-    val targets = (batch * hiddenWeights)()
+    val noise = Vec(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.05)
+    val targets = (batch * hiddenWeights + noise)()
 
     val fixInputs = loss.invoke(
       *(input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
@@ -65,5 +66,6 @@ fun main() = with(DoublePrecision) {
 
   println("Final weights: $weights")
 
-  mapOf("x" to lossHistory.map { it.first }, "y" to lossHistory.map { it.second }).plot("Loss over time", "linear_regression_loss.svg")
+  mapOf("Epochs" to lossHistory.map { it.first }, "Squared errors" to lossHistory.map { it.second })
+    .plot2D("Loss over time", "Epochs", "linear_regression_loss.svg")
 }

@@ -85,19 +85,6 @@ fun main() {
 
   val title = "f(x) = sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
-  val data = (labels.zip(errors) + ("x" to xs)).toMap()
-  val colors = listOf("dark_green", "gray", "black", "red", "orange", "dark_blue")
-  val geoms = labels.zip(colors).map { geom_path(color = it.second) { x = "x"; y = it.first } }
-  val plot = geoms.foldRight(ggplot(data)) { it, acc -> acc + it } + ggtitle(title)
-
-  val plotSpec = plot.toSpec()
-  val plotSize = DoubleVector(1000.0, 500.0)
-
-  val result = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, plotSize) {}.first()
-  val resultWithAttributes = result.patchLetsPlot()
-  resultWithAttributes.saveAs("comparison.svg").viewInBrowser()
-}
-
- fun String.patchLetsPlot() = lines().first().replace(">",
-   " xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">") +
-   "\n" + lines().drop(1).joinToString("\n")
+   val data = (labels.zip(errors) + ("x" to xs)).toMap()
+   data.plot2D(title, "x", "comparison.svg", 0.2)
+ }
