@@ -101,10 +101,12 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): SFun<X> = invoke(Bindings(mapOf(*ps)))
 
   @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): SFun<X> = invoke(Bindings(mapOf(pair)))
+  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): SFun<X> =
+    invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
 
   @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): SFun<X> = invoke(Bindings(mapOf(pair)))
+  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): SFun<X> =
+    invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray())
 
   open operator fun invoke(): SFun<X> = invoke(Bindings())
 
@@ -352,12 +354,14 @@ sealed class Protocol<X : SFun<X>> {
   val two = Two<X>()
   val e = E<X>()
 
-  val constants: Map<Special<X>, Number> = mapOf(zero to 0, one to 1, two to 2, e to E)
+  val constants = mapOf(zero to 0, one to 1, two to 2, e to E).wrap()
+
+  private fun <T> Map<T, Any>.wrap() = map { it.key to wrap(it.value) }.toTypedArray()
 
   private fun <T: Map<Var<X>, Number>> T.bind() =
-    Bindings((constants + this@bind).map { it.key to wrap(it.value) }.toMap())
+    Bindings((constants.toMap() + this@bind).toMap() as Map<Fun<X>, Fun<X>>)
 
-  abstract fun wrap(number: Number): X
+  abstract fun wrap(number: Any): SFun<X>
   fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwap() = (this as X).value
 
   fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwap().toDouble()
@@ -434,9 +438,9 @@ sealed class Protocol<X : SFun<X>> {
 }
 
 object DoublePrecision : Protocol<DReal>() {
-  override fun wrap(number: Number): DReal = DReal(number.toDouble())
+  override fun wrap(number: Any): DReal = DReal(number.toString().toDouble())
 }
 
 object BigDecimalPrecision : Protocol<BDReal>() {
-  override fun wrap(number: Number): BDReal = BDReal(number.toDouble())
+  override fun wrap(number: Any): BDReal = BDReal(number.toString().toDouble())
 }

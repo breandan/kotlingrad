@@ -14,14 +14,19 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   override operator fun invoke(bnds: Bindings<X>): MFun<X, R, C> =
     MComposition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
 
+  // Materializes the concrete vector from the dataflow graph
+  operator fun invoke(): Mat<X, R, C> = invoke(Bindings()) as Mat<X, R, C>
+
   @JvmName("sFunReassign")
-  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>) = invoke(Bindings(mapOf(*ps)))
+  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): MFun<X, R, C> =
+    invoke(Bindings(mapOf(*ps))) as Mat<X, R, C>
 
   @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>) = invoke(Bindings(mapOf(pair)))
+  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): MFun<X, R, C>  =
+    invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
 
   @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1, M: MFun<X, R, C>> invoke(pair: Pair<M, M>) = invoke(Bindings(mapOf(pair)))
+  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): MFun<X, R, C> = TODO()
 
   // Materializes the concrete matrix from the dataflow graph
   fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
@@ -104,6 +109,8 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: V
 class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, R, C>): MFun<X, R, C>(sFun) {
   fun df() = sFun.df()
   fun SFun<X>.df(): MFun<X, R, C> = when (this@df) {
+    is Var -> Mat(mVar.rows.map { row -> Vec(row.contents.map { col -> if (col == this@df) One() else Zero() }) })
+    is SConst -> Mat(mVar.rows.map { Vec(it.contents.map { Zero() }) })
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power -> this * (right * Log(left)).df()
@@ -116,7 +123,9 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
   }
 }
 
-class MVar<X: SFun<X>, R: D1, C: D1>(override val name: String = "", val rows: R, val cols: C): Variable<X>, MFun<X, R, C>()
+class MVar<X: SFun<X>, R: D1, C: D1>(override val name: String = "", val r: R, val c: C): Variable<X>,
+  Mat<X, R, C>(List(r.i) { row -> Vec(List(r.i) { col -> Var("$name.$row.$col")}) })
+
 open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, C>(*rows.toTypedArray()) {
