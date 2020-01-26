@@ -332,7 +332,7 @@ Plotting is also possible in higher dimensions, [for example](samples/src/main/k
 
 ### Loss curves
 
-Gradient descent is one application which Kotlin∇ enables. Below, we see the typical loss curve of SGD on a [linear regression problem](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/LinearRegression.kt):
+Gradient descent is one application for Kotlin∇. Below, is a typical loss curve of SGD on [linear regression](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/LinearRegression.kt):
 
 ![](samples/src/main/resources/linear_regression_loss.svg)
 
