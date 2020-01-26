@@ -38,6 +38,10 @@ interface Fun<X: SFun<X>> {
   }
 }
 
+interface Variable<X: SFun<X>> {
+  val name: String
+}
+
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
 data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fun<X>, Fun<X>> by fMap {
@@ -60,7 +64,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fu
   val vVars: Set<VVar<X, *>> = vMap.keys.filterIsInstance<VVar<X, *>>().toSet()
   val mVars: Set<MVar<X, *, *>> = mMap.keys.filterIsInstance<MVar<X, *, *>>().toSet()
 
-  val isReassignmentFree = fMap.values.none { it is Variable }
+  val isReassignmentFree = fMap.values.none { it is Variable<*> }
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.sVars.all { it in fMap }
   override fun toString() = fMap.toString()
   operator fun contains(v: Var<X>) = v in fMap
@@ -255,9 +259,7 @@ class DProd<X: SFun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): SFun<X>(le
 
 class VMagnitude<X: SFun<X>>(val value: VFun<X, *>): SFun<X>(value)
 
-interface Variable { val name: String }
-
-class Var<X : SFun<X>>(override val name: String = "") : Variable, SFun<X>() {
+class Var<X : SFun<X>>(override val name: String = "") : Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) =
     if(other is Var<*>) name == other.name
@@ -415,9 +417,13 @@ sealed class Protocol<X : SFun<X>> {
   fun Mat3x2(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
   fun Mat3x3(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number, d8: Number) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
+  fun <R: D1, C: D1> Mat(r: Nat<R>, c: Nat<C>, gen: () -> Number): Mat<X, R, C> = Mat(List(r.i) { Vec(List(c.i) { wrap(gen()) }) })
+  fun <E: D1> Vec(e: Nat<E>, gen: () -> Number): Vec<X, E> = Vec(List(e.i) { wrap(gen()) })
+
   fun Var(name: String) = Var<X>(name)
-  fun Var2() = Vec(Var<X>(), Var())
-  fun Var3() = Vec(Var<X>(), Var(), Var())
+  fun <T: D1> Var(name: String, t: Nat<T>) = Vec<X, T>(List(t.i) { Var("$name-$it") })
+  fun Var2(name: String) = VVar<X, D2>(name, D2)
+  fun Var3(name: String) = VVar<X, D3>(name, D3)
 
   fun Var2x1() = Mat2x1(Var<X>(), Var())
   fun Var2x2() = Mat2x2(Var<X>(), Var(), Var(), Var())
