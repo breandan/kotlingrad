@@ -16,13 +16,16 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
 
   @JvmName("sFunReassign")
-  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): VFun<X, E> = invoke(Bindings(mapOf(*ps)))
+  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): VFun<X, E> =
+    invoke(Bindings(mapOf(*ps)))
 
   @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): VFun<X, E> = invoke(Bindings(mapOf(pair)))
+  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): VFun<X, E> =
+    invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
 
   @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): VFun<X, E> = invoke(Bindings(mapOf(pair)))
+  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): VFun<X, E> =
+    invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray())
 
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
 
