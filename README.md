@@ -334,7 +334,7 @@ Plotting is also possible in higher dimensions, [for example](samples/src/main/k
 
 Gradient descent is one application which Kotlin∇ enables. Below, we see the typical loss curve of SGD on a [linear regression problem](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/LinearRegression.kt):
 
-![](samples/src/main/resources/linear_regression_loss.png)
+![](samples/src/main/resources/linear_regression_loss.svg)
 
 To train the model, execute `./gradlew LinearRegression` from within the parent directory.
 
