@@ -233,7 +233,7 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
   fun SFun<X>.call(): SFun<X> = inputs.sMap.getOrElse(this) { bind() }
 
   @Suppress("UNCHECKED_CAST")
-  fun SFun<X>.bind() = when (this@bind) {
+  fun SFun<X>.bind(): SFun<X> = when (this@bind) {
     is Var -> this
     is SConst -> this
     is Prod -> left.call() * right.call()
