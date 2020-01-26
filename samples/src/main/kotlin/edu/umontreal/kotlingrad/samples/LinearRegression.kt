@@ -5,67 +5,59 @@ import java.util.*
 
 fun main() = with(DoublePrecision) {
   val rand = Random()
-  val t1 = Var("t1"); val t2 = Var("t2")
-  val theta = Vec(t1, t2)
-  val i1 = Var("i1"); val i2 = Var("i2"); val i3 = Var("i3"); val i4 = Var("i4"); val i5 = Var("i5"); val i6 = Var("i6")
-  val input = Mat3x2(i1, i2, i3, i4, i5, i6)
-  val y1 = Var("y1"); val y2 = Var("y2"); val y3 = Var("y3")
-  val label: Vec<DReal, D3> = Vec(y1, y2, y3)
+  val theta = Var2("theta")
+  val input = Var3x2()
+  val label = Var3("y")
 
   val loss = (input * theta - label).magnitude()
 
   var weights = Vec(rand.nextDouble() * 10, rand.nextDouble() * 10)
   println("Initial weights are: $weights")
   var totalLoss = 0.0
-  var epochs = 0.0
+  var epochs = 0
   val alpha = wrap(0.001)
 
   val hiddenWeights = Vec(rand.nextDouble() * 10, rand.nextDouble() * 10)
   println("Target coefficients: $hiddenWeights")
   val consts = constants.entries.map { it.key to wrap(it.value) }
 
-  val lossHistory = mutableListOf<Pair<Double, Double>>()
+  val lossHistory = mutableListOf<Pair<Int, Double>>()
 
   do {
-    val batch = Mat3x2(
-      rand.nextDouble(), rand.nextDouble(),
-      rand.nextDouble(), rand.nextDouble(),
-      rand.nextDouble(), rand.nextDouble()
-    )
-    val noise = Vec(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.05)
+    val batch = Mat(D3, D2) { rand.nextDouble() }
+    val noise = Vec(D3) { rand.nextDouble() - 0.5 }
     val targets = (batch * hiddenWeights + noise)()
 
-    val fixInputs = loss.invoke(
+    val batchLoss = loss(
       *(input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
         label.contents.mapIndexed { i, it -> it to targets[i] }).toTypedArray()
     )
 
-    val batchLoss = loss.invoke(
-      *(input.flatContents.zip(batch.flatContents) +
-        label.contents.zip(targets.contents) +
-        theta.contents.zip(weights.contents) + consts).toTypedArray()
-    )
+    val averageLoss = batchLoss(
+      *(theta.contents.zip(weights.contents) + consts).toTypedArray()
+    ).toDouble() / batch.rows.size
 
-    val dv1 = fixInputs.d(t1)(t1 to weights[0], t2 to weights[1])
-    val dv2 = fixInputs.d(t2)(t1 to weights[0], t2 to weights[1])
-
-    val deltas: Vec<DReal, D2> = Vec(dv1, dv2)(
+    val gradients = batchLoss.d(theta)(
       *(theta.contents.zip(weights.contents) + consts).toTypedArray()
     )()
 
-    if (epochs % 100 == 0.0 && 0 < epochs) {
+    weights = (weights - alpha * gradients)() // Vanilla SGD
+
+    if (epochs % 100 == 0 && 0 < epochs) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
       lossHistory += epochs / 100 to totalLoss / 100
       totalLoss = 0.0
     }
 
-    weights = (weights - alpha * deltas)()
-    totalLoss += batchLoss.toDouble()
+    totalLoss += averageLoss
     epochs++
   } while (epochs < 20000)
 
   println("Final weights: $weights")
+  println("Target coefficients: $hiddenWeights")
 
-  mapOf("Epochs" to lossHistory.map { it.first }, "Squared errors" to lossHistory.map { it.second })
-    .plot2D("Loss over time", "Epochs", "linear_regression_loss.svg")
+  mapOf(
+    "Epochs" to lossHistory.map { it.first },
+    "Average Loss" to lossHistory.map { it.second }
+  ).plot2D("Loss over time", "Epochs", "linear_regression_loss.svg")
 }

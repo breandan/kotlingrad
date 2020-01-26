@@ -116,7 +116,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
   }
 }
 
-class MVar<X: SFun<X>, R: D1, C: D1>(override val name: String = "", val rows: R, val cols: C): Variable, MFun<X, R, C>()
+class MVar<X: SFun<X>, R: D1, C: D1>(override val name: String = "", val rows: R, val cols: C): Variable<X>, MFun<X, R, C>()
 open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, C>(*rows.toTypedArray()) {
