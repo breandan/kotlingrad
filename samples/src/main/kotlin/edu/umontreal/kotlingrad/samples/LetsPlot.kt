@@ -45,5 +45,5 @@ fun Map<String, Any>.plot2D(title: String,
 }
 
 fun String.patchLetsPlot() = lines().first().replace(">",
-  " xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">") +
+  " xmlns=\"http://www.w3.org/2000/svg\">") +
   "\n" + lines().drop(1).joinToString("\n")
