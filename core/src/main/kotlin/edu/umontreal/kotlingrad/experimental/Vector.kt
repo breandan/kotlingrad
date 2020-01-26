@@ -175,7 +175,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>): VFun<X, E>(*cont
   override fun times(multiplicand: SFun<X>): Vec<X, E> = Vec(contents.map { it * multiplicand })
 
   override fun dot(multiplicand: VFun<X, E>) = when(multiplicand) {
-    is Vec<X, E> -> contents.reduceIndexed { index, acc, element -> acc + element * multiplicand[index] }
+    is Vec<X, E> -> contents.zip(multiplicand.contents).map { it.first * it.second }.reduce { acc, it -> acc + it }
     else -> super.dot(multiplicand)
   }
 
