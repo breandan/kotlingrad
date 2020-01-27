@@ -22,7 +22,7 @@ interface Field<X : Field<X>> : Group<X> {
   operator fun div(divisor: X): X
   operator fun times(multiplicand: X): X
 
-  infix fun pow(exp: X): X
+  infix fun pow(exponent: X): X
   fun ln(): X
 }
 
@@ -133,7 +133,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   open fun grad(): Map<Var<X>, SFun<X>> = bindings.sVars.map { it to Derivative(this, it) }.toMap()
 
   override fun ln(): SFun<X> = Log(this)
-  override fun pow(exp: SFun<X>): SFun<X> = Power(this, exp)
+  override fun pow(exponent: SFun<X>): SFun<X> = Power(this, exponent)
   override fun unaryMinus(): SFun<X> = Negative(this)
   open fun sqrt(): SFun<X> = this pow (ONE / TWO)
 
@@ -268,7 +268,15 @@ class Var<X : SFun<X>>(override val name: String = "") : Variable<X>, SFun<X>() 
     else super.equals(other)
 }
 
-open class SConst<X : SFun<X>> : SFun<X>()
+open class SConst<X : SFun<X>> : SFun<X>() {
+  open val doubleValue: Double = when(this) {
+    is Zero -> 0.0
+    is One -> 1.0
+    is Two -> 2.0
+    is E -> kotlin.math.E
+    else -> Double.NaN
+  }
+}
 sealed class Special<X: SFun<X>> : SConst<X>() {
   override fun equals(other: Any?) =
     if (this === other) true else javaClass == other?.javaClass
@@ -285,9 +293,17 @@ class One<X: SFun<X>> : Special<X>()
 class Two<X: SFun<X>> : Special<X>()
 class E<X: SFun<X>> : Special<X>()
 
-abstract class RealNumber<X : SFun<X>, Y>(open val value: Y) : SConst<X>() {
+abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
   override fun toString() = value.toString()
-  abstract fun wrap(value: Number): X
+  abstract fun wrap(number: Any): X
+
+  override val doubleValue: Double by lazy {
+    when (this) {
+      is BDReal -> value.toDouble()
+      is DReal -> value
+      else -> super.doubleValue
+    }
+  }
 
   override val ZERO by lazy { wrap(0) }
   override val ONE by lazy { wrap(1) }
@@ -306,43 +322,49 @@ abstract class RealNumber<X : SFun<X>, Y>(open val value: Y) : SConst<X>() {
       is Mat -> Mat(multiplicand.rows.map { this * it } as List<Vec<X, C>>)
       else -> super.times(multiplicand)
     }
-}
 
-class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
-  override fun wrap(value: Number) = DReal(value.toDouble())
-
-  override fun sin() = DReal(sin(value))
-  override fun cos() = DReal(cos(value))
-  override fun tan() = DReal(tan(value))
-  override fun sqrt() = DReal(sqrt(value))
-  override fun unaryMinus() = DReal(-value)
-  override fun ln() = DReal(ln(value))
+  override fun sin() = wrap(sin(doubleValue))
+  override fun cos() = wrap(cos(doubleValue))
+  override fun tan() = wrap(tan(doubleValue))
+  override fun sqrt() = wrap(sqrt(doubleValue))
+  override fun unaryMinus() = wrap(-doubleValue)
+  override fun ln() = wrap(ln(doubleValue))
 
   /**
    * Constant propagation.
    */
 
-  override fun plus(addend: SFun<DReal>) = when (addend) {
-    is DReal -> DReal(value + addend.value)
+  override fun plus(addend: SFun<X>) = when (addend) {
+    is RealNumber<X, *> -> wrap(doubleValue + addend.doubleValue)
     else -> super.plus(addend)
   }
 
-  override fun times(multiplicand: SFun<DReal>) = when (multiplicand) {
-    is DReal -> DReal(value * multiplicand.value)
+  override fun times(multiplicand: SFun<X>) = when (multiplicand) {
+    is RealNumber<X, *> -> wrap(doubleValue * multiplicand.doubleValue)
     else -> super.times(multiplicand)
   }
 
-  override fun pow(exp: SFun<DReal>) = when (exp) {
-    is DReal -> DReal(value.pow(exp.value))
-    else -> super.pow(exp)
+  override fun pow(exponent: SFun<X>) = when (exponent) {
+    is RealNumber<X, *> -> wrap(doubleValue.pow(exponent.doubleValue))
+    else -> super.pow(exponent)
   }
 }
 
+open class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
+  override fun wrap(number: Any) = when(number) {
+    is Number -> DReal(number.toDouble())
+    is SConst<*> -> DReal(number.doubleValue)
+    else -> DReal(number.toString().toDouble())
+  }
+
+  companion object: DReal(0.0)
+}
+
 /**
- * Numerical context.
+ * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-sealed class Protocol<X : SFun<X>> {
+sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   val x = Var<X>("x")
   val y = Var<X>("y")
   val z = Var<X>("z")
@@ -358,12 +380,10 @@ sealed class Protocol<X : SFun<X>> {
 
   private fun <T> Map<T, Any>.wrap() = map { it.key to wrap(it.value) }.toTypedArray()
 
-  private fun <T: Map<Var<X>, Number>> T.bind() =
-    Bindings((constants.toMap() + this@bind).toMap() as Map<Fun<X>, Fun<X>>)
+  private fun <T: Map<Var<X>, Number>> T.bind() = Bindings(constants.toMap() + this@bind.wrap())
 
-  abstract fun wrap(number: Any): SFun<X>
+  fun wrap(number: Any): X = prototype.wrap(number)
   fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwap() = (this as X).value
-
   fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwap().toDouble()
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
@@ -401,28 +421,28 @@ sealed class Protocol<X : SFun<X>> {
   fun Number.pow(exp: SFun<X>) = wrap(this) pow exp
   infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
 
-  fun Vec(d0: Number) = Vec(wrap(d0))
-  fun Vec(d0: Number, d1: Number) = Vec(wrap(d0), wrap(d1))
-  fun Vec(d0: Number, d1: Number, d2: Number) = Vec(wrap(d0), wrap(d1), wrap(d2))
-  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3))
-  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4))
-  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5))
-  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6))
-  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7))
-  fun Vec(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number, d8: Number) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7), wrap(d8))
+  fun <Y: Number> Vec(d0: Y) = Vec(wrap(d0))
+  fun <Y: Number> Vec(d0: Y, d1: Y) = Vec(wrap(d0), wrap(d1))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y) = Vec(wrap(d0), wrap(d1), wrap(d2))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7))
+  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = Vec(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7), wrap(d8))
 
-  fun Mat1x1(d0: Number) = Mat<X, D1, D1>(Vec(d0))
-  fun Mat1x2(d0: Number, d1: Number) = Mat<X, D1, D2>(Vec(d0, d1))
-  fun Mat1x3(d0: Number, d1: Number, d2: Number) = Mat<X, D1, D3>(Vec(d0, d1, d2))
-  fun Mat2x1(d0: Number, d1: Number) = Mat<X, D2, D1>(Vec(d0), Vec(d1))
-  fun Mat2x2(d0: Number, d1: Number, d2: Number, d3: Number) = Mat<X, D2, D2>(Vec(d0, d1), Vec(d2, d3))
-  fun Mat2x3(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Mat<X, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
-  fun Mat3x1(d0: Number, d1: Number, d2: Number) = Mat<X, D3, D1>(listOf(Vec(d0), Vec(d1), Vec(d2)) )
-  fun Mat3x2(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
-  fun Mat3x3(d0: Number, d1: Number, d2: Number, d3: Number, d4: Number, d5: Number, d6: Number, d7: Number, d8: Number) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
+  fun <Y: Number> Mat1x1(d0: Y) = Mat<X, D1, D1>(Vec(d0))
+  fun <Y: Number> Mat1x2(d0: Y, d1: Y) = Mat<X, D1, D2>(Vec(d0, d1))
+  fun <Y: Number> Mat1x3(d0: Y, d1: Y, d2: Y) = Mat<X, D1, D3>(Vec(d0, d1, d2))
+  fun <Y: Number> Mat2x1(d0: Y, d1: Y) = Mat<X, D2, D1>(Vec(d0), Vec(d1))
+  fun <Y: Number> Mat2x2(d0: Y, d1: Y, d2: Y, d3: Y) = Mat<X, D2, D2>(Vec(d0, d1), Vec(d2, d3))
+  fun <Y: Number> Mat2x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
+  fun <Y: Number> Mat3x1(d0: Y, d1: Y, d2: Y) = Mat<X, D3, D1>(listOf(Vec(d0), Vec(d1), Vec(d2)) )
+  fun <Y: Number> Mat3x2(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
+  fun <Y: Number> Mat3x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
-  fun <R: D1, C: D1> Mat(r: Nat<R>, c: Nat<C>, gen: () -> Number): Mat<X, R, C> = Mat(List(r.i) { Vec(List(c.i) { wrap(gen()) }) })
-  fun <E: D1> Vec(e: Nat<E>, gen: () -> Number): Vec<X, E> = Vec(List(e.i) { wrap(gen()) })
+  fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: () -> Y): Mat<X, R, C> = Mat(List(r.i) { Vec(List(c.i) { wrap(gen()) }) })
+  fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: () -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen()) })
 
   fun Var(name: String) = Var<X>(name)
   fun <T: D1> Var(name: String, t: Nat<T>) = Vec<X, T>(List(t.i) { Var("$name-$it") })
@@ -437,10 +457,5 @@ sealed class Protocol<X : SFun<X>> {
   fun Var3x3() = Mat3x3(Var<X>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
 }
 
-object DoublePrecision : Protocol<DReal>() {
-  override fun wrap(number: Any): DReal = DReal(number.toString().toDouble())
-}
-
-object BigDecimalPrecision : Protocol<BDReal>() {
-  override fun wrap(number: Any): BDReal = BDReal(number.toString().toDouble())
-}
+object DoublePrecision : Protocol<DReal>(DReal)
+object BigDecimalPrecision : Protocol<BDReal>(BDReal)

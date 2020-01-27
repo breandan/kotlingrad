@@ -28,11 +28,11 @@ fun main() = with(DoublePrecision) {
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
     val targets = (batch * hiddenWeights + noise)()
 
-    val batchLoss = loss.invoke(input to batch)(label to targets)
+    val batchLoss = loss(input to batch)(label to targets)
     val averageLoss = batchLoss(theta to weights)(*constants) / batch.rows.size
     val gradients = batchLoss.d(theta)(theta to weights)(*constants)
 
-// TODO: Why this is SO MUCH faster?
+// TODO: Why is this SO MUCH faster?
 //
 //  val batchLoss = loss(
 //    *(input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
