@@ -11,9 +11,9 @@ fun main() = with(DoublePrecision) {
 
   val loss = (input * theta - label).magnitude()
 
-  var weights = Vec(rand.nextDouble() * 10, rand.nextDouble() * 10)
+  var weights = Vec(D2) { rand.nextDouble() * 10 }
   println("Initial weights are: $weights")
-  val hiddenWeights = Vec(rand.nextDouble() * 10, rand.nextDouble() * 10)
+  val hiddenWeights = Vec(D2) { rand.nextDouble() * 10 }
   println("Target coefficients: $hiddenWeights")
 
   var epochs = 0
@@ -34,18 +34,18 @@ fun main() = with(DoublePrecision) {
 
 // TODO: Why this is SO MUCH faster?
 //
-//    val batchLoss = loss(
-//      *(input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
-//        label.contents.mapIndexed { i, it -> it to targets[i] }).toTypedArray()
-//    )
+//  val batchLoss = loss(
+//    *(input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
+//      label.contents.mapIndexed { i, it -> it to targets[i] }).toTypedArray()
+//  )
 //
-//    val averageLoss = batchLoss(
-//      *(theta.contents.zip(weights.contents) + constants).toTypedArray()
-//    ).toDouble() / batch.rows.size
+//  val averageLoss = batchLoss(
+//    *(theta.contents.zip(weights.contents) + constants).toTypedArray()
+//  ).toDouble() / batch.rows.size
 //
-//    val gradients = batchLoss.d(theta)(
-//      *(theta.contents.zip(weights.contents) + constants).toTypedArray()
-//    )()
+//  val gradients = batchLoss.d(theta)(
+//    *(theta.contents.zip(weights.contents) + constants).toTypedArray()
+//  )()
 
     weights = (weights - alpha * gradients)() // Vanilla SGD
 
@@ -67,5 +67,5 @@ fun main() = with(DoublePrecision) {
   mapOf(
     "Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
-  ).plot2D("Loss over time", "Epochs", "linear_regression_loss.svg")
+  ).plot2D("Training Loss", "Epochs", "linear_regression_loss.svg")
 }
