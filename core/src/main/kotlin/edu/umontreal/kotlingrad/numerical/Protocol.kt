@@ -64,8 +64,8 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
 //  infix operator fun <F: D100> ScalarFun<X>.minus(subtrahend: VectorFun<ScalarFun<X>, F>) = fill(subtrahend.length, this) - subtrahend
 //  infix operator fun <F: D100> ScalarFun<X>.times(multiplicand: VectorFun<ScalarFun<X>, F>) = fill(multiplicand.length, this) * multiplicand
 
-  @JvmName("prefixNumPowFun") fun pow(`fun`: Fun<X>, number: Number) = `fun`.run { pow(wrap(number)) }
-  @JvmName("prefixFunPowNum") fun pow(number: Number, `fun`: Fun<X>) = `fun`.run { wrap(number) }
+  @JvmName("prefixNumPowFun") fun pow(`fun`: Fun<X>, number: Number) = `fun`.pow(wrap(number))
+  @JvmName("prefixFunPowNum") fun pow(number: Number, `fun`: Fun<X>) = wrap(number).pow(`fun`)
   @JvmName("infixNumPowFun") fun Number.pow(`fun`: Fun<X>) = wrap(this).pow(`fun`)
   @JvmName("infixFunPowNum") infix fun Fun<X>.pow(number: Number) = pow(wrap(number))
 

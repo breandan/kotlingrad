@@ -38,9 +38,7 @@ interface Fun<X: SFun<X>> {
   }
 }
 
-interface Variable<X: SFun<X>> {
-  val name: String
-}
+interface Variable<X: SFun<X>>: Fun<X> { val name: String }
 
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
@@ -59,21 +57,28 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fu
   private inline fun <reified T: Fun<X>> filterInstancesOf(): Map<T, T> =
     mapOf(*fMap.keys.filterIsInstance(T::class.java).map { it to fMap[it]!! as T }.toTypedArray())
 
+  // Merges two variable bindings
+  // TODO: Add support for change of variables, i.e. x = y, y = 2z, z = x + y...
+  operator fun plus(other: Bindings<X>) = Bindings(fMap + other.fMap)
+
   // Scalar, vector, and matrix variables
   val sVars: Set<Var<X>> = sMap.keys.filterIsInstance<Var<X>>().toSet()
   val vVars: Set<VVar<X, *>> = vMap.keys.filterIsInstance<VVar<X, *>>().toSet()
   val mVars: Set<MVar<X, *, *>> = mMap.keys.filterIsInstance<MVar<X, *, *>>().toSet()
 
   val isReassignmentFree = fMap.values.none { it is Variable<*> }
-  fun fullyDetermines(fn: SFun<X>) = fn.bindings.sVars.all { it in fMap }
+  fun fullyDetermines(fn: SFun<X>) = fn.bindings.sVars.all { it in this }
   override fun toString() = fMap.toString()
-  operator fun contains(v: Var<X>) = v in fMap
+  operator fun contains(v: Variable<X>) = v in fMap
   fun curried() = fMap.entries.map { Bindings(mapOf(it.key to it.value)) }
 
   operator fun get(fn: SConst<X>) = fn
   operator fun get(fn: SFun<X>): SFun<X> = sMap.getOrElse(fn) { fn }
   operator fun <L: D1> get(fn: VFun<X, L>): VFun<X, L> = vMap.getOrElse(fn) { fn } as VFun<X, L>
   operator fun <R: D1, C: D1> get(fn: MFun<X, R, C>): MFun<X, R, C> = mMap.getOrElse(fn) { fn } as MFun<X, R, C>
+
+  override fun equals(other: Any?) = other is Bindings<*> && fMap == other.fMap
+  override fun hashCode() = fMap.hashCode()
 }
 
 /**
@@ -108,7 +113,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): SFun<X> =
     invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray())
 
-  open operator fun invoke(): SFun<X> = invoke(Bindings())
+  operator fun invoke(vararg fns: SFun<X>): SFun<X> = invoke(*bindings.sVars.zip(fns).toTypedArray())
+
+  operator fun invoke(): SFun<X> = invoke(Bindings())
 
   open fun d(v1: Var<X>): SFun<X> = Derivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(d(v1), d(v2))
@@ -236,10 +243,10 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
 //    return result
 //  }
 
-  fun SFun<X>.call(): SFun<X> = inputs.sMap.getOrElse(this) { bind() }
+  fun SFun<X>.call(bindings: Bindings<X> = inputs): SFun<X> = inputs.sMap.getOrElse(this) { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
-  fun SFun<X>.bind(): SFun<X> = when (this@bind) {
+  fun SFun<X>.bind(bindings: Bindings<X>): SFun<X> = when (this@bind) {
     is Var -> this
     is SConst -> this
     is Prod -> left.call() * right.call()
@@ -251,9 +258,9 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
     is Tangent -> input.call().tan()
     is Log -> left.call().ln()
     is Derivative -> df().call()
-    is DProd -> left(inputs) as Vec<X, D1> dot right(inputs) as Vec<X, D1>
-    is VMagnitude -> value(inputs).magnitude()
-    is Composition -> fn.call().call()
+    is DProd -> left(bindings) as Vec<X, D1> dot right(bindings) as Vec<X, D1>
+    is VMagnitude -> value(bindings).magnitude()
+    is Composition -> fn.call(bindings + inputs)
   }
 }
 
@@ -263,9 +270,7 @@ class VMagnitude<X: SFun<X>>(val value: VFun<X, *>): SFun<X>(value)
 
 class Var<X : SFun<X>>(override val name: String = "") : Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
-  override fun equals(other: Any?) =
-    if(other is Var<*>) name == other.name
-    else super.equals(other)
+  override fun equals(other: Any?) = other is Var<*> &&  name == other.name
 }
 
 open class SConst<X : SFun<X>> : SFun<X>() {
@@ -389,7 +394,8 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
   fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
   fun <T: SFun<T>> tan(angle: SFun<T>) = angle.tan()
-  fun <T: SFun<T>> exp(angle: SFun<T>) = angle.exp()
+  fun <T: SFun<T>> exp(exponent: SFun<T>) = exponent.exp()
+  fun <T: SFun<T>> sqrt(radicand: SFun<T>) = radicand.sqrt()
 
   class IndVar<X: SFun<X>> constructor(val fn: SFun<X>)
 
@@ -397,6 +403,10 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
     // TODO: ensure correctness for arbitrary nested functions using the Chain rule
     infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
   }
+
+  operator fun Number.invoke(n: Number) = this
+
+  operator fun SFun<X>.invoke(number: Number): SFun<X> = invoke(wrap(number))
 
   operator fun SFun<X>.invoke(vararg pairs: Pair<Var<X>, Number>) = invoke(pairs.toMap().bind())
 
@@ -420,6 +430,8 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
 
   fun Number.pow(exp: SFun<X>) = wrap(this) pow exp
   infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
+  @JvmName("prefixPowNum") fun pow(base: SFun<X>, exp: Number) = base pow wrap(exp)
+  @JvmName("prefixPowFun") fun pow(base: Number, exp: SFun<X>) = wrap(base) pow exp
 
   fun <Y: Number> Vec(d0: Y) = Vec(wrap(d0))
   fun <Y: Number> Vec(d0: Y, d1: Y) = Vec(wrap(d0), wrap(d1))
@@ -441,8 +453,8 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun <Y: Number> Mat3x2(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
   fun <Y: Number> Mat3x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
-  fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: () -> Y): Mat<X, R, C> = Mat(List(r.i) { Vec(List(c.i) { wrap(gen()) }) })
-  fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: () -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen()) })
+  inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: () -> Y): Mat<X, R, C> = Mat(List(r.i) { Vec(List(c.i) { wrap(gen()) }) })
+  inline fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: () -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen()) })
 
   fun Var(name: String) = Var<X>(name)
   fun <T: D1> Var(name: String, t: Nat<T>) = Vec<X, T>(List(t.i) { Var("$name-$it") })
