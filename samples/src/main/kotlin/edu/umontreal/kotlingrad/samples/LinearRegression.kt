@@ -16,7 +16,7 @@ fun main() = with(DoublePrecision) {
   val hiddenWeights = Vec(D2) { rand.nextDouble() * 10 }
   println("Target coefficients: $hiddenWeights")
 
-  var epochs = 0
+  var epochs = 1
   var totalLoss = 0.0
   var totalTime = 0.0
   val alpha = wrap(0.001)
@@ -49,7 +49,7 @@ fun main() = with(DoublePrecision) {
 
     weights = (weights - alpha * gradients)() // Vanilla SGD
 
-    if (epochs % 100 == 0 && 0 < epochs) {
+    if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
       println("Average time: " + totalTime / 100 + "ns")
       lossHistory += epochs / 100 to totalLoss / 100
