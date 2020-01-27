@@ -49,14 +49,11 @@ class TestPowerDerivatives: StringSpec({
 
     "d(x⁰) / dx should be 0" {
       DoubleGenerator.assertAll { ẋ ->
-        println("xx $ẋ")
         val f1 = x / x
         val f2 = pow(x, 0)
         val manualDeriv = 0
         val `df1∕dx` = d(f1) / d(x)
         val `df2∕dx` = d(f2) / d(x)
-        println("df1dx $`df1∕dx`")
-        println("df2dx $`df2∕dx`")
         `df1∕dx`(ẋ) shouldBeAbout `df2∕dx`(ẋ)
         `df1∕dx`(ẋ) shouldBeAbout manualDeriv(ẋ)
         `df2∕dx`(ẋ) shouldBeAbout manualDeriv(ẋ)

@@ -51,14 +51,14 @@ class TestTrigonometricDerivatives: StringSpec({
       }
     }
 
-    "∂²z/∂x² should be -y * y * y * sin(x * y)" {
+    "∂²z/∂x² should be -y * y * y * sin(x * y)".config(enabled = false) {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = -y.pow(3) * sin(x * y)
         `∂²z∕∂x²`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
       }
     }
 
-    "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))" {
+    "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))".config(enabled = false) {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))
         `∂²z∕∂x∂y`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
