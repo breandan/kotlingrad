@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.calculus
 
 
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
@@ -13,7 +13,7 @@ class TestSimpleDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ ->
         val f = x * 1
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(ẋ) shouldBeAbout 1
+        `∂f∕∂x`(x to ẋ) shouldBeAbout 1
       }
     }
 
@@ -21,7 +21,7 @@ class TestSimpleDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ ->
         val f = x * 2
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(ẋ) shouldBeAbout 2
+        `df∕dx`(x to ẋ) shouldBeAbout 2
       }
     }
 
@@ -29,7 +29,7 @@ class TestSimpleDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ ->
         val f = x + x
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(ẋ) shouldBeAbout 2
+        `df∕dx`(x to ẋ) shouldBeAbout 2
       }
     }
   }
