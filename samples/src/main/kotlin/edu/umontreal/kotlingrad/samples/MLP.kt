@@ -44,23 +44,24 @@ fun main() = with(DoublePrecision) {
 
   do {
     val (X, Y) = drawSample()
-    val t = mlp(w1, w2, w3)(mlp.x to X, mlp.y to Y)
+    val fixInputs = mlpf(mlp.x to X, mlp.y to Y)(*constants)
+    val loss = fixInputs(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
 
-    totalLoss += t.toDouble()
+    totalLoss += loss.toDouble()
 
-    val dw1 = mlpf.d(mlp.p1v)
-    val dw2 = mlpf.d(mlp.p2v)
-    val dw3 = mlpf.d(mlp.p3v)
+    val dw1 = loss.d(mlp.p1v)
+    val dw2 = loss.d(mlp.p2v)
+    val dw3 = loss.d(mlp.p3v)
 
-    val t1 = dw1(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(mlp.x to X, mlp.y to Y)()
-    val t2 = dw2(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(mlp.x to X, mlp.y to Y)()
-    val t3 = dw3(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(mlp.x to X, mlp.y to Y)()
+    val t1 = dw1(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
+    val t2 = dw2(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
+    val t3 = dw3(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
 
     w1 += α * t1
     w2 += α * t2
     w3 += α * t3
 
-    if(epochs % 10 == 0){
+    if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 10} epochs: ${totalLoss / 100}")
       totalLoss = 0.0
     }

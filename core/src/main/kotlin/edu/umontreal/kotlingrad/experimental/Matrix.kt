@@ -26,7 +26,8 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
 
   @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): MFun<X, R, C> = TODO()
+  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): MFun<X, R, C> =
+    invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray()) as MFun<X, R, C>
 
   // Materializes the concrete matrix from the dataflow graph
   fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
