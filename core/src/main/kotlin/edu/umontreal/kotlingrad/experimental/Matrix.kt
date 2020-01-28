@@ -61,26 +61,25 @@ class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, overrid
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
 class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs: Bindings<X>): MFun<X, R, C>(Bindings(mFun.bindings, inputs)){
-  val evaluate: MFun<X, R, C> by lazy { call() }
+  val evaluate: MFun<X, R, C> by lazy { bind(inputs) }
   override val bindings: Bindings<X> by lazy { evaluate.bindings }
 
-  fun MFun<X, R, C>.call(): MFun<X, R, C> = inputs.mMap.getOrElse(this@call) { bind() } as  MFun<X, R, C>
-
   @Suppress("UNCHECKED_CAST")
-  fun  MFun<X, R, C>.bind(): MFun<X, R, C> = when (this@bind) {
-    is MNegative -> -input(inputs)
-    is MTranspose -> input(inputs).ᵀ
-    is MSum -> left(inputs) + right(inputs)
-    is MMProd<X, R, *, C> -> left(inputs) as MFun<X, R, D1> * right(inputs) as MFun<X, D1, C>
-    is HProd -> left(inputs) ʘ right(inputs)
-    is MSProd -> left(inputs) * right(inputs)
-    is SMProd -> left(inputs) * right(inputs)
+  fun MFun<X, R, C>.bind(bindings: Bindings<X>): MFun<X, R, C> =
+    when (this@bind) {
+    is MNegative -> -input.bind(bindings)
+    is MTranspose -> input.ᵀ.bind(bindings)
+    is MSum -> left.bind(bindings) + right.bind(bindings)
+    is MMProd<X, R, *, C> -> left(bindings) as MFun<X, R, D1> * right(bindings) as MFun<X, D1, C>
+    is HProd -> left.bind(bindings) ʘ right.bind(bindings)
+    is MSProd -> left.bind(bindings) * right(bindings)
+    is SMProd -> left(bindings) * right.bind(bindings)
     is MConst -> this
-    is Mat -> Mat(rows.map { it(inputs) as Vec<X, C> })
-    is MVar -> inputs.mMap.getOrElse(this) { this } as MFun<X, R, C>
-    is MDerivative -> df()(inputs)
-    is MGradient -> df()(inputs)
-    is MComposition -> mFun.call().call()
+    is Mat -> Mat(rows.map { it(bindings) as Vec<X, C> })
+    is MVar -> bindings.mMap.getOrElse(this) { this } as MFun<X, R, C>
+    is MDerivative -> df()(bindings)
+    is MGradient -> df()(bindings)
+    is MComposition -> mFun.bind(bindings + inputs)
     else -> this
   }
 }
