@@ -34,12 +34,10 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
+  open operator fun minus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, -addend)
   open operator fun times(multiplicand: SFun<X>): MFun<X, R, C> = MSProd(this, multiplicand)
   open operator fun times(multiplicand: VFun<X, C>): VFun<X, R> = MVProd(this, multiplicand)
-
-  // The Hadamard product
   open infix fun ʘ(multiplicand: MFun<X, R, C>): MFun<X, R, C> = HProd(this, multiplicand)
-
   open operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
 
   override fun toString() = when (this) {
@@ -90,7 +88,6 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
 class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: Var<X>): MFun<X, R, C>(mFun) {
-  fun df() = mFun.df()
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
     is MConst -> map { Zero() }
     is MVar -> this
