@@ -74,8 +74,8 @@ fun main() = with(DoublePrecision) {
       val dw3 = sampleLoss.d(p3v)
 
 
-      val ew1 = try {dw1(*closure) } catch(e: Exception) {
-        render { dw1.toGraph() }.saveToFile("gradient_dw1.svg").show()
+      val ew1 = try {dw1.invoke(*closure) } catch(e: Exception) {
+        dw1.show()
         throw e
       }
       val ew2 = dw2(*closure)

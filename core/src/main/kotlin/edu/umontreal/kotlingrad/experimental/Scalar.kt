@@ -37,6 +37,8 @@ interface Fun<X: SFun<X>> {
     when (this@Fun) {
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
+      is SFun<*> -> (this@Fun as SFun).toGraph()
+      is VFun<*, *> -> (this@Fun as VFun<*, *>).toGraph()
       else -> TODO(this@Fun.javaClass.toString())
     }
   }
@@ -487,9 +489,10 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   val DARKMODE = false
   val THICKNESS = 2
 
-  fun SFun<*>.render() = render { toGraph() }
+  fun Fun<*>.show() = renderAsSVG { toGraph() }.show()
+  fun SFun<*>.renderAsSVG() = renderAsSVG { toGraph() }
 
-  inline fun render(crossinline op: () -> MutableNode) =
+  inline fun renderAsSVG(crossinline op: () -> MutableNode) =
     graph(directed = true) {
       val color = if (DARKMODE) Color.WHITE else Color.BLACK
 
@@ -505,6 +508,7 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
 
   fun Renderer.saveToFile(filename: String) = toFile(File(filename))
 
+  fun Renderer.show() = toFile(File.createTempFile("temp", ".svg")).show()
   fun File.show() = ProcessBuilder("x-www-browser", path).start()
 }
 
