@@ -23,14 +23,14 @@ fun main() {
     "t" to xs.map { cos(it + 1) }
   )
 
-  data.plot2D("y = sin(x)", "x", "hello_lets-plot.svg")
+  data.plot2D("y = sin(x)", "hello_lets-plot.svg")
 }
 
 fun Map<String, Any>.plot2D(title: String,
-                            xAxis: String,
                             filename: String,
                             thickness: Double = 1.0,
                             dimensions: DoubleVector = DoubleVector(1000.0, 500.0)) {
+  val xAxis = entries.first().key
   // Create plot specs using Lets-Plot Kotlin API
   val geoms = entries.filter { it.key != xAxis }.zip(Colors.distributeEvenly(entries.size - 1, 1.0))
     .map { geom_path(size = thickness, color = it.second, show_legend = true) { x = xAxis; y = it.first.key } }

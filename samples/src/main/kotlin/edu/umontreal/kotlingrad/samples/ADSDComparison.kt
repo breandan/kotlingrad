@@ -86,5 +86,5 @@ fun main() {
   val title = "f(x) = sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
    val data = (labels.zip(errors) + ("x" to xs)).toMap()
-   data.plot2D(title, "x", "comparison.svg", 0.2)
+   data.plot2D(title, "comparison.svg", 0.2)
  }

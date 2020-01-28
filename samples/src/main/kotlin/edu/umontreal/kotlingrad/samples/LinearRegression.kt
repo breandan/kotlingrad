@@ -60,5 +60,5 @@ fun main() = with(DoublePrecision) {
   mapOf(
     "Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
-  ).plot2D("Training Loss", "Epochs", "linear_regression_loss.svg")
+  ).plot2D("Training Loss", "linear_regression_loss.svg")
 }
