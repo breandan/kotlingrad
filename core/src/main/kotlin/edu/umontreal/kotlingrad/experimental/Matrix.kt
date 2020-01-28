@@ -29,6 +29,8 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): MFun<X, R, C> =
     invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray()) as MFun<X, R, C>
 
+  open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef)
+
   // Materializes the concrete matrix from the dataflow graph
   fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
 
@@ -52,6 +54,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   }
 }
 
+class MMap<X: SFun<X>, R: D1, C: D1>(val value: MFun<X, R, C>, val ef: (SFun<X>) -> SFun<X>): MFun<X, R, C>(value)
 class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
 class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
 class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
@@ -143,7 +146,7 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, 
 
   override val ᵀ: Mat<X, C, R> by lazy { Mat(cols) }
 
-  fun map(map: (SFun<X>) -> SFun<X>): Mat<X, R, C> = Mat(rows.map { it.map(map) })
+  override fun map(ef: (SFun<X>) -> SFun<X>): Mat<X, R, C> = Mat(rows.map { it.map(ef) })
 
   override operator fun unaryMinus(): Mat<X, R, C> = Mat(rows.map { -it })
 
