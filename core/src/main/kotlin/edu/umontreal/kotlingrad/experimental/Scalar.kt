@@ -72,10 +72,9 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fu
   operator fun contains(v: Variable<X>) = v in fMap
   fun curried() = fMap.entries.map { Bindings(mapOf(it.key to it.value)) }
 
-  operator fun get(fn: SConst<X>) = fn
-  operator fun get(fn: SFun<X>): SFun<X> = sMap.getOrElse(fn) { fn }
-  operator fun <L: D1> get(fn: VFun<X, L>): VFun<X, L> = vMap.getOrElse(fn) { fn } as VFun<X, L>
-  operator fun <R: D1, C: D1> get(fn: MFun<X, R, C>): MFun<X, R, C> = mMap.getOrElse(fn) { fn } as MFun<X, R, C>
+  operator fun get(fn: SFun<X>): SFun<X>? = sMap[fn]
+  operator fun <L: D1> get(fn: VFun<X, L>): VFun<X, L>? = vMap[fn] as VFun<X, L>?
+  operator fun <R: D1, C: D1> get(fn: MFun<X, R, C>): MFun<X, R, C>? = mMap[fn] as MFun<X, R, C>?
 
   override fun equals(other: Any?) = other is Bindings<*> && fMap == other.fMap
   override fun hashCode() = fMap.hashCode()
@@ -229,7 +228,7 @@ class Derivative<X : SFun<X>>(val fn: SFun<X>, val vrb: Var<X>) : SFun<X>(fn, vr
 
 // TODO: Unit test this data structure
 class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<X>(Bindings(fn.bindings, inputs)) {
-  val evaluate: SFun<X> by lazy { call() }
+  val evaluate: SFun<X> by lazy { bind(inputs) }
   override val bindings: Bindings<X> by lazy { evaluate.bindings }
 
 //  private fun calculateFixpoint(): Fun<X> {
@@ -243,25 +242,24 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
 //    return result
 //  }
 
-  fun SFun<X>.call(bindings: Bindings<X> = inputs): SFun<X> = inputs.sMap.getOrElse(this) { bind(bindings) }
-
   @Suppress("UNCHECKED_CAST")
-  fun SFun<X>.bind(bindings: Bindings<X>): SFun<X> = when (this@bind) {
-    is Var -> this
-    is SConst -> this
-    is Prod -> left.call() * right.call()
-    is Sum -> left.call() + right.call()
-    is Power -> left.call() pow right.call()
-    is Negative -> -input.call()
-    is Sine -> input.call().sin()
-    is Cosine -> input.call().cos()
-    is Tangent -> input.call().tan()
-    is Log -> left.call().ln()
-    is Derivative -> df().call()
-    is DProd -> left(bindings) as Vec<X, D1> dot right(bindings) as Vec<X, D1>
-    is VMagnitude -> value(bindings).magnitude()
-    is Composition -> fn.call(bindings + inputs)
-  }
+  fun SFun<X>.bind(bindings: Bindings<X>): SFun<X> =
+    bindings[this@bind] ?: when (this@bind) {
+      is Var -> this@bind
+      is SConst -> this@bind
+      is Prod -> left.bind(bindings) * right.bind(bindings)
+      is Sum -> left.bind(bindings) + right.bind(bindings)
+      is Power -> left.bind(bindings) pow right.bind(bindings)
+      is Negative -> -input.bind(bindings)
+      is Sine -> input.bind(bindings).sin()
+      is Cosine -> input.bind(bindings).cos()
+      is Tangent -> input.bind(bindings).tan()
+      is Log -> left.bind(bindings).ln()
+      is Derivative -> df().bind(bindings)
+      is DProd -> left(bindings) as Vec<X, D1> dot right(bindings) as Vec<X, D1>
+      is VMagnitude -> value(bindings).magnitude()
+      is Composition -> fn.bind(bindings + inputs)
+    }
 }
 
 class DProd<X: SFun<X>>(val left: VFun<X, *>, val right: VFun<X, *>): SFun<X>(left, right)

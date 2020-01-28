@@ -117,28 +117,27 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: 
   override fun invoke(bnds: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }
 
-class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(Bindings(vFun.bindings, inputs)){
-  val evaluate: VFun<X, E> by lazy { call() }
+class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(Bindings(vFun.bindings, inputs)) {
+  val evaluate: VFun<X, E> by lazy { bind(inputs) }
   override val bindings: Bindings<X> by lazy { evaluate.bindings }
 
-  fun VFun<X, E>.call(): VFun<X, E> = inputs.vMap.getOrElse(this@call) { bind() } as VFun<X, E>
-
   @Suppress("UNCHECKED_CAST")
-  fun VFun<X, E>.bind(): VFun<X, E> = when (this@bind) {
-    is Vec<X, E> -> Vec(contents.map { it(inputs) })
-    is VNegative<X, E> -> -input(inputs)
-    is VSum<X, E> -> left(inputs) + right(inputs)
-    is VVProd<X, E> -> left(inputs) ʘ right(inputs)
-    is SVProd<X, E> -> left(inputs) * right(inputs)
-    is VSProd<X, E> -> left(inputs) * right(inputs)
-    is VDerivative -> df()(inputs)
-    is Gradient -> df()(inputs)
-    is MVProd<X, *, *> -> left(inputs) as MFun<X, E, E> * (right as VFun<X, E>)(inputs)
-    is VMProd<X, *, *> -> (left as Vec<X, E>)(inputs) * (right as MFun<X, E, E>)(inputs)
-    is VMap<X, E> -> value(inputs).map(ef)
-    is VVar<X, E> -> inputs.vMap.getOrElse(this) { this } as VFun<X, E>
-    is VComposition -> vFun.call().call()
-  }
+  fun VFun<X, E>.bind(bindings: Bindings<X>): VFun<X, E> =
+    bindings[this@bind] ?: when (this@bind) {
+      is VVar<X, E> -> this@bind
+      is Vec<X, E> -> Vec(contents.map { it(bindings) })
+      is VNegative<X, E> -> -input(bindings)
+      is VSum<X, E> -> left.bind(bindings) + right.bind(bindings)
+      is VVProd<X, E> -> left.bind(bindings) ʘ right.bind(bindings)
+      is SVProd<X, E> -> left(bindings) * right.bind(bindings)
+      is VSProd<X, E> -> left.bind(bindings) * right(bindings)
+      is VDerivative -> df().bind(bindings)
+      is Gradient -> df().bind(bindings)
+      is MVProd<X, *, *> -> left(bindings) as MFun<X, E, E> * (right as VFun<X, E>).bind(bindings)
+      is VMProd<X, *, *> -> (left as Vec<X, E>).bind(bindings) * (right as MFun<X, E, E>)(bindings)
+      is VMap<X, E> -> value.bind(bindings).map(ef)
+      is VComposition -> vFun.bind(bindings + inputs)
+    }
 }
 
 open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(consts.toList())
