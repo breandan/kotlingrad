@@ -1,6 +1,9 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 import kotlin.random.Random
 
 fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
@@ -18,6 +21,15 @@ fun <T: SFun<T>> buildMLP(
   val lossFun = (output - y) pow Two()
   return lossFun
 }
+
+fun Double.clip(maxUnsignedVal: Double = 100.0) =
+  if (maxUnsignedVal < absoluteValue) 100 * sign else this
+
+fun <E: D1> VFun<DReal, E>.clipGradient() =
+  map { DoublePrecision.wrap(it.toDouble().clip()) }
+
+fun <R: D1, C: D1> MFun<DReal, R, C>.clipGradient() =
+  map { DoublePrecision.wrap(it.toDouble().clip()) }
 
 fun main() = with(DoublePrecision) {
   val x = Var("x")
@@ -37,14 +49,13 @@ fun main() = with(DoublePrecision) {
 
   var epochs = 1
   val batchSize = 10
-  val α = wrap(0.1) / batchSize
-  val localHistory = mutableListOf<Pair<Int, Double>>()
+  val α = wrap(0.01) / batchSize
+  val lossHistory = mutableListOf<Pair<Int, Double>>()
 
   println("Starting...")
   do {
     var totalTime = System.nanoTime()
     var batchLoss = 0.0
-    var avgLoss = 0.0
     var evalCount = 0
     var t1: VFun<DReal, D3> = Vec(D3) { 0 }
     var t2: MFun<DReal, D3, D3> = Mat(D3, D3) { 0 }
@@ -53,7 +64,7 @@ fun main() = with(DoublePrecision) {
       val (X, Y) = drawSample()
       val inputs = arrayOf<Pair<SFun<DReal>, SFun<DReal>>>(x to wrap(X), y to wrap(Y)) + constants
       val sampleLoss = mlp(*inputs)
-      val closure = (p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
+      val closure = (p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } + constants +
         p3v.contents.mapIndexed { i, it -> it to w3[i] } +
         p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
 
@@ -65,24 +76,38 @@ fun main() = with(DoublePrecision) {
       val ew2 = dw2(*closure)
       val ew3 = dw3(*closure)
 
-      t1 = (t1 + ew1)(*constants)
-      t2 = (t2 + ew2)(*constants)
-      t3 = (t3 + ew3)(*constants)
-      batchLoss += sampleLoss(*closure).toDouble()
+      if((ew1 as Vec).contents.any { it.toDouble().isNaN() } ||
+        (ew2 as Mat).flatContents.any { it.toDouble().isNaN() } ||
+        (ew3 as Vec).contents.any { it.toDouble().isNaN() })
+        evalCount --
+      else {
+        t1 += ew1.clipGradient()
+        t2 += ew2.clipGradient()
+        t3 += ew3.clipGradient()
+
+        batchLoss += sampleLoss(*closure).toDouble()
+      }
     } while (evalCount++ < batchSize)
 
-    println("T1: $t1")
-    println("T2: $t2")
-    println("T3: $t3")
+//    println("T1: $t1")
+//    println("T2: $t2")
+//    println("T3: $t3")
 
     w1 = (w1 - α * t1)(*constants)()
     w2 = (w2 - α * t2)(*constants)()
     w3 = (w3 - α * t3)(*constants)()
 
-    avgLoss /= batchSize
+    batchLoss /= batchSize
     totalTime -= -System.nanoTime()
-    println("Average loss at $epochs epochs: $avgLoss")
+    println("Average loss at $epochs epochs: $batchLoss")
     println("Average time: " + totalTime / 100 + "ns")
-    localHistory += epochs to avgLoss
-  } while (epochs++ < 1000)
+    lossHistory += epochs to batchLoss
+  } while (epochs++ < 100)
+
+  println("Final weights: w1:$w1\nw2:$w2\nw3:$w3")
+
+  mapOf(
+    "Epochs" to lossHistory.map { it.first },
+    "Average Loss" to lossHistory.map { it.second }
+  ).plot2D("Training Loss", "Epochs", "mlp_loss.svg")
 }

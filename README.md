@@ -332,11 +332,11 @@ Plotting is also possible in higher dimensions, [for example](samples/src/main/k
 
 ### Loss curves
 
-Gradient descent is one application for Kotlin∇. Below, is a typical loss curve of SGD on [linear regression](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/LinearRegression.kt):
+Gradient descent is one application for Kotlin∇. Below, is a typical loss curve of SGD on [a multilayer perceptron](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/MLP.kt):
 
-![](samples/src/main/resources/linear_regression_loss.svg)
+![](samples/src/main/resources/mlp_loss.svg)
 
-To train the model, execute `./gradlew LinearRegression` from within the parent directory.
+To train the model, execute `./gradlew MLP` from within the parent directory.
 
 ## Testing
 

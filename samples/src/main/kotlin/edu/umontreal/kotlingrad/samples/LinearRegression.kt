@@ -51,7 +51,7 @@ fun main() = with(DoublePrecision) {
       totalLoss = 0.0
     }
 
-    totalLoss += averageLoss.toDouble()
+    totalLoss += averageLoss
   } while (epochs++ < 20000)
 
   println("Final weights: $weights")
