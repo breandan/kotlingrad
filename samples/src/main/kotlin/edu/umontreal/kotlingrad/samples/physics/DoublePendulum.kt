@@ -94,7 +94,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     }
   }
 
-  fun SFun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DReal>, DReal>): SFun<DReal> {
+  fun SFun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DReal>, SFun<DReal>>): SFun<DReal> {
     with(DoublePrecision) {
       val d_dg = this@descend.d(map.first)
       var G1P: SFun<DReal> = map.second

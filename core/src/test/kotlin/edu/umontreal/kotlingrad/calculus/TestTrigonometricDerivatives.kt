@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
@@ -51,14 +51,14 @@ class TestTrigonometricDerivatives: StringSpec({
       }
     }
 
-    "∂²z/∂x² should be -y * y * y * sin(x * y)".config(enabled = false) {
+    "∂²z/∂x² should be -y * y * y * sin(x * y)" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = -y.pow(3) * sin(x * y)
         `∂²z∕∂x²`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
       }
     }
 
-    "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))".config(enabled = false) {
+    "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))
         `∂²z∕∂x∂y`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)

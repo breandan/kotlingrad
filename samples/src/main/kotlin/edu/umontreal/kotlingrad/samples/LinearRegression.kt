@@ -24,7 +24,7 @@ fun main() = with(DoublePrecision) {
 
   do {
     totalTime = System.nanoTime()
-    val batch = Mat(D3, D2) { rand.nextDouble() }
+    val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
     val targets = (batch * hiddenWeights + noise)()
 
