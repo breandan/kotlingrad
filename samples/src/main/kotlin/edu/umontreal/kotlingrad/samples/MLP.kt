@@ -2,6 +2,7 @@ package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
+import edu.umontreal.kotlingrad.utils.step
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 import kotlin.random.Random
@@ -10,7 +11,6 @@ fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 fun <T: SFun<T>> layer(x: VFun<T, D3>): VFun<T, D3> = x.map { sigmoid(it) }
 fun <T: SFun<T>> buildMLP(
   x: Var<T> = Var("x"),
-  y: Var<T> = Var("y"),
   p1v: VVar<T, D3> = VVar("p1v", D3),
   p2v: Mat<T, D3, D3> = MVar("p2v", D3, D3),
   p3v: VVar<T, D3> = VVar("p3v", D3)
@@ -18,8 +18,7 @@ fun <T: SFun<T>> buildMLP(
   val layer1 = layer(p1v * x)
   val layer2 = layer(p2v * layer1)
   val output = layer2 dot p3v
-  val lossFun = (output - y) pow Two()
-  return lossFun
+  return output
 }
 
 fun Double.clip(maxUnsignedVal: Double = 100.0) =
@@ -43,13 +42,13 @@ fun main() = with(DoublePrecision) {
   var w2 = Mat(D3, D3) { rand.nextDouble() }
   var w3 = Vec(D3) { rand.nextDouble() }
 
-  val oracle = { it: Double -> it * it }
+  val oracle = { it: Double -> it }
   val drawSample = { Random.nextDouble().let { Pair(it, oracle(it)) } }
-  val mlp = buildMLP(x, y, p1v, p2v, p3v)
+  val mlp = buildMLP(x, p1v, p2v, p3v)
 
   var epochs = 1
   val batchSize = 10
-  val α = wrap(0.01) / batchSize
+  val α = wrap(0.1) / batchSize
   val lossHistory = mutableListOf<Pair<Int, Double>>()
 
   println("Starting...")
@@ -63,7 +62,7 @@ fun main() = with(DoublePrecision) {
     do {
       val (X, Y) = drawSample()
       val inputs = arrayOf<Pair<SFun<DReal>, SFun<DReal>>>(x to wrap(X), y to wrap(Y)) + constants
-      val sampleLoss = mlp(*inputs)
+      val sampleLoss = pow(mlp(*inputs) - wrap(Y), 2)
       val closure = (p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } + constants +
         p3v.contents.mapIndexed { i, it -> it to w3[i] } +
         p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
@@ -78,15 +77,16 @@ fun main() = with(DoublePrecision) {
 
       if((ew1 as Vec).contents.any { it.toDouble().isNaN() } ||
         (ew2 as Mat).flatContents.any { it.toDouble().isNaN() } ||
-        (ew3 as Vec).contents.any { it.toDouble().isNaN() })
-        evalCount --
-      else {
+        (ew3 as Vec).contents.any { it.toDouble().isNaN() }) {
+        evalCount--
+      } else {
         t1 += ew1.clipGradient()
         t2 += ew2.clipGradient()
         t3 += ew3.clipGradient()
 
         batchLoss += sampleLoss(*closure).toDouble()
       }
+      if(epochs % 2 == 0 && evalCount % 5 == 0) println("X: $X\tY: $Y\tY_PRED: ${mlp(*(closure + inputs))()}")
     } while (evalCount++ < batchSize)
 
 //    println("T1: $t1")
@@ -96,18 +96,35 @@ fun main() = with(DoublePrecision) {
     w1 = (w1 - α * t1)(*constants)()
     w2 = (w2 - α * t2)(*constants)()
     w3 = (w3 - α * t3)(*constants)()
+//    println("Final weights: w1:$w1\nw2:$w2\nw3:$w3")
 
     batchLoss /= batchSize
     totalTime -= -System.nanoTime()
     println("Average loss at $epochs epochs: $batchLoss")
     println("Average time: " + totalTime / 100 + "ns")
     lossHistory += epochs to batchLoss
-  } while (epochs++ < 100)
+  } while (epochs++ < 1000)
 
   println("Final weights: w1:$w1\nw2:$w2\nw3:$w3")
 
   mapOf(
     "Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
-  ).plot2D("Training Loss", "Epochs", "mlp_loss.svg")
+  ).plot2D("Training Loss", "mlp_loss.svg")
+
+  val t = ((0.0..1.0) step 0.01).toList()
+
+  mapOf(
+    "x" to t,
+    "y" to t.map { oracle(it) },
+    "z" to t.map { value ->
+      val closure = (
+        p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
+        arrayOf<Pair<SFun<DReal>, SFun<DReal>>>(x to wrap(value)) +
+        p3v.contents.mapIndexed { i, it -> it to w3[i] } +
+        p1v.contents.mapIndexed { i, it -> it to w1[i] } + constants ).toTypedArray()
+
+      mlp(*closure).toDouble().also{println(value.toString() + "," + it)}
+    }
+  ).plot2D("Oracle vs. Model", "compare_outputs.svg")
 }
