@@ -1,6 +1,12 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
+import guru.nidi.graphviz.attribute.Color
+import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.minus
+import guru.nidi.graphviz.model.Factory
+import guru.nidi.graphviz.model.MutableNode
+
 /**
  * Vector function.
  */
@@ -51,6 +57,17 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   open infix fun dot(multiplicand: VFun<X, E>): SFun<X> = DProd(this, multiplicand)
 
   open fun magnitude(): SFun<X> = VMagnitude(this)
+
+  override fun toGraph(): MutableNode = Factory.mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
+    when (this@VFun) {
+      is VVar -> name + "-Vec$length"
+      is Gradient -> { fn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("grad")) }
+      is Vec -> { contents.map { it.toGraph() - this;  } }
+      is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
+      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
+      else -> TODO(this@VFun.javaClass.toString())
+    }
+  }
 
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
@@ -124,7 +141,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
   @Suppress("UNCHECKED_CAST")
   fun VFun<X, E>.bind(bindings: Bindings<X>): VFun<X, E> =
     bindings[this@bind] ?: when (this@bind) {
-      is VVar<X, E> -> this@bind
+      is VVar<X, E> -> Vec(List(this@bind.length.i) { Var() })
       is Vec<X, E> -> Vec(contents.map { it(bindings) })
       is VNegative<X, E> -> -input(bindings)
       is VSum<X, E> -> left.bind(bindings) + right.bind(bindings)

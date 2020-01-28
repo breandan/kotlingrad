@@ -3,8 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
 import edu.umontreal.kotlingrad.utils.step
-import kotlin.math.absoluteValue
-import kotlin.math.sign
+import kotlin.math.*
 import kotlin.random.Random
 
 fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
@@ -17,12 +16,12 @@ fun <T: SFun<T>> buildMLP(
 ): SFun<T> {
   val layer1 = layer(p1v * x)
   val layer2 = layer(p2v * layer1)
-  val output = layer2 dot p3v
+  val output = sigmoid(layer2 dot p3v)
   return output
 }
 
-fun Double.clip(maxUnsignedVal: Double = 100.0) =
-  if (maxUnsignedVal < absoluteValue) 100 * sign else this
+fun Double.clip(maxUnsignedVal: Double = 3.0) =
+  if (maxUnsignedVal < log10(absoluteValue).absoluteValue) sign * 10.0.pow(log10(absoluteValue)) else this
 
 fun <E: D1> VFun<DReal, E>.clipGradient() =
   map { DoublePrecision.wrap(it.toDouble().clip()) }
@@ -33,13 +32,16 @@ fun <R: D1, C: D1> MFun<DReal, R, C>.clipGradient() =
 fun main() = with(DoublePrecision) {
   val x = Var("x")
   val y = Var("y")
-  val p1v = Var3("p3v")
-  val p2v = Var3x3()
+  val p1v = Var3("p1v")
+  val p2v = Mat(D3, D3) { r, c -> if(c == 3) wrap(1.0) else Var() } //Add column of biases
   val p3v = Var3("p3v")
+//  val p1v = Var3("p1v")
+//  val p2v = Mat(D3, D3) { r, c -> if(c == 3) wrap(1.0) else Var() } //Add column of biases
+//  val p3v = Var3("p3v")
 
   val rand = java.util.Random()
   var w1 = Vec(D3) { rand.nextDouble() }
-  var w2 = Mat(D3, D3) { rand.nextDouble() }
+  var w2 = Mat(D3, D3) { _, _ -> rand.nextDouble() }
   var w3 = Vec(D3) { rand.nextDouble() }
 
   val oracle = { it: Double -> it }
@@ -57,7 +59,7 @@ fun main() = with(DoublePrecision) {
     var batchLoss = 0.0
     var evalCount = 0
     var t1: VFun<DReal, D3> = Vec(D3) { 0 }
-    var t2: MFun<DReal, D3, D3> = Mat(D3, D3) { 0 }
+    var t2: MFun<DReal, D3, D3> = Mat(D3, D3) { _, _ -> 0 }
     var t3: VFun<DReal, D3> = Vec(D3) { 0 }
     do {
       val (X, Y) = drawSample()
@@ -71,21 +73,20 @@ fun main() = with(DoublePrecision) {
       val dw2 = sampleLoss.d(p2v)
       val dw3 = sampleLoss.d(p3v)
 
-      val ew1 = dw1(*closure)
+
+      val ew1 = try {dw1(*closure) } catch(e: Exception) {
+        render { dw1.toGraph() }.saveToFile("gradient_dw1.svg").show()
+        throw e
+      }
       val ew2 = dw2(*closure)
       val ew3 = dw3(*closure)
 
-      if((ew1 as Vec).contents.any { it.toDouble().isNaN() } ||
-        (ew2 as Mat).flatContents.any { it.toDouble().isNaN() } ||
-        (ew3 as Vec).contents.any { it.toDouble().isNaN() }) {
-        evalCount--
-      } else {
-        t1 += ew1.clipGradient()
-        t2 += ew2.clipGradient()
-        t3 += ew3.clipGradient()
 
-        batchLoss += sampleLoss(*closure).toDouble()
-      }
+      t1 += ew1
+      t2 += ew2
+      t3 += ew3
+
+      batchLoss += sampleLoss(*closure).toDouble()
       if(epochs % 2 == 0 && evalCount % 5 == 0) println("X: $X\tY: $Y\tY_PRED: ${mlp(*(closure + inputs))()}")
     } while (evalCount++ < batchSize)
 
@@ -103,7 +104,7 @@ fun main() = with(DoublePrecision) {
     println("Average loss at $epochs epochs: $batchLoss")
     println("Average time: " + totalTime / 100 + "ns")
     lossHistory += epochs to batchLoss
-  } while (epochs++ < 1000)
+  } while (epochs++ < 200)
 
   println("Final weights: w1:$w1\nw2:$w2\nw3:$w3")
 
@@ -124,7 +125,7 @@ fun main() = with(DoublePrecision) {
         p3v.contents.mapIndexed { i, it -> it to w3[i] } +
         p1v.contents.mapIndexed { i, it -> it to w1[i] } + constants ).toTypedArray()
 
-      mlp(*closure).toDouble().also{println(value.toString() + "," + it)}
+      mlp(*closure).toDouble().also { println("$value,$it")}
     }
   ).plot2D("Oracle vs. Model", "compare_outputs.svg")
 }

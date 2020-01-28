@@ -30,9 +30,9 @@ fun main() {
 
     val sigmoid = plot2D(X_RANGE, *y2.andDerivatives())
 
-    hermite.saveAs("hermite.svg").viewInBrowser()
-    sinusoid.saveAs("plot.svg").viewInBrowser()
-    sigmoid.saveAs("sigmoid.svg").viewInBrowser()
+    hermite.saveAs("hermite.svg").show()
+    sinusoid.saveAs("plot.svg").show()
+    sigmoid.saveAs("sigmoid.svg").show()
   }
 }
 

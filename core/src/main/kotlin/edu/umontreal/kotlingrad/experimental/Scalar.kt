@@ -2,10 +2,14 @@
 
 package edu.umontreal.kotlingrad.experimental
 
-import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.minus
+import guru.nidi.graphviz.*
+import guru.nidi.graphviz.attribute.*
+import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
+import java.io.File
+import java.lang.NumberFormatException
 import kotlin.math.*
 
 /**
@@ -31,7 +35,7 @@ interface Fun<X: SFun<X>> {
   fun opCode() = javaClass.simpleName
   fun toGraph(): MutableNode = mutNode(toString()).apply {
     when (this@Fun) {
-      is BiFun<*> -> { left.toGraph() - this; right.toGraph() - this; add(Label.of(opCode())) }
+      is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       else -> TODO(this@Fun.javaClass.toString())
     }
@@ -161,7 +165,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     is Log -> "ln"
     is Negative -> "-"
     is Power -> "pow"
-    is Prod -> "×"
+    is Prod -> "*"
     is Sum -> "+"
     is Derivative -> "d"
     is Sine -> "sin"
@@ -175,9 +179,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     when (this@SFun) {
       is Var -> name
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
-      is BiFun<*> -> { left.toGraph() - this; right.toGraph() - this; add(Label.of(opCode())) }
+      is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      is RealNumber<*, *> -> add(Label.of("$value"))
+      is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
       is Special -> add(Label.of(this@SFun.toString()))
       is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
       else -> TODO(this@SFun.javaClass.toString())
@@ -213,7 +217,9 @@ class Derivative<X : SFun<X>>(val fn: SFun<X>, val vrb: Var<X>) : SFun<X>(fn, vr
     is SConst -> ZERO
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
-    is Power -> this * (right * Log(left)).df()
+    is Power ->
+      if (right is SConst<X> || right.bindings.sVars.isEmpty()) right * left.pow(right - ONE) * left.df()
+      else this * (left.df() * right / left + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -ONE) * left.df()
     is Sine -> input.cos() * input.df()
@@ -281,6 +287,7 @@ open class SConst<X : SFun<X>> : SFun<X>() {
   }
 }
 sealed class Special<X: SFun<X>> : SConst<X>() {
+  override fun toString() = javaClass.simpleName
   override fun equals(other: Any?) =
     if (this === other) true else javaClass == other?.javaClass
 
@@ -298,7 +305,10 @@ class E<X: SFun<X>> : Special<X>()
 
 abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
   override fun toString() = value.toString()
-  abstract fun wrap(number: Any): X
+  open fun wrap(number: Any): SFun<X> = when(number) {
+    is SFun<*> -> number as SFun<X>
+    else -> throw NumberFormatException(number.toString())
+  }
 
   override val doubleValue: Double by lazy {
     when (this) {
@@ -332,6 +342,7 @@ abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
   override fun sqrt() = wrap(sqrt(doubleValue))
   override fun unaryMinus() = wrap(-doubleValue)
   override fun ln() = wrap(ln(doubleValue))
+  //  override fun ln() =try { wrap(ln(doubleValue))} catch(n: NumberFormatException) {n.printStackTrace();System.err.println("$doubleValue"); throw n}
 
   /**
    * Constant propagation.
@@ -355,9 +366,16 @@ abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
 
 open class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
   override fun wrap(number: Any) = when(number) {
-    is Number -> DReal(number.toDouble())
-    is SConst<*> -> DReal(number.doubleValue)
+    is Number -> DReal(number.toDouble().bounded())
+    is SConst<*> -> DReal(number.doubleValue.bounded())
+    is SFun<*> -> super.wrap(number)
     else -> DReal(number.toString().toDouble())
+  }
+
+  fun Double.bounded() = when {
+    isNaN() -> throw NumberFormatException("Is NaN")
+    3 < log10(absoluteValue).absoluteValue -> sign * 10.0.pow(log10(absoluteValue))
+    else -> this
   }
 
   companion object: DReal(0.0)
@@ -385,9 +403,9 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
 
   private fun <T: Map<Var<X>, Number>> T.bind() = Bindings(constants.toMap() + this@bind.wrap())
 
-  fun wrap(number: Any): X = prototype.wrap(number)
-  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwap() = (this as X).value
-  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwap().toDouble()
+  fun wrap(number: Any): SFun<X> = prototype.wrap(number)
+  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwrap() = (this as X).value
+  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwrap().toDouble()
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
   fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
@@ -451,8 +469,8 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun <Y: Number> Mat3x2(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
   fun <Y: Number> Mat3x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
-  inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: () -> Y): Mat<X, R, C> = Mat(List(r.i) { Vec(List(c.i) { wrap(gen()) }) })
-  inline fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: () -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen()) })
+  inline fun <R: D1, C: D1, Y: Any> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
+  inline fun <E: D1, Y: Any> Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen(it)) })
 
   fun Var(name: String) = Var<X>(name)
   fun <T: D1> Var(name: String, t: Nat<T>) = Vec<X, T>(List(t.i) { Var("$name-$it") })
@@ -465,6 +483,29 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun Var3x1() = Mat3x1(Var<X>(), Var(), Var())
   fun Var3x2() = Mat3x2(Var<X>(), Var(), Var(), Var(), Var(), Var())
   fun Var3x3() = Mat3x3(Var<X>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
+
+  val DARKMODE = false
+  val THICKNESS = 2
+
+  fun SFun<*>.render() = render { toGraph() }
+
+  inline fun render(crossinline op: () -> MutableNode) =
+    graph(directed = true) {
+      val color = if (DARKMODE) Color.WHITE else Color.BLACK
+
+      edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
+
+      graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), Color.TRANSPARENT.background()]
+
+      node[color, color.font(), Font.config("Helvetica", 20),
+        Style.lineWidth(THICKNESS)]
+
+      op()
+    }.toGraphviz().render(Format.SVG)
+
+  fun Renderer.saveToFile(filename: String) = toFile(File(filename))
+
+  fun File.show() = ProcessBuilder("x-www-browser", path).start()
 }
 
 object DoublePrecision : Protocol<DReal>(DReal)
