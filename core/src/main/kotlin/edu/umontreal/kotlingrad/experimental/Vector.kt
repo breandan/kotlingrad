@@ -45,7 +45,6 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
   open operator fun minus(subtrahend: VFun<X, E>): VFun<X, E> = VSum(this, -subtrahend)
-
   open infix fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
   open operator fun times(multiplicand: SFun<X>): VFun<X, E> = VSProd(this, multiplicand)
   open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)
@@ -78,8 +77,6 @@ class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, overrid
 class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, C>(left, right), BiFun<X>
 
 class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val v1: Var<X>) : VFun<X, E>(vFun) {
-  fun df() = vFun.df()
-
   fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VVar -> Vec(List(length.i) { Zero() })
     is VConst<X, E> -> Vec(consts.map { Zero() })

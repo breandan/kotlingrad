@@ -29,41 +29,62 @@ fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 
 fun main() = with(DoublePrecision) {
   val rand = java.util.Random()
-  var w1: VFun<DReal, D3> = Vec(D3) { rand.nextDouble() }
-  var w2: MFun<DReal, D3, D3> = Mat(D3, D3) { rand.nextDouble() }
-  var w3: VFun<DReal, D3> = Vec(D3) { rand.nextDouble() }
+  var w1 = Vec(D3) { rand.nextDouble() }
+  var w2 = Mat(D3, D3) { rand.nextDouble() }
+  var w3 = Vec(D3) { rand.nextDouble() }
 
   val oracle = { it: Double -> it * it }
   val drawSample = { Random.nextDouble().let { Pair(it, oracle(it)) } }
   val mlp = MLP<DReal>()
-  val mlpf = mlp.asFun()
+  val loss = mlp.asFun()
 
   var epochs = 1
-  var totalLoss = 0.0
-  val α = wrap(0.01)
+  val batchSize = 10
+  val α = wrap(0.1) / batchSize
+  val localHistory = mutableListOf<Pair<Int, Double>>()
 
+  println("Starting...")
   do {
-    val (X, Y) = drawSample()
-    val fixInputs = mlpf(mlp.x to X, mlp.y to Y)(*constants)
-    val loss = fixInputs(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
+    var totalTime = System.nanoTime()
+    var batchLoss = 0.0
+    var avgLoss = 0.0
+    var evalCount = 0
+    var t1: VFun<DReal, D3> = Vec(D3) { 0 }
+    var t2: MFun<DReal, D3, D3> = Mat(D3, D3) { 0 }
+    var t3: VFun<DReal, D3> = Vec(D3) { 0 }
+    do {
+      val (X, Y) = drawSample()
+      val inputs = arrayOf<Pair<SFun<DReal>, SFun<DReal>>>(mlp.x to wrap(X), mlp.y to wrap(Y)) + constants
+      println("Evaluating sample loss")
+      val sampleLoss = loss(*inputs)
+      val closure = (mlp.p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
+        mlp.p3v.contents.mapIndexed { i, it -> it to w3[i] } +
+        mlp.p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
 
-    totalLoss += loss.toDouble()
+      val dw1 = sampleLoss.d(mlp.p1v)
+      val dw2 = sampleLoss.d(mlp.p2v)
+      val dw3 = sampleLoss.d(mlp.p3v)
 
-    val dw1 = loss.d(mlp.p1v)
-    val dw2 = loss.d(mlp.p2v)
-    val dw3 = loss.d(mlp.p3v)
+      println("Evaluating derivatives: $dw1")
+      val ew1 = dw1(*closure)
+      val ew2 = dw2(*closure)
+      val ew3 = dw3(*closure)
 
-    val t1 = dw1(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
-    val t2 = dw2(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
-    val t3 = dw3(mlp.p1v to w1)(mlp.p2v to w2)(mlp.p3v to w3)(*constants)
+      t1 += ew1
+      t2 += ew2
+      t3 += ew3
+      batchLoss += sampleLoss(*closure).toDouble()
+      println(batchLoss)
+    } while (evalCount++ < batchSize)
 
-    w1 += α * t1
-    w2 += α * t2
-    w3 += α * t3
+    w1 = (w1 - α * t1)()
+    w2 = (w2 - α * t2)()
+    w3 = (w3 - α * t3)()
 
-    if (epochs % 100 == 0) {
-      println("Average loss at ${epochs / 10} epochs: ${totalLoss / 100}")
-      totalLoss = 0.0
-    }
+    avgLoss /= batchSize
+    totalTime -= -System.nanoTime()
+    println("Average loss at $epochs epochs: $avgLoss")
+    println("Average time: " + totalTime / 100 + "ns")
+    localHistory += epochs to avgLoss
   } while (epochs++ < 1000)
 }
