@@ -478,6 +478,8 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun Var(name: String) = Var<X>(name)
   fun Var2(name: String) = VVar<X, D2>(name, D2)
   fun Var3(name: String) = VVar<X, D3>(name, D3)
+  fun Var4(name: String) = VVar<X, D4>(name, D5)
+  fun Var5(name: String) = VVar<X, D5>(name, D5)
 
   fun Var2x1(name: String) = MVar<X, D2, D1>(name, D2, D1)
   fun Var2x2(name: String) = MVar<X, D2, D2>(name, D2, D2)
@@ -485,6 +487,8 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun Var3x1(name: String) = MVar<X, D3, D1>(name, D3, D1)
   fun Var3x2(name: String) = MVar<X, D3, D2>(name, D3, D2)
   fun Var3x3(name: String) = MVar<X, D3, D3>(name, D3, D3)
+  fun Var5x5(name: String) = MVar<X, D5, D5>(name, D5, D5)
+  fun Var9x9(name: String) = MVar<X, D9, D9>(name, D9, D9)
 
   val DARKMODE = false
   val THICKNESS = 2
