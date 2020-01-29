@@ -10,18 +10,18 @@ import kotlin.random.Random
 
 fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 fun <T: SFun<T>> tanh(x: SFun<T>) = (E<T>().pow(Two<T>() * x) - One()) / (E<T>().pow(Two<T>() * x) + One())
-fun <T: SFun<T>> layer(x: VFun<T, D3>): VFun<T, D3> = x.map { tanh(it) }
+fun <T: SFun<T>> layer(x: VFun<T, D5>): VFun<T, D5> = x.map { tanh(it) }
 fun <T: SFun<T>> buildMLP(
   x: Var<T> = Var("x"),
-  p1v: VVar<T, D3> = VVar("p1v", D3), b1: VVar<T, D3> = VVar("b1", D3),
-  p2v: Mat<T, D3, D3> = MVar("p2v", D3, D3), b2: VVar<T, D3> = VVar("b2", D3),
-  p3v: Mat<T, D3, D3> = MVar("p3v", D3, D3), b3: VVar<T, D3> = VVar("b3", D3),
-  p4v: VVar<T, D3> = VVar("p4v", D3), b4: VVar<T, D3> = VVar("b4", D3)
+  p1v: VVar<T, D5> = VVar("p1v", D5), b1: VVar<T, D5> = VVar("b1", D5),
+  p2v: Mat<T, D5, D5> = MVar("p2v", D5, D5), b2: VVar<T, D5> = VVar("b2", D5),
+  p3v: Mat<T, D5, D5> = MVar("p3v", D5, D5), b3: VVar<T, D5> = VVar("b3", D5),
+  p4v: VVar<T, D5> = VVar("p4v", D5), b4: VVar<T, D5> = VVar("b4", D5)
 ): SFun<T> {
   val layer1 = layer(p1v * x + b1)
-  val layer2 = p2v * layer1 + b2
-  val layer3 = p3v * layer2 + b3
-  val output = layer3 dot p4v + b4
+  val layer2 = layer(p2v * layer1 + b2)
+  val layer3 = layer(p3v * layer2 + b3)
+  val output = layer2 dot p4v + b4
   return output
 }
 
@@ -31,24 +31,24 @@ fun Double.clip(maxUnsignedVal: Double = 3.0) =
 fun main() = with(DoublePrecision) {
   val x = Var("x")
   val y = Var("y")
-  val p1v = Var3("p1v")
-  val p2v = Var3x3("p2v")
-  val p3v = Var3x3("p3v")
-  val p4v = Var3("p5v")
-  val b1 = Var3("b1v")
-  val b2 = Var3("b2v")
-  val b3 = Var3("b3v")
-  val b4 = Var3("b4v")
+  val p1v = Var5("p1v")
+  val p2v = Var5x5("p2v")
+  val p3v = Var5x5("p3v")
+  val p4v = Var5("p5v")
+  val b1 = Var5("b1v")
+  val b2 = Var5("b2v")
+  val b3 = Var5("b3v")
+  val b4 = Var5("b4v")
 
   val rand = Random(1)
-  var w1 = Vec(D3) { rand.nextDouble(-0.6, 0.6) }
-  var w2 = Mat(D3, D3) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w3 = Mat(D3, D3) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w4 = Vec(D3) { rand.nextDouble(-0.6, 0.6) }
-  var v1 = Vec(D3) { 0 }
-  var v2 = Vec(D3) { 0 }
-  var v3 = Vec(D3) { 0 }
-  var v4 = Vec(D3) { 0 }
+  var w1 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var w2 = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w3 = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w4 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var v1 = Vec(D5) { 0 }
+  var v2 = Vec(D5) { 0 }
+  var v3 = Vec(D5) { 0 }
+  var v4 = Vec(D5) { 0 }
 
   val oracle = { it: Double -> -(it / 10).pow(3)  }//kotlin.math.sin(it/2.0) }//(it / 10).pow(2) }//-it / 10 + 1 }
   val drawSample = { rand.nextDouble(0.0, 10.0).let { Pair(it, oracle(it)) } }
