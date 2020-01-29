@@ -119,7 +119,9 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
     is SConst -> Vec(List(vVar.length.i) { Zero() })
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
-    is Power -> this * (right * Log(left)).df()
+    is Power ->
+      if (right.bindings.sVars.isEmpty()) right * left.pow(right - One()) * left.df()
+      else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
     is DProd -> this().df()

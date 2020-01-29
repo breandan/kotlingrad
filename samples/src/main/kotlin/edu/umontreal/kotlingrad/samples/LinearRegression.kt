@@ -6,7 +6,7 @@ import java.util.*
 fun main() = with(DoublePrecision) {
   val rand = Random()
   val theta = Var2("theta")
-  val input = Var3x2()
+  val input = Var3x2("input")
   val label = Var3("y")
 
   val loss = (input * theta - label).magnitude()
