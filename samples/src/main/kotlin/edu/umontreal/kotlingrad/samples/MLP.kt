@@ -13,12 +13,14 @@ fun <T: SFun<T>> layer(x: VFun<T, D5>): VFun<T, D5> = x.map { sigmoid(it) }
 fun <T: SFun<T>> buildMLP(
   x: Var<T> = Var("x"),
   p1v: VVar<T, D5> = VVar("p1v", D5), b1: VVar<T, D5> = VVar("b1", D5),
-  p2v: Mat<T, D5, D5> = MVar("p2v", D5, D5), b2: VVar<T, D5> = VVar("b1", D5),
-  p3v: VVar<T, D5> = VVar("p3v", D5), b3: VVar<T, D5> = VVar("b1", D5)
+  p2v: Mat<T, D5, D5> = MVar("p2v", D5, D5), b2: VVar<T, D5> = VVar("b2", D5),
+  p3v: Mat<T, D5, D5> = MVar("p3v", D5, D5), b3: VVar<T, D5> = VVar("b3", D5),
+  p4v: VVar<T, D5> = VVar("p4v", D5), b4: VVar<T, D5> = VVar("b4", D5)
 ): SFun<T> {
   val layer1 = layer(p1v * x + b1)
   val layer2 = layer(p2v * layer1 + b2)
-  val output = layer2 dot p3v + b3
+  val layer3 = layer(p3v * layer2 + b3)
+  val output = layer3 dot p4v + b4
   return output
 }
 
@@ -30,22 +32,26 @@ fun main() = with(DoublePrecision) {
   val y = Var("y")
   val p1v = Var5("p1v")
   val p2v = Var5x5("p2v")
-  val p3v = Var5("p5v")
+  val p3v = Var5x5("p3v")
+  val p4v = Var5("p5v")
   val b1 = Var5("b1v")
   val b2 = Var5("b2v")
-  val b3 = Var5("b5v")
+  val b3 = Var5("b3v")
+  val b4 = Var5("b4v")
 
   val rand = Random(1)
   var w1 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
   var w2 = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w3 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var w3 = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w4 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
   var v1 = Vec(D5) { 0 }
   var v2 = Vec(D5) { 0 }
   var v3 = Vec(D5) { 0 }
+  var v4 = Vec(D5) { 0 }
 
   val oracle = { it: Double -> (it / 10).pow(2) }//-it / 10 + 1 }
   val drawSample = { rand.nextDouble(0.0, 10.0).let { Pair(it, oracle(it)) } }
-  val mlp = buildMLP(x, p1v, b1, p2v, b2, p3v, b3)
+  val mlp = buildMLP(x, p1v, b1, p2v, b2, p3v, b3, p4v, b4)
 
   var epochs = 0
   val batchSize = 5
@@ -58,12 +64,14 @@ fun main() = with(DoublePrecision) {
     var totalTime = System.nanoTime()
     var batchLoss = wrap(0)
     var evalCount = 0
-    val closure = (p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } + constants +
+    val closure = (p1v.contents.mapIndexed { i, it -> it to w1[i] } + constants +
+        p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
+      p3v.flatContents.mapIndexed { i, it -> it to w3.flatContents[i] } +
+      p4v.contents.mapIndexed { i, it -> it to w4[i] } +
       b1.contents.mapIndexed { i, it -> it to v1[i] } +
       b2.contents.mapIndexed { i, it -> it to v2[i] } +
       b3.contents.mapIndexed { i, it -> it to v3[i] } +
-      p3v.contents.mapIndexed { i, it -> it to w3[i] } +
-      p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
+      b4.contents.mapIndexed { i, it -> it to v4[i] }).toTypedArray()
 
     do {
       val (X, Y) = drawSample()
@@ -77,23 +85,29 @@ fun main() = with(DoublePrecision) {
     val dw1 = batchLoss.d(p1v)
     val dw2 = batchLoss.d(p2v)
     val dw3 = batchLoss.d(p3v)
+    val dw4 = batchLoss.d(p4v)
     val db1 = batchLoss.d(b1)
     val db2 = batchLoss.d(b2)
     val db3 = batchLoss.d(b3)
+    val db4 = batchLoss.d(b4)
 
     val ew1 = dw1(*closure)
     val ew2 = dw2(*closure)
     val ew3 = dw3(*closure)
+    val ew4 = dw4(*closure)
     val cw1 = db1(*closure)
     val cw2 = db2(*closure)
     val cw3 = db3(*closure)
+    val cw4 = db4(*closure)
 
     w1 = (w1 - α * ew1)(*constants)()
     w2 = (w2 - α * ew2)(*constants)()
     w3 = (w3 - α * ew3)(*constants)()
+    w4 = (w4 - α * ew4)(*constants)()
     v1 = (v1 - α * cw1)(*constants)()
     v2 = (v2 - α * cw2)(*constants)()
     v3 = (v3 - α * cw3)(*constants)()
+    v4 = (v4 - α * cw4)(*constants)()
 
     batchLoss = batchLoss(*closure)
 
@@ -117,12 +131,14 @@ fun main() = with(DoublePrecision) {
     "Average Loss" to lossHistory.map { it.second }
   ).plot2D("Training Loss", "mlp_loss.svg")
 
-  val closure = (p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } + constants +
+  val closure = (p1v.contents.mapIndexed { i, it -> it to w1[i] } + constants +
+    p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
+    p3v.flatContents.mapIndexed { i, it -> it to w3.flatContents[i] } +
+    p4v.contents.mapIndexed { i, it -> it to w4[i] } +
     b1.contents.mapIndexed { i, it -> it to v1[i] } +
     b2.contents.mapIndexed { i, it -> it to v2[i] } +
     b3.contents.mapIndexed { i, it -> it to v3[i] } +
-    p3v.contents.mapIndexed { i, it -> it to w3[i] } +
-    p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
+    b4.contents.mapIndexed { i, it -> it to v4[i] }).toTypedArray()
 
   plotVsOracle(oracle, closure, x, mlp)
 }
