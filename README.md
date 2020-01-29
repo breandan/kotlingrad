@@ -316,6 +316,12 @@ Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.
 
 ![](samples/src/main/resources/dataflow.svg)
 
+Red and blue edges indicate the right and left inputs to a binary operator, respectively. Consider the DFG for a batch of stochastic gradients on linear regression:
+
+![](samples/src/main/resources/lr_batch_loss_graph.svg)
+
+Thetas represent the hidden parameters under differentiation and the constants are the batch inputs and targets.
+
 ### Plotting
 
 To generate the [sample 2D plots](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot2D.kt) below, run `./gradlew Plot2D`.

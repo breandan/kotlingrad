@@ -33,15 +33,17 @@ fun main() = with(DoublePrecision) {
 //  val averageLoss = batchLoss(theta to weights)(*constants) / batch.numRows
 //  val gradients = batchLoss.d(theta)(theta to weights)(*constants)
 
-    val test = (input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } + constants +
+    val inputs = (input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } + constants +
       label.contents.mapIndexed { i, it -> it to targets[i] }).toTypedArray()
-    val batchLoss: SFun<DReal> = loss(*test)
+    val batchLoss: SFun<DReal> = loss(*inputs)
 
     val weightClosure = (theta.contents.zip(weights.contents) + constants).toTypedArray()
     val averageLoss = batchLoss(*weightClosure).toDouble() / batch.rows.size
-    val gradients = batchLoss.d(theta)(*weightClosure)
+    val gradients = batchLoss.d(theta)
 
-    weights = (weights - alpha * gradients)() // Vanilla SGD
+    // gradients.show()
+
+    weights = (weights - alpha * gradients)(*weightClosure)() // Vanilla SGD
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
