@@ -19,8 +19,8 @@ fun <T: SFun<T>> buildMLP(
   p4v: VVar<T, D3> = VVar("p4v", D3), b4: VVar<T, D3> = VVar("b4", D3)
 ): SFun<T> {
   val layer1 = layer(p1v * x + b1)
-  val layer2 = layer(p2v * layer1 + b2)
-  val layer3 = layer(p3v * layer2 + b3)
+  val layer2 = p2v * layer1 + b2
+  val layer3 = p3v * layer2 + b3
   val output = layer3 dot p4v + b4
   return output
 }
