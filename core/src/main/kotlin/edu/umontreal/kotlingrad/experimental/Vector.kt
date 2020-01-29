@@ -60,9 +60,9 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   override fun toGraph(): MutableNode = Factory.mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
     when (this@VFun) {
-      is VVar -> name + "-Vec$length"
+      is VVar -> "$name-Vec$length"
       is Gradient -> { fn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("grad")) }
-      is Vec -> { contents.map { it.toGraph() - this;  } }
+      is Vec -> { contents.map { it.toGraph() - this } }
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       else -> TODO(this@VFun.javaClass.toString())
@@ -131,7 +131,7 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
   }
 }
 
-class VVar<X: SFun<X>, E: D1>(override val name: String = "", val length: E): Variable<X>, Vec<X, E>(List(length.i) { Var("$name-$it") })
+class VVar<X: SFun<X>, E: D1>(override val name: String = "", val length: E): Variable<X>, Vec<X, E>(List(length.i) { Var("$name.$it") })
 class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn) {
   override fun invoke(bnds: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
 }

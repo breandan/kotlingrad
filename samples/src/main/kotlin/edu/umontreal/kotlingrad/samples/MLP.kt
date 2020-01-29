@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.show
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
 import edu.umontreal.kotlingrad.utils.step
 import kotlin.math.*
@@ -71,8 +72,13 @@ fun main() = with(DoublePrecision) {
         p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
 
       val dw1 = sampleLoss.d(p1v)
+      dw1.show()
       val dw2 = sampleLoss.d(p2v)
+      dw2.show()
       val dw3 = sampleLoss.d(p3v)
+      dw3.show()
+
+      System.exit(1)
 
       val ew1 = dw1(*closure)
       val ew2 = dw2(*closure)

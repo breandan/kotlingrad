@@ -2,6 +2,12 @@
 
 package edu.umontreal.kotlingrad.experimental
 
+import guru.nidi.graphviz.attribute.Color
+import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.minus
+import guru.nidi.graphviz.model.Factory
+import guru.nidi.graphviz.model.MutableNode
+
 /**
  * Matrix function.
  */
@@ -41,6 +47,17 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open operator fun times(multiplicand: VFun<X, C>): VFun<X, R> = MVProd(this, multiplicand)
   open infix fun ʘ(multiplicand: MFun<X, R, C>): MFun<X, R, C> = HProd(this, multiplicand)
   open operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
+
+  override fun toGraph(): MutableNode = Factory.mutNode(if (this is MVar) "MVar($name)" else "${hashCode()}").apply {
+    when (this@MFun) {
+      is MVar -> name + "-Mec$rows$cols"
+      is MGradient -> { sFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
+      is Mat -> { flatContents.map { it.toGraph() - this } }
+      is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
+      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
+      else -> TODO(this@MFun.javaClass.toString())
+    }
+  }
 
   override fun toString() = when (this) {
     is MNegative -> "-($input)"
