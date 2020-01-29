@@ -320,7 +320,7 @@ Red and blue edges indicate the right and left inputs to a binary operator, resp
 
 ![](samples/src/main/resources/lr_batch_loss_graph.svg)
 
-Thetas represent the hidden parameters under differentiation and the constants represent the batch inputs (**X**) and targets (**Y**).
+Thetas represent the hidden parameters under differentiation and the constants are the batch inputs (**X**) and targets (**Y**).
 
 ### Plotting
 
@@ -687,6 +687,10 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
  derivative = "d(" anyExp ") / d(" exp ")" | anyExp ".d(" exp ")" | anyExp ".d(" expList ")";
    gradient = exp ".grad()";
 ```
+
+## UML Diagram
+
+![](samples/src/main/resources/uml_diagram.svg)
 
 ## Comparison
 

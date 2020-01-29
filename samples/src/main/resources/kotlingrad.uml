@@ -1,0 +1,908 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>edu.umontreal.kotlingrad.experimental</OriginalElement>
+  <nodes>
+    <node x="2426.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.MNegative</node>
+    <node x="4253.042857142857" y="606.0">edu.umontreal.kotlingrad.experimental.Bindings</node>
+    <node x="513.8564676616897" y="606.0">edu.umontreal.kotlingrad.experimental.VFun</node>
+    <node x="5019.958759772562" y="606.0">edu.umontreal.kotlingrad.experimental.Protocol</node>
+    <node x="3311.9309523809525" y="1090.0">edu.umontreal.kotlingrad.experimental.BDReal</node>
+    <node x="4057.0428571428574" y="988.0">edu.umontreal.kotlingrad.experimental.Cosine</node>
+    <node x="3209.9309523809525" y="1090.0">edu.umontreal.kotlingrad.experimental.DReal</node>
+    <node x="4093.2928571428574" y="606.0">edu.umontreal.kotlingrad.experimental.UnFun</node>
+    <node x="3913.801705756928" y="988.0">edu.umontreal.kotlingrad.experimental.Special</node>
+    <node x="236.5" y="988.0">edu.umontreal.kotlingrad.experimental.VMap</node>
+    <node x="2725.7642857142855" y="184.0">edu.umontreal.kotlingrad.experimental.SFun</node>
+    <node x="328.5" y="988.0">edu.umontreal.kotlingrad.experimental.MVProd</node>
+    <node x="2744.7642857142855" y="0.0">edu.umontreal.kotlingrad.experimental.Group</node>
+    <node x="1346.5" y="988.0">edu.umontreal.kotlingrad.experimental.VVProd</node>
+    <node x="1110.5" y="988.0">edu.umontreal.kotlingrad.experimental.VSum</node>
+    <node x="664.5" y="988.0">edu.umontreal.kotlingrad.experimental.VDerivative</node>
+    <node x="1907.5" y="988.0">edu.umontreal.kotlingrad.experimental.MMProd</node>
+    <node x="440.5" y="988.0">edu.umontreal.kotlingrad.experimental.VMProd</node>
+    <node x="3717.078002842928" y="606.0">edu.umontreal.kotlingrad.experimental.SConst</node>
+    <node x="3829.078002842928" y="606.0">edu.umontreal.kotlingrad.experimental.VMagnitude</node>
+    <node x="4386.042857142857" y="988.0">edu.umontreal.kotlingrad.experimental.Negative</node>
+    <node x="3238.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.RealNumber</node>
+    <node x="142.5" y="988.0">edu.umontreal.kotlingrad.experimental.Vec</node>
+    <node x="2167.0" y="1090.0">edu.umontreal.kotlingrad.experimental.MConst</node>
+    <node x="2291.3970504619756" y="606.0">edu.umontreal.kotlingrad.experimental.MFun</node>
+    <node x="2802.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.Power</node>
+    <node x="189.0" y="1090.0">edu.umontreal.kotlingrad.experimental.VVar</node>
+    <node x="1659.616098081023" y="606.0">edu.umontreal.kotlingrad.experimental.BiFun</node>
+    <node x="3586.9309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.MMap</node>
+    <node x="3076.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.MDerivative</node>
+    <node x="5089.042857142857" y="988.0">edu.umontreal.kotlingrad.experimental.DoublePrecision</node>
+    <node x="33.0" y="1090.0">edu.umontreal.kotlingrad.experimental.VConst</node>
+    <node x="4847.042857142857" y="988.0">edu.umontreal.kotlingrad.experimental.BigDecimalPrecision</node>
+    <node x="3423.9309523809525" y="1090.0">edu.umontreal.kotlingrad.experimental.E</node>
+    <node x="2131.5" y="988.0">edu.umontreal.kotlingrad.experimental.Mat</node>
+    <node x="826.5" y="988.0">edu.umontreal.kotlingrad.experimental.VComposition</node>
+    <node x="3444.9309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.MGradient</node>
+    <node x="4782.542857142857" y="1090.0">edu.umontreal.kotlingrad.experimental.Zero</node>
+    <node x="3791.583759772563" y="1090.0">edu.umontreal.kotlingrad.experimental.One</node>
+    <node x="2019.5" y="988.0">edu.umontreal.kotlingrad.experimental.MSProd</node>
+    <node x="1702.5" y="988.0">edu.umontreal.kotlingrad.experimental.MSum</node>
+    <node x="2904.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.MComposition</node>
+    <node x="1809.0737206823019" y="1090.0">edu.umontreal.kotlingrad.experimental.MVar</node>
+    <node x="1458.5" y="988.0">edu.umontreal.kotlingrad.experimental.VNegative</node>
+    <node x="2303.1809523809525" y="82.0">edu.umontreal.kotlingrad.experimental.Fun</node>
+    <node x="4684.042857142857" y="606.0">edu.umontreal.kotlingrad.experimental.Composition</node>
+    <node x="1202.5" y="988.0">edu.umontreal.kotlingrad.experimental.Variable</node>
+    <node x="4518.042857142857" y="988.0">edu.umontreal.kotlingrad.experimental.Sine</node>
+    <node x="2568.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.MTranspose</node>
+    <node x="10.5" y="988.0">edu.umontreal.kotlingrad.experimental.Gradient</node>
+    <node x="552.5" y="988.0">edu.umontreal.kotlingrad.experimental.SVProd</node>
+    <node x="4169.042857142857" y="988.0">edu.umontreal.kotlingrad.experimental.Tangent</node>
+    <node x="1795.5" y="988.0">edu.umontreal.kotlingrad.experimental.SMProd</node>
+    <node x="2744.7642857142855" y="82.0">edu.umontreal.kotlingrad.experimental.Field</node>
+    <node x="4582.042857142857" y="606.0">edu.umontreal.kotlingrad.experimental.DProd</node>
+    <node x="1266.25" y="1090.0">edu.umontreal.kotlingrad.experimental.Var</node>
+    <node x="998.5" y="988.0">edu.umontreal.kotlingrad.experimental.VSProd</node>
+    <node x="2334.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.Prod</node>
+    <node x="5151.958759772562" y="606.0">edu.umontreal.kotlingrad.experimental.Derivative</node>
+    <node x="1600.5" y="988.0">edu.umontreal.kotlingrad.experimental.HProd</node>
+    <node x="2252.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.Log</node>
+    <node x="3781.801705756928" y="988.0">edu.umontreal.kotlingrad.experimental.Jacobian</node>
+    <node x="2720.4309523809525" y="988.0">edu.umontreal.kotlingrad.experimental.Sum</node>
+    <node x="4175.333759772563" y="1090.0">edu.umontreal.kotlingrad.experimental.Two</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="edu.umontreal.kotlingrad.experimental.Two" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="15.5" y="-16.0" />
+      <point x="4221.833759772563" y="1070.0" />
+      <point x="4375.542857142857" y="1070.0" />
+      <point x="4375.542857142857" y="356.0" />
+      <point x="2784.907142857143" y="356.0" />
+      <point x="23.142857142857054" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.BiFun" target="edu.umontreal.kotlingrad.experimental.Fun">
+      <point x="-20.5" y="-16.0" />
+      <point x="1680.116098081023" y="236.0" />
+      <point x="1594.8398009950233" y="236.0" />
+      <point x="1594.8398009950233" y="154.0" />
+      <point x="2325.3238095238094" y="154.0" />
+      <point x="-8.85714285714289" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Variable" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="28.0" y="-16.0" />
+      <point x="1286.5" y="778.0" />
+      <point x="1264.5142857142857" y="778.0" />
+      <point x="1264.5142857142857" y="376.0" />
+      <point x="2739.65" y="376.0" />
+      <point x="-22.1142857142857" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Sine" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="4554.042857142857" y="968.0" />
+      <point x="4560.542857142857" y="968.0" />
+      <point x="4560.542857142857" y="326.0" />
+      <point x="2787.9928571428572" y="326.0" />
+      <point x="26.228571428571342" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MMProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-30.666666666666742" y="-16.0" />
+      <point x="1922.8333333333333" y="828.0" />
+      <point x="1711.5494314143564" y="828.0" />
+      <point x="10.933333333333394" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Log" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="20.666666666666515" y="-16.0" />
+      <point x="2304.097619047619" y="918.0" />
+      <point x="2373.8970504619756" y="918.0" />
+      <point x="2373.8970504619756" y="536.0" />
+      <point x="2756.107142857143" y="536.0" />
+      <point x="-5.657142857142844" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Var" target="edu.umontreal.kotlingrad.experimental.Variable">
+      <point x="-20.666666666666686" y="-16.0" />
+      <point x="1276.5833333333333" y="1070.0" />
+      <point x="1258.5" y="1070.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.HProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-27.333333333333258" y="-16.0" />
+      <point x="1614.1666666666667" y="778.0" />
+      <point x="1600.9803837953089" y="778.0" />
+      <point x="1600.9803837953089" y="426.0" />
+      <point x="2744.7928571428574" y="426.0" />
+      <point x="-16.971428571428532" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VNegative" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="-40.666666666666515" y="-16.0" />
+      <point x="1478.8333333333335" y="658.0" />
+      <point x="582.8564676616897" y="658.0" />
+      <point x="33.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.BigDecimalPrecision" target="edu.umontreal.kotlingrad.experimental.Protocol">
+      <point x="0.0" y="-16.0" />
+      <point x="4958.042857142857" y="968.0" />
+      <point x="5047.958759772562" y="968.0" />
+      <point x="-28.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MMProd" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="30.666666666666742" y="-16.0" />
+      <point x="1984.1666666666667" y="888.0" />
+      <point x="2310.781665846591" y="888.0" />
+      <point x="-16.615384615384528" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MGradient" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="30.5" y="-16.0" />
+      <point x="3536.4309523809525" y="506.0" />
+      <point x="2769.4785714285713" y="506.0" />
+      <point x="7.714285714285666" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.BDReal" target="edu.umontreal.kotlingrad.experimental.RealNumber">
+      <point x="0.0" y="-16.0" />
+      <point x="3357.9309523809525" y="1070.0" />
+      <point x="3337.4309523809525" y="1070.0" />
+      <point x="33.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Power" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-27.333333333333314" y="-16.0" />
+      <point x="2816.097619047619" y="748.0" />
+      <point x="1738.8827647476899" y="748.0" />
+      <point x="38.26666666666688" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Zero" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="18.0" y="-16.0" />
+      <point x="4836.542857142857" y="266.0" />
+      <point x="2794.1642857142856" y="266.0" />
+      <point x="32.399999999999864" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VSProd" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="-30.666666666666515" y="-16.0" />
+      <point x="1013.8333333333335" y="688.0" />
+      <point x="564.8564676616897" y="688.0" />
+      <point x="15.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Two" target="edu.umontreal.kotlingrad.experimental.Special">
+      <point x="-15.5" y="-16.0" />
+      <point x="4190.833759772563" y="1070.0" />
+      <point x="3977.551705756928" y="1070.0" />
+      <point x="12.75" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Sum" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="2751.4309523809525" y="938.0" />
+      <point x="2756.2642857142855" y="938.0" />
+      <point x="2756.2642857142855" y="586.0" />
+      <point x="2761.25" y="586.0" />
+      <point x="-0.5142857142857338" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Bindings" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="4309.042857142857" y="366.0" />
+      <point x="2783.8785714285714" y="366.0" />
+      <point x="22.114285714285643" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Jacobian" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-28.0" y="-16.0" />
+      <point x="3809.801705756928" y="698.0" />
+      <point x="2360.6278196927447" y="698.0" />
+      <point x="33.23076923076928" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MNegative" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-40.66666666666663" y="-16.0" />
+      <point x="2446.764285714286" y="778.0" />
+      <point x="2327.3970504619756" y="778.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VDerivative" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="-35.5" y="-16.0" />
+      <point x="700.0" y="708.0" />
+      <point x="552.8564676616897" y="708.0" />
+      <point x="3.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Tangent" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="4220.042857142857" y="968.0" />
+      <point x="4231.542857142857" y="968.0" />
+      <point x="4231.542857142857" y="386.0" />
+      <point x="2781.8214285714284" y="386.0" />
+      <point x="20.057142857142765" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.UnFun" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-20.5" y="-16.0" />
+      <point x="4113.792857142857" y="396.0" />
+      <point x="2780.792857142857" y="396.0" />
+      <point x="19.028571428571354" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MTranspose" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="44.0" y="-16.0" />
+      <point x="2678.4309523809525" y="968.0" />
+      <point x="4122.578571428572" y="968.0" />
+      <point x="-11.714285714285666" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VFun" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="18.0" y="-16.0" />
+      <point x="567.8564676616897" y="326.0" />
+      <point x="2734.5071428571428" y="326.0" />
+      <point x="-27.257142857142853" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VMagnitude" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-33.0" y="-16.0" />
+      <point x="3862.078002842928" y="456.0" />
+      <point x="2774.6214285714286" y="456.0" />
+      <point x="12.857142857142804" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MTranspose" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-44.0" y="-16.0" />
+      <point x="2590.4309523809525" y="768.0" />
+      <point x="2332.9355120004366" y="768.0" />
+      <point x="5.5384615384614335" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VNegative" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1519.5" y="416.0" />
+      <point x="2743.7642857142855" y="416.0" />
+      <point x="-18.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Special" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="25.5" y="-16.0" />
+      <point x="3990.301705756928" y="938.0" />
+      <point x="4041.445238095238" y="938.0" />
+      <point x="4041.445238095238" y="426.0" />
+      <point x="2777.7071428571426" y="426.0" />
+      <point x="15.942857142857065" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Protocol" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="5075.958759772562" y="256.0" />
+      <point x="2795.192857142857" y="256.0" />
+      <point x="33.4285714285713" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Special" target="edu.umontreal.kotlingrad.experimental.SConst">
+      <point x="-25.5" y="-16.0" />
+      <point x="3939.301705756928" y="688.0" />
+      <point x="3786.078002842928" y="688.0" />
+      <point x="23.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MFun" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="18.0" y="-16.0" />
+      <point x="2345.3970504619756" y="526.0" />
+      <point x="2755.078571428571" y="526.0" />
+      <point x="-6.685714285714283" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Power" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="27.333333333333314" y="-16.0" />
+      <point x="2870.764285714286" y="938.0" />
+      <point x="2895.954086709309" y="938.0" />
+      <point x="2895.954086709309" y="556.0" />
+      <point x="2764.3357142857144" y="556.0" />
+      <point x="2.571428571428555" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VSProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="30.666666666666515" y="-16.0" />
+      <point x="1075.1666666666665" y="818.0" />
+      <point x="1678.7494314143562" y="818.0" />
+      <point x="-21.866666666666788" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.BiFun" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="20.5" y="-16.0" />
+      <point x="1721.116098081023" y="436.0" />
+      <point x="2745.8214285714284" y="436.0" />
+      <point x="-15.942857142857136" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VMProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="30.666666666666515" y="-16.0" />
+      <point x="517.1666666666665" y="798.0" />
+      <point x="1667.8160980810228" y="798.0" />
+      <point x="-32.80000000000018" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MVar" target="edu.umontreal.kotlingrad.experimental.Mat">
+      <point x="24.0" y="-16.0" />
+      <point x="1869.0737206823019" y="1070.0" />
+      <point x="2147.0" y="1070.0" />
+      <point x="-15.5" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VDerivative" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="35.5" y="-16.0" />
+      <point x="771.0" y="778.0" />
+      <point x="757.25" y="778.0" />
+      <point x="757.25" y="336.0" />
+      <point x="2735.535714285714" y="336.0" />
+      <point x="-26.228571428571428" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SFun" target="edu.umontreal.kotlingrad.experimental.Field">
+      <point x="24.0" y="-16.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Log" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-20.666666666666515" y="-16.0" />
+      <point x="2262.764285714286" y="808.0" />
+      <point x="1722.4827647476898" y="808.0" />
+      <point x="21.866666666666788" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SFun" target="edu.umontreal.kotlingrad.experimental.Fun">
+      <point x="-24.0" y="-16.0" />
+      <point x="2737.7642857142855" y="164.0" />
+      <point x="2343.0380952380956" y="164.0" />
+      <point x="8.85714285714289" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VMap" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="18.0" y="-16.0" />
+      <point x="290.5" y="758.0" />
+      <point x="528.8564676616897" y="758.0" />
+      <point x="-21.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VVProd" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="-30.666666666666515" y="-16.0" />
+      <point x="1361.8333333333335" y="668.0" />
+      <point x="576.8564676616897" y="668.0" />
+      <point x="27.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.DReal" target="edu.umontreal.kotlingrad.experimental.RealNumber">
+      <point x="0.0" y="-16.0" />
+      <point x="3250.9309523809525" y="1070.0" />
+      <point x="3271.4309523809525" y="1070.0" />
+      <point x="-33.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Cosine" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="30.66666666666663" y="-16.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Vec" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="15.5" y="-16.0" />
+      <point x="189.0" y="748.0" />
+      <point x="522.8564676616897" y="748.0" />
+      <point x="-27.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VVar" target="edu.umontreal.kotlingrad.experimental.Variable">
+      <point x="24.0" y="-16.0" />
+      <point x="249.0" y="1070.0" />
+      <point x="1221.1666666666667" y="1070.0" />
+      <point x="-37.33333333333334" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.One" target="edu.umontreal.kotlingrad.experimental.Special">
+      <point x="15.5" y="-16.0" />
+      <point x="3838.083759772563" y="1070.0" />
+      <point x="3952.051705756928" y="1070.0" />
+      <point x="-12.75" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.RealNumber" target="edu.umontreal.kotlingrad.experimental.SConst">
+      <point x="33.0" y="-16.0" />
+      <point x="3337.4309523809525" y="938.0" />
+      <point x="3740.078002842928" y="938.0" />
+      <point x="-23.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Sum" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-20.666666666666686" y="-16.0" />
+      <point x="2730.764285714286" y="758.0" />
+      <point x="1733.4160980810232" y="758.0" />
+      <point x="32.80000000000018" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SConst" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-23.0" y="-16.0" />
+      <point x="3740.078002842928" y="476.0" />
+      <point x="2772.5642857142857" y="476.0" />
+      <point x="10.799999999999955" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Field" target="edu.umontreal.kotlingrad.experimental.Group">
+      <point x="0.0" y="-16.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VComposition" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="-38.0" y="-16.0" />
+      <point x="864.5" y="698.0" />
+      <point x="558.8564676616897" y="698.0" />
+      <point x="9.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MVar" target="edu.umontreal.kotlingrad.experimental.Variable">
+      <point x="-24.0" y="-16.0" />
+      <point x="1821.0737206823019" y="1050.0" />
+      <point x="1295.8333333333335" y="1050.0" />
+      <point x="37.33333333333337" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VSum" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="-24.0" y="-16.0" />
+      <point x="1122.5" y="678.0" />
+      <point x="570.8564676616897" y="678.0" />
+      <point x="21.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VVProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1392.5" y="406.0" />
+      <point x="2742.7357142857145" y="406.0" />
+      <point x="-19.02857142857141" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Composition" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-35.5" y="-16.0" />
+      <point x="4719.542857142857" y="286.0" />
+      <point x="2792.1071428571427" y="286.0" />
+      <point x="30.342857142857042" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VVar" target="edu.umontreal.kotlingrad.experimental.Vec">
+      <point x="-24.0" y="-16.0" />
+      <point x="201.0" y="1070.0" />
+      <point x="189.0" y="1070.0" />
+      <point x="15.5" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VMap" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-18.0" y="-16.0" />
+      <point x="254.5" y="286.0" />
+      <point x="2730.3928571428573" y="286.0" />
+      <point x="-31.371428571428567" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VMProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-30.666666666666515" y="-16.0" />
+      <point x="455.8333333333335" y="728.0" />
+      <point x="453.2588486140712" y="728.0" />
+      <point x="453.2588486140712" y="306.0" />
+      <point x="2732.45" y="306.0" />
+      <point x="-29.314285714285717" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Tangent" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="-34.0" y="-16.0" />
+      <point x="4186.042857142857" y="968.0" />
+      <point x="4146.007142857143" y="968.0" />
+      <point x="11.71428571428578" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Vec" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-15.5" y="-16.0" />
+      <point x="158.0" y="266.0" />
+      <point x="2728.3357142857144" y="266.0" />
+      <point x="-33.428571428571416" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VSProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1044.5" y="356.0" />
+      <point x="2737.592857142857" y="356.0" />
+      <point x="-24.171428571428578" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MVProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-30.666666666666515" y="-16.0" />
+      <point x="343.8333333333335" y="728.0" />
+      <point x="359.75467306325436" y="728.0" />
+      <point x="359.75467306325436" y="296.0" />
+      <point x="2731.421428571429" y="296.0" />
+      <point x="-30.342857142857156" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MConst" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="23.0" y="-16.0" />
+      <point x="2236.0" y="1070.0" />
+      <point x="2226.0" y="1070.0" />
+      <point x="2226.0" y="506.0" />
+      <point x="2753.0214285714287" y="506.0" />
+      <point x="-8.742857142857133" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VConst" target="edu.umontreal.kotlingrad.experimental.Vec">
+      <point x="23.0" y="-16.0" />
+      <point x="102.0" y="1070.0" />
+      <point x="158.0" y="1070.0" />
+      <point x="-15.5" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MSProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-30.666666666666742" y="-16.0" />
+      <point x="2034.8333333333333" y="818.0" />
+      <point x="1717.016098081023" y="818.0" />
+      <point x="16.40000000000009" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MNegative" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="40.66666666666674" y="-16.0" />
+      <point x="2528.0976190476194" y="958.0" />
+      <point x="4110.864285714286" y="958.0" />
+      <point x="-23.428571428571445" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VComposition" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="38.0" y="-16.0" />
+      <point x="940.5" y="346.0" />
+      <point x="2736.5642857142857" y="346.0" />
+      <point x="-25.19999999999999" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Negative" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="4442.042857142857" y="968.0" />
+      <point x="4455.209523809524" y="968.0" />
+      <point x="4455.209523809524" y="346.0" />
+      <point x="2785.9357142857143" y="346.0" />
+      <point x="24.171428571428464" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MMap" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="18.0" y="-16.0" />
+      <point x="3640.9309523809525" y="496.0" />
+      <point x="2770.5071428571428" y="496.0" />
+      <point x="8.742857142857133" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MFun" target="edu.umontreal.kotlingrad.experimental.Fun">
+      <point x="-18.0" y="-16.0" />
+      <point x="2309.3970504619756" y="236.0" />
+      <point x="2224.1207533759757" y="236.0" />
+      <point x="2224.1207533759757" y="164.0" />
+      <point x="2334.1809523809525" y="164.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Var" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="20.666666666666742" y="-16.0" />
+      <point x="1317.9166666666667" y="1070.0" />
+      <point x="1336.0" y="1070.0" />
+      <point x="1336.0" y="396.0" />
+      <point x="2741.707142857143" y="396.0" />
+      <point x="-20.05714285714282" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VSum" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1146.5" y="778.0" />
+      <point x="1180.1327647476896" y="778.0" />
+      <point x="1180.1327647476896" y="366.0" />
+      <point x="2738.6214285714286" y="366.0" />
+      <point x="-23.14285714285711" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VMProd" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="0.0" y="-16.0" />
+      <point x="486.5" y="778.0" />
+      <point x="540.8564676616897" y="778.0" />
+      <point x="-9.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Cosine" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="4103.042857142857" y="938.0" />
+      <point x="4082.7928571428574" y="938.0" />
+      <point x="4082.7928571428574" y="406.0" />
+      <point x="2779.7642857142855" y="406.0" />
+      <point x="17.999999999999943" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.E" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-10.5" y="-16.0" />
+      <point x="3434.4309523809525" y="516.0" />
+      <point x="2768.45" y="516.0" />
+      <point x="6.685714285714255" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VFun" target="edu.umontreal.kotlingrad.experimental.Fun">
+      <point x="-18.0" y="-16.0" />
+      <point x="531.8564676616897" y="134.0" />
+      <point x="2307.609523809524" y="134.0" />
+      <point x="-26.571428571428555" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MSum" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1738.5" y="848.0" />
+      <point x="1752.25" y="848.0" />
+      <point x="1752.25" y="446.0" />
+      <point x="2746.85" y="446.0" />
+      <point x="-14.914285714285711" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MSProd" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="30.666666666666742" y="-16.0" />
+      <point x="2096.166666666667" y="898.0" />
+      <point x="2316.3201273850523" y="898.0" />
+      <point x="-11.076923076923094" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MDerivative" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-35.5" y="-16.0" />
+      <point x="3111.9309523809525" y="728.0" />
+      <point x="2344.01243507736" y="728.0" />
+      <point x="16.615384615384528" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Derivative" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-33.0" y="-16.0" />
+      <point x="5184.958759772562" y="246.0" />
+      <point x="2796.2214285714285" y="246.0" />
+      <point x="34.45714285714274" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Negative" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="-37.33333333333334" y="-16.0" />
+      <point x="4404.709523809524" y="958.0" />
+      <point x="4157.721428571429" y="958.0" />
+      <point x="23.428571428571445" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MVProd" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="0.0" y="-16.0" />
+      <point x="374.5" y="768.0" />
+      <point x="534.8564676616897" y="768.0" />
+      <point x="-15.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Prod" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-24.0" y="-16.0" />
+      <point x="2346.4309523809525" y="788.0" />
+      <point x="1727.9494314143565" y="788.0" />
+      <point x="27.333333333333485" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SVProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="30.666666666666515" y="-16.0" />
+      <point x="629.1666666666665" y="808.0" />
+      <point x="1673.2827647476895" y="808.0" />
+      <point x="-27.333333333333485" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MMap" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-18.0" y="-16.0" />
+      <point x="3604.9309523809525" y="708.0" />
+      <point x="2355.089358154283" y="708.0" />
+      <point x="27.692307692307622" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Mat" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-15.5" y="-16.0" />
+      <point x="2147.0" y="496.0" />
+      <point x="2751.9928571428572" y="496.0" />
+      <point x="-9.7714285714286" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VVProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="30.666666666666515" y="-16.0" />
+      <point x="1423.1666666666665" y="838.0" />
+      <point x="1689.6827647476896" y="838.0" />
+      <point x="-10.933333333333394" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MComposition" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="38.0" y="-16.0" />
+      <point x="3018.4309523809525" y="546.0" />
+      <point x="2765.364285714286" y="546.0" />
+      <point x="3.599999999999966" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MSProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="2065.5" y="486.0" />
+      <point x="2750.964285714286" y="486.0" />
+      <point x="-10.800000000000011" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MSum" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="24.0" y="-16.0" />
+      <point x="1762.5" y="868.0" />
+      <point x="2299.704742769668" y="868.0" />
+      <point x="-27.692307692307622" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VSum" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="24.0" y="-16.0" />
+      <point x="1170.5" y="828.0" />
+      <point x="1684.216098081023" y="828.0" />
+      <point x="-16.40000000000009" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.RealNumber" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-33.0" y="-16.0" />
+      <point x="3271.4309523809525" y="526.0" />
+      <point x="2767.421428571429" y="526.0" />
+      <point x="5.657142857142844" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MVProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="30.666666666666515" y="-16.0" />
+      <point x="405.1666666666665" y="788.0" />
+      <point x="1662.349431414356" y="788.0" />
+      <point x="-38.26666666666688" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MMProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1953.5" y="476.0" />
+      <point x="2749.9357142857143" y="476.0" />
+      <point x="-11.828571428571422" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Mat" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="15.5" y="-16.0" />
+      <point x="2178.0" y="908.0" />
+      <point x="2321.8585889235137" y="908.0" />
+      <point x="-5.5384615384614335" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MSum" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-24.0" y="-16.0" />
+      <point x="1714.5" y="848.0" />
+      <point x="1700.616098081023" y="848.0" />
+      <point x="0.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Fun" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="17.714285714285666" y="16.0" />
+      <point x="2351.8952380952383" y="154.0" />
+      <point x="2761.7642857142855" y="154.0" />
+      <point x="0.0" y="-16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Gradient" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="28.0" y="-16.0" />
+      <point x="94.5" y="738.0" />
+      <point x="516.8564676616897" y="738.0" />
+      <point x="-33.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SMProd" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="30.666666666666742" y="-16.0" />
+      <point x="1872.1666666666667" y="878.0" />
+      <point x="2305.243204308129" y="878.0" />
+      <point x="-22.15384615384619" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.HProd" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="27.333333333333485" y="-16.0" />
+      <point x="1668.8333333333335" y="858.0" />
+      <point x="2294.166281231206" y="858.0" />
+      <point x="-33.23076923076928" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SMProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="-30.666666666666742" y="-16.0" />
+      <point x="1810.8333333333333" y="838.0" />
+      <point x="1706.0827647476897" y="838.0" />
+      <point x="5.466666666666697" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SVProd" target="edu.umontreal.kotlingrad.experimental.VFun">
+      <point x="0.0" y="-16.0" />
+      <point x="598.5" y="718.0" />
+      <point x="546.8564676616897" y="718.0" />
+      <point x="-3.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MGradient" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-30.5" y="-16.0" />
+      <point x="3475.4309523809525" y="718.0" />
+      <point x="2349.5508966158213" y="718.0" />
+      <point x="22.15384615384619" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.HProd" target="edu.umontreal.kotlingrad.experimental.BiFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1641.5" y="848.0" />
+      <point x="1695.1494314143563" y="848.0" />
+      <point x="-5.466666666666697" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SVProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-30.666666666666515" y="-16.0" />
+      <point x="567.8333333333335" y="728.0" />
+      <point x="503.35646766168975" y="728.0" />
+      <point x="503.35646766168975" y="316.0" />
+      <point x="2733.4785714285713" y="316.0" />
+      <point x="-28.285714285714278" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.UnFun" target="edu.umontreal.kotlingrad.experimental.Fun">
+      <point x="20.5" y="-16.0" />
+      <point x="4154.792857142857" y="586.0" />
+      <point x="4249.161336176261" y="586.0" />
+      <point x="4249.161336176261" y="144.0" />
+      <point x="2360.752380952381" y="144.0" />
+      <point x="26.571428571428555" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VVar" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="226.0" y="276.0" />
+      <point x="2729.364285714286" y="276.0" />
+      <point x="-32.39999999999998" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MDerivative" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="35.5" y="-16.0" />
+      <point x="3182.9309523809525" y="536.0" />
+      <point x="2766.392857142857" y="536.0" />
+      <point x="4.628571428571377" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Prod" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="2370.4309523809525" y="928.0" />
+      <point x="2414.078002842928" y="928.0" />
+      <point x="2414.078002842928" y="546.0" />
+      <point x="2757.135714285714" y="546.0" />
+      <point x="-4.628571428571433" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.DProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="20.5" y="-16.0" />
+      <point x="4643.542857142857" y="296.0" />
+      <point x="2791.078571428571" y="296.0" />
+      <point x="29.314285714285603" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Jacobian" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="28.0" y="-16.0" />
+      <point x="3865.801705756928" y="938.0" />
+      <point x="3971.578002842928" y="938.0" />
+      <point x="3971.578002842928" y="436.0" />
+      <point x="2776.6785714285716" y="436.0" />
+      <point x="14.914285714285654" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MComposition" target="edu.umontreal.kotlingrad.experimental.MFun">
+      <point x="-38.0" y="-16.0" />
+      <point x="2942.4309523809525" y="738.0" />
+      <point x="2338.4739735388985" y="738.0" />
+      <point x="11.076923076923094" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MVar" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1845.0737206823019" y="1040.0" />
+      <point x="1785.0" y="1040.0" />
+      <point x="1785.0" y="456.0" />
+      <point x="2747.8785714285714" y="456.0" />
+      <point x="-13.8857142857143" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.One" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-15.5" y="-16.0" />
+      <point x="3807.083759772563" y="1050.0" />
+      <point x="3669.4309523809525" y="1050.0" />
+      <point x="3669.4309523809525" y="486.0" />
+      <point x="2771.535714285714" y="486.0" />
+      <point x="9.771428571428544" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Zero" target="edu.umontreal.kotlingrad.experimental.Special">
+      <point x="-18.0" y="-16.0" />
+      <point x="4800.542857142857" y="1060.0" />
+      <point x="4003.051705756928" y="1060.0" />
+      <point x="38.25" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.SMProd" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="1841.5" y="466.0" />
+      <point x="2748.907142857143" y="466.0" />
+      <point x="-12.85714285714289" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.DoublePrecision" target="edu.umontreal.kotlingrad.experimental.Protocol">
+      <point x="0.0" y="-16.0" />
+      <point x="5180.042857142857" y="968.0" />
+      <point x="5103.958759772562" y="968.0" />
+      <point x="28.0" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MConst" target="edu.umontreal.kotlingrad.experimental.Mat">
+      <point x="-23.0" y="-16.0" />
+      <point x="2190.0" y="1070.0" />
+      <point x="2178.0" y="1070.0" />
+      <point x="15.5" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.E" target="edu.umontreal.kotlingrad.experimental.Special">
+      <point x="10.5" y="-16.0" />
+      <point x="3455.4309523809525" y="1060.0" />
+      <point x="3926.551705756928" y="1060.0" />
+      <point x="-38.25" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VConst" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-23.0" y="-16.0" />
+      <point x="56.0" y="1070.0" />
+      <point x="0.0" y="1070.0" />
+      <point x="0.0" y="246.0" />
+      <point x="2726.2785714285715" y="246.0" />
+      <point x="-35.485714285714266" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Variable" target="edu.umontreal.kotlingrad.experimental.Fun">
+      <point x="-28.0" y="-16.0" />
+      <point x="1230.5" y="768.0" />
+      <point x="1129.1327647476896" y="768.0" />
+      <point x="1129.1327647476896" y="144.0" />
+      <point x="2316.4666666666667" y="144.0" />
+      <point x="-17.714285714285666" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MTranspose" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="2634.4309523809525" y="576.0" />
+      <point x="2760.2214285714285" y="576.0" />
+      <point x="-1.5428571428571445" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.MNegative" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="0.0" y="-16.0" />
+      <point x="2487.4309523809525" y="938.0" />
+      <point x="2496.8761904761905" y="938.0" />
+      <point x="2496.8761904761905" y="566.0" />
+      <point x="2759.192857142857" y="566.0" />
+      <point x="-2.571428571428555" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Gradient" target="edu.umontreal.kotlingrad.experimental.SFun">
+      <point x="-28.0" y="-16.0" />
+      <point x="38.5" y="256.0" />
+      <point x="2727.307142857143" y="256.0" />
+      <point x="-34.457142857142856" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.VNegative" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="40.666666666666515" y="-16.0" />
+      <point x="1560.1666666666665" y="948.0" />
+      <point x="4099.15" y="948.0" />
+      <point x="-35.14285714285711" y="16.0" />
+    </edge>
+    <edge source="edu.umontreal.kotlingrad.experimental.Sine" target="edu.umontreal.kotlingrad.experimental.UnFun">
+      <point x="-24.0" y="-16.0" />
+      <point x="4530.042857142857" y="948.0" />
+      <point x="4169.435714285714" y="948.0" />
+      <point x="35.14285714285711" y="16.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.10520361990950226" x="2642.0" y="561.0" />
+  <SelectedNodes>
+    <node>edu.umontreal.kotlingrad.experimental.MNegative</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
