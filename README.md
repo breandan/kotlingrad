@@ -316,7 +316,7 @@ Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.
 
 ![](samples/src/main/resources/dataflow.svg)
 
-Red and blue edges indicate the right and left inputs to a binary operator, respectively. Consider the DFG for a batch of stochastic gradients on [linear regression](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/MLP.kt), which can be written in matrix form as <img src="https://render.githubusercontent.com/render/math?math=\nabla_{\Theta}||\mathbf{Y} - \mathbf{X}\Theta||^2">:
+Red and blue edges indicate the right and left inputs to a binary operator, respectively. Consider the DFG for a batch of stochastic gradients on [linear regression](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/LinearRegression.kt), which can be written in matrix form as <img src="https://render.githubusercontent.com/render/math?math=\nabla_{\Theta}||\mathbf{Y} - \mathbf{X}\Theta||^2">:
 
 ![](samples/src/main/resources/lr_batch_loss_graph.svg)
 
