@@ -60,26 +60,24 @@ fun main() = with(DoublePrecision) {
   val lossHistory = mutableListOf<Pair<Int, Double>>()
 
   mlp.show()
-
+  var closure: Array<Pair<SFun<DReal>, SFun<DReal>>> = arrayOf()
   do {
     var totalTime = System.nanoTime()
-    var batchLoss = wrap(0)
-    var evalCount = 0
-    val closure = (p1v.contents.mapIndexed { i, it -> it to w1[i] } + constants +
-        p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
-      p3v.flatContents.mapIndexed { i, it -> it to w3.flatContents[i] } +
-      p4v.contents.mapIndexed { i, it -> it to w4[i] } +
-      b1.contents.mapIndexed { i, it -> it to v1[i] } +
-      b2.contents.mapIndexed { i, it -> it to v2[i] } +
-      b3.contents.mapIndexed { i, it -> it to v3[i] } +
-      b4.contents.mapIndexed { i, it -> it to v4[i] }).toTypedArray()
+    closure = (p1v.contents.zip(w1.contents) +
+      p2v.flatContents.zip(w2.flatContents) +
+      p3v.flatContents.zip(w3.flatContents) +
+      p4v.contents.zip(w4.contents) +
+      b1.contents.zip(v1.contents) +
+      b2.contents.zip(v2.contents) +
+      b3.contents.zip(v3.contents) +
+      b4.contents.zip(v4.contents)).toTypedArray() + constants
 
+    var evalCount = 0
+    var batchLoss = wrap(0)
     do {
       val (X, Y) = drawSample()
       val sampleLoss = pow(mlp - wrap(Y), 2)
-      val inputs = arrayOf<Pair<SFun<DReal>, SFun<DReal>>>(x to wrap(X), y to wrap(Y)) + constants
-
-      batchLoss += sampleLoss(*inputs)
+      batchLoss += sampleLoss(x to wrap(X), y to wrap(Y))
     } while (evalCount++ < batchSize)
 
     batchLoss = batchLoss.sqrt()
@@ -92,26 +90,16 @@ fun main() = with(DoublePrecision) {
     val db3 = batchLoss.d(b3)
     val db4 = batchLoss.d(b4)
 
-    val ew1 = dw1(*closure)
-    val ew2 = dw2(*closure)
-    val ew3 = dw3(*closure)
-    val ew4 = dw4(*closure)
-    val cw1 = db1(*closure)
-    val cw2 = db2(*closure)
-    val cw3 = db3(*closure)
-    val cw4 = db4(*closure)
-
-    w1 = (w1 - α * ew1)(*constants)()
-    w2 = (w2 - α * ew2)(*constants)()
-    w3 = (w3 - α * ew3)(*constants)()
-    w4 = (w4 - α * ew4)(*constants)()
-    v1 = (v1 - α * cw1)(*constants)()
-    v2 = (v2 - α * cw2)(*constants)()
-    v3 = (v3 - α * cw3)(*constants)()
-    v4 = (v4 - α * cw4)(*constants)()
+    w1 = (w1 - α * dw1)(*closure)()
+    w2 = (w2 - α * dw2)(*closure)()
+    w3 = (w3 - α * dw3)(*closure)()
+    w4 = (w4 - α * dw4)(*closure)()
+    v1 = (v1 - α * db1)(*closure)()
+    v2 = (v2 - α * db2)(*closure)()
+    v3 = (v3 - α * db3)(*closure)()
+    v4 = (v4 - α * db4)(*closure)()
 
     batchLoss = batchLoss(*closure)
-
     totalTime -= -System.nanoTime()
 
     if (epochs % 10 == 0) {
@@ -131,15 +119,6 @@ fun main() = with(DoublePrecision) {
     "Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
   ).plot2D("Training Loss", "mlp_loss.svg")
-
-  val closure = (p1v.contents.mapIndexed { i, it -> it to w1[i] } + constants +
-    p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } +
-    p3v.flatContents.mapIndexed { i, it -> it to w3.flatContents[i] } +
-    p4v.contents.mapIndexed { i, it -> it to w4[i] } +
-    b1.contents.mapIndexed { i, it -> it to v1[i] } +
-    b2.contents.mapIndexed { i, it -> it to v2[i] } +
-    b3.contents.mapIndexed { i, it -> it to v3[i] } +
-    b4.contents.mapIndexed { i, it -> it to v4[i] }).toTypedArray()
 
   plotVsOracle(oracle, closure, x, mlp)
 }
