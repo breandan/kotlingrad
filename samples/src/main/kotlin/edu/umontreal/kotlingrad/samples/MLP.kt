@@ -33,19 +33,19 @@ fun main() = with(DoublePrecision) {
   val x = Var("x")
   val y = Var("y")
   val p1v = Var3("p1v")
-  val p2v = Mat(D3, D3) { r, c -> if(c == 3) wrap(1.0) else Var() } //Add column of biases
+  val p2v = Var3x3("p2v")
   val p3v = Var3("p3v")
 //  val p1v = Var3("p1v")
 //  val p2v = Mat(D3, D3) { r, c -> if(c == 3) wrap(1.0) else Var() } //Add column of biases
 //  val p3v = Var3("p3v")
 
-  val rand = java.util.Random()
+  val rand = Random(1)
   var w1 = Vec(D3) { rand.nextDouble() }
   var w2 = Mat(D3, D3) { _, _ -> rand.nextDouble() }
   var w3 = Vec(D3) { rand.nextDouble() }
 
   val oracle = { it: Double -> it }
-  val drawSample = { Random.nextDouble().let { Pair(it, oracle(it)) } }
+  val drawSample = { rand.nextDouble().let { Pair(it, oracle(it)) } }
   val mlp = buildMLP(x, p1v, p2v, p3v)
 
   var epochs = 1
@@ -54,6 +54,7 @@ fun main() = with(DoublePrecision) {
   val lossHistory = mutableListOf<Pair<Int, Double>>()
 
   println("Starting...")
+
   do {
     var totalTime = System.nanoTime()
     var batchLoss = 0.0
@@ -64,7 +65,7 @@ fun main() = with(DoublePrecision) {
     do {
       val (X, Y) = drawSample()
       val inputs = arrayOf<Pair<SFun<DReal>, SFun<DReal>>>(x to wrap(X), y to wrap(Y)) + constants
-      val sampleLoss = pow(mlp(*inputs) - wrap(Y), 2)
+      val sampleLoss = pow(mlp - wrap(Y), 2)(*inputs)
       val closure = (p2v.flatContents.mapIndexed { i, it -> it to w2.flatContents[i] } + constants +
         p3v.contents.mapIndexed { i, it -> it to w3[i] } +
         p1v.contents.mapIndexed { i, it -> it to w1[i] }).toTypedArray()
@@ -73,21 +74,16 @@ fun main() = with(DoublePrecision) {
       val dw2 = sampleLoss.d(p2v)
       val dw3 = sampleLoss.d(p3v)
 
-
-      val ew1 = try {dw1.invoke(*closure) } catch(e: Exception) {
-        dw1.show()
-        throw e
-      }
+      val ew1 = dw1(*closure)
       val ew2 = dw2(*closure)
       val ew3 = dw3(*closure)
-
 
       t1 += ew1
       t2 += ew2
       t3 += ew3
 
       batchLoss += sampleLoss(*closure).toDouble()
-      if(epochs % 2 == 0 && evalCount % 5 == 0) println("X: $X\tY: $Y\tY_PRED: ${mlp(*(closure + inputs))()}")
+      if (epochs % 2 == 0 && evalCount % 5 == 0) println("X: $X\tY: $Y\tY_PRED: ${mlp(*(closure + inputs))()}")
     } while (evalCount++ < batchSize)
 
 //    println("T1: $t1")

@@ -113,7 +113,9 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
     is SConst -> Mat(mVar.rows.map { Vec(it.contents.map { Zero() }) })
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
-    is Power -> this * (right * Log(left)).df()
+    is Power ->
+      if (right.bindings.sVars.isEmpty()) right * left.pow(right - One()) * left.df()
+      else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
     is DProd -> this().df()
@@ -124,7 +126,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
 }
 
 class MVar<X: SFun<X>, R: D1, C: D1>(override val name: String = "", val r: R, val c: C): Variable<X>,
-  Mat<X, R, C>(List(r.i) { row -> Vec(List(r.i) { col -> Var("$name.$row.$col")}) })
+  Mat<X, R, C>(List(r.i) { row -> Vec(List(c.i) { col -> Var("$name.$row.$col")}) })
 
 open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
 

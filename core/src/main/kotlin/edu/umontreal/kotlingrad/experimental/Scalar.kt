@@ -220,7 +220,7 @@ class Derivative<X : SFun<X>>(val fn: SFun<X>, val vrb: Var<X>) : SFun<X>(fn, vr
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
-      if (right is SConst<X> || right.bindings.sVars.isEmpty()) right * left.pow(right - ONE) * left.df()
+      if (right.bindings.sVars.isEmpty()) right * left.pow(right - ONE) * left.df()
       else this * (left.df() * right / left + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -ONE) * left.df()
@@ -344,7 +344,6 @@ abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
   override fun sqrt() = wrap(sqrt(doubleValue))
   override fun unaryMinus() = wrap(-doubleValue)
   override fun ln() = wrap(ln(doubleValue))
-  //  override fun ln() =try { wrap(ln(doubleValue))} catch(n: NumberFormatException) {n.printStackTrace();System.err.println("$doubleValue"); throw n}
 
   /**
    * Constant propagation.
@@ -368,17 +367,17 @@ abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
 
 open class DReal(override val value: Double) : RealNumber<DReal, Double>(value) {
   override fun wrap(number: Any) = when(number) {
-    is Number -> DReal(number.toDouble().bounded())
-    is SConst<*> -> DReal(number.doubleValue.bounded())
+    is Number -> DReal(number.toDouble())
+    is SConst<*> -> DReal(number.doubleValue)
     is SFun<*> -> super.wrap(number)
     else -> DReal(number.toString().toDouble())
   }
 
-  fun Double.bounded() = when {
-    isNaN() -> throw NumberFormatException("Is NaN")
-    3 < log10(absoluteValue).absoluteValue -> sign * 10.0.pow(log10(absoluteValue))
-    else -> this
-  }
+//  fun Double.clipped() = when {
+//    isNaN() -> throw NumberFormatException("Is NaN")
+//    3 < log10(absoluteValue).absoluteValue -> sign * 10.0.pow(log10(absoluteValue))
+//    else -> this
+//  }
 
   companion object: DReal(0.0)
 }
@@ -471,20 +470,21 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   fun <Y: Number> Mat3x2(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
   fun <Y: Number> Mat3x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
 
-  inline fun <R: D1, C: D1, Y: Any> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
-  inline fun <E: D1, Y: Any> Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen(it)) })
+  inline fun <R: D1, C: D1, Y: Any> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
+    Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
+  inline fun <E: D1, Y: Any> Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> =
+    Vec(List(e.i) { wrap(gen(it)) })
 
   fun Var(name: String) = Var<X>(name)
-  fun <T: D1> Var(name: String, t: Nat<T>) = Vec<X, T>(List(t.i) { Var("$name-$it") })
   fun Var2(name: String) = VVar<X, D2>(name, D2)
   fun Var3(name: String) = VVar<X, D3>(name, D3)
 
-  fun Var2x1() = Mat2x1(Var<X>(), Var())
-  fun Var2x2() = Mat2x2(Var<X>(), Var(), Var(), Var())
-  fun Var2x3() = Mat2x3(Var<X>(), Var(), Var(), Var(), Var(), Var())
-  fun Var3x1() = Mat3x1(Var<X>(), Var(), Var())
-  fun Var3x2() = Mat3x2(Var<X>(), Var(), Var(), Var(), Var(), Var())
-  fun Var3x3() = Mat3x3(Var<X>(), Var(), Var(), Var(), Var(), Var(), Var(), Var(), Var())
+  fun Var2x1(name: String) = MVar<X, D2, D1>(name, D2, D1)
+  fun Var2x2(name: String) = MVar<X, D2, D2>(name, D2, D2)
+  fun Var2x3(name: String) = MVar<X, D2, D3>(name, D2, D3)
+  fun Var3x1(name: String) = MVar<X, D3, D1>(name, D3, D1)
+  fun Var3x2(name: String) = MVar<X, D3, D2>(name, D3, D2)
+  fun Var3x3(name: String) = MVar<X, D3, D3>(name, D3, D3)
 
   val DARKMODE = false
   val THICKNESS = 2
