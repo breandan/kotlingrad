@@ -86,6 +86,7 @@ fun main() = with(DoublePrecision) {
       val db2 = batchLoss.d(b2)
       val db3 = batchLoss.d(b3)
       val db4 = batchLoss.d(b4)
+
       (w1 - α * dw1)(*weights).show()
       w1 = (w1 - α * dw1)(*weights)()
       w2 = (w2 - α * dw2)(*weights)()
