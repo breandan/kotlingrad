@@ -62,7 +62,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fu
       vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
       mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())
 
-  // Scalar, vector, and matrix "views" on untyped collection map
+  // Scalar, vector, and matrix "views" on untyped function map
   val vMap = filterInstancesOf<VFun<X, *>>()
   val mMap = filterInstancesOf<MFun<X, *, *>>()
   val sMap = filterInstancesOf<SFun<X>>()
@@ -129,7 +129,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   override fun invoke(newBindings: Bindings<X>): SFun<X> =
       Composition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
-  operator fun invoke() = invoke(Bindings())
+  operator fun invoke() = invoke(bindings)
 
   open fun d(v1: Var<X>): SFun<X> = Derivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(d(v1), d(v2))

@@ -21,7 +21,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     MComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
-  operator fun invoke(): Mat<X, R, C> = invoke(Bindings()) as Mat<X, R, C>
+  operator fun invoke(): Mat<X, R, C> = invoke(bindings) as Mat<X, R, C>
 
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef)
 

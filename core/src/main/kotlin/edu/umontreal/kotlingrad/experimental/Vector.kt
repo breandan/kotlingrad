@@ -19,7 +19,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     VComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
-  operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
+  operator fun invoke(): Vec<X, E> = invoke(bindings) as Vec<X, E>
 
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
 
