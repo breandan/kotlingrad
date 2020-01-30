@@ -24,6 +24,7 @@ fun main() = with(DoublePrecision) {
   var totalTime = 0L
   val alpha = wrap(0.001)
   val lossHistory = mutableListOf<Pair<Int, Double>>()
+  var weightMap: Array<Pair<Fun<DReal>, Fun<DReal>>>
 
   do {
     totalTime = System.nanoTime()
@@ -33,22 +34,20 @@ fun main() = with(DoublePrecision) {
 
 //  TODO: Why is this SO MUCH slower?
 //  val batchLoss = loss(input to batch)(label to targets)
-//  val averageLoss = batchLoss(theta to weights)(*constants) / batch.numRows
-//  val gradients = batchLoss.d(theta)(theta to weights)(*constants)
+//  val averageLoss = batchLoss(theta to weights) / batch.numRows
+//  val gradients = batchLoss.d(theta)(theta to weights)
 
-    val inputs = (input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } + constants +
+    val inputs = (input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
       label.contents.mapIndexed { i, it -> it to targets[i] }).toTypedArray()
     val batchLoss: SFun<DReal> = loss(*inputs)
 
-    val weightClosure = (theta.contents.zip(weights.contents) + arrayOf(bias to biasNow) + constants).toTypedArray()
-    val averageLoss = batchLoss(*weightClosure).toDouble() / batch.rows.size
+    weightMap = arrayOf(theta to weights, bias to biasNow)
+    val averageLoss = batchLoss.invoke(*weightMap).toDouble() / batch.rows.size
     val gradients = batchLoss.d(theta)
     val biasGrads = batchLoss.d(bias)
 
-    // gradients.show()
-
-    weights = (weights - alpha * gradients)(*weightClosure)() // Vanilla SGD
-    biasNow = (biasNow - alpha * biasGrads)(*weightClosure)() // Vanilla SGD
+    weights = (weights - alpha * gradients)(*weightMap)() // Vanilla SGD
+    biasNow = (biasNow - alpha * biasGrads)(*weightMap)() // Vanilla SGD
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")

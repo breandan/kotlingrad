@@ -47,7 +47,7 @@ class TestArithmetic: StringSpec({
 
     "test division" {
       DoubleGenerator(0).assertAll { ẋ, ẏ ->
-        (x / y)(x to ẋ, y to ẏ) shouldBeAbout x(x to ẋ).toDouble() / y(y to ẏ).toDouble()
+        (x / y)(x to ẋ, y to ẏ) shouldBeAbout ẋ / ẏ
       }
     }
 
