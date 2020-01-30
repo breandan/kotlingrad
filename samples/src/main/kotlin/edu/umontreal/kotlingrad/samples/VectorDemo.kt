@@ -23,7 +23,7 @@ fun main() = with(DoublePrecision) {
   val vf1 = Vec(y + x, y * 2)
   println(vf1)
   val bh = x * vf1 + Vec(1.0, 3.0)
-  println(bh.invoke(y to 2.0, x to 4.0))
+  println(bh(y to 2.0, x to 4.0))
   val vf2 = Vec(x, y)
   val q = vf1 + vf2 + Vec(0.0, 0.0)
   val z = q(x to 1.0).magnitude()(y to 2.0)

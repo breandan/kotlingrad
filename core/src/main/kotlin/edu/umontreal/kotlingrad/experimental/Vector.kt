@@ -11,27 +11,15 @@ import guru.nidi.graphviz.model.MutableNode
  * Vector function.
  */
 
-sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>, (Bindings<X>) -> VFun<X, E> {
+sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
 
   @Suppress("UNCHECKED_CAST")
-  override operator fun invoke(bnds: Bindings<X>): VFun<X, E> =
-    VComposition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
+  override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
+    VComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
-
-  @JvmName("sFunReassign")
-  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): VFun<X, E> =
-    invoke(Bindings(mapOf(*ps)))
-
-  @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): VFun<X, E> =
-    invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
-
-  @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): VFun<X, E> =
-    invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray())
 
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
 
@@ -131,9 +119,14 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
   }
 }
 
-class VVar<X: SFun<X>, E: D1>(override val name: String = "", val length: E): Variable<X>, Vec<X, E>(List(length.i) { Var("$name.$it") })
+class VVar<X: SFun<X>, E: D1>(
+  override val name: String = "",
+  val length: E,
+  val sVars: List<Var<X>> = List(length.i) { Var("$name.$it") }
+): Variable<X>, Vec<X, E>(sVars)
+
 class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: Var<X>): MFun<X, R, C>(vfn) {
-  override fun invoke(bnds: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(bnds)
+  override fun invoke(newBindings: Bindings<X>) = Mat<X, C, R>(vrbs.map { VDerivative(vfn, it)() }).ᵀ(newBindings)
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(Bindings(vFun.bindings, inputs)) {
@@ -152,7 +145,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is VSProd<X, E> -> left.bind(bindings) * right(bindings)
       is VDerivative -> df().bind(bindings)
       is Gradient -> df().bind(bindings)
-      is MVProd<X, *, *> -> left(bindings) as MFun<X, E, E> * (right as VFun<X, E>).bind(bindings)
+      is MVProd<X, *, *> -> left.invoke(bindings) as MFun<X, E, E> * (right as VFun<X, E>).bind(bindings)
       is VMProd<X, *, *> -> (left as Vec<X, E>).bind(bindings) * (right as MFun<X, E, E>)(bindings)
       is VMap<X, E> -> value.bind(bindings).map(ef)
       is VComposition -> vFun.bind(bindings + inputs)

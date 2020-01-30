@@ -12,28 +12,16 @@ import guru.nidi.graphviz.model.MutableNode
  * Matrix function.
  */
 
-open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): Fun<X>, (Bindings<X>) -> MFun<X, R, C> {
+open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
-  override operator fun invoke(bnds: Bindings<X>): MFun<X, R, C> =
-    MComposition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
+  override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
+    MComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
-  // Materializes the concrete vector from the dataflow graph
+  // Materializes the concrete matrix from the dataflow graph
   operator fun invoke(): Mat<X, R, C> = invoke(Bindings()) as Mat<X, R, C>
-
-  @JvmName("sFunReassign")
-  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): MFun<X, R, C> =
-    invoke(Bindings(mapOf(*ps))) as Mat<X, R, C>
-
-  @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): MFun<X, R, C>  =
-    invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
-
-  @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): MFun<X, R, C> =
-    invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray()) as MFun<X, R, C>
 
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef)
 
@@ -50,7 +38,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   override fun toGraph(): MutableNode = Factory.mutNode(if (this is MVar) "MVar($name)" else "${hashCode()}").apply {
     when (this@MFun) {
-      is MVar -> name + "-Mec$rows$cols"
+      is MVar -> "$name-MVar$rows$cols"
       is MGradient -> { sFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
       is Mat -> { flatContents.map { it.toGraph() - this } }
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
@@ -80,7 +68,7 @@ class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override
 class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
-class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs: Bindings<X>): MFun<X, R, C>(Bindings(mFun.bindings, inputs)){
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs: Bindings<X>): MFun<X, R, C>(Bindings(mFun.bindings, inputs)) {
   val evaluate: MFun<X, R, C> by lazy { bind(inputs) }
   override val bindings: Bindings<X> by lazy { evaluate.bindings }
 
@@ -142,12 +130,14 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
   }
 }
 
-class MVar<X: SFun<X>, R: D1, C: D1>(override val name: String = "", val r: R, val c: C): Variable<X>,
-  Mat<X, R, C>(List(r.i) { row -> Vec(List(c.i) { col -> Var("$name.$row.$col")}) })
+class MVar<X: SFun<X>, R: D1, C: D1>(
+  override val name: String = "", val r: R, val c: C,
+  val sVars: List<Var<X>> = List(r.i * c.i) { Var("$name[${it / c.i},${it % c.i}]") }
+): Variable<X>, Mat<X, R, C>(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
 
 open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
 
-open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, C>(*rows.toTypedArray()) {
+open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<Vec<X, C>>): MFun<X, R, C>(*rows.toTypedArray()) {
   constructor(vararg rows: Vec<X, C>): this(rows.asList())
 
   val flatContents: List<SFun<X>> by lazy { rows.flatMap { it.contents } }
@@ -167,9 +157,9 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, 
 
   override fun map(ef: (SFun<X>) -> SFun<X>): Mat<X, R, C> = Mat(rows.map { it.map(ef) })
 
-  override operator fun unaryMinus(): Mat<X, R, C> = Mat(rows.map { -it })
+  override fun unaryMinus(): Mat<X, R, C> = Mat(rows.map { -it })
 
-  override operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> =
+  override fun plus(addend: MFun<X, R, C>): MFun<X, R, C> =
     when (addend) {
       is Mat -> Mat(rows.mapIndexed { i, r -> (r + addend[i]) as Vec<X, C> })
       else -> super.plus(addend)
@@ -177,15 +167,15 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(val rows: List<Vec<X, C>>): MFun<X, R, 
 
   operator fun get(i: Int): VFun<X, C> = rows[i]
 
-  override operator fun times(multiplicand: SFun<X>): Mat<X, R, C> = Mat(rows.map { it * multiplicand })
+  override fun times(multiplicand: SFun<X>): Mat<X, R, C> = Mat(rows.map { it * multiplicand })
 
-  override operator fun times(multiplicand: VFun<X, C>): VFun<X, R> =
+  override fun times(multiplicand: VFun<X, C>): VFun<X, R> =
     when (multiplicand) {
       is Vec -> Vec(rows.map { r -> r dot multiplicand })
       else -> super.times(multiplicand)
     }
 
-  override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
+  override fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> =
     when (multiplicand) {
       is Mat -> Mat(indices.map { i ->
         Vec(multiplicand.cols.indices.map { j ->

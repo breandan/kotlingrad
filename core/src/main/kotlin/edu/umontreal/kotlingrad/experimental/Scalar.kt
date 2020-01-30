@@ -30,9 +30,12 @@ interface Field<X : Field<X>> : Group<X> {
   fun ln(): X
 }
 
-interface Fun<X: SFun<X>> {
+interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   val bindings: Bindings<X>
   fun opCode() = javaClass.simpleName
+
+  override operator fun invoke(newBindings: Bindings<X>): Fun<X>
+
   fun toGraph(): MutableNode = mutNode(toString()).apply {
     when (this@Fun) {
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
@@ -49,16 +52,31 @@ interface Variable<X: SFun<X>>: Fun<X> { val name: String }
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
 data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fun<X>, Fun<X>> by fMap {
-  constructor(inputs: List<Bindings<X>>): this(
-    mapOf(*inputs.flatMap { it.fMap.entries }.map { Pair(it.key, it.value) }.toTypedArray())
-  )
+  constructor(inputs: List<Bindings<X>>): this(inputs.map { it.fMap }.fold(mapOf()) { acc, fMap -> fMap + acc })
   constructor(vararg bindings: Bindings<X>): this(bindings.toList())
   constructor(vararg funs: Fun<X>): this(funs.map { it.bindings })
+  constructor(vararg pairs: Pair<Fun<X>, Fun<X>>): this(pairs.toMap())
+
+  fun zip(fns: Array<out Fun<X>>): List<Pair<Fun<X>, Fun<X>>> =
+      sVars.zip(fns.filterIsInstance<SFun<X>>()) +
+      vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
+      mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())
 
   // Scalar, vector, and matrix "views" on untyped collection map
-  val sMap = filterInstancesOf<SFun<X>>()
   val vMap = filterInstancesOf<VFun<X, *>>()
   val mMap = filterInstancesOf<MFun<X, *, *>>()
+  val sMap = filterInstancesOf<SFun<X>>()
+
+  val vVarsMap: Map<VVar<X, *>, VFun<X, *>> =
+    vMap.mapNotNull { if (it.key is VVar<X, *>) it.key as VVar<X, *> to it.value else null }.toMap()
+  val mVarsMap: Map<MVar<X, *, *>, MFun<X, *, *>> =
+    mMap.mapNotNull { if (it.key is MVar<X, *, *>) it.key as MVar<X, *, *> to it.value else null }.toMap()
+
+  // Scalar variables plus any scalar variables in vector and matrix functions
+  val sVarMap: Map<Var<X>, SFun<X>> =
+    sMap.mapNotNull { if (it.key is Var<*>) it.key as Var<X> to it.value else null }.toMap() +
+      vVarsMap.flatMap { it.key.sVars.zip(it.value().contents) } +
+      mVarsMap.flatMap { it.key.sVars.zip(it.value().flatContents) }
 
   private inline fun <reified T: Fun<X>> filterInstancesOf(): Map<T, T> =
     mapOf(*fMap.keys.filterIsInstance(T::class.java).map { it to fMap[it]!! as T }.toTypedArray())
@@ -68,17 +86,21 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fu
   operator fun plus(other: Bindings<X>) = Bindings(fMap + other.fMap)
 
   // Scalar, vector, and matrix variables
-  val sVars: Set<Var<X>> = sMap.keys.filterIsInstance<Var<X>>().toSet()
-  val vVars: Set<VVar<X, *>> = vMap.keys.filterIsInstance<VVar<X, *>>().toSet()
-  val mVars: Set<MVar<X, *, *>> = mMap.keys.filterIsInstance<MVar<X, *, *>>().toSet()
+  val sVars: Set<Var<X>> = sVarMap.keys
+  val vVars: Set<VVar<X, *>> = vVarsMap.keys
+  val mVars: Set<MVar<X, *, *>> = mVarsMap.keys
 
-  val isReassignmentFree = fMap.values.none { it is Variable<*> }
+  val areReassignmentFree = fMap.values.none { it is Variable<*> }
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.sVars.all { it in this }
   override fun toString() = fMap.toString()
   operator fun contains(v: Variable<X>) = v in fMap
-  fun curried() = fMap.entries.map { Bindings(mapOf(it.key to it.value)) }
+  fun curried() = fMap.map { Bindings(mapOf(it.key to it.value)) }
 
-  operator fun get(fn: SFun<X>): SFun<X>? = sMap[fn]
+  operator fun get(fn: SFun<X>): SFun<X>? = when(fn) {
+    is Var<X> -> sVarMap[fn]
+    else -> sMap[fn]
+  }
+
   operator fun <L: D1> get(fn: VFun<X, L>): VFun<X, L>? = vMap[fn] as VFun<X, L>?
   operator fun <R: D1, C: D1> get(fn: MFun<X, R, C>): MFun<X, R, C>? = mMap[fn] as MFun<X, R, C>?
 
@@ -90,7 +112,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()): Map<Fu
  * Scalar function.
  */
 
-sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>>, (Bindings<X>) -> SFun<X> {
+sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
   constructor(vararg funs: Fun<X>) : this(Bindings(*funs))
 
   protected open val ZERO: SFun<X> by lazy { Zero() }
@@ -98,29 +120,16 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   protected open val TWO: SFun<X> by lazy { Two() }
   protected open val E: SFun<X> by lazy { E<X>() }
 
-  override operator fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
-  override operator fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
-  override operator fun div(divisor: SFun<X>): SFun<X> = this * divisor.pow(-ONE)
+  override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
+  override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
+  override fun div(divisor: SFun<X>): SFun<X> = this * divisor.pow(-ONE)
   open operator fun <E : D1> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
   open operator fun <R : D1, C : D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
-  override operator fun invoke(bnds: Bindings<X>): SFun<X> =
-      Composition(this, bnds).run { if (bnds.isReassignmentFree) evaluate else this }
+  override fun invoke(newBindings: Bindings<X>): SFun<X> =
+      Composition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
-  @JvmName("sFunReassign")
-  operator fun invoke(vararg ps: Pair<SFun<X>, SFun<X>>): SFun<X> = invoke(Bindings(mapOf(*ps)))
-
-  @JvmName("vFunReassign")
-  operator fun <L: D1> invoke(pair: Pair<VFun<X, L>, VFun<X, L>>): SFun<X> =
-    invoke(*pair.first().contents.zip(pair.second().contents).toTypedArray())
-
-  @JvmName("mFunReassign")
-  operator fun <R: D1, C: D1> invoke(pair: Pair<MFun<X, R, C>, MFun<X, R, C>>): SFun<X> =
-    invoke(*pair.first().flatContents.zip(pair.second().flatContents).toTypedArray())
-
-  operator fun invoke(vararg fns: SFun<X>): SFun<X> = invoke(*bindings.sVars.zip(fns).toTypedArray())
-
-  operator fun invoke(): SFun<X> = invoke(Bindings())
+  operator fun invoke() = invoke(Bindings())
 
   open fun d(v1: Var<X>): SFun<X> = Derivative(this, v1)
   open fun d(v1: Var<X>, v2: Var<X>): Vec<X, D2> = Vec(d(v1), d(v2))
@@ -185,7 +194,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
       is Special -> add(Label.of(this@SFun.toString()))
-      is Composition -> { bindings.sMap.entries.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
+      is Composition -> { bindings.sMap.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
       else -> TODO(this@SFun.javaClass.toString())
     }
   }
@@ -398,15 +407,13 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   val two = Two<X>()
   val e = E<X>()
 
-  val constants = mapOf(zero to 0, one to 1, two to 2, e to E).wrap()
+  val constants = listOf(zero to 0, one to 1, two to 2, e to E).bind()
 
-  private fun <T> Map<T, Any>.wrap() = map { it.key to wrap(it.value) }.toTypedArray()
-
-  private fun <T: Map<Var<X>, Number>> T.bind() = Bindings(constants.toMap() + this@bind.wrap())
+  fun List<Pair<Fun<X>, Any>>.bind(): Bindings<X> =
+    Bindings(map { it.first to (if(it.second is Fun<*>) it.second as Fun<X> else wrap(it.second)) }.toMap())
 
   fun wrap(number: Any): SFun<X> = prototype.wrap(number)
-  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.unwrap() = (this as X).value
-  fun <X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = unwrap().toDouble()
+  inline fun <reified X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() = (this as X).value.toDouble()
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
   fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
@@ -422,14 +429,15 @@ sealed class Protocol<X : SFun<X>>(val prototype: RealNumber<X, *>) {
   }
 
   operator fun Number.invoke(n: Number) = this
+  inline operator fun <reified T: SFun<X>> T.invoke(number: Number): T = invoke(wrap(number))
 
-  operator fun SFun<X>.invoke(number: Number): SFun<X> = invoke(wrap(number))
+  inline operator fun <reified A, reified T: Fun<X>> A.invoke(vararg ps: Pair<T, Any>): A =
+    if (this is T) invoke(ps.toList().bind() + constants) as A else this
 
-  operator fun SFun<X>.invoke(vararg pairs: Pair<Var<X>, Number>) = invoke(pairs.toMap().bind())
+  inline operator fun <reified A, reified T: Fun<X>> A.invoke(vararg fns: T): A =
+    if (this is T) invoke(bindings.zip(fns).bind() + constants) as A else this
 
-  operator fun <E : D1> VFun<X, E>.invoke(vararg pairs: Pair<Var<X>, Number>) = invoke(pairs.toMap().bind())
-
-  operator fun <R : D1, C: D1> MFun<X, R, C>.invoke(vararg pairs: Pair<Var<X>, Number>) = invoke(pairs.toMap().bind())
+  fun <T> T.test(): T = this
 
   fun d(fn: SFun<X>) = Differential(fn)
 
