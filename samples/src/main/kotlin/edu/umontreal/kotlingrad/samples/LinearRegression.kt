@@ -10,7 +10,8 @@ fun main() = with(DoublePrecision) {
   val bias = Var("bias")
   val label = Var3("y")
 
-  val loss = ((input * theta).map { it + bias } - label).magnitude()
+  val error = ((input * theta).map { it + bias } - label)
+  val loss = ((error ʘ error) dot Vec(D3) { 1 }).sqrt()
 
   var weightsNow = Vec(D2) { rand.nextDouble() * 10 }
   var biasNow = wrap(rand.nextDouble() * 10)
