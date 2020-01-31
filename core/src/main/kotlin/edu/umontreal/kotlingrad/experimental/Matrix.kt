@@ -18,7 +18,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
-    MComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
+    MComposition(this, newBindings).evaluate//.run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
   operator fun invoke(): Mat<X, R, C> = invoke(bindings) as Mat<X, R, C>
@@ -40,7 +40,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     when (this@MFun) {
       is MVar -> "$name-MVar$rows$cols"
       is MGradient -> { sFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
-      is Mat -> { flatContents.map { it.toGraph() - this } }
+      is Mat -> { flattened.map { it.toGraph() - this } }
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       else -> TODO(this@MFun.javaClass.toString())
@@ -69,8 +69,7 @@ class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, overrid
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
 class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs: Bindings<X>): MFun<X, R, C>(Bindings(mFun.bindings, inputs)) {
-  val evaluate: MFun<X, R, C> by lazy { bind(inputs) }
-  override val bindings: Bindings<X> by lazy { evaluate.bindings }
+  val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun MFun<X, R, C>.bind(bindings: Bindings<X>): MFun<X, R, C> =
@@ -84,10 +83,10 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs
     is SMProd -> left(bindings) * right.bind(bindings)
     is MConst -> this
     is Mat -> Mat(rows.map { it(bindings) as Vec<X, C> })
-    is MVar -> bindings.mMap.getOrElse(this) { this } as MFun<X, R, C>
+    is MVar -> bindings.mFunMap.getOrElse(this) { this } as MFun<X, R, C>
     is MDerivative -> df()(bindings)
     is MGradient -> df()(bindings)
-    is MComposition -> mFun.bind(bindings + inputs)
+    is MComposition -> mFun.bind(bindings)
     else -> this
   }
 }
@@ -123,8 +122,8 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
-    is DProd -> this().df()
-    is VMagnitude -> this().df()
+    is DProd -> invoke().df()
+    is VMagnitude -> invoke().df()
     is Composition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -140,7 +139,7 @@ open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<Vec<X, C>>): MFun<X, R, C>(*rows.toTypedArray()) {
   constructor(vararg rows: Vec<X, C>): this(rows.asList())
 
-  val flatContents: List<SFun<X>> by lazy { rows.flatMap { it.contents } }
+  val flattened: List<SFun<X>> by lazy { rows.flatMap { it.contents } }
 
   val numRows = rows.size
   val numCols = rows.first().contents.size

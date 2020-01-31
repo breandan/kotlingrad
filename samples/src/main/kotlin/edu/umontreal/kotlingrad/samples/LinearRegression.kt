@@ -4,7 +4,7 @@ import edu.umontreal.kotlingrad.experimental.*
 import java.util.*
 
 fun main() = with(DoublePrecision) {
-  val rand = Random()
+  val rand = Random(1)
   val theta = Var2("theta")
   val input = Var3x2("input")
   val bias = Var("bias")
@@ -12,42 +12,46 @@ fun main() = with(DoublePrecision) {
 
   val loss = ((input * theta).map { it + bias } - label).magnitude()
 
-  var weights = Vec(D2) { rand.nextDouble() * 10 }
+  var weightsNow = Vec(D2) { rand.nextDouble() * 10 }
   var biasNow = wrap(rand.nextDouble() * 10)
-  println("Initial weights are: $weights")
+  println("Initial weights are: $weightsNow")
   val hiddenWeights = Vec(D2) { rand.nextDouble() * 10 }
-  val hiddenBias = wrap(rand.nextDouble() * 10)
+  val hiddenBias = rand.nextDouble() * 10
   println("Target coefficients: $hiddenWeights")
 
   var epochs = 1
   var totalLoss = 0.0
   var totalTime = 0L
-  val alpha = wrap(0.001)
+  val alpha = 0.001
   val lossHistory = mutableListOf<Pair<Int, Double>>()
-  var weightMap: Array<Pair<Fun<DReal>, Fun<DReal>>>
+  var weightMap: Array<Pair<Fun<DReal>, Any>>
 
   do {
     totalTime = System.nanoTime()
-    val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
+    val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val targets = ((batch * hiddenWeights).map { it + hiddenBias } + noise)()
 
-//  TODO: Why is this SO MUCH slower?
-//  val batchLoss = loss(input to batch)(label to targets)
-//  val averageLoss = batchLoss(theta to weights) / batch.numRows
-//  val gradients = batchLoss.d(theta)(theta to weights)
+    val batchInputs = arrayOf(input to batch, label to targets)
+    val batchLoss = loss(*batchInputs)
 
-    val inputs = (input.flatContents.mapIndexed { i, it -> it to batch.flatContents[i] } +
-      label.contents.mapIndexed { i, it -> it to targets[i] }).toTypedArray()
-    val batchLoss: SFun<DReal> = loss(*inputs)
+    weightMap = arrayOf(theta to weightsNow, bias to biasNow)
 
-    weightMap = arrayOf(theta to weights, bias to biasNow)
-    val averageLoss = batchLoss.invoke(*weightMap).toDouble() / batch.rows.size
-    val gradients = batchLoss.d(theta)
+    println("Input bnds: " + Bindings(batchInputs.toList().bind()))
+    println("Combined: " + (loss.bindings + Bindings(batchInputs.toList().bind())))
+    println("Weights: " + Bindings(weightMap.toList().bind()))
+    println("Combined2: " + (loss.bindings + Bindings(batchInputs.toList().bind()) + Bindings(weightMap.toList().bind())))
+    println("Combined3: " + (loss(*batchInputs).bindings + Bindings(weightMap.toList().bind())))
+    println("Combined4: " + (Composition(loss, constants + batchInputs.toList().bind() + weightMap.toList().bind()).evaluate))
+    println("Batchloss: " + Composition(loss, constants + batchInputs.toList().bind()).bindings)
+    println("losseval" + loss(*batchInputs))
+
+    val averageLoss = batchLoss(*weightMap).toDouble() / batch.rows.size
+    val weightGrads = batchLoss.d(theta)
     val biasGrads = batchLoss.d(bias)
 
-    weights = (weights - alpha * gradients)(*weightMap)() // Vanilla SGD
-    biasNow = (biasNow - alpha * biasGrads)(*weightMap)() // Vanilla SGD
+    weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
+    biasNow = (biasNow - alpha * biasGrads)(*weightMap)()
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
@@ -60,7 +64,7 @@ fun main() = with(DoublePrecision) {
     totalLoss += averageLoss
   } while (epochs++ < 20000)
 
-  println("Final weights: $weights, bias: $biasNow")
+  println("Final weights: $weightsNow, bias: $biasNow")
   println("Target coefficients: $hiddenWeights, $hiddenBias")
 
   mapOf(
