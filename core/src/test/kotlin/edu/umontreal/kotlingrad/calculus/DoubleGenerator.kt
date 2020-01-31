@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.seededRandom
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.DoubleShrinker
 import io.kotlintest.properties.shrinking.Shrinker
@@ -18,7 +19,7 @@ open class DoubleGenerator(
   override fun constants() = listOf(0.0) - excluding
   override fun random(): Sequence<Double> =
     generateSequence {
-      val r = Random.nextDouble()
+      val r = seededRandom.nextDouble()
       val e = 10.0.pow(expRange.random().toDouble())
       if (positive) r * e else -e + 2 * e * r
     } - excluding
