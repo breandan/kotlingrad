@@ -16,7 +16,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
-    VComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
+    VComposition(this, newBindings).evaluate//.run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> = invoke(bindings) as Vec<X, E>
@@ -32,7 +32,6 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>) = Jacobian<X, E, D7>(this, v1, v2, v3, v4, v5, v6, v7)
   fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>) = Jacobian<X, E, D8>(this, v1, v2, v3, v4, v5, v6, v7, v8)
   fun d(v1: Var<X>, v2: Var<X>, v3: Var<X>, v4: Var<X>, v5: Var<X>, v6: Var<X>, v7: Var<X>, v8: Var<X>, v9: Var<X>) = Jacobian<X, E, D9>(this, v1, v2, v3, v4, v5, v6, v7, v8, v9)
-  //...
   fun d(vararg vars: Var<X>): Map<Var<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
   fun grad(): Map<Var<X>, VFun<X, E>> = bindings.sVars.map { it to VDerivative(this, it) }.toMap()
 
@@ -92,10 +91,10 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val v1: Var<X>) : VF
     is VNegative -> -input.df()
     is VDerivative -> vFun.df().df()
     is Vec -> Vec(contents.map { it.d(v1) })
-    is MVProd<X, E, *> -> this().df()
-    is VMProd<X, *, E> -> this().df()
-    is Gradient -> this()
-    is VMap -> this().df()
+    is MVProd<X, E, *> -> invoke().df()
+    is VMProd<X, *, E> -> invoke().df()
+    is Gradient -> invoke()
+    is VMap -> invoke().df()
     is VComposition -> evaluate.df()
   }
 }
@@ -112,8 +111,8 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
-    is DProd -> this().df()
-    is VMagnitude -> this().df()
+    is DProd -> invoke().df()
+    is VMagnitude -> invoke().df()
     is Composition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -130,8 +129,7 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, vararg val vrbs: 
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(Bindings(vFun.bindings, inputs)) {
-  val evaluate: VFun<X, E> by lazy { bind(inputs) }
-  override val bindings: Bindings<X> by lazy { evaluate.bindings }
+  val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun VFun<X, E>.bind(bindings: Bindings<X>): VFun<X, E> =
@@ -148,7 +146,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is MVProd<X, *, *> -> left.invoke(bindings) as MFun<X, E, E> * (right as VFun<X, E>).bind(bindings)
       is VMProd<X, *, *> -> (left as Vec<X, E>).bind(bindings) * (right as MFun<X, E, E>)(bindings)
       is VMap<X, E> -> value.bind(bindings).map(ef)
-      is VComposition -> vFun.bind(bindings + inputs)
+      is VComposition -> vFun.bind(bindings)
     }
 }
 
