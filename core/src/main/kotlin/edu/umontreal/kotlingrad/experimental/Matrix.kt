@@ -27,6 +27,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   // Materializes the concrete matrix from the dataflow graph
   fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
+  open fun d(sVar: Var<X>): MFun<X, R, C> = MDerivative(this, sVar)
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
@@ -38,7 +39,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   override fun toGraph(): MutableNode = Factory.mutNode(if (this is MVar) "MVar($name)" else "${hashCode()}").apply {
     when (this@MFun) {
-      is MVar -> "$name-MVar$rows$cols"
+      is MVar -> "$name-MVar$r$c"
       is MGradient -> { sFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
       is Mat -> { flattened.map { it.toGraph() - this } }
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
@@ -55,6 +56,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     is MConst -> "${javaClass.name}()"
     is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ") { it.contents.joinToString(", ") }})"
     is MDerivative -> "d($mFun) / d($sVar)"
+    is MVar -> "MVar($name)"
     else -> TODO(this.javaClass.name)
   }
 }
@@ -68,35 +70,37 @@ class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override
 class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
-class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val inputs: Bindings<X>): MFun<X, R, C>(Bindings(mFun.bindings, inputs)) {
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X>): MFun<X, R, C>(mFun.bindings + inputs) {
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun MFun<X, R, C>.bind(bindings: Bindings<X>): MFun<X, R, C> =
-    when (this@bind) {
-    is MNegative -> -input.bind(bindings)
-    is MTranspose -> input.ᵀ.bind(bindings)
-    is MSum -> left.bind(bindings) + right.bind(bindings)
-    is MMProd<X, R, *, C> -> left(bindings) as MFun<X, R, D1> * right(bindings) as MFun<X, D1, C>
-    is HProd -> left.bind(bindings) ʘ right.bind(bindings)
-    is MSProd -> left.bind(bindings) * right(bindings)
-    is SMProd -> left(bindings) * right.bind(bindings)
-    is MConst -> this
-    is Mat -> Mat(rows.map { it(bindings) as Vec<X, C> })
-    is MVar -> bindings.mFunMap.getOrElse(this) { this } as MFun<X, R, C>
-    is MDerivative -> df()(bindings)
-    is MGradient -> df()(bindings)
-    is MComposition -> mFun.bind(bindings)
-    else -> this
-  }
+    bindings[this@bind] ?: when (this@bind) {
+      is MVar -> this@bind
+      is MConst -> this@bind
+      is Mat -> map { it(bindings) }
+      is MNegative -> -input.bind(bindings)
+      is MTranspose -> input.ᵀ.bind(bindings)
+      is MSum -> left.bind(bindings) + right.bind(bindings)
+      is MMProd<X, R, *, C> -> left(bindings) as MFun<X, R, D1> * right(bindings) as MFun<X, D1, C>
+      is HProd -> left.bind(bindings) ʘ right.bind(bindings)
+      is MSProd -> left.bind(bindings) * right(bindings)
+      is SMProd -> left(bindings) * right.bind(bindings)
+      is MDerivative -> df()(bindings)
+      is MGradient -> df()(bindings)
+      is MComposition -> mFun.bind(bindings)
+      is MMap<X, R, C> -> value.bind(bindings).map { ef(it)(bindings) }
+      else -> this
+    }
 }
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
 class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: Var<X>): MFun<X, R, C>(mFun) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
+    is MVar -> MGradient(sVar, this@df).df()
+    is Mat -> Mat(rows.map { it.d(sVar)() })
     is MConst -> map { Zero() }
-    is MVar -> this
     is MNegative -> -input.df()
     is MTranspose -> (input as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
     is MSum -> left.df() + right.df()
@@ -105,7 +109,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: V
     is MSProd -> left.df() * right + left * right.d(sVar)
     is SMProd -> left.d(sVar) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
-    is Mat -> Mat(rows.map { it.d(sVar)() })
+    is MMap -> value.df().map(ef).map { it * ef(it) } // Chain rule
     else -> TODO(this@df.javaClass.name)
   }
 }
@@ -113,8 +117,8 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: V
 class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, R, C>): MFun<X, R, C>(sFun) {
   fun df() = sFun.df()
   fun SFun<X>.df(): MFun<X, R, C> = when (this@df) {
-    is Var -> Mat(mVar.rows.map { row -> Vec(row.contents.map { col -> if (col == this@df) One() else Zero() }) })
-    is SConst -> Mat(mVar.rows.map { Vec(it.contents.map { Zero() }) })
+    is Var -> map { if (it == this@df) One() else Zero() }
+    is SConst -> map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
@@ -131,12 +135,16 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
 
 class MVar<X: SFun<X>, R: D1, C: D1>(
   override val name: String = "", val r: R, val c: C,
-  val sVars: List<Var<X>> = List(r.i * c.i) { Var("$name[${it / c.i},${it % c.i}]") }
-): Variable<X>, Mat<X, R, C>(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
+  val sVars: List<Var<X>> = List(r.i * c.i) { Var("$name[${it / c.i},${it % c.i}]") },
+  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
+): Variable<X>, MFun<X, R, C>() {
+  override val bindings: Bindings<X> = Bindings(mapOf(this to sMat))
+}
 
 open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
 
-open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<Vec<X, C>>): MFun<X, R, C>(*rows.toTypedArray()) {
+open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<Vec<X, C>>):
+  MFun<X, R, C>(*rows.toTypedArray()), Iterable<Vec<X, C>> by rows {
   constructor(vararg rows: Vec<X, C>): this(rows.asList())
 
   val flattened: List<SFun<X>> by lazy { rows.flatMap { it.contents } }
@@ -156,17 +164,17 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<Vec<X, C>>): MFun<X
 
   override fun map(ef: (SFun<X>) -> SFun<X>): Mat<X, R, C> = Mat(rows.map { it.map(ef) })
 
-  override fun unaryMinus(): Mat<X, R, C> = Mat(rows.map { -it })
+  override fun unaryMinus(): Mat<X, R, C> = map { -it }
 
   override fun plus(addend: MFun<X, R, C>): MFun<X, R, C> =
     when (addend) {
-      is Mat -> Mat(rows.mapIndexed { i, r -> (r + addend[i]) as Vec<X, C> })
+      is Mat -> Mat(mapIndexed { i, r -> (r + addend[i]) as Vec<X, C> })
       else -> super.plus(addend)
     }
 
   operator fun get(i: Int): VFun<X, C> = rows[i]
 
-  override fun times(multiplicand: SFun<X>): Mat<X, R, C> = Mat(rows.map { it * multiplicand })
+  override fun times(multiplicand: SFun<X>): Mat<X, R, C> = map { it * multiplicand }
 
   override fun times(multiplicand: VFun<X, C>): VFun<X, R> =
     when (multiplicand) {

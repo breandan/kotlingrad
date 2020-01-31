@@ -23,7 +23,7 @@ class TestArithmetic: StringSpec({
 
     "test exponentiation" {
       DoubleGenerator.assertAll { ẏ ->
-        (y pow 3)(y to ẏ) shouldBeAbout (y * y * y)(y to ẏ)
+        (y pow 3)(ẏ) shouldBeAbout (y * y * y)(ẏ)
       }
     }
 
@@ -41,7 +41,7 @@ class TestArithmetic: StringSpec({
 
     "test multiplication with numerical type" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x * 2)(x to ẋ) shouldBeAbout ẋ * 2
+        (x * 2)(ẋ) shouldBeAbout ẋ * 2
       }
     }
 
@@ -83,8 +83,8 @@ class TestArithmetic: StringSpec({
       }
     }
 
-    "test compositional associativity".config(enabled = false) {
-      DoubleGenerator.assertAll { ẋ, ẏ, ż ->
+    "test compositional associativity" {
+      DoubleGenerator(0, positive = false, expRange = 0..2).assertAll { ẋ, ẏ, ż ->
         val f = 4 * z + x
         val g = 3 * y + z
         val h = 2 * x + y
@@ -92,7 +92,9 @@ class TestArithmetic: StringSpec({
         val fo_goh = f(x to g(y to h))
         val fog_oh = f(x to g)(y to h)
 
+        fogoho(x to ẋ, y to ẏ, z to ż) shouldBeAbout fo_goh(x to ẋ, y to ẏ, z to ż)
         fo_goh(x to ẋ, y to ẏ, z to ż) shouldBeAbout fog_oh(x to ẋ, y to ẏ, z to ż)
+        fog_oh(x to ẋ, y to ẏ, z to ż) shouldBeAbout fogoho(x to ẋ, y to ẏ, z to ż)
       }
     }
   }
