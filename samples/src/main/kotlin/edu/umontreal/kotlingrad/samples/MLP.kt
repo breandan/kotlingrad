@@ -15,8 +15,8 @@ fun <T: SFun<T>> layer(x: VFun<T, D5>): VFun<T, D5> = x.map { tanh(it) }
 fun <T: SFun<T>> mlp(
   x: Var<T> = Var("x"),
   p1v: VVar<T, D5> = VVar("p1v", D5), b1: VVar<T, D5> = VVar("b1", D5),
-  p2v: Mat<T, D5, D5> = MVar("p2v", D5, D5), b2: VVar<T, D5> = VVar("b2", D5),
-  p3v: Mat<T, D5, D5> = MVar("p3v", D5, D5), b3: VVar<T, D5> = VVar("b3", D5),
+  p2v: MVar<T, D5, D5> = MVar("p2v", D5, D5), b2: VVar<T, D5> = VVar("b2", D5),
+  p3v: MVar<T, D5, D5> = MVar("p3v", D5, D5), b3: VVar<T, D5> = VVar("b3", D5),
   p4v: VVar<T, D5> = VVar("p4v", D5), b4: VVar<T, D5> = VVar("b4", D5)
 ): SFun<T> {
   val layer1 = layer(p1v * x + b1)
@@ -87,7 +87,6 @@ fun main() = with(DoublePrecision) {
       val db3 = batchLoss.d(b3)
       val db4 = batchLoss.d(b4)
 
-      (w1 - α * dw1)(*weights).show()
       w1 = (w1 - α * dw1)(*weights)()
       w2 = (w2 - α * dw2)(*weights)()
       w3 = (w3 - α * dw3)(*weights)()

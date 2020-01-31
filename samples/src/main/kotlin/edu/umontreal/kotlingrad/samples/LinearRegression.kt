@@ -30,21 +30,12 @@ fun main() = with(DoublePrecision) {
     totalTime = System.nanoTime()
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
     val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
-    val targets = ((batch * hiddenWeights).map { it + hiddenBias } + noise)()
+    val targets = (batch * hiddenWeights).map { it + hiddenBias } + noise
 
-    val batchInputs = arrayOf(input to batch, label to targets)
+    val batchInputs = arrayOf(input to batch, label to targets())
     val batchLoss = loss(*batchInputs)
 
     weightMap = arrayOf(theta to weightsNow, bias to biasNow)
-
-    println("Input bnds: " + Bindings(batchInputs.toList().bind()))
-    println("Combined: " + (loss.bindings + Bindings(batchInputs.toList().bind())))
-    println("Weights: " + Bindings(weightMap.toList().bind()))
-    println("Combined2: " + (loss.bindings + Bindings(batchInputs.toList().bind()) + Bindings(weightMap.toList().bind())))
-    println("Combined3: " + (loss(*batchInputs).bindings + Bindings(weightMap.toList().bind())))
-    println("Combined4: " + (Composition(loss, constants + batchInputs.toList().bind() + weightMap.toList().bind()).evaluate))
-    println("Batchloss: " + Composition(loss, constants + batchInputs.toList().bind()).bindings)
-    println("losseval" + loss(*batchInputs))
 
     val averageLoss = batchLoss(*weightMap).toDouble() / batch.rows.size
     val weightGrads = batchLoss.d(theta)
