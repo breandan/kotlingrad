@@ -159,7 +159,6 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     is Special -> javaClass.simpleName
     is BiFun<*> -> "($left) ${opCode()} ($right)"
     is UnFun<*> -> "${opCode()}($input)"
-    is VMagnitude -> "|$value|"
     is Composition -> "($fn)$bindings"
     else -> super.toString()
   }
@@ -231,8 +230,8 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: Var<X>): SFun<X>(fn, vrb)
     is Derivative -> fn.df()
     is DProd -> (left.d(vrb) as VFun<X, D1> dot right as VFun<X, D1>) +
       (left as VFun<X, D1> dot right.d(vrb))
-    is VMagnitude -> value.map { it.d(vrb) }.magnitude() / (TWO * this@df)
     is Composition -> evaluate.df()
+    is VSumAll<X, *> -> input.map { it.df() }.sum()
   }
 }
 
@@ -255,14 +254,13 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X>) : SFun<X>(f
       is Log -> left.bind(bindings).ln()
       is Derivative -> df().bind(bindings)
       is DProd -> left(bindings) as VFun<X, D1> dot right(bindings) as VFun<X, D1>
-      is VMagnitude -> value(bindings).magnitude()
       is Composition -> fn.bind(bindings)
+      is VSumAll<X, *> -> input.map { it.bind(bindings) }.sum()
     }
 }
 
 class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
-
-class VMagnitude<X: SFun<X>>(val value: VFun<X, *>): SFun<X>(value)
+class VSumAll<X: SFun<X>, E: D1>(override val input: VFun<X, E>): SFun<X>(input), UnFun<X>
 
 class Var<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
@@ -444,6 +442,8 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
   @JvmName("prefixPowNum") fun pow(base: SFun<X>, exp: Number) = base pow wrap(exp)
   @JvmName("prefixPowFun") fun pow(base: Number, exp: SFun<X>) = wrap(base) pow exp
+
+  fun <E: D1> VFun<X, E>.magnitude() = map { it * it }.sum().sqrt()
 
   fun <Y: Number> Vec(d0: Y) = Vec(wrap(d0))
   fun <Y: Number> Vec(d0: Y, d1: Y) = Vec(wrap(d0), wrap(d1))

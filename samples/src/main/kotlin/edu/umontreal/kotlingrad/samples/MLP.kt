@@ -42,14 +42,14 @@ fun main() = with(DoublePrecision) {
   val b4 = Var5("b4v")
 
   val rand = Random(1)
-  var w1 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
-  var w2 = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w3 = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w4 = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
-  var v1 = Vec(D5) { 0 }
-  var v2 = Vec(D5) { 0 }
-  var v3 = Vec(D5) { 0 }
-  var v4 = Vec(D5) { 0 }
+  var w1: VFun<DReal, D5> = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var w2: MFun<DReal, D5, D5> = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w3: MFun<DReal, D5, D5> = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w4: VFun<DReal, D5> = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var v1: VFun<DReal, D5> = Vec(D5) { 0 }
+  var v2: VFun<DReal, D5> = Vec(D5) { 0 }
+  var v3: VFun<DReal, D5> = Vec(D5) { 0 }
+  var v4: VFun<DReal, D5> = Vec(D5) { 0 }
 
   val oracle = { it: Double -> -(it / 10).pow(3) }//kotlin.math.sin(it/2.0) }//(it / 10).pow(2) }//-it / 10 + 1 }
   val drawSample = { rand.nextDouble(0.0, 10.0).let { Pair(it, oracle(it)) } }
@@ -87,14 +87,14 @@ fun main() = with(DoublePrecision) {
       val db3 = batchLoss.d(b3)
       val db4 = batchLoss.d(b4)
 
-      w1 = (w1 - α * dw1)(*weights)()
-      w2 = (w2 - α * dw2)(*weights)()
-      w3 = (w3 - α * dw3)(*weights)()
-      w4 = (w4 - α * dw4)(*weights)()
-      v1 = (v1 - α * db1)(*weights)()
-      v2 = (v2 - α * db2)(*weights)()
-      v3 = (v3 - α * db3)(*weights)()
-      v4 = (v4 - α * db4)(*weights)()
+      w1 = (w1 - α * dw1)(*weights)
+      w2 = (w2 - α * dw2)(*weights)
+      w3 = (w3 - α * dw3)(*weights)
+      w4 = (w4 - α * dw4)(*weights)
+      v1 = (v1 - α * db1)(*weights)
+      v2 = (v2 - α * db2)(*weights)
+      v3 = (v3 - α * db3)(*weights)
+      v4 = (v4 - α * db4)(*weights)
       batchLoss = batchLoss(*weights)
       lossHistory += epochs to batchLoss.toDouble()
       println("Average loss at $epochs epochs: $batchLoss")

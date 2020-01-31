@@ -90,6 +90,7 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
       is MGradient -> df()(bindings)
       is MComposition -> mFun.bind(bindings)
       is MMap<X, R, C> -> value.bind(bindings).map { ef(it)(bindings) }
+      is Jacobian -> df()(bindings)
       else -> this
     }
 }
@@ -127,9 +128,29 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
     is DProd -> invoke().df()
-    is VMagnitude -> invoke().df()
     is Composition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
+  }
+}
+
+class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VFun<X, C>): MFun<X, R, C>(vfn) {
+  fun df() = vfn.df()
+  fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
+    is VVar -> Mat(vfn().contents.map { output -> Vec(vVar().contents.map { output.d(it.bindings.sVars.first()) }) })
+//    is VConst<X, E> -> Vec(consts.map { Zero() })
+//    is VSum -> left.df() + right.df()
+//    is VVProd -> left.df() ʘ right + left ʘ right.df()
+//    is SVProd -> left.d(v1) * right + left * right.df()
+//    is VSProd -> left.df() * right + left * right.d(v1)
+//    is VNegative -> -input.df()
+//    is VDerivative -> vFun.df().df()
+//    is Vec -> Vec(contents.map { it.d(v1) })
+//    is MVProd<X, E, *> -> invoke().df()
+//    is VMProd<X, *, E> -> invoke().df()
+//    is Gradient -> invoke()
+//    is VMap -> input.df().map(ssMap).map { it * ssMap(it) } // Chain rule
+//    is VComposition -> evaluate.df()
+    else -> VVMap(vfn) { vVar.map { it() } }
   }
 }
 

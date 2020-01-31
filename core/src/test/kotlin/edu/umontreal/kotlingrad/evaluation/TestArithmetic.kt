@@ -83,8 +83,8 @@ class TestArithmetic: StringSpec({
       }
     }
 
-    "test compositional associativity" {
-      DoubleGenerator(0, positive = false, expRange = 0..4).assertAll { ẋ, ẏ, ż ->
+    "test compositional associativity".config(enabled=false) {
+      DoubleGenerator.assertAll { ẋ, ẏ, ż ->
         val f = 4 * z + x
         val g = 3 * y + z
         val h = 2 * x + y
