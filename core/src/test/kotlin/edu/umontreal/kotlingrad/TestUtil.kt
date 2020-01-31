@@ -3,6 +3,7 @@ package edu.umontreal.kotlingrad
 import io.kotlintest.shouldBe
 import java.math.BigDecimal
 import java.math.MathContext
+import kotlin.random.Random
 
 infix fun Double.shouldBeAbout(d: Double) =
   if (isNaN() && d.isNaN() || d.isInfinite() && isInfinite()) Unit
@@ -19,3 +20,5 @@ infix fun Number.shouldBeAbout(d: Number) = this.toDouble() shouldBe d.toDouble(
 infix fun Number.shouldBeAbout(d: Double) = this.toDouble() shouldBeAbout d
 
 infix fun Double.shouldBeAbout(d: Number) = this shouldBeAbout d.toDouble()
+
+val seededRandom = Random(4)

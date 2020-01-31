@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.seededRandom
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow
@@ -12,7 +13,7 @@ class ExpressionGenerator<X: SFun<X>>(proto: Protocol<X>): Gen<SFun<X>> {
   val mul = { x: SFun<X>, y: SFun<X> -> x * y }
   val div = { x: SFun<X>, y: SFun<X> -> x / y }
 
-  val rng = System.currentTimeMillis().let { println("Seed: $it"); Random(it) }
+  val rng = seededRandom
   val operators = listOf(sum, sub, mul, div)
   val constants = List(100) { proto.wrap(rng.nextDouble() * 10.0.pow(rng.nextInt(5))) }
   val variables = constants.map { proto.variables.random(rng) }
