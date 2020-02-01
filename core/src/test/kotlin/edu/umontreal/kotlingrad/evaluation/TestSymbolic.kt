@@ -14,7 +14,7 @@ import javax.script.SimpleBindings
 class TestSymbolic : StringSpec({
   val engine = ScriptEngineManager().getEngineByExtension("kts")
 
-  fun ktf(f: SFun<DReal>, vararg kgBnds: Pair<Var<DReal>, Number>) =
+  fun ktf(f: SFun<DReal>, vararg kgBnds: Pair<SVar<DReal>, Number>) =
     engine.run {
       try {
         val bnds = kgBnds.map { it.first.name to it.second.toDouble() }.toMap()

@@ -15,11 +15,7 @@ open class BDReal(number: Number, val sigFigs: Int = 30): RealNumber<BDReal, Big
 
   companion object: BDReal(BigDecimal.ZERO)
 
-  override fun wrap(number: Any) = when (number) {
-    is BigDecimal -> BDReal(number, number.precision())
-    is Number -> BDReal(number.toDouble(), sigFigs)
-    else -> BDReal(number.toString().toDouble(), sigFigs)
-  }
+  override fun wrap(number: Number) = BDReal(number.toDouble(), sigFigs)
 
   override fun sin() = BDReal(BigDecimalMath.sin(value, mc))
   override fun cos() = BDReal(BigDecimalMath.cos(value, mc))

@@ -63,25 +63,25 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
 
     if(isObserving && obs != null) {
       val loss = (ω2 - obs) pow 2
-      G = loss.descend(100, 0.0, 0.9, 0.1, G as Var<DReal> to wrap(priorVal))
+      G = loss.descend(100, 0.0, 0.9, 0.1, G as SVar<DReal> to wrap(priorVal))
       priorVal = G.toDouble()
       println(G)
     }
 
     val r1a = (r1.angle + (ω1 * dt + .5 * α1 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).toDouble() else try {
+      if(G is SVar) this(G as SVar<DReal> to priorVal).toDouble() else try {
         toDouble()
       } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).toDouble() }
     }
     val r2a = (r2.angle + - (ω2 * dt + .5 * α2 * dt * dt)).run {
-      if(G is Var) this(G as Var<DReal> to priorVal).toDouble() else try {
+      if(G is SVar) this(G as SVar<DReal> to priorVal).toDouble() else try {
         toDouble()
       } catch(e: Exception) {println(this); this(bindings.sVars.first() to priorVal).toDouble() }
     }
 
-    if(G is Var) {
-      ω1 = ω1(G as Var<DReal> to priorVal)
-      ω2 = ω2(G as Var<DReal> to priorVal)
+    if(G is SVar) {
+      ω1 = ω1(G as SVar<DReal> to priorVal)
+      ω2 = ω2(G as SVar<DReal> to priorVal)
     }
 
     r1 = Vec(r1.magn * cos(r1a), r1.magn * sin(r1a))
@@ -94,7 +94,7 @@ class DoublePendulum(private val len: Double = 900.0) : Application(), EventHand
     }
   }
 
-  fun SFun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<Var<DReal>, SFun<DReal>>): SFun<DReal> {
+  fun SFun<DReal>.descend(steps: Int, vinit: Double, gamma: Double, α: Double = 0.1, map: Pair<SVar<DReal>, SFun<DReal>>): SFun<DReal> {
     with(DoublePrecision) {
       val d_dg = this@descend.d(map.first)
       var G1P: SFun<DReal> = map.second
