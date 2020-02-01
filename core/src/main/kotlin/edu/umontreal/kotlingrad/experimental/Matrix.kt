@@ -18,16 +18,16 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
-    MComposition(this, newBindings).evaluate//.run { if (newBindings.areReassignmentFree) evaluate else this }
+    MComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
-  operator fun invoke(): Mat<X, R, C> = invoke(bindings) as Mat<X, R, C>
+  operator fun invoke(): Mat<X, R, C> = invoke(Bindings()) as Mat<X, R, C>
 
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef)
 
   // Materializes the concrete matrix from the dataflow graph
   fun coalesce(): Mat<X, R, C> = this(Bindings()) as Mat<X, R, C>
-  open fun d(sVar: Var<X>): MFun<X, R, C> = MDerivative(this, sVar)
+  open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar)
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
@@ -91,13 +91,14 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
       is MComposition -> mFun.bind(bindings)
       is MMap<X, R, C> -> value.bind(bindings).map { ef(it)(bindings) }
       is Jacobian -> df()(bindings)
+      is VVMap -> VVMap(input(bindings)) { svMap(it)(bindings) }
       else -> this
     }
 }
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
-class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: Var<X>): MFun<X, R, C>(mFun) {
+class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: SVar<X>): MFun<X, R, C>(mFun) {
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
     is MVar -> MGradient(sVar, this@df).df()
     is Mat -> Mat(rows.map { it.d(sVar)() })
@@ -118,7 +119,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: V
 class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, R, C>): MFun<X, R, C>(sFun) {
   fun df() = sFun.df()
   fun SFun<X>.df(): MFun<X, R, C> = when (this@df) {
-    is Var -> map { if (it == this@df) One() else Zero() }
+    is SVar -> map { if (it == this@df) One() else Zero() }
     is SConst -> map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
@@ -133,36 +134,35 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
   }
 }
 
-class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VFun<X, C>): MFun<X, R, C>(vfn) {
+class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X, C>): MFun<X, R, C>(vfn) {
   fun df() = vfn.df()
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
-    is VVar -> Mat(vfn().contents.map { output -> Vec(vVar().contents.map { output.d(it.bindings.sVars.first()) }) })
-//    is VConst<X, E> -> Vec(consts.map { Zero() })
-//    is VSum -> left.df() + right.df()
-//    is VVProd -> left.df() ʘ right + left ʘ right.df()
-//    is SVProd -> left.d(v1) * right + left * right.df()
-//    is VSProd -> left.df() * right + left * right.d(v1)
-//    is VNegative -> -input.df()
-//    is VDerivative -> vFun.df().df()
-//    is Vec -> Vec(contents.map { it.d(v1) })
-//    is MVProd<X, E, *> -> invoke().df()
-//    is VMProd<X, *, E> -> invoke().df()
-//    is Gradient -> invoke()
-//    is VMap -> input.df().map(ssMap).map { it * ssMap(it) } // Chain rule
-//    is VComposition -> evaluate.df()
-    else -> VVMap(vfn) { vVar.map { it() } }
+    is VVar -> VVMap(vfn) { it.d(vVar) } //Mat(vfn().contents.map { output -> vVar.sVars.map { output.d(it as Var<X>) }})
+    is Vec -> VVMap(vfn) { it.d(vVar) } //Mat(contents.map { output -> vVar.sVars.map { output.d(it as Var<X>) } })
+    is VConst -> VVMap(vfn) { it.d(vVar) } //Mat(consts.map { Vec(vVar().contents.map { Zero() }) })
+    is VSum -> left.df() + right.df()
+    is VVProd -> invoke().df()
+    is SVProd -> invoke().df()
+    is VSProd -> invoke().df()
+    is VNegative -> -input.df()
+    is VDerivative -> (invoke() as VFun<X, R>).df()
+    is MVProd<X, *, *> -> invoke().df()
+    is VMProd<X, *, *> -> invoke().df()
+    is Gradient -> invoke().df()
+    is VMap -> input.df().map(ssMap).map { it * ssMap(it) } // Chain rule
+    is VComposition -> evaluate.df()
   }
 }
 
 class MVar<X: SFun<X>, R: D1, C: D1>(
   override val name: String = "", val r: R, val c: C,
-  val sVars: List<Var<X>> = List(r.i * c.i) { Var("$name[${it / c.i},${it % c.i}]") },
+  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
   val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
 ): Variable<X>, MFun<X, R, C>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to sMat))
 }
 
-open class MConst<X: SFun<X>, R: D1, C: D1>: Mat<X, R, C>()
+open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X>
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<Vec<X, C>>):
   MFun<X, R, C>(*rows.toTypedArray()), Iterable<Vec<X, C>> by rows {
