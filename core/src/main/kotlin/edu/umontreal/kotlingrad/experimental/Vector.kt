@@ -6,6 +6,7 @@ import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.MutableNode
+import java.lang.ClassCastException
 
 /**
  * Vector function.
@@ -19,9 +20,21 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     VComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
-  operator fun invoke(): Vec<X, E> = invoke(Bindings()) as Vec<X, E>
+  operator fun invoke(): Vec<X, E> =
+    invoke(Bindings()).let {
+      try {
+        it as Vec<X, E>
+      } catch (e: ClassCastException) {
+        show("before")
+        it.show("after")
+        e.printStackTrace()
+        throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables()}\n$this")
+      }
+    }
 
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
+
+  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef)
 
   fun <Q: D1> d(v1: VVar<X, Q>): Jacobian<X, E, Q> = Jacobian(this, v1)
 
@@ -51,9 +64,10 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     when (this@VFun) {
       is VVar -> "$name-Vec$length"
       is Gradient -> { fn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("grad")) }
-      is Vec -> { contents.map { it.toGraph() - this } }
+      is Vec -> { contents.map { it.toGraph() - this }; add(Label.of("Vec")) }
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
+      is VComposition -> { vFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("VComp")) }
       else -> TODO(this@VFun.javaClass.toString())
     }
   }
@@ -66,7 +80,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     is Gradient -> "($fn).d($vVar)"
     is VMap -> "$input.map { $ssMap }"
     is VVar -> "VVar($name)"
-    is VComposition -> "($vFun)$inputs"
+    is VComposition -> "($vFun)$bindings"
     else -> TODO(this.javaClass.name)
   }
 }
@@ -87,7 +101,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val v1: SVar<X>) : V
   fun df() = vFun.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VVar -> Gradient(v1, this@df).df()
-    is VConst<X, E> -> Vec(consts.map { Zero() })
+    is VConst<X, E> -> map { Zero() }
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
     is SVProd -> left.d(v1) * right + left * right.df()
@@ -95,9 +109,13 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val v1: SVar<X>) : V
     is VNegative -> -input.df()
     is VDerivative -> vFun.df().df()
     is Vec -> Vec(contents.map { it.d(v1) })
-    is MVProd<X, E, *> -> invoke().df()
-    is VMProd<X, *, E> -> invoke().df()
-    is Gradient -> invoke()
+    is MVProd<X, *, *> ->
+      (left.d(v1) as MFun<X, E, E>) * right as VFun<X, E> +
+      (left as MFun<X, E, E> * right.d(v1))
+    is VMProd<X, *, *> ->
+      (left.d(v1) as VFun<X, E>) * right as MFun<X, E, E> +
+        (left as VFun<X, E> * right.d(v1))
+    is Gradient -> invoke().df()
     is VMap -> input.df().map(ssMap).map { it * ssMap(it) } // Chain rule
     is VComposition -> evaluate.df()
   }
@@ -106,8 +124,8 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val v1: SVar<X>) : V
 class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<X, E>(fn) {
   fun df() = fn.df()
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
-    is SVar -> Vec(List(vVar.length.i) { if(this@df == vVar.sVars[it]) One() else Zero() })
-    is SConst -> Vec(List(vVar.length.i) { Zero() })
+    is SVar -> vVar.map { if(this@df == it) One() else Zero() }
+    is SConst -> vVar.map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
@@ -126,31 +144,32 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
 class VVar<X: SFun<X>, E: D1>(
   override val name: String = "",
   val length: E,
+//  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
   val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name.$it") })
 ): Variable<X>, VFun<X, E>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  override val bindings: Bindings<X> = Bindings(mapOf(this to sVars))
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
-  fun VFun<X, E>.bind(bindings: Bindings<X>): VFun<X, E> =
-    bindings[this@bind] ?: when (this@bind) {
-      is VVar<X, E> -> this@bind
+  fun VFun<X, E>.bind(bnds: Bindings<X>): VFun<X, E> =
+    bnds[this@bind] ?: when (this@bind) {
       is VConst<X, E> -> this@bind
-      is Vec<X, E> -> map { it(bindings) }
-      is VNegative<X, E> -> -input(bindings)
-      is VSum<X, E> -> left.bind(bindings) + right.bind(bindings)
-      is VVProd<X, E> -> left.bind(bindings) ʘ right.bind(bindings)
-      is SVProd<X, E> -> left(bindings) * right.bind(bindings)
-      is VSProd<X, E> -> left.bind(bindings) * right(bindings)
-      is VDerivative -> df().bind(bindings)
-      is Gradient -> df().bind(bindings)
-      is MVProd<X, *, *> -> left(bindings) as MFun<X, E, E> * (right as VFun<X, E>).bind(bindings)
-      is VMProd<X, *, *> -> (left as VFun<X, E>).bind(bindings) * (right as MFun<X, E, E>)(bindings)
-      is VMap<X, E> -> input.bind(bindings).map { ssMap(it)(bindings) }
-      is VComposition -> vFun.bind(bindings)
+      is Vec<X, E> -> map { it(bnds) }
+      is VNegative<X, E> -> -input.bind(bnds)
+      is VSum<X, E> -> left.bind(bnds) + right.bind(bnds)
+      is VVProd<X, E> -> left.bind(bnds) ʘ right.bind(bnds)
+      is SVProd<X, E> -> left(bnds) * right.bind(bnds)
+      is VSProd<X, E> -> left.bind(bnds) * right(bnds)
+      is VDerivative -> df().bind(bnds)
+      is Gradient -> df().bind(bnds)
+      is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>).bind(bnds)
+      is VMProd<X, *, *> -> (left as VFun<X, E>).bind(bnds) * (right as MFun<X, E, E>)(bnds)
+      is VMap<X, E> -> input.bind(bnds).map { ssMap(it)(bnds) }
+      is VComposition -> vFun.bind(bnds)
+      else -> TODO(this@bind.javaClass.name)
     }
 }
 
@@ -186,7 +205,14 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.dot(multiplicand)
   }
 
+  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = when(multiplicand) {
+    is Mat<X, Q, E> -> Vec(multiplicand.rows.map { r -> r dot this})
+    else -> super.times(multiplicand)
+  }
+
   override fun map(ef: (SFun<X>) -> SFun<X>): Vec<X, E> = Vec(contents.map { ef(it) })
+
+  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): Mat<X, E, C> = Mat(contents.map { ef(it) as Vec<X, C> })
 
   override fun unaryMinus(): Vec<X, E> = map { -it }
 
