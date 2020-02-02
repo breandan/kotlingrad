@@ -1,7 +1,7 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
-import guru.nidi.graphviz.attribute.Color
+import guru.nidi.graphviz.attribute.Color.*
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory
@@ -28,7 +28,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
         show("before")
         it.show("after")
         e.printStackTrace()
-        throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables()}\n$this")
+        throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables().keys}")
       }
     }
 
@@ -65,7 +65,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
       is VVar -> "$name-Vec$length"
       is Gradient -> { fn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("grad")) }
       is Vec -> { contents.map { it.toGraph() - this }; add(Label.of("Vec")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
+      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is VComposition -> { vFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("VComp")) }
       else -> TODO(this@VFun.javaClass.toString())
@@ -74,7 +74,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
-    is VDerivative -> "d($vFun) / d($v1)"//d(${v1.joinToString(", ")})"
+    is VDerivative -> "d($vFun) / d($sVar)"//d(${v1.joinToString(", ")})"
     is BiFun<*> -> "($left) ${opCode()} ($right)"
     is UnFun<*> -> "${opCode()}($input)"
     is Gradient -> "($fn).d($vVar)"
@@ -96,28 +96,30 @@ class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: 
 class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): VFun<X, E>(left, right), BiFun<X>
 class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): VFun<X, R>(left, right), BiFun<X>
 class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, C>(left, right), BiFun<X>
+class MSumRows<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): VFun<X, C>(input), UnFun<X>
 
-class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val v1: SVar<X>) : VFun<X, E>(vFun) {
+class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) : VFun<X, E>(vFun) {
   fun df() = vFun.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
-    is VVar -> Gradient(v1, this@df).df()
+    is VVar -> map { it.d(sVar) }
     is VConst<X, E> -> map { Zero() }
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
-    is SVProd -> left.d(v1) * right + left * right.df()
-    is VSProd -> left.df() * right + left * right.d(v1)
+    is SVProd -> left.d(sVar) * right + left * right.df()
+    is VSProd -> left.df() * right + left * right.d(sVar)
     is VNegative -> -input.df()
-    is VDerivative -> vFun.df().df()
-    is Vec -> Vec(contents.map { it.d(v1) })
+    is VDerivative -> vFun.df()
+    is Vec -> map { it.d(sVar) }
     is MVProd<X, *, *> ->
-      (left.d(v1) as MFun<X, E, E>) * right as VFun<X, E> +
-      (left as MFun<X, E, E> * right.d(v1))
+      (left.d(sVar) as MFun<X, E, E>) * right as VFun<X, E> +
+      (left as MFun<X, E, E> * right.d(sVar))
     is VMProd<X, *, *> ->
-      (left.d(v1) as VFun<X, E>) * right as MFun<X, E, E> +
-        (left as VFun<X, E> * right.d(v1))
-    is Gradient -> invoke().df()
-    is VMap -> input.df().map(ssMap).map { it * ssMap(it) } // Chain rule
+      (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
+      (left as VFun<X, E> * right.d(sVar))
+    is Gradient -> map { it.d(sVar) }
+    is VMap -> input.df().map { it * ssMap(it).d(sVar) } // Chain rule
     is VComposition -> evaluate.df()
+    else -> TODO(this@df.javaClass.name)
   }
 }
 
@@ -137,6 +139,7 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
       (left.d(vVar) as MFun<X, E, E> * right as VFun<X, E>) +
       (left as VFun<X, E> * right.d(vVar) as MFun<X, E, E>)
     is Composition -> evaluate.df()
+    is VSumAll<*, *> -> (input as VFun<X, E>).d(vVar).sum()
     else -> TODO(this@df.javaClass.name)
   }
 }
@@ -145,9 +148,9 @@ class VVar<X: SFun<X>, E: D1>(
   override val name: String = "",
   val length: E,
 //  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
-  val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name.$it") })
+  val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name[$it]") })
 ): Variable<X>, VFun<X, E>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to sVars))
+  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
@@ -169,6 +172,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is VMProd<X, *, *> -> (left as VFun<X, E>).bind(bnds) * (right as MFun<X, E, E>)(bnds)
       is VMap<X, E> -> input.bind(bnds).map { ssMap(it)(bnds) }
       is VComposition -> vFun.bind(bnds)
+      is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
       else -> TODO(this@bind.javaClass.name)
     }
 }
@@ -216,7 +220,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
 
   override fun unaryMinus(): Vec<X, E> = map { -it }
 
-  override fun sum(): SFun<X> = reduce { acc, it -> acc + it }
+  override fun sum() = reduce { acc, it -> acc + it }
 
   companion object {
     operator fun <T: SFun<T>> invoke(s0: SConst<T>): VConst<T, D1> = VConst(s0)
