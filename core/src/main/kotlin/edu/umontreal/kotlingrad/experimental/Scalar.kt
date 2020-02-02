@@ -7,6 +7,7 @@ import guru.nidi.graphviz.attribute.*
 import guru.nidi.graphviz.attribute.Color.*
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Renderer
+import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
 import java.io.File
@@ -91,12 +92,16 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   val mVars: Set<MVar<X, *, *>> = mVarMap.keys
   val allVars: Set<Variable<X>> = sVars + vVars + mVars
 
-  private fun Vec<X, *>.allFreeSVars() = contents.flatMap { bindings.sVars }
+  private fun Vec<X, *>.allFreeSVars() = contents.filter { it !is Constant<*> }
   private fun Mat<X, *, *>.allFreeSVars() = rows.flatMap { it.allFreeSVars() }
   fun allFreeVariables() =
-    fMap.filterValues { it !is Constant ||
-      (it is Mat<X, *, *> && it.allFreeSVars().isEmpty()) ||
-      (it is Vec<X, *> && it.allFreeSVars().isEmpty()) }
+    fMap.filterValues {
+      (it is Mat<X, *, *> && it.allFreeSVars().isNotEmpty()) ||
+      (it is MFun<X, *, *> && it !is Mat<X, *, *> && it !is MConst<X, *, *>) ||
+      (it is Vec<X, *> && it.allFreeSVars().isNotEmpty()) ||
+      (it is VFun<X, *> && it !is Vec<X, *> && it !is VConst<X, *>) ||
+      (it is SFun<X> && it !is Constant)
+    }
   val areReassignmentFree = allFreeVariables().isEmpty()
 
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.allVars.all { it in this }
@@ -194,7 +199,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
       is Special -> add(Label.of(this@SFun.toString()))
-      is Composition -> { bindings.sFunMap.map { entry -> mutNode(entry.hashCode().toString()).also { compNode -> entry.key.toGraph() - compNode; entry.value.toGraph() - compNode; compNode.add(Label.of("comp")) } }.map { it - this; add(Label.of("bindings")) } }
+      is Composition -> { fn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("Comp")) }
       else -> TODO(this@SFun.javaClass.toString())
     }
   }
@@ -245,26 +250,26 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb
 }
 
 // TODO: Unit test this data structure
-class Composition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X>) : SFun<X>(fn.bindings + inputs) {
+class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<X>(fn.bindings + inputs) {
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
-  fun SFun<X>.bind(bindings: Bindings<X>): SFun<X> =
-    bindings[this@bind] ?: when (this@bind) {
+  fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
+    bnds[this@bind] ?: when (this@bind) {
       is SVar -> this@bind
       is SConst -> this@bind
-      is Prod -> left.bind(bindings) * right.bind(bindings)
-      is Sum -> left.bind(bindings) + right.bind(bindings)
-      is Power -> left.bind(bindings) pow right.bind(bindings)
-      is Negative -> -input.bind(bindings)
-      is Sine -> input.bind(bindings).sin()
-      is Cosine -> input.bind(bindings).cos()
-      is Tangent -> input.bind(bindings).tan()
-      is Log -> left.bind(bindings).ln()
-      is Derivative -> df().bind(bindings)
-      is DProd -> left(bindings) as VFun<X, D1> dot right(bindings) as VFun<X, D1>
-      is Composition -> fn.bind(bindings)
-      is VSumAll<X, *> -> input.map { it.bind(bindings) }.sum()
+      is Prod -> left.bind(bnds) * right.bind(bnds)
+      is Sum -> left.bind(bnds) + right.bind(bnds)
+      is Power -> left.bind(bnds) pow right.bind(bnds)
+      is Negative -> -input.bind(bnds)
+      is Sine -> input.bind(bnds).sin()
+      is Cosine -> input.bind(bnds).cos()
+      is Tangent -> input.bind(bnds).tan()
+      is Log -> left.bind(bnds).ln()
+      is Derivative -> df().bind(bnds)
+      is DProd -> left(bnds) as VFun<X, D1> dot right(bnds) as VFun<X, D1>
+      is Composition -> fn.bind(bnds)
+      is VSumAll<X, *> -> input(bnds).map { it.bind(bnds) }.sum()
     }
 }
 
@@ -406,6 +411,8 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
     try {
       (this as X).value.toDouble()
     } catch(e: ClassCastException) {
+      show("before")
+      e.printStackTrace()
       throw NumberFormatException("Function has unbound free variables: ${bindings.allFreeVariables()}\n$this")
     }
 

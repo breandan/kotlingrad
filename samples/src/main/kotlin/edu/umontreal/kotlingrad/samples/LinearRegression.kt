@@ -10,7 +10,7 @@ fun main() = with(DoublePrecision) {
   val bias = Var("bias")
   val label = Var3("y")
 
-  val error = ((input * theta).map { it + bias } - label)
+  val error = ((input * theta).map { it /*+ bias*/ } - label)
   val loss = ((error ʘ error) dot Vec(D3) { 1 }).sqrt()
 
   var weightsNow = Vec(D2) { rand.nextDouble() * 10 }
@@ -33,19 +33,20 @@ fun main() = with(DoublePrecision) {
     val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val targets = (batch * hiddenWeights).map { it + hiddenBias } + noise
 
-    val batchInputs = arrayOf(input to batch, label to targets())
+    val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(input to batch, label to targets())
     val batchLoss = loss(*batchInputs)
 
     weightMap = arrayOf(theta to weightsNow, bias to biasNow)
 
-    println("Loss1: ${loss(*batchInputs).invoke(*weightMap).bindings}")
-
     val averageLoss = batchLoss(*weightMap).toDouble() / batch.rows.size
+    println("Avg loss: $averageLoss")
     val weightGrads = batchLoss.d(theta)
-    val biasGrads = batchLoss.d(bias)
+//    val biasGrads = batchLoss.d(bias)
 
     weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
-    biasNow = (biasNow - alpha * biasGrads)(*weightMap)().toDouble()
+    println("Weights now: $weightsNow")
+//    biasNow = (biasNow - alpha * biasGrads)(*weightMap)().toDouble()
+//    println("Bias now: $biasNow")
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
