@@ -93,15 +93,17 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   val allVars: Set<Variable<X>> = sVars + vVars + mVars
 
   private fun Vec<X, *>.allFreeSVars() = contents.filter { it !is Constant<*> }
-  private fun Mat<X, *, *>.allFreeSVars() = rows.flatMap { it.allFreeSVars() }
-  fun allFreeVariables() =
-    fMap.filterValues {
-      (it is Mat<X, *, *> && it.allFreeSVars().isNotEmpty()) ||
-      (it is MFun<X, *, *> && it !is Mat<X, *, *> && it !is MConst<X, *, *>) ||
-      (it is Vec<X, *> && it.allFreeSVars().isNotEmpty()) ||
-      (it is VFun<X, *> && it !is Vec<X, *> && it !is VConst<X, *>) ||
-      (it is SFun<X> && it !is Constant)
-    }
+  private fun Mat<X, *, *>.allFreeSVars() = rows.flatMap { it.bindings.sVars }
+  fun allFreeVariables() = fMap.filterValues { containsFreeVariable(it) }
+  fun allBoundVariables() = fMap.filterValues { !containsFreeVariable(it) }
+
+  private fun containsFreeVariable(it: Fun<X>): Boolean =
+    (it is Mat<X, *, *> && it.bindings.allFreeVariables().isNotEmpty()) ||
+    (it is MFun<X, *, *> && it !is Mat<X, *, *> && it !is MConst<X, *, *>) ||
+    (it is Vec<X, *> && it.bindings.allFreeVariables().isNotEmpty()) ||
+    (it is VFun<X, *> && it !is Vec<X, *> && it !is VConst<X, *>) ||
+    (it is SFun<X> && it !is Constant)
+
   val areReassignmentFree = allFreeVariables().isEmpty()
 
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.allVars.all { it in this }
@@ -225,7 +227,7 @@ class Negative<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X
 class Sum<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
 class Prod<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
 class Power<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
-class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E()): SFun<X>(left, right), BiFun<X>
+class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E<X>()): SFun<X>(left, right), BiFun<X>
 
 class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb) {
   fun SFun<X>.df(): SFun<X> = when (this@df) {
@@ -269,7 +271,7 @@ class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<
       is Derivative -> df().bind(bnds)
       is DProd -> left(bnds) as VFun<X, D1> dot right(bnds) as VFun<X, D1>
       is Composition -> fn.bind(bnds)
-      is VSumAll<X, *> -> input(bnds).map { it.bind(bnds) }.sum()
+      is VSumAll<X, *> -> input(bnds).sum()
     }
 }
 
@@ -413,7 +415,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
     } catch(e: ClassCastException) {
       show("before")
       e.printStackTrace()
-      throw NumberFormatException("Function has unbound free variables: ${bindings.allFreeVariables()}\n$this")
+      throw NumberFormatException("Scalar function has unbound free variables: ${bindings.allFreeVariables().keys}")
     }
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()

@@ -10,8 +10,8 @@ fun main() = with(DoublePrecision) {
   val bias = Var("bias")
   val label = Var3("y")
 
-  val error = ((input * theta).map { it /*+ bias*/ } - label)
-  val loss = ((error ʘ error) dot Vec(D3) { 1 }).sqrt()
+  val error = ((input * theta).map { it + bias } - label)
+  val loss = (error ʘ error).sum().sqrt()
 
   var weightsNow = Vec(D2) { rand.nextDouble() * 10 }
   var biasNow = rand.nextDouble() * 10
@@ -41,12 +41,12 @@ fun main() = with(DoublePrecision) {
     val averageLoss = batchLoss(*weightMap).toDouble() / batch.rows.size
     println("Avg loss: $averageLoss")
     val weightGrads = batchLoss.d(theta)
-//    val biasGrads = batchLoss.d(bias)
+    val biasGrads = batchLoss.d(bias)
 
     weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
     println("Weights now: $weightsNow")
-//    biasNow = (biasNow - alpha * biasGrads)(*weightMap)().toDouble()
-//    println("Bias now: $biasNow")
+    biasNow = (biasNow - alpha * biasGrads)(*weightMap)().toDouble()
+    println("Bias now: $biasNow")
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
