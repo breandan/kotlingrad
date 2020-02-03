@@ -40,8 +40,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
 
 //  operator fun invoke(sFun: SFun<X>): Fun<X> = invoke(bindings.zip(fns).bind() + constants) as bindings.z
-  operator fun <A: Fun<X>> A.invoke(vararg fns: Fun<X>): A =
-    invoke(Bindings(*bindings.zip(fns).toTypedArray())) as A
+  operator fun <A: Fun<X>> A.invoke(vararg fns: Fun<X>): A = invoke(Bindings(*bindings.zip(fns).toTypedArray())) as A
 
   fun toGraph(): MutableNode = mutNode(toString()).apply {
     when (this@Fun) {
@@ -74,9 +73,12 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   }
 
   fun zip(fns: Array<out Fun<X>>): List<Pair<Fun<X>, Fun<X>>> =
-    sVars.zip(fns.filterIsInstance<SFun<X>>()) +
-      vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
-      mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())
+    sVars.filter { it.name == "mapInput" }.zip(fns.filterIsInstance<SFun<X>>()).let { mapped ->
+      mapped +
+      sVars.filter { it.name != "mapInput" }.zip(fns.toList() - mapped.map { it.second }) +
+        vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
+        mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())
+    }
 
   // Scalar, vector, and matrix "views" on untyped function map
   val sFunMap = filterInstancesOf<SFun<X>>()
@@ -466,7 +468,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   }
 
   operator fun Number.invoke(n: Number) = this
-  inline operator fun <reified T: SFun<X>> T.invoke(number: Number): T = invoke(wrap(number)) as T
+  inline operator fun <reified T: SFun<X>> T.invoke(number: Number): T = invoke(wrap(number))
 
   inline operator fun <reified A: Fun<X>> A.invoke(vararg ps: Pair<Fun<X>, Any>): A =
     invoke(ps.toList().bind() + constants) as A
