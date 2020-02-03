@@ -54,7 +54,8 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is MComposition -> { mFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("MComp")) }
-      is Jacobian -> { vfn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("jacobian")) }
+      is Jacobian -> { vfn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Jacobian")) }
+      is MDerivative -> { mFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("MDerivative")) }
       else -> TODO(this@MFun.javaClass.toString())
     }
   }
@@ -74,7 +75,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   }
 }
 
-class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ef: (SFun<X>) -> SFun<X>): MFun<X, R, C>(input), UnFun<X>
+class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ssMap: (SFun<X>) -> SFun<X>): MFun<X, R, C>(input), UnFun<X>
 class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
 class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
 class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
@@ -102,7 +103,7 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
       is MDerivative -> df().bind(bnds)
       is MGradient -> df().bind(bnds)
       is MComposition -> mFun.bind(bnds)
-      is MMap<X, R, C> -> input.bind(bnds).map { ef(it(bnds)) }
+      is MMap<X, R, C> -> input.bind(bnds).map { ssMap(it(bnds)) }
       is Jacobian -> df().bind(bnds)
       is VVMap -> input(bnds).vMap { svMap(it(bnds)) }
       else -> TODO(this@bind.toString() + "/" + bnds)
@@ -137,7 +138,8 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: S
     is MSProd -> left.df() * right + left * right.d(sVar)
     is SMProd -> left.d(sVar) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
-    is MMap -> input.df().map { it * ef(it.d(sVar)) } // Chain rule
+    is MMap -> input.df().map { it * ssMap(it.d(sVar)) } // Chain rule
+    is VVMap -> input.d(sVar).vMap { it * svMap(it.d(sVar)) }
     is MDerivative -> mFun.df()
     is MComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
