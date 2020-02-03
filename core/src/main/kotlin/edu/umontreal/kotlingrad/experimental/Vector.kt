@@ -18,7 +18,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
-    VComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
+    VComposition(this, newBindings).run { if (newBindings.areReassignmentFree || EAGER) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> =
@@ -33,13 +33,13 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
       }
     }
 
-  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef)
+  val mapInput = SVar<X>("mapInput")
+  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput))
+  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput))
 
-  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef)
+  fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1).let { if(EAGER) it.df() else it }
 
-  fun <Q: D1> d(v1: VVar<X, Q>): Jacobian<X, E, Q> = Jacobian(this, v1)
-
-  fun d(v1: SVar<X>) = VDerivative(this, v1)
+  fun d(v1: SVar<X>) = VDerivative(this, v1)//.let { if (EAGER) it.df() else it }
   fun d(v1: SVar<X>, v2: SVar<X>) = Jacobian(this, VVar("j2", D2, Vec(v1, v2)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>) = Jacobian(this, VVar("j3", D3, Vec(v1, v2, v3)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>) = Jacobian(this, VVar("j4", D4, Vec(v1, v2, v3, v4)))
@@ -48,8 +48,8 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>) = Jacobian(this, VVar("j7", D7, Vec(v1, v2, v3, v4, v5, v6, v7)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>) = Jacobian(this, VVar("j8", D8, Vec(v1, v2, v3, v4, v5, v6, v7, v8)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>, v9: SVar<X>) = Jacobian(this, VVar("j9", D9, Vec(v1, v2, v3, v4, v5, v6, v7, v8, v9)))
-  fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> = vars.map { it to VDerivative(this, it) }.toMap()
-  fun grad(): Map<SVar<X>, VFun<X, E>> = bindings.sVars.map { it to VDerivative(this, it) }.toMap()
+  fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> = vars.map { it to d(it) }.toMap()
+  fun grad(): Map<SVar<X>, VFun<X, E>> = bindings.sVars.map { it to d(it) }.toMap()
 
   open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
@@ -87,8 +87,8 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
-class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: (SFun<X>) -> SFun<X>): VFun<X, E>(input), UnFun<X>
-class VVMap<X: SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, val svMap: (SFun<X>) -> VFun<X, C>): MFun<X, R, C>(input), UnFun<X>
+class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: SFun<X>): VFun<X, E>(input), UnFun<X>
+class VVMap<X: SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, val svMap: VFun<X, C>): MFun<X, R, C>(input), UnFun<X>
 
 class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
 
@@ -102,7 +102,7 @@ class MSumRows<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): VFu
 class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) : VFun<X, E>(vFun) {
   fun df() = vFun.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
-    is VVar -> map { it.d(sVar) }
+    is VVar -> sVars.map { it.d(sVar) }
     is VConst<X, E> -> map { Zero() }
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
@@ -118,7 +118,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
       (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
       (left as VFun<X, E> * right.d(sVar))
     is Gradient -> map { it.d(sVar) }
-    is VMap -> input.df().map { it * ssMap(it.d(sVar)) } // Chain rule
+    is VMap -> input.df().map { it * ssMap(it.d(sVar)) as SFun<X> } // Chain rule
     is VComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -127,8 +127,8 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
 class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<X, E>(fn) {
   fun df() = fn.df()
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
-    is SVar -> vVar.map { if(this@df == it) One() else Zero() }
-    is SConst -> vVar.map { Zero() }
+    is SVar -> vVar.sVars.map { if(this@df == it) One() else Zero() }
+    is SConst -> vVar.sVars.map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
@@ -138,7 +138,7 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
     is Log -> (left pow -One<X>()) * left.df()
     is DProd ->
       (left.d(vVar) as MFun<X, E, E> * right as VFun<X, E>) +
-      (left as VFun<X, E> * right.d(vVar) as MFun<X, E, E>)
+      (left as VFun<X, E> * right.d(vVar))
     is Composition -> evaluate.df()
     is VSumAll<*, *> -> (input as VFun<X, E>).d(vVar).sum()
     else -> TODO(this@df.javaClass.name)
@@ -155,7 +155,7 @@ class VVar<X: SFun<X>, E: D1>(
   operator fun remAssign(const: VFun<X, E>) {
     value = const
   }
-  override val bindings: Bindings<X> = Bindings()//mapOf(this to this))
+  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings join inputs) {
@@ -180,6 +180,15 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is VComposition -> vFun.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
       else -> TODO(this@bind.toString() + "/" + bnds)
+    }.also { result ->
+      val freeVars = result.bindings.allFreeVariables().keys
+      val boundVars = bnds.allBoundVariables()
+      val unpropogated = freeVars.filter { it in boundVars }
+      if (unpropogated.isNotEmpty()) {
+        show("input"); result.show("result")
+        println("Bindings were $bnds")
+        throw Exception("Bindings included unpropogated variables: $unpropogated")
+      }
     }
 }
 
@@ -208,7 +217,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.ʘ(multiplicand)
   }
 
-  override fun times(multiplicand: SFun<X>): Vec<X, E> = map { it * multiplicand }
+  override fun times(multiplicand: SFun<X>) = map { it * multiplicand }
 
   override fun dot(multiplicand: VFun<X, E>) = when(multiplicand) {
     is Vec<X, E> -> mapIndexed { i, v -> v * multiplicand[i] }.reduce { acc, it -> acc + it }
@@ -220,11 +229,11 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.times(multiplicand)
   }
 
-  override fun map(ef: (SFun<X>) -> SFun<X>): Vec<X, E> = Vec(contents.map { ef(it) })
+  override fun map(ef: (SFun<X>) -> SFun<X>) = Vec<X, E>(contents.map { ef(it).invoke(it) })
 
-  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): Mat<X, E, C> = Mat(contents.map { ef(it) })
+  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>) = Mat<X, E, C>(contents.map { ef(it) })
 
-  override fun unaryMinus(): Vec<X, E> = map { -it }
+  override fun unaryMinus() = map { -it }
 
   override fun sum() = reduce { acc, it -> acc + it }
 

@@ -18,7 +18,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
-    MComposition(this, newBindings).run { if (newBindings.areReassignmentFree) evaluate else this }
+    MComposition(this, newBindings).run { if (newBindings.areReassignmentFree || EAGER) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
   operator fun invoke(): Mat<X, R, C> =
@@ -34,7 +34,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef)
 
-  open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar)
+  open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
@@ -50,7 +50,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     when (this@MFun) {
       is MVar -> "$name-MVar$r$c"
       is MGradient -> { sFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
-      is Mat -> { flattened.map { it.toGraph() - this }; add(Label.of("Mat")) }
+      is Mat -> { rows.map { it.toGraph() - this }; add(Label.of("Mat")) }
       is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is MComposition -> { mFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("MComp")) }
@@ -69,7 +69,8 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     is MDerivative -> "d($mFun) / d($sVar)"
     is MVar -> "MVar($name)"
     is MComposition -> "MComp($mFun)$bindings"
-    else -> TODO(this.javaClass.name)
+    is Jacobian -> "Jacobian($vVar)$bindings"
+    else -> TODO(javaClass.name)
   }
 }
 
@@ -88,9 +89,9 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
   @Suppress("UNCHECKED_CAST")
   fun MFun<X, R, C>.bind(bnds: Bindings<X>): MFun<X, R, C> =
     bnds[this@bind] ?: when (this@bind) {
-      is MVar<X, R, C> -> this@bind.value ?: this@bind
+//      is MVar<X, R, C> -> this@bind.value ?: this@bind
       is MConst -> this@bind
-      is Mat -> map { it(bnds) }
+      is Mat -> Mat(rows.map { it(bnds) })
       is MNegative -> -input.bind(bnds)
       is MTranspose -> input.ᵀ.bind(bnds)
       is MSum -> left.bind(bnds) + right.bind(bnds)
@@ -105,12 +106,23 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
       is Jacobian -> df().bind(bnds)
       is VVMap -> input(bnds).vMap { svMap(it(bnds)) }
       else -> TODO(this@bind.toString() + "/" + bnds)
+    }.also { result ->
+      val freeVars = result.bindings.allFreeVariables().keys
+      val boundVars = bnds.allBoundVariables()
+      val unpropogated = freeVars.filter { it in boundVars }.map { it to bnds.get(it) }
+      if (unpropogated.isNotEmpty()) {
+        show("input"); result.show("result")
+        println("Free vars: $freeVars")
+        println("Bindings were $bnds")
+        throw Exception("Result included unpropogated variables: $unpropogated")
+      }
     }
 }
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
 class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: SVar<X>): MFun<X, R, C>(mFun) {
+  fun df() = mFun.df()
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
     is MVar -> map { it.d(sVar) }
     is Mat -> map { it.d(sVar) }
@@ -164,7 +176,7 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X,
 
 class MVar<X: SFun<X>, R: D1, C: D1>(
   override val name: String = "", val r: R, val c: C,
-  val vVars: List<VVar<X, C>> = List(r.i) { VVar("name[$it]", c) },
+  val vVars: List<VVar<X, C>> = List(r.i) { VVar("$name[$it]", c) },
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
 //  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
 //  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
@@ -173,7 +185,7 @@ class MVar<X: SFun<X>, R: D1, C: D1>(
   operator fun remAssign(const: MFun<X, R, C>) {
     value = const
   }
-  override val bindings: Bindings<X> = Bindings()//mapOf(this to this))
+  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
 }
 
