@@ -63,6 +63,10 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   constructor(vararg bindings: Bindings<X>): this(bindings.toList())
   constructor(vararg funs: Fun<X>): this(funs.map { it.bindings })
 
+  companion object {
+    var throws = false
+  }
+
   fun zip(fns: Array<out Fun<X>>): List<Pair<Fun<X>, Fun<X>>> =
     sVars.zip(fns.filterIsInstance<SFun<X>>()) +
       vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
@@ -80,11 +84,27 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 //    vVarMap.flatMap { it.key.sVars.zip(it.value().contents) }.filter { it.second is SConst<X> } +
 //    mVarMap.flatMap { it.key.sVars.zip(it.value().flattened) }.filter { it.second is SConst<X> }
 
+  init {
+    if(mVarMap.values.any { it is MVar } && throws)
+      println("$mVarMap")
+  }
+
   private inline fun <reified T> filterInstancesOf(): Map<T, T> = fMap.filterKeys { it is T } as Map<T, T>
 
   // Merges two variable bindings
   // TODO: Add support for change of variables, i.e. x = y, y = 2z, z = x + y...
-  operator fun plus(other: Bindings<X>) = Bindings(fMap + other.fMap)
+  operator fun plus(other: Bindings<X>) =
+    Bindings(
+      fMap.filterValues { containsFreeVariable(it) } +
+      other.fMap.filterValues { containsFreeVariable(it) } +
+      fMap.filterValues { !containsFreeVariable(it) } +
+      other.fMap.filterValues { !containsFreeVariable(it) }
+    )
+
+  infix fun join(other: Bindings<X>) = this + other
+//    other.allVars.filter { it in allVars }.let { join ->
+//      Bindings(fMap) + Bindings(other.fMap.filter { it.key in join })
+//    }
 
   // Scalar, vector, and matrix variables
   val sVars: Set<SVar<X>> = sVarMap.keys
@@ -151,13 +171,6 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
 
   open fun <L: D1> d(vVar: VVar<X, L>): VFun<X, L> = Gradient(this, vVar)
   open fun <R: D1, C: D1> d(mVar: MVar<X, R, C>): MFun<X, R, C> = MGradient(this, mVar)
-
-  open fun <R: D1, C: D1> d(mv: Mat<X, R, C>) =
-    d(*mv.bindings.sVars.toTypedArray()).values
-      .foldIndexed(mutableListOf()) { index, acc: MutableList<MutableList<SFun<X>>>, p ->
-        if (index % mv.numCols == 0) acc.add(mutableListOf(p)) else acc.last().add(p)
-        acc
-      }.map { Vec<X, C>(it) }.let { Mat<X, R, C>(it) }
 
   open fun grad(): Map<SVar<X>, SFun<X>> = bindings.sVars.map { it to Derivative(this, it) }.toMap()
 
@@ -252,13 +265,13 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb
 }
 
 // TODO: Unit test this data structure
-class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<X>(fn.bindings + inputs) {
+class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<X>(fn.bindings join inputs) {
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
-      is SVar -> this@bind
+      is SVar -> this@bind.value ?: this@bind
       is SConst -> this@bind
       is Prod -> left.bind(bnds) * right.bind(bnds)
       is Sum -> left.bind(bnds) + right.bind(bnds)
@@ -279,7 +292,11 @@ class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<
 class VSumAll<X: SFun<X>, E: D1>(override val input: VFun<X, E>): SFun<X>(input), UnFun<X>
 
 class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  var value: SFun<X>? = null
+  operator fun remAssign(const: SFun<X>) {
+    value = const
+  }
+  override val bindings: Bindings<X> = Bindings()//mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
 }
 
@@ -490,8 +507,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
     Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
 
-  inline fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> =
-    Vec(List(e.i) { wrap(gen(it)) })
+  inline fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen(it)) })
 
   fun Var(name: String) = SVar<X>(name)
   fun Var2(name: String) = VVar<X, D2>(name, D2)

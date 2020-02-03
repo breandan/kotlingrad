@@ -65,7 +65,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     is BiFun<*> -> "$left ${opCode()} $right"
     is UnFun<*> -> "${opCode()} $input"
     is MConst -> "${javaClass.name}()"
-    is Mat -> "Mat${numRows}x$numCols(${rows.joinToString(", ")})"
+    is Mat -> "Mat(${rows.joinToString(", ")})"
     is MDerivative -> "d($mFun) / d($sVar)"
     is MVar -> "MVar($name)"
     is MComposition -> "MComp($mFun)$bindings"
@@ -73,7 +73,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   }
 }
 
-class MMap<X: SFun<X>, R: D1, C: D1>(val value: MFun<X, R, C>, val ef: (SFun<X>) -> SFun<X>): MFun<X, R, C>(value)
+class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ef: (SFun<X>) -> SFun<X>): MFun<X, R, C>(input), UnFun<X>
 class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
 class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
 class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
@@ -82,12 +82,13 @@ class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override
 class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
-class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X>): MFun<X, R, C>(mFun.bindings + inputs) {
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X>): MFun<X, R, C>(mFun.bindings join inputs) {
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun MFun<X, R, C>.bind(bnds: Bindings<X>): MFun<X, R, C> =
     bnds[this@bind] ?: when (this@bind) {
+      is MVar<X, R, C> -> this@bind.value ?: this@bind
       is MConst -> this@bind
       is Mat -> map { it(bnds) }
       is MNegative -> -input.bind(bnds)
@@ -100,10 +101,10 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
       is MDerivative -> df().bind(bnds)
       is MGradient -> df().bind(bnds)
       is MComposition -> mFun.bind(bnds)
-      is MMap<X, R, C> -> value.bind(bnds).map { ef(it)(bnds) }
+      is MMap<X, R, C> -> input.bind(bnds).map { ef(it(bnds)) }
       is Jacobian -> df().bind(bnds)
-      is VVMap -> input(bnds).vMap { svMap(it)(bnds) }
-      else -> TODO(this@bind.javaClass.name)
+      is VVMap -> input(bnds).vMap { svMap(it(bnds)) }
+      else -> TODO(this@bind.toString() + "/" + bnds)
     }
 }
 
@@ -124,7 +125,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: S
     is MSProd -> left.df() * right + left * right.d(sVar)
     is SMProd -> left.d(sVar) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
-    is MMap -> value.df().map { it * ef(it).d(sVar) } // Chain rule
+    is MMap -> input.df().map { it * ef(it.d(sVar)) } // Chain rule
     is MDerivative -> mFun.df()
     is MComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
@@ -168,7 +169,11 @@ class MVar<X: SFun<X>, R: D1, C: D1>(
 //  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
 //  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
 ): Variable<X>, MFun<X, R, C>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  var value: MFun<X, R, C>? = null
+  operator fun remAssign(const: MFun<X, R, C>) {
+    value = const
+  }
+  override val bindings: Bindings<X> = Bindings()//mapOf(this to this))
   fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
 }
 
@@ -185,10 +190,10 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
   }
 
   val flattened: List<SFun<X>> by lazy { materialize().flatMap { it.contents } }
-  val numRows: Int by lazy { materialize().size }
-  val numCols: Int by lazy { materialize().first().contents.size }
-  val indices: List<Int> by lazy { materialize().indices.take(numRows) }
-  val cols: List<VFun<X, R>> by lazy { indices.map { i -> Vec<X, R>(materialize().map { it[i] }) } }
+  val numRows: Int = rows.size
+  val numCols: Int by lazy { rows.first().invoke().size }
+  val indices: List<Int> = rows.indices.drop(1)
+  val cols: List<VFun<X, R>> by lazy { indices.map { i -> Vec(materialize().map { it[i] }) } }
 
   override fun sum() = reduce { acc, it -> acc + it }
 

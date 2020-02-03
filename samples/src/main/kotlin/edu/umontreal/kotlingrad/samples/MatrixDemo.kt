@@ -26,21 +26,18 @@ fun main() = with(DoublePrecision) {
   val r = q(x to 1.0, y to 2.0)
   println("r: $r")
 
-  val mf1 = Mat2x1(
-    y * y,
-    x * y)
+  val mf1 = Mat2x1(y * y, x * y)
 
   val mf2 = Mat1x2(vf2)
 
   val qr = mf2 * Vec(x, y)
 
-  val mf3 = Mat3x2(x, x,
-    y, x,
-    x, x)
+  val mf3 = Mat3x2(x, x, y, x, x, x)
   val mf4 = Mat2x2(vf2, vf2)
   val mf5 = Mat2x2(
     y * y, x * x,
-    x * y, y * y)
+    x * y, y * y
+  )
   val mf6 = mf4 * mf5 * mf1
 
   println(mf1 * mf2) // 2*1 x 1*2
