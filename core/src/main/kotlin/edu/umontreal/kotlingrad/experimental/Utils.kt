@@ -32,3 +32,5 @@ fun Renderer.saveToFile(filename: String) = toFile(File(filename))
 fun Fun<*>.show(name: String = "temp") = renderAsSVG { toGraph() }.show(name)
 fun Renderer.show(name: String) = toFile(File.createTempFile(name, ".svg")).show()
 fun File.show() = ProcessBuilder("x-www-browser", path).start()
+
+var EAGER = false
