@@ -7,6 +7,7 @@ import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory
 import guru.nidi.graphviz.model.MutableNode
 import java.lang.ClassCastException
+import kotlin.math.min
 
 /**
  * Vector function.
@@ -117,7 +118,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
       (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
       (left as VFun<X, E> * right.d(sVar))
     is Gradient -> map { it.d(sVar) }
-    is VMap -> input.df().map { it * ssMap(it).d(sVar) } // Chain rule
+    is VMap -> input.df().map { it * ssMap(it.d(sVar)) } // Chain rule
     is VComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -150,15 +151,20 @@ class VVar<X: SFun<X>, E: D1>(
 //  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
   val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name[$it]") })
 ): Variable<X>, VFun<X, E>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  var value: VFun<X, E>? = null
+  operator fun remAssign(const: VFun<X, E>) {
+    value = const
+  }
+  override val bindings: Bindings<X> = Bindings()//mapOf(this to this))
 }
 
-class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
+class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings join inputs) {
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun VFun<X, E>.bind(bnds: Bindings<X>): VFun<X, E> =
     bnds[this@bind] ?: when (this@bind) {
+      is VVar<X, E> -> this@bind.value ?: this@bind
       is VConst<X, E> -> this@bind
       is Vec<X, E> -> map { it(bnds) }
       is VNegative<X, E> -> -input.bind(bnds)
@@ -170,10 +176,10 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is Gradient -> df().bind(bnds)
       is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>).bind(bnds)
       is VMProd<X, *, *> -> (left as VFun<X, E>).bind(bnds) * (right as MFun<X, E, E>)(bnds)
-      is VMap<X, E> -> input.bind(bnds).map { ssMap(it)(bnds) }
+      is VMap<X, E> -> input.bind(bnds).map { ssMap(it(bnds)) }
       is VComposition -> vFun.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
-      else -> TODO(this@bind.javaClass.name)
+      else -> TODO(this@bind.toString() + "/" + bnds)
     }
 }
 
@@ -216,7 +222,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
 
   override fun map(ef: (SFun<X>) -> SFun<X>): Vec<X, E> = Vec(contents.map { ef(it) })
 
-  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): Mat<X, E, C> = Mat(contents.map { ef(it) as Vec<X, C> })
+  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): Mat<X, E, C> = Mat(contents.map { ef(it) })
 
   override fun unaryMinus(): Vec<X, E> = map { -it }
 

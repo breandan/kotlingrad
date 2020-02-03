@@ -590,7 +590,6 @@ The operator `+` can now be used like so. Incompatible operands will cause a typ
 ```kotlin
 val one = Vec(1, 2, 3) + Vec(1, 2, 3)          // Always runs safely
 val add = Vec(1, 2, 3) + Vec(D3, listOf(...))  // May fail at runtime
-val vec = Vec(1, 2, 3)                         // Does not compile
 val sum = Vec(1, 2) + add                      // Does not compile
 ```
 
