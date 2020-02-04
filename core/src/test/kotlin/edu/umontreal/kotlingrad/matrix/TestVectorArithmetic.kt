@@ -9,7 +9,7 @@ import kotlin.math.pow
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestVectorArithmetic: StringSpec({
-  val gen = DoubleGenerator(positive = false, expRange = -3..3)
+  val gen = DoubleGenerator
   with(DoublePrecision) {
     "a ʘ b" {
       gen.assertAll { v1: Double, v2: Double, v3: Double, v4: Double ->
@@ -28,7 +28,7 @@ class TestVectorArithmetic: StringSpec({
         val b = Var2("t")
         val d = Vec(v3, v4)
         val c = a + b
-        val s = c(b to d)
+        val s = c(b to d)()
         s shouldBeAbout Vec(v1 + v3, v2 + v4)
       }
     }
@@ -38,7 +38,7 @@ class TestVectorArithmetic: StringSpec({
         val a = Vec(v1, v2, v3, v4)
         val b = Var4("t")
         val c = b.sum()
-        val s = c(b to a)
+        val s = c(b to a)()
         s shouldBeAbout v1 + v2 + v3 + v4
       }
     }

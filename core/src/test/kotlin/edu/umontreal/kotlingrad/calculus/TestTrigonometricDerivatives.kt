@@ -31,7 +31,7 @@ class TestTrigonometricDerivatives: StringSpec({
     val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)
     val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
 
-    "z should be y * (sin(x * y) - x)" {
+    "z should be y * (sin(x * y) - x)".config(enabled = false) {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val numericalAnswer = ẏ * (kotlin.math.sin(ẋ * ẏ) - ẋ) + 0.0
         z(ẋ, ẏ) shouldBeAbout numericalAnswer
