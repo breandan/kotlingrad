@@ -80,7 +80,6 @@ fun main() = with(DoublePrecision) {
       batchLoss = batchLoss.sqrt()
       val dw1 = batchLoss.d(p1v)
       val dw2 = batchLoss.d(p2v)
-      println("DW2: " + dw2(*weights).bindings.allFreeVariables().keys)
       val dw3 = batchLoss.d(p3v)
       val dw4 = batchLoss.d(p4v)
       val db1 = batchLoss.d(b1)
@@ -88,27 +87,18 @@ fun main() = with(DoublePrecision) {
       val db3 = batchLoss.d(b3)
       val db4 = batchLoss.d(b4)
 
-      p1v %= w1
-      p2v %= w2
-      p3v %= w3
-      p4v %= w4
-      b1 %= v1
-      b2 %= v2
-      b3 %= v3
-      b4 %= v4
-
-      w1 = (w1 - α * dw1)(*weights)(constants)
-      val mv= (-dw2 * α + w2)
-      w2 = mv(*weights)(constants)
-      w3 = (-dw3 * α + w3)(*weights)(constants)
-      w4 = (-dw4 * α + w4)(*weights)(constants)
-      v1 = (-db1 * α + v1)(*weights)(constants)
-      v2 = (-db2 * α + v2)(*weights)(constants)
-      v3 = (-db3 * α + v3)(*weights)(constants)
-      v4 = (-db4 * α + v4)(*weights)(constants)
+      w1 = (w1 - α * dw1)(*weights)
+      w2 = (-dw2 * α + w2)(*weights)
+      w3 = (-dw3 * α + w3)(*weights)
+      w4 = (-dw4 * α + w4)(*weights)
+      v1 = (-db1 * α + v1)(*weights)
+      v2 = (-db2 * α + v2)(*weights)
+      v3 = (-db3 * α + v3)(*weights)
+      v4 = (-db4 * α + v4)(*weights)
 
       batchLoss = batchLoss(*weights)(constants)
 
+      println("Batch weights: w1:$w1\nw2:$w2\nw3:$w3")
       println("Batch free variables:" + batchLoss.bindings.allFreeVariables().keys)
       println("Average loss at $epochs epochs: $batchLoss".take(100))
       lossHistory += epochs to batchLoss.toDouble()

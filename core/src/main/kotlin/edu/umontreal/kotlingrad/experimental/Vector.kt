@@ -152,20 +152,16 @@ class VVar<X: SFun<X>, E: D1>(
 //  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
   val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name[$it]") })
 ): Variable<X>, VFun<X, E>() {
-  var value: VFun<X, E>? = null
-  operator fun remAssign(const: VFun<X, E>) {
-    value = const
-  }
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
 }
 
-class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings join inputs) {
+class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun VFun<X, E>.bind(bnds: Bindings<X>): VFun<X, E> =
     bnds[this@bind] ?: when (this@bind) {
-      is VVar<X, E> -> this@bind.value ?: this@bind
+      is VVar<X, E> -> TODO()
       is Vec<X, E> -> map { it(bnds) }
       is VNegative<X, E> -> -input.bind(bnds)
       is VSum<X, E> -> left.bind(bnds) + right.bind(bnds)

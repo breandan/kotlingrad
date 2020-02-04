@@ -92,9 +92,6 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   val sVarMap = (vVarMap.filterValues { it is Vec<X, *> }
     .flatMap { it.key.sVars.zip((it.value as Vec<X, *>).contents) } .toMap() +
     sFunMap.filterKeys { it is SVar<X> }) as Map<SVar<X>, SFun<X>>
-  // Scalar variables plus any scalar variables contained in vector and matrix functions
-//    vVarMap.flatMap { it.key.sVars.zip(it.value().contents) }.filter { it.second is SConst<X> } +
-//    mVarMap.flatMap { it.key.sVars.zip(it.value().flattened) }.filter { it.second is SConst<X> }
 
   val allVarMap = mVarMap + vVarMap + sVarMap
 
@@ -113,8 +110,6 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
       fMap.filterValues { !containsFreeVariable(it) } +
       other.fMap.filterValues { !containsFreeVariable(it) }
     )
-
-  infix fun join(other: Bindings<X>) = this + other
 
   // Scalar, vector, and matrix variables
   val sVars: Set<SVar<X>> = sVarMap.keys
@@ -275,13 +270,13 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb
 }
 
 // TODO: Unit test this data structure
-class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<X>(fn.bindings join inputs) {
+class Composition<X : SFun<X>>(val fn: SFun<X>, val inputs: Bindings<X>) : SFun<X>(fn.bindings + inputs) {
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
-      is SVar -> TODO()//this@bind.value ?: this@bind
+      is SVar -> TODO()
       is SConst -> this@bind
       is Prod -> left.bind(bnds) * right.bind(bnds)
       is Sum -> left.bind(bnds) + right.bind(bnds)
@@ -311,10 +306,6 @@ class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<
 class VSumAll<X: SFun<X>, E: D1>(override val input: VFun<X, E>): SFun<X>(input), UnFun<X>
 
 class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
-  var value: SFun<X>? = null
-  operator fun remAssign(const: SFun<X>) {
-    value = const
-  }
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
 }
