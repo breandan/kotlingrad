@@ -12,7 +12,7 @@ class TestTrigonometricDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ ->
         val f = sin(x)
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(x to ẋ) shouldBeAbout cos(x)(x to ẋ)
+        `df∕dx`(ẋ) shouldBeAbout cos(x)(ẋ)
       }
     }
 
@@ -20,7 +20,7 @@ class TestTrigonometricDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ ->
         val f = cos(x)
         val `df∕dx` = d(f) / d(x)
-        `df∕dx`(x to ẋ) shouldBeAbout -sin(x)(x to ẋ)
+        `df∕dx`(ẋ) shouldBeAbout -sin(x)(ẋ)
       }
     }
 
@@ -33,35 +33,35 @@ class TestTrigonometricDerivatives: StringSpec({
     "z should be y * (sin(x * y) - x)" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val numericalAnswer = ẏ * (kotlin.math.sin(ẋ * ẏ) - ẋ) + 0.0
-        z(x to ẋ, y to ẏ) shouldBeAbout numericalAnswer
+        z(ẋ, ẏ) shouldBeAbout numericalAnswer
       }
     }
 
     "∂z/∂x should be y * (cos(x * y) * y - 1)" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = y * (cos(x * y) * y - 1)
-        `∂z∕∂x`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
+        `∂z∕∂x`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
       }
     }
 
     "∂z/∂y should be sin(x * y) - x + y * cos(x * y) * x" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = sin(x * y) - x + y * cos(x * y) * x
-        `∂z∕∂y`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
+        `∂z∕∂y`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
       }
     }
 
     "∂²z/∂x² should be -y * y * y * sin(x * y)" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = -y.pow(3) * sin(x * y)
-        `∂²z∕∂x²`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
+        `∂²z∕∂x²`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
       }
     }
 
     "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val manualDerivative = cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))
-        `∂²z∕∂x∂y`(x to ẋ, y to ẏ) shouldBeAbout manualDerivative(x to ẋ, y to ẏ)
+        `∂²z∕∂x∂y`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
       }
     }
   }
