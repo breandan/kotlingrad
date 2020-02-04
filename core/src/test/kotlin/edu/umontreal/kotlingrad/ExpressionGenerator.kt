@@ -1,11 +1,9 @@
-package edu.umontreal.kotlingrad.calculus
+package edu.umontreal.kotlingrad
 
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.seededRandom
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow
-import kotlin.random.Random
 
 class ExpressionGenerator<X: SFun<X>>(proto: Protocol<X>): Gen<SFun<X>> {
   val sum = { x: SFun<X>, y: SFun<X> -> x + y }

@@ -68,6 +68,8 @@ fun main() = with(DoublePrecision) {
       p1v to w1, p2v to w2, p3v to w3, p4v to w4,
       b1 to v1, b2 to v2, b3 to v3, b4 to v4)
 
+    EAGER = true
+
     measureTimeMillis {
       var evalCount = 0
       var batchLoss: SFun<DReal> = wrap(0)
@@ -78,6 +80,7 @@ fun main() = with(DoublePrecision) {
       } while (evalCount++ < batchSize)
 
       batchLoss = batchLoss.sqrt()
+
       val dw1 = batchLoss.d(p1v)
       val dw2 = batchLoss.d(p2v)
       val dw3 = batchLoss.d(p3v)
@@ -88,15 +91,15 @@ fun main() = with(DoublePrecision) {
       val db4 = batchLoss.d(b4)
 
       w1 = (w1 - α * dw1)(*weights)
-      w2 = (-dw2 * α + w2)(*weights)
-      w3 = (-dw3 * α + w3)(*weights)
-      w4 = (-dw4 * α + w4)(*weights)
-      v1 = (-db1 * α + v1)(*weights)
-      v2 = (-db2 * α + v2)(*weights)
-      v3 = (-db3 * α + v3)(*weights)
-      v4 = (-db4 * α + v4)(*weights)
+      w2 = (w2 - α * dw2)(*weights)
+      w3 = (w3 - α * dw3)(*weights)
+      w4 = (w4 - α * dw4)(*weights)
+      v1 = (v1 - α * db1)(*weights)
+      v2 = (v2 - α * db2)(*weights)
+      v3 = (v3 - α * db3)(*weights)
+      v4 = (v4 - α * db4)(*weights)
 
-      batchLoss = batchLoss(*weights)(constants)
+      batchLoss = batchLoss(*weights)
 
       println("Batch weights: w1:$w1\nw2:$w2\nw3:$w3")
       println("Batch free variables:" + batchLoss.bindings.allFreeVariables().keys)
@@ -104,10 +107,9 @@ fun main() = with(DoublePrecision) {
       lossHistory += epochs to batchLoss.toDouble()
     }.let { println("Batch time: $it ms") }
 
-    trainedMLP = mlp(*weights)(constants)
+    trainedMLP = mlp(*weights)
 
     if (epochs % 1 == 0) {
-      println(p1v)
       plotVsOracle(oracle, trainedMLP, x)
       validate(drawSample, trainedMLP, x)
     }
@@ -127,7 +129,7 @@ private fun DoublePrecision.plotVsOracle(oracle: (Double) -> Double, mlp: SFun<D
   mapOf(
     "x" to t,
     "y" to t.map { oracle(it) },
-    "z" to t.map { value -> mlp(x to value)(constants).toDouble() }
+    "z" to t.map { value -> mlp(x to value).toDouble() }
   ).plot2D("Oracle vs. Model", "compare_outputs.svg")
 }
 
@@ -135,7 +137,7 @@ fun DoublePrecision.validate(drawSample: () -> Pair<Double, Double>, mlp: SFun<D
   val preds = mutableListOf<Double>()
   repeat(10) {
     val (X, Y) = drawSample()
-    preds += mlp(x to X)(constants).toDouble().also { println("X: $X\tY: $Y\tY_PRED: $it") }
+    preds += mlp(x to X).toDouble().also { println("X: $X\tY: $Y\tY_PRED: $it") }
   }
   val v = (preds.fold(0.0) { i, j -> i + j * j } - preds.sum().pow(2.0) / preds.size) / preds.size
   println("Variance: $v")

@@ -119,7 +119,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
       (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
       (left as VFun<X, E> * right.d(sVar))
     is Gradient -> map { it.d(sVar) }
-    is VMap -> input.df().map { it * ssMap(it.d(sVar)) as SFun<X> } // Chain rule
+    is VMap -> input.df().map { it * ssMap(it).d(sVar) } // Chain rule
     is VComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
