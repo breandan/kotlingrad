@@ -320,7 +320,7 @@ Red and blue edges indicate the right and left inputs to a binary operator, resp
 
 ![](samples/src/main/resources/lr_batch_loss_graph.svg)
 
-Thetas represent the hidden parameters under differentiation and the constants are the batch inputs (**X**) and targets (**Y**).
+Thetas represent the hidden parameters under differentiation and the constants are the batch inputs (**X**) and targets (**Y**). When all the free variables are bound to numerical values, the graph collapses into a single node, which can be unwrapped into a Kotlin `Number`.
 
 ### Plotting
 

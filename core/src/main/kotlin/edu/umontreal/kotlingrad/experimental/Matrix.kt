@@ -26,8 +26,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
       try {
         it as Mat<X, R, C>
       } catch (e: ClassCastException) {
-        show("before")
-        it.show("after")
+        show("before"); it.show("after")
         throw NumberFormatException("Matrix function has unbound free variables: ${bindings.allFreeVariables().keys}")
       }
     }
@@ -84,13 +83,12 @@ class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override
 class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
-class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X>): MFun<X, R, C>(mFun.bindings join inputs) {
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X>): MFun<X, R, C>(mFun.bindings + inputs) {
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
   fun MFun<X, R, C>.bind(bnds: Bindings<X>): MFun<X, R, C> =
     bnds[this@bind] ?: when (this@bind) {
-//      is MVar<X, R, C> -> this@bind.value ?: this@bind
       is MConst -> this@bind
       is Mat -> Mat(rows.map { it(bnds) })
       is MNegative -> -input.bind(bnds)
@@ -183,10 +181,6 @@ class MVar<X: SFun<X>, R: D1, C: D1>(
 //  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
 //  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
 ): Variable<X>, MFun<X, R, C>() {
-  var value: MFun<X, R, C>? = null
-  operator fun remAssign(const: MFun<X, R, C>) {
-    value = const
-  }
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
 }
