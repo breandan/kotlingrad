@@ -17,7 +17,7 @@ class TestVectorArithmetic: StringSpec({
         val b = Var2("t")
         val d = Vec(v3, v4)
         val c = a ʘ b
-        val s = c(b to d)
+        val s = c(b to d)()
         s shouldBeAbout Vec(v1 * v3, v2 * v4)
       }
     }
