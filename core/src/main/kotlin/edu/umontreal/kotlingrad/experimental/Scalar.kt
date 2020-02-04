@@ -468,7 +468,8 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   }
 
   operator fun Number.invoke(n: Number) = this
-  inline operator fun <reified T: SFun<X>> T.invoke(number: Number): T = invoke(wrap(number))
+  inline operator fun <reified T: SFun<X>> T.invoke(vararg numbers: Number): T =
+    invoke(*numbers.map { wrap(it) }.toTypedArray())
 
   inline operator fun <reified A: Fun<X>> A.invoke(vararg ps: Pair<Fun<X>, Any>): A =
     invoke(ps.toList().bind() + constants) as A

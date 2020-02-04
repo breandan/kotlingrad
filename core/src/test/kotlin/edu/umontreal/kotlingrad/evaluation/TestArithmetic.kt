@@ -11,13 +11,13 @@ class TestArithmetic: StringSpec({
   with(DoublePrecision) {
     "test addition" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x + y).invoke(x to ẋ, y to ẏ) shouldBeAbout ẏ + ẋ
+        (x + y).invoke(ẋ, ẏ) shouldBeAbout ẏ + ẋ
       }
     }
 
     "test subtraction" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x - y).invoke(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
+        (x - y).invoke(ẋ, ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
@@ -29,13 +29,13 @@ class TestArithmetic: StringSpec({
 
     "test unary minus" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (-y + x)(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
+        (-y + x)(ẋ, ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
     "test multiplication" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x * y)(x to ẋ, y to ẏ) shouldBeAbout ẋ * ẏ
+        (x * y)(ẋ, ẏ) shouldBeAbout ẋ * ẏ
       }
     }
 
@@ -47,7 +47,7 @@ class TestArithmetic: StringSpec({
 
     "test division" {
       DoubleGenerator(0).assertAll { ẋ, ẏ ->
-        (x / y)(x to ẋ, y to ẏ) shouldBeAbout ẋ / ẏ
+        (x / y)(ẋ, ẏ) shouldBeAbout ẋ / ẏ
       }
     }
 
@@ -55,7 +55,7 @@ class TestArithmetic: StringSpec({
       DoubleGenerator(0).assertAll { ẋ, ẏ ->
         val f = x * 1 / y
         val g = x / y
-        f(x to ẋ, y to ẏ) shouldBeAbout g(x to ẋ, y to ẏ)
+        f(ẋ, ẏ) shouldBeAbout g(ẋ, ẏ)
       }
     }
 
@@ -63,7 +63,7 @@ class TestArithmetic: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
         val f = x * (y * z)
         val g = (x * y) * z
-        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
+        f(ẋ, ẏ, z to ż) shouldBeAbout g(ẋ, ẏ, z to ż)
       }
     }
 
@@ -71,7 +71,7 @@ class TestArithmetic: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
         val f = x * y * z
         val g = z * y * x
-        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
+        f(ẋ, ẏ, z to ż) shouldBeAbout g(ẋ, ẏ, z to ż)
       }
     }
 
@@ -79,7 +79,7 @@ class TestArithmetic: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ, ż ->
         val f = x * (y + z)
         val g = x * y + x * z
-        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout g(x to ẋ, y to ẏ, z to ż)
+        f(ẋ, ẏ, z to ż) shouldBeAbout g(ẋ, ẏ, z to ż)
       }
     }
 
@@ -88,13 +88,13 @@ class TestArithmetic: StringSpec({
         val f = 4 * z + x
         val g = 3 * y + z
         val h = 2 * x + y
-        val fogoho = f(x to g, y to h)
-        val fo_goh = f(x to g(y to h))
-        val fog_oh = f(x to g)(y to h)
+        val fogoho = f(g, h)
+        val fo_goh = f(g(h))
+        val fog_oh = f(g)(h)
 
-        fogoho(x to ẋ, y to ẏ, z to ż) shouldBeAbout fo_goh(x to ẋ, y to ẏ, z to ż)
-        fo_goh(x to ẋ, y to ẏ, z to ż) shouldBeAbout fog_oh(x to ẋ, y to ẏ, z to ż)
-        fog_oh(x to ẋ, y to ẏ, z to ż) shouldBeAbout fogoho(x to ẋ, y to ẏ, z to ż)
+        fogoho(ẋ, ẏ, z to ż) shouldBeAbout fo_goh(ẋ, ẏ, z to ż)
+        fo_goh(ẋ, ẏ, z to ż) shouldBeAbout fog_oh(ẋ, ẏ, z to ż)
+        fog_oh(ẋ, ẏ, z to ż) shouldBeAbout fogoho(ẋ, ẏ, z to ż)
       }
     }
   }

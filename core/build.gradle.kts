@@ -46,7 +46,7 @@ tasks {
 
     useJUnitPlatform()
     testLogging {
-      events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT, STANDARD_ERROR)
+      events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT)
       exceptionFormat = FULL
       showExceptions = true
       showCauses = true

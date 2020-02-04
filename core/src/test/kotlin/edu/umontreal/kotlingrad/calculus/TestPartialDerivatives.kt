@@ -12,7 +12,7 @@ class TestPartialDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val f = cos(x)
         val `∂f∕∂y` = d(f) / d(y)
-        `∂f∕∂y`(x to ẋ, y to ẏ) shouldBeAbout 0
+        `∂f∕∂y`(ẋ, ẏ) shouldBeAbout 0
       }
     }
 
@@ -20,7 +20,7 @@ class TestPartialDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val f = x + y
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout 1
+        `∂f∕∂x`(ẋ, ẏ) shouldBeAbout 1
       }
     }
 
@@ -28,7 +28,7 @@ class TestPartialDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val f = x + y + x
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout 2
+        `∂f∕∂x`(ẋ, ẏ) shouldBeAbout 2
       }
     }
 
@@ -36,7 +36,7 @@ class TestPartialDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val f = y * x
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout ẏ
+        `∂f∕∂x`(ẋ, ẏ) shouldBeAbout ẏ
       }
     }
 
@@ -44,7 +44,7 @@ class TestPartialDerivatives: StringSpec({
       DoubleGenerator.assertAll { ẋ, ẏ ->
         val f = y * x + x * x + y * y
         val `∂f∕∂x` = d(f) / d(x)
-        `∂f∕∂x`(x to ẋ, y to ẏ) shouldBeAbout (y + x * 2)(x to ẋ, y to ẏ)
+        `∂f∕∂x`(ẋ, ẏ) shouldBeAbout (y + x * 2)(ẋ, ẏ)
       }
     }
   }
