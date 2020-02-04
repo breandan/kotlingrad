@@ -40,7 +40,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
 
 //  operator fun invoke(sFun: SFun<X>): Fun<X> = invoke(bindings.zip(fns).bind() + constants) as bindings.z
-  operator fun <A: Fun<X>> A.invoke(vararg fns: Fun<X>): A = invoke(Bindings(*bindings.zip(fns).toTypedArray())) as A
+  operator fun <A: Fun<X>> A.invoke(vararg fns: Fun<X>): A = invoke(bindings.zip(fns.toList())) as A
 
   fun toGraph(): MutableNode = mutNode(toString()).apply {
     when (this@Fun) {
@@ -72,13 +72,12 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
     var throws = false
   }
 
-  fun zip(fns: Array<out Fun<X>>): List<Pair<Fun<X>, Fun<X>>> =
+  fun zip(fns: List<Fun<X>>): Bindings<X> =
     sVars.filter { it.name == "mapInput" }.zip(fns.filterIsInstance<SFun<X>>()).let { mapped ->
-      mapped +
-      sVars.filter { it.name != "mapInput" }.zip(fns.toList() - mapped.map { it.second }) +
+      mapped + sVars.filter { it.name != "mapInput" }.zip(fns.toList() - mapped.map { it.second }) +
         vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
         mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())
-    }
+    }.let { Bindings(*it.toTypedArray()) }
 
   // Scalar, vector, and matrix "views" on untyped function map
   val sFunMap = filterInstancesOf<SFun<X>>()
@@ -458,11 +457,11 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   }
 
   operator fun Number.invoke(n: Number) = this
-  inline operator fun <reified T: SFun<X>> T.invoke(vararg numbers: Number): T =
-    invoke(*numbers.map { wrap(it) }.toTypedArray())
+  operator fun <T: Fun<X>> T.invoke(vararg numbers: Number): T =
+    invoke(bindings.zip(numbers.map { wrap(it) }) + constants) as T
 
-  inline operator fun <reified A: Fun<X>> A.invoke(vararg ps: Pair<Fun<X>, Any>): A =
-    invoke(ps.toList().bind())(constants) as A
+  operator fun <T: Fun<X>> T.invoke(vararg ps: Pair<Fun<X>, Any>): T =
+    invoke(ps.toList().bind() + constants) as T
 
   fun <T> T.test(): T = this
 
@@ -489,7 +488,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   @JvmName("prefixPowNum") fun pow(base: SFun<X>, exp: Number) = base pow wrap(exp)
   @JvmName("prefixPowFun") fun pow(base: Number, exp: SFun<X>) = wrap(base) pow exp
 
-  fun <E: D1> VFun<X, E>.magnitude() = (this ʘ this).sum().sqrt()
+  inline fun <reified E: D1> VFun<X, E>.magnitude() = (this ʘ this).sum().sqrt()
 
   fun <Y: Number> Vec(d0: Y) = VConst<X, D1>(wrap(d0))
   fun <Y: Number> Vec(d0: Y, d1: Y) = VConst<X, D2>(wrap(d0), wrap(d1))

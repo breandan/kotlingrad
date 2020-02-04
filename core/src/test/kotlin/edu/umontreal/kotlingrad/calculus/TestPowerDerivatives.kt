@@ -9,8 +9,8 @@ import io.kotlintest.specs.StringSpec
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPowerDerivatives: StringSpec({
   with(DoublePrecision) {
-    "d(1/x) / dx should be -1/x²".config(enabled = false) {
-      DoubleGenerator.assertAll { ẋ ->
+    "d(1/x) / dx should be -1/x²" {
+      DoubleGenerator(0).assertAll { ẋ ->
         val f1 = 1 / x
         val f2 = pow(x, -1)
         val manualDeriv = -1 / pow(x, 2)
@@ -49,7 +49,7 @@ class TestPowerDerivatives: StringSpec({
     }
 
     "d(x⁰) / dx should be 0".config(enabled = false){
-      DoubleGenerator.assertAll { ẋ ->
+      DoubleGenerator(0).assertAll { ẋ ->
         val f1 = x / x
         val f2 = pow(x, 0)
         val manualDeriv = 0
