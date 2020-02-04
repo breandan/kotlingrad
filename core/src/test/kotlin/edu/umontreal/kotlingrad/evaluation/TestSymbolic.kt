@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.evaluation
 
-import edu.umontreal.kotlingrad.calculus.DoubleGenerator
-import edu.umontreal.kotlingrad.calculus.ExpressionGenerator
+import edu.umontreal.kotlingrad.DoubleGenerator
+import edu.umontreal.kotlingrad.ExpressionGenerator
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll

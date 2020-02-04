@@ -1,11 +1,9 @@
-package edu.umontreal.kotlingrad.calculus
+package edu.umontreal.kotlingrad
 
-import edu.umontreal.kotlingrad.seededRandom
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.DoubleShrinker
 import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow
-import kotlin.random.Random
 
 open class DoubleGenerator(
   vararg exclude: Number,

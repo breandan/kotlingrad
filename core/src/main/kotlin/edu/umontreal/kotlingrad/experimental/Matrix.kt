@@ -158,7 +158,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
     is Log -> (left pow -One<X>()) * left.df()
     is DProd -> mVar.vMap { vVar -> 
       (left.d(vVar) as MFun<X, C, C> * (right as VFun<X, C>) +
-        left as VFun<X, C> * (right.d(vVar) as MFun<X, C, C>))
+        left as VFun<X, C> * right.d(vVar))
     }
     is Composition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)

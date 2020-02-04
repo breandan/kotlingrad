@@ -262,8 +262,7 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb
     is Cosine -> -input.sin() * input.df()
     is Tangent -> (input.cos() pow -TWO) * input.df()
     is Derivative -> fn.df()
-    is DProd -> (left.d(vrb) as VFun<X, D1> dot right as VFun<X, D1>) +
-      (left as VFun<X, D1> dot right.d(vrb))
+    is DProd -> (left.d(vrb) as VFun<X, D1> dot right as VFun<X, D1>) + (left as VFun<X, D1> dot right.d(vrb))
     is Composition -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()
   }
@@ -463,10 +462,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
     invoke(*numbers.map { wrap(it) }.toTypedArray())
 
   inline operator fun <reified A: Fun<X>> A.invoke(vararg ps: Pair<Fun<X>, Any>): A =
-    invoke(ps.toList().bind() + constants) as A
-
-  inline operator fun <reified A: Fun<X>> A.invoke(vararg fns: Fun<X>): A =
-    invoke(bindings.zip(fns).bind() + constants) as A
+    invoke(ps.toList().bind())(constants) as A
 
   fun <T> T.test(): T = this
 

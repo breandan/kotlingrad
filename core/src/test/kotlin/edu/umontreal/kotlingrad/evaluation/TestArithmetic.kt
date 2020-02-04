@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.evaluation
 
-import edu.umontreal.kotlingrad.calculus.DoubleGenerator
+import edu.umontreal.kotlingrad.DoubleGenerator
 import edu.umontreal.kotlingrad.experimental.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
@@ -11,13 +11,13 @@ class TestArithmetic: StringSpec({
   with(DoublePrecision) {
     "test addition" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x + y).invoke(ẋ, ẏ) shouldBeAbout ẏ + ẋ
+        (x + y).invoke(x to ẋ, y to ẏ) shouldBeAbout ẏ + ẋ
       }
     }
 
     "test subtraction" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x - y).invoke(ẋ, ẏ) shouldBeAbout ẋ - ẏ
+        (x - y).invoke(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
@@ -29,13 +29,13 @@ class TestArithmetic: StringSpec({
 
     "test unary minus" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (-y + x)(ẋ, ẏ) shouldBeAbout ẋ - ẏ
+        (-y + x)(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
       }
     }
 
     "test multiplication" {
       DoubleGenerator.assertAll { ẋ, ẏ ->
-        (x * y)(ẋ, ẏ) shouldBeAbout ẋ * ẏ
+        (x * y)(x to ẋ, y to ẏ) shouldBeAbout ẋ * ẏ
       }
     }
 
@@ -47,7 +47,7 @@ class TestArithmetic: StringSpec({
 
     "test division" {
       DoubleGenerator(0).assertAll { ẋ, ẏ ->
-        (x / y)(ẋ, ẏ) shouldBeAbout ẋ / ẏ
+        (x / y)(x to ẋ, y to ẏ) shouldBeAbout ẋ / ẏ
       }
     }
 

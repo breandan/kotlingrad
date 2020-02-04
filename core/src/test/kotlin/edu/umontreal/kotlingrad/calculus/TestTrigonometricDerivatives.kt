@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.DoubleGenerator
 import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
