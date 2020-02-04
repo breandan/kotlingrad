@@ -103,10 +103,10 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 |                 Math                    |      Infix <sup>&dagger;</sup>  |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
 |:---------------------------------------:|:-------------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
-|      ![][compose]<br>![][circ-compose]  |       `a(b)`<br>`a of b`        |                                  |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)   |
-|              ![][plus-minus]            |       `a + b`<br>`a - b`        | `plus(a, b)`<br>`minus(a, b)`    |                                     |        (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)   |
-|              ![][mul]                   |     `a * b`<br>`a.times(b)`     |          `times(a, b)`           |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
-|          ![][div]<br>![][inv]           |      `a / b`<br>`a.div(b)`      |           `div(a, b)`            |                                     |       (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>) |
+|      ![][compose]<br>![][circ-compose]  |       `a(b)`<br>`a of b`        |                                  |                                     |       (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)    |
+|              ![][plus-minus]            |       `a + b`<br>`a - b`        | `plus(a, b)`<br>`minus(a, b)`    |                                     |       (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)    |
+|              ![][mul]                   |     `a * b`<br>`a.times(b)`     |          `times(a, b)`           |                                     |      (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>)  |
+|          ![][div]<br>![][inv]           |      `a / b`<br>`a.div(b)`      |           `div(a, b)`            |                                     |      (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>)  |
 |              ![][pos-neg]               |                                 |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                           (`a`: ℝ<sup>τ</sup>→ℝ<sup>π</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>π</sup>)                     |
 |  ![][sin]<br>![][cos]<br>![][tan]       |                                 | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                               (`a`: ℝ→ℝ) → (ℝ→ℝ)                                                 |
 |              ![][ln]                    |                                 |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)                   |
@@ -115,11 +115,10 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 |        ![][sqrt]<br>![][cbrt]           |  `a.pow(1.0/2)`<br>`a.root(3)`  |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
 |     ![][leibniz]<br>![][euler]          |  `a.d(b)`<br>`d(a) / d(b)`      |            `grad(a)[b]`          |                                     |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
 |              ![][gradient]              |                                 |            `grad(a)`             |             `a.grad()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
-|              ![][gradient_wrt]          |     `a.d(b)`<br>`a.grad(b)`     |            `grad(a, b)`          |                                     |       (`a`: C(ℝ<sup>τ</sup>→ℝ), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>n</sup>)             |
+|              ![][gradient_wrt]          |     `a.d(b)`<br>`a.grad(b)`     |   `grad(a, b)`<br>`grad(a)[b]    |                                     |   (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>π</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>ω</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>π×ω</sup>)   |
 |              ![][divg]                  |                                 |            `divg(a)`             |             `a.divg()`              |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
-|              ![][curl]                  |                                 |            `curl(a)`             |             `a.curl()`             |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
+|              ![][curl]                  |                                 |            `curl(a)`             |             `a.curl()`              |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
 |              ![][jacobian]              |                                 |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
-|              ![][jacobian_wrt]          |     `a.d(b)`<br>`a.grad(b)`     |            `grad(a, b)`          |                                     | (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>n</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>m×n</sup>)     |
 |              ![][hessian]               |                                 |            `hess(a)`             |             `a.hess()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ×τ</sup>)                            |
 |              ![][laplacian]             |                                 |            `lapl(a)`             |             `a.lapl()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
 
@@ -147,7 +146,6 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 [divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{\mathbf{A}}
 [curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{\mathbf{A}}
 [jacobian]:     https://render.githubusercontent.com/render/math?math=\mathcal{J}(\mathbf{A})
-[jacobian_wrt]: https://render.githubusercontent.com/render/math?math=\mathcal{J}_{\mathbf{B}}(\mathbf{A})
 [hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
 [laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
 
@@ -161,7 +159,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt). Otherwise, if the user desires compile-time shape-safety when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or wait for a runtime exception.
+<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or do so at runtime.
 
 <sup>τ, λ</sup> Arbitrarily shaped tensors.
 
