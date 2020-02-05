@@ -3,7 +3,7 @@ plugins {
   application
   kotlin("jvm")
   id("org.openjfx.javafxplugin") version "0.0.8"
-  id("com.palantir.graal") version "0.6.0-67-gaa8ea65"
+  id("com.palantir.graal") version "0.6.0-74-g5306dc5"
 }
 
 val entrypoint = "edu.umontreal.kotlingrad.samples.HelloKotlingradKt"
