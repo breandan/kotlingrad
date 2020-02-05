@@ -16,10 +16,11 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
   * [Installation](#installation)
   * [Notation](#notation)
   * [Shape Safety](#shape-safety)
-  * [Example](#shape-safety)
-* [Visualization](#visualization)
-  * [Dataflow graphs](#dataflow)
+  * [Example](#example)
+* [Visualization](#visualization-tools)
+  * [Dataflow graphs](#dataflow-graphs)
   * [Plotting functions](#plotting)
+  * [Loss curves](#loss-curves)
 * [Testing and gradient checking](#testing)
 * [How does it work?](#how)
   * [Operator overloading](#operator-overloading)
@@ -30,8 +31,10 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
 * [Formal Grammar](#grammar)
+* [UML Diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
 * [Citation](#citation)
+* [References](#references)
 * [Special thanks](#special-thanks)
 
 ## Introduction
@@ -308,7 +311,7 @@ z({x=0, y=1})        = 0.0
 
 Kotlin∇ provides various graphical tools that can be used for visual debugging.
 
-### Dataflow
+### Dataflow graphs
 
 Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph), called dataflow graphs (DFGs). For example, running the expression `((1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2).render()` will display the following DFG:
 
