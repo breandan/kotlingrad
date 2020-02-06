@@ -37,13 +37,13 @@ fun main() = with(DoublePrecision) {
 
     weightMap = arrayOf(theta to weightsNow, bias to biasNow)
 
-    val averageLoss = batchLoss(*weightMap)(constants).toDouble() / batch.rows.size
+    val averageLoss = batchLoss(*weightMap).toDouble() / batch.rows.size
     val weightGrads = batchLoss.d(theta)
     println("Weight grads: ${weightGrads(*weightMap)}")
     val biasGrads = batchLoss.d(bias)
 
     weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
-    biasNow = (biasNow - alpha * biasGrads)(*weightMap)(constants)().toDouble()
+    biasNow = (biasNow - alpha * biasGrads)(*weightMap).toDouble()
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
