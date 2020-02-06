@@ -97,10 +97,11 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   // TODO: Add support for change of variables, i.e. x = y, y = 2z, z = x + y...
   operator fun plus(other: Bindings<X>) =
     Bindings(
-      (fMap.filterValues { containsFreeVariable(it) } +
-      other.fMap.filterValues { containsFreeVariable(it) } +
-      fMap.filterValues { !containsFreeVariable(it) } +
-      other.fMap.filterValues { !containsFreeVariable(it) })
+      fMap + other.fMap +
+      allVarMap.filterValues { containsFreeVariable(it) } +
+      other.allVarMap.filterValues { containsFreeVariable(it) } +
+      allVarMap.filterValues { !containsFreeVariable(it) } +
+      other.allVarMap.filterValues { !containsFreeVariable(it) }
     )
 
   operator fun plus(pair: Pair<Fun<X>, Fun<X>>) = plus(Bindings(pair))
@@ -122,7 +123,8 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
     (it is VFun<X, *> && it !is Vec<X, *> && it !is VConst<X, *>) ||
     (it is SFun<X> && it !is Constant)
 
-  val areReassignmentFree = allFreeVariables.isEmpty()
+  val complete = allFreeVariables.isEmpty()
+  val readyToBind = allBoundVariables.isNotEmpty()
 
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.allVars.all { it in this }
   operator fun contains(v: Fun<X>) = v in allVars
@@ -152,7 +154,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   open operator fun <R: D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
   override fun invoke(newBindings: Bindings<X>): SFun<X> =
-    SComposition(this, newBindings).run { if (newBindings.areReassignmentFree || EAGER) evaluate else this }
+    SComposition(this, newBindings).run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   operator fun invoke() = invoke(Bindings())
 
@@ -420,7 +422,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
 
   private fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
-    is Number -> wrap(any)
+    is Number -> prototype.wrap(any)
     else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
   }
 

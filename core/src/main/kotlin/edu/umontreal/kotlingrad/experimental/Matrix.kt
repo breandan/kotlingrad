@@ -19,7 +19,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
-    MComposition(this, newBindings).run { if (newBindings.areReassignmentFree || EAGER) evaluate else this }
+    MComposition(this, newBindings).run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
   operator fun invoke(): Mat<X, R, C> =
@@ -94,6 +94,7 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
   fun MFun<X, R, C>.bind(bnds: Bindings<X>): MFun<X, R, C> =
     bnds[this@bind] ?: when (this@bind) {
       is MConst -> this@bind
+      is MVar -> vMat
       is Mat -> Mat(rows.map { it(bnds) })
       is MNegative -> -input.bind(bnds)
       is MTranspose -> input.ᵀ.bind(bnds)
@@ -156,14 +157,14 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
-      if (right.bindings.areReassignmentFree) right * left.pow(right - One()) * left.df()
+      if (right.bindings.complete) right * left.pow(right - One()) * left.df()
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
-    is DProd -> mVar.vMap { vVar -> 
-      (left.d(vVar) as MFun<X, C, C> * (right as VFun<X, C>) +
-        left as VFun<X, C> * right.d(vVar))
-    }
+    is DProd -> invoke().d(mVar)
+//      mVar.vMap { vVar ->
+//      (left.d(vVar) as MFun<X, C, C> * (right as VFun<X, C>) +
+//        left as VFun<X, C> * right.d(vVar)) }
     is SComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -175,7 +176,7 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X,
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
     is VSum -> left.df() + right.df()
     is VNegative -> -input.df()
-    else -> vMap { it.d(vVar) }
+    else -> vfn().vMap { it.d(vVar) }
   }
 }
 
@@ -186,8 +187,10 @@ class MVar<X: SFun<X>, R: D1, C: D1>(
 //  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
 //  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
 ): Variable<X>, MFun<X, R, C>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  override val bindings: Bindings<X> = Bindings(mapOf(this to vMat))
   fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
+  override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
+  override fun hashCode(): Int = name.hashCode()
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X>
