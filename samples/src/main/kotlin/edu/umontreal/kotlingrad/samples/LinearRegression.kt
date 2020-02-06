@@ -10,8 +10,7 @@ fun main() = with(DoublePrecision) {
   val bias = Var("bias")
   val label = Var3("y")
 
-  val error = ((input * theta).map { it + bias } - label)
-  val loss = (error ʘ error).sum().sqrt()
+  val loss = ((input * theta).map { it + bias } - label).magnitude()
 
   var weightsNow = Vec(D2) { rand.nextDouble() * 10 }
   var biasNow = rand.nextDouble() * 10
@@ -38,15 +37,13 @@ fun main() = with(DoublePrecision) {
 
     weightMap = arrayOf(theta to weightsNow, bias to biasNow)
 
-    val averageLoss = batchLoss(*weightMap).toDouble() / batch.rows.size
-    println("Avg loss: $averageLoss")
+    val averageLoss = batchLoss(*weightMap)(constants).toDouble() / batch.rows.size
     val weightGrads = batchLoss.d(theta)
+    println("Weight grads: ${weightGrads(*weightMap)}")
     val biasGrads = batchLoss.d(bias)
 
     weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
-    println("Weights now: $weightsNow")
-    biasNow = (biasNow - alpha * biasGrads)(*weightMap).toDouble()
-    println("Bias now: $biasNow")
+    biasNow = (biasNow - alpha * biasGrads)(*weightMap)(constants)().toDouble()
 
     if (epochs % 100 == 0) {
       println("Average loss at ${epochs / 100} epochs: ${totalLoss / 100}")
@@ -57,7 +54,7 @@ fun main() = with(DoublePrecision) {
     }
 
     totalLoss += averageLoss
-  } while (epochs++ < 20000)
+  } while (epochs++ < 2000)
 
   println("Final weights: $weightsNow, bias: $biasNow")
   println("Target coefficients: $hiddenWeights, $hiddenBias")

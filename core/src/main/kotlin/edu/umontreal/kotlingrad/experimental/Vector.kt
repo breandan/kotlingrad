@@ -4,10 +4,9 @@ package edu.umontreal.kotlingrad.experimental
 import guru.nidi.graphviz.attribute.Color.*
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
-import guru.nidi.graphviz.model.Factory
+import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
 import java.lang.ClassCastException
-import kotlin.math.min
 
 /**
  * Vector function.
@@ -29,15 +28,15 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
         show("before")
         it.show("after")
         e.printStackTrace()
-        throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables().keys}")
+        throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }
 
   val mapInput = SVar<X>("mapInput")
-  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput))
-  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput))
+  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput), mapInput)
+  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput), mapInput)
 
-  fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1).let { if(EAGER) it.df() else it }
+  fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1)//.let { if(EAGER) it.df() else it }
 
   fun d(v1: SVar<X>) = VDerivative(this, v1)//.let { if (EAGER) it.df() else it }
   fun d(v1: SVar<X>, v2: SVar<X>) = Jacobian(this, VVar("j2", D2, Vec(v1, v2)))
@@ -61,15 +60,16 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   open fun sum(): SFun<X> = VSumAll(this)
 
-  override fun toGraph(): MutableNode = Factory.mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
+  override fun toGraph(): MutableNode = mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
     when (this@VFun) {
       is VVar -> "$name-Vec$length"
-      is Gradient -> { fn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Gradient")) }
-      is VDerivative -> { vFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("VDerivative")) }
+      is Gradient -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Gradient")) }
+      is VDerivative -> { vFun.toGraph() - this; mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("VDerivative")) }
       is Vec -> { contents.map { it.toGraph() - this }; add(Label.of("Vec")) }
       is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      is VComposition -> { vFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("VComp")) }
+      is VMap<*, *> -> { (input.toGraph() - this).add(BLUE); (ssMap.toGraph() - this).add(RED); add(Label.of(opCode())) }
+      is VComposition -> { vFun.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("VComp")) }
       else -> TODO(this@VFun.javaClass.toString())
     }
   }
@@ -83,13 +83,15 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     is VMap -> "$input.map { $ssMap }"
     is VVar -> "VVar($name)"
     is VComposition -> "($vFun)$bindings"
-    else -> TODO(this.javaClass.name)
+    else -> javaClass.simpleName
   }
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
-class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: SFun<X>): VFun<X, E>(input), UnFun<X>
-class VVMap<X: SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, val svMap: VFun<X, C>): MFun<X, R, C>(input), UnFun<X>
+class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: SFun<X>, placeholder: SVar<X>):
+  VFun<X, E>(input.bindings + ssMap.bindings - placeholder), UnFun<X>
+class VVMap<X: SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, val svMap: VFun<X, C>, placeholder: SVar<X>):
+  MFun<X, R, C>(input.bindings + svMap.bindings - placeholder), UnFun<X>
 
 class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
 
@@ -119,7 +121,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
       (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
       (left as VFun<X, E> * right.d(sVar))
     is Gradient -> map { it.d(sVar) }
-    is VMap -> input.df().map { it * ssMap(it).d(sVar) } // Chain rule
+    is VMap -> input.df().map { it * ssMap(mapInput to it).d(sVar) } // Chain rule
     is VComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -133,14 +135,14 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
-      if (right.bindings.sVars.isEmpty()) right * left.pow(right - One()) * left.df()
+      if (right.isConstant()) right * left.pow(right - One()) * left.df()
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
     is DProd ->
       (left.d(vVar) as MFun<X, E, E> * right as VFun<X, E>) +
       (left as VFun<X, E> * right.d(vVar))
-    is Composition -> evaluate.df()
+    is SComposition -> evaluate.df()
     is VSumAll<*, *> -> (input as VFun<X, E>).d(vVar).sum()
     else -> TODO(this@df.javaClass.name)
   }
@@ -172,24 +174,19 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is Gradient -> df().bind(bnds)
       is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>).bind(bnds)
       is VMProd<X, *, *> -> (left as VFun<X, E>).bind(bnds) * (right as MFun<X, E, E>)(bnds)
-      is VMap<X, E> -> input.bind(bnds).map { ssMap(it(bnds)) }
+      is VMap<X, E> -> input.bind(bnds).map { ssMap(mapInput to it)(bnds) }
       is VComposition -> vFun.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
       else -> TODO(this@bind.toString() + "/" + bnds)
     }.let { result ->
-      val freeVars = result.bindings.allFreeVariables().keys
-      val boundVars = bnds.allBoundVariables()
-      val unpropogated = freeVars.filter { it in boundVars }
-      if (unpropogated.isNotEmpty()) {
-        val result2 = result(bnds)
-        val freeVars2 = result2.bindings.allFreeVariables().keys
-        val unpropogated2 = freeVars2.filter { it in boundVars }
-        if (unpropogated2.isNotEmpty()) {
-          show("input"); result(bnds).show("result")
+      val freeVars = result.bindings.allFreeVariables.keys
+      val boundVars = bnds.allBoundVariables
+      val unpropagated = freeVars.filter { it in boundVars }
+      if (unpropagated.isNotEmpty()) {
+          show("input"); result.show("result")
           println("Bindings were $bnds")
-          throw Exception("Bindings included unpropogated variables: $unpropogated")
-        }
-        result2
+        (result as Vec).contents.forEach { println(it) }
+          throw Exception("Bindings included unpropagated variables: $unpropagated")
       } else result
     }
 }
@@ -231,9 +228,9 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.times(multiplicand)
   }
 
-  override fun map(ef: (SFun<X>) -> SFun<X>) = Vec<X, E>(contents.map { ef(it).invoke(it) })
+  override fun map(ef: (SFun<X>) -> SFun<X>) = Vec<X, E>(contents.map { ef(it)(mapInput to it) })
 
-  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>) = Mat<X, E, C>(contents.map { ef(it).invoke(it) })
+  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>) = Mat<X, E, C>(contents.map { ef(it)(mapInput to it) })
 
   override fun unaryMinus() = map { -it }
 

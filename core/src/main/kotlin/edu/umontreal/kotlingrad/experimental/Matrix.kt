@@ -2,10 +2,11 @@
 
 package edu.umontreal.kotlingrad.experimental
 
-import guru.nidi.graphviz.attribute.Color
+import guru.nidi.graphviz.attribute.Color.BLUE
+import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
-import guru.nidi.graphviz.model.Factory
+import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
 
 /**
@@ -27,11 +28,12 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
         it as Mat<X, R, C>
       } catch (e: ClassCastException) {
         show("before"); it.show("after")
-        throw NumberFormatException("Matrix function has unbound free variables: ${bindings.allFreeVariables().keys}")
+        throw NumberFormatException("Matrix function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }
 
-  open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef)
+  val mapInput = SVar<X>("mapInput")
+  open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
 
   open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
 
@@ -45,16 +47,17 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   open fun sum(): VFun<X, C> = MSumRows(this)
 
-  override fun toGraph(): MutableNode = Factory.mutNode(if (this is MVar) "MVar($name)" else "${hashCode()}").apply {
+  override fun toGraph(): MutableNode = mutNode(if (this is MVar) "MVar($name)" else "${hashCode()}").apply {
     when (this@MFun) {
       is MVar -> "$name-MVar$r$c"
-      is MGradient -> { sFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
+      is MGradient -> { sFun.toGraph() - this; mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
       is Mat -> { rows.map { it.toGraph() - this }; add(Label.of("Mat")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(Color.BLUE); (right.toGraph() - this).add(Color.RED); add(Label.of(opCode())) }
+      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      is MComposition -> { mFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(bindings.allFreeVariables().keys.toString())) } - this; add(Label.of("MComp")) }
-      is Jacobian -> { vfn.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Jacobian")) }
-      is MDerivative -> { mFun.toGraph() - this; Factory.mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("MDerivative")) }
+      is MComposition -> { mFun.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("MComp")) }
+      is Jacobian -> { vfn.toGraph() - this; mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Jacobian")) }
+      is MDerivative -> { mFun.toGraph() - this; mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("MDerivative")) }
+      is VVMap<*, *, *> -> { (input.toGraph() - this).add(BLUE); (svMap.toGraph() - this).add(RED); add(Label.of(opCode())) }
       else -> TODO(this@MFun.javaClass.toString())
     }
   }
@@ -70,11 +73,12 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     is MVar -> "MVar($name)"
     is MComposition -> "MComp($mFun)$bindings"
     is Jacobian -> "Jacobian($vVar)$bindings"
-    else -> TODO(javaClass.name)
+    else -> javaClass.simpleName
   }
 }
 
-class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ssMap: (SFun<X>) -> SFun<X>): MFun<X, R, C>(input), UnFun<X>
+class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):
+  MFun<X, R, C>(input.bindings + ssMap.bindings - placeholder), UnFun<X>
 class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
 class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
 class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
@@ -101,19 +105,19 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
       is MDerivative -> df().bind(bnds)
       is MGradient -> df().bind(bnds)
       is MComposition -> mFun.bind(bnds)
-      is MMap<X, R, C> -> input.bind(bnds).map { ssMap(it(bnds)) }
+      is MMap<X, R, C> -> input.bind(bnds).map { ssMap(mapInput to it)(bnds) }
       is Jacobian -> df().bind(bnds)
-      is VVMap -> input(bnds).vMap { svMap(it(bnds)) }
+      is VVMap -> input(bnds).vMap { svMap(mapInput to it)(bnds) }
       else -> TODO(this@bind.toString() + "/" + bnds)
     }.also { result ->
-      val freeVars = result.bindings.allFreeVariables().keys
-      val boundVars = bnds.allBoundVariables()
-      val unpropogated = freeVars.filter { it in boundVars }.map { it to bnds.get(it) }
-      if (unpropogated.isNotEmpty()) {
+      val freeVars = result.bindings.allFreeVariables.keys
+      val boundVars = bnds.allBoundVariables
+      val unpropagated = freeVars.filter { it in boundVars }.map { it to bnds.get(it) }
+      if (unpropagated.isNotEmpty()) {
         show("input"); result.show("result")
         println("Free vars: $freeVars")
         println("Bindings were $bnds")
-        throw Exception("Result included unpropogated variables: $unpropogated")
+        throw Exception("Result included unpropagated variables: $unpropagated")
       }
     }
 }
@@ -136,8 +140,8 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: S
     is MSProd -> left.df() * right + left * right.d(sVar)
     is SMProd -> left.d(sVar) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
-    is MMap -> input.df().map { it * ssMap(it.d(sVar)) } // Chain rule
-    is VVMap -> input.d(sVar).vMap { it * svMap(it.d(sVar)) }
+    is MMap -> input.df().map { it * ssMap.d(sVar) } // Chain rule
+    is VVMap -> input.d(sVar).vMap { it * svMap(mapInput to it).d(sVar) }
     is MDerivative -> mFun.df()
     is MComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
@@ -160,13 +164,14 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
       (left.d(vVar) as MFun<X, C, C> * (right as VFun<X, C>) +
         left as VFun<X, C> * right.d(vVar))
     }
-    is Composition -> evaluate.df()
+    is SComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
 }
 
 class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X, C>): MFun<X, R, C>(vfn) {
   fun df() = vfn.df()
+
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
     is VSum -> left.df() + right.df()
     is VNegative -> -input.df()
@@ -207,7 +212,8 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
 
   override val ᵀ: Mat<X, C, R> by lazy { Mat(cols) }
 
-  override fun map(ef: (SFun<X>) -> SFun<X>): Mat<X, R, C> = Mat(rows.map { it.map(ef) })
+  override fun map(ef: (SFun<X>) -> SFun<X>): Mat<X, R, C> =
+    Mat(rows.map { row -> row.map { ef(it)(mapInput to it) } })
 
   override fun unaryMinus(): Mat<X, R, C> = map { -it }
 

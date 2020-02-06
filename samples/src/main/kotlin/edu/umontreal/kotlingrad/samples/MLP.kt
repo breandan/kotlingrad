@@ -102,7 +102,7 @@ fun main() = with(DoublePrecision) {
       batchLoss = batchLoss(*weights)
 
       println("Batch weights: w1:$w1\nw2:$w2\nw3:$w3")
-      println("Batch free variables:" + batchLoss.bindings.allFreeVariables().keys)
+      println("Batch free variables:" + batchLoss.bindings.allFreeVariables.keys)
       println("Average loss at $epochs epochs: $batchLoss".take(100))
       lossHistory += epochs to batchLoss.toDouble()
     }.let { println("Batch time: $it ms") }
