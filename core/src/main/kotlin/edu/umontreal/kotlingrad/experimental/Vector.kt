@@ -17,7 +17,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
-    VComposition(this, newBindings).run { if (newBindings.areReassignmentFree || EAGER) evaluate else this }
+    VComposition(this, newBindings).run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> =
@@ -120,7 +120,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
     is VMProd<X, *, *> ->
       (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
       (left as VFun<X, E> * right.d(sVar))
-    is Gradient -> map { it.d(sVar) }
+    is Gradient -> invoke().df() // map { it.d(sVar) }
     is VMap -> input.df().map { it * ssMap(mapInput to it).d(sVar) } // Chain rule
     is VComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
@@ -154,7 +154,9 @@ class VVar<X: SFun<X>, E: D1>(
 //  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
   val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name[$it]") })
 ): Variable<X>, VFun<X, E>() {
-  override val bindings: Bindings<X> = Bindings(mapOf(this to this))
+  override val bindings: Bindings<X> = Bindings(mapOf(this to sVars))
+  override fun equals(other: Any?) = other is VVar<*, *> && name == other.name
+  override fun hashCode(): Int = name.hashCode()
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
@@ -163,7 +165,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
   @Suppress("UNCHECKED_CAST")
   fun VFun<X, E>.bind(bnds: Bindings<X>): VFun<X, E> =
     bnds[this@bind] ?: when (this@bind) {
-      is VVar<X, E> -> TODO()
+      is VVar<X, E> -> sVars
       is Vec<X, E> -> map { it(bnds) }
       is VNegative<X, E> -> -input.bind(bnds)
       is VSum<X, E> -> left.bind(bnds) + right.bind(bnds)
