@@ -48,7 +48,7 @@ class TestVectorArithmetic: StringSpec({
         val a = Vec(v1, v2, v3, v4)
         val b = Var4("t")
         val c = b * 1
-        val s = b(b to a)()
+        val s = c(b to a)()
         s.magnitude() shouldBeAbout kotlin.math.sqrt(v1.pow(2) + v2.pow(2) + v3.pow(2) + v4.pow(2))
       }
     }
