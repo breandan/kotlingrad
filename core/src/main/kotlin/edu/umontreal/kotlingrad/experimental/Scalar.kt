@@ -554,6 +554,8 @@ abstract class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
 
   fun extToFormat(string: String): Format = when(string) {
     "dot" -> Format.DOT
+    "png" -> Format.PNG
+    "ps" -> Format.PS
     else -> Format.SVG
   }
   fun SFun<*>.saveToFile(filename: String) =

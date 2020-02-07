@@ -13,10 +13,10 @@ fun main() {
   val rand = Random(5)
   val eg = ExpressionGenerator(rand)
 
-  for(i in 0..9) {
+  for (i in 0..1) {
     val bt = eg.scaledRandomBiTree(4)
     bt.saveToFile("btree_rand$i.dot")
-    ((-1.0..1.0) step 0.01).map { "$it, ${bt(it)}" }.joinToString("\n").saveAs("btree_rand$i.csv")
+    ((-1.0..1.0) step 0.01).joinToString("\n") { "$it, ${bt(it)}" }.saveAs("btree_rand$i.csv")
   }
 }
 
