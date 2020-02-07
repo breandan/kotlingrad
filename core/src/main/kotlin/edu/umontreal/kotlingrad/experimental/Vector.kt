@@ -197,6 +197,7 @@ open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(co
 
 open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
   VFun<X, E>(*contents.toTypedArray()), Iterable<SFun<X>> by contents {
+  constructor(len: Int, gen: () -> SFun<X>): this(List(len) { gen() })
   val size = contents.size
 
   override fun toString() = contents.joinToString(", ", "[", "]")

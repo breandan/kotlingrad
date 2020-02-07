@@ -406,12 +406,12 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
+abstract class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   val x = SVar<X>("x")
   val y = SVar<X>("y")
   val z = SVar<X>("z")
 
-  val variables = listOf(x, y, z)
+  open val variables = listOf(x, y, z)
 
   val zero: Fun<X> = Zero()
   val one: Fun<X> = One()
@@ -420,7 +420,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
 
   val constants = listOf(zero to 0, one to 1, two to 2, e to E).bind()
 
-  private fun wrapOrError(any: Any): Fun<X> = when (any) {
+  fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
     is Number -> prototype.wrap(any)
     else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
@@ -456,6 +456,9 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   operator fun Number.invoke(n: Number) = this
   operator fun <T: Fun<X>> T.invoke(vararg numbers: Number): T =
     invoke(bindings.zip(numbers.map { wrap(it) }) + constants) as T
+
+  operator fun <T: Fun<X>> T.invoke(vararg funs: Fun<X>): T =
+    invoke(bindings.zip(funs.toList()) + constants) as T
 
   operator fun <T: Fun<X>> T.invoke(vararg ps: Pair<Fun<X>, Any>): T =
     invoke(ps.toList().bind() + constants) as T
@@ -510,7 +513,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
     Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
 
-  inline fun <E: D1, Y: Number> Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> = Vec(List(e.i) { wrap(gen(it)) })
+  inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> = Vec(List(e.i) { wrapOrError(gen(it)) as SFun<X> })
 
   fun Var(name: String) = SVar<X>(name)
   fun Var2(name: String) = VVar<X, D2>(name, D2)

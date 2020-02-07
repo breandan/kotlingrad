@@ -2117,6 +2117,13 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
 
 To evaluate our algorithm, we train a multilayer perceptron (MLP) on input-output pairs from a set of random algebraic expressions. We generate these expressions by uniformly sampling from the space of perfect binary trees of depth 5, whose leaf nodes contain either (1) a random alphabetical variable or (2) a random 64-bit IEEE 754 floating point number in the range $[0, 1]$. The internal nodes contain with equal probability a random operator in the set ${+, -, \times}$. Our training set consists of input-output pairs produced by binding the set of free variables belonging to the same datatype and numerical range as the constants, evaluating the expression and re-normalizing all output values in the range $[0, 1]$. For each expression in our dataset, we then train a single MLP to convergence. Then, for both adversarial testing and uniform random sampling strategies, compare the average number of violations detected per evaluation as a function of input dimension and error tolerance.
 
+\begin{figure}
+\centering
+\includegraphics[width=0.80\textwidth]{../figures/training_curve.png}
+\caption{Training curve of a single trajectory of gradient descent in the parameter space.}
+\label{fig:training_curve}
+\end{figure}
+
 \section{Conclusion}
 
 In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in adversarial learning and fuzz testing. We have proposed a framework for evaluating differentiable programs in a low-cost, data-driven manner and suggest some intriguing directions for future research.
