@@ -13,11 +13,22 @@ fun main() = with(DoublePrecision) {
   val batchSize = D9
   val label = Var9("y")
 
-  val eg = ExpressionGenerator(rand)
+  /* https://en.wikipedia.org/wiki/Polynomial_regression#Matrix_form_and_calculation_of_estimates
+   *  __  __    __                      __  __  __    __  __
+   * | y_1 |   | 1  x_1  x_1^2 ... x_1^m | | y_1 |   | y_1 |
+   * | y_2 |   | 1  x_2  x_2^2 ... x_2^m | | y_2 |   | y_2 |
+   * | y_3 | = | 1  x_3  x_3^2 ... x_3^m | | y_3 | + | y_3 |
+   * |  :  |   | :   :     :   ...   :   | |  :  |   |  :  |
+   * | y_n |   | 1  x_n  x_n^2 ... x_n^m | | y_n |   | y_n |
+   * |__ __|   |__                     __| |__ __|   |__ __|
+   */
+
   val maxX = 1.0
   val maxY = 1.0
+  val eg = ExpressionGenerator(rand)
   val targetEq = eg.scaledRandomBiTree(4, maxX, maxY)
   targetEq.show()
+
   val oracle: (Double) -> Double = { it: Double -> targetEq(x to it).toDouble() }
   plotOracle("oracle.svg", 1.0, oracle)
 
@@ -33,9 +44,10 @@ fun main() = with(DoublePrecision) {
   val alpha = 0.001
   val lossHistory = mutableListOf<Pair<Int, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
+  val totalEpochs = 100
 
-  for(epochs in 1..(epochSize * 100)) {
-    totalTime = System.currentTimeMillis()
+  for(epochs in 1..(epochSize * totalEpochs)) {
+    totalTime = System.nanoTime()
     val noise = Vec(batchSize) { (rand.nextDouble() - 0.5) * 0.1 }
     val xInputs = Vec(batchSize) { Random(seed + epochs).nextDouble() * 2 * maxX - maxX }
     val targets = xInputs.map { row -> targetEq(row) } + noise
@@ -51,13 +63,14 @@ fun main() = with(DoublePrecision) {
 
     weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
 
+    totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
       plotVsOracle(oracle, Vec(D9) { x } dot weightsNow, x)
-      println("Average loss at ${epochs / epochSize} epochs: ${totalLoss / epochSize}")
-      totalTime -= System.currentTimeMillis()
-      println("Average time: " + -totalTime / 100 + "ms")
+      println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
+      println("Average time: " + -totalTime.toDouble() / epochSize + "ns")
       lossHistory += epochs / 100 to totalLoss / 100
       totalLoss = 0.0
+      totalTime = 0
     }
 
     totalLoss += averageLoss
@@ -65,32 +78,9 @@ fun main() = with(DoublePrecision) {
 
   println("Final weights: $weightsNow")
 
-  mapOf(
-    "Epochs" to lossHistory.map { it.first },
+  mapOf("Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
   ).plot2D("Training Loss", "linear_regression_loss.svg")
-}
-
-class ExpressionGenerator(val rng: Random): Protocol<DReal>(DReal) {
-  val sum = { x: SFun<DReal>, y: SFun<DReal> -> x + y }
-  val sub = { x: SFun<DReal>, y: SFun<DReal> -> x - y }
-  val mul = { x: SFun<DReal>, y: SFun<DReal> -> x * y }
-//  val div = { x: SFun<DReal>, y: SFun<DReal> -> x / y }
-
-  val operators = listOf(sum, sub, mul)
-  override val variables = listOf(x)
-
-  infix fun SFun<DReal>.wildOp(that: SFun<DReal>) = operators.random(rng)(this, that)
-
-  fun randomBiTree(height: Int = 5): SFun<DReal> =
-    if (height == 0) (listOf(wrap(rng.nextDouble())) + variables).random(rng)
-    else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
-
-  fun scaledRandomBiTree(height: Int, maxX: Double = 1.0, maxY: Double = 1.0) =
-      randomBiTree(height).let { it - it.invoke(0.0) }.let {
-        it * wrap(maxY) / ((-maxX..maxX) step 0.01).toList()
-          .map { num -> it.invoke(num).toDouble().absoluteValue }.max()!!
-      }
 }
 
 private fun plotOracle(filename: String, maxX: Double = 1.0, oracle: (Double) -> Double) {

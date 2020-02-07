@@ -25,11 +25,12 @@ fun main() = with(DoublePrecision) {
   val alpha = 0.001
   val lossHistory = mutableListOf<Pair<Int, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
+  val totalEpochs = 100
 
   loss.saveToFile("test.dot")
 
-  for(epochs in 1..(epochSize * 100)) {
-    totalTime = System.currentTimeMillis()
+  for(epochs in 1..(epochSize * totalEpochs)) {
+    totalTime = System.nanoTime()
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
     val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val targets = (batch * hiddenWeights).map { it + hiddenBias } + noise
@@ -46,11 +47,12 @@ fun main() = with(DoublePrecision) {
     weightsNow = (weightsNow - alpha * weightGrads)(*weightMap)()
     biasNow = (biasNow - alpha * biasGrads)(*weightMap).toDouble()
 
+    totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
-      println("Average loss at ${epochs / epochSize} epochs: ${totalLoss / epochSize}")
-      totalTime -= System.currentTimeMillis()
-      println("Average time: " + -totalTime / 100 + "ms")
-      lossHistory += epochs / 100 to totalLoss / 100
+      println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
+      println("Average time: " + -totalTime.toDouble() / epochSize + "ns")
+      lossHistory += epochs / epochSize to totalLoss / epochSize
+      totalTime = 0L
       totalLoss = 0.0
     }
 
@@ -60,8 +62,7 @@ fun main() = with(DoublePrecision) {
   println("Final weights: $weightsNow, bias: $biasNow")
   println("Target coefficients: $hiddenWeights, $hiddenBias")
 
-  mapOf(
-    "Epochs" to lossHistory.map { it.first },
+  mapOf("Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
   ).plot2D("Training Loss", "linear_regression_loss.svg")
 }
