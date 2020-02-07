@@ -515,8 +515,11 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   fun Var(name: String) = SVar<X>(name)
   fun Var2(name: String) = VVar<X, D2>(name, D2)
   fun Var3(name: String) = VVar<X, D3>(name, D3)
-  fun Var4(name: String) = VVar<X, D4>(name, D5)
+  fun Var4(name: String) = VVar<X, D4>(name, D4)
   fun Var5(name: String) = VVar<X, D5>(name, D5)
+  fun Var6(name: String) = VVar<X, D6>(name, D6)
+  fun Var7(name: String) = VVar<X, D7>(name, D7)
+  fun Var8(name: String) = VVar<X, D8>(name, D8)
   fun Var9(name: String) = VVar<X, D9>(name, D9)
 
   fun Var2x1(name: String) = MVar<X, D2, D1>(name, D2, D1)
@@ -540,7 +543,7 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
 
       edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
 
-      graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), TRANSPARENT.background()]
+      graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), TRANSPARENT.background()]
 
       node[color, color.font(), Font.config("Helvetica", 20),
         Style.lineWidth(THICKNESS)]
