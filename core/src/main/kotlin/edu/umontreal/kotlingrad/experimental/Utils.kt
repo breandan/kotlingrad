@@ -13,7 +13,7 @@ import java.io.File
 val DARKMODE = false
 val THICKNESS = 2
 
-inline fun renderAsSVG(crossinline op: () -> MutableNode) =
+inline fun render(crossinline op: () -> MutableNode) =
   graph(directed = true) {
     val color = if (DARKMODE) Color.WHITE else Color.BLACK
 
@@ -29,7 +29,7 @@ inline fun renderAsSVG(crossinline op: () -> MutableNode) =
 
 fun Renderer.saveToFile(filename: String) = toFile(File(filename))
 
-fun Fun<*>.show(name: String = "temp") = renderAsSVG { toGraph() }.show(name)
+fun Fun<*>.show(name: String = "temp") = render { toGraph() }.show(name)
 fun Renderer.show(name: String) = toFile(File.createTempFile(name, ".svg")).show()
 fun File.show() = ProcessBuilder("x-www-browser", path).start()
 

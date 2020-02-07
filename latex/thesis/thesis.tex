@@ -31,7 +31,7 @@
 \usepackage{natbib}
 
 \usepackage{enumitem}
-\usepackage{graphicx}
+\usepackage{graphviz}
 
 % Quotes
 \usepackage{epigraph}
@@ -1265,7 +1265,7 @@ Above, we define a function with two variables and take a series of partial deri
 %val z = sin(10 * (x * x + pow(y, 2))) / 10 // Does not perform calculation
 %\end{unbreakablekotlin}
 \begin{unbreakablekotlin}
-val z = (1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2
+val t = (1 + x * 2 + z / y).d(y).d(x) + z / y * 3 - 4 * (y pow y).d(y)
 \end{unbreakablekotlin}
 \end{figure}
 \vspace{-40pt}
@@ -1275,45 +1275,75 @@ val z = (1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2
 %    \tikzset{level distance=60pt}
 %    \Tree [.$\div$ [.\inline{sin} [.$\times$ \inline{10} [.$+$ [.$\times$ \inline{\textbf{x}} \inline{\textbf{x}} ] [.\inline{pow} \inline{\textbf{y}} \inline{2} ] ] ] ] \inline{10} ]
 %\end{tikzpictre}
-\includegraphics[scale=0.60]{../figures/dataflow.png}
+%\includegraphics[scale=0.60]{../figures/dataflow.png}
+\digraph[scale=0.5]{abc} {
+graph ["rankdir"="LR","bgcolor"="transparent"];
+"209813603" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="+"];
+"659748578" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="+"];
+"483422889" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="d"];
+"1277181601" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="d"];
+"488970385" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="+"];
+"93122545" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="+"];
+"1239731077" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="1.0"];
+"249515771" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="*"];
+"x" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)"];
+"1627960023" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="2.0"];
+"1811044090" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="*"];
+"z" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)"];
+"940060004" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="*"];
+"1945604815" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="*"];
+"328638398" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="pow"];
+"y" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)"];
+"1121172875" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="pow"];
+"1644443712" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="pow"];
+"745160567" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="d"];
+"391447681" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="*"];
+"1308927845" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="-"];
+"440434003" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="-"];
+"1" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="One"];
+"1595953398" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="-"];
+"1277181601{color=black, fontcolor=black, fontname=Helvetica, fontsize=20, style=setlinewidth(2)}->" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="y"];
+"483422889{color=black, fontcolor=black, fontname=Helvetica, fontsize=20, style=setlinewidth(2)}->" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="x"];
+"1684106402" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="3.0"];
+"403424356" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="4.0"];
+"745160567{color=black, fontcolor=black, fontname=Helvetica, fontsize=20, style=setlinewidth(2)}->" ["color"="black","fontcolor"="black","fontname"="Helvetica","fontsize"="20","style"="setlinewidth(2)","label"="y"];
+"659748578" -> "209813603" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"483422889" -> "659748578" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"1277181601" -> "483422889" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"488970385" -> "1277181601" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"93122545" -> "488970385" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"1239731077" -> "93122545" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"249515771" -> "93122545" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"x" -> "249515771" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"1627960023" -> "249515771" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"1811044090" -> "488970385" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"z" -> "1811044090" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"z" -> "940060004" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"940060004" -> "1945604815" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"1945604815" -> "659748578" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"328638398" -> "1811044090" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"y" -> "328638398" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"y" -> "1121172875" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"y" -> "1644443712" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"y" -> "1644443712" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"1121172875" -> "940060004" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"1644443712" -> "745160567" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"745160567" -> "391447681" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"391447681" -> "1308927845" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"1308927845" -> "209813603" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"440434003" -> "328638398" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"1" -> "440434003" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"1" -> "1595953398" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"1595953398" -> "1121172875" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"1277181601{color=black, fontcolor=black, fontname=Helvetica, fontsize=20, style=setlinewidth(2)}->" -> "1277181601" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"483422889{color=black, fontcolor=black, fontname=Helvetica, fontsize=20, style=setlinewidth(2)}->" -> "483422889" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+"1684106402" -> "1945604815" ["color"="red","arrowhead"="normal","style"="setlinewidth(2)"];
+"403424356" -> "391447681" ["color"="blue","arrowhead"="normal","style"="setlinewidth(2)"];
+"745160567{color=black, fontcolor=black, fontname=Helvetica, fontsize=20, style=setlinewidth(2)}->" -> "745160567" ["color"="black","arrowhead"="normal","style"="setlinewidth(2)"];
+}
 \caption{Implicit DFG constructed by the original expression, shown above.}
 \label{lst:edsl}
 \end{figure}\\\\
-
-\section{Grammar}
-
-Below is an approximately complete BNF grammar for Kotlin$\nabla$:
-
-\newcommand{\mor}{\ensuremath{\;\mid\;}}
-\newcommand{\code}[1]{\ensuremath{\text{\inline{#1}}}}
-\newcommand{\bnfrl}[1]{\ensuremath{\langle#1\rangle}}
-\begin{eqnarray*}
-\bnfrl{type} & ::= & \code{Double} \mor \code{Float} \mor \code{Int} \mor \code{BigInteger} \mor \code{BigDouble} \\
-\bnfrl{nat} & ::= & \code{1} \mor \ldots \mor \code{99} \\
-\bnfrl{output} & ::= & \code{Fun<}\bnfrl{type}\code{Real>} \mor \code{VFun<}\bnfrl{type}\code{Real,}\bnfrl{nat}\code{>} \mor \code{MFun<}\bnfrl{type}\code{Real,}\bnfrl{nat}\code{,}\bnfrl{nat}\code{>} \\
-\bnfrl{int} & ::= & \code{0} \mor \bnfrl{nat}\bnfrl{int} \\
-\bnfrl{float} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
-\bnfrl{num} & ::= & \bnfrl{type}\code{(}\bnfrl{int}\code{)} \mor \bnfrl{type}\code{(}\bnfrl{float}\code{)} \\
-\bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \mor \code{Var()}} \\
-\bnfrl{signOp} & ::= & \code{+} \mor \code{-} \\
-\bnfrl{binOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{/} \mor \code{pow} \\
-\bnfrl{trigOp} & ::= & \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{asin} \mor \code{acos} \mor \code{atan} \mor \code{asinh} \mor \code{acosh} \mor \code{atanh} \\
-\bnfrl{unaryOp} & ::= & \bnfrl{signOp} \mor \bnfrl{trigOp} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
-\bnfrl{exp} & ::= & \bnfrl{var} \mor \bnfrl{num} \mor \bnfrl{unaryOp}\bnfrl{exp} \mor \bnfrl{var}\bnfrl{binOp}\bnfrl{exp} \mor \code{(} \bnfrl{exp} \code{)} \\
-\bnfrl{expList} & ::= & \bnfrl{exp} \mor \bnfrl{exp} \code{,} \bnfrl{expList} \\
-\bnfrl{linOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{ dot } \\
-\bnfrl{vec} & ::= & \code{Vec(} \bnfrl{expList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
-\bnfrl{vecExp} & ::= & \bnfrl{vec} \mor \bnfrl{signOp}\bnfrl{vecExp} \mor \bnfrl{exp} \code{*} \bnfrl{vecExp} \mor \bnfrl{vec} \bnfrl{linOp} \bnfrl{vecExp} \\
-&&\bnfrl{vecExp}\code{.norm(}\bnfrl{int}\code{)} \\
-\bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
-\bnfrl{matExp} & ::= & \bnfrl{mat} \mor \bnfrl{signOp}\bnfrl{matExp} \mor \bnfrl{exp}\bnfrl{linOp}\bnfrl{matExp} \mor \\
-&&\bnfrl{vecExp}\bnfrl{linOp}\bnfrl{matExp} \mor \bnfrl{mat} \bnfrl{linOp} \bnfrl{matExp} \\
-\bnfrl{anyExp} & ::= & \bnfrl{exp} \mor \bnfrl{vecExp} \mor \bnfrl{matExp} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
-\bnfrl{bindings} & ::= & \bnfrl{exp} \code{ to } \bnfrl{exp} \mor \bnfrl{exp} \code{ to } \bnfrl{exp} \code{,} \bnfrl{bindings} \\
-\bnfrl{invocation} & ::= & \bnfrl{anyExp} \code{(} \bnfrl{bindings} \code{)} \\
-\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExp} \code{) / d(} \bnfrl{exp} \code{)} \mor \bnfrl{anyExp} \code{.d(} \bnfrl{exp} \code{)} \mor \bnfrl{anyExp} \code{.d(} \bnfrl{expList} \code{)} \\
-\bnfrl{gradient} & ::= & \bnfrl{exp} \code{.grad()}
-\end{eqnarray*}
 
 \section{Type systems}\label{sec:type-systems}
 
@@ -1613,9 +1643,7 @@ Kotlin's \href{https://kotlinlang.org/docs/reference/typecasts.html#smart-casts}
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
-In conjunction with ADTs, Kotlin$\nabla$ uses multiple dispatch to instantiate the most specific result type of an arithmetic operation based on the type of its component operands. Like ADTs, multiple dispatch is not directly supported in the language, but it can be emulated using dynamic dispatch and overloading.
-
-Building on \autoref{sec:adts}, imagine we would like to rewrite some algebraic expression, which can help to reduce expression swell or improve numerical stability. We can use \inline{when} to detect the type of a subexpression at runtime, then use smart casting to access its members, as though it were previously cast:
+In conjunction with ADTs, Kotlin$\nabla$ uses multiple dispatch to instantiate the most specific result type of an arithmetic operation based on the type of its component operands. Like ADTs, multiple dispatch is not directly supported in the language, but it can be emulated using dynamic dispatch and overloading. Building on \autoref{sec:adts}, suppose we wish to rewrite some algebraic expression, e.g. to reduce expression swell or improve numerical stability. We can use \inline{when} to detect the type of a subexpression at runtime. Smart casting allows us to access its members, as though it were previously cast:
 
 \begin{kotlinlisting}
 override fun times(multiplicand: Fun<X>): Fun<X> =
@@ -2911,6 +2939,42 @@ Regular regression testing can provide diagnostics about the behavior of intelli
 
 \appendix
 \chapter{Type-safe differentiable programming}
+
+\section{Grammar}
+
+Below is an approximately complete BNF grammar for Kotlin$\nabla$:
+
+\newcommand{\mor}{\ensuremath{\;\mid\;}}
+\newcommand{\code}[1]{\ensuremath{\text{\inline{#1}}}}
+\newcommand{\bnfrl}[1]{\ensuremath{\langle#1\rangle}}
+\begin{eqnarray*}
+\bnfrl{type} & ::= & \code{Double} \mor \code{Float} \mor \code{Int} \mor \code{BigInteger} \mor \code{BigDouble} \\
+\bnfrl{nat} & ::= & \code{1} \mor \ldots \mor \code{99} \\
+\bnfrl{output} & ::= & \code{Fun<}\bnfrl{type}\code{Real>} \mor \code{VFun<}\bnfrl{type}\code{Real,}\bnfrl{nat}\code{>} \mor \code{MFun<}\bnfrl{type}\code{Real,}\bnfrl{nat}\code{,}\bnfrl{nat}\code{>} \\
+\bnfrl{int} & ::= & \code{0} \mor \bnfrl{nat}\bnfrl{int} \\
+\bnfrl{float} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
+\bnfrl{num} & ::= & \bnfrl{type}\code{(}\bnfrl{int}\code{)} \mor \bnfrl{type}\code{(}\bnfrl{float}\code{)} \\
+\bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \mor \code{Var()}} \\
+\bnfrl{signOp} & ::= & \code{+} \mor \code{-} \\
+\bnfrl{binOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{/} \mor \code{pow} \\
+\bnfrl{trigOp} & ::= & \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{asin} \mor \code{acos} \mor \code{atan} \mor \code{asinh} \mor \code{acosh} \mor \code{atanh} \\
+\bnfrl{unaryOp} & ::= & \bnfrl{signOp} \mor \bnfrl{trigOp} \mor \code{sqrt} \mor \code{log} \mor \code{ln} \mor \code{exp} \\
+\bnfrl{exp} & ::= & \bnfrl{var} \mor \bnfrl{num} \mor \bnfrl{unaryOp}\bnfrl{exp} \mor \bnfrl{var}\bnfrl{binOp}\bnfrl{exp} \mor \code{(} \bnfrl{exp} \code{)} \\
+\bnfrl{expList} & ::= & \bnfrl{exp} \mor \bnfrl{exp} \code{,} \bnfrl{expList} \\
+\bnfrl{linOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{ dot } \\
+\bnfrl{vec} & ::= & \code{Vec(} \bnfrl{expList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
+\bnfrl{vecExp} & ::= & \bnfrl{vec} \mor \bnfrl{signOp}\bnfrl{vecExp} \mor \bnfrl{exp} \code{*} \bnfrl{vecExp} \mor \bnfrl{vec} \bnfrl{linOp} \bnfrl{vecExp} \\
+&&\bnfrl{vecExp}\code{.norm(}\bnfrl{int}\code{)} \\
+\bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
+\bnfrl{matExp} & ::= & \bnfrl{mat} \mor \bnfrl{signOp}\bnfrl{matExp} \mor \bnfrl{exp}\bnfrl{linOp}\bnfrl{matExp} \mor \\
+&&\bnfrl{vecExp}\bnfrl{linOp}\bnfrl{matExp} \mor \bnfrl{mat} \bnfrl{linOp} \bnfrl{matExp} \\
+\bnfrl{anyExp} & ::= & \bnfrl{exp} \mor \bnfrl{vecExp} \mor \bnfrl{matExp} \mor \bnfrl{derivative} \mor \bnfrl{invocation} \\
+\bnfrl{bindings} & ::= & \bnfrl{exp} \code{ to } \bnfrl{exp} \mor \bnfrl{exp} \code{ to } \bnfrl{exp} \code{,} \bnfrl{bindings} \\
+\bnfrl{invocation} & ::= & \bnfrl{anyExp} \code{(} \bnfrl{bindings} \code{)} \\
+\bnfrl{derivative} & ::= & \code{d(} \bnfrl{anyExp} \code{) / d(} \bnfrl{exp} \code{)} \mor \bnfrl{anyExp} \code{.d(} \bnfrl{exp} \code{)} \mor \bnfrl{anyExp} \code{.d(} \bnfrl{expList} \code{)} \\
+\bnfrl{gradient} & ::= & \bnfrl{exp} \code{.grad()}
+\end{eqnarray*}
+
 
 \section{Linear regression}
 
