@@ -534,25 +534,29 @@ sealed class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   val DARKMODE = false
   val THICKNESS = 2
 
-  fun Fun<*>.show() = renderAsSVG { toGraph() }.show()
-  fun SFun<*>.renderAsSVG() = renderAsSVG { toGraph() }
-
-  inline fun renderAsSVG(crossinline op: () -> MutableNode) =
+  inline fun render(format: Format = Format.SVG, crossinline op: () -> MutableNode) =
     graph(directed = true) {
       val color = if (DARKMODE) WHITE else BLACK
 
       edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
 
-      graph[Rank.dir(Rank.RankDir.TOP_TO_BOTTOM), TRANSPARENT.background()]
+      graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), TRANSPARENT.background()]
 
       node[color, color.font(), Font.config("Helvetica", 20),
         Style.lineWidth(THICKNESS)]
 
       op()
-    }.toGraphviz().render(Format.SVG)
+    }.toGraphviz().render(format)
 
-  fun Renderer.saveToFile(filename: String) = toFile(File(filename))
-
+  fun extToFormat(string: String): Format = when(string) {
+    "dot" -> Format.DOT
+    else -> Format.SVG
+  }
+  fun SFun<*>.saveToFile(filename: String) =
+    render(extToFormat(filename.split(".").last())) { toGraph() }.saveToFile(filename)
+  fun SFun<*>.render() = render { toGraph() }
+  fun Renderer.saveToFile(filename: String) = File(filename).writeText(toString().replace("]", "];"))
+  fun Fun<*>.show() = render { toGraph() }.show()
   fun Renderer.show() = toFile(File.createTempFile("temp", ".svg")).show()
   fun File.show() = ProcessBuilder("x-www-browser", path).start()
 }

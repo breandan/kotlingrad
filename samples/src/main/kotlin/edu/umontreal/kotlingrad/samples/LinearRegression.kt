@@ -26,6 +26,8 @@ fun main() = with(DoublePrecision) {
   val lossHistory = mutableListOf<Pair<Int, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
 
+  loss.saveToFile("test.dot")
+
   do {
     totalTime = System.nanoTime()
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
