@@ -1290,7 +1290,7 @@ The problem we attempt to solve can be summarized as follows. Given two values \
 
 Shape checking operations on multidimensional arrays is not always decidable. For arbitrary type functions $\mathcal{T}(\mathbf{a}, \mathbf{b})$, checking $\mathcal{T}(\mathbf{a}, \mathbf{b}) \stackrel{?}{=} \mathbf{c}$ requires a Turing machine. If $\mathcal{T}$ is allowed to use the multiplication operator, as in the case of convolutional arithmetic~\citep{dumoulin2016guide}, shape inference becomes equivalent to Peano arithmetic, which is undecidable~\citep{godel1931formal}. Addition, subtraction, indexing and comparison of integers are all decidable operations in Presburger arithmetic~\citep{suzuki1980verification, bradley2006decidable, charlier2011enumeration}. Equality checking is trivially decidable, and can be implemented in most static type systems.
 
-Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g.\ convolutional arithmetic) requires a dependently typed language~\citep{xi1998eliminating, pineyro2019structure}, but checking shape equality (e.g. ordinary arithmetic) is feasible in Java and its cousins.\hspace{-.08em}\footnote{Java's type system is known to be Turing complete~\citep{grigore2017java}. Thus, emulation of dependent types in Java is theoretically possible, but likely intractable due to the practical limitations noted by Grigore.} Furthermore, we believe that shape checking ordinary matrix arithmetic is decidable in any type system loosely based on System F${}_{<:}$~\citep{cardelli1991extension}. We propose a type system for enforcing shape-safety which can be implemented in any language with subtyping and generics, such as \href{https://docs.oracle.com/javase/tutorial/java/generics/index.html}{Java}~\citep{naftalin2007java}, \href{https://kotlinlang.org/docs/reference/generics.html}{Kotlin}~\citep{tate2013mixed}, \href{https://www.typescriptlang.org/docs/handbook/advanced-types.html}{TypeScript}~\citep{bierman2014understanding} or \href{https://doc.rust-lang.org/1.7.0/book/generics.html}{Rust}~\citep{crozet2019nalgebra}.
+Evaluating an arbitrary $\mathcal{T}$ which uses multiplication or division (e.g.\ convolutional arithmetic) requires a dependently typed language~\citep{xi1998eliminating, pineyro2019structure}, but checking shape equality (e.g. shape checking ordinary arithmetic operations) is feasible in Java and its cousins.\hspace{-.08em}\footnote{Java's type system is known to be Turing complete~\citep{grigore2017java}. Thus, emulation of dependent types in Java is theoretically possible, but likely intractable due to the practical limitations noted by Grigore.} Furthermore, we believe that shape checking ordinary matrix arithmetic is decidable in any type system loosely based on System F${}_{<:}$~\citep{cardelli1991extension}. We propose a type system for enforcing shape-safety which can be implemented in any language with subtyping and generics, such as \href{https://docs.oracle.com/javase/tutorial/java/generics/index.html}{Java}~\citep{naftalin2007java}, \href{https://kotlinlang.org/docs/reference/generics.html}{Kotlin}~\citep{tate2013mixed}, \href{https://www.typescriptlang.org/docs/handbook/advanced-types.html}{TypeScript}~\citep{bierman2014understanding} or \href{https://doc.rust-lang.org/1.7.0/book/generics.html}{Rust}~\citep{crozet2019nalgebra}.
 
 {\tiny
 \begin{table}
@@ -1751,7 +1751,7 @@ fun unitTest(subroutine: (Input) -> Output) {
 }
 \end{kotlinlisting}
 %
-When carefully applied, unit testing can be an effective method for detecting bugs and validating the author's belief of preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated when the program changes. This has the unintended side effect of decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
+When carefully applied, unit testing can be an effective method for detecting bugs and validating the author's belief about preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated whenever the program changes. This has the unintended side effect of decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
 
 \section{Integration Testing}
 
@@ -1970,7 +1970,7 @@ Assuming zero knowledge about the program's implementation or the data distribut
 
 What constitutes a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her candidate inputs must break the program specification. To generate plausible test cases, not only must she be able to exploit weaknesses of the program, but ideally possess a good understanding of $p_{data}$.
 
-Suppose we are given a program which takes a high dimensional input and produces a boolean, i.e. a binary classifier. How should we test its implementation, without providing an exhaustive specification, or some prior distribution over the input values? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} or GAN, produces low-cost adversaries which satisfy our desired criteria. The vanilla GAN is a two-player game consisting of a Generator $G$ and a Discriminator $D$, whose objective can be expressed as:
+Suppose we have a program $D: \mathbb{R}^h\rightarrow\mathbb{B}$, i.e. a binary classifier. How should we test its implementation, without providing an exhaustive specification, or some prior distribution over the inputs? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} (GAN), proposes a generative adversary $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$. The vanilla GAN objective can be expressed as a min-max optimization problem:
 
 \begin{equation}
 \min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}(\mathbf x)}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
@@ -2052,23 +2052,23 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
 \end{algorithmic}
 \end{algorithm}
 
-To evaluate our algorithm, we train a polynomial regressor \autoref{sec:poly_reg} on input-output pairs from a set of random algebraic expressions. These expressions are produced by generating random binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphanumeric variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set ${+, \times}$. The generator can be defined as follows:
+To evaluate our algorithm, we train a polynomial regressor \autoref{sec:poly_reg} on input-output pairs from a set of random algebraic expressions. These expressions are produced by generating perfect binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphabetic variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set $\{+, \times\}$. Our expression generator with type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ takes a depth $\delta$, a random seed $\psi$, and returns a scalar-valued function.
 
 \begin{equation}\label{eq:btree_gen}
-G(d) = \begin{cases}
-x & \text{if } d \leq 0 \text{ and } z\sim\{\text{True, False}\},\\
-c\sim U(-1, 1) & \text{if } d \leq 0 \text{ and } z\sim\{\text{True, False}\},\\
-G(d-1) + G(d-1) & \text{if } d > 0 \text{ and } z\sim\{\text{True, False}\},\\
-G(d-1) * G(d-1) & \text{if } d > 0 \text{ and } z\sim\{\text{True, False}\}.\\
+G_e(\delta, \psi) = \begin{cases}
+\delta\sim\{a,b,..z\} & \text{if } \delta \leq 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\},\\
+\chi\sim U(-1, 1) & \text{if } \delta \leq 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\},\\
+G(\delta-1, \psi) + G(\delta-1, \psi) & \text{if } \delta > 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\},\\
+G(\delta-1, \psi) * G(\delta-1, \psi) & \text{if } \delta > 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\}.\\
 \end{cases}
 \end{equation}
 
-Our training set consists of input-output pairs produced by binding the set of free variables belonging to the same datatype and numerical range as the constants, evaluating the expression on the range $[-1, 1]$ and rescaling all output values to in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}(d)= \frac{G(d)}{\max |G(d)[-1, 1]|}$. For each expression in our dataset, we then train a polynomial regressor to convergence using SGD. Then, for both adversarial testing and uniform random sampling strategies, compare the average number of violations detected per evaluation as a function of input dimension and error tolerance.
+Our training set consists of input-output pairs produced by binding the set of free variables belonging to the same datatype and numerical range as the constants, evaluating the expression on input values in the range $[-1, 1]$ and rescaling all output values to in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression in our dataset, we then train a polynomial regressor to convergence using SGD. Then, for both adversarial testing and uniform random sampling strategies, compare the average number of violations detected per evaluation as a function of input dimension and error tolerance.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.70\textwidth]{../figures/training_curve.png}
-\caption{Training curve of a single trajectory of gradient descent in the parameter space.}
+\caption{Training curve of a single trajectory of gradient descent in parameter space.}
 \label{fig:training_curve}
 \end{figure}
 
@@ -2100,7 +2100,7 @@ Learning capabilities will play a crucial role in autonomous systems. As today's
 
 \chapter{Tools for reproducible robotics}\label{ch:ducker}
 
-\setlength{\epigraphwidth}{0.70\textwidth}
+\setlength{\epigraphwidth}{0.73\textwidth}
 \epigraph{``An article about computational science in a scientific publication is not the scholarship itself, it is merely advertising of the scholarship. The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.''}{\begin{flushright}--\citet{buckheit1995wavelab}, \href{https://statweb.stanford.edu/~wavelab/Wavelab_850/wavelab.pdf}{\textit{WaveLab and Reproducible Research}}\end{flushright}}
 
 In this chapter, we discuss the challenge of software reproducibility and how best practices in software engineering such as continuous integration and containerization tools can help researchers mitigate the variability associated with building and maintaining robotics software. Broadly, our work attempts to isolate sources of computational variability, and does not consider notions of statistical variability arising from aleatoric or epistemic risk. However, minimizing the computational variability (which often impedes experimental reproducibility) is a key step in enabling researchers to more rapidly identify and diagnose these more elusive variables in robotics and machine learning.
@@ -2618,7 +2618,7 @@ Docker images can be cross-compiled by enclosing the ARM-specific portion of the
 Alternately, it is possible to build directly on ARM devices by creating a file named \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
 
 \begin{rpilisting}
-~$ docker build --file=FILE_PATH/Dockerfile.arm --tag [TAG NAME] .
+~$ docker build --file=FILE_PATH/Dockerfile.arm [--tag TAG_NAME] .
 \end{rpilisting}
 %
 \subsection{Multi-architecture support}
@@ -2728,7 +2728,7 @@ dt> duckiebot calibrate_intrinsics DUCKIEBOT_NAME
 \noindent To calibrate the gain and trim of the wheel motors, the following commands are needed:
 
 \begin{dtslisting}
-dt> duckiebot demo --demo_name base --duckiebot_name NAME
+dt> duckiebot demo --demo_name base --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
 \begin{pclisting}
 ~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_gain --GAIN
