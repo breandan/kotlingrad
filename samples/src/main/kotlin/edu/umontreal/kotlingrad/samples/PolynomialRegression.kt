@@ -1,9 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.times
 import edu.umontreal.kotlingrad.utils.step
-import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 fun main() = with(DoublePrecision) {
@@ -33,6 +31,7 @@ fun main() = with(DoublePrecision) {
 
   println(targetEq.toString())
   val oracle: (Double) -> Double = { it: Double -> targetEq(x to it).toDouble() }
+  plotOracle("oracle.svg", 1.0, oracle)
 
   val encodedInput = xBatchIn.sVars.vMap { row -> Vec(batchSize) { col -> row pow (col + 1) } }
   val loss = (encodedInput * theta + bias - label).magnitude()
@@ -94,11 +93,6 @@ private fun plotLoss(lossHistory: MutableList<Pair<Int, Double>>) {
   mapOf("Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
   ).plot2D("Training Loss", "linear_regression_loss.svg")
-}
-
-private fun plotOracle(filename: String, maxX: Double = 1.0, oracle: (Double) -> Double) {
-  val t = ((-maxX..maxX) step 0.01).toList()
-  mapOf( "x" to t, "y" to t.map { oracle(it) }).plot2D("Oracle", filename)
 }
 
 private fun DoublePrecision.plotVsOracle(oracle: (Double) -> Double, model: SFun<DReal>, x: SFun<DReal>) {
