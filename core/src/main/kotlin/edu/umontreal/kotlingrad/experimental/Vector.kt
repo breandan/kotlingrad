@@ -66,10 +66,10 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
       is Gradient -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Gradient")) }
       is VDerivative -> { vFun.toGraph() - this; mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("VDerivative")) }
       is Vec -> { contents.map { it.toGraph() - this }; add(Label.of("Vec")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is VMap<*, *> -> { (input.toGraph() - this).add(BLUE); (ssMap.toGraph() - this).add(RED); add(Label.of(opCode())) }
       is VComposition -> { vFun.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("VComp")) }
+      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
+      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       else -> TODO(this@VFun.javaClass.toString())
     }
   }
