@@ -418,6 +418,7 @@
 
 \def\chapterautorefname{Chapter}
 \renewcommand{\sectionautorefname}{\S}
+\renewcommand{\subsectionautorefname}{\S}
 \newcommand{\algorithmautorefname}{Algorithm}
 \usepackage{hypcap}
 \usepackage{bookmark}
@@ -2051,7 +2052,18 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
 \end{algorithmic}
 \end{algorithm}
 
-To evaluate our algorithm, we train a multilayer perceptron (MLP) on input-output pairs from a set of random algebraic expressions. We generate these expressions by uniformly sampling from the space of perfect binary trees of depth 5, whose leaf nodes contain either (1) a random alphabetical variable or (2) a random 64-bit IEEE 754 floating point number in the range $[0, 1]$. The internal nodes contain with equal probability a random operator in the set ${+, -, \times}$. Our training set consists of input-output pairs produced by binding the set of free variables belonging to the same datatype and numerical range as the constants, evaluating the expression and re-normalizing all output values in the range $[0, 1]$. For each expression in our dataset, we then train a single MLP to convergence. Then, for both adversarial testing and uniform random sampling strategies, compare the average number of violations detected per evaluation as a function of input dimension and error tolerance.
+To evaluate our algorithm, we train a polynomial regressor \autoref{sec:poly_reg} on input-output pairs from a set of random algebraic expressions. These expressions are produced by generating random binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphanumeric variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set ${+, \times}$. The generator can be defined as follows:
+
+\begin{equation}
+G(d) = \begin{cases}
+x & \text{if } d \leq 0 \text{ and } z\sim\{\text{True, False}\},\\
+c\sim U(-1, 1) & \text{if } d \leq 0 \text{ and } z\sim\{\text{True, False}\},\\
+G(d-1) + G(d-1) & \text{if } d > 0 \text{ and } z\sim\{\text{True, False}\},\\
+G(d-1) * G(d-1) & \text{if } d > 0 \text{ and } z\sim\{\text{True, False}\}.\\
+\end{cases}
+\end{equation}
+
+Our training set consists of input-output pairs produced by binding the set of free variables belonging to the same datatype and numerical range as the constants, evaluating the expression on the range $[-1, 1]$ and rescaling all output values to in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}(d)= \frac{G(d)}{\max |G(d)[-1, 1]|}$. For each expression in our dataset, we then train a polynomial regressor to convergence using SGD. Then, for both adversarial testing and uniform random sampling strategies, compare the average number of violations detected per evaluation as a function of input dimension and error tolerance.
 
 \begin{figure}
 \centering
@@ -2917,11 +2929,11 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 \end{eqnarray*}
 
 
-\section{Linear regression}
+\section{Linear regression}\label{sec:lin_reg}
 
 \noindent Recall the matrix equation for linear regression, where $\mathbf{X}: \mathbb{R}^{m \times n}$ and $\bm\Theta: \mathbb{R}^{n \times 1}$:
 %
-\begin{equation}
+\begin{equation}\label{eq:lin_reg}
 \mathbf{\hat f}(\mathbf{X}; \bm\Theta) = \mathbf{X}\bm\Theta
 \end{equation}
 %
@@ -3011,7 +3023,7 @@ Notice how analytical differentiation gives us the same answer as the \hyperref[
 \end{bmatrix}
 \end{equation}
 
-\subsection{Matrix solution}
+\subsection{Matrix solution}\label{sec:linreg_matrix_sol}
 
 Having reviewed the scalar procedure for linear regression, let us now return to the general form of $\mathcal L(\bm\Theta)$. Matrix notation allows us to simplify the loss considerably:
 %
@@ -3099,6 +3111,26 @@ Solving this requires computing $(\mathbf{X}^\intercal\mathbf{X})^{-1}$ which is
 \end{equation}
 %
 Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required to find a suitable $\alpha$ (various improvements like Nesterov momentum~\citep{nesterov2013gradient} and quasi-Newton methods also help to accelerate convergence), this procedure is guaranteed to be computationally more efficient than matrix inversion for sufficiently large $m$ and $n$. In practice, the normal equation is seldom used unless $m$ is very small.
+
+\section{Polynomial regression}\label{sec:poly_reg}
+
+Polynomial regression is a straightforward application of linear regression, where the weights are the coefficients for each term in a polynomial. Consider the univariate case:
+
+\begin{equation}
+y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m + \varepsilon_i\  (i = 1, 2, \dots , n)
+\end{equation}
+%
+We can be rewrite this function in matrix form as follows:
+%
+\begin{equation}
+\begin{bmatrix} y_1\\ y_2\\ y_3 \\ \vdots \\ y_n \end{bmatrix}= \begin{bmatrix} 1 & x_1 & x_1^2 & \dots & x_1^m \\ 1 & x_2 & x_2^2 & \dots & x_2^m \\ 1 & x_3 & x_3^2 & \dots & x_3^m \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_n & x_n^2 & \dots & x_n^m \end{bmatrix} \begin{bmatrix} \beta_0\\ \beta_1\\ \beta_2\\ \vdots \\ \beta_m \end{bmatrix}
+\end{equation}
+%
+\begin{equation}
+\mathbf{\hat f}_{PR}(\mathbf{X}; \bm\beta) = \mathbf{X}\bm\beta
+\end{equation}
+%
+The resemblance to ~\autoref{eq:lin_reg} should be clear. To find $\bm\beta$ minimizing $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, we can use the same method described in ~\autoref{sec:linreg_matrix_sol}.
 
 \chapter{Tools for reproducible robotics}
 
