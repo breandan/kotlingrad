@@ -43,22 +43,16 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   operator fun <A: Fun<X>> A.invoke(vararg fns: Fun<X>): A = invoke(bindings.zip(fns.toList())) as A
   operator fun <A: Fun<X>> A.invoke(vararg pairs: Pair<Fun<X>, Fun<X>>): A = invoke(Bindings(*pairs)) as A
 
-  fun toGraph(): MutableNode = mutNode(toString()).apply {
-    when (this@Fun) {
-      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      is SFun<*> -> (this@Fun as SFun).toGraph()
-      is VFun<*, *> -> (this@Fun as VFun<*, *>).toGraph()
-      is MFun<*, *, *> -> (this@Fun as MFun<*, *, *>).toGraph()
-      else -> TODO(this@Fun.javaClass.toString())
-    }
-  }
+  fun toGraph(): MutableNode
 }
 
-interface Variable<X: SFun<X>>: Fun<X> {
-  val name: String
+interface BiFun<X: SFun<X>>: Fun<X> {
+  val left: Fun<X>
+  val right: Fun<X>
 }
 
+interface UnFun<X: SFun<X>>: Fun<X> { val input: Fun<X> }
+interface Variable<X: SFun<X>>: Fun<X> { val name: String }
 interface Constant<X: SFun<X>>: Fun<X>
 
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
@@ -210,11 +204,11 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     when (this@SFun) {
       is SVar -> name
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
       is Special -> add(Label.of(this@SFun.toString()))
       is SComposition -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("SComp")) }
+      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
+      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       else -> TODO(this@SFun.javaClass.toString())
     }
   }
@@ -223,15 +217,6 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
 /**
  * Symbolic operators.
  */
-
-interface BiFun<X: SFun<X>>: Fun<X> {
-  val left: Fun<X>
-  val right: Fun<X>
-}
-
-interface UnFun<X: SFun<X>>: Fun<X> {
-  val input: Fun<X>
-}
 
 class Sine<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
 class Cosine<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>

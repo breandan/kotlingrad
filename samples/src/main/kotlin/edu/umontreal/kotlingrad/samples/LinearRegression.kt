@@ -30,7 +30,7 @@ fun main() = with(DoublePrecision) {
   loss.saveToFile("test.dot")
 
   for(epochs in 1..(epochSize * totalEpochs)) {
-    totalTime = System.nanoTime()
+    totalTime += System.nanoTime()
     val noise = Vec(D3) { rand.nextDouble() - 0.5 }
     val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val targets = (batch * hiddenWeights).map { it + hiddenBias } + noise
