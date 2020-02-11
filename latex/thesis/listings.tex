@@ -1,0 +1,336 @@
+% Code listings
+%\usepackage[scaled]{beramono}
+\usepackage{fontspec}
+\setmonofont{JetBrains Mono}
+\usepackage{ocr}
+\usepackage[T1]{fontenc}
+\usepackage[skins,breakable,listings]{tcolorbox}
+
+\usepackage{accsupp}
+\newcommand{\noncopyable}[1]{%
+    \BeginAccSupp{method=escape,ActualText={}}%
+    #1%
+    \EndAccSupp{}%
+}
+
+\lstdefinelanguage{kotlin}{
+    comment=[l]{//},
+    commentstyle={\color{gray}\ttfamily},
+    emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, repeat, assert, with, head, tail, len, return@},
+    numberstyle=\noncopyable,
+    emphstyle={\color{OrangeRed}},
+    identifierstyle=\color{black},
+    keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while, tailrec, reified},
+    keywordstyle={\color{NavyBlue}\bfseries},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[s]{"""*}{*"""},
+    ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Boolean, Int, Integer, Iterable, Long, Runnable, Short, String},
+    ndkeywordstyle={\color{BurntOrange}\bfseries},
+    sensitive=true,
+    stringstyle={\color{ForestGreen}\ttfamily},
+    literate={`}{{\char0}}1
+}
+
+\lstdefinelanguage{docker}{
+    keywords={FROM, RUN, COPY, ADD, ENTRYPOINT, CMD,  ENV, ARG, WORKDIR, EXPOSE, LABEL, USER, VOLUME, STOPSIGNAL, ONBUILD, MAINTAINER},
+    keywordstyle=\color{blue}\bfseries,
+    numberstyle=\noncopyable,
+    identifierstyle=\color{black},
+    sensitive=true,
+    comment=[l]{\#},
+    commentstyle=\color{purple}\ttfamily,
+    stringstyle=\color{red}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+
+\lstdefinelanguage{BashPrompt}{%
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily,
+    literate={\$}{{\bfseries\textcolor{blue}{\noncopyable\$}}}1
+    {~}{{\bfseries\textcolor{blue}{\noncopyable\textasciitilde}}}1,
+}
+
+\lstdefinelanguage{DtsPrompt}{%
+    keywordstyle=\color{blue},
+    basicstyle=\ttfamily,
+    literate={dt> }{{\bfseries\textcolor{blue}{\noncopyable{dt> }}}}1
+}
+
+\lstdefinelanguage{XML}{
+    basicstyle=\ttfamily,
+    numberstyle=\noncopyable,
+    morestring=[s][\color{black}]{"}{"},
+    morestring=[s][\color{black}]{>}{<},
+    stringstyle=\color{black},
+    identifierstyle=\color{blue}\bfseries,
+    moreidentifier={launch, node},
+    keywordstyle=\color{brown},
+    morekeywords={name, pkg, type, output},
+}
+
+\lstdefinelanguage{bnf}{
+    comment=[l]{//},
+    commentstyle={\color{gray}\ttfamily},
+    numberstyle=\noncopyable,
+    basicstyle=\ttfamily,
+    morestring=[s][\color{RoyalPurple}\bfseries]{"}{"},
+    emphstyle={\color{ForestGreen}\bfseries},
+    moreemph={TYPE, FIELD, SEPARATOR, CONSTANT, COMMENT},
+    identifierstyle=\color{blue}\bfseries,
+    keywordstyle={\color{NavyBlue}\bfseries},
+    morekeywords={property, recover_property, rosInterfaceFile},
+    ndkeywords={getType, get Key, getValue, getName, setName, getNameIdentifier},
+    ndkeywordstyle={\color{black}\itshape},
+}
+
+%% Adjustments
+
+\lstdefinestyle{barelisting}{
+    language=kotlin,
+    basicstyle=\ttfamily\scriptsize,
+    numberstyle=\footnotesize\noncopyable,
+    backgroundcolor=\color{slightgray},
+    frame=single,
+    tabsize=2,
+    rulecolor=\color{black!30},
+    breaklines=true,
+    inputencoding=utf8
+}
+
+\usepackage{lipsum}
+\tcbuselibrary{listings,breakable}
+
+\newtcblisting{unbreakablekotlin}[1][]{%
+    breakable=false,
+    listing only,
+    boxsep=-1.5pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    listing options={
+        language=kotlin,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
+        tabsize=2,
+        numbers=right,
+        breaklines=true,
+        inputencoding=utf8,
+        escapeinside={(*}{*)},
+        #1
+    },
+    underlay={
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\newtcblisting{kotlinlisting}[1][]{%
+    listing options={
+        language=kotlin,
+        basicstyle=\ttfamily\tiny,
+        numberstyle=\footnotesize\noncopyable,
+        showstringspaces=false,
+        tabsize=2,
+        breaklines=true,
+        numbers=right,
+        inputencoding=utf8,
+        escapeinside={(*}{*)},
+        #1
+    },
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=4mm]{../figures/kotlin_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\newtcblisting{pclisting}[1][]{%
+    listing options={
+        language=BashPrompt,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\noncopyable,
+        tabsize=2,
+        numbers=right,
+        inputencoding=utf8,
+        escapeinside={(*}{*)},
+        #1
+    },
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/laptop_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\newtcblisting{flexlisting}[1][]{%
+    left=20pt,
+    listing options={
+        language=DtsPrompt,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\noncopyable,
+        numbers=right,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
+    }
+}
+
+\newtcblisting{dtslisting}[1][]{%
+    left=20pt,
+    listing options={
+        language=DtsPrompt,
+        basicstyle=\ttfamily\footnotesize,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
+    },
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{../figures/duckietown.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+% Imitate syntax error
+\usepackage{ulem}
+\makeatletter
+\def\uwave{\bgroup \markoverwith{\lower3.5\p@\hbox{\sixly \textcolor{red}{\char58}}}\ULon}
+\font\sixly=lasy6 % does not re-load if already loaded, so no memory problem.
+\makeatother
+
+\newtcblisting{launchlisting}[1][]{%
+    #1,
+    listing options={
+        language=XML,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
+        tabsize=2,
+        numbers=right,
+        breaklines=true,
+        inputencoding=utf8,
+        escapeinside={(*}{*)}
+    },
+    fonttitle=\ttfamily\small,
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/launch_icon.png}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+    }
+}
+
+\newtcblisting{dockerlisting}[1][]{%
+    listing options={
+        language=docker,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\footnotesize\noncopyable,
+        tabsize=2,
+        numbers=right,
+        breaklines=true,
+        inputencoding=utf8,
+        escapeinside={(*}{*)}
+    },
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=6mm]{../figures/docker_icon.jpg}} ([xshift=-10mm,yshift=-9mm]interior.north west);
+    }
+}
+
+\newtcblisting{bnflisting}[1][]{%
+    #1,
+    listing options={
+        language=bnf,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\noncopyable,
+        breaklines=true,
+        numbers=right,
+        showstringspaces=false,
+    },
+    fonttitle=\ttfamily\small,
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/bnf_file.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\newtcblisting{pythonlisting}[1][]{%
+    #1,
+    listing options={
+        language=Python,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\noncopyable,
+        breaklines=true,
+        numbers=right,
+        showstringspaces=false,
+        keywordstyle=\color{blue}\bfseries,
+        escapeinside={(*}{*)}
+    },
+    fonttitle=\ttfamily\small,
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=5mm]{../figures/python_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\newtcblisting{rpilisting}[1][]{%
+    listing options={
+        language=BashPrompt,
+        basicstyle=\ttfamily\footnotesize,
+        numberstyle=\noncopyable,
+        tabsize=2,
+        inputencoding=utf8,
+        #1
+    },
+    underlay unbroken and first={%
+        \path[draw=none] (interior.north west) rectangle node[white]{\includegraphics[width=8mm]{../figures/raspi_icon.png}} ([xshift=-10mm,yshift=-10mm]interior.north west);
+    }
+}
+
+\tcbset{
+    enhanced jigsaw,
+    breakable,
+    listing only,
+    boxsep=-1pt,
+    top=-1pt,
+    bottom=-0.5pt,
+    right=-0.5pt,
+    overlay first={
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
+        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
+    },
+    overlay middle={
+        \node[black!50] (S) at (frame.south) {\Large\ding{34}};
+        \draw[dashed,black!50] (frame.south west) -- (S) -- (frame.south east);
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
+        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+    },
+    overlay last={
+        \node[black!50] (S) at (frame.north) {\Large\ding{34}};
+        \draw[dashed,black!50] (frame.north west) -- (S) -- (frame.north east);
+    },
+    before={\par\vspace{10pt}},
+    after={\par\vspace{\parskip}\noindent}
+}
+
+\newcommand*{\inlineimg}[1]{%
+    \raisebox{-.3\baselineskip}{%
+        \includegraphics[
+            height=\baselineskip,
+            width=\baselineskip,
+            keepaspectratio,
+        ]{#1}%
+    }%
+}
+
+\definecolor{slightgray}{rgb}{0.90, 0.90, 0.90}
+
+\usepackage{soul}
+\makeatletter
+\def\SOUL@hlpreamble{%
+    \setul{}{3.0ex}%
+    \let\SOUL@stcolor\SOUL@hlcolor%
+    \SOUL@stpreamble%
+}
+\makeatother
+
+\newcommand{\inline}[1]{%
+    \begingroup%
+    \sethlcolor{slightgray}%
+    \hl{\ttfamily\footnotesize #1}%
+    \endgroup
+}
+
+\newcommand{\tinline}[1]{%
+    \begingroup%
+    \sethlcolor{slightgray}%
+    \hl{\ttfamily\tiny #1}%
+    \endgroup
+}
