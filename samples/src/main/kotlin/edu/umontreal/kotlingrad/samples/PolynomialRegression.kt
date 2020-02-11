@@ -7,11 +7,12 @@ import kotlin.random.Random
 fun main() = with(DoublePrecision) {
   val seed = 2L
   val rand = Random(seed)
-  val theta = Var9("theta")
-  val bias = Var9("theta")
-  val xBatchIn = Var9("xBatchIn")
-  val batchSize = D9
-  val label = Var9("y")
+  val theta = Var20("theta")
+  val bias = Var20("theta")
+  val xBatchIn = Var20("xBatchIn")
+  val batchSize = D20
+  val paramSize = D20
+  val label = Var20("y")
 
   /* https://en.wikipedia.org/wiki/Polynomial_regression#Matrix_form_and_calculation_of_estimates
    *  __  __    __                      __  __  __    __  __
@@ -26,26 +27,27 @@ fun main() = with(DoublePrecision) {
   val maxX = 1.0
   val maxY = 1.0
   val eg = ExpressionGenerator(rand)
-  val targetEq: SFun<DReal> = eg.scaledRandomBiTree(4, maxX, maxY)
+  val targetEq: SFun<DReal> = eg.scaledRandomBiTree(5, maxX, maxY)
   targetEq.show()
 
   println(targetEq.toString())
   val oracle: (Double) -> Double = { it: Double -> targetEq(x to it).toDouble() }
   plotOracle("oracle.svg", 1.0, oracle)
 
-  val encodedInput = xBatchIn.sVars.vMap { row -> Vec(batchSize) { col -> row pow (col + 1) } }
+  val encodedInput = xBatchIn.sVars.vMap { row -> Vec(paramSize) { col -> row pow (col + 1) } }
   val loss = (encodedInput * theta + bias - label).magnitude()
-  var weightsNow = Vec(batchSize) { rand.nextDouble() - 0.5 }
-  var biasNow = Vec(batchSize) { rand.nextDouble() - 0.5 }
+  var weightsNow = Vec(paramSize) { rand.nextDouble() - 0.5 }
+  var biasNow = Vec(paramSize) { rand.nextDouble() - 0.5 }
   println("w_0: $weightsNow / b_0: $biasNow")
   println("Target equation: $targetEq")
 
-  val epochSize = 1000
+  val epochSize = 100
   var totalLoss = 0.0
   var totalTime = 0L
-  val delWeight = Vec(batchSize) { 0 }
-  val alphaWeight = 0.01
-  val alphaBias = 0.01
+  val alpha = 0.1
+  val beta = 0.9
+  var weightUpdate = Vec(paramSize) { 0.0 }
+  var biasUpdate = Vec(paramSize) { 0.0 }
   val lossHistory = mutableListOf<Pair<Int, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
   val totalEpochs = 100
@@ -66,16 +68,16 @@ fun main() = with(DoublePrecision) {
     val weightGrads = batchLoss.d(theta)
     val biasGrads = batchLoss.d(bias)
 
-    val weightUpdate = (alphaWeight * weightGrads)(*weightMap)
-    val biasUpdate = (alphaBias * biasGrads)(*weightMap)
-    weightsNow = (weightsNow - weightUpdate)()
-    biasNow = (weightsNow - biasUpdate)()
+    weightUpdate = (beta * weightUpdate + (1 - beta) * weightGrads)(*weightMap)()
+    biasUpdate = (beta * biasUpdate + (1 - beta) * biasGrads)(*weightMap)()
+    weightsNow = (weightsNow - alpha * weightUpdate)()
+    biasNow = (weightsNow - alpha * biasUpdate)()
 
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
-      plotVsOracle(oracle, Vec(batchSize) { x pow it } dot weightsNow, x)
+      plotVsOracle(oracle, Vec(paramSize) { x pow it } dot weightsNow, x)
       println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
-      println("Average time: " + -totalTime.toDouble() / epochSize + "ns")
+      println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
       println("Weights: $weightsNow / Bias: $biasNow")
       lossHistory += epochs / 100 to totalLoss / 100
       plotLoss(lossHistory)
