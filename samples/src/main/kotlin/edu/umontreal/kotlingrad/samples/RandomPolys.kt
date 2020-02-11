@@ -1,10 +1,14 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DReal
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.invoke
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.saveToFile
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
+import edu.umontreal.kotlingrad.experimental.Protocol
+import edu.umontreal.kotlingrad.experimental.SFun
 import edu.umontreal.kotlingrad.utils.step
+import guru.nidi.graphviz.engine.Format.DOT
+import java.io.File
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
@@ -13,9 +17,13 @@ fun main() {
   val eg = ExpressionGenerator(rand)
 
   for (i in 0..9) {
-    val bt = eg.scaledRandomBiTree(5)
+    val bt = eg.scaledRandomBiTree(4)
     plotOracle("oracle$i.svg", 1.0) { bt(it).toDouble() }
-    bt.saveToFile("btree_rand$i.dot")
+    with(DoublePrecision) {
+      File("btree_rand$i.tex")
+        .writeText(bt.render(DOT).toString().lines().drop(1)
+          .joinToString("\n").let { "\\digraph[scale=0.2]{btree$i} {\n$it" })
+    }
     ((-1.0..1.0) step 0.01).joinToString("\n") { "$it, ${bt(it)}" }.saveAs("btree_rand$i.csv")
   }
 }

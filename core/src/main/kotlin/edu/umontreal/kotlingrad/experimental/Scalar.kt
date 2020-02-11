@@ -545,7 +545,7 @@ abstract class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
   }
   fun SFun<*>.saveToFile(filename: String) =
     render(extToFormat(filename.split(".").last())) { toGraph() }.saveToFile(filename)
-  fun SFun<*>.render() = render { toGraph() }
+  fun SFun<*>.render(format: Format = Format.SVG) = render(format) { toGraph() }
   fun Renderer.saveToFile(filename: String) = File(filename).writeText(toString().replace("]", "];"))
   fun Fun<*>.show() = render { toGraph() }.show()
   fun Renderer.show() = toFile(File.createTempFile("temp", ".svg")).show()

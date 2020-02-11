@@ -4,7 +4,7 @@ To build this thesis, a [TeX Live](https://www.latex-project.org/get/) distribut
 Run the following command from the parent directory:
 
 ```
-xelatex -file-line-error -interaction=nonstopmode -synctex=1 -output-directory=$(pwd) thesis.tex
+xelatex -file-line-error -interaction=nonstopmode -synctex=1 --shell-escape -output-directory=$(pwd) thesis
 ```
 
 ## Rail diagrams
@@ -33,6 +33,6 @@ $ sudo mktexlsr
 
 When the rail has been installed, the following steps will regenerate the diagram.
 
-1. Run `latex thesis`, which will create `thesis.rai`.
+1. Run `xelatex ... thesis`, which will create `thesis.rai`.
 2. Run `rail thesis` to generate `thesis.rao` from `thesis.rai`.
-3. Run `latex thesis` to generate the final document.
+3. Run `xelatex ... thesis` to generate the final document.

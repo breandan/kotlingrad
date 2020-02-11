@@ -78,11 +78,11 @@ As the publisher writes messages to \hl{\ttfamily\small channel}, another node w
 %
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/subscriber.py]
 def callback(data):
-rospy.loginfo(rospy.get_caller_id() + "received data %s", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "received data %s", data.data)
 
-rospy.init_node("subscriber", anonymous=True)
-rospy.Subscriber("(*\hl{channel}*)", String, callback)
-rospy.spin()
+    rospy.init_node("subscriber", anonymous=True)
+    rospy.Subscriber("(*\hl{channel}*)", String, callback)
+    rospy.spin()
 \end{pythonlisting}
 %
 All ROS packages have launch file, which contain a manifest of available nodes:
@@ -152,14 +152,14 @@ Refactoring is an essential feature in any IDE, and the essence of refactoring i
 %
 \begin{pythonlisting}
 def callback(data):
-rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
 \end{pythonlisting}
 %
 If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} within the file using \inline{:\%s/data/msg/g}, producing the following result:
 %
 \begin{pythonlisting}
 def callback((*\hl{msg}*)):
-rospy.loginfo(rospy.get_caller_id() + "received (*\hl{msg}*): %s", (*\hl{msg}*).(*\hl{msg}*))
+    rospy.loginfo(rospy.get_caller_id() + "received (*\hl{msg}*): %s", (*\hl{msg}*).(*\hl{msg}*))
 \end{pythonlisting}
 %
 There were four occurrences of the string \inline{data}, only two of which were correctly renamed. Instead, only those strings which refer to the function parameter should be renamed:
@@ -168,7 +168,7 @@ There were four occurrences of the string \inline{data}, only two of which were 
 
 \begin{pythonlisting}
 def callback((*\cfbox{red}{data}*)):
-rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{data}*).data)
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{data}*).data)
 \end{pythonlisting}
 %
 Generally, we would like the ability to rename identifiers across files and languages. To do so, we need a richer understanding of code that transcends text -- we need a parser.
@@ -184,11 +184,11 @@ The procedural instructions for modern parsers are seldom written by hand unless
 \begin{bnflisting}
 rosInterfaceFile ::= ( property | COMMENT )*
 property ::= ( TYPE FIELD SEPARATOR CONSTANT ) | ( TYPE FIELD ) {
-pin=3 // Identifies an unambiguous delimiter or fallback point
-recoverWhile="recover_property" // Error recovery predicate
-mixin="edu.umontreal.hatchery.psi.impl.RosMsgNamedElementImpl"
-implements="edu.umontreal.hatchery.psi.RosMsgNamedElement"
-methods=[getType getKey getValue getName setName getNameIdentifier]
+    pin=3 // Identifies an unambiguous delimiter or fallback point
+    recoverWhile="recover_property" // Error recovery predicate
+    mixin="edu.umontreal.hatchery.psi.impl.RosMsgNamedElementImpl"
+    implements="edu.umontreal.hatchery.psi.RosMsgNamedElement"
+    methods=[getType getKey getValue getName setName getNameIdentifier]
 }
 private recover_property ::= ! ( TYPE | FIELD | SEPARATOR | COMMENT )
 \end{bnflisting}
@@ -221,11 +221,11 @@ The process of compiling and running ROS applications often requires several ste
 %
 \begin{pclisting}
 ~$ . /opt/ros/<DISTRO>/setup.[ba]sh &&
-cd <PROJECT>/catkin_ws &&
-catkin_make &&
-. devel/setup.sh &&
-[export ROS_MASTER_URI=<URI> &&]
-roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
+   cd <PROJECT>/catkin_ws &&
+   catkin_make &&
+   . devel/setup.sh &&
+   [export ROS_MASTER_URI=<URI> &&]
+   roslaunch [OPTIONS] src/.../<LAUNCH FILE> [ARGUMENTS]"
 \end{pclisting}
 %
 Hatchery provides assistance for configuring, building and running ROS applications inside a custom graphical user interface (GUI). This GUI effectively serves as a wrapper for the ROS command line interface (CLI). Visual elements like configuration options and command line flags are written to an internal model called the ``Run Configuration'' (\autoref{fig:ros_run_config}). When a run configuration is manually triggered, Hatchery's internal model is serialized to a \inline{String}, representing the command to be executed. This \inline{String} is then sent to a terminal emulator, which invokes the command and displays the corresponding output.
