@@ -26,7 +26,7 @@ fun main() = with(DoublePrecision) {
   val maxX = 1.0
   val maxY = 1.0
   val eg = ExpressionGenerator(rand)
-  val targetEq: SFun<DReal> = eg.scaledRandomBiTree(5, maxX, maxY)
+  val targetEq: SFun<DReal> = eg.scaledRandomBiTree(4, maxX, maxY)
   targetEq.show()
 
   println(targetEq.toString())
@@ -92,7 +92,7 @@ fun main() = with(DoublePrecision) {
 private fun plotLoss(lossHistory: MutableList<Pair<Int, Double>>) {
   mapOf("Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
-  ).plot2D("Training Loss", "linear_regression_loss.svg")
+  ).plot2D("Training Loss", "polynomial_regression_loss.svg")
 }
 
 private fun DoublePrecision.plotVsOracle(oracle: (Double) -> Double, model: SFun<DReal>, x: SFun<DReal>) {
