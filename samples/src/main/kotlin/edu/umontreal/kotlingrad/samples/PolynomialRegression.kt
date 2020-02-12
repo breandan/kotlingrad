@@ -5,7 +5,7 @@ import edu.umontreal.kotlingrad.utils.step
 import kotlin.random.Random
 
 fun main() = with(DoublePrecision) {
-  val seed = 2L
+  val seed = 3L
   val rand = Random(seed)
   val theta = Var20("theta")
   val bias = Var20("theta")
@@ -36,15 +36,15 @@ fun main() = with(DoublePrecision) {
 
   val encodedInput = xBatchIn.sVars.vMap { row -> Vec(paramSize) { col -> row pow (col + 1) } }
   val loss = (encodedInput * theta + bias - label).magnitude()
-  var weightsNow = Vec(paramSize) { rand.nextDouble() - 0.5 }
-  var biasNow = Vec(paramSize) { rand.nextDouble() - 0.5 }
+  var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
+  var biasNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
   println("w_0: $weightsNow / b_0: $biasNow")
   println("Target equation: $targetEq")
 
-  val epochSize = 100
+  val epochSize = 10
   var totalLoss = 0.0
   var totalTime = 0L
-  val alpha = 0.1
+  val alpha = 0.01
   val beta = 0.9
   var weightUpdate = Vec(paramSize) { 0.0 }
   var biasUpdate = Vec(paramSize) { 0.0 }
@@ -55,11 +55,10 @@ fun main() = with(DoublePrecision) {
   for (epochs in 1..(epochSize * totalEpochs)) {
     totalTime += System.nanoTime()
     val noise = Vec(batchSize) { (rand.nextDouble() - 0.5) * 0.1 }
-    val xInputs = Vec(batchSize) { Random(seed + epochs).nextDouble() * 2 * maxX - maxX }
+    val xInputs = Vec(batchSize) { i -> (-1.0 + (i * Random(seed + epochs).nextDouble() * 2 - 1) * (maxX * 2 / batchSize.i)).coerceIn(-1.0, 1.0) }
     val targets = xInputs.map { row -> targetEq(row) } + noise
 
-    val batchInputs: Array<Pair<Fun<DReal>, Any>> =
-      arrayOf(xBatchIn to xInputs, label to targets())
+    val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(xBatchIn to xInputs, label to targets())
     val batchLoss = loss(*batchInputs)
 
     weightMap = arrayOf(theta to weightsNow, bias to biasNow)
@@ -75,12 +74,12 @@ fun main() = with(DoublePrecision) {
 
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
-      plotVsOracle(oracle, Vec(paramSize) { x pow it } dot weightsNow, x)
+      plotVsOracle(oracle, Vec(paramSize) { x pow (it + 1) } dot weightsNow, x)
       println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
       println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
       println("Weights: $weightsNow / Bias: $biasNow")
       lossHistory += epochs / 100 to totalLoss / 100
-      plotLoss(lossHistory)
+//      plotLoss(lossHistory)
       totalLoss = 0.0
       totalTime = 0L
     }
@@ -88,6 +87,7 @@ fun main() = with(DoublePrecision) {
     totalLoss += averageLoss
   }
 
+  plotLoss(lossHistory)
   println("Final weights: $weightsNow")
 }
 
