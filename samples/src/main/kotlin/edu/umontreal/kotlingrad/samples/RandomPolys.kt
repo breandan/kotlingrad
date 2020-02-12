@@ -42,7 +42,7 @@ class ExpressionGenerator(val rng: Random): Protocol<DReal>(DReal) {
     else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 
   fun scaledRandomBiTree(height: Int = 4, maxX: Double = 1.0, maxY: Double = 1.0) =
-    randomBiTree(height).let { it - it.invoke(0.0) }.let {
+    randomBiTree(height).let { it - it(0.0) }.let {
       it * wrap(maxY) / ((-maxX..maxX) step 0.01).toList()
         .map { num -> it(num).toDouble().absoluteValue }.max()!!
     }
