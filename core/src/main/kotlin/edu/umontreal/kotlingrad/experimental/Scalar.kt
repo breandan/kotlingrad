@@ -291,8 +291,8 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
   override fun hashCode(): Int = name.hashCode()
 }
 
-open class SConst<X: SFun<X>>: SFun<X>(), Constant<X> {
-  open val doubleValue: Double = when (this) {
+open class SConst<X: SFun<X>>(value: Double? = null): SFun<X>(), Constant<X> {
+  open val doubleValue: Double = value ?: when (this) {
     is Zero -> 0.0
     is One -> 1.0
     is Two -> 2.0
