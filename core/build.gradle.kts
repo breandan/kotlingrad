@@ -20,13 +20,14 @@ dependencies {
   implementation("ch.obermuhlner:big-math:_")
 //  implementation("scientifik:kmath-core:0.1.3")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
+//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
+  implementation("org.jetbrains.bio:viktor:_")
 
   // Property-based testing
   testImplementation("io.kotlintest:kotlintest-runner-junit5:_")
 
   // Symbolic fuzzing interpreter
   testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:_")
-
   // Graphical libraries
   implementation("guru.nidi:graphviz-kotlin:_")
 }

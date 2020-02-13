@@ -6,6 +6,7 @@ import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
+import org.jetbrains.bio.viktor.F64Array
 import java.lang.ClassCastException
 
 /**
@@ -193,7 +194,30 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
     }
 }
 
-open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X>
+open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
+  constructor(fVec: F64Array): this(*fVec.toDoubleArray().map { SConst<X>(it) }.toTypedArray())
+  val avxVec = F64Array(consts.size) { consts[it].doubleValue }
+
+  override fun plus(addend: VFun<X, E>) = when(addend) {
+    is VConst<X, E> -> VConst(avxVec + addend.avxVec)
+    else -> super.plus(addend)
+  }
+
+  override fun minus(subtrahend: VFun<X, E>) = when(subtrahend) {
+    is VConst<X, E> -> VConst(avxVec - subtrahend.avxVec)
+    else -> super.minus(subtrahend)
+  }
+
+  override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {
+    is VConst<X, E> -> VConst(avxVec * multiplicand.avxVec)
+    else -> super.ʘ(multiplicand)
+  }
+
+  override fun dot(multiplicand: VFun<X, E>): SFun<X> = when(multiplicand) {
+    is VConst<X, E> -> SConst(avxVec dot multiplicand.avxVec)
+    else -> super.dot(multiplicand)
+  }
+}
 
 open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
   VFun<X, E>(*contents.toTypedArray()), Iterable<SFun<X>> by contents {
@@ -226,8 +250,8 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.dot(multiplicand)
   }
 
-  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = when(multiplicand) {
-    is Mat<X, Q, E> -> Vec(multiplicand.rows.map { r -> r dot this})
+  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = when (multiplicand) {
+    is Mat<X, Q, E> -> Vec(multiplicand.map { row: VFun<X, E> -> row dot this })
     else -> super.times(multiplicand)
   }
 
