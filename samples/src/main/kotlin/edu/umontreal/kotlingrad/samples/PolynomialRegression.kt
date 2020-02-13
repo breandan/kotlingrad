@@ -117,7 +117,7 @@ private fun DoublePrecision.learnExpression(
 
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
-//      plotVsOracle(targetEq, decodePolynomial(weightsNow))
+      plotVsOracle(targetEq, decodePolynomial(weightsNow))
       println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
 //      println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
 //      println("Weights: $weightsNow")
