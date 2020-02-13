@@ -1461,7 +1461,7 @@ par\par\vskip9mm
 \fi
 \fi
 \chaptermark{#1}%
-\addtocontents{lof}{\protect\addvspace{10\p@}}%
+\addtocontents{lof}{\protect\addvspace{-10\p@}}%
 \addtocontents{lot}{\protect\addvspace{10\p@}}%
 \@makechapterhead{#2}\@afterheading}
 \def\@schapter#1{\typeout{#1}%
@@ -1470,7 +1470,7 @@ par\par\vskip9mm
 \ifx\dmschaptername\appendixname \@tocwriteb\tocappendix{chapter}{#1}%
 \else \@tocwriteb\tocchapter{chapter}{#1}\fi
 \chaptermark{#1}%
-\addtocontents{lof}{\protect\addvspace{10\p@}}%
+\addtocontents{lof}{\protect\addvspace{-10\p@}}%
 \addtocontents{lot}{\protect\addvspace{10\p@}}%
 \@makeschapterhead{#1}\@afterheading}
 \def\@makechapterhead#1{\global \topskip 5pc\relax
