@@ -555,11 +555,11 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()) : Grou
 }
 \end{kotlinlisting}
 %
-Kotlin's \href{https://kotlinlang.org/docs/reference/typecasts.html#smart-casts}{smart casting} implicitly downcasts the abstract type \inline{Fun} as a subtype, such as \inline{Sum} after performing an \inline{is Sum} check. If \inline{Fun} were not sealed, we would have needed to write \inline{(this as Sum).left} instead to access its member, \inline{left}. If the type cast was mistaken, a \inline{ClassCastException} would need to be thrown, which smart casting also prevents.
+Kotlin's \href{https://kotlinlang.org/docs/reference/typecasts.html#smart-casts}{smart casting} is an example of flow-sensitive type analysis~\citep{pearce2011implementing} where the abstract type \inline{Fun} can be treated as \inline{Sum} after performing an \inline{is Sum} check. Without smart casting, we would need to write \inline{(this as Sum).left} to access the member, \inline{left}, creating a potential \inline{ClassCastException} if the cast were mistaken.
 
 \section{Multiple Dispatch}\label{sec:multiple-dispatch}
 
-In conjunction with ADTs, Kotlin$\nabla$ uses multiple dispatch to instantiate the most specific result type of an arithmetic operation based on the type of its component operands. Like ADTs, multiple dispatch is not directly supported in the language, but it can be emulated using dynamic dispatch and overloading. Building on \autoref{sec:adts}, suppose we wish to rewrite some algebraic expression, e.g. to reduce expression swell or improve numerical stability. We can use \inline{when} to detect the type of a subexpression at runtime. Smart casting allows us to access its members, as though it were previously cast:
+In conjunction with ADTs, Kotlin$\nabla$ uses multiple dispatch to instantiate the most specific result type of an arithmetic operation based on the type of its operands. Although Kotlin does not directly support multiple dispatch, it can be emulated using single dispatch as described by \citet{leavens1998multiple}. Building on \autoref{sec:adts}, suppose we wish to rewrite some algebraic expression, e.g. to reduce expression swell or improve numerical stability. We can use \inline{when} to branch on the type of a subexpression at runtime:
 
 \begin{kotlinlisting}
 override fun times(multiplicand: Fun<X>): Fun<X> =

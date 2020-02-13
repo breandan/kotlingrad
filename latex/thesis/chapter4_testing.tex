@@ -357,6 +357,11 @@ Our training set consists of input-output pairs produced by binding the set of f
 \begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=0.8\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
 \end{figure}
 
+
+violations for exceeding threshold
+compare baseline w.r.t. finding
+leave out intervals, search to find regions. compare # of samples
+
 \section{Conclusion}
 
 In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in adversarial learning and fuzz testing. We have proposed a framework for evaluating differentiable programs in a low-cost, data-driven manner and suggest some intriguing directions for future research.
