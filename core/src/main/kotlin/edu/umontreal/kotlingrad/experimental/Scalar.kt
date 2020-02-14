@@ -292,6 +292,8 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
 }
 
 open class SConst<X: SFun<X>>(value: Double? = null): SFun<X>(), Constant<X> {
+  override fun toString() = doubleValue.toString()
+  open fun wrap(number: Number) = SConst<X>(number.toDouble())
   open val doubleValue: Double = value ?: when (this) {
     is Zero -> 0.0
     is One -> 1.0
@@ -299,42 +301,6 @@ open class SConst<X: SFun<X>>(value: Double? = null): SFun<X>(), Constant<X> {
     is E -> kotlin.math.E
     else -> Double.NaN
   }
-}
-
-sealed class Special<X: SFun<X>>: SConst<X>() {
-  override fun toString() = javaClass.simpleName
-  override fun equals(other: Any?) =
-    if (this === other) true else javaClass == other?.javaClass
-
-  override fun hashCode(): Int = when (this) {
-    is Zero<*> -> 0
-    is One<*> -> 1
-    is Two<*> -> 2
-    is E<*> -> 3
-  }
-}
-
-class Zero<X: SFun<X>>: Special<X>()
-class One<X: SFun<X>>: Special<X>()
-class Two<X: SFun<X>>: Special<X>()
-class E<X: SFun<X>>: Special<X>()
-
-abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
-  override fun toString() = value.toString()
-  abstract fun wrap(number: Number): SConst<X>
-
-  override val doubleValue: Double by lazy {
-    when (this) {
-      is BDReal -> value.toDouble()
-      is DReal -> value
-      else -> super.doubleValue
-    }
-  }
-
-  override val ZERO by lazy { wrap(0) }
-  override val ONE by lazy { wrap(1) }
-  override val TWO by lazy { wrap(2) }
-  override val E by lazy { wrap(Math.E) }
 
   override fun <E: D1> times(multiplicand: VFun<X, E>): VFun<X, E> =
     when (multiplicand) {
@@ -361,19 +327,55 @@ abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
    */
 
   override fun plus(addend: SFun<X>) = when (addend) {
-    is RealNumber<X, *> -> wrap(doubleValue + addend.doubleValue)
+    is SConst<X> -> wrap(doubleValue + addend.doubleValue)
     else -> super.plus(addend)
   }
 
   override fun times(multiplicand: SFun<X>) = when (multiplicand) {
-    is RealNumber<X, *> -> wrap(doubleValue * multiplicand.doubleValue)
+    is SConst<X> -> wrap(doubleValue * multiplicand.doubleValue)
     else -> super.times(multiplicand)
   }
 
   override fun pow(exponent: SFun<X>) = when (exponent) {
-    is RealNumber<X, *> -> wrap(doubleValue.pow(exponent.doubleValue))
+    is SConst<X> -> wrap(doubleValue.pow(exponent.doubleValue))
     else -> super.pow(exponent)
   }
+}
+
+sealed class Special<X: SFun<X>>: SConst<X>() {
+  override fun toString() = javaClass.simpleName
+  override fun equals(other: Any?) =
+    if (this === other) true else javaClass == other?.javaClass
+
+  override fun hashCode(): Int = when (this) {
+    is Zero<*> -> 0
+    is One<*> -> 1
+    is Two<*> -> 2
+    is E<*> -> 3
+  }
+}
+
+class Zero<X: SFun<X>>: Special<X>()
+class One<X: SFun<X>>: Special<X>()
+class Two<X: SFun<X>>: Special<X>()
+class E<X: SFun<X>>: Special<X>()
+
+abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
+  override fun toString() = value.toString()
+  abstract override fun wrap(number: Number): SConst<X>
+
+  override val doubleValue: Double by lazy {
+    when (this) {
+      is BDReal -> value.toDouble()
+      is DReal -> value
+      else -> super.doubleValue
+    }
+  }
+
+  override val ZERO by lazy { wrap(0) }
+  override val ONE by lazy { wrap(1) }
+  override val TWO by lazy { wrap(2) }
+  override val E by lazy { wrap(Math.E) }
 }
 
 open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
@@ -385,7 +387,7 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
 //    else -> this
 //  }
 
-  companion object: DReal(0.0)
+  companion object: DReal(Double.NaN)
 }
 
 /**
