@@ -24,46 +24,51 @@ fun main() = with(DoublePrecision) {
   }
 }
 
-fun DoublePrecision.testPolynomial(polynomial: SFun<DReal>, targetEq: SFun<DReal>) {
-  val sampleInputs = { i: Int ->
-    // Samples inputs randomly, but spaced regularly
-    (-1.0 + (i * rand.nextDouble() * 2 - 1) * (maxX * 2 / batchSize.i)).coerceIn(-1.0, 1.0)
-  }
-
-  val xInputs = Vec(batchSize, sampleInputs)
-  val targets = xInputs.map { targetEq(it) } //+ (rand.nextDouble() - 0.5) * 0.1 }
-  val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(xBatchIn to xInputs, label to targets())
-  val batchLoss = (xInputs.map { polynomial(it) } - label).magnitude()(*batchInputs)
-
-  val trueError = ((polynomial - targetEq) pow 2) pow 0.5
+fun DoublePrecision.testPolynomial(model: SFun<DReal>, targetEq: SFun<DReal>) {
+  val trueError = ((model - targetEq) pow 2) pow 0.5
 
   println("Threshold, Random Efficiency, Adversarial Efficiency")
-  for (i in 60..200) {
-    val threshold = i / 10000
+  for (i in 80..200) {
+    val threshold = i / 1000.0
     val budget = 10000
-    val seffPG = (1..budget).toList().parallelStream().filter { threshold < trueError(rand.nextDouble(-testSplit, testSplit)).toDouble() }.count() / budget
+    val seffPG = List(budget) { rand.nextDouble(-testSplit, testSplit) }
+      .filter { threshold < trueError(it).toDouble() }.count().toDouble() / budget
 
-    val sqrtBudget = kotlin.math.sqrt(budget.toDouble()).toInt()
+    val sqrtBudget = 1100//kotlin.math.sqrt(budget.toDouble()).toInt() + 10
     val seffAD = (0..sqrtBudget).toList().parallelStream()
-      .map {
-        val history = mutableListOf<Double>()
-        var xEval = rand.nextDouble(-testSplit, testSplit)
-        var update = 0.0
-        for (step in 0..sqrtBudget) {
-          val dx = batchLoss.d(x)
-          update = (beta * update + (1 - beta) * dx)(xEval).toDouble()
-          xEval += (alpha * update).also { if(step % 10 ==0) println(it) }
-          history += xEval
-          if (0.1 < xEval.absoluteValue || alpha * update < 0.0001) break
-        }
-        history
-      }.toList().flatten().take(budget).apply {
+      .map { attack(trueError, model, sqrtBudget) }
+      .toList().flatten().take(budget - batchSize.i).run {
         filter { threshold < trueError(it).toDouble() }.count().toDouble() / size
       }
 
-
     println("$threshold, $seffPG, $seffAD")
   }
+}
+
+private fun DoublePrecision.attack(targetEq: SFun<DReal>, model: SFun<DReal>, budget: Int): MutableList<Double> {
+  val sampleInputs = { i: Int ->
+    val interval = testSplit / batchSize.i
+    // Samples inputs randomly, but spaced evenly
+    (-testSplit + i * interval + rand.nextDouble(interval * 2)).coerceIn(-testSplit, testSplit)
+  }
+
+  val xInputs = Vec(batchSize, sampleInputs)
+  val targets = xInputs.map { targetEq(it) }
+  val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(xBatchIn to xInputs, label to targets())
+  val batchLoss = (xInputs.map { model(it) } - label).magnitude()(*batchInputs)
+
+  val history = mutableListOf<Double>()
+  var xEval = rand.nextDouble(-testSplit, testSplit)
+  var update = 0.0
+  for (step in 0..budget) {
+    val dx = batchLoss.d(x)
+    update = (beta * update + (1 - beta) * dx)(xEval).toDouble()
+    xEval += alpha * update
+    if (xEval.absoluteValue > testSplit) break
+    if (update.absoluteValue < 0.01 && step > 10) break
+    history += xEval
+  }
+  return history
 }
 
 val rand = Random(2L)
@@ -71,8 +76,8 @@ const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size
 const val beta = 0.9   // Momentum
-const val totalEpochs = 20
-const val epochSize = 10
+const val totalEpochs = 10
+const val epochSize = 5
 val batchSize = D30
 val paramSize = D30
 val theta = DoublePrecision.Var30("theta")
@@ -133,7 +138,7 @@ private fun DoublePrecision.learnExpression(
 
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
-      plotVsOracle(targetEq, decodePolynomial(weightsNow))
+//      plotVsOracle(targetEq, decodePolynomial(weightsNow))
       println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
       println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
 //      println("Weights: $weightsNow")
