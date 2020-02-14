@@ -8,6 +8,7 @@ import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
+import org.jetbrains.bio.viktor.F64Array
 
 /**
  * Matrix function.
@@ -193,7 +194,9 @@ class MVar<X: SFun<X>, R: D1, C: D1>(
   override fun hashCode(): Int = name.hashCode()
 }
 
-open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X>
+open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
+  val simdVec by lazy { F64Array(numRows, numCols) { row, col -> (vConsts[row][col] as SConst<X>).doubleValue } }
+}
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
   MFun<X, R, C>(*rows.toTypedArray()), Iterable<VFun<X, C>> by rows {

@@ -8,6 +8,7 @@ import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
 import java.lang.ClassCastException
+import kotlin.system.measureTimeMillis
 
 /**
  * Vector function.
@@ -180,7 +181,6 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is VMap<X, E> -> input.bind(bnds).map { ssMap(mapInput to it)(bnds) }
       is VComposition -> vFun.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
-      else -> TODO(this@bind.toString() + "/" + bnds)
     }.let { result ->
       val freeVars = result.bindings.allFreeVariables.keys
       val boundVars = bnds.allBoundVariables
@@ -196,26 +196,36 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
 
 open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
   constructor(fVec: F64Array): this(*fVec.toDoubleArray().map { SConst<X>(it) }.toTypedArray())
-  val avxVec = F64Array(consts.size) { consts[it].doubleValue }
+  val simdVec by lazy { F64Array(consts.size) { consts[it].doubleValue } }
 
   override fun plus(addend: VFun<X, E>) = when(addend) {
-    is VConst<X, E> -> VConst(avxVec + addend.avxVec)
+    is VConst<X, E> -> VConst(simdVec + addend.simdVec)
     else -> super.plus(addend)
   }
 
   override fun minus(subtrahend: VFun<X, E>) = when(subtrahend) {
-    is VConst<X, E> -> VConst(avxVec - subtrahend.avxVec)
+    is VConst<X, E> -> VConst(simdVec - subtrahend.simdVec)
     else -> super.minus(subtrahend)
   }
 
   override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {
-    is VConst<X, E> -> VConst(avxVec * multiplicand.avxVec)
+    is VConst<X, E> -> VConst(simdVec * multiplicand.simdVec)
     else -> super.ʘ(multiplicand)
   }
 
   override fun dot(multiplicand: VFun<X, E>): SFun<X> = when(multiplicand) {
-    is VConst<X, E> -> SConst(avxVec dot multiplicand.avxVec)
+    is VConst<X, E> -> SConst(simdVec dot multiplicand.simdVec)
     else -> super.dot(multiplicand)
+  }
+
+  override fun times(multiplicand: SFun<X>) = when (multiplicand) {
+    is SConst<X> -> VConst(simdVec * multiplicand.doubleValue)
+    else -> super.times(multiplicand)
+  }
+
+  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = when (multiplicand) {
+    is MConst<X, Q, E> -> VConst(*multiplicand.vConsts.map { SConst<X>(simdVec dot it.simdVec) }.toTypedArray())
+    else -> super.times(multiplicand)
   }
 }
 
@@ -327,3 +337,21 @@ sealed class D27(override val i: Int = 27): D26(i) { companion object: D27(), Na
 sealed class D28(override val i: Int = 28): D27(i) { companion object: D28(), Nat<D28> }
 sealed class D29(override val i: Int = 29): D28(i) { companion object: D29(), Nat<D29> }
 sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Nat<D30> }
+
+fun main() {
+  var totalTime = 0L
+  for(i in 0..100)
+    totalTime += measureTimeMillis {
+      F64Array(1000, 1000) { r, c -> Math.random() }.let { it * it }
+    }
+
+  println("simd: ${totalTime / 100.0}")
+  totalTime = 0L
+
+  for(i in 0..100)
+    totalTime += measureTimeMillis {
+      List(1000*1000){ Math.random() }.map { it * it }
+    }
+
+  println("KTX: ${totalTime / 100.0}")
+}
