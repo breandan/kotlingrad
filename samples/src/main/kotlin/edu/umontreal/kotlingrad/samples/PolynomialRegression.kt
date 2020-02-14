@@ -6,25 +6,25 @@ import edu.umontreal.kotlingrad.experimental.DoublePrecision.pow
 import edu.umontreal.kotlingrad.utils.step
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
+import kotlin.math.absoluteValue
 import kotlin.random.Random
+import kotlin.streams.toList
 
 fun main() = with(DoublePrecision) {
-  val seed = 2L
   val lossHistoryCumulative = mutableListOf<List<Pair<Int, Double>>>()
   for (expNum in 0..100) {
-    val rand = Random(seed + expNum)
     val eg = ExpressionGenerator(rand)
     val targetExp: SFun<DReal> = eg.scaledRandomBiTree(5, maxX, maxY)
-    val polynomial = learnExpression(rand, lossHistoryCumulative, targetExp)
+    val polynomial = learnExpression(lossHistoryCumulative, targetExp)
 
-    testPolynomial(rand, polynomial, targetExp)
+    testPolynomial(polynomial, targetExp)
 
     if (expNum % 10 == 0)
       ObjectOutputStream(FileOutputStream("checkpoint.hist")).use { it.writeObject(lossHistoryCumulative) }
   }
 }
 
-fun DoublePrecision.testPolynomial(rand: Random, polynomial: SFun<DReal>, targetEq: SFun<DReal>) {
+fun DoublePrecision.testPolynomial(polynomial: SFun<DReal>, targetEq: SFun<DReal>) {
   val sampleInputs = { i: Int ->
     // Samples inputs randomly, but spaced regularly
     (-1.0 + (i * rand.nextDouble() * 2 - 1) * (maxX * 2 / batchSize.i)).coerceIn(-1.0, 1.0)
@@ -33,28 +33,40 @@ fun DoublePrecision.testPolynomial(rand: Random, polynomial: SFun<DReal>, target
   val xInputs = Vec(batchSize, sampleInputs)
   val targets = xInputs.map { targetEq(it) } //+ (rand.nextDouble() - 0.5) * 0.1 }
   val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(xBatchIn to xInputs, label to targets())
-  val batchLoss = (xInputs.map { polynomial(it) } - label).magnitude()
+  val batchLoss = (xInputs.map { polynomial(it) } - label).magnitude()(*batchInputs)
 
-  var randSearchEff = 0
+  val trueError = ((polynomial - targetEq) pow 2) pow 0.5
 
-  val error = ((polynomial - targetEq) pow 2) pow 0.5
+  println("Threshold, Random Efficiency, Adversarial Efficiency")
+  for (i in 60..200) {
+    val threshold = i / 10000
+    val budget = 10000
+    val seffPG = (1..budget).toList().parallelStream().filter { threshold < trueError(rand.nextDouble(-testSplit, testSplit)).toDouble() }.count() / budget
 
-  println("Error Threshold, Errors / 1k")
-  for (i in 50..200) {
-    val seff = (1..2000).count { i * 0.001 < error(rand.nextDouble(-1.0, 1.0)).toDouble() } / 2.0
-    println("${i/1000.0}, " + seff)
+    val sqrtBudget = kotlin.math.sqrt(budget.toDouble()).toInt()
+    val seffAD = (0..sqrtBudget).toList().parallelStream()
+      .map {
+        val history = mutableListOf<Double>()
+        var xEval = rand.nextDouble(-testSplit, testSplit)
+        var update = 0.0
+        for (step in 0..sqrtBudget) {
+          val dx = batchLoss.d(x)
+          update = (beta * update + (1 - beta) * dx)(xEval).toDouble()
+          xEval += (alpha * update).also { if(step % 10 ==0) println(it) }
+          history += xEval
+          if (0.1 < xEval.absoluteValue || alpha * update < 0.0001) break
+        }
+        history
+      }.toList().flatten().take(budget).apply {
+        filter { threshold < trueError(it).toDouble() }.count().toDouble() / size
+      }
+
+
+    println("$threshold, $seffPG, $seffAD")
   }
-
-  for (i in 0..1000) {
-    var xEval = rand.nextDouble(-1.0, 1.0)
-    val seff = 1
-    val dx = batchLoss.d(x)
-    xEval
-  }
-
-  polynomial.d(x)
 }
 
+val rand = Random(2L)
 const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size
@@ -69,6 +81,16 @@ val label = DoublePrecision.Var30("y")
 val encodedInput = xBatchIn.sVars.vMap { row -> DoublePrecision.Vec(paramSize) { col -> row pow (col + 1) } }
 val pred = encodedInput * theta
 val squaredLoss = (pred - label).magnitude()
+val testSplit = 0.2
+
+fun sampleInputs(i: Int): Double {
+  // -maxX |----Train Split----|----Test Split----|----Train Split----| +maxX
+  val halfSplit = testSplit * maxX
+  // Samples from input range randomly (but evenly spaced)
+  return (rand.nextDouble(0.0, 0.9)).let {
+    if (rand.nextBoolean()) halfSplit + it else -halfSplit - it // Leave out middlemost split
+  }
+}
 
 /* https://en.wikipedia.org/wiki/Polynomial_regression#Matrix_form_and_calculation_of_estimates
  *  __  __    __                      __  __  __
@@ -81,15 +103,9 @@ val squaredLoss = (pred - label).magnitude()
  */
 
 private fun DoublePrecision.learnExpression(
-  rand: Random,
   lossHistoryCumulative: MutableList<List<Pair<Int, Double>>>,
   targetEq: SFun<DReal>): SFun<DReal> {
   var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
-
-  val sampleInputs = { i: Int ->
-    // Samples inputs randomly, but spaced regularly
-    (-1.0 + (i * rand.nextDouble() * 2 - 1) * (maxX * 2 / batchSize.i)).coerceIn(-1.0, 1.0)
-  }
 
   fun decodePolynomial(weights: Vec<DReal, D30>) = Vec(paramSize) { x pow (it + 1) } dot weights
 
@@ -101,8 +117,8 @@ private fun DoublePrecision.learnExpression(
 
   for (epochs in 1..(epochSize * totalEpochs)) {
     totalTime += System.nanoTime()
-    val xInputs = Vec(batchSize, sampleInputs)
-    val targets = xInputs.map { targetEq(it) } //+ (rand.nextDouble() - 0.5) * 0.1 }
+    val xInputs = Vec(batchSize, ::sampleInputs)
+    val targets = xInputs.map { targetEq(it) }
 
     val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(xBatchIn to xInputs, label to targets())
     val batchLoss = squaredLoss(*batchInputs)
@@ -117,7 +133,7 @@ private fun DoublePrecision.learnExpression(
 
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
-//      plotVsOracle(targetEq, decodePolynomial(weightsNow))
+      plotVsOracle(targetEq, decodePolynomial(weightsNow))
       println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
       println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
 //      println("Weights: $weightsNow")
