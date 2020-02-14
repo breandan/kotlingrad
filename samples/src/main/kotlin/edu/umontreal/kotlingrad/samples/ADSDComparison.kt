@@ -17,7 +17,7 @@ import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.log10
 
- @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
+@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main() {
   val xs = (-1000.0..1000.0 step 7E-1).toList()
 //  val xs = (-1.0..1.0 step 0.0037).toList().toDoubleArray()
@@ -87,4 +87,4 @@ fun main() {
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
    val data = (labels.zip(errors) + ("x" to xs)).toMap()
    data.plot2D(title, "comparison.svg", 0.2)
- }
+}
