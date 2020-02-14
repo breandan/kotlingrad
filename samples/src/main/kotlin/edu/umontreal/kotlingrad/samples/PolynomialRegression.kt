@@ -13,8 +13,7 @@ import kotlin.streams.toList
 fun main() = with(DoublePrecision) {
   val lossHistoryCumulative = mutableListOf<List<Pair<Int, Double>>>()
   for (expNum in 0..100) {
-    val eg = ExpressionGenerator(rand)
-    val targetExp: SFun<DReal> = eg.scaledRandomBiTree(5, maxX, maxY)
+    val targetExp = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
     val polynomial = learnExpression(lossHistoryCumulative, targetExp)
 
     testPolynomial(polynomial, targetExp)
@@ -68,6 +67,7 @@ private fun DoublePrecision.attack(targetEq: SFun<DReal>, model: SFun<DReal>, bu
     if (update.absoluteValue < 0.01 && step > 10) break
     history += xEval
   }
+
   return history
 }
 

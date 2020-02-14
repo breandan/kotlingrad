@@ -23,9 +23,9 @@ import java.awt.Point
 import kotlin.math.*
 
 @Suppress("NonAsciiCharacters", "PropertyName", "LocalVariableName")
-class SinglePendulum(private val len: Double = 300.0) : Application(), EventHandler<ActionEvent> {
+class SinglePendulum(private val len: Double = 300.0): Application(), EventHandler<ActionEvent> {
   val pivot = Point(len.toInt() + 20, 0)
-  val anchor = Circle(10.0, BLACK).apply {layoutX = len; layoutY = 0.0}
+  val anchor = Circle(10.0, BLACK).apply { layoutX = len; layoutY = 0.0 }
 
   val rod1 = Line(len, 0.0, len * 2, 0.0).apply { strokeWidth = 3.0 }
   val rod2 = Line(len, 0.0, len * 2, 0.0).apply { strokeWidth = 3.0 }
@@ -57,7 +57,7 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
   val sync = 180
 
   override fun handle(t: ActionEvent) {
-    if(q < sync) {
+    if (q < sync) {
       ωP = ω
       θP = θ
     } else if (q == sync) {
@@ -88,10 +88,10 @@ class SinglePendulum(private val len: Double = 300.0) : Application(), EventHand
       val delXPred = (bob1.layoutX - XPred) pow 2
       val delYPred = (bob1.layoutY - YPred) pow 2
       val l2 = sqrt(delXPred + delYPred)
-      if(q < sync) {
+      if (q < sync) {
         G1 = l2.descend(steps = 100, vinit = 0.0, gamma = 0.9, α = 0.01, variable = G1)
-        if(q % 10 == 0) println("G = ${G1.eval()}")
-      } else if(q % 100 == 0) println("Loss: ${l2.eval()}")
+        if (q % 10 == 0) println("G = ${G1.eval()}")
+      } else if (q % 100 == 0) println("Loss: ${l2.eval()}")
       q++
     }
   }

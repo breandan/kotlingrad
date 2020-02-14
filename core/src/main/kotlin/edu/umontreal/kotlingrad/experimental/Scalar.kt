@@ -554,8 +554,7 @@ abstract class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
 
       graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), TRANSPARENT.background()]
 
-      node[color, color.font(), Font.config("Helvetica", 20),
-        Style.lineWidth(THICKNESS)]
+      node[color, color.font(), Font.config("Helvetica", 20), Style.lineWidth(THICKNESS)]
 
       op()
     }.toGraphviz().render(format)

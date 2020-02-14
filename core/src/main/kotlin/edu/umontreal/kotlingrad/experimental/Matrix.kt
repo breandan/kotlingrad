@@ -114,7 +114,7 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
     }.also { result ->
       val freeVars = result.bindings.allFreeVariables.keys
       val boundVars = bnds.allBoundVariables
-      val unpropagated = freeVars.filter { it in boundVars }.map { it to bnds.get(it) }
+      val unpropagated = freeVars.filter { it in boundVars }.map { it to bnds[it] }
       if (unpropagated.isNotEmpty()) {
         show("input"); result.show("result")
         println("Free vars: $freeVars")
