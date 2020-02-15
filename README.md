@@ -789,16 +789,21 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [On Using Generics for Implementing Algebraic Structures](https://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
 * [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
 * [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
-* [jalgebra](https://github.com/mdgeorge4153/jalgebra): An abstract algebra library for Java
 * [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
 * [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
 
-### Computational Mathematics
+### Mathematical Libraries
 
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
 * [An introduction to context-oriented programming in Kotlin](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2)
+* [Hipparchus](https://github.com/Hipparchus-Math/hipparchus) - An efficient, general-purpose mathematics components library in the Java programming language
+* [SymJava](https://github.com/yuemingl/SymJava) - A Java library for fast symbolic-numeric computation
+* [JAS](https://github.com/kredel/java-algebra-system) - Java Algebra System
+* [jalgebra](https://github.com/mdgeorge4153/jalgebra) - An abstract algebra library for Java
 * [COJAC](https://github.com/Cojac/Cojac) - Numerical sniffing tool and Enriching number wrapper for Java
-* [chebfun](https://www.chebfun.org/) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
+* [chebfun](https://www.chebfun.org) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
+* [horeilly1101/deriv](https://github.com/horeilly1101/deriv) - Open source derivative calculator REST API (and Java library)
+* [owl](https://github.com/idsc-frazzoli/owl) - Library for motion planning in Java
 
 ### Neural Networks
 
@@ -823,7 +828,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
 * [Learning to Discover Efficient Mathematical Identities](https://papers.nips.cc/paper/5350-learning-to-discover-efficient-mathematical-identities.pdf)
 
-### Libraries
+### AD Libraries
 
 * [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp): An eDSL for writing numerical models in F# with support for interactive tensor shape-checking
 * [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
@@ -834,6 +839,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
 * [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
 * [Lantern](https://feiwang3311.github.io/Lantern/) - a framework in Scala, based on delimited continuations and multi-stage programming
+* [JAutoDiff](https://github.com/uniker9/JAutoDiff) - An Automatic Differentiation Library
 
 ## Special Thanks
 
