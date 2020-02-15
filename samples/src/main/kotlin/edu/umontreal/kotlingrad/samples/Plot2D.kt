@@ -18,6 +18,10 @@ val X_RANGE = -10.0..10.0
 
 fun main() {
   with(DoublePrecision) {
+    // TODO: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+    // TODO: https://en.wikipedia.org/wiki/Gegenbauer_polynomials
+
+    // https://en.wikipedia.org/wiki/Hermite_polynomials
     val y0 = exp(-x * x / 2)
 
     val hermite = plot2D(X_RANGE, *y0.andDerivatives())
