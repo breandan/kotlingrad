@@ -41,7 +41,10 @@ javafx.modules("javafx.controls", "javafx.swing")
 
 tasks {
   compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    kotlinOptions {
+      jvmTarget = JavaVersion.VERSION_1_8.toString()
+      languageVersion = "1.3"
+    }
   }
 
   listOf(
