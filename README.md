@@ -792,18 +792,18 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
 * [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
 
-### Mathematical Libraries
+### Symbolic Mathematics
 
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
 * [An introduction to context-oriented programming in Kotlin](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2)
 * [Hipparchus](https://github.com/Hipparchus-Math/hipparchus) - An efficient, general-purpose mathematics components library in the Java programming language
+* [tensor](https://github.com/idsc-frazzoli/tensor) - Linear algebra for tensors with symbolic and numeric scalars
 * [SymJava](https://github.com/yuemingl/SymJava) - A Java library for fast symbolic-numeric computation
 * [JAS](https://github.com/kredel/java-algebra-system) - Java Algebra System
 * [jalgebra](https://github.com/mdgeorge4153/jalgebra) - An abstract algebra library for Java
 * [COJAC](https://github.com/Cojac/Cojac) - Numerical sniffing tool and Enriching number wrapper for Java
 * [chebfun](https://www.chebfun.org) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
 * [horeilly1101/deriv](https://github.com/horeilly1101/deriv) - Open source derivative calculator REST API (and Java library)
-* [owl](https://github.com/idsc-frazzoli/owl) - Library for motion planning in Java
 
 ### Neural Networks
 
