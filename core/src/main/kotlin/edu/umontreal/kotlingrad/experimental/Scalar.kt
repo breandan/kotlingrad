@@ -137,10 +137,15 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 
 sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  protected open val ZERO: SFun<X> by lazy { Zero() }
-  protected open val ONE: SFun<X> by lazy { One() }
-  protected open val TWO: SFun<X> by lazy { Two() }
-  protected open val E: SFun<X> by lazy { E<X>() }
+  open val ZERO: SFun<X> by lazy { Zero() }
+  open val ONE: SFun<X> by lazy { One() }
+  open val TWO: SFun<X> by lazy { Two() }
+  open val E: SFun<X> by lazy { E<X>() }
+  val x = SVar<X>("x")
+  val y = SVar<X>("y")
+  val z = SVar<X>("z")
+
+  open val variables = listOf(x, y, z)
 
   override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
   override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
@@ -246,6 +251,7 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb
     is DProd -> (left.d(vrb) as VFun<X, D1> dot right as VFun<X, D1>) + (left as VFun<X, D1> dot right.d(vrb))
     is SComposition -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()
+//    is Custom<X> -> fn.df()
   }
 }
 
@@ -291,10 +297,10 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
   override fun hashCode(): Int = name.hashCode()
 }
 
-open class SConst<X: SFun<X>>(value: Double? = null): SFun<X>(), Constant<X> {
+open class SConst<X: SFun<X>>(open val value: Number? = null): SFun<X>(), Constant<X> {
   override fun toString() = doubleValue.toString()
   open fun wrap(number: Number) = SConst<X>(number.toDouble())
-  open val doubleValue: Double = value ?: when (this) {
+  open val doubleValue: Double = value?.toDouble() ?: when (this) {
     is Zero -> 0.0
     is One -> 1.0
     is Two -> 2.0
@@ -360,7 +366,7 @@ class One<X: SFun<X>>: Special<X>()
 class Two<X: SFun<X>>: Special<X>()
 class E<X: SFun<X>>: Special<X>()
 
-abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
+abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y): SConst<X>() {
   override fun toString() = value.toString()
   abstract override fun wrap(number: Number): SConst<X>
 
@@ -371,22 +377,10 @@ abstract class RealNumber<X: SFun<X>, Y>(open val value: Y): SConst<X>() {
       else -> super.doubleValue
     }
   }
-
-  override val ZERO by lazy { wrap(0) }
-  override val ONE by lazy { wrap(1) }
-  override val TWO by lazy { wrap(2) }
-  override val E by lazy { wrap(Math.E) }
 }
 
 open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
   override fun wrap(number: Number) = DReal(number.toDouble())
-
-//  fun Double.clipped() = when {
-//    isNaN() -> throw NumberFormatException("Is NaN")
-//    3 < log10(absoluteValue).absoluteValue -> sign * 10.0.pow(log10(absoluteValue))
-//    else -> this
-//  }
-
   companion object: DReal(Double.NaN)
 }
 
@@ -394,19 +388,8 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-abstract class Protocol<X: SFun<X>>(val prototype: RealNumber<X, *>) {
-  val x = SVar<X>("x")
-  val y = SVar<X>("y")
-  val z = SVar<X>("z")
-
-  open val variables = listOf(x, y, z)
-
-  val zero: Fun<X> = Zero()
-  val one: Fun<X> = One()
-  val two: Fun<X> = Two()
-  val e: Fun<X> = E()
-
-  val constants = listOf(zero to 0, one to 1, two to 2, e to E).bind()
+abstract class Protocol<X: RealNumber<X, *>>(val prototype: RealNumber<X, *>) {
+  val constants = prototype.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() }
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
