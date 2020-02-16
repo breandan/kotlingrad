@@ -36,6 +36,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   fun opCode() = javaClass.simpleName
 
   fun isConstant() = bindings.allVars.isEmpty()
+  fun wrap(number: Number) = SConst<X>(number.toDouble())
 
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
 
@@ -137,15 +138,15 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 
 sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  open val ZERO: SFun<X> by lazy { Zero() }
-  open val ONE: SFun<X> by lazy { One() }
-  open val TWO: SFun<X> by lazy { Two() }
-  open val E: SFun<X> by lazy { E<X>() }
-  val x = SVar<X>("x")
-  val y = SVar<X>("y")
-  val z = SVar<X>("z")
+  open val ZERO: Special<X> by lazy { Zero() }
+  open val ONE: Special<X> by lazy { One() }
+  open val TWO: Special<X> by lazy { Two() }
+  open val E: Special<X> by lazy { E<X>() }
+  val x: SVar<X> by lazy { SVar("x") }
+  val y: SVar<X> by lazy { SVar("y") }
+  val z: SVar<X> by lazy { SVar("z") }
 
-  open val variables = listOf(x, y, z)
+  open val variables: List<SVar<X>> by lazy { listOf(x, y, z) }
 
   override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
   override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
@@ -214,6 +215,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is SComposition -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("SComp")) }
       is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
+      is SConst<*> -> add(Label.of(this@SFun.toString()))
       else -> TODO(this@SFun.javaClass.toString())
     }
   }
@@ -299,7 +301,6 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
 
 open class SConst<X: SFun<X>>(open val value: Number? = null): SFun<X>(), Constant<X> {
   override fun toString() = doubleValue.toString()
-  open fun wrap(number: Number) = SConst<X>(number.toDouble())
   open val doubleValue: Double = value?.toDouble() ?: when (this) {
     is Zero -> 0.0
     is One -> 1.0
@@ -390,6 +391,10 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
 
 abstract class Protocol<X: RealNumber<X, *>>(val prototype: RealNumber<X, *>) {
   val constants = prototype.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() }
+  val x = prototype.x
+  val y = prototype.y
+  val z = prototype.z
+  open val variables = prototype.variables
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
@@ -402,13 +407,13 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: RealNumber<X, *>) {
 
   fun wrap(number: Number): SConst<X> = prototype.wrap(number)
 
-  inline fun <reified X: RealNumber<X, Y>, Y: Number> SFun<X>.toDouble() =
+  fun SFun<X>.toDouble() =
     try {
-      (this as X).value.toDouble()
+      (this as SConst<X>).doubleValue
     } catch(e: ClassCastException) {
       show("before")
       e.printStackTrace()
-      throw NumberFormatException("Scalar function has unbound free variables: ${bindings.allFreeVariables.keys}")
+      throw NumberFormatException("Scalar function ${javaClass.simpleName} has unbound free variables: ${bindings.allFreeVariables.keys}")
     }
 
   fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
@@ -461,25 +466,25 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: RealNumber<X, *>) {
 
   inline fun <reified E: D1> VFun<X, E>.magnitude() = (this ʘ this).sum().sqrt()
 
-  fun <Y: Number> Vec(d0: Y) = VConst<X, D1>(wrap(d0))
-  fun <Y: Number> Vec(d0: Y, d1: Y) = VConst<X, D2>(wrap(d0), wrap(d1))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y) = VConst<X, D3>(wrap(d0), wrap(d1), wrap(d2))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y) = VConst<X, D4>(wrap(d0), wrap(d1), wrap(d2), wrap(d3))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y) = VConst<X, D5>(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = VConst<X, D6>(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y) = VConst<X, D7>(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y) = VConst<X, D8>(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7))
-  fun <Y: Number> Vec(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = VConst<X, D9>(wrap(d0), wrap(d1), wrap(d2), wrap(d3), wrap(d4), wrap(d5), wrap(d6), wrap(d7), wrap(d8))
+  fun <Y: Number> Vec(y0: Y) = VConst<X, D1>(wrap(y0))
+  fun <Y: Number> Vec(y0: Y, y1: Y) = VConst<X, D2>(wrap(y0), wrap(y1))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y) = VConst<X, D3>(wrap(y0), wrap(y1), wrap(y2))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y) = VConst<X, D4>(wrap(y0), wrap(y1), wrap(y2), wrap(y3))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y) = VConst<X, D5>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = VConst<X, D6>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y) = VConst<X, D7>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y) = VConst<X, D8>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7))
+  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = VConst<X, D9>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7), wrap(y8))
 
-  fun <Y: Number> MConst1x1(d0: Y) = Mat<X, D1, D1>(Vec(d0))
-  fun <Y: Number> MConst1x2(d0: Y, d1: Y) = Mat<X, D1, D2>(Vec(d0, d1))
-  fun <Y: Number> MConst1x3(d0: Y, d1: Y, d2: Y) = Mat<X, D1, D3>(Vec(d0, d1, d2))
-  fun <Y: Number> MConst2x1(d0: Y, d1: Y) = Mat<X, D2, D1>(Vec(d0), Vec(d1))
-  fun <Y: Number> MConst2x2(d0: Y, d1: Y, d2: Y, d3: Y) = MConst<X, D2, D2>(Vec(d0, d1), Vec(d2, d3))
-  fun <Y: Number> MConst2x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D2, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5))
-  fun <Y: Number> MConst3x1(d0: Y, d1: Y, d2: Y) = Mat<X, D3, D1>(Vec(d0), Vec(d1), Vec(d2))
-  fun <Y: Number> MConst3x2(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y) = Mat<X, D3, D2>(Vec(d0, d1), Vec(d2, d3), Vec(d4, d5))
-  fun <Y: Number> MConst3x3(d0: Y, d1: Y, d2: Y, d3: Y, d4: Y, d5: Y, d6: Y, d7: Y, d8: Y) = Mat<X, D3, D3>(Vec(d0, d1, d2), Vec(d3, d4, d5), Vec(d6, d7, d8))
+  fun <Y: Number> Mat1x1(y0: Y) = MConst<X, D1, D1>(Vec(y0))
+  fun <Y: Number> Mat1x2(y0: Y, y1: Y) = MConst<X, D1, D2>(Vec(y0, y1))
+  fun <Y: Number> Mat1x3(y0: Y, y1: Y, y2: Y) = MConst<X, D1, D3>(Vec(y0, y1, y2))
+  fun <Y: Number> Mat2x1(y0: Y, y1: Y) = MConst<X, D2, D1>(Vec(y0), Vec(y1))
+  fun <Y: Number> Mat2x2(y0: Y, y1: Y, y2: Y, y3: Y) = MConst<X, D2, D2>(Vec(y0, y1), Vec(y2, y3))
+  fun <Y: Number> Mat2x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D2, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5))
+  fun <Y: Number> Mat3x1(y0: Y, y1: Y, y2: Y) = MConst<X, D3, D1>(Vec(y0), Vec(y1), Vec(y2))
+  fun <Y: Number> Mat3x2(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
+  fun <Y: Number> Mat3x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
 
   inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
     Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })

@@ -5,7 +5,7 @@ import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow
 
-class ExpressionGenerator<X: SFun<X>>(proto: Protocol<X>): Gen<SFun<X>> {
+class ExpressionGenerator<X: RealNumber<X, *>>(proto: Protocol<X>): Gen<SFun<X>> {
   val sum = { x: SFun<X>, y: SFun<X> -> x + y }
   val sub = { x: SFun<X>, y: SFun<X> -> x - y }
   val mul = { x: SFun<X>, y: SFun<X> -> x * y }
