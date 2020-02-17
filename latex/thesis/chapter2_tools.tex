@@ -66,7 +66,7 @@ A minimal ROS application contains at least one \textit{publisher} and \textit{s
 import rospy
 from std_msgs.msg import String
 
-pub = rospy.Publisher("(*\hl{channel}*)", String, queue_size=10)
+pub = rospy.Publisher("(*@\hl{channel}@*)", String, queue_size=10)
 rospy.init_node("publisher", anonymous=True)
 rate = rospy.Rate(10)
 while not rospy.is_shutdown():
@@ -81,7 +81,7 @@ def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "received data %s", data.data)
 
     rospy.init_node("subscriber", anonymous=True)
-    rospy.Subscriber("(*\hl{channel}*)", String, callback)
+    rospy.Subscriber("(*@\hl{channel}@*)", String, callback)
     rospy.spin()
 \end{pythonlisting}
 %
@@ -108,8 +108,8 @@ Rather than interacting with the command line, it would be convenient to have a 
 %
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
-<node name="publisher" pkg="pubsub" type="(*\color{red}\textbf{pubsher.py}*)" output="screen"/>
-<node name="subscriber" pkg="pubsub" type="(*\color{blue}\underline{subscriber.py}*)" output="screen"/>
+<node name="publisher" pkg="pubsub" type="(*@\color{red}\textbf{pubsher.py}@*)" output="screen"/>
+<node name="subscriber" pkg="pubsub" type="(*@\color{blue}\underline{subscriber.py}@*)" output="screen"/>
 </launch>
 \end{launchlisting}
 %
@@ -158,8 +158,8 @@ def callback(data):
 If she were using the \inline{vim} text editor, one solution would be to replace all textual occurrences of the string \inline{data} within the file using \inline{:\%s/data/msg/g}, producing the following result:
 %
 \begin{pythonlisting}
-def callback((*\hl{msg}*)):
-    rospy.loginfo(rospy.get_caller_id() + "received (*\hl{msg}*): %s", (*\hl{msg}*).(*\hl{msg}*))
+def callback((*@\hl{msg}@*)):
+    rospy.loginfo(rospy.get_caller_id() + "received (*@\hl{msg}@*): %s", (*@\hl{msg}@*).(*@\hl{msg}@*))
 \end{pythonlisting}
 %
 There were four occurrences of the string \inline{data}, only two of which were correctly renamed. Instead, only those strings which refer to the function parameter should be renamed:
@@ -167,8 +167,8 @@ There were four occurrences of the string \inline{data}, only two of which were 
 \newcommand{\cfbox}[2]{\colorlet{currentcolor}{.}{\color{#1}\fbox{\color{currentcolor}#2}}}
 
 \begin{pythonlisting}
-def callback((*\cfbox{red}{data}*)):
-    rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*\cfbox{red}{data}*).data)
+def callback((*@\cfbox{red}{data}@*)):
+    rospy.loginfo(rospy.get_caller_id() + "received data: %s", (*@\cfbox{red}{data}@*).data)
 \end{pythonlisting}
 %
 Generally, we would like the ability to rename identifiers across files and languages. To do so, we need a richer understanding of code that transcends text -- we need a parser.

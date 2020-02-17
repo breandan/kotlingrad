@@ -227,7 +227,7 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
 val x = Var("x") // Declare immutable variables (these variables are
 val y = Var("y") // just symbolic constructs used for differentiation)
     val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazily evaluated
-    val dz_dx = d(z) / d(x) // Supports Leibniz notation(*~\citep{christianson2012leibniz}*)
+    val dz_dx = d(z) / d(x) // Supports Leibniz notation(*@~\citep{christianson2012leibniz}@*)
     val d2z_dxdy = d(dz_dx) / d(y) // Mixing higher order partials
     val d3z_d2xdy = grad(d2z_dxdy)[x] // Equivalent to d(f)/d(x)
     plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in 3-space (-1 < x, y, z < 1)
@@ -309,7 +309,7 @@ Most array programming libraries such as NumPy~\citep{van2011numpy} or TensorFlo
 val vecA = Vec(1.0, 2.0)      // Inferred type: Vec<Int, D2>
 val vecB = Vec(1.0, 2.0, 3.0) // Inferred type: Vec<Int, D3>
 val vecC = vecB + vecB
-val vecD = (*\uwave{vecA + vecB}*) // Compile error: Expected Vec<2>, found Vec<3>
+val vecD = (*@\uwave{vecA + vecB}@*) // Compile error: Expected Vec<2>, found Vec<3>
 \end{kotlinlisting}
 %
 Attempting to sum two vectors whose shapes do not match will fail to compile.
@@ -318,7 +318,7 @@ Attempting to sum two vectors whose shapes do not match will fail to compile.
 val matA = Mat1x4(1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D1, D4>
 val matB = Mat4x1(1.0, 2.0, 3.0, 4.0) // Inferred type: Mat<Double, D4, D1>
 val matC = matA * matB
-val matD = (*\uwave{matA *\ matC}*) // Compile error: Expected Mat<4, *>, found Mat<1, 1>
+val matD = (*@\uwave{matA *\ matC}@*) // Compile error: Expected Mat<4, *>, found Mat<1, 1>
 \end{kotlinlisting}
 %
 Similarly, multiplying two matrices whose inner dimensions do not match will not compile.
@@ -334,7 +334,7 @@ val matC: Mat<Double, D2, D2> = a * b // Types are optional, but encouraged
 val matD = Mat2x1(1.0, 2.0)
 val matE = matC * matD
 val matF = Mat3x1(1.0, 2.0, 3.0)
-val matG = (*\uwave{matE *\ matF}*) // Compile error: Expected Mat<1, *>, found Mat<3, 1>
+val matG = (*@\uwave{matE *\ matF}@*) // Compile error: Expected Mat<1, *>, found Mat<3, 1>
 \end{kotlinlisting}
 %
 It is required to specify the parameter types in a method signature. Explicit return types are optional but encouraged for readability. If omitted, the type system can often infer them:
@@ -381,7 +381,7 @@ The operator \inline{+} can now be used like so. Incompatible operands will caus
 \begin{kotlinlisting}
 // Type-checked vector addition with shape inference
 val Y = Vec(0, 0) + Vec(0, 0) // Y: Vec<Float, D2>
-val X = (*\uwave{Vec(0, 0) + Vec(0, 0, 0)}*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
+val X = (*@\uwave{Vec(0, 0) + Vec(0, 0, 0)}@*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
 \end{kotlinlisting}
 %
 Dynamic length construction is also permitted, although it may fail at runtime. For example:
@@ -390,7 +390,7 @@ Dynamic length construction is also permitted, although it may fail at runtime. 
 val one = Vec(0, 0, 0) + Vec(0, 0, 0) // Always runs safely
 val add = Vec(0, 0, 0) + Vec<Int, D3>(listOf(...)) // Compiles, but may fail at runtime
 val vec = Vec(0, 0, 0) // Inferred type: Vec<3>
-val sum = (*\uwave{Vec(0, 0) + add}*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
+val sum = (*@\uwave{Vec(0, 0) + add}@*) // Compile error: Expected Vec<Int, D2>, found Vec<Int, D3>
 \end{kotlinlisting}
 %
 Matrices and tensors have a similar syntax. For example, Kotlin$\nabla$ can infer the shape of matrix multiplication, and will not compile if the arguments' inner dimensions disagree:
@@ -404,7 +404,7 @@ operator fun <X, Q: D1, R: D1, S: D1> Mat<X, Q, R>.times(m: Mat<X, R, S>): Mat<X
     Mt( *(rows.indices).map { i -> /* ... */ }.toTypedArray() )
 
 val matM = Mat1x2(0, 0)
-val matO = (*\uwave{matM *\ matM}*) // Compile error: Expected Mat<2, *>, found Mat<1, 2>
+val matO = (*@\uwave{matM *\ matM}@*) // Compile error: Expected Mat<2, *>, found Mat<1, 2>
 \end{kotlinlisting}
 %
 A similar technique can be found in nalgebra~\citep{crozet2019nalgebra}, a shape-checked linear algebra library for the Rust language which also uses synthetic type-level integers. This technique originates in Haskell, a language which supports more powerful forms of type-level computation, such as \textit{type arithmetic}~\citep{kiselyov2005number}. Type arithmetic simplifies array concatenation, convolutional arithmetic~\citep{dumoulin2016guide} and other operations which are currently difficult to express in Kotlin$\nabla$, where arbitrary type-level functions $\mathcal{T}(\mathbf a, \mathbf b)$ (ref.~\autoref{sec:type-systems}) can require enumerating up to $C^{q + r}$ Kotlin functions to compute.
@@ -626,7 +626,7 @@ with(DoubleContext) {
     val r = t(X to 1.0)(Y to 3.0) // Currying
     val o = X + Z + 0.0
     val p = o(X to 1.0) // Partial application
-    val k = (*\uwave{o(Y to 4.0)}*) // Does not compile
+    val k = (*@\uwave{o(Y to 4.0)}@*) // Does not compile
 }
 \end{kotlinlisting}
 
