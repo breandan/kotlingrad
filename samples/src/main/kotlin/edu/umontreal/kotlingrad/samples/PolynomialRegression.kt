@@ -24,10 +24,11 @@ fun main() = with(DoublePrecision) {
   }
 }
 
-fun DoublePrecision.testPolynomial(model: SFun<DReal>, targetEq: SFun<DReal>) {
+fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
+  val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val numSteps = 100
-  val budget = 10000
+  val budget = 100
   val trueErrors = List(budget) { rand.nextDouble(-maxX, maxX) }.map { Pair(it, trueError(it).toDouble()) }.toMap()
   val maxError = trueErrors.entries.maxBy { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
@@ -42,7 +43,7 @@ fun DoublePrecision.testPolynomial(model: SFun<DReal>, targetEq: SFun<DReal>) {
       .filter { threshold <= it }.count().toDouble() / budget
     val seffAD = trueErrors.entries.chunked(batchSize.i).dropLast(1)
       .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { chunk[it].value }) }
-      .toMap().entries.parallelStream().flatMap { attack(model, it.key, it.value) }.toList().run {
+      .toMap().entries.parallelStream().flatMap { attack(weights, it.key, it.value) }.toList().run {
         filter { threshold <= trueError(it).toDouble() }.count().toDouble() / size
       }
 
@@ -50,13 +51,28 @@ fun DoublePrecision.testPolynomial(model: SFun<DReal>, targetEq: SFun<DReal>) {
   }
 }
 
-private fun DoublePrecision.attack(model: SFun<DReal>, batchInput: Vec<DReal, D30>, targets: Vec<DReal, D30>): Stream<Double> {
-  var proposals = batchInput
-  val batchInputs = arrayOf(xBatchIn to proposals, label to targets())
-  val batchLoss = (proposals.map { model(it) } - label).magnitude()
-  val dx = batchLoss.d(x)
+private fun DoublePrecision.attack(
+  weights: Vec<DReal, D30>, batchInput: Vec<DReal, D30>, targets: Vec<DReal, D30>
+): Stream<Double> {
+  val model = decodePolynomial(weights)
+  val batchInputs = arrayOf(xBatchIn to batchInput, label to targets())
+  val batchLoss = squaredLoss(*batchInputs)
 
+  var newWeights = weights
   var update = Vec(paramSize) { 0.0 }
+  for (step in 0..10) {
+    val weightGrads = batchLoss.d(theta)(theta to newWeights)
+    update = (beta * update + (1 - beta) * weightGrads)()
+    newWeights = (newWeights - alpha * update)()
+  }
+
+  val adModel = decodePolynomial(newWeights)
+
+  var proposals = batchInput
+  val surrogateLoss = (proposals.map { model(it) - adModel(it) }).magnitude()
+  val dx = surrogateLoss.d(x)
+
+  update = Vec(paramSize) { 0.0 }
   for (step in 0..1000) {
     val dxs = proposals.map { wrap(dx(it).toDouble()) }
     update = (beta * update + (1 - beta) * dxs)()
@@ -98,12 +114,13 @@ fun sampleInputs(i: Int) = -maxX + rand.nextDouble(i * interval, (i + 1) * inter
  * |__ __|   |__                     __| |__ __|
  */
 
+fun DoublePrecision.decodePolynomial(weights: Vec<DReal, D30>) =
+  Vec(paramSize) { x pow (it + 1) } dot weights
+
 private fun DoublePrecision.learnExpression(
   lossHistoryCumulative: MutableList<List<Pair<Int, Double>>>,
-  targetEq: SFun<DReal>): SFun<DReal> {
+  targetEq: SFun<DReal>): Vec<DReal, D30> {
   var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
-
-  fun decodePolynomial(weights: Vec<DReal, D30>) = Vec(paramSize) { x pow (it + 1) } dot weights
 
   var totalLoss = 0.0
   var totalTime = 0L
@@ -144,7 +161,7 @@ private fun DoublePrecision.learnExpression(
 //    println("Final weights: $weightsNow")
   lossHistoryCumulative += lossHistory
 
-  return decodePolynomial(weightsNow)
+  return weightsNow
 }
 
 private fun plotLoss(lossHistory: MutableList<Pair<Int, Double>>) {
