@@ -261,7 +261,7 @@ CMD <DEFAULT_START_COMMAND>
 Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-build images.\hspace{-.08em}\footnote{\url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}} When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
 %
 \begin{pclisting}
-~$ docker run (*\hl{--entrypoint=qemu-arm-static}*) -it your/arm-image bash
+~$ docker run (*@\hl{--entrypoint=qemu-arm-static}@*) -it your/arm-image bash
 \end{pclisting}
 
 \subsection{\href{https://hub.docker.com/_/ros}{ROS Docker Images}}

@@ -292,7 +292,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
 \Procedure{ProbAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, budget: $\mathbb Z^+$}
 \State $D_\mathbf T \gets \{\}, j \gets 0$
 \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
-\State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from S}
+\State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from $\mathcal S_m$}
 \If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, perform gradient ascent}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$ \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
 \Else \Comment{Outside feasible set, perform gradient descent}
@@ -335,7 +335,7 @@ G(\delta-1, \psi) \times G(\delta-1, \psi) & \text{if } \delta > 0 \text{ and } 
 \end{cases}
 \end{equation}
 
-Our training set consists of input-output pairs produced by binding the set of free variables to values belonging to the same datatype and numerical range as the constants, evaluating the expression on input values in the range $[-1, -0.2] \cup [0.2, 1]$ and rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression in our dataset, we then train a polynomial regressor to convergence using SGD. Then, for both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
+Our training set consists of input-output pairs produced by binding the set of free variables to values belonging to the same datatype and numerical range as the constants, evaluating the expression on input values in the range $[-1, -0.2] \cup [0.2, 1]$ and rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression in our dataset, we train a polynomial regressor to convergence using vanilla SGD with momentum. Then, for both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
 
 \begin{figure}[H]
 \centering
@@ -354,21 +354,37 @@ Our training set consists of input-output pairs produced by binding the set of f
 \end{table}
 
 \begin{figure}
-\begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=0.8\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
+\begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
 \end{figure}
 
-The adversarial testing strategy takes as input the original the regression model $\hat{f}$, a small dataset from the same distribution, and resumes the original training procedure over the supplied datapoints for a fixed number of epochs, E, producing $\hat{f}'$. This is used to construct a surrogate loss $(\hat{f} - \hat{f}')^2$ over the input space, which can be maximized using \autoref{alg:diff_adversary}.
+\begin{kotlinlisting}
+val model = Vec(D30) { x pow (it + 1) } dot weights
+var update = Vec(D30) { 0.0 }
+
+batches.forEach { i, batch ->
+  val batchInputs = arrayOf(xBatchIn to batch.first, label to batch.second)
+  val batchLoss = squaredLoss(batchInputs)
+  val weightGrads = batchLoss.d(theta)(*newWeights)
+  update = beta * update + (1 - beta) * weightGrads
+  newWeights = newWeights - alpha * update
+}
+
+val adModel = decodePolynomial(newWeights)
+val surrogateLoss = (model - adModel) pow 2
+\end{kotlinlisting}
+
+Our adversary takes as input the original the regression model $\hat{f}$, a set of new IO pairs from the same expression, and resumes the original training procedure on the $\hat{f}$ using the supplied datapoints for a fixed number of epochs, $E$, to produce a new model $\hat{f}'$. $\hat{f}'$ is used to construct a surrogate loss $\hat\mathcal{L}(x) = (\hat{f}(x) - \hat{f}'(x))^2$, which can be maximized using \autoref{alg:diff_adversary}. We report the efficiency of the adversarial testing strategy for various error thresholds in terms of standard deviations from the mean squared error on the true loss function $\mathcal{L}(x) = (f(x) - f'(x))$. On average, the adversary yields a $10-15\%$ improvement over random search.
 
 \begin{figure}
 \begin{tikzpicture}
-\begin{axis}[title={Efficiency of Probabilistic Generator vs. Differential Shrinker}, width=0.95\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center]
-\addplot+[smooth, error bars/.cd] table [mark=none, x index=0, y index=1, y error=2, col sep=comma] {../data/seff.csv};
-\addlegendentry{Probabilistic Efficiency}
-\addplot+[smooth, error bars/.cd] table [mark=none, x index=0, y index=3, y error=4, col sep=comma] {../data/seff.csv};
-\addlegendentry{Adversarial Efficiency}
+\begin{axis}[title={Average efficiency in terms of standard deviations over MSE}, width=\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center, xtick distance=0.5]
+\addplot+[error bars/.cd, y dir = both, y explicit, every nth mark=5] table [mark=none, x index=0, y index=1, y error index=2, col sep=comma] {../data/seff.csv};
+\addlegendentry{Probabilistic Generator}
+\addplot+[error bars/.cd, y dir = both, y explicit, every nth mark=5] table [mark=none, x index=0, y index=3, y error index=4, col sep=comma] {../data/seff.csv};
+\addlegendentry{Differential Adversary}
 \end{axis}
 \end{tikzpicture}
-\caption{The differential shrinker detects more errors per IO example, by construction.}
+\caption{By construction, the differential shrinker detects more errors per IO example.}
 \label{fig:pbt_comparison}
 \end{figure}
 

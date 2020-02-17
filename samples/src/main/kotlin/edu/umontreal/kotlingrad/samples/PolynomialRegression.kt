@@ -1,7 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.invoke
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.magnitude
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.pow
 import edu.umontreal.kotlingrad.utils.step
@@ -68,14 +67,14 @@ private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>) =
   }.toList()
 
 private fun DoublePrecision.attack(
-  weights: Vec<DReal, D30>, chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
+  weights: Vec<DReal, D30>, batches: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
 ): SFun<DReal> {
   val model = decodePolynomial(weights)
   var newWeights = weights
   var update = Vec(paramSize) { 0.0 }
 
-  chunked.forEachIndexed { i, chunk ->
-    val batchInputs = arrayOf(xBatchIn to chunk.first, label to chunk.second)
+  batches.forEachIndexed { i, batch ->
+    val batchInputs = arrayOf(xBatchIn to batch.first, label to batch.second)
     val batchLoss = squaredLoss(*batchInputs)
 
     val weightGrads = batchLoss.d(theta)(theta to newWeights)

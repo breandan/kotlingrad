@@ -181,7 +181,7 @@ CMD ls -l             # Default command run when container is started
 Now, to build the image, we can simply run:
 
 \begin{pclisting}
-~$ docker build -t user/duck:v3 (*\hl{.}*)
+~$ docker build -t user/duck:v3 (*@\hl{.}@*)
 \end{pclisting}
 %
 The \inline{.} indicates the current directory, which should be the same one containing our \inline{Dockerfile}. This command should produce something like the following output:
@@ -356,7 +356,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 There is a second method of depositing data into a container, which does not require baking it into the parent image at compile-time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
 \begin{pclisting}
-~$ docker run user/duck:v6 (*\hl{-v HOST\_PATH:TARGET\_PATH}*)
+~$ docker run user/duck:v6 (*@\hl{-v HOST\_PATH:TARGET\_PATH}@*)
 \end{pclisting}
 %
 Suppose we have a \inline{Dockerfile} which provides a default \inline{CMD} instruction:
@@ -378,7 +378,7 @@ Instead, when running the container, we need to share the file via the Docker CL
 \begin{pclisting}
 ~$ echo -e '#!/bin/bash\necho Launching...' >> launch.sh && \
    chmod 775 launch.sh && \
-   docker run user/duck:v6 (*\hl{-v launch.sh:/launch.sh}*)
+   docker run user/duck:v6 (*@\hl{-v launch.sh:/launch.sh}@*)
 Launching...
 \end{pclisting}
 %
@@ -389,7 +389,7 @@ This way, the local file \inline{launch.sh} will be available to use from within
 Docker's filesystem is additive, so each layer will only increase the size of the final image. For this reason, it is often necessary to tidy up unneeded files after installation. For example, when installing dependencies on Debian-based images, it is a common practice to run:
 
 \begin{dockerlisting}
-RUN apt-get update && apt-get install ... && (*\hl{rm -rf /var/lib/apt/lists/*}*)
+RUN apt-get update && apt-get install ... && (*@\hl{rm -rf /var/lib/apt/lists/*}@*)
 \end{dockerlisting}
 %
 This ensures the package list is not baked into the image (Docker will only checkpoint the layer after each step is complete). Builds can often consume several steps, despite only producing a single artifact. Instead of chaining together several commands and cleaning up changes in a single step, multi-stage builds let us build a series of images inside a \inline{Dockerfile}, and copy resources from one to another, discarding all intermediate build artifacts:
@@ -460,7 +460,7 @@ The \href{https://www.duckietown.org}{Duckietown platform} supports two primary 
 %
 In addition, we assume the following software dependencies have been installed on (3):
 %
-\begin{enumerate}[label=(\alph*)]
+\begin{enumerate}[label=(\alph@*)]
 \item \href{https://get.docker.com}{Docker CE}
 \item POSIX-compliant shell
 \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}
@@ -475,7 +475,7 @@ In addition, we assume the following software dependencies have been installed o
 One of the first steps in the Duckietown manual requires users to manually install a custom operating system onto bootable media, a tedious and time-consuming process. The following installation script was written to automate this process, allowing users to setup a reproducible software environment more easily:
 
 \begin{pclisting}
-~$ bash -c "(*\$*)(wget -O- h.ndan.co)"
+~$ bash -c "(*@\$@*)(wget -O- h.ndan.co)"
 \end{pclisting}
 %
 Now, with the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell}, the following command is all that is needed:
@@ -501,7 +501,7 @@ To access the DuckieOS web interface, users can visit the following URL in any J
 \noindent To verify Docker is working properly, launch a remote container, interactively, like so:
 
 \begin{pclisting}
-~$ docker (*\hl{-H DUCKIEBOT\_NAME}*) run -it --privileged --net host \
+~$ docker (*@\hl{-H DUCKIEBOT\_NAME}@*) run -it --privileged --net host \
    duckietown/rpi-ros-kinetic-base:master18
 \end{pclisting}
 %
@@ -534,7 +534,7 @@ In order to circumvent this restriction, ARM-specific \inline{Dockerfile}s can b
 All Duckietown Docker images ship with the \href{https://www.qemu.org}{QEMU}~\citep{bellard2005qemu} emulator -- this allows us to run ARM images on x86 directly. To run a pure compute ROS node (i.e.\ one that does not require any camera or motor access) on an x86 platform, developers must supply a custom entrypoint to Docker when running the image using the entrypoint flag as follows:
 
 \begin{pclisting}
-~$ docker run ... (*\hl{-{}-entrypoint=qemu3-arm-static}*) IMAGE [RUN_COMMAND]
+~$ docker run ... (*@\hl{-{}-entrypoint=qemu3-arm-static}@*) IMAGE [RUN_COMMAND]
 \end{pclisting}
 %
 Here, \inline{RUN\_COMMAND} may be a shell such as \inline{/bin/bash} or another command such as \inline{/bin/bash -c "roscore"}. The entrypoint refers to the ARM emulator packaged within the base image, \inline{duckietown/rpi-ros-kinetic-base}, which allows ARM binaries to be run on x86 hosts.
@@ -609,7 +609,7 @@ dt> duckiebot keyboard_control DUCKIEBOT_NAME
 \noindent The following container will launch the extrinsic calibration procedure:
 
 \begin{pclisting}
-~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host (*\hl{-v /data:/data}*)
+~$ docker -H DUCKIEBOT_NAME run -it --privileged --net host (*@\hl{-v /data:/data}@*)
 duckietown/rpi-duckiebot-calibration:master18
 \end{pclisting}
 %

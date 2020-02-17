@@ -68,6 +68,25 @@
 
 % Downloads Table
 \usepackage{pgfplots}
+\newcounter{marknumber}
+\pgfplotsset{
+    error bars/every nth mark/.style={
+        /pgfplots/error bars/draw error bar/.prefix code={
+            \pgfmathtruncatemacro\marknumbercheck{mod(floor(\themarknumber/2),#1)}
+            \ifnum\marknumbercheck=0
+            \else
+            \begin{scope}[opacity=0]
+                \fi
+        },
+        /pgfplots/error bars/draw error bar/.append code={
+            \ifnum\marknumbercheck=0
+            \else
+\end{scope}
+\fi
+\stepcounter{marknumber}
+}
+}
+}
 \usepackage{filecontents}
 \usetikzlibrary{pgfplots.dateplot}
 
