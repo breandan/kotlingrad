@@ -28,7 +28,7 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val numSteps = 100
-  val budget = 100
+  val budget = batchSize.i * 10
   val trueErrors = List(budget) { rand.nextDouble(-maxX, maxX) }.map { Pair(it, trueError(it).toDouble()) }.toMap()
   val maxError = trueErrors.entries.maxBy { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
@@ -41,7 +41,7 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
 
     val seffPG = trueErrors.values.parallelStream()
       .filter { threshold <= it }.count().toDouble() / budget
-    val seffAD = trueErrors.entries.chunked(batchSize.i).dropLast(1)
+    val seffAD = trueErrors.entries.chunked(batchSize.i)
       .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { chunk[it].value }) }
       .toMap().entries.parallelStream().flatMap { attack(weights, it.key, it.value) }.toList().run {
         filter { threshold <= trueError(it).toDouble() }.count().toDouble() / size
@@ -68,7 +68,7 @@ private fun DoublePrecision.attack(
 
   val adModel = decodePolynomial(newWeights)
 
-  var proposals = batchInput
+  var proposals = Vec(paramSize) { sampleInputs(it) }
   val surrogateLoss = (proposals.map { model(it) - adModel(it) }).magnitude()
   val dx = surrogateLoss.d(x)
 
