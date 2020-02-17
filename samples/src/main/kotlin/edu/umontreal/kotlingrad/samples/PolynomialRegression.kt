@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.invoke
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.magnitude
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.pow
 import edu.umontreal.kotlingrad.utils.step
@@ -33,12 +34,15 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }
 
-  println("StdDevs from Mean, Random Efficiency, Adversarial Efficiency")
-
   val chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>> = trueErrors.entries.chunked(batchSize.i)
     .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { chunk[it].value }) }
-  val adErrors = attack(weights, chunked)
+  val surrogateLoss = attack(trueError, weights, chunked)
 
+  plotVsOracle(trueError, surrogateLoss)
+
+  val adErrors = sampleAndAscend(surrogateLoss)
+
+  println("StdDevs from Mean, Random Efficiency, Adversarial Efficiency")
   for (i in 0..numSteps) {
     val stdDevs = 3.0 * i / numSteps
     val threshold = avgError + stdDevs * stdError
@@ -50,14 +54,30 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   }
 }
 
+private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>) =
+  (0..100).toList().parallelStream().flatMap {
+    var proposals = Vec(paramSize) { sampleInputs(it) }
+    val batchLoss = proposals.map { surrogateLoss(it) }.magnitude()
+    val dx = batchLoss.d(x).d(x)
+
+    var momentum = Vec(paramSize) { 0.0 }
+    for (step in 0..1000) {
+      val dxs = proposals.map { wrap(dx(it).toDouble()) }
+      momentum = (beta * momentum + (1 - beta) * dxs)()
+      proposals = (proposals + alpha * momentum)()
+    }
+
+    proposals.contents.map { it.toDouble() }.stream()
+  }.toList()
+
 private fun DoublePrecision.attack(
-  weights: Vec<DReal, D30>, chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
-): List<Double> {
+  trueError: SFun<DReal>, weights: Vec<DReal, D30>, chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
+): SFun<DReal> {
   val model = decodePolynomial(weights)
   var newWeights = weights
   var update = Vec(paramSize) { 0.0 }
 
-  chunked.forEachIndexed { i, chunk ->
+  chunked.take(10).forEachIndexed { i, chunk ->
     val batchInputs = arrayOf(xBatchIn to chunk.first, label to chunk.second)
     val batchLoss = squaredLoss(*batchInputs)
 
@@ -69,20 +89,7 @@ private fun DoublePrecision.attack(
   val adModel = decodePolynomial(newWeights)
   val surrogateLoss = (model - adModel) pow 2
 
-  return (0..100).toList().parallelStream().flatMap {
-    var proposals = Vec(paramSize) { sampleInputs(it) }
-    val batchLoss = proposals.map { surrogateLoss(it) }.magnitude()
-    val dx = batchLoss.d(x)
-
-    var momentum = Vec(paramSize) { 0.0 }
-    for (step in 0..1000) {
-      val dxs = proposals.map { wrap(dx(it).toDouble()) }
-      momentum = (beta * momentum + (1 - beta) * dxs)()
-      proposals = (proposals + alpha * momentum)()
-    }
-
-    proposals.contents.map { it.toDouble() }.stream()
-  }.toList()
+  return surrogateLoss
 }
 
 val rand = Random(2L)
@@ -101,11 +108,12 @@ val label = DoublePrecision.Var30("y")
 val encodedInput = xBatchIn.sVars.vMap { row -> DoublePrecision.Vec(paramSize) { col -> row pow (col + 1) } }
 val pred = encodedInput * theta
 val squaredLoss = (pred - label).magnitude()
-val interval: Double = 2 * maxX / batchSize.i
+val interval: Double = (maxX - maxX * testSplit) / batchSize.i
 
 // Samples inputs randomly, but spaced evenly
 // -maxX |----Train Split----|----Test Split----|----Train Split----| +maxX
-fun sampleInputs(i: Int) = -maxX + rand.nextDouble(i * interval, (i + 1) * interval)
+fun sampleInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
+  (testSplit * maxX + rand.nextDouble(i * interval, (i + 2) * interval))
 
 /* https://en.wikipedia.org/wiki/Polynomial_regression#Matrix_form_and_calculation_of_estimates
  *  __  __    __                      __  __  __
