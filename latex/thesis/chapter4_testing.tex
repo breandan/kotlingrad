@@ -357,7 +357,20 @@ Our training set consists of input-output pairs produced by binding the set of f
 \begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=0.8\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
 \end{figure}
 
-The adversarial testing strategy takes as input the original the regression model $\hat{f}$, a small dataset from the same distribution, and resumes the training over the provided datapoints for a fixed number of epochs, producing $\hat{f}'$. This is used to construct a surrogate loss over the input space as follows: $(\hat{f} - \hat{f}')^2$, which can be maximized in the input domain using \autoref{alg:diff_adversary}.
+The adversarial testing strategy takes as input the original the regression model $\hat{f}$, a small dataset from the same distribution, and resumes the original training procedure over the supplied datapoints for a fixed number of epochs, E, producing $\hat{f}'$. This is used to construct a surrogate loss $(\hat{f} - \hat{f}')^2$ over the input space, which can be maximized using \autoref{alg:diff_adversary}.
+
+\begin{figure}
+\begin{tikzpicture}
+\begin{axis}[title={Efficiency of Probabilistic Generator vs. Differential Shrinker}, width=0.95\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center]
+\addplot+[smooth, error bars/.cd] table [mark=none, x index=0, y index=1, y error=2, col sep=comma] {../data/seff.csv};
+\addlegendentry{Probabilistic Efficiency}
+\addplot+[smooth, error bars/.cd] table [mark=none, x index=0, y index=3, y error=4, col sep=comma] {../data/seff.csv};
+\addlegendentry{Adversarial Efficiency}
+\end{axis}
+\end{tikzpicture}
+\caption{The differential shrinker detects more errors per IO example, by construction.}
+\label{fig:pbt_comparison}
+\end{figure}
 
 violations for exceeding threshold
 compare baseline w.r.t. finding
