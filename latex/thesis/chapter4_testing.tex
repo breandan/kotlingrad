@@ -335,7 +335,7 @@ G(\delta-1, \psi) \times G(\delta-1, \psi) & \text{if } \delta > 0 \text{ and } 
 \end{cases}
 \end{equation}
 
-Our training set consists of input-output pairs produced by binding the set of free variables belonging to the same datatype and numerical range as the constants, evaluating the expression on input values in the range $[-1, 1]$ and rescaling all output values to in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression in our dataset, we then train a polynomial regressor to convergence using SGD. Then, for both adversarial testing and uniform random sampling strategies, compare the average number of violations detected per evaluation as a function of input dimension and error tolerance.
+Our training set consists of input-output pairs produced by binding the set of free variables to values belonging to the same datatype and numerical range as the constants, evaluating the expression on input values in the range $[-1, -0.2] \cup [0.2, 1]$ and rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression in our dataset, we then train a polynomial regressor to convergence using SGD. Then, for both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
 
 \begin{figure}[H]
 \centering
@@ -357,6 +357,7 @@ Our training set consists of input-output pairs produced by binding the set of f
 \begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=0.8\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
 \end{figure}
 
+The adversarial testing strategy takes as input the original the regression model $\hat{f}$, a small dataset from the same distribution, and resumes the training over the provided datapoints for a fixed number of epochs, producing $\hat{f}'$. This is used to construct a surrogate loss over the input space as follows: $(\hat{f} - \hat{f}')^2$, which can be maximized in the input domain using \autoref{alg:diff_adversary}.
 
 violations for exceeding threshold
 compare baseline w.r.t. finding
