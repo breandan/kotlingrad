@@ -40,7 +40,7 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   val adErrors = attack(weights, chunked)
 
   for (i in 0..numSteps) {
-    val stdDevs = 10.0 * i / numSteps
+    val stdDevs = 3.0 * i / numSteps
     val threshold = avgError + stdDevs * stdError
 
     val seffPG = trueErrors.values.parallelStream().filter { threshold <= it }.count().toDouble() / budget
@@ -58,21 +58,21 @@ private fun DoublePrecision.attack(
   var update = Vec(paramSize) { 0.0 }
 
   chunked.forEachIndexed { i, chunk ->
-    println("Processing chunk $i of ${chunked.size}...")
     val batchInputs = arrayOf(xBatchIn to chunk.first, label to chunk.second)
     val batchLoss = squaredLoss(*batchInputs)
 
-    val weightGrads = batchLoss.d(theta)(newWeights)
+    val weightGrads = batchLoss.d(theta)(theta to newWeights)
     update = (beta * update + (1 - beta) * weightGrads)()
     newWeights = (newWeights - alpha * update)()
   }
 
   val adModel = decodePolynomial(newWeights)
+  val surrogateLoss = (model - adModel) pow 2
 
   return (0..100).toList().parallelStream().flatMap {
     var proposals = Vec(paramSize) { sampleInputs(it) }
-    val surrogateLoss = proposals.map { model(it) - adModel(it) }.magnitude()
-    val dx = surrogateLoss.d(x)
+    val batchLoss = proposals.map { surrogateLoss(it) }.magnitude()
+    val dx = batchLoss.d(x)
 
     var momentum = Vec(paramSize) { 0.0 }
     for (step in 0..1000) {
