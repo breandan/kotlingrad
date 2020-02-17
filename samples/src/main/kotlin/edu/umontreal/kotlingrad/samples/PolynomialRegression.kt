@@ -7,7 +7,6 @@ import edu.umontreal.kotlingrad.utils.step
 import org.nield.kotlinstatistics.standardDeviation
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
-import java.util.stream.Stream
 import kotlin.random.Random
 import kotlin.streams.toList
 
@@ -28,58 +27,62 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val numSteps = 100
-  val budget = batchSize.i * 10
+  val budget = batchSize.i * 100
   val trueErrors = List(budget) { rand.nextDouble(-maxX, maxX) }.map { Pair(it, trueError(it).toDouble()) }.toMap()
   val maxError = trueErrors.entries.maxBy { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }
 
   println("StdDevs from Mean, Random Efficiency, Adversarial Efficiency")
+
+  val chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>> = trueErrors.entries.chunked(batchSize.i)
+    .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { chunk[it].value }) }
+  val adErrors = attack(weights, chunked)
+
   for (i in 0..numSteps) {
     val stdDevs = 10.0 * i / numSteps
     val threshold = avgError + stdDevs * stdError
 
-    val seffPG = trueErrors.values.parallelStream()
-      .filter { threshold <= it }.count().toDouble() / budget
-    val seffAD = trueErrors.entries.chunked(batchSize.i)
-      .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { chunk[it].value }) }
-      .toMap().entries.parallelStream().flatMap { attack(weights, it.key, it.value) }.toList().run {
-        filter { threshold <= trueError(it).toDouble() }.count().toDouble() / size
-      }
+    val seffPG = trueErrors.values.parallelStream().filter { threshold <= it }.count().toDouble() / budget
+    val seffAD = adErrors.parallelStream().filter { threshold <= trueError(it).toDouble() }.count().toDouble() / budget
 
     println("${stdDevs}, $seffPG, $seffAD")
   }
 }
 
 private fun DoublePrecision.attack(
-  weights: Vec<DReal, D30>, batchInput: Vec<DReal, D30>, targets: Vec<DReal, D30>
-): Stream<Double> {
+  weights: Vec<DReal, D30>, chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
+): List<Double> {
   val model = decodePolynomial(weights)
-  val batchInputs = arrayOf(xBatchIn to batchInput, label to targets())
-  val batchLoss = squaredLoss(*batchInputs)
-
   var newWeights = weights
   var update = Vec(paramSize) { 0.0 }
-  for (step in 0..10) {
-    val weightGrads = batchLoss.d(theta)(theta to newWeights)
+
+  chunked.forEachIndexed { i, chunk ->
+    println("Processing chunk $i of ${chunked.size}...")
+    val batchInputs = arrayOf(xBatchIn to chunk.first, label to chunk.second)
+    val batchLoss = squaredLoss(*batchInputs)
+
+    val weightGrads = batchLoss.d(theta)(newWeights)
     update = (beta * update + (1 - beta) * weightGrads)()
     newWeights = (newWeights - alpha * update)()
   }
 
   val adModel = decodePolynomial(newWeights)
 
-  var proposals = Vec(paramSize) { sampleInputs(it) }
-  val surrogateLoss = (proposals.map { model(it) - adModel(it) }).magnitude()
-  val dx = surrogateLoss.d(x)
+  return (0..100).toList().parallelStream().flatMap {
+    var proposals = Vec(paramSize) { sampleInputs(it) }
+    val surrogateLoss = proposals.map { model(it) - adModel(it) }.magnitude()
+    val dx = surrogateLoss.d(x)
 
-  update = Vec(paramSize) { 0.0 }
-  for (step in 0..1000) {
-    val dxs = proposals.map { wrap(dx(it).toDouble()) }
-    update = (beta * update + (1 - beta) * dxs)()
-    proposals = (proposals + alpha * update)()
-  }
+    var momentum = Vec(paramSize) { 0.0 }
+    for (step in 0..1000) {
+      val dxs = proposals.map { wrap(dx(it).toDouble()) }
+      momentum = (beta * momentum + (1 - beta) * dxs)()
+      proposals = (proposals + alpha * momentum)()
+    }
 
-  return proposals.contents.map { it.toDouble() }.stream()
+    proposals.contents.map { it.toDouble() }.stream()
+  }.toList()
 }
 
 val rand = Random(2L)
@@ -124,7 +127,7 @@ private fun DoublePrecision.learnExpression(
 
   var totalLoss = 0.0
   var totalTime = 0L
-  var weightUpdate = Vec(paramSize) { 0.0 }
+  var momentum = Vec(paramSize) { 0.0 }
   val lossHistory = mutableListOf<Pair<Int, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
 
@@ -141,8 +144,8 @@ private fun DoublePrecision.learnExpression(
     totalLoss += batchLoss(*weightMap).toDouble() / xInputs.size
     val weightGrads = batchLoss.d(theta)
 
-    weightUpdate = (beta * weightUpdate + (1 - beta) * weightGrads)(*weightMap)()
-    weightsNow = (weightsNow - alpha * weightUpdate)()
+    momentum = (beta * momentum + (1 - beta) * weightGrads)(*weightMap)()
+    weightsNow = (weightsNow - alpha * momentum)()
 
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
