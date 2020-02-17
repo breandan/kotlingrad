@@ -342,18 +342,16 @@ sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Na
 
 fun main() {
   var totalTime = 0L
-  for(i in 0..100)
-    totalTime += measureTimeMillis {
-      F64Array(1000, 1000) { _, _ -> Math.random() }.let { it * it }
-    }
+  for(i in 0..100) totalTime += measureTimeMillis {
+    F64Array(1000, 1000) { _, _ -> Math.random() }.let { it * it }
+  }
 
   println("simd: ${totalTime / 100.0}")
   totalTime = 0L
 
-  for(i in 0..100)
-    totalTime += measureTimeMillis {
-      List(1000*1000){ Math.random() }.map { it * it }
-    }
+  for(i in 0..100) totalTime += measureTimeMillis {
+    List(1000 * 1000) { Math.random() }.map { it * it }
+  }
 
   println("KTX: ${totalTime / 100.0}")
 }
