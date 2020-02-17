@@ -13,18 +13,23 @@ import kotlin.streams.toList
 
 fun main() = with(DoublePrecision) {
   val lossHistoryCumulative = mutableListOf<List<Pair<Int, Double>>>()
+  val models = mutableListOf<Vec<DReal, D30>>()
+  val surrogates = mutableListOf<SFun<DReal>>()
   for (expNum in 0..100) {
     val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
     val model = learnExpression(lossHistoryCumulative, oracle)
+    models += model
+    surrogates += testPolynomial(model, oracle)
 
-    testPolynomial(model, oracle)
-
-    if (expNum % 10 == 0)
+    if (expNum % 10 == 0) {
       ObjectOutputStream(FileOutputStream("checkpoint.hist")).use { it.writeObject(lossHistoryCumulative) }
+      ObjectOutputStream(FileOutputStream("model.hist")).use { it.writeObject(model) }
+      ObjectOutputStream(FileOutputStream("surrogate.hist")).use { it.writeObject(surrogates) }
+    }
   }
 }
 
-fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
+fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>): SFun<DReal> {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val numSteps = 100
@@ -36,10 +41,8 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
 
   val chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>> = trueErrors.entries.chunked(batchSize.i)
     .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { chunk[it].value }) }
-  val surrogateLoss = attack(trueError, weights, chunked)
-
-  plotVsOracle(trueError, surrogateLoss)
-
+  val surrogateLoss = attack(weights, chunked)
+//  plotVsOracle(trueError, surrogateLoss)
   val adErrors = sampleAndAscend(surrogateLoss)
 
   println("StdDevs from Mean, Random Efficiency, Adversarial Efficiency")
@@ -52,6 +55,7 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
 
     println("${stdDevs}, $seffPG, $seffAD")
   }
+  return surrogateLoss
 }
 
 private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>) =
@@ -71,13 +75,13 @@ private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>) =
   }.toList()
 
 private fun DoublePrecision.attack(
-  trueError: SFun<DReal>, weights: Vec<DReal, D30>, chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
+  weights: Vec<DReal, D30>, chunked: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
 ): SFun<DReal> {
   val model = decodePolynomial(weights)
   var newWeights = weights
   var update = Vec(paramSize) { 0.0 }
 
-  chunked.take(10).forEachIndexed { i, chunk ->
+  chunked.forEachIndexed { i, chunk ->
     val batchInputs = arrayOf(xBatchIn to chunk.first, label to chunk.second)
     val batchLoss = squaredLoss(*batchInputs)
 
@@ -97,8 +101,8 @@ const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size
 const val beta = 0.9   // Momentum
-const val totalEpochs = 10
-const val epochSize = 5
+const val totalEpochs = 20
+const val epochSize = 10
 const val testSplit = 0.2 // Hold out test
 val batchSize = D30
 val paramSize = D30
@@ -158,8 +162,8 @@ private fun DoublePrecision.learnExpression(
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
 //      plotVsOracle(targetEq, decodePolynomial(weightsNow))
-      println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
-      println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
+//      println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
+//      println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
 //      println("Weights: $weightsNow")
       lossHistory += epochs / epochSize to totalLoss / epochSize
 //      plotLoss(lossHistory)
