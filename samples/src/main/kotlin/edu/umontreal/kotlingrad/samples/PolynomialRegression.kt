@@ -13,23 +13,17 @@ import kotlin.streams.toList
 
 fun main() = with(DoublePrecision) {
   val lossHistoryCumulative = mutableListOf<List<Pair<Int, Double>>>()
-  val models = mutableListOf<Vec<DReal, D30>>()
-  val surrogates = mutableListOf<SFun<DReal>>()
   for (expNum in 0..100) {
     val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
     val model = learnExpression(lossHistoryCumulative, oracle)
-    models += model
-    surrogates += testPolynomial(model, oracle)
+    testPolynomial(model, oracle)
 
-    if (expNum % 10 == 0) {
+    if (expNum % 10 == 0)
       ObjectOutputStream(FileOutputStream("checkpoint.hist")).use { it.writeObject(lossHistoryCumulative) }
-      ObjectOutputStream(FileOutputStream("model.hist")).use { it.writeObject(model) }
-      ObjectOutputStream(FileOutputStream("surrogate.hist")).use { it.writeObject(surrogates) }
-    }
   }
 }
 
-fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>): SFun<DReal> {
+fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val numSteps = 100
@@ -55,7 +49,6 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
 
     println("${stdDevs}, $seffPG, $seffAD")
   }
-  return surrogateLoss
 }
 
 private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>) =
