@@ -201,7 +201,7 @@ open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): M
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
   MFun<X, R, C>(*rows.toTypedArray()), Iterable<VFun<X, C>> by rows {
   constructor(vararg rows: Vec<X, C>): this(rows.asList())
-  
+
   fun materialize() = rows.map { it.invoke() }.also { rows ->
     rows.indices.zip(rows).filter { it.second.size != numCols }.run {
       require(isEmpty()) { "Declared $numCols cols but row(s) ${map { it.first }} contain(s) ${map { it.second }} inputs, respectively" }

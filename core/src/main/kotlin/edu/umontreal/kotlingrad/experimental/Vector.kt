@@ -8,6 +8,7 @@ import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
 import java.lang.ClassCastException
+import kotlin.streams.toList
 import kotlin.system.measureTimeMillis
 
 /**
