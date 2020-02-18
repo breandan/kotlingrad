@@ -20,8 +20,8 @@ fun main() = with(DoublePrecision) {
 }
 
 object ExpressionGenerator: Protocol<DReal>(DReal) {
-  val sum = { x: SFun<DReal>, y: SFun<DReal> -> x + y }
-  val mul = { x: SFun<DReal>, y: SFun<DReal> -> x * y }
+  val sum = { left: SFun<DReal>, right: SFun<DReal> -> left + right }
+  val mul = { left: SFun<DReal>, right: SFun<DReal> -> left * right }
 
   val operators = listOf(sum, mul)
   override val variables = listOf(x)
