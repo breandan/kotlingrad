@@ -352,8 +352,13 @@ Our training set consists of input-output pairs produced by binding the set of f
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.70\textwidth]{../figures/training_curve.png}
-\caption{Training curve of a single trajectory of gradient descent in parameter space.}
+%\includegraphics[width=0.70\textwidth]{../figures/training_curve.png}
+\begin{tikzpicture}
+\begin{axis}[title={Average training loss over time}, width=\textwidth, height=10cm, xlabel=Epoch, ylabel=Loss, legend pos=north east, align=center]
+\addplot+[error bars/.cd, y dir = both, y explicit] table [mark=none, x index=0, y index=1, y error index=2, col sep=comma] {../data/poly_train_loss.csv};
+\end{axis}
+\end{tikzpicture}
+\caption{Average loss curve of 100 trajectories of momentum SGD in parameter space.}
 \label{fig:training_curve}
 \end{figure}
 
