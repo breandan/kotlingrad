@@ -389,7 +389,7 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-abstract class Protocol<X: RealNumber<X, *>>(val prototype: RealNumber<X, *>) {
+abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
   val constants = prototype.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() }
   val x = prototype.x
   val y = prototype.y
