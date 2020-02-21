@@ -225,10 +225,10 @@ Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required
 Polynomial regression is a straightforward application of linear regression, where the weights are the coefficients for each term in a polynomial. Consider the univariate case:
 
 \begin{equation}
-y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m
+y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
 \end{equation}
 %
-We can be rewrite this function in matrix form as follows:
+We can rewrite this function in matrix form as follows:
 %
 \begin{equation}
 \begin{bmatrix} y_1\\ y_2\\ y_3 \\ \vdots \\ y_n \end{bmatrix}= \begin{bmatrix} 1 & x_1 & x_1^2 & \dots & x_1^m \\ 1 & x_2 & x_2^2 & \dots & x_2^m \\ 1 & x_3 & x_3^2 & \dots & x_3^m \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_n & x_n^2 & \dots & x_n^m \end{bmatrix} \begin{bmatrix} \beta_0\\ \beta_1\\ \beta_2\\ \vdots \\ \beta_m \end{bmatrix}
