@@ -795,7 +795,6 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 ### Symbolic Mathematics
 
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
-* [An introduction to context-oriented programming in Kotlin](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2)
 * [Hipparchus](https://github.com/Hipparchus-Math/hipparchus) - An efficient, general-purpose mathematics components library in the Java programming language
 * [tensor](https://github.com/idsc-frazzoli/tensor) - Linear algebra for tensors with symbolic and numeric scalars
 * [SymJava](https://github.com/yuemingl/SymJava) - A Java library for fast symbolic-numeric computation
@@ -853,3 +852,5 @@ The following individuals have helped shape this project through their enthusias
 * [Erik Meijer](https://twitter.com/headinthebox/)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
+* [Jacob Miller](https://scholar.google.ca/citations?user=xG3VWpEAAAAJ)
+* [Adam Pocock](http://www.adampocock.com/)
