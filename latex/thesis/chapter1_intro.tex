@@ -21,20 +21,14 @@ In recent years, computer science and software engineering has made significant 
 
 Intelligent systems are widely deployed in virtual settings like data science and cloud services. But even with the tremendous success of machine learning algorithms in fully-observable domains like image recognition and speech processing, intelligent systems have yet to be widely adopted in robotics (at the time of writing this thesis). This dilemma can be partly attributed to various theoretical problems such as domain adaption and transfer learning. Yet with the proven capabilities of modern learning algorithms, exponential increase in processing power, and decades-long effort in building physically-embodied intelligent agents, we should have more progress to show. Why has this goal evaded researchers for so long? One reason, we conjecture, is a lack of programming tools and abstractions for designing, developing, deploying and evaluating intelligent systems. In practice, these activities consume a large amount of cognitive effort without the right set of tools and abstractions.
 
-In this thesis, we explore several tools that facilitate the process of building intelligent systems, and which reduce the cognitive effort required to understand an intelligent program. First, we demonstrate an integrated development environment that assists users writing robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for differentiable programming, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To test this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the building, testing and deployment of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, we offer some concluding remarks and lessons learned building these tools in (\autoref{ch:conclusion}).
+In traditional software engineering, the Waterfall model (\autoref{fig:waterfall_model}) is a classical model for software development comprising of various stages~\citep{royce1987managing}. We propose contributions to four stages: First, we demonstrate an integrated development environment for \textit{designing} robotics software (\autoref{ch:hatchery}). Next, we show a type-safe domain-specific language for \textit{implementing} differentiable programs, an emerging paradigm in deep learning (\autoref{ch:kotlingrad}). To \textit{verify} this application, we use a set of techniques borrowed from property-based testing~\citep{fink1997property} and adversarial learning~\citep{lowd2005adversarial} (\autoref{ch:difftest}). Docker containers~\citep{merkel2014docker} are used to automate the \textit{maitenance} of reproducible robotics applications on heterogeneous hardware platforms (\autoref{ch:ducker}). Finally, we offer some concluding remarks and lessons learned building these tools in (\autoref{ch:conclusion}).
 
-% Finally, as a proof of concept for these ideas, we build an intelligent system comprised of a mobile autonomous vehicle and an Android mobile application, using the tools previously described (\autoref{ch:case-study}).
-
-\section{Stages in the software development lifecycle}\label{sec:sldc-stages}
-
-\begin{figure}
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.70\textwidth]{../figures/waterfall_diagram.png}
     \caption{Royce's original waterfall model describes the software development process. We use it to guide our discussion and frame our contributions inside of this model.\vspace{-10pt}}
     \label{fig:waterfall_model}
 \end{figure}
-
-In traditional software engineering, the Waterfall model (\autoref{fig:waterfall_model}) is a classical model for software development comprising of various stages~\citep{royce1987managing}. A similar framework can be found in most engineering disciplines. We propose contributions to four stages: \textit{design} in \autoref{ch:hatchery}, \textit{implementation} in \autoref{ch:kotlingrad}, \textit{verification} in \autoref{ch:difftest} and \textit{maintenance} in \autoref{ch:ducker}.
 
 \section{Design: Programming tools for robotics}
 
