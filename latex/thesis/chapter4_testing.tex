@@ -18,7 +18,7 @@ fun unitTest(subroutine: (Input) -> Output) {
     val input = Input() // Construct an input
     val expectedOutput = Output() // Construct an output
     val actualOutput = subroutine(input)
-    assert(expectedOutput == actualOutput) { "Expected $expectedOutput, got $actualOutput"}
+    assert(expectedOutput == actualOutput) { "Expected $expectedOutput, got $actualOutput" }
 }
 \end{kotlinlisting}
 %
