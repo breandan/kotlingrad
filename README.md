@@ -808,6 +808,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
 * [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
 * [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
+* [Einstein Summation in Numpy](https://obilaniu6266h16.wordpress.com/2016/02/04/einstein-summation-in-numpy/)
 
 ### Symbolic Mathematics
 
