@@ -15,7 +15,9 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
 * [Usage](#usage)
   * [Installation](#installation)
   * [Notation](#notation)
-  * [Shape Safety](#shape-safety)
+  * [Shape safety](#shape-safety)
+  * [Higher rank](#higher-rank-derivatives)
+  * [Higher order](#higher-order-derivatives)
   * [Example](#example)
 * [Visualization](#visualization-tools)
   * [Dataflow graphs](#dataflow-graphs)
@@ -30,12 +32,12 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
   * [Algebraic data types](#algebraic-data-types)
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
-* [Formal Grammar](#grammar)
-* [UML Diagram](#uml-diagram)
+* [Formal grammar](#grammar)
+* [UML diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
 * [Citation](#citation)
 * [References](#references)
-* [Special thanks](#special-thanks)
+* [Acknowledgements](#special-thanks)
 
 ## Introduction
 
@@ -168,9 +170,9 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 ### Higher Rank Derivatives
 
-Kotlin∇ supports derivatives between tensors of up to rank 2. The output shape of a tensor derivative depends on (1) the output shape of the function under differentiation and (2) the shape of the variable being differentiated.
+Kotlin∇ supports derivatives between tensors of up to rank 2. The shape of a tensor derivative depends on (1) the shape of the function under differentiation and (2) the shape of the variable with respect to which we are differentiating.
 
-|               I/O Type               |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
+|              I/O Shape               |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
 |:------------------------------------:|:-----------------------------:|:-----------------------------:|:-----------------------------:|
 |        <b>ℝ<sup>?</sup>→ℝ</b>        |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
 |  <b>ℝ<sup>?</sup>→ℝ<sup>n</sup></b>  |  ℝ<sup>?</sup>→ℝ<sup>n</sup>  | ℝ<sup>?</sup>→ℝ<sup>m×n</sup> |              :x:              |
