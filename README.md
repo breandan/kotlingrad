@@ -168,15 +168,15 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 ### Higher Rank Derivatives
 
-Kotlin∇ supports derivatives between tensors of up to rank 3. The output shape of a tensor derivative depends on (1) the output shape of the function under differentiation and (2) the shape of the variable being differentiated.
+Kotlin∇ supports derivatives between tensors of up to rank 2. The output shape of a tensor derivative depends on (1) the output shape of the function under differentiation and (2) the shape of the variable being differentiated.
 
-|             Type              |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  |       Matrix       |
-|:-----------------------------:|:-----------------------------:|:-----------------------------:|:------------------:|
-|        ℝ<sup>?</sup>→ℝ        |        ℝ<sup>?</sup>→ℝ        | ℝ<sup>?</sup>→ℝ<sup>m</sup>   | :heavy_check_mark: |
-|  ℝ<sup>?</sup>→ℝ<sup>n</sup>  |  ℝ<sup>?</sup>→ℝ<sup>n</sup>  | ℝ<sup>?</sup>→ℝ<sup>m×n</sup> |        :x:         |
-| ℝ<sup>?</sup>→ℝ<sup>m×n</sup> | ℝ<sup>?</sup>→ℝ<sup>m×n</sup> |              :x:              |        :x:         |
+|                 Type                  |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
+|:-------------------------------------:|:-----------------------------:|:-----------------------------:|:-----------------------------:|
+|        <b>ℝ<sup>?</sup>→ℝ</b>         |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
+|  <b>*ℝ<sup>?</sup>→ℝ<sup>n</sup></b>  |  ℝ<sup>?</sup>→ℝ<sup>n</sup>  | ℝ<sup>?</sup>→ℝ<sup>m×n</sup> |              :x:              |
+| <b>*ℝ<sup>?</sup>→ℝ<sup>h×i</sup></b> | ℝ<sup>?</sup>→ℝ<sup>h×i</sup> |              :x:              |              :x:              |
 
-Matrix-by-vector, vector-by-matrix, and matrix-by-matrix derivatives are currently unsupported as they require rank 4 or higher tensors.
+Matrix-by-vector, vector-by-matrix, and matrix-by-matrix derivatives are currently unsupported as they require rank 3+ tensors.
 
 ### Shape Safety
 
