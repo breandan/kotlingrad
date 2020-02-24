@@ -351,10 +351,16 @@ Our training set consists of input-output pairs produced by binding the set of f
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-\begin{axis}[title={Average training loss over time}, width=\textwidth, height=10cm, xlabel=Epoch, ylabel=Loss, legend pos=north east, align=center]
-\addplot table [mark=none, x=x, y=y] {../data/poly_train_loss.csv};
-\addplot [name path=upper,draw=none] table[x=x, y=y, err=err, y expr=\thisrow{y}+\thisrow{err}] {../data/poly_train_loss.csv};
-\addplot [name path=lower,draw=none] table[x=x, y=y, err=err, y expr=\thisrow{y}-\thisrow{err}] {../data/poly_train_loss.csv};
+\begin{axis}[title={Average training loss over time}, width=\textwidth, height=10cm, xlabel=Epoch, ylabel=Mean Squared Error, legend pos=north east, align=center,
+yticklabel style={
+/pgf/number format/fixed,
+/pgf/number format/precision=3
+},
+scaled y ticks=false
+]
+\addplot+[smooth] table [mark=none, x=x, y=y] {../data/poly_train_loss.csv};
+\addplot [smooth, name path=upper,draw=none] table[x=x, y=y, err=err, y expr=\thisrow{y}+\thisrow{err}] {../data/poly_train_loss.csv};
+\addplot [smooth, name path=lower,draw=none] table[x=x, y=y, err=err, y expr=\thisrow{y}-\thisrow{err}] {../data/poly_train_loss.csv};
 \addplot [fill=blue!10] fill between[of=upper and lower];
 \end{axis}
 \end{tikzpicture}
@@ -393,15 +399,15 @@ Our adversary takes as input the trained regression model $\hat{f}$, a set of ne
 \begin{figure}[H]
 \begin{tikzpicture}
 \begin{axis}[title={Average efficiency at error threshold $\sigma$ standard deviations above MSE}, width=\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center, xtick distance=0.5]
-\addplot+[blue] table [mark=none, x=x, y=y1] {../data/seff.csv};
+\addplot[smooth, blue] table [mark=none, x=x, y=y1] {../data/seff.csv};
 \addlegendentry{Probabilistic Generator}
-\addplot [name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}] {../data/seff.csv};
-\addplot [name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}] {../data/seff.csv};
-\addplot [fill=blue!10] fill between[of=upper1 and lower1];
-\addplot+[red] table [mark=none, x=x, y=y2] {../data/seff.csv};
+\addplot[smooth, red] table [mark=none, x=x, y=y2] {../data/seff.csv};
 \addlegendentry{Differential Adversary}
-\addplot [name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}] {../data/seff.csv};
-\addplot [name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}] {../data/seff.csv};
+\addplot [smooth, name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}] {../data/seff.csv};
+\addplot [smooth, name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}] {../data/seff.csv};
+\addplot [fill=blue!10] fill between[of=upper1 and lower1];
+\addplot [smooth, name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}] {../data/seff.csv};
+\addplot [smooth, name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}] {../data/seff.csv};
 \addplot [fill=red!10] fill between[of=upper2 and lower2];
 \end{axis}
 \end{tikzpicture}
