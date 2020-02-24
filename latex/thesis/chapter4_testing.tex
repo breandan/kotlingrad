@@ -352,7 +352,10 @@ Our training set consists of input-output pairs produced by binding the set of f
 \centering
 \begin{tikzpicture}
 \begin{axis}[title={Average training loss over time}, width=\textwidth, height=10cm, xlabel=Epoch, ylabel=Loss, legend pos=north east, align=center]
-\addplot+[error bars/.cd, y dir = both, y explicit] table [mark=none, x index=0, y index=1, y error index=2, col sep=comma] {../data/poly_train_loss.csv};
+\addplot table [mark=none, x=x, y=y] {../data/poly_train_loss.csv};
+\addplot [name path=upper,draw=none] table[x=x, y=y, err=err, y expr=\thisrow{y}+\thisrow{err}] {../data/poly_train_loss.csv};
+\addplot [name path=lower,draw=none] table[x=x, y=y, err=err, y expr=\thisrow{y}-\thisrow{err}] {../data/poly_train_loss.csv};
+\addplot [fill=blue!10] fill between[of=upper and lower];
 \end{axis}
 \end{tikzpicture}
 \caption{Average loss curve of 100 trajectories of momentum SGD in parameter space.}
@@ -390,10 +393,16 @@ Our adversary takes as input the trained regression model $\hat{f}$, a set of ne
 \begin{figure}[H]
 \begin{tikzpicture}
 \begin{axis}[title={Average efficiency at error threshold $\sigma$ standard deviations above MSE}, width=\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center, xtick distance=0.5]
-\addplot+[error bars/.cd, y dir = both, y explicit, every nth mark=5] table [mark=none, x index=0, y index=1, y error index=2, col sep=comma] {../data/seff.csv};
+\addplot+[blue] table [mark=none, x=x, y=y1] {../data/seff.csv};
 \addlegendentry{Probabilistic Generator}
-\addplot+[error bars/.cd, y dir = both, y explicit, every nth mark=5] table [mark=none, x index=0, y index=3, y error index=4, col sep=comma] {../data/seff.csv};
+\addplot [name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}] {../data/seff.csv};
+\addplot [name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}] {../data/seff.csv};
+\addplot [fill=blue!10] fill between[of=upper1 and lower1];
+\addplot+[red] table [mark=none, x=x, y=y2] {../data/seff.csv};
 \addlegendentry{Differential Adversary}
+\addplot [name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}] {../data/seff.csv};
+\addplot [name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}] {../data/seff.csv};
+\addplot [fill=red!10] fill between[of=upper2 and lower2];
 \end{axis}
 \end{tikzpicture}
 \caption{By construction, our differential shrinker detects a greater number of errors per input-output pair than a na\"ive sampler which does not take the gradient into consideration.}
