@@ -170,7 +170,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 Kotlin∇ supports derivatives between tensors of up to rank 2. The output shape of a tensor derivative depends on (1) the output shape of the function under differentiation and (2) the shape of the variable being differentiated.
 
-|                 Type                 |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
+|               I/O Type               |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
 |:------------------------------------:|:-----------------------------:|:-----------------------------:|:-----------------------------:|
 |        <b>ℝ<sup>?</sup>→ℝ</b>        |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
 |  <b>ℝ<sup>?</sup>→ℝ<sup>n</sup></b>  |  ℝ<sup>?</sup>→ℝ<sup>n</sup>  | ℝ<sup>?</sup>→ℝ<sup>m×n</sup> |              :x:              |
