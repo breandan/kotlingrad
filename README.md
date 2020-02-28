@@ -27,7 +27,7 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
 * [How does it work?](#how)
   * [Operator overloading](#operator-overloading)
   * [First-class functions](#first-class-functions)
-<!--  * [Coroutines](#coroutines)-->
+  * [Coroutines](#coroutines)
   * [Extension functions](#extension-functions)
   * [Algebraic data types](#algebraic-data-types)
   * [Multiple dispatch](#multiple-dispatch)
@@ -469,9 +469,9 @@ fun <T: Fun<T>> mlp(p1: VFun<T, D3>, p2: MFun<T, D3, D3>, p3: T) =
   ((p1 * p2 + p1 * p2 * p2 dot p1 + p1) - p3) pow p3
 ```
 
-<!--#### Coroutines-->
+#### Coroutines
 
-<!--[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. Delimited continuations [can be implemented](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!-->
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. While Kotlin callbacks are [single-shot by default](https://medium.com/@elizarov/callbacks-and-kotlin-flows-2b53aa2525cf), [delimited continuations](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) and reentrant or "multi-shot" delimited continuations [can also be implemented](https://gist.github.com/elizarov/ddee47f927dda500dc493e945128d661) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
 
 #### Extension Functions
 
