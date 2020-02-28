@@ -866,6 +866,8 @@ The following individuals have helped shape this project through their enthusias
 
 * [Liam Paull](http://liampaull.ca)
 * [Michalis Famelis](https://michalis.famelis.info/)
+* [Marc Feeley](http://www.iro.umontreal.ca/~feeley/)
+* [Eugene Syriani](http://www-ens.iro.umontreal.ca/~syriani/)
 * [Hanneli Tavante](http://hannelita.com/)
 * [Stefan Monnier](https://www.iro.umontreal.ca/~monnier/)
 * [Alexander Nozik](https://scholar.google.com/citations?user=B-WJi4kAAAAJ)
