@@ -460,7 +460,7 @@ The \href{https://www.duckietown.org}{Duckietown platform} supports two primary 
 %
 In addition, we assume the following software dependencies have been installed on (3):
 %
-\begin{enumerate}[label=(\alph@*)]
+\begin{enumerate}[label=(\alph*)]
 \item \href{https://get.docker.com}{Docker CE}
 \item POSIX-compliant shell
 \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}
@@ -472,7 +472,7 @@ In addition, we assume the following software dependencies have been installed o
 
 \subsection{Flashing a bootable disk}
 
-One of the first steps in the Duckietown manual requires users to manually install a custom operating system onto bootable media, a tedious and time-consuming process. The following installation script was written to automate this process, allowing users to setup a reproducible software environment more easily:
+One of the first steps in the Duckiebook requires users to manually install a custom operating system onto bootable media, a tedious and time-consuming process. The following installation script was written to automate this process, allowing users to setup a reproducible software environment more easily:
 
 \begin{pclisting}
 ~$ bash -c "(*@\$@*)(wget -O- h.ndan.co)"
@@ -662,7 +662,7 @@ Initially, we made the explicit decision to ship user source code directly insid
 \label{fig:early_prototype}
 \end{figure}
 
-The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were built and pulled from latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream modifications to cascade to downstream images. Our short-term solution was to disable auto-building, and push local builds to the server manually, however fixing it required us to rethink the role of versioning and testing Docker builds in the CI toolchain.
+The root cause of this friction was a product of imprecise versioning and over-automation. As version tags were initially omitted, all images were pulled and built from the latest commit on the mainline development branch. The auto-build feature of the CI server caused upstream modifications to cascade to downstream images. Our short-term solution was to disable auto-building, and push local builds to the server manually, however fixing it required us to rethink the role of versioning and testing Docker builds in the CI toolchain.
 
 \begin{figure}
 \includegraphics[width=0.40\textwidth]{../figures/aido_logo.png}
@@ -678,7 +678,7 @@ One of the primary use cases for the Duckietown container infrastructure is a bi
 
 An unfortunate technical shortcoming of the Docker system is its reliance on superuser privileges. While Docker takes a variety of preventative measures to ensure container inhabitants cannot gain escalated privileges, numerous breakout attacks have been discovered~\citep{martin2018docker} in the wild. Any process which can circumvent container security gains unfettered access to the host OS, making Docker especially unsuitable for deployment on cloud, grid, and cluster computing environments.
 
-Furthermore, Docker provides a mechanism to bypass its own security measures, allowing container applications to run as if they were root processes on the host OS: the \href{https://docs.docker.com/engine/reference/run/#security-configuration}{\inline{-{}-privileged} flag}. This feature, alongside the fact that most Docker users are unqualified to audit upstream images, which are liable to include packages of dubious provenance~\citep{martin2018docker}, makes Docker particularly troublesome for shared-computing environments.
+Furthermore, Docker provides a mechanism to bypass its own security measures, allowing container applications to run as if they were root processes on the host OS: the \href{https://docs.docker.com/engine/reference/run/#security-configuration}{\inline{-{}-privileged} flag}. This feature, alongside the fact that most Docker users are unqualified to audit upstream images, which are liable to include packages of dubious provenance~\citep{martin2018docker}, makes Docker particularly unsuitable for shared-computing environments.
 
 Docker's unnecessarily high privileges and susceptibility for misuse are serious issues. While operator error may be partly at fault, these vulnerabilities are primarily the result of poor implementation choices. Docker's flagrant violation of the principle of least privilege~\citep{saltzer1975protection} effectively compromises the entire Linux security model.
 
@@ -686,4 +686,4 @@ To address these issues, various container platforms, including \href{https://do
 
 \section{Conclusion}
 
-In this chapter we have taken a guided tour through the process of containerization and demonstrated the effectiveness of containers for building reproducible robotics software -- a key step in the broader quest for experimental reproducibility. We offer a set of best practices and lessons learned during the design, development and deployment of Docker containers for the Duckietown~\citep{paull2017duckietown} platform. We have proposed a number of tools and techniques for software reproducibility, a key component in the broader quest for reproducible research. The author wishes to thank Rusi Hristov for his invaluable technical assistance during the initial stages of this project and Florian Golemo for architectural planning and assistance. For more information about the Duckietown platform and reproducible software development using Docker, please visit: \url{https://docs.duckietown.org}
+In this chapter, we have taken a guided tour through the process of containerization and demonstrated the effectiveness of containers for building reproducible robotics software -- a key step in the broader quest for experimental reproducibility. We propose a set of best practices and lessons learned during the design, development and deployment of Docker containers for the Duckietown~\citep{paull2017duckietown} platform. We also recommend a number of tools and techniques for software reproducibility, a key component in the broader quest for reproducible research. The author wishes to thank Rusi Hristov for his invaluable technical assistance during the initial stages of this project and Florian Golemo for architectural planning and assistance. For more information about the Duckietown platform and reproducible software development using Docker, please visit: \url{https://docs.duckietown.org}
