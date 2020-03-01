@@ -801,6 +801,8 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf)
 * [Matrix derivatives](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#derivatives), from the Matrix Cookbook
 * [Div, Grad, Curl and All That](https://archive.org/details/H.M.ScheyDivGradCurlAndAllThat)
+* [Matrix Differentiation (and some other stuff)](https://atmos.washington.edu/~dennis/MatrixCalculus.pdf)
+* [Symbolic Matrix Derivatives](https://www.jstor.org/stable/2236019)
 
 ### Computer Algebra
 

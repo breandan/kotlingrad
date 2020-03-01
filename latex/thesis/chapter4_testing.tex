@@ -7,9 +7,9 @@ Today's deep neural networks are capable of learning a broad range of functions,
 
 In software engineering, techniques for software testing are becoming increasingly automated and general-purpose. Tests help prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. While essential for validating a program's correctness, tests are often cumbersome to implement. Techniques in coverage-guided fuzzing have enabled developers to write fewer tests with higher coverage. This is made possible by automated testing.
 
-In this chapter, we will explore the relationship between testing in machine learning and software engineering. We will see how the notion of adversarial testing shares a curious resemblance to fuzz testing in software engineering. In particular, we show how probabilistic sampling and constrained optimization can be seen as an extension of property-based testing (PBT) for adversarial training of differentiable programs, and propose a PBT algorithm which incorporates features of probabilistic programming and gradient-based optimization.
+In this chapter, we explore the relationship between testing in machine learning and software engineering. We will see how the notion of fuzz testing shares a curious resembance to evaluation in machine learning and how adversarial methods can be seen as extensions to metamorphic testing. Finally, we propose a new property-based testing (PBT) algorithm for differentiable programs, and show an empirical improvement in sample efficiency over na\"ive probabilistic methods by detecting a greater proportion of errors which violate the test constraints within a given budget.
 
-\section{Unit Testing}
+\subsection{Unit Testing}
 
 \noindent In traditional unit testing, most tests are written in the following manner:
 %
@@ -22,9 +22,9 @@ fun unitTest(subroutine: (Input) -> Output) {
 }
 \end{kotlinlisting}
 %
-When carefully applied, unit testing can be an effective method for detecting bugs and validating the author's belief about preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated whenever the program changes. This has the unintended side effect of decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
+When carefully applied, unit testing is an effective method for detecting bugs and validating the author's belief about preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated whenever the program changes. Side effects may include decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
 
-\section{Integration Testing}
+\subsection{Integration Testing}
 
 \noindent In integration testing, we are more concerned about the overall behavior of a program, rather than the specific behavior of its subroutines. Consider the following example:
 
@@ -58,7 +58,7 @@ fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
 %
 The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be quite expensive in practice, this method can also be quite inefficient.
 
-\section{Property-based Testing}\label{subsec:property-based-testing}
+\subsection{Property-based Testing}\label{subsec:property-based-testing}
 
 Property-based testing~\citep{fink1997property} (PBT) attempts to mitigate the test oracle problem by using \textit{properties}. It consists of two phases, searching and shrinking. Users specify a property over all outputs and the test fails if a counterexample can be found:
 %
@@ -107,7 +107,7 @@ Consider \autoref{fig:pbt_comparison}, which portrays the log difference between
 
 The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
 
-\section{Metamorphic testing}\label{subsec:metamorphic-testing}
+\subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
 It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is an approach to property-based testing which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
@@ -154,7 +154,7 @@ fun <I, O> genTX(program: (I) -> O, mr: (I, O, I, O) -> Boolean, i: I, o: O): (I
 
 But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled, computationally efficient and general purpose method of mutating an input in our dataset to discover invalid outputs.
 
-\section{Adversarial Testing}
+\subsection{Adversarial Testing}
 
 This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input of a function, which produces the largest change to its output, relative to the original output.
 
@@ -237,7 +237,7 @@ Assuming zero knowledge about the program's implementation or the data distribut
 
 % Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
 
-\section{Generative Adversarial Testing}
+\subsection{Generative Adversarial Testing}
 
 What constitutes a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her candidate inputs must break the program specification. To generate plausible test cases, not only must she be able to exploit weaknesses of the program, but ideally possess a good understanding of $p_{data}$.
 
