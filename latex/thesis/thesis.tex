@@ -59,7 +59,13 @@
 \newcommand{\argmin}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{min}}\;}
 
 % Table
-\newcommand*\rot{\rotatebox{90}}
+
+\newcolumntype{R}[2]{%
+    >{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+    l%
+    <{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{55}{1em}}}
 
 \usepackage{menukeys}
 \usepackage{relsize}

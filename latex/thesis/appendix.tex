@@ -8,6 +8,7 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 \newcommand{\mor}{\ensuremath{\;\mid\;}}
 \newcommand{\code}[1]{\ensuremath{\text{\inline{#1}}}}
 \newcommand{\bnfrl}[1]{\ensuremath{\langle#1\rangle}}
+\allowdisplaybreaks
 \begin{eqnarray*}
     \bnfrl{type} & ::= & \code{Double} \mor \code{Float} \mor \code{Int} \mor \code{BigInteger} \mor \code{BigDouble} \\
     \bnfrl{nat} & ::= & \code{1} \mor \ldots \mor \code{99} \\
@@ -15,7 +16,7 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
     \bnfrl{int} & ::= & \code{0} \mor \bnfrl{nat}\bnfrl{int} \\
     \bnfrl{float} & ::= & \bnfrl{int}\code{.}\bnfrl{int} \\
     \bnfrl{num} & ::= & \bnfrl{type}\code{(}\bnfrl{int}\code{)} \mor \bnfrl{type}\code{(}\bnfrl{float}\code{)} \\
-    \bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \mor \code{Var()}} \\
+    \bnfrl{var} & ::= & \code{x} \mor \code{y} \mor \code{z} \mor \code{ONE} \mor \code{ZERO} \mor \code{E} \mor \code{Var()} \\
 \bnfrl{signOp} & ::= & \code{+} \mor \code{-} \\
 \bnfrl{binOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{/} \mor \code{pow} \\
 \bnfrl{trigOp} & ::= & \code{sin} \mor \code{cos} \mor \code{tan} \mor \code{asin} \mor \code{acos} \mor \code{atan} \mor \code{asinh} \mor \code{acosh} \mor \code{atanh} \\
@@ -39,7 +40,7 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 
 \section{Linear regression}\label{sec:lin_reg}
 
-\noindent Recall the matrix equation for linear regression, where $\mathbf{X}: \mathbb{R}^{m \times n}$ and $\bm\Theta: \mathbb{R}^{n \times 1}$:
+\noindent Recall the matrix equation for linear regression (LR), where $\mathbf{X}: \mathbb{R}^{m \times n}$ and $\bm\Theta: \mathbb{R}^{n \times 1}$:
 %
 \begin{equation}\label{eq:lin_reg}
 \mathbf{\hat f}(\mathbf{X}; \bm\Theta) = \mathbf{X}\bm\Theta
@@ -67,7 +68,7 @@ y_m
 \end{bmatrix}
 \end{equation}
 %
-Our goal in ordinary least squares (OLS) linear regression is to minimize the loss, or error between the data and the model's prediction:
+Our goal in ordinary least squares (OLS) LR is to minimize the loss, or error between the data and the model's prediction:
 %
 \begin{equation}
 \mathcal{L}(\mathbf{X}, \mathbf{Y}; \bm\Theta) = ||\mathbf{Y} - \mathbf{\hat f}(\mathbf{X}; \bm\Theta)||^2
@@ -133,7 +134,7 @@ Notice how analytical differentiation gives us the same answer as the \hyperref[
 
 \subsection{Matrix solution}\label{sec:linreg_matrix_sol}
 
-Having reviewed the scalar procedure for linear regression, let us now return to the general form of $\mathcal L(\bm\Theta)$. Matrix notation allows us to simplify the loss considerably:
+Having reviewed the scalar procedure for LR, let us now return to the general form of $\mathcal L(\bm\Theta)$. Matrix notation allows us to simplify the loss considerably:
 %
 \begin{align}
 \mathcal L(\bm\Theta) & = \frac{1}{m} (\mathbf Y - \mathbf X \bm\Theta)^\intercal(\mathbf Y - \mathbf X \bm\Theta) \\ &= \frac{1}{m} (\mathbf Y^\intercal \mathbf Y - \mathbf Y^\intercal \mathbf X \bm\Theta - \bm\Theta^\intercal \mathbf X^\intercal \mathbf Y + \bm\Theta^\intercal \mathbf X^\intercal \mathbf X \bm\Theta) \\ &= \frac{1}{m} (\mathbf Y^\intercal \mathbf Y - 2 \bm\Theta^\intercal \mathbf X^\intercal \mathbf Y + \bm\Theta^\intercal \mathbf X^\intercal \mathbf X \bm\Theta)
@@ -206,9 +207,9 @@ m \theta_1 + \sum_{i=1}^{m}\theta_2x_i \\
 %
 Notice how we recover the same solution obtained from partial differentiation and finite difference approximation, albeit in a more compact form. For a good introduction to matrix calculus, the textbook by \citet{magnus2019matrix} is an excellent guide, of which \citet{petersen2012matrix} offer a review of important identities.
 
-OLS linear regression is a convex optimization problem. If $\mathbf X^\intercal \mathbf X$ is invertible, i.e. full-rank, this implies a unique solution $\bm\Theta^*$, which we can solve for directly by setting $\nabla_{\bm\Theta}\mathcal{L} = \mathbf{0}$:
+OLS LR is a convex optimization problem. If $\mathbf X^\intercal \mathbf X$ is invertible, i.e. full-rank, this implies a unique solution $\bm\Theta^*$, which we can solve for directly by setting $\nabla_{\bm\Theta}\mathcal{L} = \mathbf{0}$:
 %
-\begin{align}
+\begin{align}\label{eq:norm_eq}
 \mathbf{0} & = \mathbf X^\intercal \mathbf X \bm \Theta - \mathbf X ^ \intercal \mathbf Y \\ \bm\Theta &= (\mathbf X^\intercal \mathbf X)^{-1}\mathbf X^\intercal\mathbf Y
 \end{align}
 %
@@ -218,11 +219,11 @@ Solving this requires computing $(\mathbf{X}^\intercal\mathbf{X})^{-1}$ which is
 \bm\Theta' \leftarrow \bm\Theta - \alpha \nabla_{\bm\Theta}\mathcal L(\bm\Theta)
 \end{equation}
 %
-Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required to find a suitable $\alpha$ (various improvements like Nesterov momentum~\citep{nesterov2013gradient} and quasi-Newton methods also help to accelerate convergence), this procedure is guaranteed to be computationally more efficient than matrix inversion for sufficiently large $m$ and $n$. In practice, the normal equation is seldom used unless $m$ is very small.
+Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required to find a suitable $\alpha$ (various improvements like Nesterov momentum~\citep{nesterov2013gradient} and quasi-Newton methods also help to accelerate convergence), this procedure is guaranteed to be computationally more efficient than matrix inversion for sufficiently large $m$ and $n$. In practice, the normal equation~\autoref{eq:norm_eq} is seldom used unless $m$ is very small.
 
 \section{Polynomial regression}\label{sec:poly_reg}
 
-Polynomial regression is a straightforward application of linear regression, where the weights are the coefficients for each term in a polynomial. Consider the univariate case:
+Polynomial regression is a straightforward application of LR, in which we approximate the coefficients for each term in a scalar polynomial. Consider the univariate case:
 
 \begin{equation}
 y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
