@@ -11,11 +11,11 @@ import kotlin.streams.toList
 
 fun main() {
   with(DoublePrecision) {
-    (0..160).toList().parallelStream().map {
+    (0..200).toList().parallelStream().map {
       val startTime = System.currentTimeMillis()
       val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
       val (model, history) = learnExpression(oracle)
-      println("Finished $it in ${(startTime - System.currentTimeMillis())/60000.0}s")
+      println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
       Triple(oracle, model, history)
     }.toList().also {
       val lossHistoryCumulative = it.map { it.third }
@@ -39,7 +39,7 @@ const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size
 const val beta = 0.9   // Momentum
-const val totalEpochs = 30
+const val totalEpochs = 50
 const val epochSize = 5
 const val testSplit = 0.2 // Hold out test
 val batchSize = D30
