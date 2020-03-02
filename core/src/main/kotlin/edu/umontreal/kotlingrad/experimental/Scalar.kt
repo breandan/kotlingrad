@@ -10,6 +10,7 @@ import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
 import java.io.File
+import java.io.Serializable
 import kotlin.NumberFormatException
 import kotlin.math.*
 
@@ -31,7 +32,7 @@ interface Field<X: Field<X>>: Group<X> {
   fun ln(): X
 }
 
-interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
+interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   val bindings: Bindings<X>
   fun opCode() = javaClass.simpleName
 

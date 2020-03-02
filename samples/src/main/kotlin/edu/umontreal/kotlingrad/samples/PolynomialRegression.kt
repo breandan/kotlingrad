@@ -7,19 +7,18 @@ import edu.umontreal.kotlingrad.utils.step
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
 import kotlin.random.Random
+import kotlin.streams.toList
 
 fun main() = with(DoublePrecision) {
-  val lossHistoryCumulative = mutableListOf<List<Triple<Int, Double, Double>>>()
-  val models = mutableListOf<Pair<SFun<DReal>, Vec<DReal, D30>>>()
-  for (expNum in 0..100) {
+  (0..8).toList().parallelStream().map {
     val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
-    val model = learnExpression(lossHistoryCumulative, oracle)
-    models += oracle to model
-
-    if (expNum % 10 == 0) {
-      ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
-      ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
-    }
+    val (model, history) = learnExpression(oracle)
+    Triple(oracle, model, history)
+  }.toList().let {
+    val lossHistoryCumulative = it.map { it.third }
+    val models = it.map { it.first to it.second }
+    ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
+    ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
   }
 }
 
@@ -64,9 +63,7 @@ fun sampleTestInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
 fun DoublePrecision.decodePolynomial(weights: Vec<DReal, D30>) =
   Vec(paramSize) { x pow (it + 1) } dot weights
 
-private fun DoublePrecision.learnExpression(
-  lossHistoryCumulative: MutableList<List<Triple<Int, Double, Double>>>,
-  targetEq: SFun<DReal>): Vec<DReal, D30> {
+private fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>, List<Triple<Int, Double, Double>>> {
   var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
 
   var totalTrainLoss = 0.0
@@ -120,9 +117,7 @@ private fun DoublePrecision.learnExpression(
 
 //  plotLoss(lossHistory)
 //    println("Final weights: $weightsNow")
-  lossHistoryCumulative += lossHistory
-
-  return weightsNow
+  return Pair(weightsNow, lossHistory)
 }
 
 private fun plotLoss(lossHistory: MutableList<Triple<Int, Double, Double>>) {
