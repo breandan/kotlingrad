@@ -43,9 +43,5 @@ fun Map<String, Any>.plot2D(
   val plotSpec = plot.toSpec()
 
   val component = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, dimensions) {}
-  component.first().patchLetsPlot().saveAs(filename).viewInBrowser()
+  component.first().saveAs(filename).viewInBrowser()
 }
-
-fun String.patchLetsPlot() = lines().first().replace(">",
-  " xmlns=\"http://www.w3.org/2000/svg\">") +
-  "\n" + lines().drop(1).joinToString("\n")
