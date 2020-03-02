@@ -2,7 +2,7 @@ plugins {
   idea
   application
   kotlin("jvm")
-  id("org.openjfx.javafxplugin") version "0.0.8"
+//  id("org.openjfx.javafxplugin") version "0.0.8"
   id("com.palantir.graal") version "0.6.0-74-g5306dc5"
 }
 
@@ -25,8 +25,8 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 
   // Graphical libraries
-  implementation("org.openjfx:javafx-swing:_")
-  implementation("org.openjfx:javafx:_")
+//  implementation("org.openjfx:javafx-swing:_")
+//  implementation("org.openjfx:javafx:_")
   implementation("guru.nidi:graphviz-kotlin:_")
   implementation("org.jzy3d:jzy3d-api:_")
 
@@ -39,7 +39,7 @@ dependencies {
   implementation("org.nield:kotlin-statistics:_")
 }
 
-javafx.modules("javafx.controls", "javafx.swing")
+//javafx.modules("javafx.controls", "javafx.swing")
 
 tasks {
   compileKotlin {
