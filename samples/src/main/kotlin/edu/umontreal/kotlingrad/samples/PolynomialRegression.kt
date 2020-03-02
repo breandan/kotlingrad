@@ -9,16 +9,28 @@ import java.io.ObjectOutputStream
 import kotlin.random.Random
 import kotlin.streams.toList
 
-fun main() = with(DoublePrecision) {
-  (0..8).toList().parallelStream().map {
-    val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
-    val (model, history) = learnExpression(oracle)
-    Triple(oracle, model, history)
-  }.toList().let {
-    val lossHistoryCumulative = it.map { it.third }
-    val models = it.map { it.first to it.second }
-    ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
-    ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
+fun main() {
+  with(DoublePrecision) {
+    (0..160).toList().parallelStream().map {
+      val startTime = System.currentTimeMillis()
+      val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
+      val (model, history) = learnExpression(oracle)
+      println("Finished $it in ${(startTime - System.currentTimeMillis())/60000.0}s")
+      Triple(oracle, model, history)
+    }.toList().also {
+      val lossHistoryCumulative = it.map { it.third }
+      lossHistoryCumulative.flatten().groupBy { it.first }.mapValues {
+        listOf(it.key,
+          it.value.map { it.second }.average(),
+          it.value.map { it.second }.standardError(),
+          it.value.map { it.third }.average(),
+          it.value.map { it.third }.standardError()
+        )
+      }.forEach { println(it.value.joinToString(", ")) }
+      val models = it.map { it.first to it.second }
+      ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
+      ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
+    }
   }
 }
 
@@ -27,7 +39,7 @@ const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size
 const val beta = 0.9   // Momentum
-const val totalEpochs = 50
+const val totalEpochs = 30
 const val epochSize = 5
 const val testSplit = 0.2 // Hold out test
 val batchSize = D30
@@ -99,11 +111,11 @@ private fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DRe
     totalTime -= System.nanoTime()
     if (epochs % epochSize == 0) {
 //      plotVsOracle(targetEq, decodePolynomial(weightsNow))
-//      println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
 //      println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
 //      println("Weights: $weightsNow")
       if (initialTestLoss == 0.0) initialTestLoss = totalTestLoss
       if (initialTrainLoss == 0.0) initialTrainLoss = totalTrainLoss
+      println("${epochs / epochSize}, ${totalTrainLoss / initialTrainLoss}, ${totalTestLoss / initialTestLoss}")
       lossHistory += Triple(epochs / epochSize,
         totalTrainLoss / initialTrainLoss,
         totalTestLoss / initialTestLoss
