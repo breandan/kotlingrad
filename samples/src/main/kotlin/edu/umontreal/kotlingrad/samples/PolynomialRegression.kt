@@ -11,7 +11,7 @@ import kotlin.random.Random
 import kotlin.streams.toList
 
 fun main() = with(DoublePrecision) {
-  val lossHistoryCumulative = mutableListOf<List<Pair<Int, Double>>>()
+  val lossHistoryCumulative = mutableListOf<List<Triple<Int, Double, Double>>>()
   for (expNum in 0..100) {
     val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
     val model = learnExpression(lossHistoryCumulative, oracle)
@@ -93,8 +93,8 @@ const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size
 const val beta = 0.9   // Momentum
-const val totalEpochs = 20
-const val epochSize = 10
+const val totalEpochs = 50
+const val epochSize = 5
 const val testSplit = 0.2 // Hold out test
 val batchSize = D30
 val paramSize = D30
@@ -105,11 +105,16 @@ val encodedInput = xBatchIn.sVars.vMap { row -> DoublePrecision.Vec(paramSize) {
 val pred = encodedInput * theta
 val squaredLoss = (pred - label).magnitude()
 val interval: Double = (maxX - maxX * testSplit) / batchSize.i
+val testInterval: Double = testSplit / batchSize.i
 
 // Samples inputs randomly, but spaced evenly
 // -maxX |----Train Split----|----Test Split----|----Train Split----| +maxX
 fun sampleInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
   (testSplit * maxX + rand.nextDouble(i * interval, (i + 2) * interval))
+
+fun sampleTestInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
+  rand.nextDouble(i * testInterval, (i + 2) * testInterval)
+
 
 /* https://en.wikipedia.org/wiki/Polynomial_regression#Matrix_form_and_calculation_of_estimates
  *  __  __    __                      __  __  __
@@ -125,28 +130,36 @@ fun DoublePrecision.decodePolynomial(weights: Vec<DReal, D30>) =
   Vec(paramSize) { x pow (it + 1) } dot weights
 
 private fun DoublePrecision.learnExpression(
-  lossHistoryCumulative: MutableList<List<Pair<Int, Double>>>,
+  lossHistoryCumulative: MutableList<List<Triple<Int, Double, Double>>>,
   targetEq: SFun<DReal>): Vec<DReal, D30> {
   var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
 
-  var totalLoss = 0.0
+  var totalTrainLoss = 0.0
+  var totalTestLoss = 0.0
   var totalTime = 0L
   var momentum = Vec(paramSize) { 0.0 }
-  val lossHistory = mutableListOf<Pair<Int, Double>>()
+  val lossHistory = mutableListOf<Triple<Int, Double, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
+  var initialTrainLoss = 0.0
+  var initialTestLoss = 0.0
 
   for (epochs in 1..(epochSize * totalEpochs)) {
     totalTime += System.nanoTime()
-    val xInputs = Vec(batchSize, ::sampleInputs)
-    val targets = xInputs.map { targetEq(it) }
+    val xTrainInputs = Vec(batchSize, ::sampleInputs)
+    val trainTargets = xTrainInputs.map { targetEq(it) }
+    val xTestInputs = Vec(batchSize, ::sampleTestInputs)
+    val testTargets = xTestInputs.map { targetEq(it) }
 
-    val batchInputs = arrayOf(xBatchIn to xInputs, label to targets())
-    val batchLoss = squaredLoss(*batchInputs)
+    val trainInputs = arrayOf(xBatchIn to xTrainInputs, label to trainTargets())
+    val trainLoss = squaredLoss(*trainInputs)
+    val testInputs = arrayOf(xBatchIn to xTestInputs, label to testTargets())
+    val testLoss = squaredLoss(*testInputs)
 
     weightMap = arrayOf(theta to weightsNow)
 
-    totalLoss += batchLoss(*weightMap).toDouble() / xInputs.size
-    val weightGrads = batchLoss.d(theta)
+    totalTrainLoss += trainLoss(*weightMap).toDouble() / xTrainInputs.size
+    totalTestLoss += testLoss(*weightMap).toDouble() / (100.0 * xTestInputs.size)
+    val weightGrads = trainLoss.d(theta)
 
     momentum = (beta * momentum + (1 - beta) * weightGrads)(*weightMap)()
     weightsNow = (weightsNow - alpha * momentum)()
@@ -157,24 +170,31 @@ private fun DoublePrecision.learnExpression(
 //      println("Average loss at ${epochs / epochSize} / $totalEpochs epochs: ${totalLoss / epochSize}")
 //      println("Average time: " + -totalTime.toDouble() / (epochSize * 1000000) + "ms")
 //      println("Weights: $weightsNow")
-      lossHistory += epochs / epochSize to totalLoss / epochSize
+      if (initialTestLoss == 0.0) initialTestLoss = totalTestLoss
+      if (initialTrainLoss == 0.0) initialTrainLoss = totalTrainLoss
+      lossHistory += Triple(epochs / epochSize,
+        totalTrainLoss / initialTrainLoss,
+        totalTestLoss / initialTestLoss
+      )
 //      plotLoss(lossHistory)
-      totalLoss = 0.0
+      totalTrainLoss = 0.0
+      totalTestLoss = 0.0
       totalTime = 0L
     }
   }
 
-  plotLoss(lossHistory)
+//  plotLoss(lossHistory)
 //    println("Final weights: $weightsNow")
   lossHistoryCumulative += lossHistory
 
   return weightsNow
 }
 
-private fun plotLoss(lossHistory: MutableList<Pair<Int, Double>>) {
+private fun plotLoss(lossHistory: MutableList<Triple<Int, Double, Double>>) {
   mapOf("Epochs" to lossHistory.map { it.first },
-    "Average Loss" to lossHistory.map { it.second }
-  ).plot2D("Training Loss", "polynomial_regression_loss.svg")
+    "Train Loss" to lossHistory.map { it.second },
+    "Test Loss" to lossHistory.map { it.third }
+  ).plot2D("Loss", "polynomial_regression_loss.svg")
 }
 
 private fun DoublePrecision.plotVsOracle(oracle: SFun<DReal>, model: SFun<DReal>) {

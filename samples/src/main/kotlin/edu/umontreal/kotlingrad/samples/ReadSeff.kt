@@ -19,11 +19,13 @@ fun main() {
 
   ObjectInputStream(FileInputStream("checkpoint.hist")).use {
     val t = it.readObject()
-    (t as List<List<Pair<Int, Double>>>).flatten().groupBy { it.first }.mapValues {
-      Triple(it.key,
+    (t as List<List<Triple<Int, Double, Double>>>).flatten().groupBy { it.first }.mapValues {
+      listOf(it.key,
         it.value.map { it.second }.average(),
-        it.value.map { it.second }.standardError()
+        it.value.map { it.second }.standardError(),
+        it.value.map { it.third }.average(),
+        it.value.map { it.third }.standardError()
       )
-    }.forEach { println("${it.value.first}, ${it.value.second}, ${it.value.third}") }
+    }.forEach { println(it.value.joinToString(", ")) }
   }
 }
