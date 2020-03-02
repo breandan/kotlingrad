@@ -176,9 +176,9 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each co
 \end{algorithmic}
 \end{algorithm}
 
-As we can see, algorithm \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances. Clearly, if we want to find the best direction to update $\mathbf g$, we need to be more careful about how we perform the search.
+As we can see, \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances. Clearly, if we want to find the best direction to update $\mathbf g$, we need to be more careful about how we perform the search.
 
-Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of its derivative. Consider algorithm \autoref{alg:fd_fuzz}, a refinement of algorithm \autoref{alg:bf_adversary} which uses the \hyperref[sec:fdm]{finite difference method} to approximate the derivative with respect to each component of the input. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation.
+Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of its derivative. Consider \autoref{alg:fd_fuzz}, a refinement of \autoref{alg:bf_adversary} which uses the \hyperref[sec:fdm]{finite difference method} to approximate the derivative with respect to each component of the input. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation.
 
 \begin{algorithm}[H]
 \caption{Finite Difference Adversary}
@@ -346,16 +346,18 @@ fun randomBiTree(height: Int): SFun<DReal> =
   else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 \end{kotlinlisting}
 
-Our training set consists of input-output pairs produced by binding the set of free variables to values belonging to the same datatype and numerical range as the constants, evaluating the expression on input values in the range $[-1, -0.2] \cup [0.2, 1]$ and rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression in our dataset, we train a polynomial regressor to convergence using vanilla SGD with momentum. Then, for both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
+Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$ then rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression, validation inputs are sampled from the range $[-0.2, 0.2]$.
+
+In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize the losses by their respective values at $t_0$. Based on the validation curve, we apply early stopping at approximately 30 epochs.
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
 \begin{axis}[title={Average loss over time}, width=\textwidth, height=10cm, xlabel=Epoch, ylabel=Normalized MSE, legend pos=north east, align=center]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1] {../data/poly_train_loss.csv};
-\addlegendentry{Train Loss}
+\addlegendentry{Training}
 \addplot[smooth, red] table [mark=none, x=x, y=y2] {../data/poly_train_loss.csv};
-\addlegendentry{Test Loss}
+\addlegendentry{Validation}
 \addplot [smooth, name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}] {../data/poly_train_loss.csv};
 \addplot [smooth, name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}] {../data/poly_train_loss.csv};
 \addplot [fill=blue!10] fill between[of=upper1 and lower1];
@@ -364,8 +366,8 @@ Our training set consists of input-output pairs produced by binding the set of f
 \addplot [fill=red!10] fill between[of=upper2 and lower2];
 \end{axis}
 \end{tikzpicture}
-\caption{Normalized losses from 160 trajectories of momentum SGD in parameter space.}
-\label{fig:training_curve}
+\caption{For each expression in our dataset, we train a polynomial regressor to convergence.}
+\label{fig:loss_curves}
 \end{figure}
 
 \begin{table}[H]
@@ -394,7 +396,7 @@ batches.forEach { i, batch ->
 }
 \end{kotlinlisting}
 
-Our adversary takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings.
+Our adversary takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings. For both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
 
 \begin{figure}[H]
 \begin{tikzpicture}
@@ -415,10 +417,10 @@ Our adversary takes as input the trained regression model $\hat{f}$, a set of ne
 \label{fig:pbt_comparison}
 \end{figure}
 
-Above, we show the number of violations exceeding error threshold $\sigma$ standard deviations above the mean squared error (MSE) on the true loss $\mathcal{L}(x) = \big(f(x) - f'(x)\big)^2$. On average, our adversary exhibits a $10-15\%$ improvement over random search across all thresholds. We hypothesize that training the surrogate loss to convergence would further widen this margin, albeit potentially at the cost of generalization on other datasets.
+Above, we show the number of violations exceeding error threshold $\sigma$ standard deviations above the mean squared error (MSE) on the true loss $\mathcal{L}(x) = \big(f(x) - f'(x)\big)^2$. On average, our adversary exhibits a $28\%$ improvement over the probabilistic baseline across all thresholds. We hypothesize that training the surrogate loss to convergence would further widen this margin, albeit potentially at the cost of generalization on other expressions.
 
-Suppose a machine learning department has a budget $B$ and fixed cost $C$ for labeling a single datapoint. Given an error threshold $e_{min}$ and access to $\frac{B}{C}$ new inputs from the oracle, our method detects on average 15\% more errors than a uniform random sampling strategy over the input space. Conversely, to detect the same number of errors, we require a 15\% lower budget than a random sampling strategy.
+Suppose a machine learning department has a budget $B$ and fixed cost $C$ for labeling a single datapoint. Given an error threshold $e_{min}$ and access to $\frac{B}{C}$ new inputs from the oracle, our method detects on average 28\% more errors than a uniform random sampling strategy over the input space. Conversely, to detect the same number of errors, we require a 28\% lower budget than a random sampling strategy.
 
 \section{Conclusion}
 
-In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in adversarial learning and fuzz testing. We have proposed a framework for evaluating differentiable programs in a low-cost, data-driven manner and suggest some intriguing directions for future research. This work was partly inspired by \citet{lample2019deep}, in particular the expression tree generator from ~\autoref{sec:prob_ad_test}.
+In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in fuzz testing and adversarial learning. We have proposed a framework for evaluating differentiable programs in a low-cost manner and shown it is computationally more efficient than a probabilistic search, employed by most fuzz-testing approaches. The author wishes to thank Liam Paull for providing a number of very helpful suggestions and Stephen Samuel for the excellent \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest} library. This work was partly inspired by \citet{lample2019deep}, in particular the expression tree generator from ~\autoref{sec:prob_ad_test}.
