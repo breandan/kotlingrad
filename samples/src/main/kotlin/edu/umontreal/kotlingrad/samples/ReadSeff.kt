@@ -17,7 +17,7 @@ fun main() {
         it.value.map { it.third }.standardError())
     }.forEach { println(it.value.joinToString(", ")) }
 
-  ObjectInputStream(FileInputStream("checkpoint.hist")).use {
+  ObjectInputStream(FileInputStream("losses.hist")).use {
     val t = it.readObject()
     (t as List<List<Triple<Int, Double, Double>>>).flatten().groupBy { it.first }.mapValues {
       listOf(it.key,
