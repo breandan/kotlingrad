@@ -9,9 +9,13 @@ In software engineering, techniques for software testing are becoming increasing
 
 In this chapter, we explore the relationship between testing in machine learning and software engineering. We will see how the notion of fuzz testing shares a curious resembance to evaluation in machine learning and how adversarial methods can be seen as extensions to metamorphic testing. Finally, we propose a new property-based testing (PBT) algorithm for differentiable programs, and show an empirical improvement in sample efficiency over na\"ive probabilistic methods by detecting a greater proportion of errors which violate the test constraints within a given budget.
 
+\section{Background}
+
+In the following sections, we introduce a series of software testing methodologies, in decreasing order of cognitive complexity. We hypothesize the subsequent methods allow developers to attain the same level of assurance with progressively lower effort.
+
 \subsection{Unit Testing}
 
-\noindent In traditional unit testing, most tests are written in the following manner:
+\noindent In traditional unit testing, each subroutine is accompanied by a single test:
 %
 \begin{kotlinlisting}
 fun unitTest(subroutine: (Input) -> Output) {
@@ -22,7 +26,7 @@ fun unitTest(subroutine: (Input) -> Output) {
 }
 \end{kotlinlisting}
 %
-When carefully applied, unit testing is an effective method for detecting bugs and validating the author's belief about preconditions and postconditions. The trouble is, someone needs to write a bunch of test cases for it to work. In addition, it only tests subprograms, and must be updated whenever the program changes. Side effects may include decreasing agility, discouraging refactoring, or discarding prior work when tests become obsolete.
+Unit testing is an effective to validate one's belief about pre- and post-conditions. The trouble is, someone needs to write a bunch of test cases. Side effects include reduced agility, aversion to refactoring or discarding prior work when tests become obsolete.
 
 \subsection{Integration Testing}
 
@@ -42,9 +46,9 @@ fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -
 %
 With this strategy, there are fewer tests to write down, since we only care about end-to-end behavior. Integration testing simply checks a program for terminating exceptions and simple post conditions. For this reason, it is often too coarse-grained.
 
-For simplicity, in the following sections, we will only consider examples of programs which are pure functions, i.e. which have no external state and produce no side effects.
+%For simplicity, in the following sections, we will only consider examples of programs which are pure functions, i.e. which have no external state and produce no side effects.
 
-\section{Fuzz Testing}
+\subsection{Fuzz Testing}
 
 Fuzz testing is an automated testing methodology which generates random inputs to test a given program. For example, consider the following test:
 %
@@ -56,7 +60,7 @@ fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
     }
 \end{kotlinlisting}
 %
-The trouble is, we need an oracle, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be quite expensive in practice, this method can also be quite inefficient.
+The trouble is, we need an \textit{oracle}, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be quite expensive in practice, this method can also be quite inefficient.
 
 \subsection{Property-based Testing}\label{subsec:property-based-testing}
 
@@ -103,13 +107,13 @@ fun decrease(failure: Float): Float = failure - failure / 2
 \label{fig:pbt_comparison}
 \end{figure}
 %
-Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures).\hspace{-.08em}\footnote{To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and MacLaurin series expansion of sine and cosine.} Given two algorithms for calculating the derivative, a property-based test might check whether the absolute difference is bounded over all inputs.
+Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures).\hspace{-.08em}\footnote{To calculate AP, we symbolically derive the function and numerically evaluate the expression using \hyperref[sec:fdm]{finite difference approximation} and the MacLaurin series expansion of sine and cosine using arbitrary precision numerics.} Given two algorithms for calculating the derivative, a property-based test might check whether the absolute difference is bounded over all inputs.
 
-The trouble is, finding the right properties to test can be highly sensitive, and requires a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
+The trouble is, what are the right properties to test? This requiring a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-It is often the case we would like to test the behavior of a program without providing an exhaustive specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is an approach to property-based testing which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+It is often the case we would like to test the behavior of a program without exhaustive property-based specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is an approach to property-based testing which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
 First, let us consider the following concrete example, borrowed from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations applied to the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it may encounter in an operational setting.
 
@@ -176,9 +180,9 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each co
 \end{algorithmic}
 \end{algorithm}
 
-As we can see, \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\mathbf{\hat P}$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances. Clearly, if we want to find the best direction to update $\mathbf g$, we need to be more careful about how we perform the search.
+As we can see, \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\dim \mathbf g$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances. Clearly, if we want to find the best direction to update $\mathbf g$, we need to be more careful when performing the search.
 
-Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of its derivative. Consider \autoref{alg:fd_fuzz}, a refinement of \autoref{alg:bf_adversary} which uses the \hyperref[sec:fdm]{finite difference method} to approximate the derivative with respect to each component of the input. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation.
+Even if we cannot compute a closed-form for $\nabla_{\mathbf g}\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of the gradient. Consider \autoref{alg:fd_fuzz}, which uses the \hyperref[sec:fdm]{finite difference method} to approximate $\nabla_{\mathbf g}\mathbf{\hat P}$. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation as in \autoref{alg:bf_adversary}.
 
 \begin{algorithm}[H]
 \caption{Finite Difference Adversary}
@@ -194,7 +198,7 @@ Even if we cannot compute a closed-form derivative for $\mathbf{\hat P}$, if $\m
 \end{algorithmic}
 \end{algorithm}
 
-We now have a procedure that is $\mathcal{O}(m)$ with respect to $\mathbf{\hat P}$, but must be recomputed for each input -- we can still do better by assuming further structure on $\mathbf{\hat P}$. Furthermore, we have not yet incorporated any form of constraint on the input values. Perhaps we can combine the notion of metamorphic testing seen in \autoref{subsec:metamorphic-testing} with constrained optimization to accelerate the search for adversarial examples.
+We now have a procedure that is $\mathcal{O}(m)$ with respect to $\mathbf{\hat P}$, but must be recomputed for each input -- we can still do better by assuming further structure on $\mathbf{\hat P}$. Furthermore, we have not yet incorporated any constraint on the input values. Perhaps we can combine the notion of metamorphic testing seen in \autoref{subsec:metamorphic-testing} with constrained optimization to accelerate the search for adversarial examples.
 
 During backpropagation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In gradient-based adversarial testing, we perform gradient ascent on a loss function with respect to the inputs using a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
 %
@@ -230,24 +234,22 @@ Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \math
 Where $C \in \mathbb{R}$. How should we find a set of inputs that break our test given a fixed computational budget (i.e.\ constant number of program evaluations)? More concretely:
 %
 \begin{equation}
-\{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, maximize |D_\mathbf T|
+\{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, \text{ maximize } |D_\mathbf T|
 \end{equation}
 %
-Assuming zero knowledge about the program's implementation or the data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Given access to $\mathbf{\hat P}$'s implementation, we could use classical fuzzing techniques to prioritize the search for inputs more likely to violate $\mathbf T$. Assuming the program is differentiable, given input-output access but not the source code, we can still use zeroth order optimization techniques to approximate the gradient. Given access to its implementation, we can accelerate the search by using automatic differentiation. Furthermore, given information about the data distribution, we could re-parameterize the distribution to initialize the search in promising regions of the input space. By assuming the program has previously been tested on common inputs, we might sample from the inverse training distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select low probability inputs, possibly more likely to elicit an error.
-
-% Finally, we could train a neural network to predict inputs that were likely to cause a program to fail a given specification. As input, the network would take the function and test cases, and as its output, produce values that were likely to violate $T$.
+Assuming zero knowledge about the program's implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Given access to $\mathbf{\hat P}$'s implementation, we could use classical fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. By assuming the program is differentiable, given input-output values but not the source code, we can use zeroth order optimization techniques to approximate the gradient. Given futher access to its implementation, we can accelerate the search by using automatic differentiation. With additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select low probability inputs, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of explicitly engineering one per problem?
 
 \subsection{Generative Adversarial Testing}
 
-What constitutes a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her candidate inputs must break the program specification. To generate plausible test cases, not only must she be able to exploit weaknesses of the program, but ideally possess a good understanding of $p_{data}$.
+What are the the properties of a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her attacks must break the program specification. To generate plausible test cases, not only must she be able to exploit weaknesses of the program, but ideally possess a good understanding of $p_{data}$.
 
-Suppose we have a program $D: \mathbb{R}^h\rightarrow\mathbb{B}$, i.e. a binary classifier. How should we test its implementation, without providing an exhaustive specification, or some prior distribution over the inputs? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} (GAN), proposes a generative adversary $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$. The vanilla GAN objective can be expressed as a min-max optimization problem:
+Suppose we have a program $D: \mathbb{R}^h\rightarrow\mathbb{B}$, i.e. a binary classifier. How should we attack its implementation, without a custom adversary, or defining some prior distribution over the inputs? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} (GAN), proposes to train a ``generative'' adversary $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$ alongside the trained model. The vanilla GAN objective can be expressed as a minimax optimization problem:
 
 \begin{equation}
 \min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}(\mathbf x)}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
 \end{equation}
 
-This objective can be optimized by sampling minibatches $\mathbf x \sim p_{data}(\mathbf x)$ and $\mathbf z \sim p_{G}(\mathbf z)$, then updating the parameters of $G$ and $D$ using their respective stochastic gradients:
+This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}(\mathbf x)$ and $\mathbf z \sim p_{G}(\mathbf z)$, then updating the parameters of $G$ and $D$ using their respective stochastic gradients:
 
 \begin{equation}
 \theta_D \leftarrow \theta_D + \nabla_{\theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D(\mathbf x^{(i)}) + \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
@@ -270,16 +272,12 @@ This can be solved by combining the losses using a form of hypervolume maximizat
 \end{equation}
 
 Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the vanilla GAN to improve stability and sample diversity. GANs have been successfully applied in various domains from speech~\citep{donahue2019wavegan} to graph synthesis~\citep{wang2018graphgan}. One practical extension to the latter could be applying the GAN framework to program synthesis and compiler optimization by choosing a suitable metric and following the approach proposed by e.g.~\citet{adams2019learning, mendis2019compiler}.
+
+The trouble with GANs is that we need to train $G$ and $D$ in lockstep, otherwise one quickly becomes too strong. What happens if we want to attack a pretrained model?
 %
 \section{Probabilistic Adversarial Testing}\label{sec:prob_ad_test}
 
-% Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
-%
-% \begin{equation}
-%     (\forall i \in I^\dagger, p(i) \implies \neg T) \implies \lim_{|x|\to \infty}Prob(\hat{T}=False) = 1
-% \end{equation}
-
-Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we select $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniform random prior, or using a meta-learner $\mathbf M: (\mathbb{R}^m \rightarrow \mathbb{R}^n) \times (\mathbb{R}^m \times \mathbb R \rightarrow \mathbb B) \rightarrow \mathbb{R}^m$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we update $\mathbf x$ following $\nabla_{\mathbf x}\mathcal{L}(\mathbf{x})$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
+Let us now consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we select $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniform random prior, or using a meta-learner $\mathbf M: (\mathbb{R}^m \rightarrow \mathbb{R}^n) \times (\mathbb{R}^m \times \mathbb R \rightarrow \mathbb B) \rightarrow \mathbb{R}^m$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we update $\mathbf x$ following $\nabla_{\mathbf x}\mathcal{L}(\mathbf{x})$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
 
 We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge at all, a subset would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
 
@@ -348,12 +346,12 @@ fun randomBiTree(height: Int): SFun<DReal> =
 
 Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$ then rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression, validation inputs are sampled from the range $[-0.2, 0.2]$.
 
-In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize the losses by their respective values at $t_0$. Based on the validation curve, we apply early stopping at approximately 30 epochs.
+In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize the losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-\begin{axis}[title={Average loss over time}, width=\textwidth, height=10cm, xlabel=Epoch, ylabel=Normalized MSE, legend pos=north east, align=center]
+\begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=10cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1] {../data/poly_train_loss.csv};
 \addlegendentry{Training}
 \addplot[smooth, red] table [mark=none, x=x, y=y2] {../data/poly_train_loss.csv};
@@ -419,8 +417,14 @@ Our adversary takes as input the trained regression model $\hat{f}$, a set of ne
 
 Above, we show the number of violations exceeding error threshold $\sigma$ standard deviations above the mean squared error (MSE) on the true loss $\mathcal{L}(x) = \big(f(x) - f'(x)\big)^2$. On average, our adversary exhibits a $28\%$ improvement over the probabilistic baseline across all thresholds. We hypothesize that training the surrogate loss to convergence would further widen this margin, albeit potentially at the cost of generalization on other expressions.
 
-Suppose a machine learning department has a budget $B$ and fixed cost $C$ for labeling a single datapoint. Given an error threshold $e_{min}$ and access to $\frac{B}{C}$ new inputs from the oracle, our method detects on average 28\% more errors than a uniform random sampling strategy over the input space. Conversely, to detect the same number of errors, we require a 28\% lower budget than a random sampling strategy.
+% Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
+%
+% \begin{equation}
+%     (\forall i \in I^\dagger, p(i) \implies \neg T) \implies \lim_{|x|\to \infty}Prob(\hat{T}=False) = 1
+% \end{equation}
+
+% Suppose a machine learning department has a budget $B$ and fixed cost $C$ for labeling a single datapoint. Given an error threshold $e_{min}$ and access to $\frac{B}{C}$ new inputs from the oracle, suppose our method detects more errors than a uniform random sampling strategy over the input space. Conversely, to detect the same number of errors, we require a lower budget than a random sampling strategy.
 
 \section{Conclusion}
 
-In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in fuzz testing and adversarial learning. We have proposed a framework for evaluating differentiable programs in a low-cost manner and shown it is computationally more efficient than a probabilistic search, employed by most fuzz-testing approaches. The author wishes to thank Liam Paull for providing a number of very helpful suggestions and Stephen Samuel for the excellent \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest} library. This work was partly inspired by \citet{lample2019deep}, in particular the expression tree generator from ~\autoref{sec:prob_ad_test}.
+In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in fuzz testing and adversarial learning. We have proposed a framework for evaluating differentiable programs in a low-cost manner and shown our approach is more data-efficient than a random search strategy, employed by most automated testing frameworks. This enables us to detect a greater number of errors with a lower computational and data collection budget. The author wishes to thank Liam Paull for providing a number of very helpful suggestions and Stephen Samuel for the excellent \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest} library. This work was partly inspired by \citet{lample2019deep}, in particular the expression tree generator from ~\autoref{sec:prob_ad_test}.
