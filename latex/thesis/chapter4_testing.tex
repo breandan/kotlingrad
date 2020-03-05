@@ -113,7 +113,7 @@ The trouble is, what are the right properties to test? This requiring a lot of e
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-It is often the case we would like to test the behavior of a program without exhaustive property-based specification. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given a small set of inputs and outputs. Metamorphic testing (MT) is an approach to property-based testing which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+It is often the case we would like to test the behavior of a program without completely specifying its properties. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given just a few inputs and outputs. Metamorphic testing (MT) is an approach to property-based testing which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
 
 First, let us consider the following concrete example, borrowed from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations applied to the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it may encounter in an operational setting.
 
@@ -279,7 +279,7 @@ The trouble with GANs is that we need to train $G$ and $D$ in lockstep, otherwis
 
 Let us now consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we select $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniform random prior, or using a meta-learner $\mathbf M: (\mathbb{R}^m \rightarrow \mathbb{R}^n) \times (\mathbb{R}^m \times \mathbb R \rightarrow \mathbb B) \rightarrow \mathbb{R}^m$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we update $\mathbf x$ following $\nabla_{\mathbf x}\mathcal{L}(\mathbf{x})$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
 
-We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of gradient descent trajectories would fail to converge at all, a subset would converge to local minima, and the remaining trajectories would discover inputs violating the program specification.
+We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of trajectories would fail to converge at all, a subset would converge to local optima, and the remaining trajectories would discover inputs violating the program specification.
 
 \begin{algorithm}[ht]
 \caption{Probabilistic Generator}
@@ -352,15 +352,15 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \centering
 \begin{tikzpicture}
 \begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=10cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
-\addplot[smooth, blue] table [mark=none, x=x, y=y1] {../data/poly_train_loss.csv};
+\addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/poly_train_loss.csv};
 \addlegendentry{Training}
-\addplot[smooth, red] table [mark=none, x=x, y=y2] {../data/poly_train_loss.csv};
+\addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/poly_train_loss.csv};
 \addlegendentry{Validation}
-\addplot [smooth, name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}] {../data/poly_train_loss.csv};
-\addplot [smooth, name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}] {../data/poly_train_loss.csv};
+\addplot [smooth, name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}, col sep=comma] {../data/poly_train_loss.csv};
+\addplot [smooth, name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}, col sep=comma] {../data/poly_train_loss.csv};
 \addplot [fill=blue!10] fill between[of=upper1 and lower1];
-\addplot [smooth, name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}] {../data/poly_train_loss.csv};
-\addplot [smooth, name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}] {../data/poly_train_loss.csv};
+\addplot [smooth, name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}, col sep=comma] {../data/poly_train_loss.csv};
+\addplot [smooth, name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}, col sep=comma] {../data/poly_train_loss.csv};
 \addplot [fill=red!10] fill between[of=upper2 and lower2];
 \end{axis}
 \end{tikzpicture}
@@ -394,20 +394,28 @@ batches.forEach { i, batch ->
 }
 \end{kotlinlisting}
 
+\begin{table}[H]
+\begin{tabular}{l}
+\begin{tikzpicture} \begin{axis}[title={Oracle vs. Regression Model}, width=\textwidth, height=0.5\textwidth, xlabel=$x$, ylabel=$y$, legend style={at={(0.5,0.03)},anchor=south}, align=center] \addplot table [mark=none, x=x, y=oracle, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Oracle $(f)$} \addplot table [mark=none, x=x, y=model, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Model $(\hat{f})$} \end{axis} \end{tikzpicture} \\
+\begin{tikzpicture} \begin{axis}[title={True vs. Surrogate Loss}, width=\textwidth, height=0.5\textwidth, xlabel=$x$, ylabel=Loss, legend style={at={(0.5,0.97)},anchor=north}, align=center] \addplot table [mark=none, x=x, y=true, col sep=comma] {../data/true_vs_surrogate_loss.csv}; \addlegendentry{True Loss $(\mathcal{L})$} \addplot table [mark=none, x=x, y=surrogate, col sep=comma] {../data/true_vs_surrogate_loss.csv}; \addlegendentry{Surrogate Loss $(\hat{\mathcal{L}})$} \end{axis} \end{tikzpicture}
+\end{tabular}
+\caption{\label{tab:oracle_vs_model} Ground truth and trained model predictions for a single expression.}
+\end{table}
+
 Our adversary takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings. For both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
 
 \begin{figure}[H]
 \begin{tikzpicture}
 \begin{axis}[title={Average efficiency at error threshold $\sigma$ standard deviations above MSE}, width=\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center, xtick distance=0.5]
-\addplot[smooth, blue] table [mark=none, x=x, y=y1] {../data/seff.csv};
+\addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/seff.csv};
 \addlegendentry{Probabilistic Generator}
-\addplot[smooth, red] table [mark=none, x=x, y=y2] {../data/seff.csv};
+\addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/seff.csv};
 \addlegendentry{Differential Adversary}
-\addplot [smooth, name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}] {../data/seff.csv};
-\addplot [smooth, name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}] {../data/seff.csv};
+\addplot [smooth, name path=upper1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}+\thisrow{y1_err}, col sep=comma] {../data/seff.csv};
+\addplot [smooth, name path=lower1,draw=none] table[x=x, y1=y1, y1_err=y1_err, y expr=\thisrow{y1}-\thisrow{y1_err}, col sep=comma] {../data/seff.csv};
 \addplot [fill=blue!10] fill between[of=upper1 and lower1];
-\addplot [smooth, name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}] {../data/seff.csv};
-\addplot [smooth, name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}] {../data/seff.csv};
+\addplot [smooth, name path=upper2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}+\thisrow{y2_err}, col sep=comma] {../data/seff.csv};
+\addplot [smooth, name path=lower2,draw=none] table[x=x, y2=y2, y2_err=y2_err, y expr=\thisrow{y2}-\thisrow{y2_err}, col sep=comma] {../data/seff.csv};
 \addplot [fill=red!10] fill between[of=upper2 and lower2];
 \end{axis}
 \end{tikzpicture}
