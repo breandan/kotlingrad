@@ -462,7 +462,7 @@ val fd_dx = (sin(x + dx) - sin(x)) / dx
 }
 \end{kotlinlisting}
 %
-There are many other ways to independently verify the numerical gradient, such as dual numbers or the complex step derivative. Another method to validate Kotlin$\nabla$'s implementation would be to compare the numerical output against the output of a well-known AD framework, such as TensorFlow. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
+For further details, see \autoref{subsec:property-based-testing}. There are many other ways to independently check the numerical gradient, such as dual numbers or the complex step derivative~\citep{martins2003complex}. Another strategy is to compare with a well-known AD framework, such as TensorFlow~\citep{abadi2016tensorflow} or PyTorch~\citep{paszke2019pytorch}. In future work, we intend to conduct a more thorough comparison of numerical accuracy and performance.
 
 \section{Operator overloading}\label{sec:operator-overloading}
 
