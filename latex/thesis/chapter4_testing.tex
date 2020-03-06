@@ -351,7 +351,7 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-\begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=10cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
+\begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=7cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/poly_train_loss.csv};
 \addlegendentry{Training}
 \addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/poly_train_loss.csv};
@@ -396,17 +396,17 @@ batches.forEach { i, batch ->
 
 \begin{table}[H]
 \begin{tabular}{l}
-\begin{tikzpicture} \begin{axis}[title={Oracle vs. Regression Model}, width=\textwidth, height=0.5\textwidth, xlabel=$x$, ylabel=$y$, legend style={at={(0.5,0.03)},anchor=south}, align=center] \addplot table [mark=none, x=x, y=oracle, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Oracle $(f)$} \addplot table [mark=none, x=x, y=model, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Model $(\hat{f})$} \end{axis} \end{tikzpicture} \\
-\begin{tikzpicture} \begin{axis}[title={True vs. Surrogate Loss}, width=\textwidth, height=0.5\textwidth, xlabel=$x$, ylabel=Loss, legend style={at={(0.5,0.97)},anchor=north}, align=center] \addplot table [mark=none, x=x, y=true, col sep=comma] {../data/true_vs_surrogate_loss.csv}; \addlegendentry{True Loss $(\mathcal{L})$} \addplot table [mark=none, x=x, y=surrogate, col sep=comma] {../data/true_vs_surrogate_loss.csv} [postaction={decorate, decoration={markings,mark=between positions 0.8 and 0.97 step 0.01 with {\arrow[red,line width=.5pt]{>};}}}]; \addlegendentry{Surrogate Loss $(\hat{\mathcal{L}})$} \end{axis} \end{tikzpicture}
+\begin{tikzpicture} \begin{axis}[title={Oracle vs. Regression Model}, width=\textwidth, height=0.4\textwidth, xlabel=$x$, ylabel=$y$, legend style={at={(0.5,0.03)},anchor=south}, align=center] \addplot table [mark=none, x=x, y=oracle, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Oracle $(f)$} \addplot table [mark=none, x=x, y=model, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Model $(\hat{f})$} \end{axis} \end{tikzpicture} \\
+\begin{tikzpicture} \begin{axis}[title={True vs. Surrogate Loss}, width=\textwidth, height=0.4\textwidth, xlabel=$x$, ylabel=Loss, legend style={at={(0.5,0.97)},anchor=north}, align=center] \addplot table [mark=none, x=x, y=true, col sep=comma] {../data/true_vs_surrogate_loss.csv}; \addlegendentry{True Loss $(\mathcal{L})$} \addplot table [mark=none, x=x, y=surrogate, col sep=comma] {../data/true_vs_surrogate_loss.csv} [postaction={decorate, decoration={markings,mark=between positions 0.8 and 0.97 step 0.01 with {\arrow[red,line width=.5pt]{>};}}}]; \addlegendentry{Surrogate Loss $(\hat{\mathcal{L}})$} \end{axis} \end{tikzpicture}
 \end{tabular}
-\caption{\label{tab:oracle_vs_model} Above: Ground truth and trained model predictions for a single expression. Below: A single particle attacks the model by seeking high error region on the surrogate loss.}
+\caption{\label{tab:oracle_vs_model} Above: Ground truth and trained model predictions for a single expression. Below: A single particle attacks the model by seeking high error on the surrogate loss.}
 \end{table}
 
 Our adversary takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings. For both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
 
 \begin{figure}[H]
 \begin{tikzpicture}
-\begin{axis}[title={Average efficiency at error threshold $\sigma$ standard deviations above MSE}, width=\textwidth, height=10cm, xlabel=$\sigma$, ylabel=Average errors detected per labeled input, legend pos=north east, align=center, xtick distance=0.5]
+\begin{axis}[title={Average efficiency at error threshold $\sigma$ standard deviations above MSE}, width=\textwidth, height=7cm, xlabel=$\sigma$, ylabel=Average errors detected per label, legend pos=north east, align=center, xtick distance=0.5]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/seff.csv};
 \addlegendentry{Probabilistic Generator}
 \addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/seff.csv};

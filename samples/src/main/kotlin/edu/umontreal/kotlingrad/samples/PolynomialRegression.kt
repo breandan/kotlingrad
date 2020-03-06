@@ -1,8 +1,10 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.invoke
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.magnitude
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.pow
+import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
 import edu.umontreal.kotlingrad.utils.step
 import java.io.FileOutputStream
 import java.io.ObjectOutputStream
@@ -119,6 +121,9 @@ fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>
         totalTrainLoss / initialTrainLoss,
         totalTestLoss / initialTestLoss
       )
+
+//      val mdlNow = decodePolynomial(weightsNow)
+//      testPoints.forEach { println("epoch_0${epochs/epochSize}, $it, ${mdlNow(it).toDouble()}") }
 //      plotLoss(lossHistory)
       totalTrainLoss = 0.0
       totalTestLoss = 0.0

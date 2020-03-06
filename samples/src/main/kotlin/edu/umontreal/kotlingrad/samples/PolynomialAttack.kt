@@ -7,11 +7,11 @@ import kotlin.streams.toList
 
 fun main() {
   with(DoublePrecision) {
-      (0..7).toList().parallelStream().map {
+      (0..200).toList().parallelStream().map {
         val startTime = System.currentTimeMillis()
         val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
         val (model, history) = learnExpression(oracle)
-        println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
+//        println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
         Triple(oracle, model, history)
         testPolynomial(model, oracle)
       }.toList()
@@ -26,12 +26,14 @@ fun main() {
 //  }
 }
 
+val numSteps = 100
+val budget = batchSize.i * 100
+val testPoints = List(budget) { rand.nextDouble(-maxX, maxX) }.sorted()
+
 fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
-  val numSteps = 100
-  val budget = batchSize.i * 100
-  val trueErrors = List(budget) { rand.nextDouble(-maxX, maxX) }.map { Pair(it, trueError(it).toDouble()) }.toMap()
+  val trueErrors = testPoints.map { Pair(it, trueError(it).toDouble()) }.toMap()
   val maxError = trueErrors.entries.maxBy { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }
