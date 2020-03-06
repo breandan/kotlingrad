@@ -61,7 +61,6 @@ fun sampleInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
 fun sampleTestInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
   rand.nextDouble(i * testInterval, (i + 2) * testInterval)
 
-
 /* https://en.wikipedia.org/wiki/Polynomial_regression#Matrix_form_and_calculation_of_estimates
  *  __  __    __                      __  __  __
  * | y_1 |   | 1  x_1  x_1^2 ... x_1^m | | w_1 |
@@ -75,7 +74,7 @@ fun sampleTestInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
 fun DoublePrecision.decodePolynomial(weights: Vec<DReal, D30>) =
   Vec(paramSize) { x pow (it + 1) } dot weights
 
-private fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>, List<Triple<Int, Double, Double>>> {
+fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>, List<Triple<Int, Double, Double>>> {
   var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
 
   var totalTrainLoss = 0.0
