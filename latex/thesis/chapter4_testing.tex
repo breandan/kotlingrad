@@ -7,7 +7,7 @@ Today's deep neural networks are capable of learning a broad range of functions,
 
 In software engineering, techniques for software testing are becoming increasingly automated and general-purpose. Tests help prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. While critically important, tests are often cumbersome to implement. Recent techniques in automated testing have enabled developers to write fewer tests with higher coverage.
 
-In this chapter, we explore the relationship between testing in machine learning and software engineering. We will see how the notion of fuzz testing shares a curious resembance to machine learning evaluation and how adversarial methods can be seen as extensions to metamorphic testing. Finally, we propose a new property-based testing (PBT) algorithm for differentiable programs, and show an empirical improvement in sample efficiency over na\"ive probabilistic methods by detecting a greater proportion of errors which violate the test constraints within a given budget.
+In this chapter we propose a novel property-based testing (PBT) algorithm for differentiable programs, and show an empirical improvement in sample efficiency over na\"ive probabilistic fuzzing by detecting a greater proportion of errors violating test constraints in a given budget. Our algorithm can be used to both identify trust region boundaries, and adversarially attack a pretrained model given input-output access and a few samples from the training distribution. We explore the relationship between adversarial methods in machine learning and property-based testing, and show how adversarial methods can be seen as extensions to a kind of property-based testing testing known as metamorphic testing.
 
 \section{Background}
 
@@ -225,19 +225,8 @@ To do so, we can initialize $\mathbf{x} \sim U[CS]$ and perform projected gradie
 \bm\Phi_{CS}(\mathbf \phi') = \argmin{\mathbf \phi \in CS}\frac{1}{2}||\mathbf \phi - \mathbf \phi'||^2_2
 \end{equation}
 %
-Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^m \times \mathbb{R} \rightarrow \mathbb{B}$:
-%
-\begin{equation} \label{eq:output_constraint_example}
-\mathbf T(\mathbf{x}, C) = \mathcal{L}(\mathbf{x}) < C
-\end{equation}
-%
-Where $C \in \mathbb{R}$. How should we find a set of inputs that break our test given a fixed computational budget (i.e.\ constant number of program evaluations)? More concretely:
-%
-\begin{equation}
-\{ D_\mathbf T: \mathbf x \in CS \mid \mathbf{\hat P}(\mathbf x) \implies \neg \mathbf T \}, \text{ maximize } |D_\mathbf T|
-\end{equation}
-%
-Assuming zero knowledge about the program's implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Given access to $\mathbf{\hat P}$'s implementation, we could use classical fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. By assuming the program is differentiable, given input-output values but not the source code, we can use zeroth order optimization techniques to approximate the gradient. Given futher access to its implementation, we can accelerate the search by using automatic differentiation. With additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$ to select low probability inputs, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of explicitly engineering one per problem?
+
+Assuming zero knowledge about the program $\mathbf{\hat P}$'s implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Assuming $\mathbf{\hat P}$ is differentiable, given input-output values we can use zeroth-order optimization techniques to approximate $\nabla_{\mathbf{x}}\mathcal{L}$. Assuming $\mathbf{\hat P}$ is open source, we could use coverage-guided fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. If $\mathbf{\hat P}$ is both open source and differentiable, we can accelerate the search by using automatic differentiation. Given additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of manually constructing one?
 
 \subsection{Generative Adversarial Testing}
 
@@ -277,19 +266,32 @@ The trouble with GANs is that we need to train $G$ and $D$ in lockstep, otherwis
 %
 \section{Probabilistic Adversarial Testing}\label{sec:prob_ad_test}
 
-Let us now consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we select $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniform random prior, or using a meta-learner $\mathbf M: (\mathbb{R}^m \rightarrow \mathbb{R}^n) \times (\mathbb{R}^m \times \mathbb R \rightarrow \mathbb B) \rightarrow \mathbb{R}^m$ as input). If $\mathbf{\hat P}(\mathbf{x}^i)$ violates $\mathbf T$, we can append $\mathbf x^i$ to $D_\mathbf T$ and repeat. Otherwise, we update $\mathbf x$ following $\nabla_{\mathbf x}\mathcal{L}(\mathbf{x})$ and repeat until test failure, gradient descent convergence, or a fixed number of steps $C$ are reached before resampling $\mathbf{x}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
+\noindent Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$:
+%
+\begin{equation} \label{eq:output_constraint_example}
+\mathbf T(\mathbf{x}) = \mathcal{L}(\mathbf{x}) < C
+\end{equation}
+%
+Our goal is to find a set of inputs which break our test given a computational budget $\mathcal{B}_e$ (i.e.\ fixed number of program evaluations) and labeling budget $\mathcal{B}_l$ (i.e.\ fixed number of labels).
+%
+\begin{equation}
+\{ D_\mathbf T: \mathbf x \in CS \mid \mathcal{L}(\mathbf{x}) < C\}, \text{ maximize } |D_\mathbf T| \text { subject to } \mathcal{B}_e, \mathcal{B}_l
+\end{equation}
+%
 
-We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of trajectories would fail to converge at all, a subset would converge to local optima, and the remaining trajectories would discover inputs violating the program specification.
+Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we sample an input $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniformly). If $\mathcal{L}(\mathbf{x}_j)$ satisfies \autoref{eq:output_constraint_example}, we ascend loss following $\nabla_{\mathbf x}\mathcal{L}$, otherwise we descend and repeat until the test ``flips'', gradient vanishes, or a fixed number of steps $I_{max}$ are reached before resampling $\mathbf{x}_{j+1}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
+
+We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of trajectories would fail to converge at all, a subset would converge to local optima, and the remaining trajectories would discover the boundary.
 
 \begin{algorithm}[ht]
 \caption{Probabilistic Generator}
 \label{alg:prob_adversary}
 \begin{algorithmic}[1]
-\Procedure{ProbAdversary}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, budget: $\mathbb Z^+$}
+\Procedure{ProbGen}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_e: \mathbb N^+$}
 \State $D_\mathbf T \gets \{\}, j \gets 0$
 \While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
 \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from $\mathcal S_m$}
-\If {$\mathbf T\big(\mathbf{x}_j, \mathcal L(\mathbf{x}_j)\big)$} \Comment{Inside feasible set, perform gradient ascent}
+\If {$\mathbf T\big(\mathbf{x}_j, C\big)$} \Comment{Inside feasible set, perform gradient ascent}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$ \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
 \Else \Comment{Outside feasible set, perform gradient descent}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$  \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
@@ -305,22 +307,23 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were indeed flawed and
 \caption{Differential Shrinker}
 \label{alg:diff_adversary}
 \begin{algorithmic}[1]
-\Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$}
-\State $i \gets 1$
-\State $t_1 \gets \mathbf T\big(\mathbf x_1, \mathcal L(\mathbf x_1)\big)$ \Comment{Store initial state to detect when test flips.}
-\While {$i \leq I_{max}$ \textbf{and} $\mathbf ||\mathbf x_i - \mathbf x_{i-1}||_2^2 < \epsilon$} \Comment{While in budget and not converged.}
-\State $\mathbf x_i \gets \bm\Phi_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
-\If {$\mathbf T\big(\mathbf{x}_i, \mathcal L(\mathbf{x}_i)\big) \neq t_1$} \Comment{Boundary value was found.}
-\State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
-\EndIf
-\State $i \gets i + 1$
-\EndWhile
+\Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
+\State $i \gets 1, t_i \gets \mathbf T\big(\mathbf x_i, C\big)$ \Comment{Store initial state to detect when test flips.}
+\Do
+    \State $i \gets i + 1$
+    \State $\mathbf x_i \gets \bm\Phi_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
+    \If {$\mathbf T\big(\mathbf{x}_i, C\big) \neq t_1$} \Comment{Boundary value was found.}
+    \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
+    \EndIf
+\doWhile {$i \leq I_{max}$ \textbf{and} $\mathbf |\mathcal{L}(\mathbf x_i) - \mathcal{L}(\mathbf x_{i-1})| < \epsilon$} \Comment{While in budget and not converged.}
 \State \Return \textbf{if } $\neg t_1$ \textbf{ then } $\{\mathbf x_{i-1}\}$ \textbf{ else } $\varnothing$ \Comment{Return last iterate or $\varnothing$ if test passed.}
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
-To evaluate our algorithm, we train a polynomial regressor \autoref{sec:poly_reg} on input-output pairs from a set of random algebraic expressions. These expressions are produced by generating perfect binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphabetic variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set $\{+, \times\}$. Our expression generator with type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ takes a depth $\delta$, a random seed $\psi$, and returns a scalar-valued function.
+We evaluate our algorithm in the regression setting, where $\mathbf{\hat P}$ is a polynomial regressor (cf. \autoref{sec:poly_reg}) and $\mathcal{L}$ is the mean squared error loss.
+
+ Our training set consists of input-output pairs from a set of random algebraic expressions. These expressions are produced by generating perfect binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphabetic variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set $\{+, \times\}$. Our expression generator (\autoref{eq:btree_gen}) with type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ takes a depth $\delta: \mathbb{N}^+$, a random seed $\psi: \mathbb{Z}$, and returns a scalar-valued function.
 
 \begin{equation}\label{eq:btree_gen}
 G_e(\delta, \psi) = \begin{cases}
@@ -347,6 +350,23 @@ fun randomBiTree(height: Int): SFun<DReal> =
 Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$ then rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression, validation inputs are sampled from the range $[-0.2, 0.2]$.
 
 In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize the losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
+
+\begin{algorithm}[ht]
+\caption{Surrogate Attack}
+\label{alg:surrogate_attack}
+\begin{algorithmic}[1]
+\Procedure{SurrogateAttack}{$\mathbf{\theta}: \mathbb{R}^k$, $\hat{f}: \mathbb R^k \times \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_l: \mathbb N^+$}
+\State $\mathbf{\theta}' \gets \mathbf{\theta}$
+\Do
+    \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x})$ \Comment{Ask for label from oracle.}
+    \State $\mathcal{B}_l \gets \mathcal{B}_l - 1$
+    \State $\mathbf\theta' \gets \mathbf\theta' - \nabla_{\mathbf\theta'}\mathcal{L}(\hat{f}(\mathbf{x}; \mathbf\theta'), \mathbf{y})$
+\doWhile {$0 < \mathcal{B}_l$} \Comment{Iterate until labeling budget exhausted.}
+\State $\mathcal{\hat{L}} \gets (\hat{f}(\mathbf{\theta}') - \hat{f}(\mathbf{\theta}))$
+\State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T, \mathcal B_e$}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
 
 \begin{figure}[H]
 \centering
