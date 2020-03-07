@@ -192,7 +192,7 @@ Even if we cannot compute a closed-form for $\nabla_{\mathbf g}\mathbf{\hat P}$,
 \If {$m = 1$} \Comment{Compute finite (centered) difference and perform gradient ascent}
 \State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c) - \mathbf{\hat P}(g_1 + c)}{2c}$
 \Else \Comment{Apply single-step gradient ascent using componentwise finite difference}
-\State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c, 0, \ldots) - \mathbf{\hat P}(g_1 + c, 0, \ldots)}{2c}$, \Call{FdAdversary}{$\mathbf{\hat P}, c, g_1, \ldots, g_{m}$}
+\State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c, 0, \ldots) - \mathbf{\hat P}(g_1 + c, 0, \ldots)}{2c}$, \Call{FdAdversary}{$\mathbf{\hat P}, c, g_2, \ldots, g_{m}$}
 \EndIf
 \EndProcedure
 \end{algorithmic}
@@ -279,7 +279,7 @@ Our goal is to find a set of inputs which break our test given a computational b
 \end{equation}
 %
 
-Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we sample an input $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniformly). If $\mathcal{L}(\mathbf{x}_j)$ satisfies \autoref{eq:output_constraint_example}, we ascend loss following $\nabla_{\mathbf x}\mathcal{L}$, otherwise we descend and repeat until the test ``flips'', gradient vanishes, or a fixed number of steps $I_{max}$ are reached before resampling $\mathbf{x}_{j+1}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
+Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we sample an input $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniformly). If $\mathcal{L}(\mathbf{x}_j)$ satisfies \autoref{eq:output_constraint_example}, we ascend the loss following $\nabla_{\mathbf x}\mathcal{L}$, otherwise we descend and repeat until the test ``flips'', gradient vanishes, or a fixed number of steps $I_{max}$ are reached before resampling $\mathbf{x}_{j+1}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
 
 We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of trajectories would fail to converge at all, a subset would converge to local optima, and the remaining trajectories would discover the boundary.
 
@@ -310,8 +310,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
 \State $i \gets 1, t_i \gets \mathbf T\big(\mathbf x_i, C\big)$ \Comment{Store initial state to detect when test flips.}
 \Do
-    \State $i \gets i + 1$
-    \State $\mathbf x_i \gets \bm\Phi_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
+    \State $i \gets i + 1, \mathbf x_i \gets \bm\Phi_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
     \If {$\mathbf T\big(\mathbf{x}_i, C\big) \neq t_1$} \Comment{Boundary value was found.}
     \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
     \EndIf
@@ -347,7 +346,7 @@ fun randomBiTree(height: Int): SFun<DReal> =
   else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 \end{kotlinlisting}
 
-Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$ then rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression, validation inputs are sampled from the range $[-0.2, 0.2]$.
+Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$ then rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression, a unique validation set is sampled from the range $[-0.2, 0.2]$.
 
 In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize the losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
 
@@ -358,11 +357,10 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \Procedure{SurrogateAttack}{$\mathbf{\theta}: \mathbb{R}^k$, $\hat{f}: \mathbb R^k \times \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_l: \mathbb N^+$}
 \State $\mathbf{\theta}' \gets \mathbf{\theta}$
 \Do
-    \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x})$ \Comment{Ask for label from oracle.}
-    \State $\mathcal{B}_l \gets \mathcal{B}_l - 1$
-    \State $\mathbf\theta' \gets \mathbf\theta' - \nabla_{\mathbf\theta'}\mathcal{L}(\hat{f}(\mathbf{x}; \mathbf\theta'), \mathbf{y})$
+    \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x}), \mathcal{B}_l \gets \mathcal{B}_l - 1$ \Comment{Ask for a new label from the oracle.}
+    \State $\mathbf\theta' \gets \mathbf\theta' - \nabla_{\mathbf\theta'}(\hat{f}(\mathbf{x} - \mathbf\theta')^2, \mathbf{y})$ \Comment{Update model parameters using loss gradient.}
 \doWhile {$0 < \mathcal{B}_l$} \Comment{Iterate until labeling budget exhausted.}
-\State $\mathcal{\hat{L}} \gets (\hat{f}(\mathbf{\theta}') - \hat{f}(\mathbf{\theta}))$
+\State $\mathcal{\hat{L}} \gets (\hat{f}(\mathbf{\theta}') - \hat{f}(\mathbf{\theta}))^2$ \Comment{Construct the surrogate loss.}
 \State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T, \mathcal B_e$}
 \EndProcedure
 \end{algorithmic}
@@ -371,7 +369,7 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-\begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=7cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
+\begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=10cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/poly_train_loss.csv};
 \addlegendentry{Training}
 \addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/poly_train_loss.csv};
@@ -422,7 +420,7 @@ batches.forEach { i, batch ->
 \caption{\label{tab:oracle_vs_model} Above: Ground truth and trained model predictions for a single expression. Below: A single particle attacks the model by seeking higher error on the surrogate loss.}
 \end{table}
 
-Our adversary takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings. For both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
+Our adversary (\autoref{alg:surrogate_attack}) takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings. For both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
 
 \begin{figure}[H]
 \begin{tikzpicture}
@@ -443,7 +441,7 @@ Our adversary takes as input the trained regression model $\hat{f}$, a set of ne
 \label{fig:pbt_comparison}
 \end{figure}
 
-Above, we show the number of violations exceeding error threshold $\sigma$ standard deviations above the mean squared error (MSE) on the true loss $\mathcal{L}(x) = \big(f(x) - f'(x)\big)^2$. On average, our adversary exhibits a $28\%$ improvement over the probabilistic baseline across all thresholds. We hypothesize that training the surrogate loss to convergence would further widen this margin, albeit potentially at the cost of generalization on other expressions.
+Above, we show the number of violations exceeding error threshold $\sigma$ standard deviations above the mean squared error (MSE) on the true loss $\mathcal{L}(x) = \big(f(x) - \hat{f}(x)\big)^2$. On average, our adversary exhibits a $28\%$ improvement over the probabilistic baseline across all thresholds. We hypothesize that training the surrogate loss to convergence would further widen this margin, albeit potentially at the cost of generalization on other expressions.
 
 % Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
 %
