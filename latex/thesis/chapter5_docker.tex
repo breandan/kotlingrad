@@ -488,7 +488,7 @@ Users must insert an SD card and follow the instructions provided. When complete
 
 \subsection{Web interface}
 
-To access the DuckieOS web interface, users can visit the following URL in any JavaScript-enabled web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation process successfully completed and the network is properly configured, the web application displayed in~\autoref{fig:portainer_ui} should be accessible. This application allows users unfamiliar with the CLI to manage containers on their Duckiebots from within the browser.
+To access the DuckieOS web interface, users can visit the following URL in any JavaScript-enabled web browser: \url{http://DUCKIEBOT_NAME:9000/}. If the installation process successfully completed and the network is properly configured, the web application displayed in~\autoref{fig:portainer_ui} should be accessible. This application allows users unfamiliar with the CLI to manage Docker containers from within their favorite browser.
 
 \begin{figure}
 \includegraphics[width=0.80\textwidth]{../figures/portainer_screenshot.png}
@@ -683,6 +683,10 @@ Furthermore, Docker provides a mechanism to bypass its own security measures, al
 Docker's unnecessarily high privileges and susceptibility for misuse are serious issues. While operator error may be partly at fault, these vulnerabilities are primarily the result of poor implementation choices. Docker's flagrant violation of the principle of least privilege~\citep{saltzer1975protection} effectively compromises the entire Linux security model.
 
 To address these issues, various container platforms, including \href{https://docs.nersc.gov/programming/shifter/overview/}{Shifter}~\citep{gerhardt2017shifter} and \href{https://sylabs.io/docs/}{Singularity}~\citep{kurtzer2017singularity}, have emerged and gained traction in the scientific computing community, owing to their lower privileges and compatibility with legacy Linux distributions used by many academic computing environments. Since then, Docker has also introduced a \href{https://engineering.docker.com/2019/02/experimenting-with-rootless-docker/}{rootless mode}, but it remains experimental at the time of writing this thesis.
+
+\section{Future Work}
+
+Duckietown encourages users to train reinforcement learning models inside a driving simulator. As agents learn a policy to drive a Duckiebot, we envision it is similarly possible to train an agent to perform tasks in the Docker environment. Agents, endowed with rudimentary shell commands would receive a reward based on the exit code of some desired program we wish to run. This can be extended to a fully automated environment, where the agent has access to a virtual keyboard and mouse, and learns to configure a desktop environment to run some desired program. Currently, this process involves a graduate student trying various commands from StackOverflow. Ostensibly, the same result can be achieved by any stochastic process which selects commands from a knowledge base and learns from past experience. Early work in this domain is already being undertaken~\citep{henkel2020learning}, presumably by a graduate student in a similar predicament.
 
 \section{Conclusion}
 
