@@ -37,6 +37,7 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 \bnfrl{gradient} & ::= & \bnfrl{exp} \code{.grad()}
 \end{eqnarray*}
 
+\chapter{Testing intelligent systems}
 
 \section{Linear regression}\label{sec:lin_reg}
 
@@ -226,7 +227,7 @@ Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required
 Polynomial regression is a straightforward application of LR, in which we approximate the coefficients for each term in a scalar polynomial. Consider the univariate case:
 
 \begin{equation}
-y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
+y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + vs + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
 \end{equation}
 %
 We can rewrite this function in matrix form as follows:
@@ -239,7 +240,31 @@ We can rewrite this function in matrix form as follows:
 \mathbf{\hat f}_{PR}(\mathbf{X}; \bm\beta) = \mathbf{X}\bm\beta
 \end{equation}
 %
-The resemblance to ~\autoref{eq:lin_reg} should be clear. To find $\bm\beta$ minimizing $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, we can use the same method described in ~\autoref{sec:linreg_matrix_sol}.
+The resemblance to \autoref{eq:lin_reg} should be clear. To find $\bm\beta$ minimizing $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, we can use the same method described in ~\autoref{sec:linreg_matrix_sol}. Here, $\mathbf, x, \mathbf y \in \mathbf R^n$, where $(x_i, y_i)$ correspond to scalar points in our dataset of size $n$. The matrix $\mathbf X \in \mathbf R^{n\times m}$ represents a \textit{feature map}, $\varphi: \mathbb R \rightarrow \mathbb R^m$, applied elementwise to each input value $x_i$ in our dataset, where $\varphi(x_i) = \left[1, x_i^2, \ldots, x_i^n\right]$.
+%
+Now consider the multivariate case, where $\mathbx w, \mathbf x \in \mathbb R^2$:
+%
+\begin{equation}
+    y(\mathbf w, \mathbf x) = 1 + \beta_{\mathbf x} \mathbf x + \beta_{\mathbf w}\mathbf w + \beta_{\mathbf x\mathbf w} \mathbf x\mathbf w + \beta_{\mathbf x^2} \mathbf x^2 + \beta_{\mathbf w^2} \mathbf w^2 + \beta_{\mathbf x\mathbf w^2} \mathbf x\mathbf w^2 + \beta_{\mathbf w\mathbf x^2} \mathbf w\mathbf x^2
+\end{equation}
+%
+Here, to represent $\mathbf{\hat f}$ we need to consider the pairwise interactions between every $\mathbf w$ and $\mathbf x$ at every degree of the polynomial. Instead, let us construct a special function $k: \mathbb R^2 \times \mathbb R^2 \rightarrow \mathbb R$:
+%
+\begin{align}\label{eq:kernel_expansion}
+    k(\mathbf x, \mathbf y) & = (1 + \mathbf x^T \mathbf y)^2 = (1 + x_1 \, y_1 + x_2 \, y_2)^2 \\
+    & = 1 + x_1^2 y_1^2 + x_2^2 y_2^2 + 2 x_1 y_1 + 2 x_2 y_2 + 2 x_1 x_2 y_1 y_2
+\end{align}
+%
+The function $k$ is called a \textit{quadratic kernel}, one member of a well-studied family known as \textit{kernel functions}, $K: \Omega \times \Omega \rightarrow \mathbb R$ which satisfy certain properties. Skipping the details, if we design a valid kernel, this preserves the standard inner product in feature space. Observe that by letting $\varphi(v) = \left[1, v_1^2, v_2^2, \sqrt{2} v_1, \sqrt{2} v_2, \sqrt{2} v_1 v_2\right]$:
+%
+\begin{align}
+    k(\mathbf w, \mathbf x) &= \varphi(\mathbf w)^\intercal \varphi(\mathbf x) \\
+    &=[1, w_1^2, w_2^2, \sqrt{2} w_1, \sqrt{2} w_2, \sqrt{2} w_1 w_2]^\intercal\begin{bmatrix}
+                                                                                   1\\ x_1^2\\ x_2^2\\ \sqrt{2} x_1\\ \sqrt{2} x_2\\ \sqrt{2} x_1 x_2
+    \end{bmatrix}
+\end{align}
+%
+We recover the same solution as in \autoref{eq:kernel_expansion}, but without computing $\varphi(x)$ or $\varphi(y)$ directly. This is called the \textit{kernel trick}.
 
 \chapter{Tools for reproducible robotics}
 
