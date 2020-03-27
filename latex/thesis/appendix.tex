@@ -25,7 +25,7 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 \bnfrl{expList} & ::= & \bnfrl{exp} \mor \bnfrl{exp} \code{,} \bnfrl{expList} \\
 \bnfrl{linOp} & ::= & \bnfrl{signOp} \mor \code{*} \mor \code{ dot } \\
 \bnfrl{vec} & ::= & \code{Vec(} \bnfrl{expList} \code{)} \mor \code{Vec} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
-\bnfrl{vecExp} & ::= & \bnfrl{vec} \mor \bnfrl{signOp}\bnfrl{vecExp} \mor \bnfrl{exp} \code{*} \bnfrl{vecExp} \mor \bnfrl{vec} \bnfrl{linOp} \bnfrl{vecExp} \\
+\bnfrl{vecExp} & ::= & \bnfrl{vec} \mor \bnfrl{signOp}\bnfrl{vecExp} \mor \bnfrl{exp} \code{*} \bnfrl{vecExp} \mor \bnfrl{vec} \bnfrl{linOp} \bnfrl{vecExp} \mor \\
 &&\bnfrl{vecExp}\code{.norm(}\bnfrl{int}\code{)} \\
 \bnfrl{mat} & ::= & \code{Mat} \bnfrl{nat} \code{x} \bnfrl{nat} \code{(} \bnfrl{expList} \code{)} \\
 \bnfrl{matExp} & ::= & \bnfrl{mat} \mor \bnfrl{signOp}\bnfrl{matExp} \mor \bnfrl{exp}\bnfrl{linOp}\bnfrl{matExp} \mor \\
@@ -224,10 +224,12 @@ Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required
 
 \section{Polynomial regression}\label{sec:poly_reg}
 
+\subsection{Univariate PR}
+
 Polynomial regression is a straightforward application of LR, in which we approximate the coefficients for each term in a scalar polynomial. Consider the univariate case:
 
 \begin{equation}
-y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + vs + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
+y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
 \end{equation}
 %
 We can rewrite this function in matrix form as follows:
@@ -237,35 +239,41 @@ We can rewrite this function in matrix form as follows:
 \end{equation}
 %
 \begin{equation}
-\mathbf{\hat f}_{PR}(\mathbf{X}; \bm\beta) = \mathbf{X}\bm\beta
+\mathbf{\hat f}(\mathbf{X}; \bm\beta) = \mathbf{X}\bm\beta
 \end{equation}
 %
-The resemblance to \autoref{eq:lin_reg} should be clear. To find $\bm\beta$ minimizing $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, we can use the same method described in ~\autoref{sec:linreg_matrix_sol}. Here, $\mathbf x, \mathbf y \in \mathbb R^n$, where $(x_i, y_i)$ correspond to scalar points in our dataset of size $n$. The matrix $\mathbf X \in \mathbb R^{n\times m}$ represents a \textit{feature map}, $\varphi: \mathbb R \rightarrow \mathbb R^m$, applied elementwise to each input value $x_i$ in our dataset, where $\varphi(x_i) = \left[1, x_i^2, \ldots, x_i^n\right]$.
-%
-Now consider the multivariate case, where $\mathbf w, \mathbf x \in \mathbb R^2$:
+The resemblance to \autoref{eq:lin_reg} should be clear. To find $\bm\beta$ minimizing $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, we can use the same method described in \autoref{sec:linreg_matrix_sol}. Here, $\mathbf x, \mathbf y \in \mathbb R^n$, where $(x_i, y_i)$ correspond to scalar points in our dataset of size $n$. The matrix $\mathbf X \in \mathbb R^{n\times m}$ represents a \textit{feature map}, $\varphi: \mathbb R \rightarrow \mathbb R^m$, applied elementwise to each input value $x_i$ in our dataset, where $\varphi(x_i) = \left[1, x_i^2, \ldots, x_i^m\right]$.
+
+\subsection{Multivariate PR}
+
+In multivariate PR, we need coefficients for all pairwise interactions between every variable and every other at every degree of the polynomial. Consider the bivariate case:
 %
 \begin{equation}
-    y(\mathbf w, \mathbf x) = 1 + \beta_{\mathbf x} \mathbf x + \beta_{\mathbf w}\mathbf w + \beta_{\mathbf x\mathbf w} \mathbf x\mathbf w + \beta_{\mathbf x^2} \mathbf x^2 + \beta_{\mathbf w^2} \mathbf w^2 + \beta_{\mathbf x\mathbf w^2} \mathbf x\mathbf w^2 + \beta_{\mathbf w\mathbf x^2} \mathbf w\mathbf x^2
+    y_i(\mathbf w, \mathbf x) = 1 + \beta_{\mathbf x} \mathbf x + \beta_{\mathbf w}\mathbf w + \beta_{\mathbf x\mathbf w} \mathbf x\mathbf w + \beta_{\mathbf x^2} \mathbf x^2 + \beta_{\mathbf w^2} \mathbf w^2 + \beta_{\mathbf x\mathbf w^2} \mathbf x\mathbf w^2 + \cdots + \beta_{\mathbf w^m\mathbf x^m} \mathbf w^m\mathbf x^m
 \end{equation}
 %
-Here, to represent $\mathbf{\hat f}$ we need to consider the pairwise interactions between every $\mathbf w$ and $\mathbf x$ at every degree of the polynomial. Instead of doing so explicitly, let us construct a special function $k: \langle\varphi(\mathbf x), \varphi(\mathbf w)\rangle \mapsto \mathbb R$, satisfying $k(\mathbf w, \mathbf x) = (1 + \mathbf w^\intercal \mathbf x)^2$. Called a \textit{quadratic kernel}, this function is part of a well-studied family known as \textit{kernel functions}, $K: \Omega \times \Omega \rightarrow \mathbb R$ with certain properties. Skipping the details, designing a valid kernel preserves the inner product in feature space. Letting $\varphi(\mathbf v) = \left[1, v_1^2, v_2^2, \sqrt{2} v_1, \sqrt{2} v_2, \sqrt{2} v_1 v_2\right]$:
-%
+This requires at least $(n \times m \times 2)$ terms. Minimizing $\bm\beta$ on this expression directly becomes intractable as the maximum degree $m$, dataset size $n$ and the number of variables grows.
+
+\subsection{Kernel Trick}
+
+Instead of modeling $\mathbf X$ explicitly, let us construct a special function $k: \langle\varphi(\mathbf x), \varphi(\mathbf w)\rangle \mapsto \mathbb R$, where $k(\mathbf w, \mathbf x) = (1 + \mathbf w^\intercal \mathbf x)^2$. Called a \textit{kernel}, this function is part of a well-studied family of \textit{kernel functions}, $K: \Omega \times \Omega \rightarrow \mathbb R$ with some additional structure. Skimming over the details, a valid kernel preserves the inner product in our feature space. For simplicity, let $\mathbf w, \mathbf x \in \mathbb R^2$. Suppose we have a feature map $\varphi(\mathbf v) = \left[1, v_1^2, v_2^2, \sqrt{2} v_1, \sqrt{2} v_2, \sqrt{2} v_1 v_2\right]$. We observe:
+
 \begin{align}\label{eq:feature_map}
     k(\mathbf w, \mathbf x) &= \varphi(\mathbf w) \varphi(\mathbf x) \\
-    &=[1, w_1^2, w_2^2, \sqrt{2} w_1, \sqrt{2} w_2, \sqrt{2} w_1 w_2]^\intercal\begin{bmatrix}
+    &=[1, w_1^2, w_2^2, \sqrt{2} w_1, \sqrt{2} w_2, \sqrt{2} w_1 w_2]\begin{bmatrix}
                                                                                    1\\ x_1^2\\ x_2^2\\ \sqrt{2} x_1\\ \sqrt{2} x_2\\ \sqrt{2} x_1 x_2
     \end{bmatrix}\\
     & = \boxed{1 + w_1^2 x_1^2 + w_2^2 x_2^2 + 2 w_1 x_1 + 2 w_2 x_2 + 2 w_1 w_2 x_1 x_2}
 \end{align}
 %
-Observe that by expanding the kernel, $k(\mathbf w, \mathbf x)$ as follows:
+By expanding the kernel $k(\mathbf w, \mathbf x)$ as follows:
 %
 \begin{align}
 k(\mathbf w, \mathbf x) & = (1 + \mathbf w^\intercal \mathbf x)^2 = (1 + w_1 \, x_1 + w_2 \, x_2)^2 \\
 & = \boxed{1 + w_1^2 x_1^2 + w_2^2 x_2^2 + 2 w_1 x_1 + 2 w_2 x_2 + 2 w_1 w_2 x_1 x_2}
 \end{align}
 %
-We recover \autoref{eq:feature_map}, without directly computing or even needing to remember $\varphi$. This is called the \textit{kernel trick}, a widely used technique in many areas of machine learning.
+We recover \autoref{eq:feature_map} without directly using $\varphi$. This is called the \textit{kernel trick}, a widely used technique in many areas of machine learning.
 
 \chapter{Tools for reproducible robotics}
 
