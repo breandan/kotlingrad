@@ -325,17 +325,20 @@ We evaluate our algorithm in the regression setting, where $\mathbf{\hat P}$ is 
  Our training set consists of input-output pairs from a set of random algebraic expressions. These expressions are produced by generating perfect binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphabetic variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set $\{+, \times\}$. Our expression generator (\autoref{eq:btree_gen}) with type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ takes a depth $\delta: \mathbb{N}^+$, a random seed $\psi: \mathbb{Z}$, and returns a scalar-valued function.
 
 \begin{equation}\label{eq:btree_gen}
-G_e(\delta, \psi) = \begin{cases} \text{if } \delta \leq 0 \begin{cases}
-\delta\sim_\psi\{a,b,..z\} & \text{if } \gamma\sim_\psi\{\text{True, False}\},\\
-\chi\sim_\psi U(-1, 1) & \text{otherwise.}
-\end{cases} \\
-\text{if } \delta > 0 \begin{cases}
-G(\delta-1, \psi + 1) + G(\delta-1, \psi - 1) & \text{if } \gamma\sim_\psi\{\text{True, False}\},\\
-G(\delta-1, \psi + 1) \times G(\delta-1, \psi - 1) & \text{otherwise.}
-\end{cases}
+G_e(\delta, \psi) = \begin{cases}
+    \delta \leq 0 \begin{cases}
+    \delta\sim_\psi\{a,b,..z\} \text{ if } \gamma\sim_\psi\{\text{True, False}\},\\
+    \chi\sim_\psi U(-1, 1) \text{ otherwise.}
+    \end{cases} \\
+    \delta > 0 \begin{cases}
+    G(\delta-1, \psi + 1) + G(\delta-1, \psi - 1) \text{ if } \gamma\sim_\psi\{\text{True, False}\},\\
+    G(\delta-1, \psi + 1) \times G(\delta-1, \psi - 1) \text{ otherwise.}
+    \end{cases}
 \end{cases}
 \end{equation}
 
+A Kotlin implementation of the expression tree generator in \autoref{eq:btree_gen} is shown below:
+%
 \begin{kotlinlisting}
 val sum = { left: SFun<DReal>, right: SFun<DReal> -> left + right }
 val mul = { left: SFun<DReal>, right: SFun<DReal> -> left * right }
