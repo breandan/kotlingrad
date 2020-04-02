@@ -1,4 +1,4 @@
-# Languages for Inference Workshop at POPL 19
+# Montreal Artificial Intelligence Sympoisum
 
 Kotlin∇ was [accepted](http://montrealaisymposium.com/) to MAIS '19! 
 
