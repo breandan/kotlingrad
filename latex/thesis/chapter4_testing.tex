@@ -287,16 +287,16 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \caption{Probabilistic Generator}
 \label{alg:prob_adversary}
 \begin{algorithmic}[1]
-\Procedure{ProbGen}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_e: \mathbb N^+$}
+\Procedure{ProbGen}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
 \State $D_\mathbf T \gets \{\}, j \gets 0$
-\While{$j \le$ budget}\Comment{Iterate until count exceeds our budget}
+\While{$0 < \mathcal{B}_e$}\Comment{Iterate until computational budget exhausted}
 \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from $\mathcal S_m$}
 \If {$\mathbf T\big(\mathbf{x}_j, C\big)$} \Comment{Inside feasible set, perform gradient ascent}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$ \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
 \Else \Comment{Outside feasible set, perform gradient descent}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$  \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
 \EndIf
-\State $j \gets j + 1$
+\State $\mathcal{B}_e \gets \mathcal{B}_e - 1$
 \EndWhile
 \State \Return $D_\mathbf T$
 \EndProcedure
@@ -310,11 +310,11 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \Procedure{DiffShrink}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathbf{x}_1: \mathbb R^m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
 \State $i \gets 1, t_i \gets \mathbf T\big(\mathbf x_i, C\big)$ \Comment{Store initial state to detect when test flips.}
 \Do
-    \State $i \gets i + 1, \mathbf x_i \gets \bm\Phi_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x_{i-1}} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
+    \State $i \gets i + 1, \mathbf x_i \gets \bm\Phi_{CS}\big(\mathbf x_{i-1} - \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}(\mathbf{x}_{i-1})\big)$ \Comment{PGD step (\autoref{eq:projected_gd})}
     \If {$\mathbf T\big(\mathbf{x}_i, C\big) \neq t_1$} \Comment{Boundary value was found.}
-    \State \Return $\{\mathbf{x}_{i-1}\}$ \Comment{Return previous iterate.}
+    \State \Return \textbf{if } $t_1$ \textbf{ then } $\{\mathbf{x}_{i}\}$ \textbf{ else } $\{\mathbf{x}_{i-1}\}$ \textbf{ end if} \Comment{Always return violation.}
     \EndIf
-\doWhile {$i \leq I_{max}$ \textbf{and} $\mathbf |\mathcal{L}(\mathbf x_i) - \mathcal{L}(\mathbf x_{i-1})| < \epsilon$} \Comment{While in budget and not converged.}
+\doWhile {$i \leq I_{max}$ \textbf{and} $\epsilon < \mathbf |\mathcal{L}(\mathbf x_i) - \mathcal{L}(\mathbf x_{i-1})|$} \Comment{While not converged.}
 \State \Return \textbf{if } $\neg t_1$ \textbf{ then } $\{\mathbf x_{i-1}\}$ \textbf{ else } $\varnothing$ \Comment{Return last iterate or $\varnothing$ if test passed.}
 \EndProcedure
 \end{algorithmic}
@@ -325,11 +325,14 @@ We evaluate our algorithm in the regression setting, where $\mathbf{\hat P}$ is 
  Our training set consists of input-output pairs from a set of random algebraic expressions. These expressions are produced by generating perfect binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphabetic variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set $\{+, \times\}$. Our expression generator (\autoref{eq:btree_gen}) with type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ takes a depth $\delta: \mathbb{N}^+$, a random seed $\psi: \mathbb{Z}$, and returns a scalar-valued function.
 
 \begin{equation}\label{eq:btree_gen}
-G_e(\delta, \psi) = \begin{cases}
-\delta\sim\{a,b,..z\} & \text{if } \delta \leq 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\},\\
-\chi\sim U(-1, 1) & \text{if } \delta \leq 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\},\\
-G(\delta-1, \psi) + G(\delta-1, \psi) & \text{if } \delta > 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\},\\
-G(\delta-1, \psi) \times G(\delta-1, \psi) & \text{if } \delta > 0 \text{ and } \gamma\sim_\psi\{\text{True, False}\}.\\
+G_e(\delta, \psi) = \begin{cases} \text{if } \delta \leq 0 \begin{cases}
+\delta\sim_\psi\{a,b,..z\} & \text{if } \gamma\sim_\psi\{\text{True, False}\},\\
+\chi\sim_\psi U(-1, 1) & \text{otherwise.}
+\end{cases} \\
+\text{if } \delta > 0 \begin{cases}
+G(\delta-1, \psi + 1) + G(\delta-1, \psi - 1) & \text{if } \gamma\sim_\psi\{\text{True, False}\},\\
+G(\delta-1, \psi + 1) \times G(\delta-1, \psi - 1) & \text{otherwise.}
+\end{cases}
 \end{cases}
 \end{equation}
 
@@ -346,22 +349,22 @@ fun randomBiTree(height: Int): SFun<DReal> =
   else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 \end{kotlinlisting}
 
-Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$ then rescaling all output values in the range $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. For each expression, a unique validation set is sampled from the range $[-0.2, 0.2]$.
+Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$, then rescaling all outputs to $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. Each expression has a unique validation set $\{\mathbf x \sim [-0.2, 0.2]\}$.
 
-In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize the losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
+In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize all losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
 
 \begin{algorithm}[ht]
 \caption{Surrogate Attack}
 \label{alg:surrogate_attack}
 \begin{algorithmic}[1]
-\Procedure{SurrogateAttack}{$\mathbf{\theta}: \mathbb{R}^k$, $\hat{f}: \mathbb R^k \times \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_l: \mathbb N^+$}
+\Procedure{SurrogateAttack}{$\mathbf{\theta}: \mathbb{R}^k$, $\hat{f}: \mathbb R^k \times \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
 \State $\mathbf{\theta}' \gets \mathbf{\theta}$
 \Do
     \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x}), \mathcal{B}_l \gets \mathcal{B}_l - 1$ \Comment{Ask for a new label from the oracle.}
     \State $\mathbf\theta' \gets \mathbf\theta' - \nabla_{\mathbf\theta'}(\hat{f}(\mathbf{x} - \mathbf\theta')^2, \mathbf{y})$ \Comment{Update model parameters using loss gradient.}
 \doWhile {$0 < \mathcal{B}_l$} \Comment{Iterate until labeling budget exhausted.}
-\State $\mathcal{\hat{L}} \gets (\hat{f}(\mathbf{\theta}') - \hat{f}(\mathbf{\theta}))^2$ \Comment{Construct the surrogate loss.}
-\State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T, \mathcal B_e$}
+\State $\mathcal{\hat{L}} \gets \left(\hat{f}(\mathbf{\theta}') - \hat{f}(\mathbf{\theta})\right)^2$ \Comment{Construct the surrogate loss.}
+\State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T$}
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
@@ -398,7 +401,8 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 %\begin{figure}
 %\begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
 %\end{figure}
-
+Below, is an excerpt from an implementation of momentum SGD in the Kotlin$\nabla$ DSL:
+%
 \begin{kotlinlisting}
 val model = Vec(D30) { x pow (it + 1) } dot weights
 var update = Vec(D30) { 0.0 }

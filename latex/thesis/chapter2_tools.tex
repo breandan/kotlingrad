@@ -241,6 +241,13 @@ Hatchery provides assistance for configuring, building and running ROS applicati
 
 An often overlooked, but important aspect of development tools is the graphical user interface, as the primary interface for editing source code. In the early days of modern computing, the only way of getting information in or out of a computer involved punching holes in paper~\autoref{fig:evolution_of_programming}. Later, computers were equipped with technology to emit the same binary pattern as pixels, which could be used to display a small alphabet called ASCII. With higher density and frequency displays, computers could render more sophisticated shapes and animations. These improvements are the direct result of graphical innovation, but can also be seen as progress in program representation, where the symbolic medium was itself just a notational convention which developers and machines used to communicate.
 
+\begin{figure}
+    \centering
+%    \includegraphics[width=0.90\textwidth]{../figures/evolution.png}
+    \includegraphics[width=0.90\textwidth]{../figures/progress_in_program.png}
+    \caption{The evolution of code. On the left are languages that force the user to adapt to the machine. To the right are increasingly flexible representations of source code.}
+    \label{fig:evolution_of_programming}
+\end{figure}
 ASCII is still the dominant medium for modern programming, although machines still use various forms of low-level assembly code for execution. A great deal of software infrastructure is dedicated to translating between such representations via programming languages and compilers. While many software frameworks provide a minimal command line interface (CLI) and some even provide sophisticated programming environments, these tools are fairly restrictive. In the same way that early computer scientists probably did not invent new algorithms by imagining patterns of holes in paper, ASCII is also an indirect medium for expressing ideas, albeit one slightly less contrived. As hardware and software technology progressed, programming languages moved ``up the stack'', allowing their users to express ideas in a notation which was more familiar and easy to reason about its execution.
 
 \begin{figure}
@@ -252,11 +259,9 @@ ASCII is still the dominant medium for modern programming, although machines sti
 
 With the development of modern languages came programming tools capable of representing code as a mixture of hypertext and graphical user interfaces. Such tools provide a richer representation for code than plaintext and help to capture programs' graph-based structure, but still use ASCII with sparse visual cues to render code. Some tools support larger character sets and font-based typographic ligatures, although the visual representation of source code remains mostly linear and textual.
 
-More experimental UIs, as proposed in the language oriented programming~\citep{dmitriev2004language} and model-driven engineering~\citep{famelis2015mummint} literature, suggest the possibility of more visually flexible layouts. This uncoupling between the composition and representation of text raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a given programming task? And who is the intended audience? These are important questions to consider when designing a new programming tool.
+More experimental UIs, as proposed in the language oriented programming~\citep{dmitriev2004language} and model-driven engineering~\citep{famelis2015mummint} literature, suggest the possibility of more visually flexible layouts. This uncoupling between the composition and representation of source code raises many intriguing questions. With the proliferation of new abstractions and programming shorthands, what is the appropriate level of notation required for a given programming task? And who is the intended audience? These are important questions to consider when designing a new programming tool.
 
-The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a visual language consisting of iconography and repetitive visual motifs, which serve as cognitive landmarks to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a glance. Plugins can use these same patterns to access procedural memories implanted in the userbase, facilitating transfer learning. To do this properly requires familiarity with the design language and careful integration with the target framework (i.e. ROS).
-
-Hatchery provides a settings menu for configuring and managing ROS installations which can automatically detect local ROS distributions and also allows users to manually configure the \href{https://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in ~\autoref{fig:ros_settings}.
+The Hatchery plugin provides a lightweight GUI overlaying the program's source code. This interface (\autoref{fig:hatchery_gui}) primarily consists of simple visual cues such as text highlighting, navigation assistance and other menus and configuration panels for performing various programming tasks. The host IDE offers a design language consisting of iconography and repetitive visual motifs, which serve as cognitive landmarks to guide the developer's procedural memory. The IntelliJ Platform offers a palette of common design elements, which users who are familiar with the IDE can recognize at a glance. Plugins can use these same patterns to access procedural memories implanted in the userbase, facilitating transfer learning. Hatchery also provides a settings menu for configuring and managing ROS installations, which can automatically detect local ROS distributions and also allows users to manually configure the \href{https://wiki.ros.org/ROS/Tutorials/InstallingandConfiguringROSEnvironment}{ROS environment}, as shown in and \autoref{fig:ros_settings}.
 %
 \begin{figure}[b]
 \centering
@@ -279,14 +284,14 @@ Hatchery provides a settings menu for configuring and managing ROS installations
 \begin{itemize}
 \item \textbf{Syntax support} -- Highlighting, navigation, autocompletion
 \item \textbf{Program analysis} -- Code inspections, intentions, and linting
-\item \textbf{Testing support} -- Unit and integration testing, code coverage
+%\item \textbf{Testing support} -- Unit and integration testing, code coverage
 \item \textbf{Project creation} -- Project setup and boilerplate code generation
 \item \textbf{Dependency management} -- Track installed and missing packages
 \item \textbf{Monitoring utils} -- Logging, diagnostics, profiling and visualization
 \item \textbf{Crash analytics} -- Enhanced stack traces with source navigation
 \item \textbf{Build automation} -- Delta rebuilds, cmake magic, code hotswap
-\item \textbf{ROS integration} -- Nodes, topics, services, parameters, graphs
-\item \textbf{Duckumentation} -- Usage instructions and supported features
+%\item \textbf{ROS integration} -- Nodes, topics, services, parameters, graphs
+%\item \textbf{Duckumentation} -- Usage instructions and supported features
 \end{itemize}\vspace{10pt}
 %
 A more comprehensive list of currently supported and upcoming features are detailed below:\vspace{10pt}
@@ -352,14 +357,14 @@ A more comprehensive list of currently supported and upcoming features are detai
 \item Validate \inline{.msg}/\inline{.srv} compatibility
 \item ROS nodes and graph analysis via \href{https://wiki.ros.org/rosdep}{\inline{rosdep}}/\href{https://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}}
 \end{todolist}
-\item \href{https://wiki.ros.org/rqt}{rqt} plugin support
+\item[\done] \href{https://wiki.ros.org/rqt}{rqt} plugin support
 \begin{todolist}
 \item[\done] \href{https://wiki.ros.org/rqt_image_view}{\inline{rqt\_img\_view}} - View images
-\item[\done] \href{https://wiki.ros.org/rqt_plot}{\inline{rqt\_plot}} - Plot data visually
+%\item[\done] \href{https://wiki.ros.org/rqt_plot}{\inline{rqt\_plot}} - Plot data visually
 \item[\done] \href{https://wiki.ros.org/rqt_graph}{\inline{rqt\_graph}} - Graph messages
-%\item[\done] \href{https://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}} - Visualize dependencies
+\item[\done] \href{https://wiki.ros.org/rqt_dep}{\inline{rqt\_dep}} - Visualize dependencies
 %\item[\done] \href{https://wiki.ros.org/rqt_bag}{\inline{rqt\_bag}} - Replay and edit bag files
-%\item \href{https://wiki.ros.org/rqt_common_plugins}{rqt\_common} - Other common plugins
+%\item \href{https://wiki.ros.org/rqt_common_plugins}{rqt\_common} - Common plugins
 \end{todolist}
 \end{todolist}
 \end{multicols}
