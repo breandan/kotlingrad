@@ -1,7 +1,13 @@
 % Code listings
 %\usepackage[scaled]{beramono}
 \usepackage{fontspec}
-\setmonofont{JetBrains Mono}
+
+\makeatletter
+\def\verbatim@nolig@list{}
+\makeatother
+
+\setmonofont{JetBrains Mono}[Contextuals=Alternate]
+
 \usepackage{ocr}
 \usepackage[T1]{fontenc}
 \usepackage[skins,breakable,listings]{tcolorbox}
