@@ -7,6 +7,10 @@ Run the following command from the parent directory:
 xelatex -file-line-error -interaction=nonstopmode -synctex=1 --shell-escape -output-directory=$(pwd) thesis
 ```
 
+## Teletype Font
+
+A custom typeface, [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono#installation) is needed to render source code listings and inline code tokens.
+
 ## Rail diagrams
 
 Parts of this document were built with a non-standard package called [rail](https://ctan.org/pkg/rail). To modify the rail diagrams, install the package like so:
