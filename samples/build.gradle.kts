@@ -50,10 +50,10 @@ tasks {
   }
 
   listOf(
-    "Plot2D", "Plot3D", "HelloKotlingrad", "physics.DoublePendulum",
+    "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG",
     "physics.SinglePendulum", "VariableCapture", "LetsPlot", "ScalarDemo",
     "VectorDemo", "MatrixDemo", "MLP", "LinearRegression", "PolynomialRegression",
-    "PolynomialAttack", "ReadSeff"
+    "PolynomialAttack", "ReadSeff", "physics.DoublePendulum",
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
       main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
