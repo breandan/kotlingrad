@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.plot.MonolithicAwt
+import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.geom.geom_path
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.ggtitle
@@ -42,6 +42,6 @@ fun Map<String, Any>.plot2D(
   // Create JFXPanel showing the plot.
   val plotSpec = plot.toSpec()
 
-  val component = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, dimensions) {}
-  component.first().saveAs(filename).viewInBrowser()
+  val component = PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, dimensions)
+  component.saveAs(filename).viewInBrowser()
 }

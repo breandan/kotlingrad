@@ -7,7 +7,7 @@ import edu.umontreal.kotlingrad.experimental.DoublePrecision
 import edu.umontreal.kotlingrad.experimental.SFun
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.MonolithicAwt
+import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.geom.geom_path
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.ggtitle
@@ -71,11 +71,7 @@ private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
   val plotSpec = plot.toSpec()
   val plotSize = DoubleVector(1000.0, 500.0)
 
-  val result = MonolithicAwt.buildSvgImagesFromRawSpecs(plotSpec, plotSize) {}.first()
-  val resultWithAttributes = result.lines().first().replace(">",
-    " xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns=\"http://www.w3.org/2000/svg\">") +
-    "\n" + result.lines().drop(1).joinToString("\n")
-  return resultWithAttributes
+  return PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)
 }
 
 fun String.saveAs(filename: String) =
