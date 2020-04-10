@@ -226,7 +226,7 @@ To do so, we can initialize $\mathbf{x} \sim U[CS]$ and perform projected gradie
 \end{equation}
 %
 
-Assuming zero knowledge about the program $\mathbf{\hat P}$'s implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Assuming $\mathbf{\hat P}$ is differentiable, given input-output values we can use zeroth-order optimization techniques to approximate $\nabla_{\mathbf{x}}\mathcal{L}$. Assuming $\mathbf{\hat P}$ is open source, we could use coverage-guided fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. If $\mathbf{\hat P}$ is both open source and differentiable, we can accelerate the search by using automatic differentiation. Given additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $x \sim \frac{1}{D_{\mathbf{\hat P}}}$, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of manually constructing one?
+Assuming zero knowledge about the program $\mathbf{\hat P}$'s implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Assuming $\mathbf{\hat P}$ is differentiable, given input-output values we can use zeroth-order optimization techniques to approximate $\nabla_{\mathbf{x}}\mathcal{L}$. Assuming $\mathbf{\hat P}$ is open source, we could use coverage-guided fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. If $\mathbf{\hat P}$ is both open source and differentiable, we can accelerate the search by using automatic differentiation. Given additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $\mathbf x \sim \frac{1}{D_{\mathbf{\hat P}}}$, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of manually constructing one?
 
 \subsection{Generative Adversarial Testing}
 
@@ -235,17 +235,17 @@ What are the properties of a good adversary? For an adversary to be considered a
 Suppose we have a program $D: \mathbb{R}^h\rightarrow\mathbb{B}$, i.e. a binary classifier. How should we attack its implementation, without a custom adversary, or defining some prior distribution over the inputs? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} (GAN), proposes to train a ``generative'' adversary $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$ alongside the trained model. The vanilla GAN objective can be expressed as a minimax optimization problem:
 
 \begin{equation}
-\min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}(\mathbf x)}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
+\min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
 \end{equation}
 
-This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}(\mathbf x)$ and $\mathbf z \sim p_{G}(\mathbf z)$, then updating the parameters of $G$ and $D$ using their respective stochastic gradients:
+This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}$ and $\mathbf z \sim p_{G}$, then updating the parameters of $G$ and $D$ using their respective stochastic gradients:
 
 \begin{equation}
-\theta_D \leftarrow \theta_D + \nabla_{\theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D(\mathbf x^{(i)}) + \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
+\bm\Theta_D \leftarrow \bm\Theta_D + \nabla_{\bm\Theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D(\mathbf x^{(i)}) + \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
 \end{equation}
 
 \begin{equation}
-\theta_G \leftarrow \theta_G - \nabla_{\theta_G}\frac{1}{m}\sum_{i=1}^m \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)
+\bm\Theta_G \leftarrow \bm\Theta_G - \nabla_{\bm\Theta_G}\frac{1}{m}\sum_{i=1}^m \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)
 \end{equation}
 %
 \citet{albuquerque2019hgan} propose an augmented version of this game using multiple Discriminators which each receive a fixed, random projection $P_k(\cdot)$ of the Generator's output, and solves the following multi-objective optimization problem:
@@ -257,7 +257,7 @@ This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}(\m
 This can be solved by combining the losses using a form of hypervolume maximization:
 %
 \begin{equation}
-\nabla_\Theta \mathcal{L}_G = \sum_{k=1}^K \frac{1}{\eta - l_k}\nabla_\Theta l_k
+\nabla_{\bm\Theta} \mathcal{L}_G = \sum_{k=1}^K \frac{1}{\eta - l_k}\nabla_\Theta l_k
 \end{equation}
 
 Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the vanilla GAN to improve stability and sample diversity. GANs have been successfully applied in various domains from speech~\citep{donahue2019wavegan} to graph synthesis~\citep{wang2018graphgan}. One practical extension to the latter could be applying the GAN framework to program synthesis and compiler optimization by choosing a suitable metric and following the approach proposed by e.g.~\citet{adams2019learning, mendis2019compiler}.
@@ -287,7 +287,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \caption{Probabilistic Generator}
 \label{alg:prob_adversary}
 \begin{algorithmic}[1]
-\Procedure{ProbGen}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
+\Procedure{ProbGen}{$\mathcal L: \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_e: \mathbb R$}
 \State $D_\mathbf T \gets \{\}, j \gets 0$
 \While{$0 < \mathcal{B}_e$}\Comment{Iterate until computational budget exhausted}
 \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from $\mathcal S_m$}
@@ -352,7 +352,7 @@ fun randomBiTree(height: Int): SFun<DReal> =
   else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 \end{kotlinlisting}
 
-Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$, then rescaling all outputs to $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. Each expression has a unique validation set $\{\mathbf x \sim [-0.2, 0.2]\}$.
+Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$, then rescaling all outputs to $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. Each expression has a unique validation set $x_i \sim [-0.2, 0.2]$.
 
 In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize all losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
 
@@ -360,14 +360,14 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \caption{Surrogate Attack}
 \label{alg:surrogate_attack}
 \begin{algorithmic}[1]
-\Procedure{SurrogateAttack}{$\mathbf{\theta}: \mathbb{R}^k$, $\hat{f}: \mathbb R^k \times \mathbb R^m \rightarrow \mathbb R$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$}
-\State $\mathbf{\theta}' \gets \mathbf{\theta}$
+\Procedure{SurrogateAttack}{$\bm\Theta: \mathbb{R}^k$, $\mathbf{\hat f}: \mathbb R^m \times \mathbb R^k\rightarrow \mathbb R^n$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_l: \mathbb R$}
+\State $\bm\Theta' \gets \bm\Theta$
 \Do
     \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x}), \mathcal{B}_l \gets \mathcal{B}_l - 1$ \Comment{Ask for a new label from the oracle.}
-    \State $\mathbf\theta' \gets \mathbf\theta' - \nabla_{\mathbf\theta'}(\hat{f}(\mathbf{x} - \mathbf\theta')^2, \mathbf{y})$ \Comment{Update model parameters using loss gradient.}
+    \State $\bm\Theta' \gets \bm\Theta - \nabla_{\bm\Theta}||\mathbf{\hat f}(\mathbf{x}; \bm\Theta') - \mathbf{y}||_2,$ \Comment{Update model parameters using loss gradient.}
 \doWhile {$0 < \mathcal{B}_l$} \Comment{Iterate until labeling budget exhausted.}
-\State $\mathcal{\hat{L}} \gets \left(\hat{f}(\mathbf{\theta}') - \hat{f}(\mathbf{\theta})\right)^2$ \Comment{Construct the surrogate loss.}
-\State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T$}
+\State $\mathcal{\hat{L}} \gets ||\mathbf{\hat f}(\bm\Theta') - \mathbf{\hat f}(\bm\Theta)||_2$ \Comment{Construct the surrogate loss.}
+\State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T, \mathcal{B}_e$}
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
