@@ -235,7 +235,7 @@ What are the properties of a good adversary? For an adversary to be considered a
 Suppose we have a program $D: \mathbb{R}^h\rightarrow\mathbb{B}$, i.e. a binary classifier. How should we attack its implementation, without a custom adversary, or defining some prior distribution over the inputs? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} (GAN), proposes to train a ``generative'' adversary $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$ alongside the trained model. The vanilla GAN objective can be expressed as a minimax optimization problem:
 
 \begin{equation}
-\min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}(\mathbf z)}\big[\log\big(1 - D(G(\mathbf z))\big)\big]
+\min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}}\Big[\log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
 \end{equation}
 
 This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}$ and $\mathbf z \sim p_{G}$, then updating the parameters of $G$ and $D$ using their respective stochastic gradients:
@@ -251,7 +251,7 @@ This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}$ a
 \citet{albuquerque2019hgan} propose an augmented version of this game using multiple Discriminators which each receive a fixed, random projection $P_k(\cdot)$ of the Generator's output, and solves the following multi-objective optimization problem:
 %
 \begin{equation} \label{eq:moo_spec}
-\min \mathbf{\mathcal{L}}_G(\mathbf x) = \left[l_1(\mathbf z), l_2(\mathbf z), \ldots, l_K(\mathbf z)\right] \text{, where } l_k = -\mathbb E_{z \sim p_z} \log D_k(P_k(G(z_k)))
+\min \mathbf{\mathcal{L}}_G(\mathbf x) = \big[l_1(\mathbf z), l_2(\mathbf z), \ldots, l_K(\mathbf z)\big] \text{, where } l_k = -\mathbb E_{z \sim p_z} \log D_k\Big(P_k\big(G(z_k)\big)\Big)
 \end{equation}
 %
 This can be solved by combining the losses using a form of hypervolume maximization:
@@ -363,8 +363,8 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \Procedure{SurrogateAttack}{$\bm\Theta: \mathbb{R}^k$, $\mathbf{\hat f}: \mathbb R^m \times \mathbb R^k\rightarrow \mathbb R^n$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_l: \mathbb R$}
 \State $\bm\Theta' \gets \bm\Theta$
 \Do
-    \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x}), \mathcal{B}_l \gets \mathcal{B}_l - 1$ \Comment{Ask for a new label from the oracle.}
-    \State $\bm\Theta' \gets \bm\Theta - \nabla_{\bm\Theta}||\mathbf{\hat f}(\mathbf{x}; \bm\Theta') - \mathbf{y}||_2,$ \Comment{Update model parameters using loss gradient.}
+    \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x}), \mathcal{B}_l \gets \mathcal{B}_l - 1$ \Comment{Ask for new label from the oracle.}
+    \State $\bm\Theta' \gets \bm\Theta - \alpha\nabla_{\bm\Theta}||\mathbf{\hat f}(\mathbf{x}; \bm\Theta') - \mathbf{y}||_2,$ \Comment{Update parameters using loss gradient.}
 \doWhile {$0 < \mathcal{B}_l$} \Comment{Iterate until labeling budget exhausted.}
 \State $\mathcal{\hat{L}} \gets ||\mathbf{\hat f}(\bm\Theta') - \mathbf{\hat f}(\bm\Theta)||_2$ \Comment{Construct the surrogate loss.}
 \State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T, \mathcal{B}_e$}
