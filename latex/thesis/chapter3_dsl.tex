@@ -89,17 +89,17 @@ The cost of calculating the Hessian, $\mathbf{H}$ is approximately quadratic~\ci
 For some classes of computable functions, small changes to the input will produce a sudden large change in the output. We say that such functions are non-differentiable.
 %
 \begin{equation}
-    ||\nabla F|| \approx \pm \infty
+    ||(\nabla F)(a)|| \approx \pm \infty
 \end{equation}
 %
 It is an open question whether non-differentiable functions exist in the real-world~\citep{buniy2005hilbert}. At the current physical (10nm) and temporal (10ns) scale of modern computing, there exist no such functions, but most modern computers are incapable of reporting the true value of their binary-valued functions. For all intents and purposes, programs implemented by most physical computers are discrete relations. Nevertheless, discrete programs are capable of approximating bounded functions on $\mathbb{R}^m$ to arbitrary precision given enough time and space. For most applications, a low precision (32-64 bit) approximation is sufficient.
 
-There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: \mathbb{R} \rightarrow \mathbb{R}$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $\mathbf{f}: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m \rightarrow [0, 1]$, there exists a function $\mathbf{\hat f}: \mathbb{R}^m \times \mathbb{R}^{n \times m}$, parameterized by $\Theta \in \mathbb{R}^{n \times m}$, taking an input $\mathbf x \in [0, 1]^m$ and constants $n \in \mathbb{N}, \mathbf{\beta} \in \mathbb{R}^n, \mathbf{b} \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ such that following statement holds:
+There exists at the heart of machine learning a theorem that states a simple family of functions, which compute a weighted sum of a non-linear function $\varphi: \mathbb{R} \rightarrow \mathbb{R}$ composed with a linear function $\theta^\intercal x + b$, can approximate any bounded function on $\mathbb{R}^m$ to arbitrary precision. More precisely, the universal approximation theorem~\citep{hornik1989multilayer} states that for all real-valued continuous functions $f: C(\mathbb{I}_m)$, where $\mathbb{I}_m = [0, 1]^m \rightarrow [0, 1]$, there exists an $\hat f: \mathbb{R}^m \times \mathbb{R}^{n \times m} \rightarrow \mathbb{R}$, parameterized by $\Theta \in \mathbb{R}^{n \times m}$, taking an input $\mathbf x \in [0, 1]^m$ and constants $n \in \mathbb{N}, \mathbf{\beta} \in \mathbb{R}^n, \mathbf{b} \in \mathbb{R}^n, \epsilon \in \mathbb{R}^+$ such that following statement holds:
 %
 \begin{equation}
     \begin{split}
-        \mathbf{\hat{f}}(\mathbf{x}; \Theta) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\Theta^\intercal \mathbf{x} + \mathbf{b}\right) \\
-        \forall \mathbf{x} \in \mathbb{I}_m, \ | \mathbf{\hat f}( \mathbf{x} ) - \mathbf{f} ( \mathbf{x} ) | < \epsilon
+        \hat{f}(\mathbf{x}; \Theta) = \mathbf{\beta}^\intercal \varphi_{\odot} \left(\Theta^\intercal \mathbf{x} + \mathbf{b}\right) \\
+        \forall \mathbf{x} \in \mathbb{I}_m, \ | \hat f( \mathbf{x} ) - f ( \mathbf{x} ) | < \epsilon
     \end{split}
 \end{equation}
 %
@@ -482,7 +482,7 @@ fun <T: Group<T>> cubed(t: T): T = t * t * t
 fun <X: Fun<X>> twiceExprCubed(e: X): X = cubed(e) + cubed(e)
 \end{kotlinlisting}
 %
-Like \href{https://docs.python.org/3/reference/datamodel.html#special-method-names}{Python}, Kotlin supports overloading a limited set of operators, which are evaluated using a \href{https://kotlinlang.org/docs/reference/grammar.html#precedence}{fixed precedence}. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
+Like \href{https://docs.python.org/3/reference/datamodel.html#special-method-names}{Python}, Kotlin supports overloading a limited set of operators, which are evaluated using a \href{https://kotlinlang.org/docs/reference/grammar.html#precedence}{fixed precedence}. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph (\autoref{lst:edsl}) representing the symbolic expression. Expressions are only evaluated when invoked as a function.
 
 \section{First-class functions}\label{sec:first-class-functions}
 
@@ -627,9 +627,8 @@ This DSL, which is used to support variable capture and currying, can be used as
 with(DoubleContext) {
     val t = X + Y + 0.0
     val l = t(X to 1.0, Y to 2.0) * t(X to 1.0)(Y to 3.0) // Currying
-    val o = X + Z + 0.0
-    val p = o(X to 1.0) // Partial application
-    val k = (*@\uwave{o(Y to 4.0)}@*) // Does not compile
+    val p = t(X to 1.0) // Partial application
+    val k = (*@\uwave{t(Z to 4.0)}@*) // Does not compile
 }
 \end{kotlinlisting}
 
@@ -645,7 +644,7 @@ The distinction between AD and SD becomes increasingly blurry when we consider m
 
 Coroutines are a generalization of subroutines for non-preemptive multitasking, typically implemented using continuations~\citep{haynes1984continuations}. Continuations are a mechanism that allow functions to access and modify subsequent computation. In continuation-passing style~\citep{sussman1975scheme} (CPS), every function, in addition to its usual arguments, takes another function representing the subsequent routine. Rather than returning to its caller after completion, the function invokes its continuation, and the process is restarted.
 
-One form of continuation, known as delimited continuations, are sufficient for implementing reverse-mode AD with operator overloading alone (sans additional data structures) as described by \citet{wang2018demystifying} and later in \citet{wang2018backpropagation}. While callbacks in Kotlin are single-shot by default, reentrant or "multi-shot" delimited continuations can also be \href{https://gist.github.com/elizarov/ddee47f927dda500dc493e945128d661}{implemented} using \href{https://kotlinlang.org/docs/reference/coroutines-overview.html}{Kotlin Coroutines}. Multi-shot delimited continuations would greatly simplify our AD implementation, support a more flexible set of primitives for asynchronous programming and merits further investigation.
+One form of continuation, known as delimited continuations, are sufficient for implementing reverse-mode AD with operator overloading alone (sans additional data structures) as described by \citet{wang2018demystifying} and later in \citet{wang2018backpropagation}. While callbacks in Kotlin are single-shot by default, reentrant or ``multi-shot'' delimited continuations can also be \href{https://gist.github.com/elizarov/ddee47f927dda500dc493e945128d661}{implemented} using \href{https://kotlinlang.org/docs/reference/coroutines-overview.html}{Kotlin Coroutines}. Multi-shot delimited continuations would greatly simplify our AD implementation, support a more flexible set of primitives for asynchronous programming and merits further investigation.
 
 \section{Comparison}\label{sec:comparison}
 
