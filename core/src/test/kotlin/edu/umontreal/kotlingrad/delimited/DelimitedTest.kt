@@ -2,6 +2,7 @@ package edu.umontreal.kotlingrad.delimited
 
 import edu.umontreal.kotlingrad.coroutines.*
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 
@@ -44,7 +45,7 @@ class DelimitedTest {
 
   // TODO: Is this possible? https://en.wikiversity.org/wiki/Introduction_to_Delimited_Continuations/Handling_the_continuation
 
-  @Test
+  @Disabled @Test
   fun testHiddenShift() {
     var g: DelimitedContinuation<String, Int>? = null
     val x = reset<String> { shift<Int> { k -> g = k; k(42) }.toString() }

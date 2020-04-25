@@ -5,10 +5,10 @@ import java.util.*
 
 fun main() = with(DoublePrecision) {
   val rand = Random(1)
-  val theta = Var2("theta")
-  val input = Var3x2("input")
-  val bias = Var("bias")
-  val label = Var3("y")
+  val theta by Var2()
+  val input by Var3x2()
+  val bias by Var()
+  val label by Var3()
 
   val loss = ((input * theta).map { it + bias } - label).magnitude()
 

@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.*
 import org.jzy3d.analysis.AbstractAnalysis
 import org.jzy3d.analysis.AnalysisLauncher
 import org.jzy3d.chart.factories.AWTChartComponentFactory
@@ -19,8 +19,8 @@ object Plot3D: AbstractAnalysis() {
     val mapper = object: Mapper() {
       override fun f(xc: Double, yc: Double) =
         with(DoublePrecision) {
-          val x = Var()
-          val y = Var()
+          val x by Var()
+          val y by Var()
 
           val Z = x * x + pow(y, 2)
           val Z10 = Z * 10
@@ -30,7 +30,7 @@ object Plot3D: AbstractAnalysis() {
           val d2Z_dxdy = d(dZ_dx) / d(y)
           val d3Z_d2xdy = d(d2Z_dxdy) / d(x)
 
-          d3Z_d2xdy(xc, yc)
+          d3Z_d2xdy(xc, yc).toDouble()
         }
     }
 

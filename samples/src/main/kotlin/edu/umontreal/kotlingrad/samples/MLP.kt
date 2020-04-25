@@ -30,16 +30,16 @@ fun Double.clip(maxUnsignedVal: Double = 3.0) =
   if (maxUnsignedVal < log10(absoluteValue).absoluteValue) sign * 10.0.pow(log10(absoluteValue)) else this
 
 fun main() = with(DoublePrecision) {
-  val x = Var("x")
-  val y = Var("y")
-  val p1v = Var5("p1v")
-  val p2v = Var5x5("p2v")
-  val p3v = Var5x5("p3v")
-  val p4v = Var5("p5v")
-  val b1 = Var5("b1v")
-  val b2 = Var5("b2v")
-  val b3 = Var5("b3v")
-  val b4 = Var5("b4v")
+  val x by Var()
+  val y by Var()
+  val p1v by Var5()
+  val p2v by Var5x5()
+  val p3v by Var5x5()
+  val p4v by Var5()
+  val b1 by Var5()
+  val b2 by Var5()
+  val b3 by Var5()
+  val b4 by Var5()
 
   val rand = Random(1)
   var w1: VFun<DReal, D5> = Vec(D5) { rand.nextDouble(-0.6, 0.6) }

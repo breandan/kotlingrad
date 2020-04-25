@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.calculus
 
+import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.DoubleGenerator
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
 import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
@@ -10,7 +10,7 @@ import io.kotlintest.specs.StringSpec
 class TestLogarithmicDerivatives: StringSpec({
   val gen = DoubleGenerator(0)
   with(DoublePrecision) {
-    val n = Var("n")
+    val n by Var()
 
     "dnⁿ / dn should be nⁿ * (ln(n) + 1)" {
       gen.assertAll { nVal: Double ->

@@ -46,9 +46,9 @@ const val epochSize = 5
 const val testSplit = 0.2 // Hold out test
 val batchSize = D30
 val paramSize = D30
-val theta = DoublePrecision.Var30("theta")
-val xBatchIn = DoublePrecision.Var30("xBatchIn")
-val label = DoublePrecision.Var30("y")
+val theta by DoublePrecision.Var30()
+val xBatchIn by DoublePrecision.Var30()
+val label by DoublePrecision.Var30()
 val encodedInput = xBatchIn.sVars.vMap { row -> DoublePrecision.Vec(paramSize) { col -> row pow (col + 1) } }
 val pred = encodedInput * theta
 val squaredLoss = (pred - label).magnitude()

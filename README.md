@@ -156,7 +156,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
 
-<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var("x")`) or expressions (e.g. `x + 1`, `2 * x + y`).
+<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var()`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
 <sup>&Dagger;</sup> For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
@@ -284,8 +284,8 @@ import edu.umontreal.kotlingrad.numerical.DoublePrecision
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main() {
   with(DoublePrecision) { 
-    val x = Var("x")
-    val y = Var("y")
+    val x by Var()
+    val y by Var()
 
     val z = x * (-sin(x * y) + y) * 4  // Infix notation
     val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]
@@ -375,8 +375,8 @@ Kotlin∇ claims to eliminate certain runtime errors, but how do we know the pro
 For example, consider the following test, which checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
 
 ```kotlin
-val x = Var("x")
-val y = Var("y")
+val x by Var()
+val y by Var()
 
 val z = y * (sin(x * y) - x)            // Function under test
 val `∂z∕∂x` = d(z) / d(x)               // Automatic derivative
@@ -455,8 +455,8 @@ In Kotlin∇, all expressions can be treated as functions. For example:
 
 ```kotlin
 fun <T: Group<T>> makePoly(x: Var<T>, y: Var<T>) = x * y + y * y + x * x
-val x: Var<Double> = Var()
-val y: Var<Double> = Var()
+val x by Var()
+val y by Var()
 val f = makePoly(x, y)
 val z = f(1.0, 2.0) // Returns a value
 println(z) // Prints: 7
@@ -669,8 +669,8 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 However inferring arity for arbitrary expressions at compile-time would be difficult in the Kotlin type system. Instead, we can have the user specify it directly.
 
 ```kotlin
-val x = Var(1.0)                                // x: Variable<Double> inferred type
-val y = Var(1.0)                                // x: Variable<Double> "
+val x by Var(1.0)                               // x: Variable<Double> inferred type
+val y by Var(1.0)                               // x: Variable<Double> "
 val f = Fun(D2) { x * y + sin(2 * x + 3 * y) }  // f: BinaryFunction<Double> "
 val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0

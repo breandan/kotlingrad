@@ -8,6 +8,7 @@ import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
 import java.lang.ClassCastException
+import kotlin.reflect.KProperty
 import kotlin.streams.toList
 import kotlin.system.measureTimeMillis
 
@@ -151,7 +152,7 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
   }
 }
 
-class VVar<X: SFun<X>, E: D1>(
+open class VVar<X: SFun<X>, E: D1>(
   override val name: String = "",
   val length: E,
 //  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
@@ -160,6 +161,8 @@ class VVar<X: SFun<X>, E: D1>(
   override val bindings: Bindings<X> = Bindings(mapOf(this to sVars))
   override fun equals(other: Any?) = other is VVar<*, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
+  operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+    VVar(if (name.isEmpty()) property.name else name, length, sVars)
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
