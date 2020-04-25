@@ -3,6 +3,7 @@
 
 # Kotlin∇: Type-safe Symbolic Differentiation for Kotlin
 
+[![](https://jitpack.io/v/breandan/kotlingrad.svg)](https://jitpack.io/#breandan/kotlingrad)
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 
@@ -74,7 +75,7 @@ Gradle users should write their GPR credentials to the `~/.gradle/gradle.propert
 
 ```
 gpr.user=<USERNAME>
-grp.key=<PERSONAL_ACCESS_TOKEN>
+gpr.key=<PERSONAL_ACCESS_TOKEN>
 ```
 
 Ensure `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
