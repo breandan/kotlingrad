@@ -649,6 +649,26 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 &lowast; Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
+#### Property Delegation
+
+[Property delegation](https://kotlinlang.org/docs/reference/delegated-properties.html) is a reflection feature in the Kotlin language which lets us access properties to which an instance is bound. For example, we can read the property name like so:
+
+```kotlin
+class Var(override val name: String = "") {
+  operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+    Var(if (name.isEmpty()) property.name else name)
+}
+```
+
+This feature allows consumers to instantiate variables e.g. in an embedded DSL without redeclaring their names:
+
+```kotlin
+val x by Var()   // With property delegation
+val x = Var("x") // Without property delegation
+```
+
+Without property delegation, users would need to repeat the property name in the constructor.
+
 ## Ideal API (WIP)
 
 The current API is experimental, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt), this technique incurs a large source code overhead. It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
@@ -670,8 +690,8 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 However inferring arity for arbitrary expressions at compile-time would be difficult in the Kotlin type system. Instead, we can have the user specify it directly.
 
 ```kotlin
-val x by Var(1.0)                               // x: Variable<Double> inferred type
-val y by Var(1.0)                               // x: Variable<Double> "
+val x by Var()                                  // x: Variable<Double> inferred type
+val y by Var()                                  // x: Variable<Double> "
 val f = Fun(D2) { x * y + sin(2 * x + 3 * y) }  // f: BinaryFunction<Double> "
 val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
