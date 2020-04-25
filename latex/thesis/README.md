@@ -1,5 +1,11 @@
 # [Master's Thesis](thesis.pdf)
 
+## Abstract
+
+Programming tools are computer programs which help humans program computers. Tools come in all shapes and forms, from editors and compilers to debuggers and profilers. Each of these tools facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this thesis, we explore several tools that facilitate the process of building intelligent systems, and which reduce the cognitive effort required to design, develop, test and deploy intelligent software systems. First, we introduce an integrated development environment (IDE) for programming Robot Operating System (ROS) applications, called Hatchery. Second, we describe Kotlin∇, a language and type system for differentiable programming, an emerging paradigm in machine learning. Third, we propose a new algorithm for automatically testing differentiable programs, drawing inspiration from techniques in adversarial and metamorphic testing, and demonstrate its empirical efficiency in the regression setting. Fourth, we explore a container infrastructure based on Docker, which enables reproducible deployment of ROS applications on the Duckietown platform. Finally, we reflect on the current state of programming tools for these applications and speculate what intelligent systems programming might look like in the future.
+
+## Building
+
 To build this thesis, a [TeX Live](https://www.latex-project.org/get/) distribution is required.
 Run the following command from the parent directory:
 
@@ -7,11 +13,11 @@ Run the following command from the parent directory:
 xelatex -file-line-error -interaction=nonstopmode -synctex=1 --shell-escape -output-directory=$(pwd) thesis
 ```
 
-## Teletype Font
+### Teletype Font
 
 A custom typeface, [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono#installation) is needed to render source code listings and inline code tokens.
 
-## Rail diagrams
+### Rail diagrams
 
 Parts of this document were built with a non-standard package called [rail](https://ctan.org/pkg/rail). To modify the rail diagrams, install the package like so:
 
