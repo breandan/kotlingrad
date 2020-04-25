@@ -74,7 +74,7 @@ Gradle users should write their GPR credentials to the `~/.gradle/gradle.propert
 
 ```
 gpr.user=<USERNAME>
-grp.key=<PERSONAL_ACCESS_TOKEN>
+gpr.key=<PERSONAL_ACCESS_TOKEN>
 ```
 
 Ensure `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
