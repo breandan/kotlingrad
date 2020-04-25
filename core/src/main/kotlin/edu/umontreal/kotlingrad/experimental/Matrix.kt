@@ -9,6 +9,7 @@ import guru.nidi.graphviz.minus
 import guru.nidi.graphviz.model.Factory.*
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
+import kotlin.reflect.KProperty
 
 /**
  * Matrix function.
@@ -181,7 +182,7 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X,
   }
 }
 
-class MVar<X: SFun<X>, R: D1, C: D1>(
+open class MVar<X: SFun<X>, R: D1, C: D1>(
   override val name: String = "", val r: R, val c: C,
   val vVars: List<VVar<X, C>> = List(r.i) { VVar("$name[$it]", c) },
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
@@ -192,6 +193,8 @@ class MVar<X: SFun<X>, R: D1, C: D1>(
   fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
   override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
+  operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+    MVar(if (name.isEmpty()) property.name else name, r, c, vVars, vMat)
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {

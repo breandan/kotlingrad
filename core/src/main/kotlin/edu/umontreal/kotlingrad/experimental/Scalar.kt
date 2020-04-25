@@ -13,6 +13,7 @@ import java.io.File
 import java.io.Serializable
 import kotlin.NumberFormatException
 import kotlin.math.*
+import kotlin.reflect.KProperty
 
 /**
  * Algebraic primitives.
@@ -143,9 +144,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   open val ONE: Special<X> by lazy { One() }
   open val TWO: Special<X> by lazy { Two() }
   open val E: Special<X> by lazy { E<X>() }
-  val x: SVar<X> by lazy { SVar("x") }
-  val y: SVar<X> by lazy { SVar("y") }
-  val z: SVar<X> by lazy { SVar("z") }
+  val x by lazy { SVar<X>("x") }
+  val y by lazy { SVar<X>("y") }
+  val z by lazy { SVar<X>("z") }
 
   open val variables: List<SVar<X>> by lazy { listOf(x, y, z) }
 
@@ -298,6 +299,8 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()
+  operator fun getValue(thisRef: Any?, property: KProperty<*>) =
+    SVar<X>(if (name.isEmpty()) property.name else name)
 }
 
 open class SConst<X: SFun<X>>(open val value: Number? = null): SFun<X>(), Constant<X> {
@@ -492,45 +495,45 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
 
   inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> = Vec(List(e.i) { wrapOrError(gen(it)) as SFun<X> })
 
-  fun Var(name: String) = SVar<X>(name)
-  fun Var2(name: String) = VVar<X, D2>(name, D2)
-  fun Var3(name: String) = VVar<X, D3>(name, D3)
-  fun Var4(name: String) = VVar<X, D4>(name, D4)
-  fun Var5(name: String) = VVar<X, D5>(name, D5)
-  fun Var6(name: String) = VVar<X, D6>(name, D6)
-  fun Var7(name: String) = VVar<X, D7>(name, D7)
-  fun Var8(name: String) = VVar<X, D8>(name, D8)
-  fun Var9(name: String) = VVar<X, D9>(name, D9)
-  fun Var10(name: String) = VVar<X, D10>(name, D10)
-  fun Var11(name: String) = VVar<X, D11>(name, D11)
-  fun Var12(name: String) = VVar<X, D12>(name, D12)
-  fun Var13(name: String) = VVar<X, D13>(name, D13)
-  fun Var14(name: String) = VVar<X, D14>(name, D14)
-  fun Var15(name: String) = VVar<X, D15>(name, D15)
-  fun Var16(name: String) = VVar<X, D16>(name, D16)
-  fun Var17(name: String) = VVar<X, D17>(name, D17)
-  fun Var18(name: String) = VVar<X, D18>(name, D18)
-  fun Var19(name: String) = VVar<X, D19>(name, D19)
-  fun Var20(name: String) = VVar<X, D20>(name, D20)
-  fun Var21(name: String) = VVar<X, D21>(name, D21)
-  fun Var22(name: String) = VVar<X, D22>(name, D22)
-  fun Var23(name: String) = VVar<X, D23>(name, D23)
-  fun Var24(name: String) = VVar<X, D24>(name, D24)
-  fun Var25(name: String) = VVar<X, D25>(name, D25)
-  fun Var26(name: String) = VVar<X, D26>(name, D26)
-  fun Var27(name: String) = VVar<X, D27>(name, D27)
-  fun Var28(name: String) = VVar<X, D28>(name, D28)
-  fun Var29(name: String) = VVar<X, D29>(name, D29)
-  fun Var30(name: String) = VVar<X, D30>(name, D30)
+  fun Var(name: String = "") = SVar<X>(name)
+  fun Var2(name: String = "") = VVar<X, D2>(name, D2)
+  fun Var3(name: String = "") = VVar<X, D3>(name, D3)
+  fun Var4(name: String = "") = VVar<X, D4>(name, D4)
+  fun Var5(name: String = "") = VVar<X, D5>(name, D5)
+  fun Var6(name: String = "") = VVar<X, D6>(name, D6)
+  fun Var7(name: String = "") = VVar<X, D7>(name, D7)
+  fun Var8(name: String = "") = VVar<X, D8>(name, D8)
+  fun Var9(name: String = "") = VVar<X, D9>(name, D9)
+  fun Var10(name: String = "") = VVar<X, D10>(name, D10)
+  fun Var11(name: String = "") = VVar<X, D11>(name, D11)
+  fun Var12(name: String = "") = VVar<X, D12>(name, D12)
+  fun Var13(name: String = "") = VVar<X, D13>(name, D13)
+  fun Var14(name: String = "") = VVar<X, D14>(name, D14)
+  fun Var15(name: String = "") = VVar<X, D15>(name, D15)
+  fun Var16(name: String = "") = VVar<X, D16>(name, D16)
+  fun Var17(name: String = "") = VVar<X, D17>(name, D17)
+  fun Var18(name: String = "") = VVar<X, D18>(name, D18)
+  fun Var19(name: String = "") = VVar<X, D19>(name, D19)
+  fun Var20(name: String = "") = VVar<X, D20>(name, D20)
+  fun Var21(name: String = "") = VVar<X, D21>(name, D21)
+  fun Var22(name: String = "") = VVar<X, D22>(name, D22)
+  fun Var23(name: String = "") = VVar<X, D23>(name, D23)
+  fun Var24(name: String = "") = VVar<X, D24>(name, D24)
+  fun Var25(name: String = "") = VVar<X, D25>(name, D25)
+  fun Var26(name: String = "") = VVar<X, D26>(name, D26)
+  fun Var27(name: String = "") = VVar<X, D27>(name, D27)
+  fun Var28(name: String = "") = VVar<X, D28>(name, D28)
+  fun Var29(name: String = "") = VVar<X, D29>(name, D29)
+  fun Var30(name: String = "") = VVar<X, D30>(name, D30)
 
-  fun Var2x1(name: String) = MVar<X, D2, D1>(name, D2, D1)
-  fun Var2x2(name: String) = MVar<X, D2, D2>(name, D2, D2)
-  fun Var2x3(name: String) = MVar<X, D2, D3>(name, D2, D3)
-  fun Var3x1(name: String) = MVar<X, D3, D1>(name, D3, D1)
-  fun Var3x2(name: String) = MVar<X, D3, D2>(name, D3, D2)
-  fun Var3x3(name: String) = MVar<X, D3, D3>(name, D3, D3)
-  fun Var5x5(name: String) = MVar<X, D5, D5>(name, D5, D5)
-  fun Var9x9(name: String) = MVar<X, D9, D9>(name, D9, D9)
+  fun Var2x1(name: String = "") = MVar<X, D2, D1>(name, D2, D1)
+  fun Var2x2(name: String = "") = MVar<X, D2, D2>(name, D2, D2)
+  fun Var2x3(name: String = "") = MVar<X, D2, D3>(name, D2, D3)
+  fun Var3x1(name: String = "") = MVar<X, D3, D1>(name, D3, D1)
+  fun Var3x2(name: String = "") = MVar<X, D3, D2>(name, D3, D2)
+  fun Var3x3(name: String = "") = MVar<X, D3, D3>(name, D3, D3)
+  fun Var5x5(name: String = "") = MVar<X, D5, D5>(name, D5, D5)
+  fun Var9x9(name: String = "") = MVar<X, D9, D9>(name, D9, D9)
 
   val DARKMODE = false
   val THICKNESS = 2

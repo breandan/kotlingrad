@@ -25,6 +25,7 @@ dependencies {
 
   // Property-based testing
   testImplementation("io.kotlintest:kotlintest-runner-junit5:_")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
   // Symbolic fuzzing interpreter
   testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:_")
@@ -44,7 +45,6 @@ tasks {
   test {
     minHeapSize = "1024m"
     maxHeapSize = "4096m"
-
     useJUnitPlatform()
     testLogging {
       events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT)

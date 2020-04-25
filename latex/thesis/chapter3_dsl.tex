@@ -224,8 +224,8 @@ Kotlin$\nabla$ allows users to implement differentiable programs by composing ex
 \begin{figure}[H] \label{fig:basic_kotlingrad}
 \begin{unbreakablekotlin}
 with(DoublePrecision) { // Uses double precision numerics for evaluation
-  val x = Var("x") // Declare immutable variables (these variables are
-  val y = Var("y") // just symbolic constructs used for differentiation)
+  val x by Var() // Declare immutable variables (these variables are
+  val y by Var() // just symbolic constructs used for differentiation)
   val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazily evaluated
   val dz_dx = d(z) / d(x) // Supports Leibniz notation(*@~\citep{christianson2012leibniz}@*)
   val d2z_dxdy = d(dz_dx) / d(y) // Mixing higher order partials

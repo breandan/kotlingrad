@@ -408,8 +408,8 @@ Universit\'e de Montr\'eal \\
     \begin{frame}[fragile]
         \frametitle{Automatic test case generation}
         \begin{lstlisting}[language=Kotlin, gobble=12]
-            val x = Var("x")
-            val y = Var("y")
+            val x by Var()
+            val y by Var()
 
             val z = y * (sin(x * y) - x) // Function under test
             val dz_dx = d(z) / d(x)      // Automatic derivative
