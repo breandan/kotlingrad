@@ -19,9 +19,6 @@ object Plot3D: AbstractAnalysis() {
     val mapper = object: Mapper() {
       override fun f(xc: Double, yc: Double) =
         with(DoublePrecision) {
-          val x by Var()
-          val y by Var()
-
           val Z = x * x + pow(y, 2)
           val Z10 = Z * 10
           val sinZ = sin(Z10)

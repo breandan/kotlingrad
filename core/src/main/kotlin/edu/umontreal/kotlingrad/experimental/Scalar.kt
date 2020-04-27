@@ -89,7 +89,8 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 
   val allVarMap = mVarMap + vVarMap + sVarMap
 
-  private inline fun <reified T> filterInstancesOf(): Map<T, T> = fMap.filterKeys { it is T } as Map<T, T>
+  private inline fun <reified T> filterInstancesOf(): Map<T, T> =
+    fMap.filterKeys { it is T } as Map<T, T>
 
   // Merges two variable bindings
   // TODO: Add support for change of variables, i.e. x = y, y = 2z, z = x + y...
@@ -148,8 +149,6 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   val y by lazy { SVar<X>("y") }
   val z by lazy { SVar<X>("z") }
 
-  open val variables: List<SVar<X>> by lazy { listOf(x, y, z) }
-
   override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
   override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
   override fun div(divisor: SFun<X>): SFun<X> = this * divisor.pow(-ONE)
@@ -157,11 +156,12 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   open operator fun <R: D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
   override fun invoke(newBindings: Bindings<X>): SFun<X> =
-    SComposition(this, newBindings).run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
+    SComposition(this, newBindings)
+      .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   operator fun invoke() = invoke(Bindings())
 
-  open fun d(v1: SVar<X>) = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
+  open fun d(v1: SVar<X>): SFun<X> = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
   open fun d(v1: SVar<X>, v2: SVar<X>): Vec<X, D2> = Vec(d(v1), d(v2))
   open fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>): Vec<X, D3> = Vec(d(v1), d(v2), d(v3))
   open fun d(vararg vars: SVar<X>): Map<SVar<X>, SFun<X>> = vars.map { it to d(it) }.toMap()
@@ -398,7 +398,7 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
   val x = prototype.x
   val y = prototype.y
   val z = prototype.z
-  open val variables = prototype.variables
+  open val variables = listOf(x, y, z)
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
@@ -434,6 +434,15 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
   }
 
   operator fun Number.invoke(n: Number) = this
+
+  /**
+   * Invocation is cast as T, to keep track of the output type and type check
+   * subsequent operations. T must never be more specific or more abstract than
+   * [SFun], [VFun] or [MFun]. If the receiver is a superclass (i.e. [Fun]),
+   * type checking subsequent composition will be impossible. If the receiver
+   * is a subclass, the cast will fail after T has been evaluated to [Constant].
+   */
+
   operator fun <T: Fun<X>> T.invoke(vararg numbers: Number): T =
     invoke(bindings.zip(numbers.map { wrap(it) }) + constants) as T
 

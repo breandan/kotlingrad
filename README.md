@@ -280,50 +280,44 @@ For further details, please refer to [the implementation](core/src/main/kotlin/e
 The following example shows how to derive higher-order partials of a function `z` of type ℝ²→ℝ:
 
 ```kotlin
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
+with(DoublePrecision) {
+  val x by Var()
+  val y by Var()
 
-@Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main() {
-  with(DoublePrecision) { 
-    val x by Var()
-    val y by Var()
+  val z = x * (-sin(x * y) + y) * 4  // Infix notation
+  val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]
+  val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
+  val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
+  val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
+  val `∇z` = z.grad()                // Gradient operator
 
-    val z = x * (-sin(x * y) + y) * 4  // Infix notation
-    val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]
-    val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
-    val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
-    val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
-    val `∇z` = z.grad()                // Gradient operator
+  val values = arrayOf(x to 0, y to 1)
 
-    val values = mapOf(x to 0, y to 1)
-    val indVar = z.variables.joinToString(", ")
-
-    print("z($indVar) \t\t\t= $z\n" +
-        "z($values) \t\t\t= ${z(values)}\n" +
-        "∂z($values)/∂x \t\t= $`∂z∕∂x` \n\t\t\t\t= " + `∂z∕∂x`(values) + "\n" +
-        "∂z($values)/∂y \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂z∕∂y`(values) + "\n" +
-        "∂²z($values)/∂x² \t\t= $`∂z∕∂y` \n\t\t\t\t= " + `∂²z∕∂x²`(values) + "\n" +
-        "∂²z($values)/∂x∂y \t\t= $`∂²z∕∂x∂y` \n\t\t\t\t= " + `∂²z∕∂x∂y`(values) + "\n" +
-        "∇z($values) \t\t\t= $`∇z` \n\t\t\t\t= [${`∇z`[x]!!(values)}, ${`∇z`[y]!!(values)}]ᵀ")
-  }
+  println("z(x, y) \t= $z\n" +
+    "z(${values.map { it.second }.joinToString(",")}) \t\t= ${z(*values)}\n" +
+    "∂z/∂x \t\t= $`∂z∕∂x` \n\t\t= " + `∂z∕∂x`(*values) + "\n" +
+    "∂z/∂y \t\t= $`∂z∕∂y` \n\t\t= " + `∂z∕∂y`(*values) + "\n" +
+    "∂²z/∂x² \t= $`∂z∕∂y` \n\t\t= " + `∂²z∕∂x²`(*values) + "\n" +
+    "∂²z/∂x∂y \t= $`∂²z∕∂x∂y` \n\t\t= " + `∂²z∕∂x∂y`(*values) + "\n" +
+    "∇z \t\t= $`∇z` \n\t\t= [${`∇z`[x]!!(*values)}, ${`∇z`[y]!!(*values)}]ᵀ")
 }
 ```
 
 Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlingrad.kt) via `./gradlew HelloKotlingrad` should produce the following output:
 
 ```
-z(x, y)              = x * (-sin(x * y) + y) * 4
-z({x=0, y=1})        = 0.0
-∂z({x=0, y=1})/∂x    = (-sin(x * y) + y - x * cos(x * y) * y) * 4 
-                     = 4.0
-∂z({x=0, y=1})/∂y    = x * (1 - cos(x * y) * x) * 4 
-                     = 0.0
-∂²z({x=0, y=1})/∂x²  = x * (1 - cos(x * y) * x) * 4 
-                     = -8.0
-∂²z({x=0, y=1})/∂x∂y = (-x * (-sin(x * y) * x * y + cos(x * y)) + 1 - cos(x * y) * x) * 4 
-                     = 4.0
-∇z({x=0, y=1})       = {x=(-sin(x * y) + y - x * cos(x * y) * y) * 4, y=x * (1 - cos(x * y) * x) * 4} 
-                     = [4.0, 0.0]ᵀ
+z(x, y)         = ((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)
+z(0,1)          = 0.0
+∂z/∂x           = d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(x) 
+                = 4.0
+∂z/∂y           = d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(y) 
+                = 0.0
+∂²z/∂x²         = d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(y) 
+                = 4.0
+∂²z/∂x∂y        = d(d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(x)) / d(y) 
+                = 4.0
+∇z              = {y=d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(y), x=d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(x)} 
+                = [4.0, 0.0]ᵀ
 ```
 
 ## Visualization tools
@@ -654,9 +648,9 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 [Property delegation](https://kotlinlang.org/docs/reference/delegated-properties.html) is a reflection feature in the Kotlin language which lets us access properties to which an instance is bound. For example, we can read the property name like so:
 
 ```kotlin
-class Var(override val name: String = "") {
+class Var(val name: String?) {
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    Var(if (name.isEmpty()) property.name else name)
+    Var(name ?: property.name)
 }
 ```
 
