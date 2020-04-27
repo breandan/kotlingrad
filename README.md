@@ -67,41 +67,38 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
-Kotlin∇ is hosted on the [GitHub Package Registry](https://github.com/breandan/kotlingrad/packages/). If you have not already done so, first generate a [new GitHub Personal Access Token](https://github.com/settings/tokens/new) with the `read:packages` permission.
+Kotlin∇ is hosted on [JitPack](https://jitpack.io/#breandan/kotlingrad).
 
 #### Gradle
 
-Gradle users should write their GPR credentials to the `~/.gradle/gradle.properties` file as follows:
-
-```
-gpr.user=<USERNAME>
-gpr.key=<PERSONAL_ACCESS_TOKEN>
-```
-
-Ensure `GRADLE_USER_HOME` points to `~/.gradle`. Then add a repository and dependency to the `build.gradle.kts` file:
-
 ```kotlin
 repositories {
-    maven("https://maven.pkg.github.com/breandan/kotlingrad") {
-        credentials {
-            username = ext.properties["gpr.user"] as String?
-            password = ext.properties["gpr.key"] as String?
-        }
-    }
+    maven("https://jitpack.io")
 }
 
 dependencies {
-    implementation("edu.umontreal:kotlingrad:<VERSION>")
+    implementation("com.github.breandan:kotlingrad:-SNAPSHOT")
 }
 ```
 
-Finally, run `gradle dependencies` to ensure the requested dependency can be downloaded.
-
-For additional help, please refer to the [GPR Gradle configuration instructions](https://help.github.com/en/articles/configuring-gradle-for-use-with-github-package-registry).
-
 #### Maven
 
-Maven users should refer to [these instructions](https://help.github.com/en/articles/configuring-apache-maven-for-use-with-github-package-registry#installing-a-package).
+```xml
+<project>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+  
+  <dependency>
+    <groupId>com.github.breandan</groupId>
+    <artifactId>kotlingrad</artifactId>
+    <version>-SNAPSHOT</version>
+  </dependency>
+</project>
+```
 
 ### Notation
 
@@ -294,7 +291,7 @@ with(DoublePrecision) {
   val values = arrayOf(x to 0, y to 1)
 
   println("z(x, y) \t= $z\n" +
-    "z(${values.map { it.second }.joinToString(",")}) \t\t= ${z(*values)}\n" +
+    "z(${values.map { it.second }.joinToString(", ")}) \t\t= ${z(*values)}\n" +
     "∂z/∂x \t\t= $`∂z∕∂x` \n\t\t= " + `∂z∕∂x`(*values) + "\n" +
     "∂z/∂y \t\t= $`∂z∕∂y` \n\t\t= " + `∂z∕∂y`(*values) + "\n" +
     "∂²z/∂x² \t= $`∂z∕∂y` \n\t\t= " + `∂²z∕∂x²`(*values) + "\n" +
@@ -307,7 +304,7 @@ Any backticks and unicode characters above are simply for readability and have n
 
 ```
 z(x, y)         = ((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)
-z(0,1)          = 0.0
+z(0, 1)         = 0.0
 ∂z/∂x           = d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(x) 
                 = 4.0
 ∂z/∂y           = d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(y) 
@@ -649,8 +646,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 ```kotlin
 class Var(val name: String?) {
-  operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    Var(name ?: property.name)
+  operator fun getValue(thisRef: Any?, property: KProperty<*>) = Var(name ?: property.name)
 }
 ```
 
