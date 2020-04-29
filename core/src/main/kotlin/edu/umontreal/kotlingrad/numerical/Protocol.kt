@@ -73,14 +73,12 @@ sealed class Protocol<X: RealNumber<X, Y>, Y> where Y: Number, Y: Comparable<Y> 
   operator fun Fun<X>.invoke(vararg number: X) = this(variables.zip(number).toMap()).proto.value
   operator fun Fun<X>.invoke(vararg subs: Fun<X>) = this(variables.zip(subs).toMap())
   @JvmName("numInvoke") operator fun Fun<X>.invoke(pairs: Map<ScalarVar<X>, Number>) =
-    this(pairs.map { (it.key to wrap(it.value)) }.toMap()).proto.value
+    this(pairs.map { (k, v) -> (k to wrap(v)) }.toMap()).proto.value
   @JvmName("numInvoke") operator fun Fun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, Number>) =
-    this(pairs.map { (it.first to wrap(it.second)) }.toMap()).proto.value
+    this(pairs.map { (k, v) -> (k to wrap(v)) }.toMap()).proto.value
   @JvmName("subInvoke") operator fun Fun<X>.invoke(vararg pairs: Pair<ScalarVar<X>, Fun<X>>) =
-    this(pairs.map { it.first to it.second }.toMap())
+    this(pairs.toMap())
   operator fun Number.invoke(n: Number) = this
-
-  fun Fun<X>.eval() = invoke(variables.map { Pair(it, it.value) }.toMap()).proto.value
 
 //  operator fun <F: D100> VectorFun<X, F>.invoke(vararg number: Number) = this(variables.zip(number).toMap())
 //  operator fun <F: D100> VectorFun<X, F>.invoke(pairs: Map<ScalarVar<X>, Number>) = this(pairs.map { (it.key to wrap(it.value)) }.toMap()).value
