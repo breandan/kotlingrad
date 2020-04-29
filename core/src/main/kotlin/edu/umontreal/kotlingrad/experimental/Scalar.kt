@@ -81,10 +81,10 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 
   val mVarMap = mFunMap.filterKeys { it is MVar<X, *, *> } as Map<MVar<X, *, *>, MFun<X, *, *>>
   val vVarMap = mVarMap.filterValues { it is Mat<X, *, *> }
-    .flatMap { it.key.vVars.zip((it.value as Mat<X, *, *>).rows) }.toMap() +
+    .flatMap { (k, v) -> k.vVars.zip((v as Mat<X, *, *>).rows) }.toMap() +
   vFunMap.filterKeys { it is VVar<X, *> } as Map<VVar<X, *>, VFun<X, *>>
   val sVarMap = (vVarMap.filterValues { it is Vec<X, *> }
-    .flatMap { it.key.sVars.zip((it.value as Vec<X, *>).contents) }.toMap() +
+    .flatMap { (k, v) -> k.sVars.zip((v as Vec<X, *>).contents) }.toMap() +
     sFunMap.filterKeys { it is SVar<X> && it.name != "mapInput"}) as Map<SVar<X>, SFun<X>>
 
   val allVarMap = mVarMap + vVarMap + sVarMap
@@ -127,7 +127,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
 
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.allVars.all { it in this }
   operator fun contains(v: Fun<X>) = v in allVars
-  fun curried() = fMap.map { Bindings(mapOf(it.key to it.value)) }
+  fun curried() = fMap.map { (k, v) -> Bindings(k to v) }
 
   operator fun <T: Fun<X>> get(t: T): T? = (allVarMap[t as? Variable<X>] ?: fMap[t]) as? T?
   override fun equals(other: Any?) = other is Bindings<*> && fMap == other.fMap
