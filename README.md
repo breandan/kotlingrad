@@ -745,6 +745,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 |                   [JAX](https://github.com/google/jax)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :construction: |
 |               [Tangent](https://github.com/google/tangent)               |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |      :x:       |
 | [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf) | Analitik | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
+
 ¹ Symbolic differentiation
 
 ² Automatic differentiation
