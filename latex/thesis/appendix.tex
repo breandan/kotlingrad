@@ -254,7 +254,7 @@ In multivariate PR, we need coefficients for all pairwise interactions between e
 %
 This requires at least $(n \times m \times 2)$ terms. Minimizing $\bm\beta$ on this expression directly becomes intractable as the maximum degree $m$, dataset size $n$ and the number of variables grows.
 
-\subsection{Kernel Trick}
+\subsection{Kernel trick}
 
 Instead of modeling $\mathbf X$ explicitly, let us construct a special function $k: \langle\varphi(\mathbf x), \varphi(\mathbf w)\rangle \mapsto \mathbb R$, where $k(\mathbf w, \mathbf x) = (1 + \mathbf w^\intercal \mathbf x)^2$. Called a \textit{kernel}, this function is part of a well-studied family of \textit{kernel functions}, $K: \Omega \times \Omega \rightarrow \mathbb R$ with some additional structure. Skimming over the details, a valid kernel preserves the inner product in our feature space. For simplicity, let $\mathbf w, \mathbf x \in \mathbb R^2$. Suppose we have a feature map $\varphi(\mathbf v) = \left[1, v_1^2, v_2^2, \sqrt{2} v_1, \sqrt{2} v_2, \sqrt{2} v_1 v_2\right]$. We observe:
 

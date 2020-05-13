@@ -224,7 +224,7 @@ Notice that as soon as we run the container, Docker will execute the \inline{ls 
 ~$ docker run -it user/duck:v3 (*@\hl{[custom command]}@*)
 \end{pclisting}
 %
-\subsection{Layer Caching}
+\subsection{Layer caching}
 
 \href{https://docs.docker.com/storage/storagedriver/#images-and-layers}{Layers} are an important concept to understand when working with Docker. One way to think of a layer is like a Git commit -- a set of changes to a previous image or layer, uniquely identified by a hash code. In a \inline{Dockerfile}, layers begin with a \href{https://docs.docker.com/engine/reference/builder/#from}{keyword}.
 
@@ -351,7 +351,7 @@ A common mistake when writing \inline{Dockerfile}s is to \inline{COPY} more file
 
 % Like Git's \inline{.gitignore}, Docker also has a \inline{.dockerignore} file. If we add a line to the \inline{.dockerignore} file, then all paths matching this line in the build context will be ignored. Docker also accepts other patterns like regular expressions and negation.~\footnote{Further details: \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
 
-\subsection{Volume Sharing}\label{subsec:volume_sharing}
+\subsection{Volume sharing}\label{subsec:volume_sharing}
 
 There is a second method of depositing data into a container, which does not require baking it into the parent image at compile-time. This method is more appropriate for data which is required at runtime, but non-essential for the build. It takes the following form:
 
@@ -446,7 +446,7 @@ One application of multi-stage builds is compiling a project dependency from its
 
 The \href{https://www.duckietown.org}{Duckietown platform} supports two primary instruction set architectures: x86 and ARM. To ensure the runtime compatibility of Duckietown packages, we cross-build using hardware virtualization to ensure build artifacts can be run on either target architecture. Runtime emulation of foreign artifacts is also possible, using a similar technique.\hspace{-.08em}\footnote{For more information, this technique is described in further depth at the following URL: \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} For performance and simplicity, we only use emulation where necessary (e.g., on x86 devices). On ARM-native, the base operating system is \hyperref[subsec:hypriot]{HypriotOS}, a lightweight Debian distribution for the Raspberry Pi and other ARM-based SBCs, with native support for Docker. For both x86 and ARM-native, Docker is the underlying container platform upon which all user applications are run, inside a container. Since both ROS and Docker have extensive command line interfaces, a unified interface, the \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell} (\inline{dts}), is provided to wrap their functionality and perform common tasks.
 
-\section{Duckiebot Development using Docker}
+\section{Duckiebot development using Docker}
 
 \noindent Software development for the Duckietown platform requires the following physical objects:
 %
@@ -565,7 +565,7 @@ Like most commands, a Python-based shell is provided for the user's convenience:
 dt> duckiebot demo --demo_name camera --duckiebot_name DUCKIEBOT_NAME
 \end{dtslisting}
 %
-\subsection{Graphical User Interface tools}
+\subsection{Graphical user interface tools}
 
 To use GUI tools, one must first allow incoming X connections from the host. On Linux hosts, this can be done by running \inline{xhost +} outside Docker.\hspace{-.08em}\footnote{See \url{https://wiki.ros.org/docker/Tutorials/GUI#The_safer_way} for a more secure alternative.} A container with common ROS GUI plugins can be started with following command:
 
@@ -684,7 +684,7 @@ Docker's unnecessarily high privileges and susceptibility for misuse are serious
 
 To address these issues, various container platforms, including \href{https://docs.nersc.gov/programming/shifter/overview/}{Shifter}~\citep{gerhardt2017shifter} and \href{https://sylabs.io/docs/}{Singularity}~\citep{kurtzer2017singularity}, have emerged and gained traction in the scientific computing community, owing to their lower privileges and compatibility with legacy Linux distributions used by many academic computing environments. Since then, Docker has also introduced a \href{https://engineering.docker.com/2019/02/experimenting-with-rootless-docker/}{rootless mode}, but it remains experimental at the time of writing this thesis.
 
-\section{Future Work}
+\section{Future work}
 
 Duckietown encourages users to train reinforcement learning models inside a driving simulator. As agents learn a policy to drive a Duckiebot, we envision it is similarly possible to train an agent to perform tasks in the Docker environment. Agents, endowed with rudimentary shell commands would receive a reward based on the exit code of some desired program we wish to run. This can be extended to a fully automated environment, where the agent has access to a virtual keyboard and mouse, and learns to configure a desktop environment to run some desired program. Currently, this process involves a graduate student trying various commands from StackOverflow. Ostensibly, the same result can be achieved by any stochastic process which selects commands from a knowledge base and learns from past experience. Early work in this domain is already being undertaken~\citep{henkel2020learning}, presumably by a graduate student in a similar predicament.
 
