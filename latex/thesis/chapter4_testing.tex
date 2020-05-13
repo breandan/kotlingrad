@@ -13,7 +13,7 @@ In this chapter we propose a novel property-based testing (PBT) algorithm for di
 
 In the following sections, we introduce a series of software testing methodologies, in decreasing order of cognitive complexity. We hypothesize the subsequent methods allow developers to attain the same level of assurance with progressively lower effort.
 
-\subsection{Unit Testing}
+\subsection{Unit testing}
 
 \noindent In traditional unit testing, each subroutine is accompanied by a single test:
 %
@@ -28,7 +28,7 @@ fun unitTest(subroutine: (Input) -> Output) {
 %
 Unit testing is an effective to validate one's belief about pre- and post-conditions. The trouble is, someone needs to write a bunch of test cases. Side effects include reduced agility, aversion to refactoring or discarding prior work when tests become obsolete.
 
-\subsection{Integration Testing}
+\subsection{Integration testing}
 
 \noindent In integration testing, we are more concerned about the overall behavior of a program, rather than the specific behavior of its subroutines. Consider the following example:
 
@@ -48,7 +48,7 @@ With this strategy, there are fewer tests to write down, since we only care abou
 
 %For simplicity, in the following sections, we will only consider examples of programs which are pure functions, i.e. which have no external state and produce no side effects.
 
-\subsection{Fuzz Testing}
+\subsection{Fuzz testing}
 
 Fuzz testing is an automated testing methodology which generates random inputs to test a given program. For example, consider the following test:
 %
@@ -62,7 +62,7 @@ fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
 %
 The trouble is, we need an \textit{oracle}, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be quite expensive in practice, this method can also be quite inefficient.
 
-\subsection{Property-based Testing}\label{subsec:property-based-testing}
+\subsection{Property-based testing}\label{subsec:property-based-testing}
 
 Property-based testing~\citep{fink1997property} (PBT) attempts to mitigate the test oracle problem by using \textit{properties}. It consists of two phases, searching and shrinking. Users specify a property over all outputs and the test fails if a counterexample can be found:
 %
@@ -158,7 +158,7 @@ fun <I, O> genTX(program: (I) -> O, mr: (I, O, I, O) -> Boolean, i: I, o: O): (I
 
 But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled, computationally efficient and general purpose method of mutating an input in our dataset to discover invalid outputs.
 
-\subsection{Adversarial Testing}
+\subsection{Adversarial testing}
 
 This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input of a function, which produces the largest change to its output, relative to the original output.
 
@@ -228,7 +228,7 @@ To do so, we can initialize $\mathbf{x} \sim U[CS]$ and perform projected gradie
 
 Assuming zero knowledge about the program $\mathbf{\hat P}$'s implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Assuming $\mathbf{\hat P}$ is differentiable, given input-output values we can use zeroth-order optimization techniques to approximate $\nabla_{\mathbf{x}}\mathcal{L}$. Assuming $\mathbf{\hat P}$ is open source, we could use coverage-guided fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. If $\mathbf{\hat P}$ is both open source and differentiable, we can accelerate the search by using automatic differentiation. Given additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $\mathbf x \sim \frac{1}{D_{\mathbf{\hat P}}}$, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of manually constructing one?
 
-\subsection{Generative Adversarial Testing}
+\subsection{Generative adversarial testing}
 
 What are the properties of a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her attacks must break the program specification. To generate plausible test cases, not only must she be able to exploit weaknesses of the program, but ideally possess a good understanding of $p_{data}$.
 
@@ -264,7 +264,7 @@ Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants
 
 The trouble with GANs is that we need to train $G$ and $D$ in lockstep, otherwise one quickly becomes too strong. What happens if we want to attack a pretrained model?
 %
-\section{Probabilistic Adversarial Testing}\label{sec:prob_ad_test}
+\section{Probabilistic adversarial testing}\label{sec:prob_ad_test}
 
 \noindent Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$:
 %

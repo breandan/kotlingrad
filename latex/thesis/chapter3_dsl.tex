@@ -496,7 +496,7 @@ val z = f(1.0, 2.0) // Returns a value
 %
 Currently, it is possible to represent functions where all inputs and outputs share a single data type. It may be possible to extend support for building functions with varying input/output types and enforcing constraints on both, by using covariant and contravariant type bounds.
 
-\section{Numeric Tower}\label{sec:numeric-tower}
+\section{Numeric tower}\label{sec:numeric-tower}
 
 Kotlin$\nabla$ uses a numeric tower~\citep{st2012typing}. An early example of this pattern can be found in \href{https://www.gnu.org/software/guile/manual/html_node/Numerical-Tower.html}{Scheme}~\citep{sperber2009revised}. This strategy is also suited to object oriented languages~\citep{niculescu2003design, niculescu2011using, kennedy2005generalized} and applied in libraries such as \href{https://github.com/mipt-npm/kmath}{KMath}~\citep{nozik2019kmath} and \href{https://commons.apache.org/proper/commons-math/}{Apache Commons Math}~\citep{developers2012apache}.
 
@@ -561,7 +561,7 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()) : Grou
 %
 Kotlin's \href{https://kotlinlang.org/docs/reference/typecasts.html#smart-casts}{smart casting} is an example of flow-sensitive type analysis~\citep{pearce2011implementing} where the abstract type \inline{Fun} can be treated as \inline{Sum} after performing an \inline{is Sum} check. Without smart casting, we would need to write \inline{(this as Sum).left} to access the member, \inline{left}, creating a potential \inline{ClassCastException} if the cast were mistaken.
 
-\section{Multiple Dispatch}\label{sec:multiple-dispatch}
+\section{Multiple dispatch}\label{sec:multiple-dispatch}
 
 In conjunction with ADTs, Kotlin$\nabla$ uses multiple dispatch to instantiate the most specific result type of an arithmetic operation based on the type of its operands. Although Kotlin does not directly support multiple dispatch, it can be emulated using single dispatch as described by \citet{leavens1998multiple}. Building on \autoref{sec:adts}, suppose we wish to rewrite some algebraic expression, e.g. to reduce expression swell or improve numerical stability. We can use \inline{when} to branch on the type of a subexpression at runtime:
 
@@ -585,7 +585,7 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0))
 %
 Multiple dispatch allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
-\section{Extension Functions}\label{sec:extension-functions}
+\section{Extension functions}\label{sec:extension-functions}
 
 \href{https://kotlinlang.org/docs/reference/extensions.html}{Extension functions} augment external classes with new fields and methods. By using context-oriented programming~\citep{hirschfeld2008context}, we can expose custom extensions (e.g.\ through \inline{DoubleContext}) to consumers without requiring subclassing or inheritance.
 %
@@ -632,7 +632,7 @@ with(DoubleContext) {
 }
 \end{kotlinlisting}
 
-\section{Automatic, Symbolic Differentiation}\label{sec:ad_vs_sd}
+\section{Automatic, symbolic differentiation}\label{sec:ad_vs_sd}
 
 Taking inspiration from \citet{mccarthy1960recursive}, Kotlin$\nabla$ implements symbolic differentiation, similar to the approach found in \citet[\S 2.56--2.58]{abelson1996structure}. Symbolic expressions allows for easier readability, numerical precision and computational efficiency. Motivated by this observation, we implement vector and matrix extensions to scalar differentiation as described by \citet{dwyer1948symbolic} and more recently \citet{laue2018computing}.
 
