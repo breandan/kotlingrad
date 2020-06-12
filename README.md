@@ -534,6 +534,8 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
 }
 ```
 
+This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
+
 Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
 #### Multiple Dispatch
@@ -887,6 +889,7 @@ The following individuals have helped shape this project through their enthusias
 * [Stefan Monnier](https://www.iro.umontreal.ca/~monnier/)
 * [Alexander Nozik](https://scholar.google.com/citations?user=B-WJi4kAAAAJ)
 * [Erik Meijer](https://twitter.com/headinthebox/)
+* [Krishna Murthy](https://krrish94.github.io/)
 * [Maxime Chevalier-Boisvert](https://pointersgonewild.com/)
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
 * [Jacob Miller](https://scholar.google.ca/citations?user=xG3VWpEAAAAJ)
