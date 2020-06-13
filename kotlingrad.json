@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "kotlingradVersion": "0.2.5",
+    "graphvizVersion": "0.15.1"
+  },
+  "link": "https://github.com/breandan/kotlingrad",
+  "repositories": [
+    "https://jitpack.io"
+  ],
+  "dependencies": [
+    "com.github.breandan:kotlingrad:$kotlingradVersion",
+    "guru.nidi:graphviz-kotlin:$graphvizVersion"
+  ],
+  "imports": [
+    "edu.umontreal.kotlingrad.experimental.*"
+  ],
+  "renderers": {
+    "edu.umontreal.kotlingrad.experimental.SFun": "HTML($it.html())"
+  }
+}
