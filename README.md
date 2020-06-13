@@ -102,10 +102,10 @@ dependencies {
 
 #### Jupyter Notebook
 
-To use Kotlin∇ from a Jupyter notebook, [install](https://github.com/breandan/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the following command from the parent directory:
+[First install](https://github.com/breandan/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then copy the library descriptor into the local settings directory:
 
 ```
-cp kotlingrad.json ~/.jupyter_kotlin/libraries/
+mkdir -p ~/.jupyter_kotlin/libraries && cp kotlingrad.json ~/.jupyter_kotlin/libraries/
 ```
 
 Then import Kotlin∇ using the following line magic:
