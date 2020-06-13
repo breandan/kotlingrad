@@ -6,8 +6,8 @@ import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.geom.geom_path
 import jetbrains.letsPlot.ggplot
-import jetbrains.letsPlot.ggtitle
 import jetbrains.letsPlot.intern.toSpec
+import jetbrains.letsPlot.label.ggtitle
 import jetbrains.letsPlot.theme
 import kotlin.math.cos
 import kotlin.math.sin
@@ -35,9 +35,9 @@ fun Map<String, Any>.plot2D(
   val xAxis = entries.first().key
   // Create plot specs using Lets-Plot Kotlin API
   val geoms = entries.filter { it.key != xAxis }.zip(Colors.distributeEvenly(entries.size - 1, 1.0))
-    .map { geom_path(size = thickness, color = it.second, show_legend = true) { x = xAxis; y = it.first.key } }
+    .map { geom_path(size = thickness, color = it.second, showLegend = true) { x = xAxis; y = it.first.key } }
 
-  val plot = geoms.fold(ggplot(this)) { acc, it -> acc + it } + ggtitle(title) + theme(legend_position = "right")
+  val plot = geoms.fold(ggplot(this)) { acc, it -> acc + it } + ggtitle(title) + theme(legendPosition = "right")
 
   // Create JFXPanel showing the plot.
   val plotSpec = plot.toSpec()
