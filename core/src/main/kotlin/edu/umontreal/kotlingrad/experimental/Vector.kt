@@ -185,17 +185,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
       is VMap<X, E> -> input.bind(bnds).map { ssMap(mapInput to it)(bnds) }
       is VComposition -> vFun.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
-    }.let { result ->
-      val freeVars = result.bindings.allFreeVariables.keys
-      val boundVars = bnds.allBoundVariables
-      val unpropagated = freeVars.filter { it in boundVars }
-      if (unpropagated.isNotEmpty()) {
-          show("input"); result.show("result")
-          println("Bindings were $bnds")
-        (result as Vec).contents.forEach { println(it) }
-          throw Exception("Bindings included unpropagated variables: $unpropagated")
-      } else result
-    }
+    }.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
 open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
