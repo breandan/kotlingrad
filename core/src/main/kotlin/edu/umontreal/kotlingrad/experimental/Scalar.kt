@@ -113,7 +113,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   val mVars: Set<MVar<X, *, *>> = mVarMap.keys
   val allVars: Set<Variable<X>> = sVars + vVars + mVars
   val allFreeVariables by lazy { allVarMap.filterValues { containsFreeVariable(it) } }
-  val allBoundVariables by lazy { allVarMap.filterValues { !containsFreeVariable(it) } }
+  val allBoundVariables: Map<Variable<X>, Fun<X>> by lazy { allVarMap.filterValues { !containsFreeVariable(it) } }
 
   private fun containsFreeVariable(it: Fun<X>): Boolean =
     (it is Mat<X, *, *> && it.bindings.allFreeVariables.isNotEmpty()) ||
@@ -128,6 +128,19 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   fun fullyDetermines(fn: SFun<X>) = fn.bindings.allVars.all { it in this }
   operator fun contains(v: Fun<X>) = v in allVars
   fun curried() = fMap.map { (k, v) -> Bindings(k to v) }
+
+  // Intended for debugging purposes, should be removed eventually
+  fun checkForUnpropagatedVariables(before: Fun<X>, after: Fun<X>) {
+    val freeVars = after.bindings.allFreeVariables.keys
+    val boundVars = allBoundVariables.keys
+    val unpropagated = (freeVars intersect boundVars).map { it to this[it] }
+    if (unpropagated.isNotEmpty()) {
+      before.show("input"); after.show("result")
+      println("Free vars: $freeVars")
+      println("Bindings were $this")
+      throw Exception("Result included unpropagated variables: $unpropagated")
+    }
+  }
 
   operator fun <T: Fun<X>> get(t: T): T? = (allVarMap[t as? Variable<X>] ?: fMap[t]) as? T?
   override fun equals(other: Any?) = other is Bindings<*> && fMap == other.fMap
@@ -266,7 +279,7 @@ class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X>) : SFun<X>(
   @Suppress("UNCHECKED_CAST")
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
-      is SVar -> {println(this); this}
+      is SVar -> this
       is SConst -> this@bind
       is Prod -> left.bind(bnds) * right.bind(bnds)
       is Sum -> left.bind(bnds) + right.bind(bnds)
@@ -278,18 +291,9 @@ class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X>) : SFun<X>(
       is Log -> left.bind(bnds).ln()
       is Derivative -> df().bind(bnds)
       is DProd -> left(bnds) as VFun<X, D1> dot right(bnds) as VFun<X, D1>
-      is SComposition -> fn.bind(bnds)
+      is SComposition -> fn.bind(bnds + bindings)
       is VSumAll<X, *> -> input(bnds).sum()
-    }.also { result ->
-      val freeVars = result.bindings.allFreeVariables.keys
-      val boundVars = bnds.allBoundVariables
-      val unpropagated = freeVars.filter { it in boundVars }
-      if (unpropagated.isNotEmpty()) {
-        show("input"); result.show("result")
-        println("Bindings were $bnds")
-        throw Exception("Bindings included unpropagated variables: $unpropagated")
-      }
-    }
+    }.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
 class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
