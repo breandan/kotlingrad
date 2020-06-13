@@ -100,6 +100,22 @@ dependencies {
 </project>
 ```
 
+#### Jupyter Notebook
+
+To use Kotlin∇ from a Jupyter notebook, [install](https://github.com/breandan/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the following command from the parent directory:
+
+```
+cp kotlingrad.json ~/.jupyter_kotlin/libraries/
+```
+
+Then import Kotlin∇ using the following line magic:
+
+```
+%use kotlingrad
+```
+
+For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.ipynb).
+
 ### Notation
 
 Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 

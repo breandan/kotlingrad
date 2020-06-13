@@ -2,7 +2,10 @@ package edu.umontreal.kotlingrad.experimental
 
 import guru.nidi.graphviz.attribute.*
 import guru.nidi.graphviz.edge
+import guru.nidi.graphviz.engine.Engine
+import guru.nidi.graphviz.engine.Engine.DOT
 import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.engine.Format.SVG
 import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.graph
 import guru.nidi.graphviz.model.MutableNode
@@ -13,7 +16,8 @@ import java.io.File
 val DARKMODE = false
 val THICKNESS = 2
 
-inline fun render(crossinline op: () -> MutableNode) =
+inline fun render(layout: Engine = DOT, format: Format = SVG,
+                  crossinline op: () -> MutableNode) =
   graph(directed = true) {
     val color = if (DARKMODE) Color.WHITE else Color.BLACK
 
@@ -25,10 +29,11 @@ inline fun render(crossinline op: () -> MutableNode) =
       Style.lineWidth(THICKNESS)]
 
     op()
-  }.toGraphviz().render(Format.SVG)
+  }.toGraphviz().apply { engine(layout) }.render(format)
 
 fun Renderer.saveToFile(filename: String) = toFile(File(filename))
 
+fun Fun<*>.html() = render { toGraph() }.toString()
 fun Fun<*>.show(name: String = "temp") = render { toGraph() }.show(name)
 fun Renderer.show(name: String) = toFile(File.createTempFile(name, ".svg")).show()
 fun File.show() = ProcessBuilder("x-www-browser", path).start()
