@@ -1,23 +1,12 @@
  package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.D
-import edu.umontreal.kotlingrad.experimental.cos
-import edu.umontreal.kotlingrad.experimental.grad
-import edu.umontreal.kotlingrad.experimental.sin
-import edu.umontreal.kotlingrad.experimental.BigDecimalPrecision
-import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.utils.step
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.MonolithicAwt
-import jetbrains.letsPlot.geom.geom_path
-import jetbrains.letsPlot.ggplot
-import jetbrains.letsPlot.ggtitle
-import jetbrains.letsPlot.intern.toSpec
 import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.log10
 
-@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
+ @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main() {
   val xs = (-1000.0..1000.0 step 7E-1).toList()
 //  val xs = (-1.0..1.0 step 0.0037).toList().toDoubleArray()
