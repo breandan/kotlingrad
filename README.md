@@ -487,7 +487,7 @@ In its current form, Kotlin∇ takes a "shallow embedding" approach. Similar to 
 
 ```kotlin
 var EAGER = false
-override operator fun invoke(newBindings: Bindings<X>): SFun<X> =
+operator fun invoke(newBindings: Bindings<X>): SFun<X> =
     Composition(this, newBindings).run { if (bindings.complete || EAGER) evaluate() else this }
 ```
 
@@ -511,7 +511,7 @@ val f2 = f1(y to 2).also { println(it) } // Prints: 1 + 2 * z
 val f3 = f2(z to 3).also { println(it) } // Prints: 7
 ```
 
-In the following section, we describe how the `evaluate()` function works.
+In the following section, we describe how evaluation works.
 
 #### Algebraic data types
 
@@ -533,7 +533,7 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
     constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
 
     // Since the subclasses of Fun are a closed set, no `else  ...` is required.
-    operator fun evaluate(map: Map<Var<X>, X>): Fun<X> = when (this) {
+    operator fun invoke(map: Bindings<X>): Fun<X> = when (this) {
         is Const -> this
         is Var -> map.getOrElse(this) { this } // Partial application is permitted
         is Prod -> left(map) * right(map) // Smart casting implicitly casts after checking
