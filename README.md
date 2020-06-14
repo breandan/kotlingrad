@@ -561,7 +561,7 @@ Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#sm
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) augment external classes with new fields and methods. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlingrad.kt) without requiring subclasses or inheritance.
+[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allow us to convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlingrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Expr()
