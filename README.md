@@ -28,11 +28,13 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
 * [How does it work?](#how)
   * [Operator overloading](#operator-overloading)
   * [First-class functions](#first-class-functions)
-  * [Coroutines](#coroutines)
+  * [Multi-stage programming](#multi-stage-programming)
   * [Extension functions](#extension-functions)
   * [Algebraic data types](#algebraic-data-types)
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
+  * [Property Delegation](#property-delegation)
+  * [Coroutines](#coroutines)
 * [Formal grammar](#grammar)
 * [UML diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
@@ -477,9 +479,77 @@ fun <T: Fun<T>> mlp(p1: VFun<T, D3>, p2: MFun<T, D3, D3>, p3: T) =
   ((p1 * p2 + p1 * p2 * p2 dot p1 + p1) - p3) pow p3
 ```
 
-#### Coroutines
+#### Multi-stage programming
 
-[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. While Kotlin callbacks are [single-shot by default](https://medium.com/@elizarov/callbacks-and-kotlin-flows-2b53aa2525cf), [delimited continuations](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) and reentrant or "multi-shot" delimited continuations [can also be implemented](https://gist.github.com/elizarov/ddee47f927dda500dc493e945128d661) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
+Kotlin∇ uses [operator overloading](#operator-overloading) in the host language to first construct a [dataflow graph](#dataflow-graphs), but performs evaluation lazily. In doing so, Kotlin∇ implements a form of "multi-stage programming", or *staging*. Multi-stage programming is a metaprogramming technique that originates from the ML community, which enables type-safe runtime code generation and compilation. More recently, this technique has been put to effective use for [compiling embedded DSLs](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf) similar to Kotlin∇.
+
+In its current form, Kotlin∇ takes a "shallow embedding" approach. Similar to an [interpreter](https://en.wikipedia.org/wiki/Interpreter_pattern), it adheres closely to the user-defined program and does not perform a high degree of code specialization or rewriting for optimization purposes. Unlike an interpreter, it postpones evaluation until all free variables in an expression have been bound. Consider the following snippet, which decides when to evaluate an expression:
+
+```kotlin
+var EAGER = false
+override operator fun invoke(newBindings: Bindings<X>): SFun<X> =
+    Composition(this, newBindings)
+      .run { if (bindings.complete || EAGER) evaluate() else this }
+```
+
+If `bindings` are `complete`, this indicates there are no unbound variables left in the expression (implementation omitted for brevity), meaning the we can evaluate the expression to obtain a numerical result. Suppose we are given the following user code:
+
+```kotlin
+val x = Var()
+val y = Var()
+val z = Var()
+val f0 = x + y * z
+val f1 = f0(x to 1).also { println(it) } // Prints: (x + y * z)(x=1)
+val f2 = f1(y to 2).also { println(it) } // Prints: (x + y * z)(x=1)(y=2)
+val f3 = f2(z to 3).also { println(it) } // Prints: 7
+```
+
+On the last line, all variables in the expression are bound, and instead of returning a `Composition`, Kotlin∇ evaluates the function, returning a constant. In the following section, we describe how evaluation works.
+
+#### Algebraic data types
+
+[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler forces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
+
+```kotlin
+class Const<T: Fun<T>>(val number: Number) : Fun<T>()
+class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
+class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
+class Zero<T: Fun<T>>: Const<T>(0.0)
+class One<T: Fun<T>>: Const<T>(1.0)
+```
+
+When branching on the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of `Fun`, a sealed class which defines the behavior of function invocation and differentiation, using a restricted form of pattern matching. It can be constructed with a set of `Var`s, and can be invoked with a numerical value:
+
+```kotlin
+sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
+    constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
+
+    // Since the subclasses of Fun are a closed set, no `else  ...` is required.
+    operator fun evaluate(map: Map<Var<X>, X>): Fun<X> = when (this) {
+        is Const -> this
+        is Var -> map.getOrElse(this) { this } // Partial application is permitted
+        is Prod -> left(map) * right(map) // Smart casting implicitly casts after checking
+        is Sum -> left(map) + right(map)
+    }
+
+    fun d(variable: Var<X>): Fun<X> = when(this) {
+       is Const -> Zero
+       is Var -> if (variable == this) One else Zero
+       // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
+       is Prod -> left.d(variable) * right + left * right.d(variable)
+       is Sum -> left.d(variable) + right.d(variable)
+    }
+
+    operator fun plus(addend: Fun<T>) = Sum(this, addend)
+
+    operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
+}
+```
+
+This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
+
+Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
 #### Extension Functions
 
@@ -509,51 +579,6 @@ fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` 
 
 Extensions can also be defined in another file or context and imported on demand.
 
-#### Algebraic data types
-
-[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler forces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
-
-```kotlin
-class Const<T: Fun<T>>(val number: Number) : Fun<T>()
-class Sum<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
-class Prod<T: Fun<T>>(val left: Fun<T>, val right: Fun<T>) : Fun<T>()
-class Var<T: Fun<T>>: Fun<T>() { override val variables: Set<Var<X>> = setOf(this) }
-class Zero<T: Fun<T>>: Const<T>(0.0)
-class One<T: Fun<T>>: Const<T>(1.0)
-```
-
-When branching on the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of `Fun`, a sealed class which defines the behavior of function invocation and differentiation, using a restricted form of pattern matching. It can be constructed with a set of `Var`s, and can be invoked with a numerical value:
-
-```kotlin
-sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
-    constructor(vararg fns: Fun<X>): this(fns.flatMap { it.variables }.toSet())
-
-    // Since the subclasses of Fun are a closed set, no `else  ...` is required.
-    operator fun invoke(map: Map<Var<X>, X>): Fun<X> = when (this) {
-        is Const -> this
-        is Var -> map.getOrElse(this) { this } // Partial application is permitted
-        is Prod -> left(map) * right(map) // Smart casting implicitly casts after checking
-        is Sum -> left(map) + right(map)
-    }
-
-    fun d(variable: Var<X>): Fun<X> = when(this) {
-       is Const -> Zero
-       is Var -> if (variable == this) One else Zero
-       // Product rule: d(u*v)/dx = du/dx * v + u * dv/dx
-       is Prod -> left.d(variable) * right + left * right.d(variable)
-       is Sum -> left.d(variable) + right.d(variable)
-    }
-
-    operator fun plus(addend: Fun<T>) = Sum(this, addend)
-
-    operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
-}
-```
-
-This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
-
-Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
-
 #### Multiple Dispatch
 
 In conjunction with ADTs, Kotlin∇ also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
@@ -578,6 +603,7 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0)) // Sum(Prod(Const(2.0), Var(
 ```
 
 This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
+
 
 #### Shape-safe Tensor Operations
 
@@ -676,6 +702,10 @@ val x = Var("x") // Without property delegation
 ```
 
 Without property delegation, users would need to repeat the property name in the constructor.
+
+#### Coroutines
+
+[Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. While Kotlin callbacks are [single-shot by default](https://medium.com/@elizarov/callbacks-and-kotlin-flows-2b53aa2525cf), [delimited continuations](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) and reentrant or "multi-shot" delimited continuations [can also be implemented](https://gist.github.com/elizarov/ddee47f927dda500dc493e945128d661) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
 
 ## Ideal API (WIP)
 
