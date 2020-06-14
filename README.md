@@ -503,7 +503,15 @@ val f2 = f1(y to 2).also { println(it) } // Prints: (x + y * z)(x=1)(y=2)
 val f3 = f2(z to 3).also { println(it) } // Prints: 7
 ```
 
-On the last line, all variables in the expression are bound, and instead of returning a `Composition`, Kotlin∇ evaluates the function, returning a constant. In the following section, we describe how evaluation works.
+On the last line, all variables in the expression are bound, and instead of returning a `Composition`, Kotlin∇ evaluates the function, returning a constant. Alternatively, if `EAGER` mode is enabled, each invocation is applied as early as possible:
+
+```
+val f1 = f0(x to 1).also { println(it) } // Prints: 1 + y * z
+val f2 = f1(y to 2).also { println(it) } // Prints: 1 + 2 * z
+val f3 = f2(z to 3).also { println(it) } // Prints: 7
+```
+
+In the following section, we describe how the `evaluate()` function works.
 
 #### Algebraic data types
 
