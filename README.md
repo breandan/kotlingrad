@@ -488,11 +488,10 @@ In its current form, Kotlin∇ takes a "shallow embedding" approach. Similar to 
 ```kotlin
 var EAGER = false
 override operator fun invoke(newBindings: Bindings<X>): SFun<X> =
-    Composition(this, newBindings)
-      .run { if (bindings.complete || EAGER) evaluate() else this }
+    Composition(this, newBindings).run { if (bindings.complete || EAGER) evaluate() else this }
 ```
 
-If `bindings` are `complete`, this indicates there are no unbound variables left in the expression (implementation omitted for brevity), meaning the we can evaluate the expression to obtain a numerical result. Suppose we are given the following user code:
+If `bindings` are `complete`, this means there are no unbound variables left in the expression (implementation omitted for brevity), and we can evaluate the expression to obtain a numerical result. Suppose we are given the following user code:
 
 ```kotlin
 val x = Var()
