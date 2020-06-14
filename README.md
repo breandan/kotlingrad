@@ -447,12 +447,12 @@ interface Group<T: Group<T>> {
 }
 ```
 
-Here, we specify a recursive type bound using a method known as [F-bounded quantification](http://staff.ustc.edu.cn/~xyfeng/teaching/FOPL/lectureNotes/CookFBound89.pdf) to ensure that operations return the concrete type variable `T`, rather than something more abstract like `Group`. Imagine a class `Expr` which has implemented `Group`. It can be used as follows:
+Here, we specify a recursive type bound using a method known as [F-bounded quantification](http://staff.ustc.edu.cn/~xyfeng/teaching/FOPL/lectureNotes/CookFBound89.pdf) to ensure that operations return the concrete type variable `T`, rather than something more abstract like `Group`. Imagine a class `Fun` which has implemented `Group`. It can be used as follows:
 
 ```kotlin
 fun <T: Group<T>> cubed(t: T): T = t * t * t
 
-fun <E: Expr<E>> twiceExprCubed(e: E): E = cubed(e) + cubed(e)
+fun <E: Fun<E>> twiceFunCubed(e: E): E = cubed(e) + cubed(e)
 ```
 
 Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html), which are evaluated using a [fixed precedence](https://kotlinlang.org/docs/reference/grammar.html#precedence). In the current version of Kotlin∇, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
@@ -564,25 +564,25 @@ Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#sm
 [Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allow us to convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlingrad.kt) without requiring subclasses or inheritance.
 
 ```kotlin
-data class Const<T: Group<T>>(val number: Double) : Expr()
-data class Sum<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
-data class Prod<T: Group<T>>(val e1: Expr, val e2: Expr) : Expr()
+data class Const<T: Group<T>>(val number: Double) : Fun()
+data class Sum<T: Group<T>>(val e1: Fun, val e2: Fun) : Fun()
+data class Prod<T: Group<T>>(val e1: Fun, val e2: Fun) : Fun()
 
-class Expr<T: Group<T>>: Group<Expr<T>> {
-  operator fun plus(addend: Expr<T>) = Sum(this, addend)
+class Fun<T: Group<T>>: Group<Fun<T>> {
+  operator fun plus(addend: Fun<T>) = Sum(this, addend)
   
-  operator fun times(multiplicand: Expr<T>) = Prod(this, multiplicand)
+  operator fun times(multiplicand: Fun<T>) = Prod(this, multiplicand)
 }
 
 object DoubleContext {
-  operator fun Number.times(expr: Expr<Double>) = Const(toDouble()) * expr
+  operator fun Number.times(expr: Fun<Double>) = Const(toDouble()) * expr
 }
 ```
 
-Now, we can use the context to define another extension, `Expr.multiplyByTwo`, which computes the product inside a `DoubleContext`, using the operator overload we defined above:
+Now, we can use the context to define another extension, `Fun.multiplyByTwo`, which computes the product inside a `DoubleContext`, using the operator overload we defined above:
 
 ```kotlin
-fun Expr<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` operator in DoubleContext
+fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` operator in DoubleContext
 ```
 
 Extensions can also be defined in another file or context and imported on demand.
