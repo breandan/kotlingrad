@@ -481,17 +481,17 @@ fun <T: Fun<T>> mlp(p1: VFun<T, D3>, p2: MFun<T, D3, D3>, p3: T) =
 
 #### Multi-stage programming
 
-Kotlin∇ uses [operator overloading](#operator-overloading) in the host language to first construct a [dataflow graph](#dataflow-graphs), but performs evaluation lazily. In doing so, Kotlin∇ implements a form of "multi-stage programming", or *staging*. Multi-stage programming is a metaprogramming technique from the [ML community](http://ocamllabs.io/iocamljs/staging.html), which enables type-safe runtime code generation and compilation. More recently, this technique has been put to effective use for [compiling embedded DSLs](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf) similar to Kotlin∇.
+Kotlin∇ uses [operator overloading](#operator-overloading) in the host language to first construct a [dataflow graph](#dataflow-graphs), but performs evaluation lazily. This a form of "multi-stage programming", or *staging*, a metaprogramming technique from the [ML community](http://ocamllabs.io/iocamljs/staging.html), which enables type-safe runtime code translation and compilation. More recently, staging has been put to effective use for [compiling embedded DSLs](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf) similar to Kotlin∇.
 
 In its current form, Kotlin∇ takes a "shallow embedding" approach. Similar to an [interpreter](https://en.wikipedia.org/wiki/Interpreter_pattern), it adheres closely to the user-defined program and does not perform a high degree of code specialization or rewriting for optimization purposes. Unlike an interpreter, it postpones evaluation until all free variables in an expression have been bound. Consider the following snippet, which decides when to evaluate an expression:
 
 ```kotlin
 var EAGER = false
-operator fun invoke(newBindings: Bindings<X>): SFun<X> =
+operator fun invoke(newBindings: Bindings<X>): Fun<X> =
     Composition(this, newBindings).run { if (bindings.complete || EAGER) evaluate() else this }
 ```
 
-If `bindings` are `complete`, this means there are no unbound variables remaining (implementation omitted for brevity), and we can evaluate the expression to obtain a numerical result. Suppose we are given the following user code:
+If `bindings` are `complete`, this means there are no unbound variables remaining (implementation omitted for brevity), and we can evaluate the expression to obtain a numerical result. Suppose we have the following user code:
 
 ```kotlin
 val x = Var()
@@ -503,7 +503,7 @@ var f2 = f1(y to 2).also { println(it) } // Prints: (x + y * z)(x=1)(y=2)
 var f3 = f2(z to 3).also { println(it) } // Prints: 7
 ```
 
-On the last line, all variables in the expression are bound, and instead of returning a `Composition`, Kotlin∇ evaluates the function, returning a constant. Alternatively, if `EAGER` mode is enabled, each invocation is applied as early as possible:
+Once the last line is reached, all variables are bound, and instead of returning a `Composition`, Kotlin∇ evaluates the function, returning a constant. Alternatively, if `EAGER` mode is enabled, each invocation is applied as early as possible:
 
 ```kotlin
 EAGER = true
@@ -910,6 +910,11 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 ### Domain-Specific Languages
 
 * [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf)
+* [DSL Implementation Using Staging and Monads](https://dl.acm.org/doi/pdf/10.1145/331963.331975)
+* [Implicit Staging of EDSL Expressions: A Bridge between Shallow and Deep Embedding](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf)
+* [Deeply Reifying Running Code for Constructing a Domain-Specific Language](https://dl.acm.org/doi/pdf/10.1145/2972206.2972219)
+* [Scripting an IDE for EDSL awareness](https://ilyasergey.net/papers/groovy-dsl.pdf)
+* [Staged Abstract Interpreters](https://www.cs.purdue.edu/homes/rompf/papers/wei-oopsla19.pdf)
 
 ### Automated Testing
 
