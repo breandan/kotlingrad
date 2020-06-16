@@ -3,6 +3,7 @@
 
 # Kotlin∇: Type-safe Symbolic Differentiation for Kotlin
 
+[![Kotlin 1.3.72](https://img.shields.io/badge/Kotlin-1.3.72-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
 [![](https://jitpack.io/v/breandan/kotlingrad.svg)](https://jitpack.io/#breandan/kotlingrad)
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
@@ -481,9 +482,9 @@ fun <T: Fun<T>> mlp(p1: VFun<T, D3>, p2: MFun<T, D3, D3>, p3: T) =
 
 #### Multi-stage programming
 
-Kotlin∇ uses [operator overloading](#operator-overloading) in the host language to first construct a [dataflow graph](#dataflow-graphs), but performs evaluation lazily. This a form of "multi-stage programming", or *staging*, a metaprogramming technique from the [ML community](http://ocamllabs.io/iocamljs/staging.html), which enables type-safe runtime code translation and compilation. More recently, staging has been put to effective use for [compiling embedded DSLs](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf) similar to Kotlin∇.
+Kotlin∇ uses [operator overloading](#operator-overloading) in the host language to first construct a [dataflow graph](#dataflow-graphs), but evaluates the graph lazily. Called "multi-stage programming", or *staging*, this is a metaprogramming technique from the [ML community](http://ocamllabs.io/iocamljs/staging.html) which enables type-safe runtime code translation and compilation. More recently, staging has been put to effective use for [compiling embedded DSLs](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf) similar to Kotlin∇.
 
-In its current form, Kotlin∇ takes a "shallow embedding" approach. Similar to an [interpreter](https://en.wikipedia.org/wiki/Interpreter_pattern), it adheres closely to the user-defined program and does not perform a high degree of code specialization or rewriting for optimization purposes. Unlike an interpreter, it postpones evaluation until all free variables in an expression have been bound. Consider the following snippet, which decides when to evaluate an expression:
+In its current form, Kotlin∇ takes a "shallow embedding" approach. Similar to an [interpreter](https://en.wikipedia.org/wiki/Interpreter_pattern), it adheres closely to the user-defined program and does not perform much code specialization or rewriting for optimization purposes. Unlike an interpreter, it postpones evaluation until all free variables in an expression have been bound. Consider the following snippet, which decides when to evaluate an expression:
 
 ```kotlin
 var EAGER = false
