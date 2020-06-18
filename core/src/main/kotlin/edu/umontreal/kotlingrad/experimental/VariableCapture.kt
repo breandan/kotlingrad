@@ -33,6 +33,36 @@ fun main() {
   }
 }
 
+/**
+ * This follow code is a type-level encoding of the 3-element graded poset.
+ *
+ * For combination, i.e. any arithmetical operation:
+ *
+ *                |  x      y      z      xy      xz      yz      xyz
+ *            -------------------------------------------------------
+ *            x   |  x      xy     xz     xy      xz      xyz     xyz
+ *            y   |  xy     y      yz     xy      xyz     yz      xyz
+ *            z   |  xz     yz     z      xyz     xz      yz      xyz
+ *            xy  |  xy     xy     xyz    xy      xyz     xyz     xyz
+ *            xz  |  xz     xyz    xz     xyz     xz      xyz     xyz
+ *            yz  |  xyz    yz     yz     xyz     xyz     yz      xyz
+ *            xyz |  xyz    xyz    xyz    xyz     xyz     xyz     xyz
+ *
+ * Can be viewed as a Hasse Diagram: https://en.wikipedia.org/wiki/Hasse_diagram
+ *
+ * For application/invocation, where P is a constant:
+ *
+ *                |  x      y      z      xy      xz      yz      xyz
+ *            -------------------------------------------------------
+ *            x   |  P                    y       z               yz
+ *            y   |         P             x               z       xz
+ *            z   |                P              x       y       xy
+ *            xy  |                       P                       z
+ *            xz  |                               P               y
+ *            yz  |                                       P       x
+ *            xyz |                                               P
+ */
+
 open class X<P: Const<P, in Number>>(override val left: BiFn<*>,
                                      override val right: BiFn<*>,
                                      override val op: Op<P>): BiFn<P>(left, right, op) {
