@@ -5,6 +5,8 @@ package edu.umontreal.kotlingrad.experimental
 import guru.nidi.graphviz.*
 import guru.nidi.graphviz.attribute.*
 import guru.nidi.graphviz.attribute.Color.*
+import guru.nidi.graphviz.attribute.GraphAttr.*
+import guru.nidi.graphviz.attribute.Rank.RankDir.*
 import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Renderer
 import guru.nidi.graphviz.model.Factory.mutNode
@@ -228,7 +230,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
       is Special -> add(Label.of(this@SFun.toString()))
       is SComposition -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("SComp")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
+      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) } // add(Label.of("{{<In0>|<In1>}|${opCode()}|{<Out0>}}")) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
       is SConst<*> -> add(Label.of(this@SFun.toString()))
       else -> TODO(this@SFun.javaClass.toString())
@@ -555,11 +557,12 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
     graph(directed = true) {
       val color = if (DARKMODE) WHITE else BLACK
 
+
       edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
 
-      graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), TRANSPARENT.background()]
+      graph[Rank.dir(LEFT_TO_RIGHT), TRANSPARENT.background(), margin(0.0), Attributes.attr("compound", "true"), Attributes.attr("nslimit", "20")]
 
-      node[color, color.font(), Font.config("Helvetica", 20), Style.lineWidth(THICKNESS)]
+      node[color, color.font(), Font.config("JetBrains Mono", 20), Style.lineWidth(THICKNESS), Attributes.attr("shape", "Mrecord")]
 
       op()
     }.toGraphviz().render(format)
