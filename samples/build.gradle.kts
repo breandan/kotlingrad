@@ -1,7 +1,5 @@
 plugins {
-  idea
   application
-  kotlin("jvm")
   id("com.palantir.graal") version "0.6.0-74-g5306dc5"
 }
 
@@ -39,13 +37,6 @@ dependencies {
 //javafx.modules("javafx.controls", "javafx.swing")
 
 tasks {
-  compileKotlin {
-    kotlinOptions {
-      jvmTarget = JavaVersion.VERSION_1_8.toString()
-      languageVersion = "1.3"
-    }
-  }
-
   listOf(
     "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG",
     "physics.SinglePendulum", "VariableCapture", "LetsPlot", "ScalarDemo",
@@ -56,5 +47,9 @@ tasks {
       main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
       classpath = sourceSets["main"].runtimeClasspath
     }
+  }
+
+  test {
+    dependsOn("MatrixDemo", "VectorDemo", "VariableCapture")
   }
 }

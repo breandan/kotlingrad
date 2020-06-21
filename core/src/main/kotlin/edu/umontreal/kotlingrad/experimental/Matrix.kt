@@ -21,11 +21,12 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
-    MComposition(this, newBindings).run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
+    MComposition(this, newBindings)
+      .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
   operator fun invoke(): Mat<X, R, C> =
-    invoke(Bindings()).let {
+    MComposition(this, Bindings()).evaluate.let {
       try {
         it as Mat<X, R, C>
       } catch (e: ClassCastException) {
