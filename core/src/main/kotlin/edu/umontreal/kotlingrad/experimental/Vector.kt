@@ -21,17 +21,16 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
-    VComposition(this, newBindings).run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
+    VComposition(this, newBindings)
+      .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> =
-    invoke(Bindings()).let {
+    VComposition(this, Bindings()).evaluate.let {
       try {
         it as Vec<X, E>
       } catch (e: ClassCastException) {
-        show("before")
-        it.show("after")
-        e.printStackTrace()
+        show("before"); it.show("after")
         throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }
@@ -336,16 +335,22 @@ sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Na
 
 fun main() {
   var totalTime = 0L
-  for(i in 0..100) totalTime += measureTimeMillis {
-    F64Array(1000, 1000) { _, _ -> Math.random() }.let { it * it }
+  val m = 1000
+  val r = 100
+  repeat(r) {
+    totalTime += measureTimeMillis {
+      F64Array(m, m) { _, _ -> Math.random() }.let { it * it }
+    }
   }
 
-  println("simd: ${totalTime / 100.0}")
+  println("Avg simd: ${totalTime / r}ms")
   totalTime = 0L
 
-  for(i in 0..100) totalTime += measureTimeMillis {
-    List(1000 * 1000) { Math.random() }.map { it * it }
+  repeat(r) {
+    totalTime += measureTimeMillis {
+      List(m * m) { Math.random() }.map { it * it }
+    }
   }
 
-  println("KTX: ${totalTime / 100.0}")
+  println("Avg KTX: ${totalTime / r}ms")
 }

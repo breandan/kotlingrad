@@ -2,8 +2,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
-  idea
-  kotlin("jvm")
   `maven-publish`
 }
 
@@ -31,29 +29,6 @@ dependencies {
   testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:_")
   // Graphical libraries
   implementation("guru.nidi:graphviz-kotlin:_")
-}
-
-tasks {
-  val jvmTarget = JavaVersion.VERSION_1_8.toString()
-  compileKotlin {
-    kotlinOptions.jvmTarget = jvmTarget
-    kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
-  }
-  compileTestKotlin {
-    kotlinOptions.jvmTarget = jvmTarget
-  }
-  test {
-    minHeapSize = "1024m"
-    maxHeapSize = "4096m"
-    useJUnitPlatform()
-    testLogging {
-      events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT)
-      exceptionFormat = FULL
-      showExceptions = true
-      showCauses = true
-      showStackTraces = true
-    }
-  }
 }
 
 val fatJar by tasks.creating(Jar::class) {
