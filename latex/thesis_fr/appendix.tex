@@ -1,9 +1,9 @@
-\appendix
+\appendice
 \chapter{Type-safe differentiable programming}
 
-\section{Grammar}\label{sec:kg_grammar}
+\section{Grammaire}\label{sec:kg_grammar}
 
-Below is an approximately complete BNF grammar for Kotlin$\nabla$:
+Vous trouverez ci-dessous une grammaire BNF à peu près complète pour Kotlin$\nabla$ :
 
 \newcommand{\mor}{\ensuremath{\;\mid\;}}
 \newcommand{\code}[1]{\ensuremath{\text{\inline{#1}}}}
@@ -41,13 +41,13 @@ Below is an approximately complete BNF grammar for Kotlin$\nabla$:
 
 \section{Linear regression}\label{sec:lin_reg}
 
-\noindent Recall the matrix equation for linear regression (LR), where $\mathbf{X}: \mathbb{R}^{m \times n}$ and $\bm\Theta: \mathbb{R}^{n \times 1}$:
+\noindent Rappeler l'équation matricielle de la régression linéaire (LR), où $\mathbf{X} : \mathbb{R}^{m \times n}$ et $\bm\Theta : \mathbb{R}^{n \times 1}$ :
 %
 \begin{equation}\label{eq:lin_reg}
 \mathbf{\hat f}(\mathbf{X}; \bm\Theta) = \mathbf{X}\bm\Theta
 \end{equation}
 %
-Imagine we are given the following dataset:
+Imaginez que l'on nous donne l'ensemble de données suivant :
 %
 \begin{equation}
 \mathbf{X} =
@@ -69,7 +69,7 @@ y_m
 \end{bmatrix}
 \end{equation}
 %
-Our goal in ordinary least squares (OLS) LR is to minimize the loss, or error between the data and the model's prediction:
+Notre objectif en matière de moindres carrés ordinaires (OLS) LR est de minimiser la perte, ou l'erreur entre les données et la prédiction du modèle :
 %
 \begin{equation}
 \mathcal{L}(\mathbf{X}, \mathbf{Y}; \bm\Theta) = ||\mathbf{Y} - \mathbf{\hat f}(\mathbf{X}; \bm\Theta)||^2
@@ -79,22 +79,22 @@ Our goal in ordinary least squares (OLS) LR is to minimize the loss, or error be
 \bm\Theta^* = \underset{\bm\Theta}{\operatorname{argmin}}\mathcal{L}(\mathbf{X}, \mathbf{Y}; \bm\Theta)
 \end{equation}
 
-\subsection{Finite difference method}\label{sec:fdm}
+\subsection{Méthode des différences finies}\label{sec:fdm}
 
-First, we consider the scalar case, where $\mathbf{\hat f}(\mathbf{X}; \bm\Theta) = \hat f(x; \theta_2, \theta_1) = \theta_2 x + \theta_1$. Since $\mathbf{X}, \mathbf{Y}$ are considered to be fixed, we can rewrite $\mathcal{L}(\mathbf{X}, \mathbf{Y}; \bm\Theta)$ as simply:
+Tout d'abord, nous considérons le cas scalaire, où $\mathbf{\hat f}(\mathbf{X} ; \bm\Theta) = \hat f(x ; \theta_2, \theta_1) = \theta_2 x + \theta_1$. Puisque $\mathbf{X}, \mathbf{Y}$ sont considérés comme fixes, nous pouvons réécrire $\mathcal{L}(\mathbf{X}, \mathbf{Y} ; \bm\Theta)$ aussi simplement :
 %
 \begin{equation}
 \mathcal{L}(\bm\Theta) = \mathcal{L}(\theta_2, \theta_1) = \frac{1}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))^2
 \end{equation}
 %
-To find the minimizer of $\mathcal{L}(\bm\Theta)$, we need $\nabla_{\bm\Theta}\mathcal{L} = \lbrack \frac{\partial\mathcal{L}}{\partial \theta_2}, \frac{\partial\mathcal{L}}{\partial \theta_1}\rbrack$. There are various ways to compute this. First, let's see FDM with centered differences:
+Pour trouver le minimiseur de $\mathcal{L}(\bm\Theta)$, nous avons besoin de $\nabla_{\bm\Theta}\mathcal{L} = \lbrack \frac{\partial\mathcal{L}}{\partial \theta_2}, \frac{\partial\mathcal{L}{\partial \theta_1}\rbrack$. Il y a plusieurs façons de calculer cela. Tout d'abord, voyons les FDM avec des différences centrées :
 %
 \begin{align}
 \frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=1}^m\left(y_i - \left(\theta_2 x_i + \theta_1 + h\right)\right)^2 - \sum_{i=1}^m\left(y_i - \left(\theta_2 x_i + \theta_1 - h\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(y_i - \left(\theta_2 x_i + \theta_1 + h\right)\right)^2 - \left(y_i - \left(\theta_2 x_i + \theta_1 - h\right)\right)^2 \label{eq:dL_dtheta0} \\
 \frac{\partial\mathcal{L}}{\partial \theta_2} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{\sum_{i=1}^m\left(y_i - \left((\theta_2 + h) x_i + \theta_1\right)\right)^2 - \sum_{i=1}^m\left(y_i - \left(\left(\theta_2 - h\right) x_i + \theta_1\right)\right)^2}{2hm} \\ & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(y_i - \left(\left(\theta_2 + h\right) x_i + \theta_1\right)\right)^2 - \left(y_i - \left(\left(\theta_2 - h\right) x_i + \theta_1\right)\right)^2 \label{eq:dL_dtheta1}
 \end{align}
 %
-Using computer algebra, the above equations can be simplified considerably:
+En utilisant l'algèbre informatique, les équations ci-dessus peuvent être considérablement simplifiées :
 %
 \begin{align}
 \frac{\partial\mathcal{L}}{\partial \theta_1} & = \underset{h \rightarrow 0}{\operatorname{lim}} \frac{1}{2hm}\sum_{i=1}^m\left(4h ( \theta_1 +  \theta_2 x_i - y_i)\right) \tag{\autoref{eq:dL_dtheta0} \href{https://www.wolframalpha.com/input/?i=(y_i-((\%CE\%B8_2\%2Bh)x_i\%2B\%CE\%B8_1))\%5E2-(y_i-((\%CE\%B8_2-h)x_i\%2B\%CE\%B8_1))\%5E2}{simplified}} \\
@@ -108,9 +108,9 @@ Using computer algebra, the above equations can be simplified considerably:
 %\item[] \autoref{eq:dL_dtheta1}: \href{}
 %\end{enumerate}
 
-\subsection{Partial differentiation}
+\subsection{Différenciation partielle}
 
-\noindent Alternatively, we can calculate the partials analytically, by applying the chain rule:
+\noindent Alternativement, nous pouvons calculer les partiels analytiquement, en appliquant la règle de la chaîne :
 %
 \begin{align}
 \frac{\partial\mathcal{L}}{\partial \theta_1} & = \frac{\partial}{\partial \theta_1}\frac{1}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))^2 \\ & = \frac{1}{m}\sum_{i=1}^m 2 (y_i - (\theta_2 x_i + \theta_1))\frac{\partial}{\partial \theta_1}(y_i - (\theta_2 x_i + \theta_1)) \\ & = \frac{2}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))(-1) \\ & = \boxed{\frac{2}{m}\sum_{i=1}^m(\theta_2 x_i + \theta_1 - y_i)}
@@ -120,7 +120,7 @@ Using computer algebra, the above equations can be simplified considerably:
 \frac{\partial\mathcal{L}}{\partial \theta_2} & = \frac{\partial}{\partial \theta_2}\frac{1}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))^2 \\ & = \frac{1}{m}\sum_{i=1}^m 2(y_i - (\theta_2 x_i + \theta_1)) \frac{\partial}{\partial \theta_2}(y_i - (\theta_2 x_i + \theta_1)) \\ & = \frac{2}{m}\sum_{i=1}^m(y_i - (\theta_2 x_i + \theta_1))(-x_i) \\ & = \boxed{\frac{2}{m}\sum_{i=1}^m(x_i)(\theta_2 x_i + \theta_1 - y_i)}
 \end{align}
 %
-Notice how analytical differentiation gives us the same answer as the \hyperref[sec:fdm]{finite difference method} (this is not by accident), with much less algebra. We can rewrite these two solutions in gradient form, i.e. as a column vector of partial derivatives:
+Remarquez comment la différenciation analytique nous donne la même réponse que la \hyperref[sec:fdm]{méthode de la différence définie} (ce n'est pas un hasard), avec beaucoup moins d'algèbre. Nous pouvons réécrire ces deux solutions sous forme de gradient, c'est-à-dire comme un vecteur colonne de dérivées partielles :
 %
 \begin{equation}
 \nabla_{\bm\Theta}\mathcal{L} =
@@ -135,19 +135,19 @@ Notice how analytical differentiation gives us the same answer as the \hyperref[
 
 \subsection{Matrix solution}\label{sec:linreg_matrix_sol}
 
-Having reviewed the scalar procedure for LR, let us now return to the general form of $\mathcal L(\bm\Theta)$. Matrix notation allows us to simplify the loss considerably:
+Après avoir passé en revue la procédure scalaire pour LR, revenons maintenant à la forme générale de $\mathcal L(\bm\Theta)$. La notation matricielle nous permet de simplifier considérablement la perte :
 %
 \begin{align}
 \mathcal L(\bm\Theta) & = \frac{1}{m} (\mathbf Y - \mathbf X \bm\Theta)^\intercal(\mathbf Y - \mathbf X \bm\Theta) \\ &= \frac{1}{m} (\mathbf Y^\intercal \mathbf Y - \mathbf Y^\intercal \mathbf X \bm\Theta - \bm\Theta^\intercal \mathbf X^\intercal \mathbf Y + \bm\Theta^\intercal \mathbf X^\intercal \mathbf X \bm\Theta) \\ &= \frac{1}{m} (\mathbf Y^\intercal \mathbf Y - 2 \bm\Theta^\intercal \mathbf X^\intercal \mathbf Y + \bm\Theta^\intercal \mathbf X^\intercal \mathbf X \bm\Theta)
 \end{align}
 %
-Matrix notation allows us to derive the gradient and requires far less algebra:
+La notation matricielle nous permet de dériver le gradient et nécessite beaucoup moins d'algèbre :
 %
 \begin{align}
 \nabla_{\bm\Theta}\mathcal L(\bm\Theta) & = \frac{1}{m} (\nabla_{\bm\Theta}\mathbf Y^\intercal \mathbf Y - 2 \nabla_{\bm\Theta} \bm\Theta^\intercal \mathbf X^\intercal \mathbf Y + \nabla_{\bm\Theta}\bm\Theta^\intercal \mathbf X^\intercal \mathbf X \bm\Theta) \\ & = \frac{1}{m} ( 0 - 2\mathbf{X}^\intercal \mathbf Y + 2 \mathbf{X}^\intercal \mathbf X \bm\Theta ) \\ & = \boxed{\frac{2}{m} (\mathbf{X}^\intercal \mathbf X \bm\Theta - \mathbf{X}^\intercal \mathbf Y)}
 \end{align}
 %
-For completeness, and to convince ourselves the matrix solution is indeed the same:
+Pour être complet, et pour nous en convaincre, la solution matricielle est en effet la même :
 %
 \begin{align}
 & = \frac{2}{m}\left(
@@ -206,33 +206,33 @@ m \theta_1 + \sum_{i=1}^{m}\theta_2x_i \\
 \end{bmatrix} = \nabla_{\bm\Theta}\mathcal{L}(\bm\Theta)}
 \end{align}
 %
-Notice how we recover the same solution obtained from partial differentiation and finite difference approximation, albeit in a more compact form. For a good introduction to matrix calculus, the textbook by \citet{magnus2019matrix} is an excellent guide, of which \citet{petersen2012matrix} offer a review of important identities.
+Remarquez comment nous récupérons la même solution obtenue par différenciation partielle et approximation par différence finie, bien que sous une forme plus compacte. Pour une bonne introduction au calcul matriciel, le manuel de \citet{magnus2019matrix} est un excellent guide, dont \citet{petersen2012matrix} offre une revue des identités importantes.
 
-OLS LR is a convex optimization problem. If $\mathbf X^\intercal \mathbf X$ is invertible, i.e. full-rank, this implies a unique solution $\bm\Theta^*$, which we can solve for directly by setting $\nabla_{\bm\Theta}\mathcal{L} = \mathbf{0}$:
+Les SLO LR sont un problème d'optimisation convexe. Si $\mathbf X^\intercal \mathbf X$ est inversible, c'est-à-dire de plein rang, cela implique une solution unique $\bm\Theta^*$, que nous pouvons résoudre directement en fixant $\nabla_{\bm\Theta}\mathcal{L} = \mathbf{0}$ :
 %
 \begin{align}\label{eq:norm_eq}
 \mathbf{0} & = \mathbf X^\intercal \mathbf X \bm \Theta - \mathbf X ^ \intercal \mathbf Y \\ \bm\Theta &= (\mathbf X^\intercal \mathbf X)^{-1}\mathbf X^\intercal\mathbf Y
 \end{align}
 %
-Solving this requires computing $(\mathbf{X}^\intercal\mathbf{X})^{-1}$ which is at least $\mathcal{O}(n^{2.373})$\citep{williams2014multiplying}, i.e. quadratic with respect to the number of input dimensions. Another way to find $\bm \Theta^*$ is by initializing $\bm\Theta \leftarrow \mathbf{0}$ and repeating the following procedure until convergence:
+Pour résoudre ce problème, il faut calculer $(\mathbf{X}^\intercal\mathbf{X})^{-1}$, soit au moins $\mathcal{O}(n^{2.373})$\citep{williams2014multiplying}, c'est-à-dire quadratique par rapport au nombre de dimensions d'entrée. Une autre façon de trouver $\bm \Theta^*$ consiste à initialiser $\bm\Theta \leftarrow \mathbf{0}$ et à répéter la procédure suivante jusqu'à la convergence :
 %
 \begin{equation}
 \bm\Theta' \leftarrow \bm\Theta - \alpha \nabla_{\bm\Theta}\mathcal L(\bm\Theta)
 \end{equation}
 %
-Typically, $\alpha \in [0.001, 0.1]$. Although hyperparameter tuning is required to find a suitable $\alpha$ (various improvements like Nesterov momentum~\citep{nesterov2013gradient} and quasi-Newton methods also help to accelerate convergence), this procedure is guaranteed to be computationally more efficient than matrix inversion for sufficiently large $m$ and $n$. In practice, the normal equation~\autoref{eq:norm_eq} is seldom used unless $m$ is very small.
+Généralement, $\alpha \in [0.001, 0.1]$. Bien qu'un réglage des hyperparamètres soit nécessaire pour trouver un $\alpha$ approprié (diverses améliorations comme le moment de Nesterov~\citep{nesterov2013gradient} et les méthodes quasi-Newton contribuent également à accélérer la convergence), cette procédure est garantie d'être plus efficace sur le plan des calculs que l'inversion de la matrice pour des $m$ et $n$ suffisamment importants. En pratique, l'équation normale~\autoref{eq:norm_eq} est rarement utilisée, sauf si $m$ est très petit.
 
-\section{Polynomial regression}\label{sec:poly_reg}
+\section{Régression polynomiale}\label{sec:poly_reg}
 
 \subsection{Univariate PR}
 
-Polynomial regression is a straightforward application of LR, in which we approximate the coefficients for each term in a scalar polynomial. Consider the univariate case:
+La régression polynomiale est une application simple de la LR, dans laquelle nous approximons les coefficients pour chaque terme dans un polynôme scalaire. Considérons le cas univarié :
 
 \begin{equation}
 y_i \,=\, \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \cdots + \beta_m x_i^m = \sum_{j=0}^{m} \beta_j x_i^{j}
 \end{equation}
 %
-We can rewrite this function in matrix form as follows:
+Nous pouvons réécrire cette fonction sous forme de matrice comme suit :
 %
 \begin{equation}
 \begin{bmatrix} y_1\\ y_2\\ y_3 \\ \vdots \\ y_n \end{bmatrix}= \begin{bmatrix} 1 & x_1 & x_1^2 & \dots & x_1^m \\ 1 & x_2 & x_2^2 & \dots & x_2^m \\ 1 & x_3 & x_3^2 & \dots & x_3^m \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & x_n & x_n^2 & \dots & x_n^m \end{bmatrix} \begin{bmatrix} \beta_0\\ \beta_1\\ \beta_2\\ \vdots \\ \beta_m \end{bmatrix}
@@ -242,21 +242,21 @@ We can rewrite this function in matrix form as follows:
 \mathbf{\hat f}(\mathbf{X}; \bm\beta) = \mathbf{X}\bm\beta
 \end{equation}
 %
-The resemblance to \autoref{eq:lin_reg} should be clear. To find $\bm\beta$ minimizing $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, we can use the same method described in \autoref{sec:linreg_matrix_sol}. Here, $\mathbf x, \mathbf y \in \mathbb R^n$, where $(x_i, y_i)$ correspond to scalar points in our dataset of size $n$. The matrix $\mathbf X \in \mathbb R^{n\times m}$ represents a \textit{feature map}, $\varphi: \mathbb R \rightarrow \mathbb R^m$, applied elementwise to each input value $x_i$ in our dataset, where $\varphi(x_i) = \left[1, x_i^2, \ldots, x_i^m\right]$.
+La ressemblance avec \autoref{eq:lin_reg} devrait être claire. Pour trouver $\bm\beta$ en minimisant $\mathcal L(\mathbf{X}, \mathbf{Y};\bm\beta)$, nous pouvons utiliser la même méthode décrite dans \autoref{sec:linreg_matrix_sol}. Ici, $\mathbf x, \mathbf y \in \mathbb R^n$, où $(x_i, y_i)$ correspondent à des points scalaires dans notre ensemble de données de taille $n$. La matrice $\mathbf X \in \mathbb R^{n \times m}$ représente une \textit{fonction map}, $\varphi : \mathbb R \rightarrow \mathbb R^m$, appliquée par éléments à chaque valeur d'entrée $x_i$ dans notre ensemble de données, où $\varphi(x_i) = \left[1, x_i^2, \ldots, x_i^m\right]$.
 
 \subsection{Multivariate PR}
 
-In multivariate PR, we need coefficients for all pairwise interactions between every variable and every other at every degree of the polynomial. Consider the bivariate case:
+Dans la RP multivariée, nous avons besoin de coefficients pour toutes les interactions par paires entre chaque variable et chaque autre à chaque degré du polynôme. Considérons le cas bivarié :
 %
 \begin{equation}
     y_i(\mathbf w, \mathbf x) = 1 + \beta_{\mathbf x} \mathbf x + \beta_{\mathbf w}\mathbf w + \beta_{\mathbf x\mathbf w} \mathbf x\mathbf w + \beta_{\mathbf x^2} \mathbf x^2 + \beta_{\mathbf w^2} \mathbf w^2 + \beta_{\mathbf x\mathbf w^2} \mathbf x\mathbf w^2 + \cdots + \beta_{\mathbf w^m\mathbf x^m} \mathbf w^m\mathbf x^m
 \end{equation}
 %
-This requires at least $(n \times m \times 2)$ terms. Minimizing $\bm\beta$ on this expression directly becomes intractable as the maximum degree $m$, dataset size $n$ and the number of variables grows.
+Cela nécessite au moins $(n \times m \times 2)$ termes. Minimiser $\bm\beta$ sur cette expression devient directement insoluble car le degré maximum $m$, la taille de l'ensemble de données $n$ et le nombre de variables augmentent.
 
 \subsection{Kernel trick}
 
-Instead of modeling $\mathbf X$ explicitly, let us construct a special function $k: \langle\varphi(\mathbf x), \varphi(\mathbf w)\rangle \mapsto \mathbb R$, where $k(\mathbf w, \mathbf x) = (1 + \mathbf w^\intercal \mathbf x)^2$. Called a \textit{kernel}, this function is part of a well-studied family of \textit{kernel functions}, $K: \Omega \times \Omega \rightarrow \mathbb R$ with some additional structure. Skimming over the details, a valid kernel preserves the inner product in our feature space. For simplicity, let $\mathbf w, \mathbf x \in \mathbb R^2$. Suppose we have a feature map $\varphi(\mathbf v) = \left[1, v_1^2, v_2^2, \sqrt{2} v_1, \sqrt{2} v_2, \sqrt{2} v_1 v_2\right]$. We observe:
+Au lieu de modéliser $\mathbf X$ explicitement, construisons une fonction spéciale $k : \langle\varphi(\mathbf x), \varphi(\mathbf w)\rangle \mapsto \mathbb R$, où $k(\mathbf w, \mathbf x) = (1 + \mathbf w^\intercal \mathbf x)^2$. Appelée \textit{noyau}, cette fonction fait partie d'une famille bien étudiée de \textit{fonctions-noyau}, $K : \Omega \times \Omega \rightarrow \mathbb R$ avec une structure supplémentaire. En écrémant les détails, un noyau valide préserve le produit intérieur dans notre espace de fonctionnalité. Pour plus de simplicité, laissez $\mathbf w, \mathbf x \in \mathbb R^2$. Supposons que nous ayons une carte des caractéristiques $\varphi(\mathbf v) = \left[1, v_1^2, v_2^2, \sqrt{2} v_1, \sqrt{2} v_2, \sqrt{2} v_1 v_2\right]$. Nous observons :
 
 \begin{align}\label{eq:feature_map}
     k(\mathbf w, \mathbf x) &= \varphi(\mathbf w) \varphi(\mathbf x) \\
@@ -266,24 +266,24 @@ Instead of modeling $\mathbf X$ explicitly, let us construct a special function 
     & = \boxed{1 + w_1^2 x_1^2 + w_2^2 x_2^2 + 2 w_1 x_1 + 2 w_2 x_2 + 2 w_1 w_2 x_1 x_2}
 \end{align}
 %
-By expanding the kernel $k(\mathbf w, \mathbf x)$ as follows:
+En développant le noyau $k(\mathbf w, \mathbf x)$ comme suit :
 %
 \begin{align}
 k(\mathbf w, \mathbf x) & = (1 + \mathbf w^\intercal \mathbf x)^2 = (1 + w_1 \, x_1 + w_2 \, x_2)^2 \\
 & = \boxed{1 + w_1^2 x_1^2 + w_2^2 x_2^2 + 2 w_1 x_1 + 2 w_2 x_2 + 2 w_1 w_2 x_1 x_2}
 \end{align}
 %
-We recover \autoref{eq:feature_map} without directly using $\varphi$. This is called the \textit{kernel trick}, a widely used technique in many areas of machine learning.
+Nous récupérons \autoref{eq:feature_map} sans utiliser directement $\varphi$. C'est ce qu'on appelle le \textit{kernel trick}, une technique largement utilisée dans de nombreux domaines de l'apprentissage machine.
 
 \chapter{Tools for reproducible robotics}
 
 \section{Useful Docker resources}
 
-The following resources have proven particularly helpful during the development of Duckietown's container infrastructure.
+Les ressources suivantes se sont avérées particulièrement utiles lors du développement de l'infrastructure de conteneurs de Duckietown.
 
 \subsection{\href{https://www.balena.io/}{Balena}}\label{subsec:balena}
 
-Balena is a very good source of base images for ARM devices. The best part of using Balena images, is that they can be rebuilt on x86 devices, such as a laptop or cloud server. Baked into every Balena image is a shim for the shell that will allow users to run ARM binaries on x86 from inside a container. To use this feature, the following \inline{Dockerfile} template is provided:
+Balena est une très bonne source d'images de base pour les appareils ARM. La meilleure utilisation des images Balena est qu'elles peuvent être reconstruites sur des appareils x86, tels qu'un ordinateur portable ou un serveur en nuage. Chaque image Balena contient une cale pour le shell qui permettra aux utilisateurs d'exécuter des binaires ARM sur x86 depuis l'intérieur d'un conteneur. Pour utiliser cette fonctionnalité, le modèle \inline{Dockerfile} suivant est fourni :
 %
 \begin{dockerlisting}
 FROM balena/BASE_IMAGE # e.g. raspberrypi3-python
@@ -293,7 +293,7 @@ RUN [ "cross-build-end" ]
 CMD <DEFAULT_START_COMMAND>
 \end{dockerlisting}
 %
-Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-build images.\hspace{-.08em}\footnote{\url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}} When running an ARM image, simply use the \inline{qemu-arm-static} binary as a custom entrypoint:
+Balena utilise \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} pour croiser les images.\hspace{-.08em}\footnote{\url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}} Lorsque vous exécutez une image ARM, utilisez simplement le binaire \inline{qemu-arm-static} comme point d'entrée personnalisé :
 %
 \begin{pclisting}
 ~$ docker run (*@\hl{--entrypoint=qemu-arm-static}@*) -it your/arm-image bash
@@ -301,7 +301,7 @@ Balena uses \href{https://www.qemu.org/}{QEMU}~\citep{bellard2005qemu} to cross-
 
 \subsection{\href{https://hub.docker.com/_/ros}{ROS Docker Images}}
 
-ROS.org builds nightly ARM and x86 images for robotics development. For each distribution, there are packages like \inline{core}, \inline{base}, \inline{perception} (including \href{https://opencv.org/}{OpenCV}), \inline{robot} and others.\vspace{10pt}
+ROS.org construit des images ARM et x86 nocturnes pour le développement de la robotique. Pour chaque distribution, il existe des paquets comme \inline{core}, \inline{base}, \inline{perception} (y compris \href{https://opencv.org/}{OpenCV}), \inline{robot} et autres.\vspace{10pt}
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{../figures/ros_docker_images.png}
@@ -309,11 +309,11 @@ ROS.org builds nightly ARM and x86 images for robotics development. For each dis
 
 \subsection{\href{https://blog.hypriot.com/}{Hypriot}}\label{subsec:hypriot}
 
-Hypriot, a base OS for RPi and other ARM devices, includes support for Docker straight out of the box. Hypriot is a lightweight Raspbian-based Linux distribution which \href{https://github.com/hypriot/image-builder-rpi}{builds} from the latest Raspberry Pi kernels and Raspbian releases.
+Hypriot, un OS de base pour RPi et autres dispositifs ARM, inclut le support de Docker dès sa sortie de la boîte. Hypriot est une distribution Linux légère basée sur Raspbian qui \href{https://github.com/hypriot/image-builder-rpi}{construit} à partir des derniers noyaux Pi de Raspberry et des dernières versions de Raspbian.
 
 \subsection{\href{https://www.piwheels.org/}{PiWheels}}
 
-Not all Python packages (especially if they wrap a native library) can be run on all platforms. One might be tempted to build some package from its sources (and in rare cases, they might need to do so). But there is a good chance the package has already been compiled for Raspberry Pi on PiWheels. By using the following command (either in a \inline{Dockerfile} or via the CLI), various Python packages may be installed, e.g. \inline{opencv-python}:
+Tous les paquets Python (surtout s'ils contiennent une bibliothèque native) ne peuvent pas être exécutés sur toutes les plates-formes. On pourrait être tenté de construire certains paquets à partir de leurs sources (et dans de rares cas, ils pourraient avoir besoin de le faire). Mais il y a de fortes chances que le paquet ait déjà été compilé pour Raspberry Pi sur PiWheels. En utilisant la commande suivante (soit dans un \inline{Dockerfile} ou via le CLI), divers paquets Python peuvent être installés, par exemple \inline{opencv-python} :
 %
 \begin{rpilisting}
 ~$ pip install opencv-python --index-url https://www.piwheels.org/simple
@@ -321,25 +321,25 @@ Not all Python packages (especially if they wrap a native library) can be run on
 
 \subsection{\href{https://hub.docker.com/}{Docker Hub}}\label{subsec:docker_hub}
 
-Docker Hub is the central repository for Docker Images. Unless a separate registry has been configured, whenever users pull a Docker image tag, it will first query the Docker Hub for a matching image. The Docker Hub can be used to upload Docker images, and configure automated builds from GitHub (with a two hour build timeout). Docker Hub does not support layer caching of any kind, so the build will always take a fixed amount of time.\vspace{10pt}
+Docker Hub est le dépôt central de Docker Images. À moins qu'un registre séparé n'ait été configuré, chaque fois qu'un utilisateur extrait une étiquette d'image du Docker, il interrogera d'abord le Docker Hub pour trouver une image correspondante. Le Docker Hub peut être utilisé pour télécharger des images de Docker et configurer des builds automatiques à partir de GitHub (avec un délai de build de deux heures). Le Docker Hub ne prend pas en charge la mise en cache des couches, de sorte que la compilation prendra toujours un temps fixe.
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{../figures/docker_hub_autobuild.png}
 \end{centering}
 %
-Docker Hub auto-builds support linking a \inline{Dockerfile} in a GitHub repository, and whenever that \inline{Dockerfile} changes, the Docker image will be updated.
+Le Docker Hub se construit automatiquement et prend en charge la liaison d'un \inline{Dockerfile} dans un dépôt GitHub, et chaque fois que ce \inline{Dockerfile} change, l'image du Docker est mise à jour.
 
-The Docker Hub also has features for configuring repository links and build triggers. These will automatically rebuild downstream Docker images whenever some event occurs.\vspace{10pt}
+Le Docker Hub dispose également de fonctions permettant de configurer les liens vers les dépôts et les déclencheurs de construction. Ceux-ci reconstruiront automatiquement les images Docker en aval chaque fois qu'un événement se produira.\vspace{10pt}
 %
 \begin{centering}
 \includegraphics[width=\textwidth]{../figures/docker_hub_repo_links.png}
 \end{centering}
 %
-Repository links allow support chaining builds together across Docker Hub repositories. Whenever a linked repository is updated, the dependent image will be rebuilt.
+Les liens vers les dépôts permettent de chaîner les constructions de support entre les dépôts de Docker Hub. Chaque fois qu'un dépôt lié est mis à jour, l'image dépendante est reconstruite.
 
 \subsection{\href{https://cloud.docker.com/}{Docker Cloud}}
 
-Docker Cloud is a Docker registry which is fully integrated with the Docker Hub. Builds are automatically published from Docker Cloud to Docker Hub. Notifications for email and Slack, as well as longer build timeouts (up to 4-hours) are supported. Docker Cloud also supports more advanced build options than Docker Hub, such as a configurable build context and cache settings.\\
+Docker Cloud est un registre de dockers qui est entièrement intégré au Docker Hub. Les constructions sont automatiquement publiées de Docker Cloud vers Docker Hub. Les notifications par e-mail et Slack, ainsi que les délais de publication plus longs (jusqu'à 4 heures) sont pris en charge. Docker Cloud prend également en charge des options de compilation plus avancées que Docker Hub, comme un contexte de compilation configurable et des paramètres de cache.
 
 \begin{centering}
 \includegraphics[width=\textwidth]{../figures/docker_cloud.png}

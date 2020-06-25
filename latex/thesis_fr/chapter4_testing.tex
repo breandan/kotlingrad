@@ -1,21 +1,21 @@
 \chapter{Testing intelligent systems}\label{ch:difftest}
 
 \setlength{\epigraphwidth}{0.80\textwidth}
-\epigraph{``If we use, to achieve our purposes, a mechanical agency with whose operation we cannot efficiently interfere\ldots then we had better be quite sure the purpose put into the machine is the purpose which we really desire.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \href{https://www.ias.ac.in/article/fulltext/reso/004/01/0080-0088}{\textit{Some moral and technical consequences of automation}}~\end{flushright}}
+\epigraph{Si nous utilisons, pour atteindre nos objectifs, un organisme mécanique dont nous ne pouvons pas interférer efficacement avec le fonctionnement des points, nous devons être sûrs que l'objectif mis dans la machine est celui que nous désirons vraiment.''}{\begin{flushright}--Norbert \citet{wiener1960some}, \href{https://www.ias.ac.in/article/fulltext/reso/004/01/0080-0088}{\textit{\conséquences morales et techniques de l'automatisation}}~\end{flushright}}
 
-Today's deep neural networks are capable of learning a broad range of functions, but have specific weaknesses. Training neural networks which can robustly transfer to new domains where the training and test distributions are highly dissimilar poses a significant challenge. These models are often susceptible to failure when presented with carefully crafted inputs. However, the same gradient-based optimization techniques used for training neural networks can also be exploited to probe their failure modes.
+Les réseaux neuronaux profonds actuels sont capables d'apprendre un large éventail de fonctions, mais présentent des faiblesses spécifiques. La formation des réseaux neuronaux qui peuvent être transférés de manière robuste vers de nouveaux domaines où les distributions de formation et de test sont très dissemblables pose un défi important. Ces modèles sont souvent susceptibles d'échouer lorsqu'ils sont présentés avec des entrées soigneusement élaborées. Cependant, les mêmes techniques d'optimisation basées sur les gradients utilisées pour l'entraînement des réseaux neuronaux peuvent également être exploitées pour sonder leurs modes de défaillance.
 
-In software engineering, techniques for software testing are becoming increasingly automated and general-purpose. Tests help prevent regressive behavior and are a form of specification in which the developer communicates the intended result of running a program. While critically important, tests are often cumbersome to implement. Recent techniques in automated testing have enabled developers to write fewer tests with higher coverage.
+Dans le domaine du génie logiciel, les techniques de test des logiciels sont de plus en plus automatisées et polyvalentes. Les tests aident à prévenir les comportements régressifs et constituent une forme de spécification dans laquelle le développeur communique le résultat escompté de l'exécution d'un programme. Bien qu'ils soient d'une importance capitale, les tests sont souvent lourds à mettre en œuvre. Les techniques récentes de tests automatisés ont permis aux développeurs d'écrire moins de tests avec une couverture plus importante.
 
-In this chapter we propose a novel property-based testing (PBT) algorithm for differentiable programs, and show our method empirically improves sample efficiency over na\"ive probabilistic testing, as measured by its ability to detect a greater proportion of errors violating test constraints in a given budget. Our algorithm can be used to both identify trust region boundaries, and attack a pretrained model given input-output access and a few samples from the training distribution. We further explore the relationship between adversarial methods in machine learning and PBT, and show how adversarial learning can be seen as an extension to a PBT technique known as metamorphic testing (MT).
+Dans ce chapitre, nous proposons un nouvel algorithme de test basé sur les propriétés (PBT) pour les programmes différenciables, et nous montrons que notre méthode améliore empiriquement l'efficacité de l'échantillon par rapport aux tests probabilistes natifs, telle que mesurée par sa capacité à détecter une plus grande proportion d'erreurs violant les contraintes du test dans un budget donné. Notre algorithme peut être utilisé à la fois pour identifier les limites des régions de confiance, et pour attaquer un modèle préformé étant donné l'accès entrée-sortie et quelques échantillons de la distribution de formation. Nous explorons plus avant la relation entre les méthodes antagonistes dans l'apprentissage machine et le PBT, et montrons comment l'apprentissage antagoniste peut être considéré comme une extension d'une technique PBT connue sous le nom de test métamorphique (MT).
 
 \section{Background}
 
-In the following sections, we introduce a series of software testing methodologies, in decreasing order of cognitive complexity. We hypothesize the subsequent methods allow developers to attain the same level of assurance with progressively lower effort.
+Dans les sections suivantes, nous présentons une série de méthodologies de test de logiciels, par ordre décroissant de complexité cognitive. Nous émettons l'hypothèse que les méthodes suivantes permettent aux développeurs d'atteindre le même niveau d'assurance avec un effort progressivement moindre.
 
-\subsection{Unit testing}
+\subsection{Tests unitaires}
 
-\noindent In traditional unit testing, each subroutine is accompanied by a single test:
+\noindent Dans les tests unitaires traditionnels, chaque sous-programme est accompagné d'un seul test:
 %
 \begin{kotlinlisting}
 fun unitTest(subroutine: (Input) -> Output) {
@@ -26,11 +26,11 @@ fun unitTest(subroutine: (Input) -> Output) {
 }
 \end{kotlinlisting}
 %
-Unit testing is an effective to validate one's belief about pre- and post-conditions. The trouble is, someone needs to write a bunch of test cases. Side effects include reduced agility, aversion to refactoring or discarding prior work when tests become obsolete.
+Les tests unitaires sont efficaces pour valider les convictions d'une personne sur les conditions préalables et postérieures. Le problème, c'est que quelqu'un doit rédiger un tas de cas de tests. Les effets secondaires comprennent une agilité réduite, une aversion pour le remaniement ou le rejet de travaux antérieurs lorsque les tests deviennent obsolètes.
 
-\subsection{Integration testing}
+\subsection{Tests d'intégration}
 
-\noindent In integration testing, we are more concerned about the overall behavior of a program, rather than the specific behavior of its subroutines. Consider the following example:
+\noindent Dans les tests d'intégration, nous sommes plus préoccupés par le comportement global d'un programme, plutôt que par le comportement spécifique de ses sous-programmes. Prenons l'exemple suivant:
 
 \begin{kotlinlisting}
 fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -> Boolean) =
@@ -44,13 +44,13 @@ fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -
     }
 \end{kotlinlisting}
 %
-With this strategy, there are fewer tests to write down, since we only care about end-to-end behavior. Integration testing simply checks a program for terminating exceptions and simple post conditions. For this reason, it is often too coarse-grained.
+Avec cette stratégie, il y a moins de tests à écrire, puisque nous ne nous soucions que du comportement de bout en bout. Les tests d'intégration vérifient simplement un programme pour mettre fin aux exceptions et aux simples conditions de post. Pour cette raison, il est souvent trop grossier.
 
-%For simplicity, in the following sections, we will only consider examples of programs which are pure functions, i.e. which have no external state and produce no side effects.
+Pour simplifier, dans les sections suivantes, nous ne considérerons que des exemples de programmes qui sont de pures fonctions, c'est-à-dire qui n'ont pas d'état externe et ne produisent pas d'effets secondaires.
 
 \subsection{Fuzz testing}
 
-Fuzz testing is an automated testing methodology which generates random inputs to test a given program. For example, consider the following test:
+Le test Fuzz est une méthodologie de test automatisée qui génère des entrées aléatoires pour tester un programme donné. Prenons par exemple le test suivant:
 %
 \begin{kotlinlisting}
 fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
@@ -60,11 +60,11 @@ fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
     }
 \end{kotlinlisting}
 %
-The trouble is, we need an \textit{oracle}, an often unreasonable assumption. This is known as the \textit{test oracle problem}. But even if we had an oracle, since the space of inputs is often large, it can take a long time to find an output where they disagree. Since a single call to \inline{program(i)} can be quite expensive in practice, this method can also be quite inefficient.
+Le problème, c'est qu'il nous faut un \textit{oracle}, une hypothèse souvent déraisonnable. C'est ce qu'on appelle le problème de l'oracle. Mais même si nous avions un oracle, puisque l'espace des entrées est souvent grand, il peut falloir beaucoup de temps pour trouver une sortie où ils ne sont pas d'accord. Comme un seul appel à \inline{program(i)} peut être assez coûteux en pratique, cette méthode peut également être assez inefficace.
 
-\subsection{Property-based testing}\label{subsec:property-based-testing}
+\subsection{Property-based testing}\label{subsec:property-based testing}
 
-Property-based testing~\citep{fink1997property} (PBT) attempts to mitigate the test oracle problem by using \textit{properties}. It consists of two phases, searching and shrinking. Users specify a property over all outputs and the test fails if a counterexample can be found:
+Test basé sur la propriété~\citep{fink1997property} (PBT) tente d'atténuer le problème de l'oracle de test en utilisant les \textit{propriétés}. Il se compose de deux phases, la recherche et la réduction. Les utilisateurs spécifient une propriété sur toutes les sorties et le test échoue si un contre-exemple peut être trouvé:
 %
 \begin{kotlinlisting}
 fun <I, O> gen(program: (I) -> O, property: (O) -> Boolean, rand: () -> I) =
@@ -78,7 +78,7 @@ fun <I, O> gen(program: (I) -> O, property: (O) -> Boolean, rand: () -> I) =
     }
 \end{kotlinlisting}
 %
-Roughly speaking, \inline{shrink} attempts to minimize the counterexample.
+En gros, \inline{shrink} tente de minimiser le contre-exemple.
 %
 \begin{kotlinlisting}
 tailrec fun <I, O> shrink(failure: I, program: (I) -> O, property: (O) -> Boolean): I =
@@ -86,7 +86,7 @@ tailrec fun <I, O> shrink(failure: I, program: (I) -> O, property: (O) -> Boolea
     else shrink(decrease(failure), program, property) // Decrease until property holds
 \end{kotlinlisting}
 %
-For example, given a \inline{program: (Float) -> Any}, we might implement \inline{decrease} like so:
+Par exemple, dans le cas d'un programme \inline{program: (Float) -> Any}, nous pourrions implémenter \inline{decrease} comme ça:
 %
 \begin{kotlinlisting}
 fun decrease(failure: Float): Float = failure - failure / 2
@@ -94,7 +94,7 @@ fun decrease(failure: Float): Float = failure - failure / 2
 %
 \begin{figure}
 \begin{tikzpicture}
-\begin{axis}[title={Log errors between AD and SD on $f(x) = \frac{\sin(\sin(\sin(x))))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
+\begin{axis}[title={Erreurs de log entre AD et SD sur $f(x) = \frac{\sin(\sin(\sin(x)))}{x} + x\sin(x) + \cos(x) + x$}, width=0.95\textwidth, height=10cm, xlabel=$x$, ylabel=$\log_{10}(\Delta)$, legend pos=south east, align=center]
 \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/adsd_comparison.csv};
 \addlegendentry{$\Delta$(SD, AP) $\approx\Delta$(AD, IP)}
 \addplot table [mark=none, x index=0, y index=2, col sep=comma] {../data/adsd_comparison.csv};
@@ -103,32 +103,32 @@ fun decrease(failure: Float): Float = failure - failure / 2
 \addlegendentry{$\Delta$(FD, AP)}
 \end{axis}
 \end{tikzpicture}
-\caption{We compare numerical drift between AD and SD over a swollen expression using fixed precision and arbitrary precision (AP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute error. These results are consistent with the findings of ~\citet{laue2019equivalence}.\vspace{-10pt}}
+\caption{Nous comparons la dérive numérique entre AD et SD sur une expression gonflée en utilisant une précision fixe et une précision arbitraire (AP). AD et SD présentent toutes deux des erreurs relatives (c'est-à-dire l'une par rapport à l'autre) inférieures de plusieurs ordres de grandeur à leur erreur absolue. Ces résultats sont conformes aux conclusions de ~\citet{laue2019equivalence}.\vspace{-10pt}}
 \label{fig:pbt_comparison}
 \end{figure}
 %
-Consider \autoref{fig:pbt_comparison}, which portrays the log difference between various forms of computational differentiation (evaluated using standard 32-bit precision) and AP (computed to 30 significant figures).\hspace{-.08em}\footnote{To calculate AP, we symbolically derive the function and numerically evaluate it using \hyperref[sec:fdm]{finite difference approximation} and the MacLaurin series expansion of sine and cosine to arbitrary numerical precision.} Given two algorithms for calculating the derivative, a property-based test might check whether the error is bounded over all inputs.
+Considérons \autoref{fig:pbt_comparison}, qui représente la différence logarithmique entre diverses formes de différenciation informatique (évaluées avec une précision standard de 32 bits) et AP (calculée à 30 chiffres significatifs).\hspace{-.08em}\footnote{Pour calculer AP, nous dérivons symboliquement la fonction et l'évaluons numériquement en utilisant \hyperref[sec:fdm]{approximation par différence définie} et l'expansion en série de MacLaurin du sinus et du cosinus à une précision numérique arbitraire.} Étant donné les deux algorithmes de calcul de la dérivée, un test basé sur les propriétés pourrait vérifier si l'erreur est limitée sur toutes les entrées.
 
-The trouble is, what are the right properties to test? This requiring a lot of effort and domain-specific expertise. In addition, the user must specify a custom shrinker, which is unclear how to implement efficiently. What if there were a better way?
+Le problème est de savoir quelles sont les bonnes propriétés à tester. Cela demande beaucoup d'efforts et une expertise spécifique au domaine. En outre, l'utilisateur doit spécifier un rétrécisseur personnalisé, ce qui n'est pas clair quant à la manière de le mettre en œuvre efficacement. Et s'il y avait une meilleure façon de procéder?
 
 \subsection{Metamorphic testing}\label{subsec:metamorphic-testing}
 
-It is often the case we would like to test the behavior of a program without completely specifying its properties. Many naturally-occurring generative processes exhibit a kind of local invariance -- small changes to the input do not drastically change the output. We can exploit this property to design general-purpose fuzzing methods given just a few inputs and outputs. Metamorphic testing (MT) is an approach to property-based testing which addresses the test oracle problem and the challenge of cheaply discovering bugs in the low-data regime. It has been successfully applied in testing driverless cars~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} and other stateful deep learning systems~\citep{du2018deepcruiser}.
+Il arrive souvent que l'on veuille tester le comportement d'un programme sans en préciser complètement les propriétés. De nombreux processus générateurs naturels présentent une sorte d'invariance locale: de petites modifications de l'entrée ne changent pas radicalement la sortie. Nous pouvons exploiter cette propriété pour concevoir des méthodes de floutage à usage général en ne tenant compte que de quelques entrées et sorties. Le test métamorphique (MT) est une approche de test basée sur la propriété qui aborde le problème de l'oracle de test et le défi de découvrir à moindre coût des bogues dans le régime de données basses. Elle a été appliquée avec succès dans les tests de voitures sans conducteur~\citep{zhou2019metamorphic, pei2017deepxplore, tian2018deeptest} et d'autres systèmes d'apprentissage profond avec état~\citep{du2018deepcruiser}.
 
-First, let us consider the following concrete example, borrowed from \citet{tian2018deeptest}: suppose we have implemented a program which takes an image from a vehicle while driving, and predicts the simultaneous steering angle of the vehicle. Given a single image and the corresponding ground-truth steering angle from an oracle (e.g. a human driver or simulator), our program should preserve invariance under various image transformations, such as limited illumination changes, linear transformations or additive noise below a certain threshold. Intuitively, the steering angle should remain approximately constant, regardless of any single transformation or sequence of transformations applied to the original image which satisfy our chosen criteria. If not, this is a strong indication our program is not sufficiently robust and may not respond well to the sort of variability it may encounter in an operational setting.
+Examinons tout d'abord l'exemple concret suivant, emprunté à \citet{tian2018deepcruiser}: supposons que nous ayons mis en œuvre un programme qui prend une image d'un véhicule pendant la conduite, et prédit l'angle de braquage simultané du véhicule. Étant donné une seule image et l'angle de braquage correspondant de l'oracle (par exemple un conducteur humain ou un simulateur), notre programme devrait préserver l'invariance sous diverses transformations d'image, telles que des changements d'éclairage limités, des transformations linéaires ou un bruit additif en dessous d'un certain seuil. Intuitivement, l'angle de braquage doit rester approximativement constant, indépendamment de toute transformation ou séquence de transformations appliquée à l'image originale qui satisfont aux critères que nous avons choisis. Si ce n'est pas le cas, cela indique clairement que notre programme n'est pas suffisamment robuste et pourrait ne pas bien répondre au type de variabilité qu'il pourrait rencontrer dans un cadre opérationnel.
 
-Metamorphic testing can be expressed as follows: Given an oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, and a set of inputs $\mathbf X = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}$ and outputs $\mathbf Y = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, a metamorphic relation (MR) is a relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ where $z \geq 2$. In the simplest case, an MR is an equivalence relation $\mathcal R$, i.e.: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Leftrightarrow \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
+Les tests de métamorphose peuvent être exprimés comme suit: Étant donné un oracle $\mathbf P: \mathcal I \rightarrow \mathcal O$, et un ensemble d'entrées $\mathbf X = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}$ et de sorties $\mathbf Y = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$, une relation métamorphique (MR) est une relation $\mathcal R \subset \mathcal I^z \times \mathcal O^z$ où $z \geq 2$. Dans le cas le plus simple, une MR est une relation d'équivalence $\mathcal R$, c'est-à-dire: $\langle \mathbf x, \mathbf y, \mathbf x', \mathbf y' \rangle \in \mathcal R \Leftrightarrow \mathbf x \sim_{\mathcal R} \mathbf x' \Flèche gauche-droite \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x')$.
 
-Suppose our MR is $\forall \varphi \in \mathcal I: ||\mathbf\varphi|| \leq \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Given a program $\mathbf{\hat P}$ and a comparatively small set of inputs $\mathbf X$ and outputs $\mathbf Y$ from our oracle $\mathbf P$, the MR produces a set $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ on which to test $\mathbf{\hat P}$, without requiring corresponding outputs from $\mathbf P$. If we can show $\exists \mathbf x' \in \mathbf X' \mid \mathbf{\hat P}(\mathbf x') \not\approx \mathbf P(\mathbf x)$, this implies at least one of the following:
+Supposons que notre RM soit de $\forall \varphi \in \mathcal I: ||\mathbf\varphi|| \leq \varepsilon, \mathbf P(\mathbf x) \approx \mathbf P(\mathbf x' = \mathbf x + \varphi) \approx \mathbf y$. Étant donné un programme $\mathbf{\hat P}$ et un ensemble relativement petit d'entrées $\mathbf X$ et de sorties $\mathbf Y$ de notre oracle $\mathbf P$, le MR produit un ensemble $\mathbf X', |\mathbf X| \ll |\mathbf X'|$ sur lequel on peut tester $\mathbf{\hat P}$, sans exiger de sorties correspondantes de $\mathbf P$. Si nous pouvons montrer que $\exists \mathbf x' \in \mathbf X' \mid \mathbf{\hat P}(\mathbf x') \not\approx \mathbf P(\mathbf x)$, cela implique au moins l'un des éléments suivants:
 
 \begin{enumerate}
-\item $\langle \mathbf x, \mathbf P(\mathbf x), \mathbf x', \mathbf P(\mathbf x')\rangle \notin \mathcal R$, i.e. our assumptions were invalid
-\item $\mathbf{\hat P}(\mathbf x') \not\approx \mathbf{P}(\mathbf x')$, i.e. the program under test is unsound
+\item $\langle \mathbf x, \mathbf P(\mathbf x), \mathbf x', \mathbf P(\mathbf x')\rangle \notin \mathcal R$, c'est-à-dire que nos hypothèses étaient invalides
+\item $\mathbf{\hat P}(\mathbf x') \not\approx \mathbf{P}(\mathbf x')$, c'est-à-dire que le programme testé n'est pas sain
 \end{enumerate}
 %
-In either case, we have obtained useful information. If our assumptions were invalid, we can strengthen the invariant, $\mathcal R$, by removing the counterexample. Otherwise, we have detected an error and can adjust the program to ensure compliance -- both are useful outcomes.
+Dans les deux cas, nous avons obtenu des informations utiles. Si nos hypothèses n'étaient pas valables, nous pouvons renforcer l'invariant, $\mathcal R$, en supprimant le contre-exemple. Dans le cas contraire, nous avons détecté une erreur et pouvons ajuster le programme pour assurer la conformité - ces deux résultats sont utiles.
 
-Consider the following example of an MT which uses an equivalence-based MR:
+Considérons l'exemple suivant d'une MT qui utilise un MR basé sur l'équivalence:
 
 \begin{kotlinlisting}
 fun <I, O> mrTest(program: (I) -> O, mr: (I, O, I, O) -> Boolean, rand: () -> Pair<I, O>) =
@@ -143,7 +143,7 @@ fun <I, O> mrTest(program: (I) -> O, mr: (I, O, I, O) -> Boolean, rand: () -> Pa
     }
 \end{kotlinlisting}
 %
-The trouble is, generating valid transformations is a non-trivial exercise. We could try to generate random transformations until we find one which meets our criteria:
+Le problème est que la génération de transformations valables est un exercice non trivial. Nous pourrions essayer de générer des transformations aléatoires jusqu'à ce que nous en trouvions une qui réponde à nos critères:
 %
 \begin{kotlinlisting}
 fun <I, O> genTX(program: (I) -> O, mr: (I, O, I, O) -> Boolean, i: I, o: O): (I) -> I {
@@ -156,13 +156,13 @@ fun <I, O> genTX(program: (I) -> O, mr: (I, O, I, O) -> Boolean, i: I, o: O): (I
 }
 \end{kotlinlisting}
 
-But this would be very inefficient and depending on the type of input and output, is not guaranteed to terminate. We could handcraft a transformation, but this requires extensive domain knowledge. Instead, we should seek a more principled, computationally efficient and general purpose method of mutating an input in our dataset to discover invalid outputs.
+Mais cela serait très inefficace et, selon le type d'entrée et de sortie, n'est pas garanti de se terminer. Nous pourrions procéder à une transformation artisanale, mais cela nécessite une connaissance approfondie du domaine. Nous devrions plutôt chercher une méthode plus efficace sur le plan du calcul, fondée sur des principes, et plus générale, pour muter une entrée dans notre ensemble de données afin de découvrir des sorties non valides.
 
 \subsection{Adversarial testing}
 
-This leads us to adversarial testing. In the general case, we are given an input-output pair from an oracle and a program approximating the oracle, but not necessarily the oracle itself. Our goal is to find a small change to the input of a function, which produces the largest change to its output, relative to the original output.
+Cela nous conduit à des tests contradictoires. Dans le cas général, on nous donne une paire entrée-sortie d'un oracle et un programme se rapprochant de l'oracle, mais pas nécessairement l'oracle lui-même. Notre objectif est de trouver une petite modification de l'entrée d'une fonction, qui produit la plus grande modification de sa sortie, par rapport à la sortie originale.
 
-Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each component $g_1, ..., g_{m}$ of which we seek to change by a fixed amount so as to produce the largest output value $\mathbf{\hat P}(g'_1, ..., g'_{m})$ directly. Suppose for each input parameter $g_1, \ldots, g_{m}$, we have one of three choices to make: either we can increase the value by $c$, decrease the value by $c$, or leave it unchanged. We are given no further information about $\mathbf{\hat P}$. Consider the na\"ive solution, which tries every combination of variable perturbations and selects the input corresponding to the greatest output value:
+Imaginez une fonction $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, chaque composante $g_1, ..., g_{m}$ que nous cherchons à modifier d'un montant fixe afin de produire directement la plus grande valeur de sortie $\mathbf{\hat P}(g'_1, ..., g'_{m})$. Supposons que pour chaque paramètre d'entrée $g_1, \ldots, g_{m}$, nous ayons l'un des trois choix suivants: soit nous augmentons la valeur de $c$, soit nous la diminuons de $c$, soit nous la laissons inchangée. On ne nous donne pas d'autres informations sur $\mathbf{\hat P}$. Considérons la solution na\"ive, qui essaie toutes les combinaisons de perturbations variables et sélectionne l'entrée correspondant à la plus grande valeur de sortie:
 
 \begin{algorithm}[H]
 \caption{Brute Force Adversary}
@@ -171,7 +171,7 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each co
 \Procedure{BfAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}$, $c: \mathbb R$, $g_1: \mathbb R$, $g_2: \mathbb R$, $\ldots$, $g_{m}: \mathbb R$}: $\mathbb{R}^m$
 \If {$m = 1$} \Comment{Evaluate $\mathbf{\hat P}$ and return the best variable perturbation}
 \State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_1 + c), \mathbf{\hat P}(g_1 - c), \mathbf{\hat P}(g_1)\}$
-\Else \Comment{Partially apply candidate perturbation and recurse}
+\Else \Comment{Appliquer partiellement la perturbation et recurse}
 \State \Return $\operatorname{argmax}\{\mathbf{\hat P}(g_1 + c) \circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_1 + c), c, g_2, \ldots, g_{m}$},\newline
 \hspace*{10em} $\mathbf{\hat P}(g_1 - c)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_1 - c), c, g_2, \ldots, g_{m}$},\newline
 \hspace*{10em} $\mathbf{\hat P}(g_1)\circ$\Call{BfAdversary}{$\mathbf{\hat P}(g_1), c, g_2, \ldots, g_{m}$}$\}$
@@ -180,65 +180,65 @@ Imagine a function $\mathbf{\hat P}: \mathbb R^m \rightarrow \mathbb R$, each co
 \end{algorithmic}
 \end{algorithm}
 
-As we can see, \autoref{alg:bf_adversary} is $\mathcal{O}(3^m)$ with respect to $\dim \mathbf g$ -- not a very efficient search routine, especially if we want to consider a larger set of perturbances. Clearly, if we want to find the best direction to update $\mathbf g$, we need to be more careful when performing the search.
+Comme on peut le voir, \autoref{alg:bf_adversary} est $\mathcal{O}(3^m)$ par rapport à $\dim \mathbf g$ -- ce n'est pas une routine de recherche très efficace, surtout si l'on veut considérer un ensemble de perturbations plus important. Il est clair que si nous voulons trouver la meilleure direction pour mettre à jour $\mathbf g$, nous devons être plus prudents lors de la recherche.
 
-Even if we cannot compute a closed-form for $\nabla_{\mathbf g}\mathbf{\hat P}$, if $\mathbf{\hat P}$ is differentiable almost everywhere, we can still use numerical differentiation to approximate pointwise values of the gradient. Consider \autoref{alg:fd_fuzz}, which uses the \hyperref[sec:fdm]{finite difference method} to approximate $\nabla_{\mathbf g}\mathbf{\hat P}$. This tells us how to minimally change the input to produce the largest output in reach, without needing to exhaustively check every perturbation as in \autoref{alg:bf_adversary}.
+Même si nous ne pouvons pas calculer une forme fermée pour $\nabla_{\mathbf g}\mathbf{\hat P}$, si $\mathbf{\hat P}$ est différenciable presque partout, nous pouvons toujours utiliser la différenciation numérique pour approximer les valeurs ponctuelles du gradient. Considérons \autoref{alg:fd_fuzz}, qui utilise la \hyperréférence[sec:fdm]{méthode de la différence finie} pour approcher $\nabla_{\mathbf g}\mathbf{\hat P}$. Cela nous indique comment modifier au minimum l'entrée pour produire la plus grande sortie à portée, sans avoir besoin de vérifier exhaustivement chaque perturbation comme dans \autoref{alg:bf_adversary}.
 
 \begin{algorithm}[H]
 \caption{Finite Difference Adversary}
 \label{alg:fd_fuzz}
 \begin{algorithmic}[1]
 \Procedure{FdAdversary}{$\mathbf{\hat P}: \mathbb{R}^m \rightarrow \mathbb{R}$, $c: \mathbb R$, $g_1: \mathbb R$, $g_2: \mathbb R$, $\ldots$, $g_{m}: \mathbb R$}: $\mathbb{R}^m$
-\If {$m = 1$} \Comment{Compute finite (centered) difference and perform gradient ascent}
+\If {$m = 1$} \Comment{Calculez la différence finie (centrée) et effectuez la montée du gradient}
 \State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c) - \mathbf{\hat P}(g_1 + c)}{2c}$
-\Else \Comment{Apply single-step gradient ascent using componentwise finite difference}
+\Else \Comment{Appliquer un gradient de montée en une seule étape en utilisant la différence finie par composante}
 \State \Return $g_1 + \frac{\mathbf{\hat P}(g_1 - c, 0, \ldots) - \mathbf{\hat P}(g_1 + c, 0, \ldots)}{2c}$, \Call{FdAdversary}{$\mathbf{\hat P}, c, g_2, \ldots, g_{m}$}
 \EndIf
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
-We now have a procedure that is $\mathcal{O}(m)$ with respect to $\mathbf{\hat P}$, but must be recomputed for each input -- we can still do better by assuming further structure on $\mathbf{\hat P}$. Furthermore, we have not yet incorporated any constraint on the input values. Perhaps we can combine the notion of metamorphic testing seen in \autoref{subsec:metamorphic-testing} with constrained optimization to accelerate the search for adversarial examples.
+Nous avons maintenant une procédure qui est $\mathcal{O}(m)$ par rapport à $\mathbf{\hat P}$, mais qui doit être recalculée pour chaque entrée -- nous pouvons encore faire mieux en supposant une structure supplémentaire sur $\mathbf{\hat P}$. En outre, nous n'avons pas encore intégré de contrainte sur les valeurs d'entrée. Nous pouvons peut-être combiner la notion de test de métamorphose vue dans \autoref{subsec:metamorphic-testing} avec l'optimisation sous contrainte pour accélérer la recherche d'exemples contradictoires.
 
-During backpropagation we perform gradient descent on a differentiable function with respect to its parameters for a specific set of inputs. In gradient-based adversarial testing, we perform gradient ascent on a loss function with respect to the inputs using a fixed parameter setting. Suppose we have a differentiable vector function $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, defined as follows:
+Lors de la rétropropagation, nous effectuons une descente de gradient sur une fonction différenciable en fonction de ses paramètres pour un ensemble spécifique d'entrées. Dans les tests contradictoires basés sur des gradients, nous effectuons une montée de gradient sur une fonction de perte par rapport aux entrées en utilisant un paramétrage fixe. Supposons que nous ayons une fonction vectorielle différenciable $\mathbf{\hat P}: \mathbb{R}^m\rightarrow\mathbb{R}^n$, définie comme suit:
 %
 \begin{equation} \tag{\autoref{eq:recursive_parametric_eq} revisited}
 \mathbf{\hat P}_k(\mathbf{x}; \bm\Theta) = \begin{cases} \mathbf{\hat p}_1(\Theta_1)\circ\mathbf{x} &\text{if } k=1\\ \mathbf{\hat p}_k(\Theta_k)\circ \mathbf{\hat P}_{k}(\bm\Theta_{[1, k]})\circ\mathbf{x}&\text{if } k > 1 \end{cases} \\
 \end{equation}
 %
-In deep learning, given pairs $\mathbf{X} = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ we want to find $\bm\Theta^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \bm\Theta), \mathbf{y}^{(i)}\big)$ which is typically achieved by performing stochastic gradient descent on the loss with respect to the model parameters:
+Dans l'apprentissage profond, les paires données $\mathbf{X} = \{\mathbf{x}^{(1)}, \dots, \mathbf{x}^{(z)}\}, \mathbf{Y} = \{\mathbf{y}^{(1)} = \mathbf{P}(\mathbf{x}^{(1)}), \dots, \mathbf{y}^{(z)} = \mathbf{P}(\mathbf{x}^{(z)})\}$ nous voulons trouver $\bm\Theta^* = \argmin{\boldsymbol{\Theta}}\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \bm\Theta), \mathbf{y}^{(i)}\big)$ qui est généralement obtenu en effectuant une descente stochastique du gradient sur la perte par rapport aux paramètres du modèle:
 %
-\begin{equation} \tag{\autoref{eq:stochastic_grad_descent} revisited}
+\begin{equation} \tag{\autoref{eq:stochastic_grad_descent} revisité}
 \bm\Theta \leftarrow \bm\Theta - \alpha\frac{1}{z}\nabla_{\bm\Theta} \sum_{i=1}^z\mathcal{L}\big(\mathbf{\hat P}_k(\mathbf{x}^{(i)}; \bm\Theta), \mathbf{y}^{(i)}\big)
 \end{equation}
 %
-We can solve for the gradient with respect to $\bm\Theta$ by multiplying the Jacobians (\autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_1} \cdots \mathcal{J}_{\mathbf{p}_k}$. In white box adversarial learning, we are given a fixed $\bm\Theta$~\footnote{In contrast with backpropagation, where the parameters $\bm\Theta$ are updated.} and control the value of $\mathbf x$, so we can rewrite $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\bm\Theta)$ instead as $\mathbf{\hat P}(\mathbf x)$, and take the gradient directly with respect to $\mathbf x$. Our objective is to find the ``worst'' $\mathbf x$ within a small distance of any $\mathbf x^{(i)}$, i.e. where $\mathbf{P}(\mathbf x)$ least resembles $\mathbf{\hat P}(\mathbf x)$. More concretely, this can be expressed as,
+Nous pouvons résoudre le gradient par rapport à $\bm\Theta$ en multipliant les Jacobiens (\autoref{eq:vfun_chain_rule}), $\mathcal{J}_{\mathbf{p}_1} \cdots \mathcal{J}_{\mathbf{p}_k}$. Dans l'apprentissage contradictoire de la boîte blanche, on nous donne une note fixe $\bm\Theta$~\footnote{ Contrairement à la rétropropagation, où les paramètres $\bm\Theta$ sont mis à jour. } et contrôlent la valeur de $\mathbf x$, de sorte que nous pouvons réécrire $\mathbf{\hat P}_k(\mathbf{x}^{(i)};\bm\Theta)$ à la place comme $\mathbf{\hat P}(\mathbf x)$, et prendre le gradient directement par rapport à $\mathbf x$. Notre objectif est de trouver le "pire" $\mathbf x$ à une faible distance de n'importe quel $\mathbf x^{(i)}$, c'est-à-dire là où $\mathbf{P}(\mathbf x)$ ressemble le moins à $\mathbf{\hat P}(\mathbf x)$. Plus concrètement, cela peut être exprimé comme suit
 %
 \begin{equation}
 \mathbf{x}^* = \argmax{\mathbf{x}}\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big) \text{ subject to } CS = \{\mathbf{x} \in \mathbb{R}^m \text{ s.t. } ||\mathbf{x}^{(i)} - \mathbf{x}||_p    < \epsilon\}
 \end{equation}
 %
-To do so, we can initialize $\mathbf{x} \sim U[CS]$ and perform projected gradient ascent on the loss:
+Pour ce faire, nous pouvons initialiser $\mathbf{x} \sim U[CS]$ et effectuer une montée en gradient projetée sur la perte:
 %
 \begin{equation}\label{eq:projected_gd}
-\mathbf x \leftarrow \bm\Phi_{CS}\Big(\mathbf x + \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)\Big) \text{, where }
+\mathbf x \leftarrow \bm\Phi_{CS}\Big(\mathbf x + \alpha\mathbf\nabla_{\mathbf x} \mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}^{(i)}\big)\Big)
 \bm\Phi_{CS}(\mathbf \phi') = \argmin{\mathbf \phi \in CS}\frac{1}{2}||\mathbf \phi - \mathbf \phi'||^2_2
 \end{equation}
 %
 
-Assuming zero knowledge about the program $\mathbf{\hat P}$'s implementation or data distribution, $D_{\mathbf{\hat P}}$, we can do no better than random search~\citep{wolpert1997no}. Assuming $\mathbf{\hat P}$ is differentiable, given input-output values we can use zeroth-order optimization techniques to approximate $\nabla_{\mathbf{x}}\mathcal{L}$. Assuming $\mathbf{\hat P}$ is open source, we could use coverage-guided fuzzing to prioritize the search for inputs more likely to violate $\mathbf T$. If $\mathbf{\hat P}$ is both open source and differentiable, we can accelerate the search by using automatic differentiation. Given additional information about the training distribution, we could initialize the search in unseen regions of the input space, e.g. sample from the inverse distribution $\mathbf x \sim \frac{1}{D_{\mathbf{\hat P}}}$, possibly more likely to elicit an error. But all this requires a great deal of human expertise to implement efficiently. What if it were possible to generate an adversary instead of manually constructing one?
+En supposant une connaissance nulle de l'implémentation du programme $\mathbf{\hat P}$ ou de la distribution des données, $D_{\mathbf{\hat P}}$, nous ne pouvons pas faire mieux que la recherche aléatoire~\citep{wolpert1997no}. En supposant que $\mathbf{\hat P}$ est différenciable, étant donné les valeurs d'entrée-sortie, nous pouvons utiliser des techniques d'optimisation d'ordre zéro pour approcher $\nabla_{\mathbf{x}}\mathcal{L}$. En supposant que $\mathbf{\hat P}$ est une source ouverte, nous pourrions utiliser le fuzzing guidé par la couverture pour donner la priorité à la recherche d'entrées plus susceptibles de violer $\mathbf T$. Si $\mathbf{\hat P}$ est à la fois open source et différentiable, nous pouvons accélérer la recherche en utilisant la différentiation automatique. Compte tenu des informations supplémentaires sur la distribution de la formation, nous pourrions initialiser la recherche dans des régions invisibles de l'espace d'entrée, par exemple un échantillon de la distribution inverse $\mathbf x \sim \frac{1}{D_{\mathbf{\hat P}}}$, probablement plus susceptible de provoquer une erreur. Mais tout cela nécessite une grande expertise humaine pour être mis en œuvre efficacement. Et s'il était possible de générer un adversaire au lieu d'en construire un manuellement?
 
 \subsection{Generative adversarial testing}
 
-What are the properties of a good adversary? For an adversary to be considered a strong adversary, a significant fraction of her attacks must break the program specification. To generate plausible test cases, not only must she be able to exploit weaknesses of the program, but ideally possess a good understanding of $p_{data}$.
+Quelles sont les propriétés d'un bon adversaire? Pour qu'un adversaire soit considéré comme un bon adversaire, une fraction importante de ses attaques doit enfreindre la spécification du programme. Pour générer des cas de test plausibles, elle doit non seulement être capable d'exploiter les faiblesses du programme, mais aussi, idéalement, posséder une bonne compréhension de $p_{data}$.
 
-Suppose we have a program $D: \mathbb{R}^h\rightarrow\mathbb{B}$, i.e. a binary classifier. How should we attack its implementation, without a custom adversary, or defining some prior distribution over the inputs? One solution, known as a generative adversarial network~\citep{goodfellow2014gan} (GAN), proposes to train a ``generative'' adversary $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$ alongside the trained model. The vanilla GAN objective can be expressed as a minimax optimization problem:
+Supposons que nous ayons un programme $D: \mathbb{R}^h\rightarrow\mathbb{B}$, c'est-à-dire un classificateur binaire. Comment devrions-nous attaquer sa mise en œuvre, sans adversaire habituel, ou définir une distribution préalable sur les entrées? Une solution, connue sous le nom de réseau générateur d'adversaires~\citep{goodfellow2014gan} (GAN), propose de former un adversaire "générateur" $G: \mathbb{R}^v\rightarrow\mathbb{R}^h$ à côté du modèle formé. L'objectif du GAN vanille peut être exprimé comme un problème d'optimisation minimax:
 
 \begin{equation}
 \min_G \max_D V(D, G) = \mathbb{E}_{\mathbf x \sim p_{data}}\big[\log D(\mathbf x)\big] + \mathbb{E}_{\mathbf z \sim p_{\mathbf z}}\Big[\log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
 \end{equation}
 
-This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}$ and $\mathbf z \sim p_{G}$, then updating the parameters of $G$ and $D$ using their respective stochastic gradients:
+Cet objectif peut être atteint en échantillonnant des minibatchs $\mathbf x \sim p_{data}$ et $\mathbf z \sim p_{G}$, puis en mettant à jour les paramètres de $G$ et $D$ en utilisant leurs gradients stochastiques respectifs:
 
 \begin{equation}
 \bm\Theta_D \leftarrow \bm\Theta_D + \nabla_{\bm\Theta_D}\frac{1}{m}\sum_{i=1}^m\Big[\log D(\mathbf x^{(i)}) + \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)\Big]
@@ -248,40 +248,40 @@ This objective can be sought by sampling minibatches $\mathbf x \sim p_{data}$ a
 \bm\Theta_G \leftarrow \bm\Theta_G - \nabla_{\bm\Theta_G}\frac{1}{m}\sum_{i=1}^m \log\Big(1 - D\big(G(\mathbf z^{(i)})\big)\Big)
 \end{equation}
 %
-\citet{albuquerque2019hgan} propose an augmented version of this game using multiple Discriminators which each receive a fixed, random projection $P_k(\cdot)$ of the Generator's output, and solves the following multi-objective optimization problem:
+\citet{albuquerque2019hgan} propose une version augmentée de ce jeu utilisant plusieurs discriminateurs qui reçoivent chacun une projection fixe et aléatoire $P_k(\cdot)$ de la sortie du générateur, et résout le problème d'optimisation multi-objectifs suivant:
 %
 \begin{equation} \label{eq:moo_spec}
 \min \mathbf{\mathcal{L}}_G(\mathbf x) = \big[l_1(\mathbf z), l_2(\mathbf z), \ldots, l_K(\mathbf z)\big] \text{, where } l_k = -\mathbb E_{z \sim p_z} \log D_k\Big(P_k\big(G(z_k)\big)\Big)
 \end{equation}
 %
-This can be solved by combining the losses using a form of hypervolume maximization:
+Ce problème peut être résolu en combinant les pertes au moyen d'une forme de maximisation de l'hypervolume:
 %
 \begin{equation}
 \nabla_{\bm\Theta} \mathcal{L}_G = \sum_{k=1}^K \frac{1}{\eta - l_k}\nabla_\Theta l_k
 \end{equation}
 
-Where $\eta$ is a common, fixed upper bound on every $l_k$. Further GAN variants such as WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. have proposed augmentations to the vanilla GAN to improve stability and sample diversity. GANs have been successfully applied in various domains from speech~\citep{donahue2019wavegan} to graph synthesis~\citep{wang2018graphgan}. One practical extension to the latter could be applying the GAN framework to program synthesis and compiler optimization by choosing a suitable metric and following the approach proposed by e.g.~\citet{adams2019learning, mendis2019compiler}.
+Où $\eta$ est une limite supérieure commune et fixe pour chaque $l_k$. D'autres variantes du GAN, telles que WGAN~\citep{arjovsky2017wgan}, MHGAN~\citep{turner2019mhgan}, et al. ont proposé des extensions du GAN vanille pour améliorer la stabilité et la diversité des échantillons. Les GAN ont été appliqués avec succès dans divers domaines allant de la parole~\citep{donahue2019wavegan} à la synthèse de graphes~\citep{wang2018graphgan}. Une extension pratique de ce dernier pourrait consister à appliquer le cadre des GAN à la synthèse de programmes et à l'optimisation des compilateurs en choisissant une métrique appropriée et en suivant l'approche proposée par exemple par ~\citet{adams2019learning, mendis2019compiler}.
 
-The trouble with GANs is that we need to train $G$ and $D$ in lockstep, otherwise one quickly becomes too strong. What happens if we want to attack a pretrained model?
+Le problème avec les GAN est que nous devons former $G$ et $D$ en synchronisation, sinon on devient vite trop fort. Que se passe-t-il si nous voulons attaquer un modèle préformé?
 %
 \section{Probabilistic adversarial testing}\label{sec:prob_ad_test}
 
-\noindent Henceforth we shall refer to $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}\big)$ as $\mathcal{L}(\mathbf x)$. Imagine a single test $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$:
+\noindent Désormais, nous appellerons $\mathcal{L}\big(\mathbf{\hat P}(\mathbf{x}), \mathbf{y}\big)$ comme $\mathcal{L}(\mathbf x)$. Imaginez un seul test $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$:
 %
 \begin{equation} \label{eq:output_constraint_example}
 \mathbf T(\mathbf{x}) = \mathcal{L}(\mathbf{x}) < C
 \end{equation}
 %
-Our goal is to find a set of inputs which break our test given a computational budget $\mathcal{B}_e$ (i.e.\ fixed number of program evaluations) and labeling budget $\mathcal{B}_l$ (i.e.\ fixed number of labels).
+Notre objectif est de trouver un ensemble d'entrées qui satisfont à notre test, compte tenu d'un budget de calcul $\mathcal{B}_e$ (c'est-à-dire un nombre fixe d'évaluations de programmes) et d'un budget d'étiquetage $\mathcal{B}_l$ (c'est-à-dire un nombre fixe d'étiquettes).
 %
 \begin{equation}
 \{ D_\mathbf T: \mathbf x \in CS \mid \mathcal{L}(\mathbf{x}) < C\}, \text{ maximize } |D_\mathbf T| \text { subject to } \mathcal{B}_e, \mathcal{B}_l
 \end{equation}
 %
 
-Let us consider an extension of classical fuzzing methods to differentiable functions on continuous random variables. First, we sample an input $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (e.g.\ uniformly). If $\mathcal{L}(\mathbf{x}_j)$ satisfies \autoref{eq:output_constraint_example}, we ascend the loss following $\nabla_{\mathbf x}\mathcal{L}$, otherwise we descend and repeat until the test ``flips'', gradient vanishes, or a fixed number of steps $I_{max}$ are reached before resampling $\mathbf{x}_{j+1}$ from $\mathcal S_m$. This procedure is described in \autoref{alg:prob_adversary}.
+Considérons une extension des méthodes classiques de fuzzing à des fonctions différenciables sur des variables aléatoires continues. Tout d'abord, nous échantillonnons une entrée $\mathbf{x}_j: \mathbb{R}^m \sim \mathcal S_m$ (par ex. \ uniformément). Si $\mathcal{L}(\mathbf{x}_j)$ satisfait \autoref{eq: output_constraint_example}, on monte la perte suivant $\nabla_{\mathbf x}\mathcal{L}$, sinon on descend et on répète jusqu'à ce que le test "bascule", le gradient disparaisse, ou qu'un nombre fixe de pas $I_{max}$ soit atteint avant de rééchantillonner $\mathbf{x}_{j+1}$ à partir de $\mathcal S_m$. Cette procédure est décrite dans \autoref{alg:prob_adversary}.
 
-We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a counterexample to \autoref{eq:output_constraint_example} existed, as sample size increased, a subset of trajectories would fail to converge at all, a subset would converge to local optima, and the remaining trajectories would discover the boundary.
+Nous émettons l'hypothèse que si la mise en œuvre de $\mathbf{\hat P}$ était imparfaite et qu'il existait un contre-exemple à \autoref{eq:output_constraint_example}, à mesure que la taille de l'échantillon augmenterait, un sous-ensemble de trajectoires ne convergerait pas du tout, un sous-ensemble convergerait vers l'optima local, et les trajectoires restantes découvriraient la limite.
 
 \begin{algorithm}[ht]
 \caption{Probabilistic Generator}
@@ -293,7 +293,7 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \State $\mathbf{x}_j \sim \mathcal S_m$\Comment{Sample from $\mathcal S_m$}
 \If {$\mathbf T\big(\mathbf{x}_j, C\big)$} \Comment{Inside feasible set, perform gradient ascent}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$ \Call{DiffShrink}{$-\mathcal L, \mathbf{x}_j, \mathbf T$}
-\Else \Comment{Outside feasible set, perform gradient descent}
+\Else \Comment{En dehors de l'ensemble réalisable, effectuer une descente en pente}
 \State $D_\mathbf T \gets D_\mathbf T$ $\cup$  \Call{DiffShrink}{$\mathcal L, \mathbf{x}_j, \mathbf T$}
 \EndIf
 \State $\mathcal{B}_e \gets \mathcal{B}_e - 1$
@@ -320,9 +320,9 @@ We hypothesize that if $\mathbf{\hat P}$'s implementation were flawed and a coun
 \end{algorithmic}
 \end{algorithm}
 
-We evaluate our algorithm in the regression setting, where $\mathbf{\hat P}$ is a polynomial regressor (cf. \autoref{sec:poly_reg}) and $\mathcal{L}$ is the mean squared error loss.
+Nous évaluons notre algorithme dans le cadre de la régression, où $\mathbf{\hat P}$ est un régresseur polynomial (cf. \autoref{sec:poly_reg}) et $\mathcal{L}$ est la perte d'erreur quadratique moyenne.
 
- Our training set consists of input-output pairs from a set of random algebraic expressions. These expressions are produced by generating perfect binary trees of depth 5, whose leaf nodes contain with equal probability either (1) an alphabetic variable or (2) a random 64-bit IEEE 754 floating point number uniformly sampled in the range $[-1, 1]$. The internal nodes contain with equal probability a random operator in the set $\{+, \times\}$. Our expression generator (\autoref{eq:btree_gen}) with type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ takes a depth $\delta: \mathbb{N}^+$, a random seed $\psi: \mathbb{Z}$, and returns a scalar-valued function.
+Notre ensemble d'apprentissage est constitué de paires d'entrées-sorties provenant d'un ensemble d'expressions algébriques aléatoires. Ces expressions sont produites en générant des arbres binaires parfaits de profondeur 5, dont les nœuds de feuilles contiennent avec une probabilité égale soit (1) une variable alphabétique, soit (2) un nombre aléatoire IEEE 754 en virgule flottante de 64 bits échantillonné uniformément dans la plage $[-1, 1]$. Les nœuds internes contiennent avec une probabilité égale un opérateur aléatoire dans l'ensemble $\{+, \times\}$. Notre générateur d'expression (\autoref{eq:btree_gen}) de type $G_e: \mathbb{N}^+\times\mathbb{Z} \rightarrow \mathbb{R}^{[1, 26]} \rightarrow \mathbb{R}$ prend une profondeur $\delta: \mathbb{N}^+$, une graine aléatoire $\psi: \mathbb{Z}$, et renvoie une fonction à valeur scalaire.
 
 \begin{equation}\label{eq:btree_gen}
 G_e(\delta, \psi) = \begin{cases}
@@ -337,7 +337,7 @@ G_e(\delta, \psi) = \begin{cases}
 \end{cases}
 \end{equation}
 
-A Kotlin implementation of the expression tree generator in \autoref{eq:btree_gen} is shown below:
+Une implémentation Kotlin du générateur d'arbres d'expression dans \autoref{eq:btree_gen} est présentée ci-dessous:
 %
 \begin{kotlinlisting}
 val sum = { left: SFun<DReal>, right: SFun<DReal> -> left + right }
@@ -352,21 +352,21 @@ fun randomBiTree(height: Int): SFun<DReal> =
   else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 \end{kotlinlisting}
 
-Our training set consists of input-output pairs produced by binding the set of free variables to values, and numerically evaluating the expression on input values sampled from $[-1, -0.2] \cup [0.2, 1]$, then rescaling all outputs to $[-1, 1]$ using min-max normalization, i.e. $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. Each expression has a unique validation set $x_i \sim [-0.2, 0.2]$.
+Notre ensemble de formation est constitué de paires entrée-sortie produites en liant l'ensemble des variables libres à des valeurs, et en évaluant numériquement l'expression sur des valeurs d'entrée échantillonnées à partir de $[-1, -0. 2] \cup [0,2, 1]$, puis en redimensionnant toutes les sorties à $[-1, 1]$ en utilisant la normalisation min-max, c'est-à-dire $\tilde{G}_e(\delta, \psi)= \frac{G_e(\delta, \psi)}{\max |G_e(\delta, \psi)[-1, 1]|}$. Chaque expression a un ensemble de validation unique $x_i \sim [-0,2, 0,2]$.
 
-In \autoref{fig:loss_curves}, we see train and validation losses for 200 trajectories of momentum SGD through parameter space. To compensate for the difference in magnitude between training and validation error, we normalize all losses by their respective values at $t_0$. Based on the validation loss, we apply early stopping at approximately 50 epochs.
+Dans \autoref{fig:loss_curves}, nous voyons des pertes de train et de validation pour 200 trajectoires de l'élan SGD à travers l'espace des paramètres. Pour compenser la différence de magnitude entre l'erreur d'entraînement et de validation, nous normalisons toutes les pertes par leurs valeurs respectives à $t_0$. Sur la base de la perte de validation, nous appliquons un arrêt anticipé à environ 50 époques.
 
 \begin{algorithm}[ht]
-\caption{Surrogate Attack}
+\caption{Attaque de substitution}
 \label{alg:surrogate_attack}
 \begin{algorithmic}[1]
 \Procedure{SurrogateAttack}{$\bm\Theta: \mathbb{R}^k$, $\mathbf{\hat f}: \mathbb R^m \times \mathbb R^k\rightarrow \mathbb R^n$, $\mathcal S_m$, $\mathbf{T}: \mathbb{R}^m \rightarrow \mathbb{B}$, $\mathcal{B}_l: \mathbb R$}
 \State $\bm\Theta' \gets \bm\Theta$
 \Do
     \State $\mathbf{x} \sim \mathcal S_m, \mathbf{y} \gets \mathcal{O}(\mathbf{x}), \mathcal{B}_l \gets \mathcal{B}_l - 1$ \Comment{Ask for new label from the oracle.}
-    \State $\bm\Theta' \gets \bm\Theta - \alpha\nabla_{\bm\Theta}||\mathbf{\hat f}(\mathbf{x}; \bm\Theta') - \mathbf{y}||_2,$ \Comment{Update parameters using loss gradient.}
-\doWhile {$0 < \mathcal{B}_l$} \Comment{Iterate until labeling budget exhausted.}
-\State $\mathcal{\hat{L}} \gets ||\mathbf{\hat f}(\bm\Theta') - \mathbf{\hat f}(\bm\Theta)||_2$ \Comment{Construct the surrogate loss.}
+    \State $\bm\Theta' \gets \bm\Theta - \alpha\nabla_{\bm\Theta}||\mathbf{\hat f}(\mathbf{x}; \bm\Theta') - \mathbf{y}||_2,$ \Comment{Mettre à jour les paramètres en utilisant le gradient de perte.}
+\doWhile {$0 < \mathcal{B}_l$} \Comment{Itérer jusqu'à épuisement du budget d'étiquetage.}
+\State $\mathcal{\hat{L}} \gets ||\mathbf{\hat f}(\bm\Theta') - \mathbf{\hat f}(\bm\Theta)|||_2$ \Comment{Construire la perte de substitution.}
 \State \Return \Call{ProbGen}{$\mathcal{\hat{L}}, \mathcal S_m, \mathbf T, \mathcal{B}_e$}
 \EndProcedure
 \end{algorithmic}
@@ -375,7 +375,7 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-\begin{axis}[title={Average loss curves for polynomial regression using momentum SGD}, width=\textwidth, height=10cm, xlabel=Epochs, ylabel=$t_0$-normalized MSE, legend pos=north east, align=center]
+\begin{axis}[title={Courbes de perte moyenne pour la régression polynomiale en utilisant le moment SGD}, width=\textwidth, height=10cm, xlabel=Epochs, ylabel=$t_0$-normalisé MSE, legend pos=north east, align=center]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/poly_train_loss.csv};
 \addlegendentry{Training}
 \addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/poly_train_loss.csv};
@@ -388,7 +388,7 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \addplot [fill=red!10] fill between[of=upper2 and lower2];
 \end{axis}
 \end{tikzpicture}
-\caption{For each expression in our dataset, we train a polynomial regressor to convergence.}
+\caption{Pour chaque expression de notre ensemble de données, nous formons un régresseur polynomial à la convergence.}
 \label{fig:loss_curves}
 \end{figure}
 
@@ -398,13 +398,13 @@ In \autoref{fig:loss_curves}, we see train and validation losses for 200 traject
 \input{btree1} & \begin{tikzpicture} \begin{axis}[title={}, width=0.4\textwidth, height=5cm, xlabel=$x$, ylabel=$y$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/btree_rand1.csv}; \end{axis} \end{tikzpicture} \\
 \input{btree2} & \begin{tikzpicture} \begin{axis}[title={}, width=0.4\textwidth, height=5cm, xlabel=$x$, ylabel=$y$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/btree_rand2.csv}; \end{axis} \end{tikzpicture}
 \end{tabular}
-\caption{\label{tab:btrees} Some DFGs generated by \autoref{eq:btree_gen} with accompanying 2D plots.}
+\caption{\label{tab:btrees} DFGs générés par \autoref{eq:btree_gen} avec des tracés en 2D qui les accompagnent.}
 \end{table}
 
 %\begin{figure}
-%\begin{tikzpicture} \begin{axis}[title={Average Errors per 1k Evaluations for Random Sampling Strategy}, width=\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
+%\begin{tikzpicture} \begin{axis}[title={Erreurs moyennes par 1k évaluations pour la stratégie d'échantillonnage aléatoire}, width=\textwidth, height=5cm, xlabel=$\text{Error threshold}$, ylabel=$\text{Errors/eval}$, align=center] \addplot table [mark=none, x index=0, y index=1, col sep=comma] {../data/urand_eff0.csv}; \end{axis} \end{tikzpicture} \\
 %\end{figure}
-Below, is an excerpt from an implementation of momentum SGD in the Kotlin$\nabla$ DSL:
+Ci-dessous, un extrait d'une mise en œuvre de la dynamique SGD dans la DSL Kotlin$\nabla$:
 %
 \begin{kotlinlisting}
 val model = Vec(D30) { x pow (it + 1) } dot weights
@@ -424,14 +424,14 @@ batches.forEach { i, batch ->
 \begin{tikzpicture} \begin{axis}[title={Oracle vs. Regression Model}, width=\textwidth, height=0.4\textwidth, xlabel=$x$, ylabel=$y$, legend style={at={(0.5,0.03)},anchor=south}, align=center] \addplot table [mark=none, x=x, y=oracle, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Oracle $(f)$} \addplot table [mark=none, x=x, y=model, col sep=comma] {../data/oracle_vs_model.csv}; \addlegendentry{Model $(\hat{f})$} \end{axis} \end{tikzpicture} \\
 \begin{tikzpicture} \begin{axis}[title={True vs. Surrogate Loss}, width=\textwidth, height=0.4\textwidth, xlabel=$x$, ylabel=Loss, legend style={at={(0.5,0.97)},anchor=north}, align=center] \addplot table [mark=none, x=x, y=true, col sep=comma] {../data/true_vs_surrogate_loss.csv}; \addlegendentry{True Loss $(\mathcal{L})$} \addplot table [mark=none, x=x, y=surrogate, col sep=comma] {../data/true_vs_surrogate_loss.csv} [postaction={decorate, decoration={markings,mark=between positions 0.8 and 0.97 step 0.01 with {\arrow[red,line width=.5pt]{>};}}}]; \addlegendentry{Surrogate Loss $(\hat{\mathcal{L}})$} \end{axis} \end{tikzpicture}
 \end{tabular}
-\caption{\label{tab:oracle_vs_model} Above: Ground truth and trained model predictions for a single expression. Below: A single particle attacks the model by seeking higher error on the surrogate loss.}
+\caption{\label{tab:oracle_vs_model} Au-dessus: Vérité de base et prédictions de modèles entraînés pour une seule expression. En bas: Une particule unique attaque le modèle en cherchant une erreur plus élevée sur la perte de substitution.}
 \end{table}
 
-Our adversary (\autoref{alg:surrogate_attack}) takes as input the trained regression model $\hat{f}$, a set of new input-output pairs from the ground truth expression, and resumes the original training procedure on $\hat{f}$ using the supplied datapoints for a fixed number of epochs, to produce a new model $\hat{f}'$. We use $\hat{f}'$ to construct a surrogate loss $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, which can be maximized using \autoref{alg:diff_adversary}. Maximizing the surrogate loss allows us to construct adversarial examples without direct access to the oracle, an often impractical assumption in real world settings. For both adversarial testing and uniform sampling strategies, we compare the average number of violations detected per evaluation.
+Notre adversaire (\autoref{alg:surrogate_attack}) prend comme entrée le modèle de régression formé $\hat{f}$, un ensemble de nouvelles paires entrée-sortie de l'expression de vérité de terrain, et reprend la procédure de formation originale sur $\hat{f}$ en utilisant les points de données fournis pour un nombre fixe d'époques, pour produire un nouveau modèle $\hat{f}'$. Nous utilisons $\hat{f}'$ pour construire une perte de substitution $\hat{\mathcal{L}}(x) = \big(\hat{f}(x) - \hat{f}'(x)\big)^2$, qui peut être maximisée en utilisant \autoref{alg:diff_adversary}. La maximisation de la perte de substitution nous permet de construire des exemples contradictoires sans accès direct à l'oracle, une hypothèse souvent peu pratique dans le monde réel. Pour les tests contradictoires et les stratégies d'échantillonnage uniformes, nous comparons le nombre moyen de violations détectées par évaluation.
 
 \begin{figure}[H]
 \begin{tikzpicture}
-\begin{axis}[title={Average efficiency at error threshold $\sigma$ standard deviations above MSE}, width=\textwidth, height=7cm, xlabel=$\sigma$, ylabel=Average errors detected per label, legend pos=north east, align=center, xtick distance=0.5]
+\begin{axis}[title={Efficacité moyenne au seuil d'erreur $\sigma$ écarts types au-dessus de l'ESM}, width=\textwidth, height=7cm, xlabel=$\sigma$, ylabel=Erreurs moyennes détectées par étiquette, legend pos=north east, align=center, xtick distance=0.5]
 \addplot[smooth, blue] table [mark=none, x=x, y=y1, col sep=comma] {../data/seff.csv};
 \addlegendentry{Probabilistic Generator}
 \addplot[smooth, red] table [mark=none, x=x, y=y2, col sep=comma] {../data/seff.csv};
@@ -448,16 +448,16 @@ Our adversary (\autoref{alg:surrogate_attack}) takes as input the trained regres
 \label{fig:pbt_comparison}
 \end{figure}
 
-Above, we show the number of violations exceeding error threshold $\sigma$ standard deviations above the mean squared error (MSE) on the true loss $\mathcal{L}(x) = \big(f(x) - \hat{f}(x)\big)^2$. On average, our adversary exhibits a $28\%$ improvement over the probabilistic baseline across all thresholds. We hypothesize that training the surrogate loss to convergence would further widen this margin, albeit potentially at the cost of generalization on other expressions.
+Ci-dessus, nous montrons le nombre de violations dépassant le seuil d'erreur $\sigma$ écarts types au-dessus de l'erreur quadratique moyenne (EQM) sur la perte réelle $\mathcal{L}(x) = \big(f(x) - \hat{f}(x)\big)^2$. En moyenne, notre adversaire affiche une amélioration de 28\% par rapport à la base de référence probabiliste pour tous les seuils. Nous émettons l'hypothèse que la formation de la perte de substitution à la convergence élargirait encore cette marge, bien que potentiellement au prix d'une généralisation sur d'autres expressions.
 
-% Furthermore, we hypothesize that if a sufficiently large fraction of the input space existed where $T$ were false, then as we sample from that space, the probability of detection would approach 1:
+De plus, nous supposons que si une fraction suffisamment importante de l'espace d'entrée existait où les $T$ étaient faux, alors en échantillonnant à partir de cet espace, la probabilité de détection approcherait 1:
 %
 % \begin{equation}
-%     (\forall i \in I^\dagger, p(i) \implies \neg T) \implies \lim_{|x|\to \infty}Prob(\hat{T}=False) = 1
+% (\forall i \in I^\dagger, p(i) \implies \neg T) \implies \lim_{|x|\to \infty}Prob(\hat{T}=Faux) = 1
 % \end{equation}
 
-% Suppose a machine learning department has a budget $B$ and fixed cost $C$ for labeling a single datapoint. Given an error threshold $e_{min}$ and access to $\frac{B}{C}$ new inputs from the oracle, suppose our method detects more errors than a uniform random sampling strategy over the input space. Conversely, to detect the same number of errors, we require a lower budget than a random sampling strategy.
+Supposons qu'un service d'apprentissage machine dispose d'un budget de $B$ et de coûts fixes de $C$ pour l'étiquetage d'un seul point de données. Étant donné un seuil d'erreur $e_{min}$ et un accès aux nouvelles entrées $\frac{B}{C}$ de l'oracle, supposons que notre méthode détecte plus d'erreurs qu'une stratégie d'échantillonnage aléatoire uniforme sur l'espace d'entrée. Inversement, pour détecter le même nombre d'erreurs, nous avons besoin d'un budget inférieur à celui d'une stratégie d'échantillonnage aléatoire.
 
 \section{Conclusion}
 
-In this chapter we have visited some interesting ideas for validating intelligent systems from the perspective of software engineering and machine learning. We have seen a curious resemblance between some new and old ideas in fuzz testing and adversarial learning. We have proposed new a framework for evaluating differentiable programs in a low-cost manner and shown our approach is more data-efficient than a random search strategy, employed by most automated testing frameworks. This enables us to detect a greater number of errors with a lower computational and data collection budget. The author wishes to thank Liam Paull for providing a number of very helpful suggestions and Stephen Samuel for the excellent \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest} library. This work was partly inspired by \citet{lample2019deep}, in particular the expression tree generator from ~\autoref{sec:prob_ad_test}.
+Dans ce chapitre, nous avons examiné quelques idées intéressantes pour valider les systèmes intelligents du point de vue du génie logiciel et de l'apprentissage machine. Nous avons constaté une curieuse ressemblance entre certaines idées nouvelles et anciennes dans le domaine des tests de fuzz et de l'apprentissage contradictoire. Nous avons proposé un nouveau cadre pour évaluer les programmes différentiables de manière peu coûteuse et avons montré que notre approche est plus efficace en termes de données qu'une stratégie de recherche aléatoire, utilisée par la plupart des cadres de test automatisés. Cela nous permet de détecter un plus grand nombre d'erreurs avec un budget de calcul et de collecte de données plus faible. L'auteur tient à remercier Liam Paull pour ses nombreuses suggestions très utiles et Stephen Samuel pour l'excellente bibliothèque \href{https://github.com/kotlintest/kotlintest}{KotlinTest}~\citep{kotlintest}. Ce travail a été en partie inspiré par \citet{lample2019deep}, en particulier le générateur d'arbres d'expression de ~\autoref{sec:prob_ad_test}.
