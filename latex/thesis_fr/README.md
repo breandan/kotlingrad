@@ -1,4 +1,4 @@
-# [Master's Thesis](../thesis/thesis.pdf)
+# [Master's Thesis](thesis.pdf)
 
 ## Abstract
 
