@@ -1,0 +1,222 @@
+\documentclass[12pt,initial,twoside,maitrise]{dms}
+\usepackage[utf8]{inputenc} %Obligatoires
+%\usepackage[T1]{fontenc}    %
+\usepackage[dvipsnames]{xcolor}
+\usepackage{array}
+\usepackage{algorithmicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}%
+\usepackage{amsmath}
+\usepackage{rail}
+\usepackage{graphicx}
+
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    pdftitle = {Programming Tools for Intelligent Systems},
+    pdfauthor = {Breandan Considine},
+    pdfkeywords = {
+        intelligent systems, machine learning, type systems, embedded systems, distributed systems, programming languages, functional programming, differentiable programming, probabilistic programming, programming tools, compilers, static analysis, build automation, continuous integration, automatic differentiation, backpropagation, automated testing, fuzzing, metamorphic testing, property-based testing, generative modeling, virtual machines, ROS, Kotlin, Docker, Duckietown
+        syst\`emes intelligents, apprentissage automatique, syst\`emes de types, syst\`emes embarqu\'es, syst\`emes distribu\'es, langages de programmation, programmation fonctionnelle, programmation diff\'erenciable, programmation probabiliste, outils de programmation, compilateurs, analyse statique, automatisation de construction, int\'egration continue, diff\'erenciation automatique, r\'etropropagation, test automatis\'e, fuzzing, test m\'etamorphique, test de propri\'et\'e, mod\'elisation g\'en\'erative, machines virtuelles, ROS, Kotlin, Docker, Duckietown
+    },
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\renewcommand{\UrlFont}{\rmfamily}
+
+\usepackage{bm}
+
+\usepackage{natbib}
+
+\usepackage{enumitem}
+\usepackage{graphviz}
+\usepackage{epstopdf}
+\usepackage{auto-pst-pdf}
+
+% Quotes
+\usepackage{epigraph}
+\beforeepigraphskip=-20pt
+\afterepigraphskip=20pt
+\renewcommand{\textflush}{flushepinormal}
+
+% Trees
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+
+% Table Checks
+\usepackage{booktabs}
+\usepackage{pifont}
+\usepackage{fontawesome}
+\usepackage{float}
+
+\newcommand{\wmark}{\textcolor{orange}{\ding{45}}}
+\newcommand{\cmark}{\textcolor{green!80!black}{\ding{51}}}
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}
+
+\usepackage{multicol}
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+\hspace{-2.5pt}}
+
+\newcommand{\argmax}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{max}}\;}
+\newcommand{\argmin}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{min}}\;}
+
+% Table
+
+\newcolumntype{R}[2]{%
+    >{\adjustbox{angle=#1,lap=\width-(#2)}\bgroup}%
+    l%
+    <{\egroup}%
+}
+\newcommand*\rot{\multicolumn{1}{R{55}{1em}}}
+
+\usepackage{menukeys}
+\usepackage{relsize}
+
+\include{listings}
+
+\usepackage{tkz-euclide}
+
+% Downloads Table
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\usepackage{filecontents}
+\usetikzlibrary{pgfplots.dateplot}
+\usetikzlibrary{decorations.markings}
+
+%% Packages utiles.
+\usepackage{amssymb,subfigure,icomma}
+\usepackage[labelfont=bf, width=\linewidth]{caption}
+
+\def\chapterautorefname{Chapter}
+\renewcommand{\sectionautorefname}{\S}
+\renewcommand{\subsectionautorefname}{\S}
+\renewcommand{\figureautorefname}{Fig.}
+\renewcommand{\equationautorefname}{Eq.}
+\newcommand{\algorithmautorefname}{Algorithm}
+\usepackage{hypcap}
+\usepackage{bookmark}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+
+\newtheorem{cor}{\corollaryname}[section]
+\newtheorem{deff}[cor]{\definitionname}
+\newtheorem{ex}[cor]{\examplename}
+\newtheorem{lem}[cor]{\lemmaname}
+\newtheorem{prop}[cor]{Proposition}
+\newtheorem{rem}[cor]{\remarkname}
+\newtheorem{theo}[cor]{\theoremname}
+
+\numberwithin{equation}{section}
+\numberwithin{table}{chapter}
+\numberwithin{figure}{chapter}
+
+\renewcommand{\baselinestretch}{1.5}
+
+%\AtBeginDocument{\hypersetup{pdfborderstyle={/S/S/W 1}}}
+\begin{document}
+
+\version{1}
+
+\title{Programming tools for intelligent systems}
+
+\author{Breandan Considine}
+
+\copyrightyear{2020}
+
+\department{D\'epartement d'informatique et de recherche op\'erationnelle}
+
+\president{Marc Feeley}
+
+\directeur{Liam Paull}
+
+\codirecteur{Michalis Famelis}
+
+\membrejury{Eug\`ene Syriani}
+
+\dateacceptation{12 mai, 2020}
+
+%% Voici les disciplines possibles (voir avec votre directeur):
+%% \sujet{statistique},
+%% \sujet{mathématiques}, \orientation{mathématiques appliquées},
+%% \orientation{mathématiques fondamentales}
+%% \orientation{mathématiques de l'ingénieur} et
+%% \orientation{mathématiques appliquées}
+
+\sujet{Informatique}
+
+%%
+%% Fin des variables à définir. La commande \maketitle créera votre
+%% page titre.
+
+\pagenumbering{roman}
+\maketitle
+\maketitle
+
+% Pour générer la deuxième page titre, il faut appeler à nouveau \maketitle
+% Cette page est optionnelle et son inclusion est laissé à la discrétion
+% de l'étudiant et du directeur de recherche, ou de tout autre instance
+% d'autorité.
+
+%%------------------------------------------------- %
+%%              pages iv                            %
+%%------------------------------------------------- %
+\anglais
+
+\include{preamble}
+
+%%------------------------------------------------- %
+%%        page v --- Table de matieres              %
+%%------------------------------------------------- %
+
+% Pour un mémoire en anglais, changer pour
+% \anglais. Noter qu'il faut une permission
+% pour écrire son mémoire en anglais.
+% \cleardoublepage termine la page actuel et force TeX
+% a poussé les éléments flottant (fig., tables, etc.) sur
+% la page (normalement TeX les garde en suspend jusqu'à ce
+% qu'il trouve un endroit approprié). Avec l'option <twoside>,
+% la commande s'assure que la prochaine page de texte est sur
+% le recto, pour l'impression. On l'utilise ici
+% pour que TeX sache que la table des matières etc. soit
+% sur la page qui suit.
+%% TABLE DES MATIÈRES
+\cleardoublepage
+\pdfbookmark[chapter]{\contentsname}{toc}  % Crée un bouton sur
+% la bar de navigation
+\tableofcontents
+% LISTE DES TABLES
+\cleardoublepage
+%\phantomsection  % Crée une section invisible (utile pour les hyperliens)
+\listoftables
+% LISTE DES FIGURES
+\cleardoublepage
+%\phantomsection
+\listoffigures
+
+\NoChapterPageNumber
+\cleardoublepage
+\pagenumbering{arabic}
+
+\include{chapter1_intro}
+
+\include{chapter2_tools}
+
+\include{chapter3_dsl}
+
+\include{chapter4_testing}
+
+\include{chapter5_docker}
+
+\include{chapter6_conclusion}
+
+\bibliography{thesis}
+\bibliographystyle{plainnat}
+
+\include{appendix}
+
+\end{document}
