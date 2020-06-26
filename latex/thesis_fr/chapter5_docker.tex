@@ -3,13 +3,13 @@
 \setlength{\epigraphwidth}{0.93\textwidth}
 \epigraph{La seule façon de réaliser des progrès substantiels dans un domaine quelconque est de s'appuyer sur le travail des autres. Pourtant, la programmation informatique reste une industrie artisanale car les programmeurs insistent pour réinventer des programmes pour chaque nouvelle application, au lieu d'utiliser ce qui existe déjà. Nous devons encourager une manière de regrouper les programmes de manière à ce qu'ils puissent être perçus comme des outils standard, chacun accomplissant sa tâche spécialisée suffisamment bien et s'interfacant avec d'autres outils de manière si pratique que les programmeurs ressentent rarement le besoin de créer leur propre version à partir de zéro.''}{\begin{flushright}--\citet{kernighan1976software}, \href{https://dl.acm.org/doi/10.1145/1010726.1010728}{\textit{Software tools}}\end{flushright}}
 
-Dans ce chapitre, nous abordons le défi de la reproductibilité des logiciels et la manière dont les meilleures pratiques du génie logiciel, telles que les outils d'intégration continue et de conteneurisation, peuvent aider les chercheurs à atténuer la variabilité associée à la construction et à la maintenance des logiciels de robotique. D'une manière générale, nos travaux tentent d'isoler les sources de variabilité computationnelle, et n'envisagent pas les notions de variabilité statistique découlant de l'incertitude aléatoire ou épistémique~\citep{diaz2018interactive}. Cependant, la réduction de la variabilité informatique (qui entrave souvent la reproductibilité expérimentale) est une étape clé pour permettre aux chercheurs d'identifier et de diagnostiquer plus rapidement ces variables plus insaisissables en robotique et en apprentissage machine.
+Dans ce chapitre, nous abordons le défi de la reproductibilité des logiciels et la manière dont les meilleures pratiques du génie logiciel, telles que les outils d'intégration continue et de conteneurisation, peuvent aider les chercheurs à atténuer la variabilité associée à la construction et à la maintenance des logiciels de robotique. D'une manière générale, nos travaux tentent d'isoler les sources de variabilité computationnelle, et n'envisagent pas les notions de variabilité statistique découlant de l'incertitude aléatoire ou épistémique~\citep{diaz2018interactive}. Cependant, la réduction de la variabilité informatique (qui entrave souvent la reproductibilité expérimentale) est une étape clé pour permettre aux chercheurs d'identifier et de diagnostiquer plus rapidement ces variables plus insaisissables en robotique et en apprentissage automatique.
 
 Afin d'aborder la question de la reproductibilité des logiciels, nous avons rassemblé un ensemble d'outils et de flux de développement représentant les meilleures pratiques en matière de génie logiciel. Ces outils sont principalement basés sur la \textit{containerisation}, une technologie de virtualisation largement adoptée dans l'industrie du logiciel. Pour abaisser la barrière d'entrée pour les nouveaux contributeurs et minimiser la variabilité entre les plates-formes matérielles, nous avons développé une infrastructure de conteneurs de pointe basée sur Docker~\citep{merkel2014docker}, un moteur de conteneurs très populaire. Docker permet aux utilisateurs de mettre en place des artefacts de déploiement versionnés qui figent efficacement un système de fichiers entier, et de gérer les contraintes de ressources via un environnement d'exécution en "sandboxed".
 
 Le contenu de ce chapitre est organisé comme suit. Dans \autoref{sec:dependency-management} nous introduisons le problème de la résolution des dépendances et le défi de la construction d'artefacts logiciels reproductibles. Dans \autoref{sec:os-and-virtualization}, nous décrivons une solution générale à ce problème, la virtualisation des logiciels. Ensuite, dans \autoref{sec:containerization}, nous discutons d'une approche légère de la virtualisation, connue sous le nom de conteneurisation. Dans \autoref{sec:docker-intro}, nous faisons une visite guidée à travers une implémentation de conteneur, appelée Docker. Enfin, dans \autoref{sec:ros-docker}, nous présentons DuckieOS, un environnement dockerisé pour la construction d'applications robotiques reproductibles pour la recherche et l'utilisation pédagogique.
 
-\section{Dependency management}\label{sec:dependency-management}
+\section{Gestion des dépendances}\label{sec:dependency-management}
 
 Une source commune de variabilité dans le développement de logiciels est la dépendance des logiciels. Pendant de nombreuses années, les développeurs ont eu du mal à gérer les dépendances avant qu'on ne découvre que le problème de résolution des dépendances était NP-complete~\citep{abate2012dependency}. Si nous supposons qu'aucune version de la même dépendance ne peut être installée simultanément, alors pour un ensemble donné de logiciels qui doivent être installés, et de dépendances nécessaires pour les installer, la détermination de la version cohérente la plus récente des dépendances est aussi difficile que les problèmes les plus difficiles de NP. Officieusement, ce problème est connu sous le nom de \textit{dependency hell} et devient de plus en plus problématique à mesure que les projets logiciels se développent et introduisent de nouvelles dépendances.
 
@@ -17,7 +17,7 @@ L'enfer des dépendances ne se produit pas seulement à l'intérieur des projets
 
 Le problème provient essentiellement de l'exigence selon laquelle aucune version de la même dépendance ne peut être installée simultanément. En outre, les installateurs de logiciels ont tendance à pulvériser des fichiers dans le système de fichiers, qui peuvent être corrompus et sont difficiles à supprimer complètement si le besoin s'en fait sentir. Pour résoudre ces problèmes, il faut une certaine notion de "contrôle", de sorte que lorsqu'un nouveau logiciel est installé, toute modification ultérieure puisse être retracée et annulée. Des sauvegardes matérielles feraient l'affaire, mais elles sont lourdes à gérer et ne conviennent pas à des fins de développement. Il serait plutôt pratique de disposer d'un outil permettant aux applications de créer un système de fichiers privé, d'installer leurs dépendances et d'éviter de contaminer le système d'exploitation hôte.
 
-\section{Operating systems and virtualization}\label{sec:os-and-virtualization}
+\section{Systèmes d'exploitation et virtualisation}\label{sec:os-and-virtualization}
 
 Avec la croissance des opérations de développement (devops), un certain nombre de solutions ont émergé pour la construction et l'exécution d'artefacts logiciels génériques. La plupart de ces solutions sont des émulateurs, qui simulent complètement une architecture de processeur étrangère, et donc tout logiciel qui s'exécute sur celle-ci. Une autre solution est celle des machines virtuelles (VM), une sorte d'environnement d'exécution isolé qui utilise un \textit{hypervisor} pour faciliter l'accès au matériel, mais qui fonctionne généralement sur du métal nu. L'inconvénient de ces deux méthodes est leur efficacité. Les machines virtuelles contiennent des systèmes d'exploitation à part entière et sont donc lourdes à exécuter et à déboguer. Cela est particulièrement inutile pour construire et exécuter une petite application sur un système d'exploitation étranger. Les émulateurs fonctionnent beaucoup plus lentement que le code machine natif, selon les architectures hôte et cible.
 
@@ -37,7 +37,7 @@ L'un des défis du développement de logiciels distribués sur des plates-formes
 \begin{figure}[ht]
 \centrer
 \includegraphics[width=0.65\textwidth]{../figures/user_kernel_hardware.png}
-\caption{Containers live in user space. Par défaut, ils sont mis en bac à sable à partir de l'OS hôte et des conteneurs frères et sœurs, mais contrairement aux VM, ils partagent un noyau commun entre eux et avec l'OS hôte. Tous les appels système sont passés par le noyau hôte.}
+\caption{Les conteneurs vivent dans l'espace utilisateur. Par défaut, ils sont mis en bac à sable à partir de l'OS hôte et des conteneurs frères et sœurs, mais contrairement aux VM, ils partagent un noyau commun entre eux et avec l'OS hôte. Tous les appels système sont passés par le noyau hôte.}
 \label{fig:user_kernel_hardware}
 \end{figure}
 
@@ -45,7 +45,7 @@ Les conteneurs Docker sont des environnements d'exécution en bac à sable qui s
 
 Si la conteneurisation simplifie considérablement le processus de création et de déploiement des applications, elle introduit également une certaine complexité supplémentaire dans le cycle de vie du développement des logiciels. Docker, comme la plupart des plates-formes de conteneur, utilise un système de fichiers en couches. Cela permet à Docker de prendre une "image" existante et de la modifier en installant de nouvelles dépendances ou en modifiant ses fonctionnalités. Les images sont généralement construites comme une séquence de couches, chacune devant être mise à jour périodiquement. Il faut veiller, lors de la conception du pipeline de développement, à ce que ces mises à jour ne brisent pas silencieusement une couche suivante, comme nous le décrivons dans \autoref{sec:retrospective}.
 
-\section{Introduction to Docker}\label{sec:docker-intro}
+\section{Introduction à Docker}\label{sec:docker-intro}
 
 Supposons qu'il existe un programme connu pour fonctionner sur un ordinateur quelconque. Il serait bon de donner à un autre ordinateur -- n'importe quel ordinateur connecté à Internet -- une courte chaîne de caractères ASCII, d'appuyer sur les touches \keys{\return}, et de revenir pour voir ce même programme s'exécuter. Peu importe où le programme a été construit ou quel logiciel était en cours d'exécution à ce moment-là. Cela peut sembler trivial, mais c'est un problème monumental de génie logiciel. Divers gestionnaires de paquets ont tenté de résoudre ce problème, mais même lorsqu'ils fonctionnent comme prévu, ils ne prennent en charge que les binaires compilés en natif sur les systèmes d'exploitation ayant le même gestionnaire de paquets.
 
@@ -89,7 +89,7 @@ Notez que l'image de Daphné possède un identifiant alphanumérique du conteneu
 
 Les images de docker peuvent être créées de deux manières différentes. Tout d'abord, dans \autoref{subsec:creating-an-image-snapshot}, nous verrons comment créer une image Docker en prenant un instantané d'un conteneur en cours d'exécution, puis dans \autoref{subsec:writing-an-image-recipe}, comment créer un nouveau conteneur Docker en utilisant un type de recette spécial, appelé \href{https://docs.docker.com/engine/reference/builder/}{\inline{Dockerfile}}.
 
-\subsection{Creating an image snapshot}\label{subsec:creating-an-image-snapshot}}, comment créer un nouveau conteneur Docker en utilisant une recette spéciale, appelée \href{}{\inline{Dockerfile}}.
+\subsection{Création d'un instantané d'image}\label{subsec:creating-an-image-snapshot}}
 
 Lorsqu'un conteneur du Docker écrit sur son propre système de fichiers, ces modifications ne sont pas persistantes, sauf si elles sont appliquées à une nouvelle image. Par exemple, démarrez un conteneur avec un shell interactif:
 
@@ -168,14 +168,14 @@ total 0
 %
 C'est un moyen pratique de partager une image avec des collègues et des collaborateurs. Toute personne ayant accès au dépôt peut retirer cette image et continuer là où nous nous sommes arrêtés, ou créer une autre image basée sur le dessus.
 
-\subsection{Writing an image recipe}\label{subsec:writing-an-image-recipe}
+\subsection{Écrire une recette d'image}\label{subsec:writing-an-image-recipe}
 
 La deuxième façon de créer une image Docker est d'écrire une recette, appelée \inline{Dockerfile}. Un \inline{Dockerfile} est un fichier texte qui spécifie les commandes requises pour créer une image du Docker, généralement en modifiant une image de conteneur existante à l'aide d'une interface de script. Ils comportent également des \href{https://docs.docker.com/engine/reference/builder/}{mots-clés} spéciaux (qui sont traditionnellement \inline{CAPITALIZED}), comme \href{https://docs.docker.com/engine/reference/builder/#from}{\inline{FROM}}, \href{https://docs.docker.com/engine/reference/builder/#from}{\inline{RUN}}, \href{https://docs.docker.com/engine/reference/builder/#entrypoint}{\inline{ENTRYPOINT}} et ainsi de suite. Par exemple, créez un fichier appelé \inline{Dockerfile}} avec le contenu suivant:
 
 \begin{dockerlisting}
-FROM daphne/duck      # Defines the base image
-RUN touch new_file1   # new_file1 will be part of our snapshot
-CMD ls -l             # Default command run when container is started
+FROM daphne/duck      # Définit l'image de base
+RUN touch new_file1   # new_file1 fera partie de notre instantané
+CMD ls -l             # Commande par défaut à exécuter au démarrage
 \end{dockerlisting}
 %
 Maintenant, pour construire l'image, nous pouvons simplement courir:
@@ -224,17 +224,17 @@ Notez que dès que nous lançons le conteneur, Docker exécute la commande \inli
 ~$ docker run -it user/duck:v3 (*@\hl{[custom command]}@*)
 \end{pclisting}
 %
-\subsection{Layer caching}
+\subsection{Mise en cache des couches}
 
-\href{https://docs.docker.com/storage/storagedriver/#images-and-layers}{Layers} sont un concept important à comprendre quand on travaille avec Docker. Une façon de penser à une couche est comme un commit Git -- un ensemble de modifications à une image ou une couche précédente, identifiée de façon unique par un code de hachage. Dans un \inline{Dockerfile}, les calques commencent par un \href{https://docs.docker.com/engine/reference/builder/#from}{mot-clé}.
+\href{https://docs.docker.com/storage/storagedriver/#images-and-layers}{Couches} sont un concept important à comprendre quand on travaille avec Docker. Une façon de penser à une couche est comme un commit Git -- un ensemble de modifications à une image ou une couche précédente, identifiée de façon unique par un code de hachage. Dans un \inline{Dockerfile}, les calques commencent par un \href{https://docs.docker.com/engine/reference/builder/#from}{mot-clé}.
 
 \begin{dockerlisting}
 FROM daphne/duck
-RUN touch new_file1                            # Defines a new layer
-RUN mkdir config && mv new_file1 config        # Layers can chain commands
-RUN apt-get update && apt-get install -y wget  # Install a dependency
-RUN wget https://get.your.app/install.sh       # Download a script
-RUN chmod +x install.sh && ./install.sh        # Run the script
+RUN touch new_file1
+RUN mkdir config && mv new_file1 config
+RUN apt-get update && apt-get install -y wget
+RUN wget https://get.your.app/install.sh
+RUN chmod +x install.sh && ./install.sh
 \end{dockerlisting}
 %
 Pour construire cette image, nous pouvons exécuter la commande suivante:
@@ -312,7 +312,7 @@ RUN cat duck.txt
 Maintenant, si nous ajoutons un message dans \inline{duck.txt} et reconstruisons notre image, le fichier sera copié dans l'image du Docker, et son contenu sera imprimé:
 
 \begin{pclisting}
-~$ echo "(*@\hl{Make way!}@*)" > duck.txt && docker build -t user/duck:v5 .
+~$ echo "(*@\hl{Faites place!}@*)" > duck.txt && docker build -t user/duck:v5 .
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM daphne/duck
 ---> cd6d8154f1e1
@@ -320,7 +320,7 @@ Step 2/3 : COPY duck.txt .
 ---> e0e03d9e1791
 Step 3/3 : RUN cat duck.txt
 ---> Running in 590c5420ce29
-(*@\hl{Make way!}@*)
+(*@\hl{Faites place!}@*)
 Removing intermediate container 590c5420ce29
 ---> 1633e3e10bef
 Successfully built 1633e3e10bef
@@ -330,7 +330,7 @@ Successfully tagged user/duck:v5
 Tant que les trois premières lignes du \inline{Dockerfile} et du \inline{duck.txt} ne sont pas modifiées, ces couches seront mises en cache et Docker ne les reconstruira pas. Si le contenu du fichier \inline{duck.txt} est modifié par la suite, cela déclenchera une reconstruction. Par exemple, si nous ajoutons au fichier et le reconstruisons, seules les deux dernières étapes devront être exécutées:
 
 \begin{pclisting}
-~$ echo "(*@\hl{Thank you. Have a nice day!}@*)" >> duck.txt
+~$ echo "(*@\hl{Je vous remercie. Bonne journée!}@*)" >> duck.txt
 ~$ docker build -t user/duck:v5 .
 Sending build context to Docker daemon  3.072kB
 Step 1/3 : FROM ubuntu
@@ -339,8 +339,8 @@ Step 2/3 : COPY duck.txt .
 ---> f219efc150a5
 Step 3/3 : RUN cat duck.txt
 ---> Running in 7c6f5f8b73e9
-(*@\hl{Make way!}@*)
-(*@\hl{Thank you. Have a nice day!}@*)
+(*@\hl{Faites place!}@*)
+(*@\hl{Je vous remercie. Bonne journée!}@*)
 Removing intermediate container 7c6f5f8b73e9
 ---> e8a1db712aee
 Successfully built e8a1db712aee
@@ -351,7 +351,7 @@ Une erreur courante lors de l'écriture de \inline{Dockerfile}s consiste à \inl
 
 % Comme le \inline{.gitignore} de Git, Docker a également un fichier \inline{.dockerignore}. Si nous ajoutons une ligne au fichier \inline{.dockerignore}, alors tous les chemins correspondant à cette ligne dans le contexte de compilation seront ignorés. Docker accepte également d'autres motifs comme les expressions régulières et la négation.~\footnote{Further details : \url{https://docs.docker.com/engine/reference/builder/#dockerignore-file}}
 
-\subsection{Volume sharing}\label{subsec:volume_sharing}
+\subsection{Partage de volume}\label{subsec:volume_sharing}
 
 Il existe une deuxième méthode pour déposer les données dans un conteneur, qui ne nécessite pas de les intégrer dans l'image mère au moment de la compilation. Cette méthode est plus appropriée pour les données qui sont nécessaires au moment de l'exécution, mais non essentielles pour la construction. Elle prend la forme suivante:
 
@@ -384,7 +384,7 @@ Launching...
 %
 De cette façon, le fichier local \inline{launch.sh} sera disponible pour être utilisé à l'intérieur du conteneur au chemin désigné, \inline{/launch.sh}.
 
-\subsection{Multi-stage builds}
+\subsection{Construction en plusieurs étapes}
 
 Le système de fichiers de Docker est additif, donc chaque couche ne fera qu'augmenter la taille de l'image finale. Pour cette raison, il est souvent nécessaire de mettre de l'ordre dans les fichiers inutiles après l'installation. Par exemple, lors de l'installation de dépendances sur des images basées sur Debian, il est courant de les exécuter:
 
@@ -432,13 +432,13 @@ total 0
 %
 Une des applications des constructions en plusieurs étapes consiste à compiler une dépendance de projet à partir de son code source. En plus de tout le code source, le processus de compilation pourrait introduire des gigaoctets d'artefacts de construction et de dépendances transitives, juste pour construire un seul binaire. Les compilations multi-étapes nous permettent de construire le fichier, et de le copier sur une nouvelle couche, libérée des fichiers intermédiaires.
 
-\section{ROS and Docker}\label{sec:ros-docker}
+\section{ROS et Docker}\label{sec:ros-docker}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.48\textwidth]{../figures/docker_stack_1.png}
 \includegraphics[width=0.48\textwidth]{../figures/docker_stack_2.png}
-\caption{Infrastructure des conteneurs. \textbf{Gauche} : La pile ROS cible deux architectures primaires, x86 et ARM. Pour simplifier le processus de construction, nous construisons des artefacts ARM sur x86 en utilisant \href{https://www.qemu.org}{QEMU}~\citep{bellard2005qemu}. \textbf{Right} : Pile d'apprentissage de renforcement. Les artefacts de construction sont formés sur un GPU, et transférés sur le CPU pour évaluation. Les modèles d'apprentissage profond peuvent également être exécutés sur un dispositif ARM à l'aide d'un \href{https://software.intel.com/en-us/neural-compute-stick}{accélérateur}.}
+\caption{Infrastructure des conteneurs. \textbf{Gauche}: La pile ROS cible deux architectures primaires, x86 et ARM. Pour simplifier le processus de construction, nous construisons des artefacts ARM sur x86 en utilisant \href{https://www.qemu.org}{QEMU}~\citep{bellard2005qemu}. \textbf{Droit}: Pile d'apprentissage de renforcement. Les artefacts de construction sont formés sur un GPU, et transférés sur le CPU pour évaluation. Les modèles d'apprentissage profond peuvent également être exécutés sur un dispositif ARM à l'aide d'un \href{https://software.intel.com/en-us/neural-compute-stick}{accélérateur}.}
 \label{fig:docker}
 \end{figure}
 
@@ -446,7 +446,7 @@ Une des applications des constructions en plusieurs étapes consiste à compiler
 
 La \href{https://www.duckietown.org}{platforme Duckietown} supporte deux architectures de jeu d'instructions primaires : x86 et ARM. Pour assurer la compatibilité d'exécution des paquets de Duckietown, nous effectuons une construction croisée en utilisant la virtualisation matérielle pour garantir que les artefacts de construction peuvent être exécutés sur l'une ou l'autre des architectures cibles. L'émulation en temps réel d'artefacts étrangers est également possible, en utilisant une technique similaire. Pour plus d'informations, cette technique est décrite plus en détail à l'URL suivante : \url{https://www.balena.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/}.} Par souci de performance et de simplicité, nous n'utilisons l'émulation que lorsque cela est nécessaire (par exemple sur les appareils x86). Sur ARM-native, le système d'exploitation de base est \hyperref[subsec:hypriot]{HypriotOS}, une distribution Debian légère pour le Raspberry Pi et autres SBCs basés sur ARM, avec un support natif pour Docker. Pour les systèmes x86 et ARM, Docker est la plate-forme de conteneur sous-jacente sur laquelle toutes les applications utilisateur sont exécutées, à l'intérieur d'un conteneur. Comme ROS et Docker ont tous deux des interfaces de ligne de commande étendues, une interface unifiée, le \href{https://github.com/duckietown/duckietown-shell}{Duckietown Shell} (\inline{dts}), est fourni pour envelopper leur fonctionnalité et effectuer des tâches communes.
 
-\section{Duckiebot development using Docker}
+\section{Développement de Duckiebot avec Docker}
 
 \noindent Le développement du logiciel pour la plate-forme Duckietown nécessite les objets physiques suivants:
 %
@@ -463,14 +463,14 @@ En outre, nous supposons que les dépendances logicielles suivantes ont été in
 \begin{enumerate}[label=(\alph*)]
 \item \href{https://get.docker.com}{Docker CE}
 \item POSIX-compliant shell
-\item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL : \url{https://github.com/duckietown/duckietown-shell}}
+\item \inline{dts}, le shell Duckietown\footnote{Il peut être obtenu à l'URL suivante: \url{https://github.com/duckietown/duckietown-shell}}
 \item un navigateur Web (par exemple \href{https://www.google.com/chrome/}{Chrome} ou \href{https://mozilla.org/firefox/}{Firefox})
 \item \inline{wget}/\inline{curl}
 \end{enumerate}
 
 \noindentent Le flux de travail suivant a été testé de manière approfondie sur des hôtes Linux fonctionnant sous Ubuntu 16.04 (et dans une moindre mesure, sous Mac OS X et VM). Aucune autre dépendance n'est supposée ou requise.
 
-\subsection{Flashing a bootable disk}
+\subsection{Flasher un disque amorçable}
 
 L'une des premières étapes du Duckiebook exige des utilisateurs qu'ils installent manuellement un système d'exploitation personnalisé sur un support amorçable, un processus fastidieux et long. Le script d'installation suivant a été écrit pour automatiser ce processus, permettant aux utilisateurs de configurer plus facilement un environnement logiciel reproductible:
 
@@ -486,17 +486,17 @@ dt> init_sd_card [--hostname "DUCKIEBOT_NAME"] [--wifi "username:password"]
 %
 Les utilisateurs doivent insérer une carte SD et suivre les instructions fournies. Une fois terminée, la carte est retirée et insérée dans la fente pour carte SD du Raspberry Pi. Au premier démarrage, il faut veiller à ce que l'appareil soit alimenté en continu pendant au moins dix minutes afin de permettre la fin de l'installation et d'éviter la corruption du système de fichiers.
 
-\subsection{Web interface}
+\subsection{Interface web}
 
 Pour accéder à l'interface web de DuckieOS, les utilisateurs peuvent visiter l'URL suivante dans n'importe quel navigateur web compatible JavaScript : \url{http://DUCKIEBOT_NAME:9000/}. Si le processus d'installation s'est achevé avec succès et que le réseau est correctement configuré, l'application web affichée dans~\autoref{fig:portainer_ui} devrait être accessible. Cette application permet aux utilisateurs non familiers avec le CLI de gérer les conteneurs Docker depuis leur navigateur préféré.
 
 \begin{figure}
 \includegraphics[width=0.80\textwidth]{../figures/portainer_screenshot.png}
-\caption{Interface de navigation pour les Duckiebots individuels. Elle est fournie par \href{https://www.portainer.io/}{Portainer}, un tableau de bord web RESTful, qui enveloppe le CLI du Docker et offre un support pour la gestion des conteneurs, la configuration, la mise en réseau et l'émulation des terminaux (montré ci-dessus). \menu{{\url{http://DUCKIEBOT_NAME:9000/#/container/container_name}} > > > \faMousePointer}}
+\caption{Interface de navigation pour les Duckiebots individuels. Elle est fournie par \href{https://www.portainer.io/}{Portainer}, un tableau de bord web RESTful, qui enveloppe le CLI du Docker et offre un support pour la gestion des conteneurs, la configuration, la mise en réseau et l'émulation des terminaux (montré ci-dessus).}
 \label{fig:portainer_ui}
 \end{figure}
 
-\subsection{Testing ROS}
+\subsection{Test de ROS}
 
 \noindent Pour vérifier que Docker fonctionne correctement, lancez un conteneur à distance, de manière interactive, comme ceci:
 
@@ -507,7 +507,7 @@ Pour accéder à l'interface web de DuckieOS, les utilisateurs peuvent visiter l
 %
 Le drapeau \inline{-H} indique un hôte Docker distant sur le réseau local où la commande Docker doit être exécutée. Pour que l'adresse \inline{DUCKIEBOT\_NAME} fonctionne, mDNS doit être correctement configuré dans les paramètres du réseau, sinon une adresse IP est nécessaire.
 
-\subsection{Build and deployment}
+\subsection{Construction et déploiement de logiciels}
 
 Les images du Docker peuvent être compilées de manière croisée en incluant la partie spécifique à l'ARM du \inline{Dockerfile} avec les instructions \inline{RUN ["cross-build-start" ]} et \inline{RUN ["cross-build-end" ]}. La commande suivante peut être utilisée pour le déploiement:
 
@@ -521,7 +521,7 @@ Il est également possible de construire directement sur les appareils ARM en cr
 ~$ docker build --file=FILE_PATH/Dockerfile.arm [--tag TAG_NAME] .
 \end{rpilisting}
 %
-\subsection{Multi-architecture support}
+\subsection{Support multi-architecture}
 
 À partir de la version 18.09.6 de Docker, les fichiers ARM spécifiques \inline{Dockerfile} ne seront pas construits sur les machines x86,\footnote{À l'exception du client Docker de Mac OS, qui offre \href{https://docs.docker.com/docker-for-mac/multi-arch/}{support multi-architecture}. Des versions plus récentes de Docker Desktop pour Mac OS et Windows ont \href{https://engineering.docker.com/2019/04/multi-arch-images/}{introduit une émulation ARM native}.}, et tenter d'en construire une produira l'erreur suivante lors de l'exécution de \inline{docker build}:
 
@@ -587,7 +587,7 @@ dt> start_gui_tools DUCKIEBOT_NAME rqt_image_view
 %
 La commande ci-dessus ouvre un shell ROS qui se connectera au nœud maître ROS de \inline{DUCKIEBOT}. Pour tester le fonctionnement de la connexion ROS, lancez \inline{roswtf}.
 
-\subsection{Remote control}
+\subsection{Télécommande}
 
 \noindent Le conteneur suivant lance la démo du joystick (le joystick USB doit être connecté):
 
@@ -604,7 +604,7 @@ dt> duckiebot demo --demo_name joystick --duckiebot_name DUCKIEBOT_NAME
 dt> duckiebot keyboard_control DUCKIEBOT_NAME
 \end{dtslisting}
 %
-\subsection{Camera calibration}
+\subsection{Calibrage de la caméra}
 
 \noindent Le conteneur suivant va lancer la procédure de calibrage extrinsèque:
 
@@ -637,7 +637,7 @@ dt> duckiebot demo --demo_name base --duckiebot_name DUCKIEBOT_NAME
 ~$ rosservice call /DUCKIEBOT_NAME/inverse_kinematics_node/set_trim --TRIM
 \end{pclisting}
 %
-\subsection{Lane following}
+\subsection{Suivi de voie automatique}
 
 \noindent Une fois calibré, le couloir suivant la démo peut être lancé comme suit:
 
@@ -666,7 +666,7 @@ La cause profonde de cette friction est le produit d'un versionnage imprécis et
 
 \begin{figure}
 \includegraphics[width=0.40\textwidth]{../figures/aido_logo.png}
-\caption{The \href{https://www.duckietown.org/research/ai-driving-olympics}{AI Driving Olympics}, un cas d'utilisation primaire pour le système décrit ci-dessus.}
+\caption{Les \href{https://www.duckietown.org/research/ai-driving-olympics}{Olympiques IA de Conduite}, un cas d'utilisation primaire pour le système décrit ci-dessus.}
 \label{fig:aido_logo}
 \end{figure}
 
@@ -688,6 +688,6 @@ Pour résoudre ces problèmes, diverses plates-formes de conteneurs, dont \href{
 
 Duckietown encourage les utilisateurs à former des modèles d'apprentissage de renforcement à l'intérieur d'un simulateur de conduite. Comme les agents apprennent une politique pour conduire un Duckiebot, nous envisageons qu'il est également possible de former un agent à effectuer des tâches dans l'environnement Docker. Les agents, dotés de commandes shell rudimentaires, recevraient une récompense basée sur le code de sortie d'un programme souhaité que nous souhaitons exécuter. Cela peut être étendu à un environnement entièrement automatisé, où l'agent a accès à un clavier et une souris virtuels et apprend à configurer un environnement de bureau pour exécuter un programme souhaité. Actuellement, ce processus implique qu'un étudiant diplômé essaie diverses commandes de StackOverflow. Il est évident que le même résultat peut être obtenu par tout processus stochastique qui sélectionne des commandes à partir d'une base de connaissances et qui apprend de l'expérience passée. Des travaux préliminaires dans ce domaine sont déjà en cours~\citep{henkel2020learning}, probablement par un étudiant diplômé dans une situation similaire.
 
-\section{Conclusion}
+\section{Épilogue}
 
 Dans ce chapitre, nous avons fait une visite guidée du processus de conteneurisation et démontré l'efficacité des conteneurs pour la construction de logiciels de robotique reproductibles - une étape clé dans la quête plus large de la reproductibilité expérimentale. Nous proposons un ensemble de meilleures pratiques et de leçons apprises lors de la conception, du développement et du déploiement des conteneurs Docker pour la plate-forme Duckietown~\citep{paull2017duckietown}. Nous recommandons également un certain nombre d'outils et de techniques pour la reproductibilité des logiciels, un élément clé dans la quête plus large de la reproductibilité de la recherche. L'auteur tient à remercier Rusi Hristov pour son assistance technique inestimable au cours des premières étapes de ce projet et Florian Golemo pour la planification et l'assistance architecturale. Pour plus d'informations sur la plate-forme Duckietown et le développement de logiciels reproductibles à l'aide de Docker, veuillez consulter le site \url{https://docs.duckietown.org}

@@ -34,9 +34,9 @@ Hatchery est un outil conçu pour aider les programmeurs à écrire des applicat
         ]
             \addplot table[col sep=comma, x=Category,y=Downloads]{../data/hatchery_downloads.csv};
         \end{axis}
-        \node[above,font=\large\bfseries] at (current bounding box.north) {Unique downloads of Hatchery};
+        \node[above,font=\large\bfseries] at (current bounding box.north) {Téléchargements uniques de Hatchery};
     \end{tikzpicture}
-    \caption{Unique downloads of Hatchery between the time of its release and June 2019. \url{https://plugins.jetbrains.com/plugin/10290-hatchery}.}
+    \caption{Téléchargements uniques de Hatchery entre le moment de sa sortie et juin 2019. \url{https://plugins.jetbrains.com/plugin/10290-hatchery}.}
     \label{fig:hatchery_downloads}
 \end{figure}
 %
@@ -44,7 +44,7 @@ Hatchery est un outil conçu pour aider les programmeurs à écrire des applicat
 
 Le système d'exploitation \href{https://www.ros.org/}{Robot Operating System} (ROS)~\citep{quigley2009ros} est un intergiciel populaire pour les applications robotiques. Il fournit une infrastructure logicielle pour la messagerie distribuée, mais comprend également un ensemble de bibliothèques et d'outils graphiques développés par la communauté pour la création d'applications robotiques. ROS n'est pas un système d'exploitation (OS) au sens traditionnel du terme, mais il prend en charge des fonctionnalités similaires telles que la mémoire partagée et la communication entre processus. Contrairement aux systèmes purement axés sur les messages tels que DDS~\citep{pardo2003omg} et \href{https://zeromq.org/}{ZMQ}~\citep{hintjens2013zeromq}, ROS fournit, outre l'infrastructure de communication, des API spécifiques pour la construction de systèmes robotiques décentralisés, notamment ceux qui sont capables de se déplacer. Cela comprend des bibliothèques standard pour la sérialisation et la désérialisation de données géométriques, de cadres de coordonnées, de cartes, de messages de capteurs et d'images.
 
-Le middleware ROS fournit plusieurs frontaux de langage pour la programmation polyglotte. Selon un recensement communautaire effectué en 2018, 55\% de toutes les applications ROS sur GitHub sont écrites en C/C++, suivies par Python avec une part de 25\% de développeurs. Le code source d'une application ROS typique contient un mélange de code C/C++ et Python, correspondant aux préférences linguistiques respectives des communautés de la robotique et de l'apprentissage machine. Hatchery est compatible avec la plupart des bibliothèques clientes ROS courantes, notamment \href{https://wiki.ros.org/rosjava}{rosjava} pour Java, \href{https://wiki.ros.org/rospy}{rospy} pour Python, \href{https://wiki.ros.org/rospy}{roscpp} pour C/C++, et d'autres frontaux de langage.
+Le middleware ROS fournit plusieurs frontaux de langage pour la programmation polyglotte. Selon un recensement communautaire effectué en 2018, 55\% de toutes les applications ROS sur GitHub sont écrites en C/C++, suivies par Python avec une part de 25\% de développeurs. Le code source d'une application ROS typique contient un mélange de code C/C++ et Python, correspondant aux préférences linguistiques respectives des communautés de la robotique et de l'apprentissage automatique. Hatchery est compatible avec la plupart des bibliothèques clientes ROS courantes, notamment \href{https://wiki.ros.org/rosjava}{rosjava} pour Java, \href{https://wiki.ros.org/rospy}{rospy} pour Python, \href{https://wiki.ros.org/rospy}{roscpp} pour C/C++, et d'autres frontaux de langage.
 
 \begin{figure}
     \centering
@@ -54,13 +54,13 @@ Le middleware ROS fournit plusieurs frontaux de langage pour la programmation po
 
 Un projet ROS typique comporte plusieurs composantes, dont le code source, les fichiers de configuration, l'infrastructure de construction, les artefacts compilés et l'environnement de déploiement. Pour construire une application ROS simple, plusieurs étapes sont nécessaires. Tout d'abord, il faut installer le système ROS, qui n'est officiellement supporté que sur les distributions Linux basées sur Debian.\hspace{-.08em}\footnote{Les instructions détaillées d'installation peuvent être trouvées ici : \url{https://wiki.ros.org/ROS/Installation}}
 %
-En supposant que le ROS a été installé à l'emplacement par défaut, il peut être localisé comme tel :
+En supposant que le ROS a été installé à l'emplacement par défaut, il peut être localisé comme tel:
 %
 \begin{pclisting}
     ~$ source /opt/ros/<ROS DISTRO>/setup.[ba]sh
 \end{pclisting}
 %
-Une application ROS minimale contient au moins un \textit{éditeur} et un \textit{abonné}, qui font passer les messages sur un canal de communication partagé. L'éditeur peut être défini comme suit :
+Une application ROS minimale contient au moins un \textit{éditeur} et un \textit{abonné}, qui font passer les messages sur un canal de communication partagé. L'éditeur peut être défini comme suit:
 %
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/publisher.py]
 import rospy
@@ -74,7 +74,7 @@ pub.publish("Some message")
 rate.sleep()
 \end{pythonlisting}
 %
-Au fur et à mesure que l'éditeur écrit des messages sur \hl{\ttfamily{\canal de petite taille}, un autre noeud qui est abonné au même canal recevra un rappel lorsque de nouveaux messages arriveront et pourra les lire sur le canal :
+Au fur et à mesure que l'éditeur écrit des messages sur \hl{\ttfamily\small channel}, un autre noeud qui est abonné au même canal recevra un rappel lorsque de nouveaux messages arriveront et pourra les lire sur le canal:
 %
 \begin{pythonlisting}[title=./catkin\_ws/src/pubsub/subscriber.py]
 def callback(data):
@@ -85,7 +85,7 @@ def callback(data):
     rospy.spin()
 \end{pythonlisting}
 %
-Tous les paquets ROS ont un fichier de lancement, qui contient un manifeste des nœuds disponibles :
+Tous les paquets ROS ont un fichier de lancement, qui contient un manifeste des nœuds disponibles:
 %
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
@@ -94,7 +94,7 @@ Tous les paquets ROS ont un fichier de lancement, qui contient un manifeste des 
 </launch>
 \end{launchlisting}
 %
-Pour construire et exécuter l'application, les séries de commandes suivantes sont nécessaires :
+Pour construire et exécuter l'application, les séries de commandes suivantes sont nécessaires:
 %
 \begin{pclisting}
     ~$ cd catkin_ws && catkin_make
@@ -104,7 +104,7 @@ Pour construire et exécuter l'application, les séries de commandes suivantes s
 ~$ roslaunch pubsub pubsub.launch
 \end{pclisting}
 %
-Plutôt que d'interagir avec la ligne de commande, il serait pratique de disposer d'un outil graphique permettant d'effectuer toutes ces tâches automatiquement. En outre, il serait utile de détecter s'il y a une erreur typographique ou une référence de navigation dans le fichier de lancement :
+Plutôt que d'interagir avec la ligne de commande, il serait pratique de disposer d'un outil graphique permettant d'effectuer toutes ces tâches automatiquement. En outre, il serait utile de détecter s'il y a une erreur typographique ou une référence de navigation dans le fichier de lancement:
 %
 \begin{launchlisting}[title=./catkin\_ws/src/pubsub/pubsub.launch]
 <launch>
@@ -117,7 +117,7 @@ Remarquez que l'erreur typographique est imprimée en rouge et que la référenc
 
 \section{Installation}\label{subsec:installation}
 
-\noindent Pour utiliser simplement l'outil, les utilisateurs doivent avoir les dépendances logicielles suivantes :
+\noindent Pour utiliser simplement l'outil, les utilisateurs doivent avoir les dépendances logicielles suivantes:
 %
 \begin{enumerate}
 \item MacOS ou une distribution Linux basée sur Debian
@@ -125,14 +125,14 @@ Remarquez que l'erreur typographique est imprimée en rouge et que la référenc
 \item Java SE (JRE 8+) ou CLion/PyCharm 2019.1+
 \end{enumerate}
 %
-\noindent Les utilisateurs de ROS peuvent utiliser la commande suivante pour ouvrir un projet ROS existant :
+\noindent Les utilisateurs de ROS peuvent utiliser la commande suivante pour ouvrir un projet ROS existant:
 %
 \begin{pclisting}
 ~$ git clone https://github.com/duckietown/hatchery && cd hatchery &&
 ./gradlew runIde [-Project="<ABSOLUTE_PATH_TO_ROS_PROJECT>"]].
 \end{pclisting}
 %
-\noindent Les utilisateurs de Duckietown peuvent simplement utiliser la coquille de Duckietown :
+\noindent Les utilisateurs de Duckietown peuvent simplement utiliser la coquille de Duckietown:
 %
 \begin{dtslisting}
 dt> hatchery
@@ -148,21 +148,21 @@ Hatchery utilise la \href{https://www.jetbrains.org/intellij/sdk/docs/}{IntelliJ
 
 \subsection{Refactoring}\label{subsec:refactoring}
 
-Le remaniement est une caractéristique essentielle de tout EDI, et l'essence du remaniement est le changement de nom. Considérez ce qui doit se produire lorsqu'un utilisateur souhaite renommer un jeton dans son programme, comme le paramètre nommé \inline{data} sur la ligne \#1 ci-dessous :
+Le remaniement est une caractéristique essentielle de tout EDI, et l'essence du remaniement est le changement de nom. Considérez ce qui doit se produire lorsqu'un utilisateur souhaite renommer un jeton dans son programme, comme le paramètre nommé \inline{data} sur la ligne \#1 ci-dessous:
 %
 \begin{pythonlisting}
 def callback(data):
     rospy.loginfo(rospy.get_caller_id() + "received data: %s", data.data)
 \end{pythonlisting}
 %
-Si elle utilisait l'éditeur de texte \inline{vim}, une solution serait de remplacer toutes les occurrences textuelles de la chaîne \inline{data} dans le fichier en utilisant \inline{:\%s/data/msg/g}, ce qui donnerait le résultat suivant :
+Si elle utilisait l'éditeur de texte \inline{vim}, une solution serait de remplacer toutes les occurrences textuelles de la chaîne \inline{data} dans le fichier en utilisant \inline{:\%s/data/msg/g}, ce qui donnerait le résultat suivant:
 
 \begin{pythonlisting}
 def callback((*@\hl{msg}@*)):
     rospy.loginfo(rospy.get_caller_id() + "received (*@\hl{msg}@*): %s", (*@\hl{msg}@*).(*@\hl{msg}@*))
 \end{pythonlisting}
 %
-Il y a eu quatre occurrences de la chaîne \inline{data}, dont seulement deux ont été correctement renommées. Au lieu de cela, seules les chaînes qui font référence au paramètre de fonction doivent être renommées :
+Il y a eu quatre occurrences de la chaîne \inline{data}, dont seulement deux ont été correctement renommées. Au lieu de cela, seules les chaînes qui font référence au paramètre de fonction doivent être renommées:
 
 \newcommand{\cfbox}[2]{\colorlet{\currentcolor}{.}{\color{#1}\fbox{\color{\currentcolor}#2}}}
 
@@ -179,7 +179,7 @@ L'un des composants les plus importants et les moins appréciés d'un EDI est l'
 
 Diverses techniques ont été développées pour améliorer la réactivité des analyseurs modernes. Les techniques d'analyse incrémentielle comme celles proposées pour la première fois dans \citet{ghezzi1979incremental} et développées plus avant par \citet{wagner1997practical,wagner1997incremental} cherchent à intégrer la mise en cache et l'analyse différentielle pour accélérer l'analyse des programmes soumis à des modifications simultanées. Les techniques d'analyse floue comme celles décrites dans ~\citet{koppler1997systematic} visent à accroître la flexibilité et la robustesse de l'analyse en présence d'erreurs locales. Ces deux techniques ont joué un rôle dans le développement d'outils de programmation sensibles au langage, qui doivent être capables de fournir un retour d'information rapide et spécifique pendant que l'utilisateur tape.
 
-Les instructions de procédure des analyseurs modernes sont rarement écrites à la main, sauf si le langage analysé est très simple ou si l'on souhaite obtenir des performances brutes. Même les analyseurs conçus pour les EDI, où l'analyse incrémentale et la tolérance aux erreurs sont si importantes, les boîtes à outils de métacompilation telles que ANTLR~\citep{parr1995antlr}, ou Xtext~\citep{eysholdt2010xtext} couvrent un nombre surprenant de cas d'utilisation courants. Hatchery utilise \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, une boîte à outils conçue pour aider les utilisateurs à développer des plugins linguistiques personnalisés pour la \href{https://www.jetbrains.org/intellij/sdk/docs}{Plateforme IntelliJ}. Il utilise un générateur de lexique basé sur DFA, JFlex~\citep{klein2001jflex}, et un générateur d'analyseur personnalisé basé sur la grammaire d'expression d'analyse (PEG)~\citep{ford2004parsing}, un descendant de la spécification grammaticale Backus-Naur Form (BNF). Cette spécification est consommée par le générateur d'analyseur GrammarKit et traduite en code source Java, produisant un analyseur qui lit le code source écrit dans le langage spécifié et construit une interface de structure de programme (PSI), la structure de données interne de la plate-forme IntelliJ pour représenter les arbres syntaxiques abstraits (AST). Voici un extrait d'une grammaire PEG BNF pour l'analyse des fichiers ROS \href{https://wiki.ros.org/msg}{\inline{.msg}} :
+Les instructions de procédure des analyseurs modernes sont rarement écrites à la main, sauf si le langage analysé est très simple ou si l'on souhaite obtenir des performances brutes. Même les analyseurs conçus pour les EDI, où l'analyse incrémentale et la tolérance aux erreurs sont si importantes, les boîtes à outils de métacompilation telles que ANTLR~\citep{parr1995antlr}, ou Xtext~\citep{eysholdt2010xtext} couvrent un nombre surprenant de cas d'utilisation courants. Hatchery utilise \href{https://github.com/JetBrains/grammar-kit}{Grammar-Kit}, une boîte à outils conçue pour aider les utilisateurs à développer des plugins linguistiques personnalisés pour la \href{https://www.jetbrains.org/intellij/sdk/docs}{Plateforme IntelliJ}. Il utilise un générateur de lexique basé sur DFA, JFlex~\citep{klein2001jflex}, et un générateur d'analyseur personnalisé basé sur la grammaire d'expression d'analyse (PEG)~\citep{ford2004parsing}, un descendant de la spécification grammaticale Backus-Naur Form (BNF). Cette spécification est consommée par le générateur d'analyseur GrammarKit et traduite en code source Java, produisant un analyseur qui lit le code source écrit dans le langage spécifié et construit une interface de structure de programme (PSI), la structure de données interne de la plate-forme IntelliJ pour représenter les arbres syntaxiques abstraits (AST). Voici un extrait d'une grammaire PEG BNF pour l'analyse des fichiers ROS \href{https://wiki.ros.org/msg}{\inline{.msg}}:
 %
 \begin{bnflisting}
 rosInterfaceFile ::= ( property | COMMENT )*
@@ -203,7 +203,7 @@ private recover_property ::= ! ( TYPE | FIELD | SEPARATOR | COMMENT )
 \label{fig:railroad}
 \end{figure}
 %
-Les règles lexicales pour les jetons, \inline{TYPE}, \inline{FIELD}, \inline{CONSTANT} et autres sont définies dans un fichier \inline{.flex} séparé, la \href{https://www.jflex.de/manual.html#Grammar}{Grammaire JFlex}. Vous trouverez ci-dessous un extrait du lexique \inline{.flex} qui l'accompagne :
+Les règles lexicales pour les jetons, \inline{TYPE}, \inline{FIELD}, \inline{CONSTANT} et autres sont définies dans un fichier \inline{.flex} séparé, la \href{https://www.jflex.de/manual.html#Grammar}{Grammaire JFlex}. Vous trouverez ci-dessous un extrait du lexique \inline{.flex} qui l'accompagne:
 %
 \begin{flexlisting}
 TYPE_CHARACTER=[^:=#\ \r\n\t\f\\]
@@ -245,7 +245,7 @@ Un aspect souvent négligé mais important des outils de développement est l'in
 \center
 % \includegraphics[width=0.90\textwidth]{../figures/evolution.png}
 \includegraphics[width=0.90\textwidth]{../figures/progress_in_program.png}
-\caption{The evolution of code. A gauche, les langues qui obligent l'utilisateur à s'adapter à la machine. À droite, on trouve des représentations de plus en plus souples du code source.}
+\caption{L'évolution du code. A gauche, les langues qui obligent l'utilisateur à s'adapter à la machine. À droite, on trouve des représentations de plus en plus souples du code source.}
 \label{fig:evolution_of_programming}
 \end{figure}
 
@@ -267,7 +267,7 @@ Le plugin Hatchery fournit une interface graphique légère qui se superpose au 
 \begin{figure}[b]
 \centering
 \frame{\includegraphics[width=0.90\textwidth]{../figures/hatchery_screenshot.png}}
-\caption{Hatchery UI supports syntax highlighting, validation and project navigation.}
+\caption{L'interface utilisateur de Hatchery prend en charge la coloration syntaxique, la validation et la navigation dans le projet.}
 \label{fig:hatchery_gui}
 \end{figure}
 %
@@ -283,14 +283,14 @@ Le plugin Hatchery fournit une interface graphique légère qui se superpose au 
 \noindent Alors qu'il prend en charge de nombreux cas d'utilisation courante tels que la navigation en code rudimentaire, l'analyse statique et l'assistance à l'exécution, Hatchery est actuellement un travail en cours. Nous travaillons à étendre le support de Hatchery pour la programmation ROS dans certains des domaines suivants:\vspace{10pt}
 %
 \begin{itemize}
-\item \textbf{Syntax support} -- Surlignage, navigation, autocomplétion
+\item \textbf{Analyse syntaxique} -- Surlignage, navigation, autocomplétion
 \item \textbf{Analyse des programmes} -- Inspections du code, intentions et peluches
 %\item \textbf{Testing support} -- Tests d'unité et d'intégration, couverture de code
 \item \textbf{Création de projet} -- Configuration du projet et génération de code passe-partout
 \item \textbf{Gestion des dépendances} -- Suivi des paquets installés et manquants
 \item \textbf{Surveillance des outils} -- Enregistrement, diagnostic, profilage et visualisation
-\item \textbf{Crash analytics} -- Tracés de pile améliorés avec navigation des sources
-\item \textbf{Build automation} -- Delta rebuilds, cmake magic, code hotswap
+\item \textbf{Analyse des plantages} -- Tracés de pile améliorés avec navigation des sources
+\item \textbf{Moteur de production} -- Delta reconstruire, cmake magic, code hotswap
 %\item \textbf{intégration ROS} -- Nœuds, sujets, services, paramètres, graphiques
 %\item \textbf{Duckumentation} -- Instructions d'utilisation et fonctionnalités supportées
 \end{itemize}\vspace{10pt}
@@ -374,6 +374,6 @@ Une liste plus complète des fonctionnalités actuellement prises en charge et �
 
 Les plugins EDI comme Hatchery améliorent la productivité des développeurs et la qualité des logiciels dans les langages et cadres de travail spécifiques à un domaine. La clé de ce processus est le développement d'analyseurs personnalisés capables d'analyser le code et de détecter les erreurs courantes, ce qui nécessite une connaissance du modèle de programmation ROS. Alors que les cadres spécifiques à un domaine comme les ROS sont devenus de plus en plus polyvalents, le développement et la maintenance des analyseurs qui les prennent en charge peuvent être difficiles, surtout lorsque ces cadres se développent et évoluent. Nous pensons que l'analyse syntaxique est essentiellement une compétence qui peut être apprise à partir d'exemples. Nous étudions actuellement les moyens d'automatiser le développement de générateurs d'analyseurs sensibles au contexte pour des applications agnostiques au domaine. Nous pensons que cette approche peut être adaptée à un cadre de méta-apprentissage qui est capable d'être transféré d'un domaine à l'autre et nécessite beaucoup moins de connaissances humaines.
 
-\section{Conclusion}
+\section{Épilogue}
 
 Dans ce chapitre, nous démontrons l'intérêt des EDI pour le développement de logiciels à usage général et nous présentons un plugin EDI spécifique à un domaine pour le développement de la robotique, développé à l'origine comme projet final dans la classe Duckietown~\citep{paull2017duckietown}. En utilisant Hatchery, les développeurs peuvent recevoir de l'aide pour écrire, compiler et exécuter des applications ROS, un cadre middleware populaire pour le développement de la robotique, en utilisant la plateforme IntelliJ. Il offre un support pour l'analyse syntaxique et l'analyse statique des fichiers de configuration ROS, ainsi qu'une assistance pour l'exécution et le débogage des applications ROS. L'auteur souhaite exprimer sa gratitude à \href{https://github.com/paoloach}{Paolo Achdjian} pour sa contribution à plusieurs fonctionnalités, notamment un menu de configuration et de paramètres d'exécution personnalisés. Pour plus d'informations sur Hatchery, veuillez consulter le site \url{https://github.com/duckietown/hatchery}.

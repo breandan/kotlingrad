@@ -75,7 +75,7 @@
 \edef\partnamefr{Partie}
 \edef\partnameen{Part}
 
-\edef\dmschapternamefr{Chapter}
+\edef\dmschapternamefr{Chapitre}
 \edef\dmschapternameen{Chapter}
 
 \edef\appendixnamefr{Annexe}
@@ -87,10 +87,10 @@
 \edef\dms@etfr{ et}
 \edef\dms@eten{, and}
 
-\edef\dmslistfigurenamefr{List of figures}
+\edef\dmslistfigurenamefr{Liste des figures}
 \edef\dmslistfigurenameen{List of figures}
 
-\edef\dmslisttablenamefr{List of tables}
+\edef\dmslisttablenamefr{Liste des tableaux}
 \edef\dmslisttablenameen{List of tables}
 
 \edef\lemmanamefr{Lemme}
@@ -108,7 +108,7 @@
 \edef\tablenamefr{Tableau}
 \edef\tablenameen{Table}
 
-\edef\dmscontentsnamefr{Contents} %\'e car on ne sait pas si inputenc sera chargé
+\edef\dmscontentsnamefr{Table des mati\noexpand\`eres} %\'e car on ne sait pas si inputenc sera chargé
 \edef\dmscontentsnameen{Contents}
 
 \edef\revuemsgfr{Cet article a \noexpand\'et\noexpand\'e soumis dans }
@@ -140,10 +140,10 @@
 \edef\keywordsfr{Mots cl\'es}
 \edef\keywordsen{Keywords}
 
-\edef\dmscontentsnamefr{Contents} %\'e car on ne sait pas si inputenc sera chargé
+\edef\dmscontentsnamefr{Table des mati\`eres} %\'e car on ne sait pas si inputenc sera chargé
 \edef\dmscontentsnameen{Contents}
 
-\edef\abstractnamefr{Abstract}
+\edef\abstractnamefr{R\'esum\'e}
 \edef\abstractnameen{Abstract}
 
 \edef\theoremnamefr{Th\'eor\`eme}
@@ -432,7 +432,7 @@ Tenth\or Eleventh\or Twelfth\or Thirteenth\or Fourteenth\fi}
 \def\@copyrightname{{\tt\string\author}} %Rappel à l'utilisateur de définir \author
 
 \renewcommand{\author}[1]{%
-\gdef\authors{#1}%
+\global\edef\authors{#1}%
 \g@addto@macro\addresses{\author{}}%
 \def\@copyrightname{#1}
 }
@@ -447,14 +447,15 @@ Tenth\or Eleventh\or Twelfth\or Thirteenth\or Fourteenth\fi}
 \def\university#1{\def\@university{{\normalfont\bf\Large#1}}}
 \university{{\bf\Large Universit\'e de Montr\'eal}}
 
+\def\faculty#1{\def\@facultyto{{\normalfont\rm#1}}}
+
 \def\facultyto#1{\def\@facultyto{{\normalfont\rm#1}}}
-\facultyto{{\rm Facult\'e des \'etudes sup\'erieures et postdoctorales}}
+\facultyto{{\rm Facult\'e des arts et des sciences}}
+
+\let\@faculty=\@facultyto
 
 \def\department#1{\def\@department{{\normalfont\rm#1}}}
 \def\@department{ D\'epartement de math\'ematiques et de statistique}
-
-\def\faculty#1{\def\@faculty{{\normalfont\rm#1}}}
-\def\@faculty{}
 
 \def\date#1{\def\@date{{\normalfont\rm#1}}}
 \def\@date{}
@@ -516,12 +517,19 @@ Tenth\or Eleventh\or Twelfth\or Thirteenth\or Fourteenth\fi}
 
 \def\Year{\number\year}
 
-\def\todayfr{\space\number\day\space\MoYrfr}
+\def\Todayfr{\space\MoYrfr}
+\def\todayfr{\space\moyrfr}
 
-\def\MoYrfr{%
+\def\moyrfr{%
 \ifcase\month\or
 janvier\or f\'evrier\or mars\or avril\or mai\or juin\or
 juillet\or ao\^ut\or septembre\or octobre\or novembre\or d\'ecembre
+\fi%
+\space\number\year}%
+\def\MoYrfr{%
+\ifcase\month\or
+Janvier\or F\'evrier\or Mars\or Avril\or Mai\or Juin\or
+Juillet\or Ao\^ut\or Septembre\or Octobre\or Novembre\or D\'ecembre
 \fi%
 \space\number\year}%
 \def\maketitle{\par
@@ -549,6 +557,11 @@ juillet\or ao\^ut\or septembre\or octobre\or novembre\or d\'ecembre
 \vskip42\p@
 \vtop{\centering
 \bgroup\bf\Large\expandafter\upshape\expandafter{\@title}\@@par\egroup%
+\ifx\@empty\@soustitre\relax
+\else\vtop{
+\large\vrule width0pt height 20pt
+\sl\@soustitre%
+}\fi
 \global\dimen@i=\prevdepth%
 }%
 \prevdepth=\dimen@i
@@ -583,8 +596,8 @@ juillet\or ao\^ut\or septembre\or octobre\or novembre\or d\'ecembre
 \ifphd@     Th\`ese pr\'esent\'ee         \fi
 en vue de l'obtention du grade de\\
 \@degree\\
-en\strut\
-            \ifx\@empty\@sujet
+en\strut
+\ifx\@empty\@sujet
 \dms@erreur\sujet
 \else
 \@sujet
@@ -609,7 +622,12 @@ en\strut\
 \vskip12\p@\@plus6\p@
 \normalfont\normalsize
 \centerline{\bf\Large\@university}
-\centerline{\rm\@facultyto}
+\setbox0=\hbox{\rm\@facultyto}
+\centerline{\copy0}
+\nointerlineskip
+\dimen0=\wd0
+\advance\dimen0 by 2pc
+\centerline{\vrule width \dimen0 height -3pt depth 3.3pt}
 \vskip18\p@\@plus12\p@
 \ifmaitrise@ \centerline{Ce m\'emoire intitul\'e}\fi
 \ifrapport@  \centerline{Ce rapport de stage intitul\'e}\fi
@@ -621,14 +639,13 @@ en\strut\
 \ifx\@empty\@title
 \dms@erreur\title
 \fi
-\expandafter\upshape\expandafter{\centering\@title}\@@par
+\expandafter\upshape\expandafter{\@title}\@@par
 %
 \ifx\@soustitre\@empty\else
 \rm\large
 \vskip1pc
 %
 \setbox0=\hbox{\@soustitre}
-\ifdim\wd0>410pt\advance\leftskip by 30pt \let\rightskip=\leftskip\fi
 \expandafter\upshape\expandafter{\unhbox0}\@@par
 \dimen0=\textwidth\advance\dimen0 by -60pt\relax
 \fi
@@ -650,7 +667,7 @@ en\strut\
 }
 \prevdepth\dimen@i
 \fi
-\vskip18\p@\@plus6\p@
+\vskip24\p@\@plus12\p@
 \ifmaitrise@\centerline{a \'et\'e \'evalu\'e par un jury compos\'e des personnes suivantes :}\fi %
 \ifrapport@\centerline{a \'et\'e \'evalu\'e par un jury compos\'e des personnes suivantes :} \fi%
 \iftravail@\centerline{a \'et\'e \'evalu\'e par un jury compos\'e des personnes suivantes :} \fi%
@@ -1365,7 +1382,7 @@ par\par\vskip9mm
 \z@
 {.7\linespacing\@plus\linespacing}
 {.5\linespacing}
-{\large\bfseries}%
+{\Large\bfseries}%
 }
 
 %%% À FAIRE Voir si on doit changer le paramètre d'indentation des
@@ -1379,7 +1396,7 @@ par\par\vskip9mm
 \z@
 {6\p@\@plus2\p@}
 {1em}%
-{\normalfont\bfseries}%
+{\large\bfseries}%
 }
 
 \def\subsubsection{%
@@ -1387,8 +1404,8 @@ par\par\vskip9mm
 {3}
 \normalparindent
 {6\p@\@plus2\p@}
-{1em}
-{\normalfont\itshape}%
+{-1mm}
+{\normalfont}%
 }
 \def\paragraph{%
 \@startsection{paragraph}
@@ -1461,7 +1478,7 @@ par\par\vskip9mm
 \fi
 \fi
 \chaptermark{#1}%
-\addtocontents{lof}{\protect\addvspace{-10\p@}}%
+\addtocontents{lof}{\protect\addvspace{10\p@}}%
 \addtocontents{lot}{\protect\addvspace{10\p@}}%
 \@makechapterhead{#2}\@afterheading}
 \def\@schapter#1{\typeout{#1}%
@@ -1470,12 +1487,12 @@ par\par\vskip9mm
 \ifx\dmschaptername\appendixname \@tocwriteb\tocappendix{chapter}{#1}%
 \else \@tocwriteb\tocchapter{chapter}{#1}\fi
 \chaptermark{#1}%
-\addtocontents{lof}{\protect\addvspace{-10\p@}}%
+\addtocontents{lof}{\protect\addvspace{10\p@}}%
 \addtocontents{lot}{\protect\addvspace{10\p@}}%
 \@makeschapterhead{#1}\@afterheading}
 \def\@makechapterhead#1{\global \topskip 5pc\relax
 \begingroup
-\normalfont\Large\bfseries \centering
+\normalfont\LARGE\bfseries \centering
 \ifnum\c@secnumdepth>\m@ne
 \leavevmode \hskip-\leftskip
 \rlap{\vbox to\z@{\vss
@@ -1512,8 +1529,8 @@ par\par\vskip9mm
 
 \AtBeginDocument{
 \ifx\ifFBunicode\undefined \else
-\def\frenchtablename{\tablename}
-\def\englishtablename{\tablename}
+\def\frenchtablename{\tablenamefr}
+\def\englishtablename{\tablenameen}
 \def\francais{
 \@francais
 \addtocontents{toc}{\protect\@francais}
@@ -1521,8 +1538,8 @@ par\par\vskip9mm
 }
 \fi
 \ifx\captionsenglish\undefined \else
-\def\frenchtablename{\tablename}
-\def\englishtablename{\tablename}
+\def\frenchtablename{\tablenamefr}
+\def\englishtablename{\tablenameen}
 \def\anglais{
 \@anglais
 \addtocontents{toc}{\protect\@anglais}
@@ -1604,7 +1621,7 @@ par\par\vskip9mm
 \let\chapter=\section %Pour que ça marche avec natbib aussi
 \def\@bibtitlestyle{\section*{\protect\refname}}
 \edef\jobname{\dms@inputfilename}
-\bibliography{../biblio/kotlingrad}
+\bibliography{#1}
 \endgroup%
 }
 
