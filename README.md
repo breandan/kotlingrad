@@ -844,13 +844,12 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
-* [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
-* [AD and the danger of confusing infinitesimals](http://conway.rutgers.edu/~ccshan/wiki/blog/posts/Differentiation/)
-* [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
-* [Automatic differentiation in machine learning: a survey](http://jmlr.org/papers/volume18/17-468/17-468.pdf)
-* [The (JAX) Autodiff Cookbook](https://colab.research.google.com/github/google/jax/blob/master/notebooks/autodiff_cookbook.ipynb)
 * [Automatic differentiation in ML: Where we are and where we should be going](https://papers.nips.cc/paper/8092-automatic-differentiation-in-ml-where-we-are-and-where-we-should-be-going.pdf)
 * [A Leibniz Notation for Automatic Differentiation](https://uhra.herts.ac.uk/bitstream/handle/2299/8933/904722.pdf)
+* [First-Class Automatic Differentiation in Swift: A Manifesto](https://gist.github.com/rxwei/30ba75ce092ab3b0dce4bde1fc2c9f1d)
+* [The (JAX) Autodiff Cookbook](https://colab.research.google.com/github/google/jax/blob/master/notebooks/autodiff_cookbook.ipynb)
+* [Automatic differentiation in PyTorch](https://openreview.net/pdf?id=BJJsrmfCZ)
+* [Automatic differentiation in machine learning: a survey](http://jmlr.org/papers/volume18/17-468/17-468.pdf)
 
 ### Differentiable Programming
 
@@ -880,8 +879,12 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
 * [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
 * [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
-* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
 * [Einstein Summation in Numpy](https://obilaniu6266h16.wordpress.com/2016/02/04/einstein-summation-in-numpy/)
+* [Issues in Computer Algebra](https://www.cs.rit.edu/~anh/comp_alg.html)
+* [Term Rewriting and All That](https://www21.in.tum.de/~nipkow/TRaAT/)
+* [Describing the syntax of programming languages using conjunctive and
+Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf)
+* [Formal languages over GF(2)](https://users.math-cs.spbu.ru/~okhotin/papers/formal_languages_gf2.pdf)
 
 ### Symbolic Mathematics
 
@@ -904,18 +907,23 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 
 ### Type Systems
 
+* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
+* [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf)
 * [Dimension Types](https://link.springer.com/content/pdf/10.1007%2F3-540-57880-3_23.pdf)
 * [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145)
-* [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf)
 
 ### Domain-Specific Languages
 
 * [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf)
-* [DSL Implementation Using Staging and Monads](https://dl.acm.org/doi/pdf/10.1145/331963.331975)
 * [Implicit Staging of EDSL Expressions: A Bridge between Shallow and Deep Embedding](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf)
+* [DSL Implementation Using Staging and Monads](https://dl.acm.org/doi/pdf/10.1145/331963.331975)
 * [Deeply Reifying Running Code for Constructing a Domain-Specific Language](https://dl.acm.org/doi/pdf/10.1145/2972206.2972219)
-* [Scripting an IDE for EDSL awareness](https://ilyasergey.net/papers/groovy-dsl.pdf)
 * [Staged Abstract Interpreters](https://www.cs.purdue.edu/homes/rompf/papers/wei-oopsla19.pdf)
+* [Generating Fluent Embedded Domain-Specific
+Languages with Subchaining](https://static.csg.ci.i.u-tokyo.ac.jp/papers/19/nakamaru-jcl50.pdf)
+* [Generating a Generic Fluent API in Java](https://arxiv.org/pdf/2002.06179.pdf)
+* [Fling – A Fluent API Generator](https://drops.dagstuhl.de/opus/volltexte/2019/10805/pdf/LIPIcs-ECOOP-2019-13.pdf)
+* [Scripting an IDE for EDSL awareness](https://ilyasergey.net/papers/groovy-dsl.pdf)
 
 ### Automated Testing
 
