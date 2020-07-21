@@ -37,7 +37,7 @@ fun Map<String, Any>.plot2D(
   val geoms = entries.filter { it.key != xAxis }.zip(Colors.distributeEvenly(entries.size - 1, 1.0))
     .map { geom_path(size = thickness, color = it.second, showLegend = true) { x = xAxis; y = it.first.key } }
 
-  val plot = geoms.fold(ggplot(this)) { acc, it -> acc + it } + ggtitle(title) + theme(legendPosition = "right")
+  val plot = geoms.fold(ggplot(this)) { acc, it -> acc + it } + ggtitle(title) + theme().legendPosition_right()
 
   // Create JFXPanel showing the plot.
   val plotSpec = plot.toSpec()

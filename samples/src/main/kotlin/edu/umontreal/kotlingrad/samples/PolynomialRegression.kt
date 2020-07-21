@@ -133,7 +133,7 @@ fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>
 
 //  plotLoss(lossHistory)
 //    println("Final weights: $weightsNow")
-  return Pair(weightsNow, lossHistory)
+  return weightsNow to lossHistory
 }
 
 private fun plotLoss(lossHistory: MutableList<Triple<Int, Double, Double>>) {
