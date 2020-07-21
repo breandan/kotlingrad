@@ -12,7 +12,6 @@ graal {
 }
 
 repositories {
-  maven("https://jitpack.io")
   maven("https://maven.jzy3d.org/releases")
   maven("https://jetbrains.bintray.com/lets-plot-maven")
 }
