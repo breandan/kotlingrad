@@ -52,7 +52,7 @@ fun main() = with(DoublePrecision) {
   var v4: VFun<DReal, D5> = Vec(D5) { 0 }
 
   val oracle = { it: Double -> -(it / 10).pow(3) }//kotlin.math.sin(it/2.0) }//(it / 10).pow(2) }//-it / 10 + 1 }
-  val drawSample = { rand.nextDouble(0.0, 10.0).let { Pair(it, oracle(it)) } }
+  val drawSample = { rand.nextDouble(0.0, 10.0).let { it to oracle(it) } }
   val mlp = mlp(x, p1v, b1, p2v, b2, p3v, b3, p4v, b4)
 
   var epochs = 0

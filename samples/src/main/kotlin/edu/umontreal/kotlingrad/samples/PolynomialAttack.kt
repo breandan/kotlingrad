@@ -33,13 +33,13 @@ val testPoints = List(budget) { rand.nextDouble(-maxX, maxX) }.sorted()
 fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
-  val trueErrors = testPoints.map { Pair(it, trueError(it).toDouble()) }.toMap()
+  val trueErrors = testPoints.map { it to trueError(it).toDouble() }.toMap()
   val maxError = trueErrors.entries.maxBy { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }
 
   val batches: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>> = trueErrors.entries.chunked(batchSize.i)
-    .map { chunk -> Pair(Vec(batchSize) { chunk[it].key }, Vec(batchSize) { targetEq(chunk[it].key).toDouble() }) }
+    .map { chunk -> Vec(batchSize) { chunk[it].key } to Vec(batchSize) { targetEq(chunk[it].key).toDouble() } }
   val (newModel, surrogateLoss) = attack(weights, batches)
 
 //  println("Oracle vs. Model")
@@ -100,5 +100,5 @@ private fun DoublePrecision.attack(
   val adModel = decodePolynomial(newWeights)
   val surrogateLoss = (model - adModel) pow 2
 
-  return Pair(decodePolynomial(newWeights), surrogateLoss)
+  return decodePolynomial(newWeights) to surrogateLoss
 }
