@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
 
 @Suppress("DuplicatedCode")
 fun main() = with(DoublePrecision) {

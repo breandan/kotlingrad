@@ -1,15 +1,13 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
-import guru.nidi.graphviz.attribute.Color.*
+import guru.nidi.graphviz.attribute.Color.BLUE
+import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.minus
-import guru.nidi.graphviz.model.Factory.*
+import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
-import java.lang.ClassCastException
 import kotlin.reflect.KProperty
-import kotlin.streams.toList
 import kotlin.system.measureTimeMillis
 
 /**

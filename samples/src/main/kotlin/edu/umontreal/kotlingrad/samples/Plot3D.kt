@@ -1,15 +1,12 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
-import org.jzy3d.analysis.AbstractAnalysis
-import org.jzy3d.analysis.AnalysisLauncher
+import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import org.jzy3d.analysis.*
 import org.jzy3d.chart.factories.AWTChartComponentFactory
-import org.jzy3d.colors.Color
-import org.jzy3d.colors.ColorMapper
+import org.jzy3d.colors.*
 import org.jzy3d.colors.colormaps.ColorMapRainbow
 import org.jzy3d.maths.Range
-import org.jzy3d.plot3d.builder.Builder
-import org.jzy3d.plot3d.builder.Mapper
+import org.jzy3d.plot3d.builder.*
 import org.jzy3d.plot3d.builder.concrete.OrthonormalGrid
 import org.jzy3d.plot3d.rendering.canvas.Quality.Advanced
 

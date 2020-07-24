@@ -1,13 +1,10 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.invoke
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.magnitude
 import edu.umontreal.kotlingrad.experimental.DoublePrecision.pow
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.toDouble
 import edu.umontreal.kotlingrad.utils.step
-import java.io.FileOutputStream
-import java.io.ObjectOutputStream
+import java.io.*
 import kotlin.random.Random
 import kotlin.streams.toList
 
