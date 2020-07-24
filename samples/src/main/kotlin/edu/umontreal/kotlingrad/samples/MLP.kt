@@ -2,10 +2,7 @@ package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.utils.step
-import kotlin.math.absoluteValue
-import kotlin.math.log10
-import kotlin.math.pow
-import kotlin.math.sign
+import kotlin.math.*
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 

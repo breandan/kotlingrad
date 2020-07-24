@@ -4,13 +4,11 @@ import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.geom_path
-import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.label.ggtitle
-import jetbrains.letsPlot.theme
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 fun main() {
   val range = -5.0..5.0
