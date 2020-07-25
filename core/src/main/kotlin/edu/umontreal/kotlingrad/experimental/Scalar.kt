@@ -174,7 +174,7 @@ class Negative<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X
 class Sum<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
 class Prod<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
 class Power<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
-class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E<X>()): SFun<X>(left, right), BiFun<X>
+class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E()): SFun<X>(left, right), BiFun<X>
 
 class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb) {
   fun df() = fn.df()

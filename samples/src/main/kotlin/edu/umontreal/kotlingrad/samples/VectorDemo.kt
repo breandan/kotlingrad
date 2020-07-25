@@ -20,7 +20,7 @@ fun main() = with(DoublePrecision) {
   val dh_dx = h.d(x)
   println("h'(x) = $dh_dx")
 
-  val vf1 = Vec(y + x, y * 2)
+  val vf1 = Vec(y + x, y * 2) // <-- this is the problem
   println(vf1)
   val bh = x * vf1 + Vec(1.0, 3.0)
   println(bh(y to 2.0, x to 4.0))
