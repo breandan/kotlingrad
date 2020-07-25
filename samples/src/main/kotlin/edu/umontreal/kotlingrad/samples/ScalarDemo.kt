@@ -37,6 +37,6 @@ fun main() = with(DoublePrecision) {
   val rom_os = r(x to m)(x to s)
 
   val i = 0
-  println("r ∘ (m ∘ s) ∘ $i = $ro_mos ∘ $i = ${ro_mos(x to 0)}")
-  println("(r ∘ m) ∘ s ∘ $i = $rom_os ∘ $i = ${rom_os(x to 0)}")
+  println("r ∘ (m ∘ s) ∘ $i = $ro_mos ∘ $i = ${ro_mos(x to 0)}")
+  println("(r ∘ m) ∘ s ∘ $i = $rom_os ∘ $i = ${rom_os(x to 0)}")
 }

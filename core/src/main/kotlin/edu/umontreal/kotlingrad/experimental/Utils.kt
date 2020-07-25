@@ -16,24 +16,29 @@ import java.io.File
 val DARKMODE = false
 val THICKNESS = 2
 
-inline fun render(layout: Engine = DOT, format: Format = SVG,
-                  crossinline op: () -> MutableNode) =
+inline fun render(format: Format = SVG, crossinline op: () -> MutableNode) =
   graph(directed = true) {
     val color = if (DARKMODE) Color.WHITE else Color.BLACK
 
     edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
 
-    graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), Color.TRANSPARENT.background()]
+    graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), Color.TRANSPARENT.background(), GraphAttr.margin(0.0), Attributes.attr("compound", "true"), Attributes.attr("nslimit", "20")]
 
-    node[color, color.font(), Font.config("Helvetica", 20),
-      Style.lineWidth(THICKNESS)]
+    node[color, color.font(), Font.config("Lucida Console", 20), Style.lineWidth(THICKNESS), Attributes.attr("shape", "Mrecord")]
 
     op()
-  }.toGraphviz().apply { engine(layout) }.render(format)
+  }.toGraphviz().render(format)
 
-fun Renderer.saveToFile(filename: String) = toFile(File(filename))
-
-fun Fun<*>.html() = render { toGraph() }.toString()
+fun extToFormat(string: String): Format = when(string) {
+  "dot" -> Format.DOT
+  "png" -> Format.PNG
+  "ps" -> Format.PS
+  else -> SVG
+}
+fun SFun<*>.saveToFile(filename: String) =
+  render(extToFormat(filename.split(".").last())) { toGraph() }.saveToFile(filename)
+fun SFun<*>.render(format: Format = SVG) = render(format) { toGraph() }
+fun Renderer.saveToFile(filename: String) = File(filename).writeText(toString().replace("]", "];"))
 fun Fun<*>.show(name: String = "temp") = render { toGraph() }.show(name)
 fun Renderer.show(name: String) = toFile(File.createTempFile(name, ".svg")).show()
 fun File.show() = ProcessBuilder("x-www-browser", path).start()

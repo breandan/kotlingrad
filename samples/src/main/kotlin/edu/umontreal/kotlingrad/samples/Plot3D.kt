@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.*
 import org.jzy3d.analysis.*
 import org.jzy3d.chart.factories.AWTChartComponentFactory
 import org.jzy3d.colors.*

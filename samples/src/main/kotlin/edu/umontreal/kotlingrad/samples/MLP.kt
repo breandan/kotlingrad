@@ -10,11 +10,11 @@ fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
 fun <T: SFun<T>> tanh(x: SFun<T>) = (E<T>().pow(Two<T>() * x) - One()) / (E<T>().pow(Two<T>() * x) + One())
 fun <T: SFun<T>> layer(x: VFun<T, D5>): VFun<T, D5> = x.map { tanh(it) }
 fun <T: SFun<T>> mlp(
-  x: SVar<T> = SVar("x"),
-  p1v: VVar<T, D5> = VVar("p1v", D5), b1: VVar<T, D5> = VVar("b1", D5),
-  p2v: MVar<T, D5, D5> = MVar("p2v", D5, D5), b2: VVar<T, D5> = VVar("b2", D5),
-  p3v: MVar<T, D5, D5> = MVar("p3v", D5, D5), b3: VVar<T, D5> = VVar("b3", D5),
-  p4v: VVar<T, D5> = VVar("p4v", D5), b4: VVar<T, D5> = VVar("b4", D5)
+  x: SVar<T>,
+  p1v: VVar<T, D5>, b1: VVar<T, D5>,
+  p2v: MVar<T, D5, D5>, b2: VVar<T, D5>,
+  p3v: MVar<T, D5, D5>, b3: VVar<T, D5>,
+  p4v: VVar<T, D5>, b4: VVar<T, D5>
 ): SFun<T> {
   val layer1 = layer(p1v * x + b1)
   val layer2 = layer(p2v * layer1 + b2)

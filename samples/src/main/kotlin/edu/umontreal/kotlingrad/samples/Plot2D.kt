@@ -22,15 +22,15 @@ fun main() {
     // https://en.wikipedia.org/wiki/Hermite_polynomials
     val y0 = exp(-x * x / 2)
 
-    val hermite = plot2D(X_RANGE, *y0.andDerivatives())
+    val hermite = plot2D(X_RANGE, *derivatives(y0))
 
     val y1 = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
 
-    val sinusoid = plot2D(X_RANGE, *y1.andDerivatives())
+    val sinusoid = plot2D(X_RANGE, *derivatives(y1))
 
     val y2 = sigmoid(x)
 
-    val sigmoid = plot2D(X_RANGE, *y2.andDerivatives())
+    val sigmoid = plot2D(X_RANGE, *derivatives(y2))
 
     hermite.saveAs("hermite.svg").show()
     sinusoid.saveAs("plot.svg").show()
@@ -38,9 +38,9 @@ fun main() {
   }
 }
 
-private fun SFun<DReal>.andDerivatives() =
+private fun derivatives(fx: SFun<DReal>) =
   with(DoublePrecision) {
-    val y = this@andDerivatives
+    val y = fx
     val `dy∕dx` = d(y) / d(x)
     val `d²y∕dx²` = d(`dy∕dx`) / d(x)
     val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
