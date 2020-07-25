@@ -1,9 +1,9 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.*
 
 @Suppress("DuplicatedCode")
-fun main() = with(DoublePrecision) {
+fun main() {
   val f = x pow 3
   println(f(x to 3.0))
   println("f(x) = $f")

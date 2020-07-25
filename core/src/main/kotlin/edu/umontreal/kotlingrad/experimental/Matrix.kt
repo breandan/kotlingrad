@@ -16,6 +16,7 @@ import kotlin.reflect.KProperty
 
 open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
+  override val proto by lazy { bindings.proto }
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
@@ -79,6 +80,10 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     is Jacobian -> "Jacobian($vVar)$bindings"
     else -> javaClass.simpleName
   }
+
+  override operator fun invoke(vararg numbers: Number): MFun<X, R, C> = invoke(bindings.zip(numbers.map { wrap(it) }) + constants())
+  override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> = invoke(bindings.zip(funs.toList()) + constants())
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> = invoke(ps.toList().bind() + constants())
 }
 
 class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):

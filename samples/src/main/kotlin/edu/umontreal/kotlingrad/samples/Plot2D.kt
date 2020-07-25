@@ -15,32 +15,28 @@ import java.io.File
 val X_RANGE = -10.0..10.0
 
 fun main() {
-  with(DoublePrecision) {
-    // TODO: https://en.wikipedia.org/wiki/Chebyshev_polynomials
-    // TODO: https://en.wikipedia.org/wiki/Gegenbauer_polynomials
+  // TODO: https://en.wikipedia.org/wiki/Chebyshev_polynomials
+  // TODO: https://en.wikipedia.org/wiki/Gegenbauer_polynomials
 
-    // https://en.wikipedia.org/wiki/Hermite_polynomials
-    val y0 = exp(-x * x / 2)
+  // https://en.wikipedia.org/wiki/Hermite_polynomials
+  val y0 = exp(-x * x / 2)
 
-    val hermite = plot2D(X_RANGE, *derivatives(y0))
+  val hermite = y0.plot2D(X_RANGE, *derivatives(y0, x))
 
-    val y1 = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
+  val y1 = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
 
-    val sinusoid = plot2D(X_RANGE, *derivatives(y1))
+  val sinusoid = y0.plot2D(X_RANGE, *derivatives(y1, x))
 
-    val y2 = sigmoid(x)
+  val y2 = sigmoid(x)
 
-    val sigmoid = plot2D(X_RANGE, *derivatives(y2))
+  val sigmoid = y0.plot2D(X_RANGE, *derivatives(y2, x))
 
-    hermite.saveAs("hermite.svg").show()
-    sinusoid.saveAs("plot.svg").show()
-    sigmoid.saveAs("sigmoid.svg").show()
-  }
+  hermite.saveAs("hermite.svg").show()
+  sinusoid.saveAs("plot.svg").show()
+  sigmoid.saveAs("sigmoid.svg").show()
 }
 
-private fun derivatives(fx: SFun<DReal>) =
-  with(DoublePrecision) {
-    val y = fx
+private fun derivatives(y: SFun<DReal>, x: SVar<DReal>): Array<SFun<DReal>> {
     val `dy∕dx` = d(y) / d(x)
     val `d²y∕dx²` = d(`dy∕dx`) / d(x)
     val `d³y∕dx³` = d(`d²y∕dx²`) / d(x)
@@ -53,11 +49,11 @@ private fun derivatives(fx: SFun<DReal>) =
 //               d³y/dx³=$`d³y∕dx³`
 //               d⁴y/dx⁴=$`d⁴y∕dx⁴`""".trimIndent())
 
-    arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
+    return arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
   }
 
-private fun DoublePrecision.plot2D(range: ClosedFloatingPointRange<Double>,
-                                   vararg funs: SFun<DReal>): String {
+private fun SFun<DReal>.plot2D(range: ClosedFloatingPointRange<Double>,
+                               vararg funs: SFun<DReal>): String {
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
   val xs = (range step 0.0087).toList()
   val ys = funs.map { xs.map { xv -> it(x to xv).toDouble() } }
