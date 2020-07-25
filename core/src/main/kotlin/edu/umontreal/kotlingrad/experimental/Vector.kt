@@ -16,7 +16,7 @@ import kotlin.system.measureTimeMillis
 
 sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  open val proto by lazy { bindings.proto }
+  override val proto by lazy { bindings.proto }
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
@@ -90,6 +90,10 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     is VComposition -> "($vFun)$bindings"
     else -> javaClass.simpleName
   }
+
+  override operator fun invoke(vararg numbers: Number): VFun<X, E> = invoke(bindings.zip(numbers.map { wrap(it) }) + constants())
+  override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> = invoke(bindings.zip(funs.toList()) + constants())
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> = invoke(ps.toList().bind() + constants())
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>

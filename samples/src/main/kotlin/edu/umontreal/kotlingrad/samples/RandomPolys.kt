@@ -6,7 +6,7 @@ import guru.nidi.graphviz.engine.Format.DOT
 import java.io.File
 import kotlin.math.absoluteValue
 
-fun main() = with(DoublePrecision) {
+fun main() {
   for (i in 0..9) {
     val bt = ExpressionGenerator.scaledRandomBiTree(4)
     plotOracle("oracle$i.svg", 1.0) { bt(it).toDouble() }

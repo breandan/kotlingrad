@@ -2,18 +2,12 @@
 
 package edu.umontreal.kotlingrad.experimental
 
-import guru.nidi.graphviz.*
-import guru.nidi.graphviz.attribute.*
-import guru.nidi.graphviz.attribute.Color.*
-import guru.nidi.graphviz.attribute.GraphAttr.*
-import guru.nidi.graphviz.attribute.Rank.RankDir.*
-import guru.nidi.graphviz.engine.Format
-import guru.nidi.graphviz.engine.Renderer
+import guru.nidi.graphviz.attribute.Color.BLUE
+import guru.nidi.graphviz.attribute.Color.RED
+import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
-import java.io.File
 import java.io.Serializable
-import kotlin.NumberFormatException
 import kotlin.math.*
 import kotlin.reflect.KProperty
 
@@ -43,12 +37,21 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   fun wrap(number: Number) = SConst<X>(number.toDouble())
 
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
-
-//  operator fun invoke(sFun: SFun<X>): Fun<X> = invoke(bindings.zip(fns).bind() + constants) as bindings.z
-  operator fun <A: Fun<X>> A.invoke(vararg fns: Fun<X>): A = invoke(bindings.zip(fns.toList())) as A
-  operator fun <A: Fun<X>> A.invoke(vararg pairs: Pair<Fun<X>, Fun<X>>): A = invoke(Bindings(*pairs)) as A
+  operator fun invoke(vararg numbers: Number): Fun<X>
+  operator fun invoke(vararg funs: Fun<X>): Fun<X>
+  operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X>
 
   fun toGraph(): MutableNode
+
+  val proto: X
+  fun constants(): Bindings<X> = proto.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() }
+
+  fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+  fun wrapOrError(any: Any): Fun<X> = when (any) {
+    is Fun<*> -> any as Fun<X>
+    is Number -> wrap(any)
+    else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
+  }
 }
 
 interface BiFun<X: SFun<X>>: Fun<X> {
@@ -57,7 +60,7 @@ interface BiFun<X: SFun<X>>: Fun<X> {
 }
 
 interface UnFun<X: SFun<X>>: Fun<X> { val input: Fun<X> }
-interface Variable<X: SFun<X>>: Fun<X> { val name: String; val proto: X }
+interface Variable<X: SFun<X>>: Fun<X> { val name: String; override val proto: X }
 interface Constant<X: SFun<X>>: Fun<X>
 
 /**
@@ -66,12 +69,12 @@ interface Constant<X: SFun<X>>: Fun<X>
 
 sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  open val ZERO: Special<X> by lazy { Zero() }
-  open val ONE: Special<X> by lazy { One() }
-  open val TWO: Special<X> by lazy { Two() }
-  open val E: Special<X> by lazy { E<X>() }
+  override val proto by lazy { bindings.proto }
+  val ZERO: Special<X> by lazy { Zero() }
+  val ONE: Special<X> by lazy { One() }
+  val TWO: Special<X> by lazy { Two() }
+  val E: Special<X> by lazy { E<X>() }
 
-  open val proto by lazy { bindings.proto }
   val x by lazy { SVar(proto, "x") }
   val y by lazy { SVar(proto, "y") }
   val z by lazy { SVar(proto, "z") }
@@ -155,16 +158,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     }
   }
 
-  val constants by lazy { proto.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() } }
-  fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
-  operator fun invoke(vararg numbers: Number) = invoke(bindings.zip(numbers.map { wrap(it) }) + constants)
-  operator fun invoke(vararg funs: Fun<X>) = invoke(bindings.zip(funs.toList()) + constants)
-  operator fun invoke(vararg ps: Pair<Fun<X>, Any>) = invoke(ps.toList().bind() + constants)
-  fun wrapOrError(any: Any): Fun<X> = when (any) {
-    is Fun<*> -> any as Fun<X>
-    is Number -> wrap(any)
-    else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
-  }
+  override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }) + constants())
+  override operator fun invoke(vararg funs: Fun<X>): SFun<X> = invoke(bindings.zip(funs.toList()) + constants())
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind() + constants())
 }
 
 /**
@@ -332,40 +328,12 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  */
 
 abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
-  val constants = prototype.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() }
   val x = prototype.x
   val y = prototype.y
   val z = prototype.z
-
   open val variables = listOf(x, y, z)
 
-  fun wrapOrError(any: Any): Fun<X> = when (any) {
-    is Fun<*> -> any as Fun<X>
-    is Number -> prototype.wrap(any)
-    else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
-  }
-
-  fun List<Pair<Fun<X>, Any>>.bind(): Bindings<X> =
-    Bindings(map { it.first to wrapOrError(it.second) }.toMap())
-
   fun wrap(number: Number): SConst<X> = prototype.wrap(number)
-
-  /**
-   * Invocation is cast as T, to keep track of the output type and type check
-   * subsequent operations. T must never be more specific or more abstract than
-   * [SFun], [VFun] or [MFun]. If the receiver is a superclass (i.e. [Fun]),
-   * type checking subsequent composition will be impossible. If the receiver
-   * is a subclass, the cast will fail after T has been evaluated to [Constant].
-   */
-
-  operator fun <T: Fun<X>> T.invoke(vararg numbers: Number): T =
-    invoke(bindings.zip(numbers.map { wrap(it) }) + constants) as T
-
-  operator fun <T: Fun<X>> T.invoke(vararg funs: Fun<X>): T =
-    invoke(bindings.zip(funs.toList()) + constants) as T
-
-  operator fun <T: Fun<X>> T.invoke(vararg ps: Pair<Fun<X>, Any>): T =
-    invoke(ps.toList().bind() + constants) as T
 
   fun <Y: Number> Vec(y0: Y) = VConst<X, D1>(wrap(y0))
   fun <Y: Number> Vec(y0: Y, y1: Y) = VConst<X, D2>(wrap(y0), wrap(y1))
@@ -390,7 +358,7 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
   inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
     Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
 
-  inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> = Vec(List(e.i) { wrapOrError(gen(it)) as SFun<X> })
+  inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> = Vec(List(e.i) { prototype.wrapOrError(gen(it)) as SFun<X> })
 
   fun Var(name: String = "") = SVar(prototype, name)
   fun Var2(name: String = "") = VVar<X, D2>(prototype, name, D2)
