@@ -16,6 +16,7 @@ import kotlin.system.measureTimeMillis
 
 sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
+  open val proto by lazy { bindings.proto }
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
@@ -33,21 +34,21 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
       }
     }
 
-  val mapInput = SVar<X>("mapInput")
+  val mapInput by lazy { SVar(proto, "mapInput") }
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput), mapInput)
   open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput), mapInput)
 
   fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1)//.let { if(EAGER) it.df() else it }
 
   fun d(v1: SVar<X>) = VDerivative(this, v1)//.let { if (EAGER) it.df() else it }
-  fun d(v1: SVar<X>, v2: SVar<X>) = Jacobian(this, VVar("j2", D2, Vec(v1, v2)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>) = Jacobian(this, VVar("j3", D3, Vec(v1, v2, v3)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>) = Jacobian(this, VVar("j4", D4, Vec(v1, v2, v3, v4)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>) = Jacobian(this, VVar("j5", D5, Vec(v1, v2, v3, v4, v5)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>) = Jacobian(this, VVar("j6", D6, Vec(v1, v2, v3, v4, v5, v6)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>) = Jacobian(this, VVar("j7", D7, Vec(v1, v2, v3, v4, v5, v6, v7)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>) = Jacobian(this, VVar("j8", D8, Vec(v1, v2, v3, v4, v5, v6, v7, v8)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>, v9: SVar<X>) = Jacobian(this, VVar("j9", D9, Vec(v1, v2, v3, v4, v5, v6, v7, v8, v9)))
+  fun d(v1: SVar<X>, v2: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j2", D2, Vec(v1, v2)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j3", D3, Vec(v1, v2, v3)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j4", D4, Vec(v1, v2, v3, v4)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j5", D5, Vec(v1, v2, v3, v4, v5)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j6", D6, Vec(v1, v2, v3, v4, v5, v6)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j7", D7, Vec(v1, v2, v3, v4, v5, v6, v7)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j8", D8, Vec(v1, v2, v3, v4, v5, v6, v7, v8)))
+  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>, v9: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j9", D9, Vec(v1, v2, v3, v4, v5, v6, v7, v8, v9)))
   fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> = vars.map { it to d(it) }.toMap()
   fun grad(): Map<SVar<X>, VFun<X, E>> = bindings.sVars.map { it to d(it) }.toMap()
 
@@ -59,6 +60,9 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)
   open infix fun dot(multiplicand: VFun<X, E>): SFun<X> = DProd(this, multiplicand)
 
+  operator fun times(multiplicand: Number): VFun<X, E> = this * wrap(multiplicand)
+
+  fun magnitude() = (this ʘ this).sum().sqrt()
   open fun sum(): SFun<X> = VSumAll(this)
 
   override fun toGraph(): MutableNode = mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
@@ -149,17 +153,18 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<
   }
 }
 
-open class VVar<X: SFun<X>, E: D1>(
+open class VVar<X: SFun<X>, E: D1> constructor(
+  override val proto: X,
   override val name: String = "",
   val length: E,
 //  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
-  val sVars: Vec<X, E> = Vec(List(length.i) { SVar("$name[$it]") })
+  val sVars: Vec<X, E> = Vec(List(length.i) { SVar(proto, "$name[$it]") })
 ): Variable<X>, VFun<X, E>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to sVars))
   override fun equals(other: Any?) = other is VVar<*, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    VVar(if (name.isEmpty()) property.name else name, length, sVars)
+    VVar(proto, if (name.isEmpty()) property.name else name, length, sVars)
 }
 
 class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
@@ -185,22 +190,24 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings
     }.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
-open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
-  constructor(fVec: F64Array): this(*fVec.toDoubleArray().map { SConst<X>(it) }.toTypedArray())
+open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
+  constructor(proto: X, fVec: F64Array): this(*fVec.toDoubleArray().map { proto.wrap(it) }.toTypedArray())
+  override val proto by lazy { consts[0].proto }
+
   val simdVec by lazy { F64Array(consts.size) { consts[it].doubleValue } }
 
   override fun plus(addend: VFun<X, E>) = when(addend) {
-    is VConst<X, E> -> VConst(simdVec + addend.simdVec)
+    is VConst<X, E> -> VConst(proto, simdVec + addend.simdVec)
     else -> super.plus(addend)
   }
 
   override fun minus(subtrahend: VFun<X, E>) = when(subtrahend) {
-    is VConst<X, E> -> VConst(simdVec - subtrahend.simdVec)
+    is VConst<X, E> -> VConst(proto, simdVec - subtrahend.simdVec)
     else -> super.minus(subtrahend)
   }
 
   override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {
-    is VConst<X, E> -> VConst(simdVec * multiplicand.simdVec)
+    is VConst<X, E> -> VConst(proto, simdVec * multiplicand.simdVec)
     else -> super.ʘ(multiplicand)
   }
 
@@ -210,7 +217,7 @@ open class VConst<X: SFun<X>, E: D1>(vararg val consts: SConst<X>): Vec<X, E>(co
   }
 
   override fun times(multiplicand: SFun<X>) = when (multiplicand) {
-    is SConst<X> -> VConst(simdVec * multiplicand.doubleValue)
+    is SConst<X> -> VConst(proto, simdVec * multiplicand.doubleValue)
     else -> super.times(multiplicand)
   }
 
@@ -225,6 +232,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
   constructor(len: Nat<E>, gen: (Int) -> SFun<X>): this(List(len.i) { gen(it) })
 
   val size = contents.size
+  override val proto by lazy { contents.first().proto }
 
   override fun toString() = contents.joinToString(", ", "[", "]")
 

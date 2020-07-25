@@ -2,7 +2,7 @@ package edu.umontreal.kotlingrad.experimental
 
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
-data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
+data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   constructor(inputs: List<Bindings<X>>): this(inputs.map { it.fMap }
     .fold(mapOf<Fun<X>, Fun<X>>()) { acc, fMap -> fMap + acc })
   constructor(vararg bindings: Bindings<X>): this(bindings.toList())
@@ -54,6 +54,7 @@ data class Bindings<X: SFun<X>>(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
   val vVars: Set<VVar<X, *>> = vVarMap.keys
   val mVars: Set<MVar<X, *, *>> = mVarMap.keys
   val allVars: Set<Variable<X>> = sVars + vVars + mVars
+  val proto by lazy { allVars.first().proto }
   val allFreeVariables by lazy { allVarMap.filterValues { containsFreeVariable(it) } }
   val allBoundVariables: Map<Variable<X>, Fun<X>> by lazy { allVarMap.filterValues { !containsFreeVariable(it) } }
 

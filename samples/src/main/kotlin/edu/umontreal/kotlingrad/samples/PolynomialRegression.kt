@@ -1,8 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.magnitude
-import edu.umontreal.kotlingrad.experimental.DoublePrecision.pow
 import edu.umontreal.kotlingrad.utils.step
 import java.io.*
 import kotlin.random.Random

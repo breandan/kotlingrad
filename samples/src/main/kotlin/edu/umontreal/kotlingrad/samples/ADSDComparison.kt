@@ -5,7 +5,7 @@ import edu.umontreal.kotlingrad.utils.step
 import java.math.BigDecimal
 import kotlin.math.*
 
- @Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
+@Suppress("NonAsciiCharacters", "LocalVariableName", "RemoveRedundantBackticks")
 fun main() {
   val xs = (-1000.0..1000.0 step 7E-1).toList()
 //  val xs = (-1.0..1.0 step 0.0037).toList().toDoubleArray()

@@ -11,6 +11,7 @@ open class BDReal(number: Number, val sigFigs: Int = 30): RealNumber<BDReal, Big
   -1E30 > number.toDouble() -> BigDecimal(1E30)
   else -> BigDecimal(number.toDouble() + 0.0)
 }) {
+  override val proto by lazy { this }
   val mc = MathContext(sigFigs)
 
   companion object: BDReal(BigDecimal.ZERO)

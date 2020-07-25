@@ -34,7 +34,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
       }
     }
 
-  val mapInput = SVar<X>("mapInput")
+  val mapInput = SVar(bindings.proto, "mapInput")
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
 
   open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
@@ -46,6 +46,8 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   open operator fun times(multiplicand: VFun<X, C>): VFun<X, R> = MVProd(this, multiplicand)
   open infix fun ʘ(multiplicand: MFun<X, R, C>): MFun<X, R, C> = HProd(this, multiplicand)
   open operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = MMProd(this, multiplicand)
+
+  operator fun times(multiplicand: Number): MFun<X, R, C> = this * wrap(multiplicand)
 
   open fun sum(): VFun<X, C> = MSumRows(this)
 
@@ -172,9 +174,10 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X,
   }
 }
 
-open class MVar<X: SFun<X>, R: D1, C: D1>(
+open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
+  override val proto: X,
   override val name: String = "", val r: R, val c: C,
-  val vVars: List<VVar<X, C>> = List(r.i) { VVar("$name[$it]", c) },
+  val vVars: List<VVar<X, C>> = List(r.i) { VVar(proto, "$name[$it]", c) },
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
 //  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
 //  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
@@ -184,7 +187,7 @@ open class MVar<X: SFun<X>, R: D1, C: D1>(
   override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    MVar(if (name.isEmpty()) property.name else name, r, c, vVars, vMat)
+    MVar(proto, if (name.isEmpty()) property.name else name, r, c, vVars, vMat)
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {

@@ -1,11 +1,11 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.DoublePrecision
+import edu.umontreal.kotlingrad.experimental.*
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main() = with(DoublePrecision) {
-  val x by Var()
-  val y by Var()
+fun main() {
+  val x by SVar(DReal)
+  val y by SVar(DReal)
 
   val z = x * (-sin(x * y) + y) * 4  // Infix notation
   val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]

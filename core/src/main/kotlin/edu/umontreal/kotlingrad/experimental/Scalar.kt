@@ -57,7 +57,7 @@ interface BiFun<X: SFun<X>>: Fun<X> {
 }
 
 interface UnFun<X: SFun<X>>: Fun<X> { val input: Fun<X> }
-interface Variable<X: SFun<X>>: Fun<X> { val name: String }
+interface Variable<X: SFun<X>>: Fun<X> { val name: String; val proto: X }
 interface Constant<X: SFun<X>>: Fun<X>
 
 /**
@@ -70,9 +70,11 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   open val ONE: Special<X> by lazy { One() }
   open val TWO: Special<X> by lazy { Two() }
   open val E: Special<X> by lazy { E<X>() }
-  val x by lazy { SVar<X>("x") }
-  val y by lazy { SVar<X>("y") }
-  val z by lazy { SVar<X>("z") }
+
+  open val proto by lazy { bindings.proto }
+  val x by lazy { SVar(proto, "x") }
+  val y by lazy { SVar(proto, "y") }
+  val z by lazy { SVar(proto, "z") }
 
   override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
   override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
@@ -105,6 +107,12 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   override fun pow(exponent: SFun<X>): SFun<X> = Power(this, exponent)
   override fun unaryMinus(): SFun<X> = Negative(this)
   open fun sqrt(): SFun<X> = this pow (ONE / TWO)
+
+  operator fun div(divisor: Number): SFun<X> = this / wrap(divisor)
+  operator fun plus(addend: Number): SFun<X> = this + wrap(addend)
+  operator fun minus(subtrahend: Number): SFun<X> = this - wrap(subtrahend)
+  operator fun times(multiplicand: Number): SFun<X> = this * wrap(multiplicand)
+  infix fun pow(exp: Number): SFun<X> = this pow wrap(exp)
 
   override fun toString(): String = when (this) {
     is Log -> "ln($left)"
@@ -145,6 +153,17 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
       is SConst<*> -> add(Label.of(this@SFun.toString()))
       else -> TODO(this@SFun.javaClass.toString())
     }
+  }
+
+  val constants by lazy { proto.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() } }
+  fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+  operator fun invoke(vararg numbers: Number) = invoke(bindings.zip(numbers.map { wrap(it) }) + constants)
+  operator fun invoke(vararg funs: Fun<X>) = invoke(bindings.zip(funs.toList()) + constants)
+  operator fun invoke(vararg ps: Pair<Fun<X>, Any>) = invoke(ps.toList().bind() + constants)
+  fun wrapOrError(any: Any): Fun<X> = when (any) {
+    is Fun<*> -> any as Fun<X>
+    is Number -> wrap(any)
+    else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
   }
 }
 
@@ -211,15 +230,17 @@ class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X>) : SFun<X>(
 class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
 class VSumAll<X: SFun<X>, E: D1>(override val input: VFun<X, E>): SFun<X>(input), UnFun<X>
 
-class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
+class SVar<X: SFun<X>>constructor(
+  override val proto: X, 
+  override val name: String = ""): Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    SVar<X>(if (name.isEmpty()) property.name else name)
+    SVar(proto, if (name.isEmpty()) property.name else name)
 }
 
-open class SConst<X: SFun<X>>(open val value: Number? = null): SFun<X>(), Constant<X> {
+open class SConst<X: SFun<X>> constructor(open val value: Number? = null): SFun<X>(), Constant<X> {
   override fun toString() = doubleValue.toString()
   open val doubleValue: Double = value?.toDouble() ?: when (this) {
     is Zero -> 0.0
@@ -303,6 +324,7 @@ abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y)
 open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
   override fun wrap(number: Number) = DReal(number.toDouble())
   companion object: DReal(Double.NaN)
+  override val proto by lazy { this }
 }
 
 /**
@@ -314,6 +336,7 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
   val x = prototype.x
   val y = prototype.y
   val z = prototype.z
+
   open val variables = listOf(x, y, z)
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
@@ -326,30 +349,6 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
     Bindings(map { it.first to wrapOrError(it.second) }.toMap())
 
   fun wrap(number: Number): SConst<X> = prototype.wrap(number)
-
-  fun SFun<X>.toDouble() =
-    try {
-      (this as SConst<X>).doubleValue
-    } catch(e: ClassCastException) {
-      show("before")
-      e.printStackTrace()
-      throw NumberFormatException("Scalar function ${javaClass.simpleName} has unbound free variables: ${bindings.allFreeVariables.keys}")
-    }
-
-  fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
-  fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
-  fun <T: SFun<T>> tan(angle: SFun<T>) = angle.tan()
-  fun <T: SFun<T>> exp(exponent: SFun<T>) = exponent.exp()
-  fun <T: SFun<T>> sqrt(radicand: SFun<T>) = radicand.sqrt()
-
-  class IndVar<X: SFun<X>> constructor(val fn: SFun<X>)
-
-  class Differential<X: SFun<X>>(private val fx: SFun<X>) {
-    // TODO: ensure correctness for arbitrary nested functions using the Chain rule
-    infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
-  }
-
-  operator fun Number.invoke(n: Number) = this
 
   /**
    * Invocation is cast as T, to keep track of the output type and type check
@@ -367,33 +366,6 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
 
   operator fun <T: Fun<X>> T.invoke(vararg ps: Pair<Fun<X>, Any>): T =
     invoke(ps.toList().bind() + constants) as T
-
-  fun <T> T.test(): T = this
-
-  fun d(fn: SFun<X>) = Differential(fn)
-
-  operator fun Number.times(multiplicand: SFun<X>) = wrap(this) * multiplicand
-  operator fun SFun<X>.times(multiplicand: Number) = this * wrap(multiplicand)
-  operator fun <E: D1> Number.times(multiplicand: VFun<X, E>): VFun<X, E> = wrap(this) * multiplicand
-  operator fun <E: D1> VFun<X, E>.times(multiplicand: Number) = this * wrap(multiplicand)
-  operator fun <R: D1, C: D1> Number.times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = wrap(this) * multiplicand
-  operator fun <R: D1, C: D1> MFun<X, R, C>.times(multiplicand: Number) = this * wrap(multiplicand)
-
-  operator fun Number.div(divisor: SFun<X>) = wrap(this) / divisor
-  operator fun SFun<X>.div(divisor: Number) = this / wrap(divisor)
-
-  operator fun Number.plus(addend: SFun<X>) = wrap(this) + addend
-  operator fun SFun<X>.plus(addend: Number) = this + wrap(addend)
-
-  operator fun Number.minus(subtrahend: SFun<X>) = wrap(this) - subtrahend
-  operator fun SFun<X>.minus(subtrahend: Number) = this - wrap(subtrahend)
-
-  fun Number.pow(exp: SFun<X>) = wrap(this) pow exp
-  infix fun SFun<X>.pow(exp: Number) = this pow wrap(exp)
-  @JvmName("prefixPowNum") fun pow(base: SFun<X>, exp: Number) = base pow wrap(exp)
-  @JvmName("prefixPowFun") fun pow(base: Number, exp: SFun<X>) = wrap(base) pow exp
-
-  inline fun <reified E: D1> VFun<X, E>.magnitude() = (this ʘ this).sum().sqrt()
 
   fun <Y: Number> Vec(y0: Y) = VConst<X, D1>(wrap(y0))
   fun <Y: Number> Vec(y0: Y, y1: Y) = VConst<X, D2>(wrap(y0), wrap(y1))
@@ -420,77 +392,82 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
 
   inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> = Vec(List(e.i) { wrapOrError(gen(it)) as SFun<X> })
 
-  fun Var(name: String = "") = SVar<X>(name)
-  fun Var2(name: String = "") = VVar<X, D2>(name, D2)
-  fun Var3(name: String = "") = VVar<X, D3>(name, D3)
-  fun Var4(name: String = "") = VVar<X, D4>(name, D4)
-  fun Var5(name: String = "") = VVar<X, D5>(name, D5)
-  fun Var6(name: String = "") = VVar<X, D6>(name, D6)
-  fun Var7(name: String = "") = VVar<X, D7>(name, D7)
-  fun Var8(name: String = "") = VVar<X, D8>(name, D8)
-  fun Var9(name: String = "") = VVar<X, D9>(name, D9)
-  fun Var10(name: String = "") = VVar<X, D10>(name, D10)
-  fun Var11(name: String = "") = VVar<X, D11>(name, D11)
-  fun Var12(name: String = "") = VVar<X, D12>(name, D12)
-  fun Var13(name: String = "") = VVar<X, D13>(name, D13)
-  fun Var14(name: String = "") = VVar<X, D14>(name, D14)
-  fun Var15(name: String = "") = VVar<X, D15>(name, D15)
-  fun Var16(name: String = "") = VVar<X, D16>(name, D16)
-  fun Var17(name: String = "") = VVar<X, D17>(name, D17)
-  fun Var18(name: String = "") = VVar<X, D18>(name, D18)
-  fun Var19(name: String = "") = VVar<X, D19>(name, D19)
-  fun Var20(name: String = "") = VVar<X, D20>(name, D20)
-  fun Var21(name: String = "") = VVar<X, D21>(name, D21)
-  fun Var22(name: String = "") = VVar<X, D22>(name, D22)
-  fun Var23(name: String = "") = VVar<X, D23>(name, D23)
-  fun Var24(name: String = "") = VVar<X, D24>(name, D24)
-  fun Var25(name: String = "") = VVar<X, D25>(name, D25)
-  fun Var26(name: String = "") = VVar<X, D26>(name, D26)
-  fun Var27(name: String = "") = VVar<X, D27>(name, D27)
-  fun Var28(name: String = "") = VVar<X, D28>(name, D28)
-  fun Var29(name: String = "") = VVar<X, D29>(name, D29)
-  fun Var30(name: String = "") = VVar<X, D30>(name, D30)
+  fun Var(name: String = "") = SVar(prototype, name)
+  fun Var2(name: String = "") = VVar<X, D2>(prototype, name, D2)
+  fun Var3(name: String = "") = VVar<X, D3>(prototype, name, D3)
+  fun Var4(name: String = "") = VVar<X, D4>(prototype, name, D4)
+  fun Var5(name: String = "") = VVar<X, D5>(prototype, name, D5)
+  fun Var6(name: String = "") = VVar<X, D6>(prototype, name, D6)
+  fun Var7(name: String = "") = VVar<X, D7>(prototype, name, D7)
+  fun Var8(name: String = "") = VVar<X, D8>(prototype, name, D8)
+  fun Var9(name: String = "") = VVar<X, D9>(prototype, name, D9)
+  fun Var10(name: String = "") = VVar<X, D10>(prototype, name, D10)
+  fun Var11(name: String = "") = VVar<X, D11>(prototype, name, D11)
+  fun Var12(name: String = "") = VVar<X, D12>(prototype, name, D12)
+  fun Var13(name: String = "") = VVar<X, D13>(prototype, name, D13)
+  fun Var14(name: String = "") = VVar<X, D14>(prototype, name, D14)
+  fun Var15(name: String = "") = VVar<X, D15>(prototype, name, D15)
+  fun Var16(name: String = "") = VVar<X, D16>(prototype, name, D16)
+  fun Var17(name: String = "") = VVar<X, D17>(prototype, name, D17)
+  fun Var18(name: String = "") = VVar<X, D18>(prototype, name, D18)
+  fun Var19(name: String = "") = VVar<X, D19>(prototype, name, D19)
+  fun Var20(name: String = "") = VVar<X, D20>(prototype, name, D20)
+  fun Var21(name: String = "") = VVar<X, D21>(prototype, name, D21)
+  fun Var22(name: String = "") = VVar<X, D22>(prototype, name, D22)
+  fun Var23(name: String = "") = VVar<X, D23>(prototype, name, D23)
+  fun Var24(name: String = "") = VVar<X, D24>(prototype, name, D24)
+  fun Var25(name: String = "") = VVar<X, D25>(prototype, name, D25)
+  fun Var26(name: String = "") = VVar<X, D26>(prototype, name, D26)
+  fun Var27(name: String = "") = VVar<X, D27>(prototype, name, D27)
+  fun Var28(name: String = "") = VVar<X, D28>(prototype, name, D28)
+  fun Var29(name: String = "") = VVar<X, D29>(prototype, name, D29)
+  fun Var30(name: String = "") = VVar<X, D30>(prototype, name, D30)
 
-  fun Var2x1(name: String = "") = MVar<X, D2, D1>(name, D2, D1)
-  fun Var2x2(name: String = "") = MVar<X, D2, D2>(name, D2, D2)
-  fun Var2x3(name: String = "") = MVar<X, D2, D3>(name, D2, D3)
-  fun Var3x1(name: String = "") = MVar<X, D3, D1>(name, D3, D1)
-  fun Var3x2(name: String = "") = MVar<X, D3, D2>(name, D3, D2)
-  fun Var3x3(name: String = "") = MVar<X, D3, D3>(name, D3, D3)
-  fun Var5x5(name: String = "") = MVar<X, D5, D5>(name, D5, D5)
-  fun Var9x9(name: String = "") = MVar<X, D9, D9>(name, D9, D9)
-
-  val DARKMODE = false
-  val THICKNESS = 2
-
-  inline fun render(format: Format = Format.SVG, crossinline op: () -> MutableNode) =
-    graph(directed = true) {
-      val color = if (DARKMODE) WHITE else BLACK
-
-
-      edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
-
-      graph[Rank.dir(LEFT_TO_RIGHT), TRANSPARENT.background(), margin(0.0), Attributes.attr("compound", "true"), Attributes.attr("nslimit", "20")]
-
-      node[color, color.font(), Font.config("Lucida Console", 20), Style.lineWidth(THICKNESS), Attributes.attr("shape", "Mrecord")]
-
-      op()
-    }.toGraphviz().render(format)
-
-  fun extToFormat(string: String): Format = when(string) {
-    "dot" -> Format.DOT
-    "png" -> Format.PNG
-    "ps" -> Format.PS
-    else -> Format.SVG
-  }
-  fun SFun<*>.saveToFile(filename: String) =
-    render(extToFormat(filename.split(".").last())) { toGraph() }.saveToFile(filename)
-  fun SFun<*>.render(format: Format = Format.SVG) = render(format) { toGraph() }
-  fun Renderer.saveToFile(filename: String) = File(filename).writeText(toString().replace("]", "];"))
-  fun Fun<*>.show() = render { toGraph() }.show()
-  fun Renderer.show() = toFile(File.createTempFile("temp", ".svg")).show()
-  fun File.show() = ProcessBuilder("x-www-browser", path).start()
+  fun Var2x1(name: String = "") = MVar<X, D2, D1>(prototype, name, D2, D1)
+  fun Var2x2(name: String = "") = MVar<X, D2, D2>(prototype, name, D2, D2)
+  fun Var2x3(name: String = "") = MVar<X, D2, D3>(prototype, name, D2, D3)
+  fun Var3x1(name: String = "") = MVar<X, D3, D1>(prototype, name, D3, D1)
+  fun Var3x2(name: String = "") = MVar<X, D3, D2>(prototype, name, D3, D2)
+  fun Var3x3(name: String = "") = MVar<X, D3, D3>(prototype, name, D3, D3)
+  fun Var5x5(name: String = "") = MVar<X, D5, D5>(prototype, name, D5, D5)
+  fun Var9x9(name: String = "") = MVar<X, D9, D9>(prototype, name, D9, D9)
 }
+
+operator fun <X: RealNumber<X, *>> Number.times(multiplicand: SFun<X>) = multiplicand.wrap(this) * multiplicand
+operator fun <X: RealNumber<X, *>, E: D1> Number.times(multiplicand: VFun<X, E>): VFun<X, E> = multiplicand.wrap(this) * multiplicand
+operator fun <X: RealNumber<X, *>, R: D1, C: D1> Number.times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = multiplicand.wrap(this) * multiplicand
+operator fun <X: RealNumber<X, *>> Number.div(divisor: SFun<X>) = divisor.wrap(this) / divisor
+operator fun <X: RealNumber<X, *>> Number.plus(addend: SFun<X>) = addend.wrap(this) + addend
+operator fun <X: RealNumber<X, *>> Number.minus(subtrahend: SFun<X>) = subtrahend.wrap(this) - subtrahend
+
+fun <X: RealNumber<X, *>> Number.pow(exp: SFun<X>) = exp.wrap(this) pow exp
+@JvmName("prefixPowNum") fun <X: RealNumber<X, *>> pow(base: SFun<X>, exp: Number) = base pow base.wrap(exp)
+@JvmName("prefixPowFun") fun <X: RealNumber<X, *>> pow(base: Number, exp: SFun<X>) = exp.wrap(base) pow exp
+
+fun <X: RealNumber<X, *>> SFun<X>.toDouble() =
+  try {
+    (this as SConst<X>).doubleValue
+  } catch(e: ClassCastException) {
+    show("before")
+    e.printStackTrace()
+    throw NumberFormatException("Scalar function ${javaClass.simpleName} has unbound free variables: ${bindings.allFreeVariables.keys}")
+  }
+
+fun <X: SFun<X>> d(fn: SFun<X>) = Differential(fn)
+class IndVar<X: SFun<X>> constructor(val fn: SFun<X>)
+
+class Differential<X: SFun<X>>(private val fx: SFun<X>) {
+  // TODO: ensure correctness for arbitrary nested functions using the Chain rule
+  infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
+}
+
+fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
+fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
+fun <T: SFun<T>> tan(angle: SFun<T>) = angle.tan()
+fun <T: SFun<T>> exp(exponent: SFun<T>) = exponent.exp()
+fun <T: SFun<T>> sqrt(radicand: SFun<T>) = radicand.sqrt()
+
+operator fun Number.invoke(n: Number) = this
 
 object DoublePrecision: Protocol<DReal>(DReal)
 object BigDecimalPrecision: Protocol<BDReal>(BDReal)
