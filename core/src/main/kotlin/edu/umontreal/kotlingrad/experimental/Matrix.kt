@@ -35,7 +35,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
       }
     }
 
-  val mapInput = SVar(bindings.proto, "mapInput")
+  val mapInput by lazy { SVar(bindings.proto, "mapInput") }
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
 
   open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
