@@ -25,7 +25,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   // Materializes the concrete vector from the dataflow graph
   operator fun invoke(): Vec<X, E> =
-    VComposition(this, Bindings()).evaluate.let {
+    VComposition(this).evaluate.let {
       try {
         it as Vec<X, E>
       } catch (e: ClassCastException) {
@@ -91,9 +91,9 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     else -> javaClass.simpleName
   }
 
-  override operator fun invoke(vararg numbers: Number): VFun<X, E> = invoke(bindings.zip(numbers.map { wrap(it) }) + constants())
-  override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> = invoke(bindings.zip(funs.toList()) + constants())
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> = invoke(ps.toList().bind() + constants())
+  override operator fun invoke(vararg numbers: Number): VFun<X, E> = invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> = invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> = invoke(ps.toList().bind())
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
@@ -171,7 +171,7 @@ open class VVar<X: SFun<X>, E: D1> constructor(
     VVar(proto, if (name.isEmpty()) property.name else name, length, sVars)
 }
 
-class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, val inputs: Bindings<X>): VFun<X, E>(vFun.bindings + inputs) {
+class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, inputs: Bindings<X> = Bindings(vFun.proto)): VFun<X, E>(vFun.bindings + inputs) {
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -234,9 +234,8 @@ open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): 
 open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
   VFun<X, E>(*contents.toTypedArray()), Iterable<SFun<X>> by contents {
   constructor(len: Nat<E>, gen: (Int) -> SFun<X>): this(List(len.i) { gen(it) })
-
-  val size = contents.size
   override val proto by lazy { contents.first().proto }
+  val size = contents.size
 
   override fun toString() = contents.joinToString(", ", "[", "]")
 
