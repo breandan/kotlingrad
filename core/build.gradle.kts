@@ -16,7 +16,7 @@ dependencies {
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:_")
-  val kmathVersion by extra { "1.4.0" }
+  val kmathVersion by extra { "0.1.4-dev-8" }
   implementation("scientifik:kmath-core:$kmathVersion")
   implementation("scientifik:kmath-ast:$kmathVersion")
   implementation("scientifik:kmath-prob:$kmathVersion")
