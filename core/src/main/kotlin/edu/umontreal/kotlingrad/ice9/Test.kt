@@ -14,7 +14,6 @@ open class Fx<M: Typ<M>>(val x: M) {
   operator fun plus(arg: Fx<M>): Fx<M> = when (arg.x) {
     is Dbl -> "dbl"
     is Int -> "int"
-    null -> TODO()
     else -> UnknownError("asdf")
   }.let { this }
 

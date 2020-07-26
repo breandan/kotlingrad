@@ -44,7 +44,6 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   fun toGraph(): MutableNode
 
   val proto: X
-  fun constants(): Bindings<X> = proto.run { listOf(ZERO to 0, ONE to 1, TWO to 2, E to Math.E).bind() }
 
   fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
   fun wrapOrError(any: Any): Fun<X> = when (any) {
@@ -89,7 +88,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     SComposition(this, newBindings)
       .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
-  operator fun invoke() = SComposition(this, Bindings()).evaluate
+  operator fun invoke() = SComposition(this).evaluate
 
   open fun d(v1: SVar<X>): SFun<X> = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
   open fun d(v1: SVar<X>, v2: SVar<X>): Vec<X, D2> = Vec(d(v1), d(v2))
@@ -158,9 +157,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     }
   }
 
-  override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }) + constants())
-  override operator fun invoke(vararg funs: Fun<X>): SFun<X> = invoke(bindings.zip(funs.toList()) + constants())
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind() + constants())
+  override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): SFun<X> = invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind())
 }
 
 /**
@@ -200,7 +199,7 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): SFun<X>(fn, vrb
 }
 
 // TODO: Unit test this data structure
-class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X>) : SFun<X>(fn.bindings + inputs) {
+class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X> = Bindings(fn.proto)) : SFun<X>(fn.bindings + inputs) {
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -305,7 +304,7 @@ class Two<X: SFun<X>>: Special<X>()
 class E<X: SFun<X>>: Special<X>()
 
 abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y): SConst<X>() {
-  override fun toString() = value.toString()
+  override fun toString() = value.toString()// "${javaClass.name.substringAfterLast(".").substringBefore("$")}($value)"
   abstract override fun wrap(number: Number): SConst<X>
 
   override val doubleValue: Double by lazy {

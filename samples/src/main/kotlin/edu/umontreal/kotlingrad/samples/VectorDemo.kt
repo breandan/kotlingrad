@@ -20,16 +20,18 @@ fun main() = with(DoublePrecision) {
   val dh_dx = h.d(x)
   println("h'(x) = $dh_dx")
 
-  val vf1 = Vec(y + x, y * 2) // <-- this is the problem
+  val vf0 = Vec(0, 0)
+  println(vf0(1, 2))
+  val vf1 = Vec(y + x, y * 2)
   println(vf1)
   val bh = x * vf1 + Vec(1.0, 3.0)
-  println(bh(y to 2.0, x to 4.0))
+  println(bh.invoke(y to 2.0, x to 4.0))
   val vf2 = Vec(x, y)
   val q = vf1 + vf2 + Vec(0.0, 0.0)
   val z = q(x to 1.0).magnitude()(y to 2.0)
   println(z)
 
   val vf3 = vf2 ʘ Vec(x, x)
-  val mf1 = vf3.d(x, y)
-//    println(vf3.d(x)(y to 2.0))
+//  val mf1 = vf3.d(x, y)
+  println(vf3.d(x)(x to 1.0, y to 2.0))
 }

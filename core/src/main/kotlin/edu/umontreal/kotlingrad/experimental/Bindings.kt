@@ -2,19 +2,20 @@ package edu.umontreal.kotlingrad.experimental
 
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
-data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>> = mapOf()) {
+data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
   constructor(inputs: List<Bindings<X>>): this(inputs.map { it.fMap }
     .fold(mapOf<Fun<X>, Fun<X>>()) { acc, fMap -> fMap + acc })
   constructor(vararg bindings: Bindings<X>): this(bindings.toList())
   constructor(vararg funs: Fun<X>): this(funs.map { it.bindings })
   constructor(vararg pairs: Pair<Fun<X>, Fun<X>>): this(pairs.toMap())
 
+  val proto: X by lazy { fMap.keys.first().proto }
+
   // TODO: Take shape into consideration when binding variables
   fun zip(fns: List<Fun<X>>): Bindings<X> =
-    (sVars.zip(fns.filterIsInstance<SFun<X>>())+
+    (sVars.zip(fns.filterIsInstance<SFun<X>>()) +
       vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
-      mVars.zip(fns.filterIsInstance<MFun<X, *, *>>()))
-      .let { Bindings(*it.toTypedArray()) }
+      mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())).let { Bindings(*it.toTypedArray()) }
 
   // Scalar, vector, and matrix "views" on untyped function map
   val sFunMap = filterInstancesOf<SFun<X>>()
@@ -37,12 +38,11 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>> = mapO
   // Merges two variable bindings
   // TODO: Add support for change of variables, i.e. x = y, y = 2z, z = x + y...
   operator fun plus(other: Bindings<X>) =
-    Bindings(
-      fMap + other.fMap +
-        allVarMap.filterValues { containsFreeVariable(it) } +
-        other.allVarMap.filterValues { containsFreeVariable(it) } +
-        allVarMap.filterValues { !containsFreeVariable(it) } +
-        other.allVarMap.filterValues { !containsFreeVariable(it) }
+    Bindings(fMap + other.fMap +
+      allVarMap.filterValues { containsFreeVariable(it) } +
+      other.allVarMap.filterValues { containsFreeVariable(it) } +
+      allVarMap.filterValues { !containsFreeVariable(it) } +
+      other.allVarMap.filterValues { !containsFreeVariable(it) }
     )
 
   operator fun plus(pair: Pair<Fun<X>, Fun<X>>) = plus(Bindings(pair))
@@ -54,7 +54,6 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>> = mapO
   val vVars: Set<VVar<X, *>> = vVarMap.keys
   val mVars: Set<MVar<X, *, *>> = mVarMap.keys
   val allVars: Set<Variable<X>> = sVars + vVars + mVars
-  val proto by lazy { allVars.first().proto }
   val allFreeVariables by lazy { allVarMap.filterValues { containsFreeVariable(it) } }
   val allBoundVariables: Map<Variable<X>, Fun<X>> by lazy { allVarMap.filterValues { !containsFreeVariable(it) } }
 

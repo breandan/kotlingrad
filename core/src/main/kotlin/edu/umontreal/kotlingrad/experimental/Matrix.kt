@@ -26,7 +26,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   // Materializes the concrete matrix from the dataflow graph
   operator fun invoke(): Mat<X, R, C> =
-    MComposition(this, Bindings()).evaluate.let {
+    MComposition(this).evaluate.let {
       try {
         it as Mat<X, R, C>
       } catch (e: ClassCastException) {
@@ -81,9 +81,9 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     else -> javaClass.simpleName
   }
 
-  override operator fun invoke(vararg numbers: Number): MFun<X, R, C> = invoke(bindings.zip(numbers.map { wrap(it) }) + constants())
-  override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> = invoke(bindings.zip(funs.toList()) + constants())
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> = invoke(ps.toList().bind() + constants())
+  override operator fun invoke(vararg numbers: Number): MFun<X, R, C> = invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> = invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> = invoke(ps.toList().bind())
 }
 
 class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):
@@ -96,7 +96,7 @@ class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override
 class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
 class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
 
-class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X>): MFun<X, R, C>(mFun.bindings + inputs) {
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X> = Bindings(mFun.proto)): MFun<X, R, C>(mFun.bindings + inputs) {
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
