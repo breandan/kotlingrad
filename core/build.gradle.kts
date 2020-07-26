@@ -16,10 +16,10 @@ dependencies {
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:_")
-  val kmathVersion by extra { "0.1.4-dev-8" }
-  implementation("scientifik:kmath-core:$kmathVersion")
-  implementation("scientifik:kmath-ast:$kmathVersion")
-  implementation("scientifik:kmath-prob:$kmathVersion")
+//  val kmathVersion by extra { "0.1.4-dev-8" }
+//  implementation("scientifik:kmath-core:$kmathVersion")
+//  implementation("scientifik:kmath-ast:$kmathVersion")
+//  implementation("scientifik:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
   implementation("org.jetbrains.bio:viktor:_")
