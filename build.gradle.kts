@@ -13,6 +13,7 @@ allprojects {
     jcenter()
     maven("https://jitpack.io")
     maven("https://dl.bintray.com/mipt-npm/dev")
+    maven("https://dl.bintray.com/hotkeytlt/maven")
   }
 }
 
