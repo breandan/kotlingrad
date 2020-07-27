@@ -19,7 +19,7 @@ dependencies {
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
   implementation("org.jetbrains.bio:viktor:1.0.1")
-  implementation("com.github.breandan:kaliningraph:0.0.2")
+  implementation("com.github.breandan:kaliningraph:0.0.3")
 
   // Property-based testing
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
