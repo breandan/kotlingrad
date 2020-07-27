@@ -1,7 +1,9 @@
 {
   "properties": {
-    "kotlingradVersion": "0.2.6",
-    "graphvizVersion": "0.17.0"
+    "kotlingradVersion": "0.2.7",
+    "kmathVersion": "0.1.4-dev8",
+    "graphvizVersion": "0.17.0",
+    "viktorVersion":"1.0.1"
   },
   "link": "https://github.com/breandan/kotlingrad",
   "repositories": [
@@ -12,6 +14,10 @@
   ],
   "dependencies": [
     "com.github.breandan:kotlingrad:$kotlingradVersion",
+    "scientifik:kmath-ast:$kmathVersion",
+    "scientifik:kmath-core:$kmathVersion",
+    "scientifik:kmath-prob:$kmathVersion",
+    "org.jetbrains.bio:viktor:$viktorVersion",
     "guru.nidi:graphviz-kotlin:$graphvizVersion"
   ],
   "imports": [
