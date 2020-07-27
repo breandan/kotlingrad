@@ -25,7 +25,7 @@ idea.module {
 
 subprojects {
   group = "edu.umontreal"
-  version = "0.2.7"
+  version = "0.2.8"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
