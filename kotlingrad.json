@@ -1,6 +1,6 @@
 {
   "properties": {
-    "kotlingradVersion": "0.2.7",
+    "kotlingradVersion": "0.2.6",
     "kmathVersion": "0.1.4-dev8",
     "graphvizVersion": "0.17.0",
     "viktorVersion":"1.0.1"
