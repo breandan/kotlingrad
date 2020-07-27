@@ -1,11 +1,14 @@
 {
   "properties": {
-    "kotlingradVersion": "0.2.5",
-    "graphvizVersion": "0.15.1"
+    "kotlingradVersion": "0.2.6",
+    "graphvizVersion": "0.17.0"
   },
   "link": "https://github.com/breandan/kotlingrad",
   "repositories": [
-    "https://jitpack.io"
+    "https://jitpack.io",
+    "https://dl.bintray.com/kotlin/kotlin-eap",
+    "https://dl.bintray.com/mipt-npm/dev",
+    "https://dl.bintray.com/hotkeytlt/maven"
   ],
   "dependencies": [
     "com.github.breandan:kotlingrad:$kotlingradVersion",

@@ -11,24 +11,24 @@ dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
 
   // Mathematical libraries
-  implementation("ch.obermuhlner:big-math:_")
+  implementation("ch.obermuhlner:big-math:2.3.0")
   val kmathVersion by extra { "0.1.4-dev-8" }
   implementation("scientifik:kmath-core:$kmathVersion")
   implementation("scientifik:kmath-ast:$kmathVersion")
   implementation("scientifik:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
-  implementation("org.jetbrains.bio:viktor:_")
-  implementation("com.github.breandan:kaliningraph:_")
+  implementation("org.jetbrains.bio:viktor:1.0.1")
+  implementation("com.github.breandan:kaliningraph:0.0.2")
 
   // Property-based testing
-  testImplementation("io.kotlintest:kotlintest-runner-junit5:_")
+  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
   // Symbolic fuzzing interpreter
   testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.4-M2")
   // Graphical libraries
-  implementation("guru.nidi:graphviz-kotlin:_")
+  implementation("guru.nidi:graphviz-kotlin:0.17.0")
 }
 
 val fatJar by tasks.creating(Jar::class) {
