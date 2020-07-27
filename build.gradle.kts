@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   idea
-  kotlin("jvm") version "1.4-M3" // Keep in sync with README
+  kotlin("jvm") version "1.4-M2" // Keep in sync with README
   id("de.fayard.refreshVersions") version "0.8.7"
 }
 
