@@ -26,7 +26,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
   // Symbolic fuzzing interpreter
-  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.4-M2")
+  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.3.72")
   // Graphical libraries
   implementation("guru.nidi:graphviz-kotlin:0.17.0")
 }
