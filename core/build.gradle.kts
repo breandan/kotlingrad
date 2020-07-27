@@ -5,10 +5,6 @@ plugins {
   `maven-publish`
 }
 
-//repositories {
-//  maven("https://dl.bintray.com/mipt-npm/scientifik")
-//}
-
 dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk8"))
@@ -30,7 +26,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
   // Symbolic fuzzing interpreter
-  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:_")
+  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.4-M2")
   // Graphical libraries
   implementation("guru.nidi:graphviz-kotlin:_")
 }

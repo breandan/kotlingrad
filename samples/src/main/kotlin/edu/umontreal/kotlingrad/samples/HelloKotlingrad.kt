@@ -7,7 +7,7 @@ val y by SVar(DReal)
 val z by SVar(DReal)
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
-fun main() {
+fun main() = with(DoubleContext){
   val z = x * (-sin(x * y) + y) * 4  // Infix notation
   val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]
   val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
