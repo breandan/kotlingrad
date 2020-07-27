@@ -1,12 +1,10 @@
 {
   "properties": {
-    "kotlingradVersion": "0.2.7"
+    "kotlingradVersion": "0.2.9"
   },
   "link": "https://github.com/breandan/kotlingrad",
   "repositories": [
-    "https://jitpack.io",
-    "https://dl.bintray.com/kotlin/kotlin-eap",
-    "https://dl.bintray.com/mipt-npm/dev"
+    "https://jitpack.io"
   ],
   "dependencies": [
     "com.github.breandan:kotlingrad:$kotlingradVersion"

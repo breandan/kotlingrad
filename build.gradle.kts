@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   idea
-  kotlin("jvm") version "1.4-M2" // Keep in sync with README
+  kotlin("jvm") version "1.3.72" // Keep in sync with README
 }
 
 allprojects {
@@ -25,7 +25,7 @@ idea.module {
 
 subprojects {
   group = "edu.umontreal"
-  version = "0.2.8"
+  version = "0.2.9"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
