@@ -30,7 +30,7 @@ dependencies {
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.23-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:kotlin-frontend-api:0.0.8-SNAPSHOT")
 
-  implementation("org.nield:kotlin-statistics:_")
+  implementation("org.nield:kotlin-statistics:1.2.1")
 }
 
 //javafx.modules("javafx.controls", "javafx.swing")
