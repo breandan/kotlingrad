@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.perf
 
 import ch.ethz.idsc.tensor.Tensors
+import edu.umontreal.kotlingrad.experimental.*
 import org.apache.commons.math3.linear.MatrixUtils
 import org.ejml.data.*
 import org.ejml.kotlin.times
@@ -14,18 +15,19 @@ class SparseTest {
   /**
    * Benchmarking 200x200 sparse matrix powering on a Xeon E3-1575M:
    *
-   * EJML/S: 0.358s
-   * EJML/D: 0.673s
-   * APACHE: 0.636s
-   * VIKTOR: 2.526s
-   * KMATH: 30.587s
-   * TENSOR: 39.609s
+   * EJML/S: 0.085s
+   * EJML/D: 0.171s
+   * APACHE: 0.16s
+   * VIKTOR: 0.752s
+   * KMATH:  2.878s
+   * TENSOR: 5.618s
+   * KTGRAD: 64.823s
    */
 
   @Test
   @Disabled
   fun testDoubleMatrixMultiplication() {
-    val m = 200
+    val m = 100
     val sparsity = 0.1
     val fill = { if (Math.random() < sparsity) Math.random() else 0.0 }
     val contents = Array(m) { i -> Array(m) { fill() }.toDoubleArray() }
@@ -38,8 +40,9 @@ class SparseTest {
     bench("EJML/D", DMatrixRMaj(contents)) { a, b -> a * b }
     bench("APACHE", MatrixUtils.createRealMatrix(contents)) { a, b -> a.multiply(b) }
     bench("VIKTOR", F64Array(m, m) { i, j -> contents[i][j] }) { a, b -> a matmul b }
-    bench("KMATH", VirtualMatrix(m, m) { i, j -> contents[i][j] } as Matrix<Double>) { a, b -> a dot b }
+    bench(" KMATH", VirtualMatrix(m, m) { i, j -> contents[i][j] } as Matrix<Double>) { a, b -> a dot b }
     bench("TENSOR", Tensors.matrixDouble(contents)) { a, b -> a.dot(b) }
+    bench("KTGRAD", with(DoublePrecision) { Mat(D100, D100) { a, b -> contents[a][b]} }) { a, b -> (a * b) as Mat<DReal, D100, D100> }
   }
 
   fun <T> bench(name: String, constructor: T, matmul: (T, T) -> T): Any =

@@ -340,6 +340,7 @@ sealed class D27(override val i: Int = 27): D26(i) { companion object: D27(), Na
 sealed class D28(override val i: Int = 28): D27(i) { companion object: D28(), Nat<D28> }
 sealed class D29(override val i: Int = 29): D28(i) { companion object: D29(), Nat<D29> }
 sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Nat<D30> }
+sealed class D100(override val i: Int = 100): D30(i) { companion object: D100(), Nat<D100> }
 
 fun main() {
 
