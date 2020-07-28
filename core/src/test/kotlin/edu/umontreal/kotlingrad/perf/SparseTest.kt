@@ -8,7 +8,7 @@ import org.jetbrains.bio.viktor.F64Array
 import org.junit.jupiter.api.*
 import kotlin.system.measureTimeMillis
 
-class PerfTest {
+class SparseTest {
   @Test
   @Disabled
   fun testDoubleMatrixMultiplication() {
@@ -29,5 +29,5 @@ class PerfTest {
 
   fun <T> testMatmul(name: String, constructor: T, matmul: (T, T) -> T): Any =
     measureTimeMillis { (0..100).fold(constructor) { acc, i -> matmul(acc, constructor) } }
-      .also { println("Avg. $name: ${it / 100}ms") }
+      .also { println("$name: ${it.toDouble() / 1000}s") }
 }
