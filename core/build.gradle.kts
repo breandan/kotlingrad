@@ -19,7 +19,7 @@ dependencies {
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
   testImplementation("org.ejml:ejml-kotlin:0.39")
-  testImplementation("org.ejml:ejml-kotlin:0.39")
+  testImplementation("org.ejml:ejml-core:0.39")
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
   implementation("org.jetbrains.bio:viktor:1.0.1")
   implementation("com.github.breandan:kaliningraph:0.0.3")
