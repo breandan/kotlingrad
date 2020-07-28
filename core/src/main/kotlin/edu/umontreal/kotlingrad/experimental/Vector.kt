@@ -38,9 +38,9 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput), mapInput)
   open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput), mapInput)
 
-  fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1)//.let { if(EAGER) it.df() else it }
+  fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1)
 
-  fun d(v1: SVar<X>) = VDerivative(this, v1)//.let { if (EAGER) it.df() else it }
+  fun d(v1: SVar<X>) = VDerivative(this, v1)
   fun d(v1: SVar<X>, v2: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j2", D2, Vec(v1, v2)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j3", D3, Vec(v1, v2, v3)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>) = Jacobian(this, VVar(bindings.proto, "j4", D4, Vec(v1, v2, v3, v4)))
@@ -81,7 +81,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
-    is VDerivative -> "d($vFun) / d($sVar)"//d(${v1.joinToString(", ")})"
+    is VDerivative -> "d($vFun) / d($sVar)"
     is BiFun<*> -> "($left) ${opCode()} ($right)"
     is UnFun<*> -> "${opCode()}($input)"
     is Gradient -> "($fn).d($vVar)"
@@ -161,7 +161,6 @@ open class VVar<X: SFun<X>, E: D1> constructor(
   override val proto: X,
   override val name: String = "",
   val length: E,
-//  val svs: List<SVar<X>> = List(length.i) { SVar("$name.$it") },
   val sVars: Vec<X, E> = Vec(List(length.i) { SVar(proto, "$name[$it]") })
 ): Variable<X>, VFun<X, E>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to sVars))
@@ -343,23 +342,5 @@ sealed class D29(override val i: Int = 29): D28(i) { companion object: D29(), Na
 sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Nat<D30> }
 
 fun main() {
-  var totalTime = 0L
-  val m = 1000
-  val r = 100
-  repeat(r) {
-    totalTime += measureTimeMillis {
-      F64Array(m, m) { _, _ -> Math.random() }.let { it * it }
-    }
-  }
 
-  println("Avg simd: ${totalTime / r}ms")
-  totalTime = 0L
-
-  repeat(r) {
-    totalTime += measureTimeMillis {
-      List(m * m) { Math.random() }.map { it * it }
-    }
-  }
-
-  println("Avg KTX: ${totalTime / r}ms")
 }
