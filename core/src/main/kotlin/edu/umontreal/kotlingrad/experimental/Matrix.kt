@@ -184,8 +184,6 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
   override val name: String = "", val r: R, val c: C,
   val vVars: List<VVar<X, C>> = List(r.i) { VVar(proto, "$name[$it]", c) },
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
-//  val sVars: List<SVar<X>> = List(r.i * c.i) { SVar("$name[${it / c.i},${it % c.i}]") },
-//  val sMat: Mat<X, R, C> = Mat(List(r.i) { row -> Vec(List(c.i) { col -> sVars[row * c.i + col] }) })
 ): Variable<X>, MFun<X, R, C>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to vMat))
   fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
