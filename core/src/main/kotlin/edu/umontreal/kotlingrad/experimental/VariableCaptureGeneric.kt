@@ -35,6 +35,7 @@ operator fun <Q, R> Eq<Q, R, *>.div(z: z): Eq<Q, R, T> = Eqn({ this / z })
 operator fun <V1, V2, V3> Eq<V1, V2, V3>.plus(c: Number): Eq<V1, V2, V3> = this
 operator fun <V1, V2, V3> Int.plus(e: Eq<V1, V2, V3>): Eq<V1, V2, V3> = e
 
+//                              X  Y  Z
 @JvmName("tff") operator fun Eq<T, F, F>.invoke(xBnd: Int) = call(x to xBnd)
 @JvmName("ftf") operator fun Eq<F, T, F>.invoke(yBnd: Int) = call(y to yBnd)
 @JvmName("fft") operator fun Eq<F, F, T>.invoke(zBnd: Int) = call(z to zBnd)
