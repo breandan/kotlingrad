@@ -210,7 +210,7 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
   val flattened: List<SFun<X>> by lazy { materialize().flatMap { it.contents } }
   val numRows: Int = rows.size
   val numCols: Int by lazy { rows.first().invoke().size }
-  val indices: List<Int> = rows.indices.drop(1)
+  val indices: List<Int> = rows.indices.toList()
   val cols: List<VFun<X, R>> by lazy { indices.map { i -> Vec(materialize().map { it[i] }) } }
 
   override fun sum() = reduce { acc, it -> acc + it }
@@ -229,6 +229,7 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
     }
 
   operator fun get(i: Int): VFun<X, C> = rows[i]
+  operator fun get(i: Int, j: Int): SFun<X> = (rows[i] as Vec<X, C>)[j]
 
   override fun times(multiplicand: SFun<X>): Mat<X, R, C> = map { it * multiplicand }
 
