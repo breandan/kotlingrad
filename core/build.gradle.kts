@@ -20,6 +20,11 @@ dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
   testImplementation("org.ejml:ejml-kotlin:0.39")
   testImplementation("org.ejml:ejml-core:0.39")
+  testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
+
+  val tfVersion by extra { "0.2.0-SNAPSHOT" }
+  testImplementation("org.tensorflow:ndarray:$tfVersion")
+  testImplementation("org.tensorflow:tensorflow-core-platform:$tfVersion")
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
   implementation("org.jetbrains.bio:viktor:1.0.1")
   implementation("com.github.breandan:kaliningraph:0.0.3")
