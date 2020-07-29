@@ -231,7 +231,7 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
   val numRows: Int = rows.size
   val numCols: Int by lazy { rows.first().invoke().size }
   val indices: List<Int> = rows.indices.toList()
-  val cols: List<VFun<X, R>> by lazy { indices.map { i -> Vec(materialize().map { it[i] }) } }
+  val cols: List<VFun<X, R>> by lazy { (0 until numCols).map { i -> Vec(materialize().map { it[i] }) } }
 
   override fun sum() = reduce { acc, it -> acc + it }
 
