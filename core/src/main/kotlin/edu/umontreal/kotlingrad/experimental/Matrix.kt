@@ -2,6 +2,7 @@
 
 package edu.umontreal.kotlingrad.experimental
 
+import edu.umontreal.kotlingrad.utils.*
 import guru.nidi.graphviz.attribute.Color.BLUE
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
@@ -194,7 +195,26 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
+  constructor(proto: X, fVec: F64Array): this(*fVec.toKotlinArray().map { VConst<X, C>(proto, *it.toTypedArray()) }.toTypedArray())
   val simdVec by lazy { F64Array(numRows, numCols) { row, col -> (vConsts[row][col] as SConst<X>).doubleValue } }
+  override val proto by lazy { vConsts[0].proto }
+
+  override fun times(multiplicand: SFun<X>): Mat<X, R, C> =
+    when(multiplicand) {
+      is SConst -> MConst(proto, simdVec.times(multiplicand.doubleValue))
+      else -> super.times(multiplicand)
+    }
+
+  override fun times(multiplicand: VFun<X, C>): VFun<X, R> =
+    when (multiplicand) {
+      is VConst -> multiplicand * this
+      else -> super.times(multiplicand)
+    }
+
+  override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = when (multiplicand) {
+    is MConst -> MConst(proto, simdVec matmul multiplicand.simdVec)
+    else -> super.times(multiplicand)
+  }
 }
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):

@@ -354,10 +354,13 @@ abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
   fun <Y: Number> Mat3x2(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
   fun <Y: Number> Mat3x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
 
-  inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
-    Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
+  inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): MConst<X, R, C> =
+//    Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
+    (0 until r.i).map { i -> (0 until c.i).map { j -> wrap(gen(i, j)) } }
+      .map { VConst<X, C>(*it.toTypedArray()) }.toTypedArray().let { MConst(*it) }
 
-  inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> = Vec(List(e.i) { prototype.wrapOrError(gen(it)) as SFun<X> })
+  inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> =
+    Vec(List(e.i) { prototype.wrapOrError(gen(it)) as SFun<X> })
 
   fun Var(name: String = "") = SVar(prototype, name)
   fun Var2(name: String = "") = VVar<X, D2>(prototype, name, D2)

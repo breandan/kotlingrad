@@ -1,6 +1,7 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
+import edu.umontreal.kotlingrad.utils.*
 import guru.nidi.graphviz.attribute.Color.BLUE
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
@@ -57,7 +58,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   open operator fun minus(subtrahend: VFun<X, E>): VFun<X, E> = VSum(this, -subtrahend)
   open infix fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = VVProd(this, multiplicand)
   open operator fun times(multiplicand: SFun<X>): VFun<X, E> = VSProd(this, multiplicand)
-  open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = VMProd(this, multiplicand)
+  open operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, Q> = VMProd(this, multiplicand)
   open infix fun dot(multiplicand: VFun<X, E>): SFun<X> = DProd(this, multiplicand)
 
   operator fun times(multiplicand: Number): VFun<X, E> = this * wrap(multiplicand)
@@ -108,7 +109,7 @@ class VVProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val righ
 class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
 class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): VFun<X, E>(left, right), BiFun<X>
 class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): VFun<X, R>(left, right), BiFun<X>
-class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, C>(left, right), BiFun<X>
+class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, R>(left, right), BiFun<X>
 class MSumRows<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): VFun<X, C>(input), UnFun<X>
 
 class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) : VFun<X, E>(vFun) {
@@ -195,6 +196,7 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, inputs: Bindings<X> 
 
 open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
   constructor(proto: X, fVec: F64Array): this(*fVec.toDoubleArray().map { proto.wrap(it) }.toTypedArray())
+  constructor(proto: X, vararg values: Number): this(*values.map { proto.wrap(it) }.toTypedArray())
   override val proto by lazy { consts[0].proto }
 
   val simdVec by lazy { F64Array(consts.size) { consts[it].doubleValue } }
@@ -224,8 +226,8 @@ open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): 
     else -> super.times(multiplicand)
   }
 
-  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = when (multiplicand) {
-    is MConst<X, Q, E> -> VConst(*multiplicand.vConsts.map { SConst<X>(simdVec dot it.simdVec) }.toTypedArray())
+  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, Q> = when (multiplicand) {
+    is MConst<X, Q, E> -> VConst(proto, simdVec matmul multiplicand.simdVec)
     else -> super.times(multiplicand)
   }
 }
@@ -262,7 +264,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.dot(multiplicand)
   }
 
-  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, E> = when (multiplicand) {
+  override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, Q> = when (multiplicand) {
     is Mat<X, Q, E> -> Vec(multiplicand.map { row: VFun<X, E> -> row dot this })
     else -> super.times(multiplicand)
   }
@@ -340,7 +342,8 @@ sealed class D27(override val i: Int = 27): D26(i) { companion object: D27(), Na
 sealed class D28(override val i: Int = 28): D27(i) { companion object: D28(), Nat<D28> }
 sealed class D29(override val i: Int = 29): D28(i) { companion object: D29(), Nat<D29> }
 sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Nat<D30> }
-sealed class D100(override val i: Int = 100): D30(i) { companion object: D100(), Nat<D100> }
+sealed class D50(override val i: Int = 50): D30(i) { companion object: D50(), Nat<D50> }
+sealed class D100(override val i: Int = 100): D50(i) { companion object: D100(), Nat<D100> }
 
 fun main() {
 
