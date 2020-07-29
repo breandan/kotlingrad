@@ -906,6 +906,7 @@ Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf)
 * [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf)
 * [Dimension Types](https://link.springer.com/content/pdf/10.1007%2F3-540-57880-3_23.pdf)
 * [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145)
+* [Programming in Martin-Löf's Type Theory](http://www.cse.chalmers.se/research/group/logic/book/book.pdf#page=23)
 
 ### Domain-Specific Languages
 
