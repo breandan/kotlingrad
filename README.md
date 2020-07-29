@@ -289,7 +289,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-For further details, please refer to [the implementation](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCapture.kt).
+For further details, please refer to [the implementation](core/src/main/kotlin/edu/umontreal/kotlingrad/experimental/VariableCaptureGeneric.kt).
 
 ### Example
 

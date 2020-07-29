@@ -1,86 +1,55 @@
 //package edu.umontreal.kotlingrad.experimental
-//
-//open class Vr
-//object x: Vr() {
-//  operator fun plus(x: x): (x) -> Double = { x -> TODO() }
-//  operator fun plus(y: y): (x, y) -> Double = { x, y -> TODO() }
-//  operator fun plus(z: z): (x, z) -> Double = { x, z -> TODO() }
-//}
-//object y: Vr() {
-//  operator fun plus(y: y): (y) -> Double = { y -> TODO() }
-//  operator fun plus(x: x): (x, y) -> Double = { x, y -> TODO() }
-//  operator fun plus(z: z): (y, z) -> Double = { y, z -> TODO() }
-//}
-//object z: Vr() {
-//  operator fun plus(z: z): (z) -> Double = { z -> TODO() }
-//  operator fun plus(x: x): (x, z) -> Double = { x, z -> TODO() }
-//  operator fun plus(y: y): (y, z) -> Double = { x, y -> TODO() }
-//}
-//
-////@JvmName("x+x") operator fun <T1: Vr> T1.plus(t1: T1): (T1) -> Double = { t1: T1 -> TODO() }
-//
-//@JvmName("x+(y)") operator fun <T1: Vr, T2: Vr> T1.plus(f2: (T2) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("x+(yz)") operator fun <T1: Vr, T2: Vr, T3: Vr> T1.plus(f2: (T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("x+(xz)") operator fun <T1: Vr, T2: Vr> T1.plus(f2: (T1, T2) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("x+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> T1.plus(f2: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("x+(x)") operator fun <T1: Vr> T1.plus(f1: (T1) -> Double): (T1) -> Double = { t1: T1 -> TODO() }
-//
-//@JvmName("(x)+x") operator fun <T1: Vr> ((T1) -> Double).plus(t1: T1): (T1) -> Double = { t1: T1 -> TODO() }
-//@JvmName("(x)+(x)") inline operator fun <reified T1: Vr> ((T1) -> Double).plus(f1: (T1) -> Double): (T1) -> Double = { t1: T1 -> TODO() }
-//
-//@JvmName("(x)+y") operator fun <T1: Vr, T2: Vr> ((T1) -> Double).plus(t2: T2): (T1, T2) -> Double = { t1, t2 -> TODO() }
-//@JvmName("(x)+(y)") inline operator fun <reified T1: Vr, reified T2: Vr> ((T1) -> Double).plus(f2: (T2) -> Double): (T1, T2) -> Double = { t1, t2 -> TODO() }
-//
-//@JvmName("(xy)+x") operator fun <T1: Vr, T2: Vr> ((T1, T2) -> Double).plus(t1: T1): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("(xy)+(x)") operator fun <T1: Vr, T2: Vr> ((T1, T2) -> Double).plus(f1: (T1) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//
-//@JvmName("(xy)+y") operator fun <T1: Vr, T2: Vr> ((T1, T2) -> Double).plus(t1: T2): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("(xy)+(y)") operator fun <T1: Vr, T2: Vr> ((T1, T2) -> Double).plus(f2: (T2) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//
-//
-//@JvmName("(xy)+z") operator fun <T1: Vr, T2: Vr, T3> ((T1, T2) -> Double).plus(t3: T3): (T1, T2, T3) -> Double = { t1, t2, t3 -> TODO() }
-//@JvmName("(xy)+(z)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2) -> Double).plus(f3: (T3) -> Double): (T1, T2, T3) -> Double = { t1, t2, t3 -> TODO() }
-//
-//
-//@JvmName("(xyz)+x") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(t1: T1): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xyz)+y") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(t2: T2): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xyz)+z") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(t2: T3): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(xyz)+(x)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f1: (T1) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xyz)+(y)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f2: (T2) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xyz)+(z)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f3: (T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(x)+(xy)") operator fun <T1: Vr, T2: Vr> ((T1) -> Double).plus(f3: (T1, T2) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("(y)+(xz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T2) -> Double).plus(f3: (T1, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(z)+(yz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T3) -> Double).plus(f3: (T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(x)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3 -> TODO() }
-//@JvmName("(y)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T2) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(z)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T3) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(xy)+(xy)") operator fun <T1: Vr, T2: Vr> ((T1, T2) -> Double).plus(f3: (T1, T2) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("(xy)+(xz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2) -> Double).plus(f3: (T1, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xy)+(yz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2) -> Double).plus(f3: (T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(yz)+(xz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T2, T3) -> Double).plus(f3: (T1, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(xy)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2) -> Double = { t1: T1, t2: T2 -> TODO() }
-//@JvmName("(xz)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T3) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(yz)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T2, T3) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(xyz)+(xy)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f3: (T1, T2) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xyz)+(yz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f3: (T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//@JvmName("(xyz)+(xz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f3: (T1, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//@JvmName("(xyz)+(xyz)") operator fun <T1: Vr, T2: Vr, T3: Vr> ((T1, T2, T3) -> Double).plus(f3: (T1, T2, T3) -> Double): (T1, T2, T3) -> Double = { t1: T1, t2: T2, t3: T3 -> TODO() }
-//
-//
-//fun main() {
-//// TODO: Figure out the problem here: maybe a Kotlin type checking bug?
-////  val m = ((x + y) + z) + (x + z)
-//  val s = y + y
-//  val t = x + x
-////  val d = s + t
-//  val q = x + y + z + (x + y + z)
-//  val z = x + (x + y + z)
-//}
+
+abstract class T
+abstract class F
+interface Eq<A, B, C> { fun call(vararg vrb: Vr) = 0 }
+class Eqn<A, B, C>(prev: Eq<*, *, *>? = null, vararg vrb: Vr): Eq<A, B, C> {
+  override fun call(vararg vrb: Vr) = 0
+}
+
+operator fun <V1, V2> Eq<*, V1, V2>.plus(x: x): Eq<T, V1, V2> = Eqn()
+operator fun <V1, V2> Eq<V1, *, V2>.plus(y: y): Eq<V1, T, V2> = Eqn()
+operator fun <V1, V2> Eq<V1, V2, *>.plus(z: z): Eq<V1, V2, T> = Eqn()
+
+operator fun <V1, V2, V3> Eq<V1, V2, V3>.plus(c: Number): Eq<V1, V2, V3> = this
+operator fun <V1, V2, V3> Int.plus(e: Eq<V1, V2, V3>): Eq<V1, V2, V3> = e
+
+@JvmName("tff") operator fun Eq<T, F, F>.invoke(xBnd: Int) = call(x(xBnd))
+@JvmName("ftf") operator fun Eq<F, T, F>.invoke(yBnd: Int) = call(y(yBnd))
+@JvmName("fft") operator fun Eq<F, F, T>.invoke(zBnd: Int) = call(z(zBnd))
+
+@JvmName("ftt") operator fun Eq<F, T, T>.invoke(yBnd: YBd) = Eqn<F, F, T>(this, yBnd)
+@JvmName("ftt") operator fun Eq<F, T, T>.invoke(zBnd: ZBd) = Eqn<F, T, F>(this, zBnd)
+@JvmName("ftt") operator fun Eq<F, T, T>.invoke(yBnd: YBd, zBnd: ZBd) = call(yBnd, zBnd)
+
+@JvmName("tft") operator fun Eq<T, F, T>.invoke(xBnd: XBd) = Eqn<F, F, T>(this, xBnd)
+@JvmName("tft") operator fun Eq<T, F, T>.invoke(zBnd: ZBd) = Eqn<T, F, F>(this, zBnd)
+@JvmName("tft") operator fun Eq<T, F, T>.invoke(xBnd: XBd, yBnd: ZBd) = call(xBnd, yBnd)
+
+@JvmName("ttf") operator fun Eq<T, T, F>.invoke(xBnd: XBd) = Eqn<F, T, F>(this, xBnd)
+@JvmName("ttf") operator fun Eq<T, T, F>.invoke(yBnd: YBd) = Eqn<T, F, F>(this, yBnd)
+@JvmName("ttf") operator fun Eq<T, T, F>.invoke(xBnd: XBd, yBnd: YBd) = call(xBnd, yBnd)
+
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(xBnd: XBd) = Eqn<F, T, T>(this, xBnd)
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(yBnd: YBd) = Eqn<T, F, T>(this, yBnd)
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(zBnd: ZBd) = Eqn<T, T, F>(this, zBnd)
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(xBnd: XBd, zBnd: ZBd) = Eqn<F, T, F>(this, xBnd, zBnd)
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(xBnd: XBd, yBnd: YBd) = Eqn<F, F, T>(this, xBnd, yBnd)
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(yBnd: YBd, zBnd: ZBd) = Eqn<T, F, F>(this, yBnd, zBnd)
+@JvmName("ttt") operator fun Eq<T, T, T>.invoke(xBnd: XBd, yBnd: YBd, zBnd: ZBd) = call(xBnd, yBnd, zBnd)
+
+open class x: Vr(), Eq<T, F, F> { companion object: x() { operator fun invoke(int: Int) = XBd(this, int) } }
+class XBd(val vr: Vr, val value: Int): x()
+open class y: Vr(), Eq<F, T, F> { companion object: y() { operator fun invoke(int: Int) = YBd(this, int) } }
+class YBd(val vr: Vr, val value: Int): y()
+open class z: Vr(), Eq<F, F, T> { companion object: z() { operator fun invoke(int: Int) = ZBd(this, int) } }
+class ZBd(val vr: Vr, val value: Int): z()
+open class Vr
+
+fun main() {
+  val xyz = 1 + x + 2 + y + z
+  val zon = xyz(x(1), y(2))
+  val out = zon(2)
+
+  val yon = xyz(x(1), z(2))
+}
