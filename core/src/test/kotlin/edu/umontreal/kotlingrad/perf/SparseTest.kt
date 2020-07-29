@@ -40,16 +40,17 @@ class SparseTest {
 
   @Test
   fun testDoubleMatrixMultiplication() {
+    var baseline = 1000L
     contents.run {
       arrayOf(
         "EJML/S" to powBench(toEJMLSparse()) { a, b -> a * b },
         "EJML/D" to powBench(toEJMLDense()) { a, b -> a * b },
         "ND4J/N" to powBench(toNd4j()) { a, b -> a.mmul(b) },
         "APACHE" to powBench(toApacheCommons()) { a, b -> a.multiply(b) },
-        "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b },
+        "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b }.also { baseline = it },
         "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as MConst<DReal, D100, D100> },
         "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
-          .also { assert(it < 5000) { "Perf regression: $it ms" } },
+          .also { assert(it < 10 * baseline) { "Perf regression: $it ms" } },
         "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
 //        "TF4J/N" to powBench(toTf4j()) { a, b ->
 //          EagerSession.create().use {
