@@ -1,5 +1,7 @@
 package edu.umontreal.kotlingrad.utils
 
+import org.jetbrains.bio.viktor.F64Array
+
 infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
   require(start.isFinite())
   require(endInclusive.isFinite())
@@ -11,6 +13,10 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
   }
   return sequence.asIterable()
 }
+
+fun F64Array.toKotlinArray() = toGenericArray().map { it as DoubleArray }.toTypedArray()
+infix fun F64Array.matmul(f: F64Array) =
+  F64Array(shape[0], shape[1]) { i, j -> view(i) dot f.view(j, 1) }
 
 fun <T> Iterable<T>.repeat(n: Int) = sequence { repeat(n) { yieldAll(this@repeat) } }
 
