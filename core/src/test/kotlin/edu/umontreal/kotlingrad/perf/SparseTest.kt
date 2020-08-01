@@ -16,6 +16,7 @@ import org.tensorflow.ndarray.*
 import org.tensorflow.ndarray.buffer.DataBuffers
 import scientifik.kmath.linear.*
 import scientifik.kmath.structures.*
+import scientifik.kmath.structures.Matrix
 import kotlin.system.measureTimeMillis
 
 class SparseTest {
