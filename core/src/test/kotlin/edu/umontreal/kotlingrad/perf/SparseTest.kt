@@ -15,8 +15,7 @@ import org.nd4j.linalg.factory.Nd4j
 import org.tensorflow.ndarray.*
 import org.tensorflow.ndarray.buffer.DataBuffers
 import scientifik.kmath.linear.*
-import scientifik.kmath.structures.Structure2D
-import scientifik.kmath.structures.Matrix
+import scientifik.kmath.structures.*
 import kotlin.system.measureTimeMillis
 
 class SparseTest {

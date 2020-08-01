@@ -1,16 +1,12 @@
 package edu.umontreal.kotlingrad.experimental
 
+import guru.nidi.graphviz.*
 import guru.nidi.graphviz.attribute.*
-import guru.nidi.graphviz.engine.Engine
-import guru.nidi.graphviz.engine.Engine.DOT
-import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.attribute.Color.*
+import guru.nidi.graphviz.attribute.Rank.RankDir.LEFT_TO_RIGHT
+import guru.nidi.graphviz.engine.*
 import guru.nidi.graphviz.engine.Format.SVG
-import guru.nidi.graphviz.engine.Renderer
-import guru.nidi.graphviz.graph
-import guru.nidi.graphviz.model.Link
-import guru.nidi.graphviz.model.LinkTarget
-import guru.nidi.graphviz.model.MutableNode
-import guru.nidi.graphviz.toGraphviz
+import guru.nidi.graphviz.model.*
 import java.io.File
 
 val DARKMODE = false
@@ -18,11 +14,11 @@ val THICKNESS = 2
 
 inline fun render(format: Format = SVG, crossinline op: () -> MutableNode) =
   graph(directed = true) {
-    val color = if (DARKMODE) Color.WHITE else Color.BLACK
+    val color = if (DARKMODE) WHITE else BLACK
 
     edge[color, Arrow.NORMAL, Style.lineWidth(THICKNESS)]
 
-    graph[Rank.dir(Rank.RankDir.LEFT_TO_RIGHT), Color.TRANSPARENT.background(), GraphAttr.margin(0.0), Attributes.attr("compound", "true"), Attributes.attr("nslimit", "20")]
+    graph[Rank.dir(LEFT_TO_RIGHT), TRANSPARENT.background(), GraphAttr.margin(0.0), Attributes.attr("compound", "true"), Attributes.attr("nslimit", "20")]
 
     node[color, color.font(), Font.config("Lucida Console", 20), Style.lineWidth(THICKNESS), Attributes.attr("shape", "Mrecord")]
 

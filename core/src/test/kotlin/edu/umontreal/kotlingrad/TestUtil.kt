@@ -1,12 +1,8 @@
 package edu.umontreal.kotlingrad
 
-import edu.umontreal.kotlingrad.experimental.D1
-import edu.umontreal.kotlingrad.experimental.DReal
-import edu.umontreal.kotlingrad.experimental.Mat
-import edu.umontreal.kotlingrad.experimental.Vec
+import edu.umontreal.kotlingrad.experimental.*
 import io.kotlintest.shouldBe
-import java.math.BigDecimal
-import java.math.MathContext
+import java.math.*
 import kotlin.random.Random
 
 infix fun Double.shouldBeAbout(d: Double) =

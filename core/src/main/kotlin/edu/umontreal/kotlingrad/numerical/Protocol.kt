@@ -1,7 +1,6 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.functions.Fun
-import edu.umontreal.kotlingrad.functions.ScalarVar
+import edu.umontreal.kotlingrad.functions.*
 import java.math.BigDecimal
 
 object BigDecimalPrecision: Protocol<BigDecimalReal, BigDecimal>() {

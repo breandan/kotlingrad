@@ -1,7 +1,7 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
-import edu.umontreal.kotlingrad.utils.*
+import edu.umontreal.kotlingrad.utils.matmul
 import guru.nidi.graphviz.attribute.Color.BLUE
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
@@ -9,7 +9,6 @@ import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
 import kotlin.reflect.KProperty
-import kotlin.system.measureTimeMillis
 
 /**
  * Vector function.
