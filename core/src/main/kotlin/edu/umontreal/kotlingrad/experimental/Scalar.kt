@@ -45,7 +45,9 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
 
   val proto: X
 
-  fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+  fun List<Pair<Fun<X>, Any>>.bind() =
+    Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
     is Number -> wrap(any)
