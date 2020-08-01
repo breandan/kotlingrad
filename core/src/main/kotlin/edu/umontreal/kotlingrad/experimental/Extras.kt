@@ -1,8 +1,7 @@
 package edu.umontreal.kotlingrad.experimental
 
 import ch.obermuhlner.math.big.BigDecimalMath
-import java.math.BigDecimal
-import java.math.MathContext
+import java.math.*
 
 open class BDReal(number: Number, val sigFigs: Int = 30): RealNumber<BDReal, BigDecimal>(when {
   number is BigDecimal -> number

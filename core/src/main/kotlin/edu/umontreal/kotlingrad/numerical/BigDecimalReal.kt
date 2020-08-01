@@ -2,10 +2,9 @@ package edu.umontreal.kotlingrad.numerical
 
 import ch.obermuhlner.math.big.BigDecimalMath.*
 import edu.umontreal.kotlingrad.functions.Fun
-import java.math.BigDecimal
+import java.math.*
 import java.math.BigDecimal.ONE
 import java.math.BigDecimal.ZERO
-import java.math.MathContext
 import kotlin.math.E
 
 class BigDecimalReal(number: Number, sigFigs: Int = 30): RealNumber<BigDecimalReal, BigDecimal>(when {

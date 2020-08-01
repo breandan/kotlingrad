@@ -6,7 +6,7 @@ import edu.umontreal.kotlingrad.utils.*
 import guru.nidi.graphviz.attribute.Color.BLUE
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.model.Factory.*
+import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
 import kotlin.reflect.KProperty

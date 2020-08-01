@@ -1,3 +1,4 @@
+import org.gradle.api.JavaVersion.VERSION_1_8
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -31,7 +32,7 @@ subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
   tasks {
-    val jvmTarget = JavaVersion.VERSION_1_8.toString()
+    val jvmTarget = VERSION_1_8.toString()
     compileKotlin {
       kotlinOptions.jvmTarget = jvmTarget
       kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"

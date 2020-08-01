@@ -1,7 +1,6 @@
 package edu.umontreal.kotlingrad.numerical
 
-import edu.umontreal.kotlingrad.functions.ScalarConst
-import edu.umontreal.kotlingrad.functions.Fun
+import edu.umontreal.kotlingrad.functions.*
 
 abstract class RealNumber<X: Fun<X>, Y>(open val value: Y): ScalarConst<X>(), Comparable<Y> by value
   where Y: Number, Y: Comparable<Y> {

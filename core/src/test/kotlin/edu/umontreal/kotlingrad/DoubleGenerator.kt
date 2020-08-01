@@ -1,8 +1,7 @@
 package edu.umontreal.kotlingrad
 
 import io.kotlintest.properties.Gen
-import io.kotlintest.properties.shrinking.DoubleShrinker
-import io.kotlintest.properties.shrinking.Shrinker
+import io.kotlintest.properties.shrinking.*
 import kotlin.math.pow
 
 open class DoubleGenerator(

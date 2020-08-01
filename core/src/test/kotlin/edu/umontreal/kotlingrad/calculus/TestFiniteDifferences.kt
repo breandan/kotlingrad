@@ -1,12 +1,10 @@
 package edu.umontreal.kotlingrad.calculus
 
-import edu.umontreal.kotlingrad.DoubleGenerator
+import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
-import kotlin.math.cos
-import kotlin.math.sin
+import kotlin.math.*
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestFiniteDifferences: StringSpec({

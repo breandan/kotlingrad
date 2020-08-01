@@ -1,14 +1,11 @@
 package edu.umontreal.kotlingrad.evaluation
 
-import edu.umontreal.kotlingrad.DoubleGenerator
-import edu.umontreal.kotlingrad.ExpressionGenerator
+import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.shouldBeAbout
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
+import javax.script.*
 import javax.script.ScriptContext.ENGINE_SCOPE
-import javax.script.ScriptEngineManager
-import javax.script.SimpleBindings
 
 @Suppress("NonAsciiCharacters")
 class TestSymbolic : StringSpec({

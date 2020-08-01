@@ -1,8 +1,7 @@
 package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.functions.Fun
-import edu.umontreal.kotlingrad.numerical.DoublePrecision
-import edu.umontreal.kotlingrad.numerical.DoubleReal
+import edu.umontreal.kotlingrad.numerical.*
 import io.kotlintest.properties.Gen
 
 open class AdversarialGenerator(vararg val inputs: DoubleReal, val function: Fun<DoubleReal>): Gen<DoubleReal> {

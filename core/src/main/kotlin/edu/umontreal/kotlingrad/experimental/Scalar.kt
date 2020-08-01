@@ -143,6 +143,18 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     else -> javaClass.simpleName
   }
 
+//  fun toKGraph() = when (this@SFun) {
+//      is SVar -> Gate(name)
+//      is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
+//      is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
+//      is Special -> add(Label.of(this@SFun.toString()))
+//      is SComposition -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("SComp")) }
+//      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) } // add(Label.of("{{<In0>|<In1>}|${opCode()}|{<Out0>}}")) }
+//      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
+//      is SConst<*> -> add(Label.of(this@SFun.toString()))
+//      else -> TODO(this@SFun.javaClass.toString())
+//    }
+
   override fun toGraph(): MutableNode = mutNode(if (this is SVar) "$this" else "${hashCode()}").apply {
     when (this@SFun) {
       is SVar -> name
