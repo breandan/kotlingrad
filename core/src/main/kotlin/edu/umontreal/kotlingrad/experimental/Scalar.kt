@@ -217,6 +217,7 @@ class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X> = Bindings(
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
+  // TODO: Make this tail recursive so that we don't blow the stack
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
       is SVar -> this

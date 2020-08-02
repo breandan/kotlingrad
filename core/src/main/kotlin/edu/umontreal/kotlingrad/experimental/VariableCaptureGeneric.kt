@@ -1,76 +1,76 @@
 package edu.umontreal.kotlingrad.experimental
 
 fun main() {
-  val xyz = (1 + x + 2) + (y + z)
-  val zon = xyz(x to 1, y to 2)
-  val out = zon(2)
-
-  val yon = xyz(x to 1, z to 2)
+  val x = v1; val y = v2; val z = v3
+  val xyz: Ex<XX, XX, XX> = (1 + x + 2) + (y + z)
+  val x__: Ex<OO, OO, XX> = xyz(x to 1, y to 2)
+  val out: Int = x__(2)
+  val _y_: Ex<OO, XX, OO> = xyz(x to 1, z to 2)
 }
 
-abstract class B
-abstract class T: B()
-abstract class F: B()
-//interface Eq<R: B, S: B, T: B> {
-//  fun call(vararg vrb: Vr<*, *, *>) = 0
-//  fun <M: B, N: B, O: B> inv(vararg vrb: Vr<*, *, *>): Eq<M, N, O>
-//}
-open class Ex<R: B, S: B, T: B>(
-  vararg exs: Ex<*, *, *>
-//  val op: (Array<out Vr<*, *, *>>) -> Ex<*, *, *>,
-//  vararg vrb: Vr<*, *, *>
-) {
-  fun call(vararg vrb: Vr<*, *, *>) = 0
-  open fun <M: B, N: B, O: B> inv(vararg vrb: Vr<*, *, *>) = Ex<M, N, O>()
+sealed class XO
+abstract class XX: XO() // Present
+abstract class OO: XO() // Absent
+
+enum class BF { PLUS, MINUS, TIMES, DIV }
+open class Ex<R: XO, S: XO, T: XO>(vararg val exs: Ex<*, *, *>, val op: BF? = null) {
+  fun <N: Number> call(vararg vrb: VrB<N>): N = (inv<N, R, S, T>(*vrb) as Nt<N>).value
+  open fun <T: Number, M: XO, N: XO, O: XO> inv(vararg bnds: VrB<T>): Ex<M, N, O> =
+    exs.reduce { it, acc -> if(op == null) acc else it.inv<T, M, N, O>(*bnds) } as Ex<M, N, O>
 }
 
-@JvmName("+:___") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<F, F, F>) = Ex<Q, R, S>(this, e)
-@JvmName("+:t__") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<T, F, F>) = Ex<T, R, S>(this, e)
-@JvmName("+:_t_") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<F, T, F>) = Ex<Q, T, S>(this, e)
-@JvmName("+:__t") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<F, F, T>) = Ex<Q, R, T>(this, e)
-@JvmName("+:tt_") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<T, T, F>) = Ex<T, T, R>(this, e)
-@JvmName("+:_tt") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<F, T, T>) = Ex<Q, T, T>(this, e)
-@JvmName("+:t_t") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<T, F, T>) = Ex<T, R, T>(this, e)
-@JvmName("+:ttt") operator fun <Q: B, R: B, S: B> Ex<Q, R, S>.plus(e: Ex<T, T, T>) = Ex<T, T, T>(this, e)
-
-operator fun <V1: B, V2: B, V3: B> Ex<V1, V2, V3>.plus(c: Number): Ex<V1, V2, V3> = this
-operator fun <V1: B, V2: B, V3: B> Int.plus(e: Ex<V1, V2, V3>): Ex<V1, V2, V3> = e
-
-//                              X  Y  Z
-@JvmName("tff") operator fun Ex<T, F, F>.invoke(xBnd: Int) = call(x to xBnd)
-@JvmName("ftf") operator fun Ex<F, T, F>.invoke(yBnd: Int) = call(y to yBnd)
-@JvmName("fft") operator fun Ex<F, F, T>.invoke(zBnd: Int) = call(z to zBnd)
-
-@JvmName("ftt") operator fun Ex<F, T, T>.invoke(yBnd: YBd) = inv<F, F, T>(yBnd)
-@JvmName("ftt") operator fun Ex<F, T, T>.invoke(zBnd: ZBd) = inv<F, T, F>(zBnd)
-@JvmName("ftt") operator fun Ex<F, T, T>.invoke(yBnd: YBd, zBnd: ZBd) = call(yBnd, zBnd)
-
-@JvmName("tft") operator fun Ex<T, F, T>.invoke(xBnd: XBd) = inv<F, F, T>(xBnd)
-@JvmName("tft") operator fun Ex<T, F, T>.invoke(zBnd: ZBd) = inv<T, F, F>(zBnd)
-@JvmName("tft") operator fun Ex<T, F, T>.invoke(xBnd: XBd, yBnd: ZBd) = call(xBnd, yBnd)
-
-@JvmName("ttf") operator fun Ex<T, T, F>.invoke(xBnd: XBd) = inv<F, T, F>(xBnd)
-@JvmName("ttf") operator fun Ex<T, T, F>.invoke(yBnd: YBd) = inv<T, F, F>(yBnd)
-@JvmName("ttf") operator fun Ex<T, T, F>.invoke(xBnd: XBd, yBnd: YBd) = call(xBnd, yBnd)
-
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(xBnd: XBd) = inv<F, T, T>(xBnd)
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(yBnd: YBd) = inv<T, F, T>(yBnd)
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(zBnd: ZBd) = inv<T, T, F>(zBnd)
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(xBnd: XBd, zBnd: ZBd) = inv<F, T, F>(xBnd, zBnd)
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(xBnd: XBd, yBnd: YBd) = inv<F, F, T>(xBnd, yBnd)
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(yBnd: YBd, zBnd: ZBd) = inv<T, F, F>(yBnd, zBnd)
-@JvmName("ttt") operator fun Ex<T, T, T>.invoke(xBnd: XBd, yBnd: YBd, zBnd: ZBd) = call(xBnd, yBnd, zBnd)
-
-open class x: Vr<T, F, F>() { companion object: x() }
-open class y: Vr<F, T, F>() { companion object: y() }
-open class z: Vr<F, F, T>() { companion object: z() }
-class XBd(val vr: Vr<*, *, *>, val value: Int): x()
-class YBd(val vr: Vr<*, *, *>, val value: Int): y()
-class ZBd(val vr: Vr<*, *, *>, val value: Int): z()
-open class Vr<R: B, S: B, T: B>: Ex<R, S, T>() {
-  override fun <M: B, N: B, O: B> inv(vararg vrb: Vr<*, *, *>): Ex<M, N, O> = TODO("Add support for variable rebinding")
+open class Nt<T: Number>(val value: T): Ex<OO, OO, OO>() {
+  override fun <T: Number, M: XO, N: XO, O: XO> inv(vararg bnds: VrB<T>) = this as Ex<M, N, O>
 }
 
-infix fun x.to(int: Int) = XBd(x, int)
-infix fun y.to(int: Int) = YBd(y, int)
-infix fun z.to(int: Int) = ZBd(z, int)
+@JvmName("+:___") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<OO, OO, OO>) = Ex<V1, V2, V3>(this, e, op = BF.PLUS)
+@JvmName("+:t__") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<XX, OO, OO>) = Ex<XX, V2, V3>(this, e, op = BF.PLUS)
+@JvmName("+:_t_") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<OO, XX, OO>) = Ex<V1, XX, V3>(this, e, op = BF.PLUS)
+@JvmName("+:__t") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<OO, OO, XX>) = Ex<V1, V2, XX>(this, e, op = BF.PLUS)
+@JvmName("+:tt_") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = BF.PLUS)
+@JvmName("+:_tt") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<OO, XX, XX>) = Ex<V1, XX, XX>(this, e, op = BF.PLUS)
+@JvmName("+:t_t") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<XX, OO, XX>) = Ex<XX, V2, XX>(this, e, op = BF.PLUS)
+@JvmName("+:ttt") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = BF.PLUS)
+
+operator fun <N: Number, V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(n: N): Ex<V1, V2, V3> = Ex(this, wrap(n))
+operator fun <N: Number, V1: XO, V2: XO, V3: XO> N.plus(e: Ex<V1, V2, V3>): Ex<V1, V2, V3> = Ex(wrap(this), e)
+
+fun <T: Number> wrap(n: T) = Nt(n)
+
+//                                            V1, V2, V3
+@JvmName("i:t__") operator fun <N: Number> Ex<XX, OO, OO>.invoke(n: N) = call(v1 to n)
+@JvmName("i:_t_") operator fun <N: Number> Ex<OO, XX, OO>.invoke(n: N) = call(v2 to n)
+@JvmName("i:__t") operator fun <N: Number> Ex<OO, OO, XX>.invoke(n: N) = call(v3 to n)
+@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v2)
+@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v3)
+@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v2, v3)
+@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, OO, XX>(v1)
+@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v3)
+@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>, v2: V3Bnd<N>) = call(v1, v2)
+@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, OO>(v1)
+@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, OO>(v2)
+@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call(v1, v2)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, XX>(v1)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, XX>(v2)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, XX, OO>(v3)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v1, v3)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v1, v2)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v2, v3)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v1, v2, v3)
+
+open class v1: Vr<XX, OO, OO>() { companion object: v1() }
+open class v2: Vr<OO, XX, OO>() { companion object: v2() }
+open class v3: Vr<OO, OO, XX>() { companion object: v3() }
+class V1Bnd<N: Number>(vr: Vr<*, *, *>, value: N): VrB<N>(vr, value)
+class V2Bnd<N: Number>(vr: Vr<*, *, *>, value: N): VrB<N>(vr, value)
+class V3Bnd<N: Number>(vr: Vr<*, *, *>, value: N): VrB<N>(vr, value)
+open class VrB<N: Number>(open val vr: Vr<*, *, *>, val value: N)
+open class Vr<R: XO, S: XO, T: XO>: Ex<R, S, T>() {
+  override fun <T: Number, M: XO, N: XO, O: XO> inv(vararg bnds: VrB<T>): Ex<M, N, O> =
+    bnds.map { it.vr to it.value }.toMap()
+      .let { if(this in it) wrap(it[this]!!) else this } as Ex<M, N, O>
+}
+
+infix fun <N: Number> v1.to(n: N) = V1Bnd(v1, n)
+infix fun <N: Number> v2.to(n: N) = V2Bnd(v2, n)
+infix fun <N: Number> v3.to(n: N) = V3Bnd(v3, n)
