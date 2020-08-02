@@ -869,6 +869,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 
 ### Computer Algebra
 
+* [miniKanren as a Tool for Symbolic Computation in Python](https://arxiv.org/pdf/2005.11644.pdf)
 * [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
 * [On Using Generics for Implementing Algebraic Structures](https://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
 * [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
@@ -886,6 +887,7 @@ Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf)
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
 * [Hipparchus](https://github.com/Hipparchus-Math/hipparchus) - An efficient, general-purpose mathematics components library in the Java programming language
 * [tensor](https://github.com/idsc-frazzoli/tensor) - Linear algebra for tensors with symbolic and numeric scalars
+* [miniKanren](http://minikanren.org/) - A tool for symbolic computation and logic programming
 * [SymJava](https://github.com/yuemingl/SymJava) - A Java library for fast symbolic-numeric computation
 * [JAS](https://github.com/kredel/java-algebra-system) - Java Algebra System
 * [jalgebra](https://github.com/mdgeorge4153/jalgebra) - An abstract algebra library for Java
