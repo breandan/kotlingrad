@@ -2,33 +2,43 @@
 
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.DoubleContext
+import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.experimental.x
+import edu.umontreal.kotlingrad.experimental.y
+import edu.umontreal.kotlingrad.experimental.z
 
-fun main() = with(DoubleContext) {
-  val q = X + Y + Z + Y + 0.0
-  println("q = $q") // Should print above expression
-  val totalApp = q(X to 1.0, Y to 2.0, Z to 3.0) // Name resolution
-  println(totalApp) // Should be 8
-  val partialApp = q(X to 1.0, Y to 1.0)(Z to 1.0) // Currying is possible
-  println(partialApp) // Should be 4
-  val partialApp2 = q(X to 1.0)(Y to 1.0, Z to 1.0) // Any arity is possible
-  println(partialApp2) // Should be 4
-  val partialApp3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
-  println(partialApp3) // Should be 4
+fun main() {
+  val xyz: Ex<XX, XX, XX> by x + (y + z) * 2; println(xyz)
+  val x_z: Ex<XX, OO, XX> by xyz(y to 1); println(x_z)
+  val out: Int = xyz(x to 1, z to 3)(y to 2).also { println("out = $it") }
 
-  val t = X + Z / Z + Y + 0.0
-  val v = t(Y to 4.0)
-  val l = t(X to 1.0)(Z to 2.0)
-  val r = t(X to 1.0)(Z to 2.0)(Y to 3.0) // Full currying
+  val f by x + y + z * 3; println(f)
+  val f1 by f(x to 1)(y to 2); println(f1)
+  val j: Int = f1(z to 3); println("j = $j")
 
-  val o = X + Z + 0.0
-  //val k = o(Y to 4.0) // Does not compile
-  val s = (o(X to 1.0) + Y)(Z to 4.0)(Y to 3.0)
+  val q by x + y + z + y + 0.0; println(q)
+  val totalApp = q(x to 1.0, y to 2.0, z to 3.0) // Name resolution
+  println("Should be 8: $totalApp")
+  val partialApp = q(x to 1.0, y to 1.0)(z to 1.0) // Currying is possible
+  println("Should be 4: $partialApp")
+  val partialApp2 = q(x to 1.0)(y to 1.0, z to 1.0) // Any arity is possible
+  println("Should be 4: $partialApp2")
+  val partialApp3 = q(z to 1.0)(x to 1.0, y to 1.0) // Any order is possible
+  println("Should be 4: $partialApp3")
 
-  val p = X + Y * Z + 0.0
-  val totalApp2 = p(X to 1.0, Y to 2.0, Z to 3.0)
-  println(totalApp2) // Should be 7
-  val d = X + Z * X
-  println(d(X to 3.0, Z to 4.0)) // Should be 15
-  println((2.0 * d)(X to 3.0, Z to 4.0)) // Should be 30
+  val t = (x + z) / (z + y + 0.0)
+  val v = t(y to 4.0)
+  val l = t(x to 1.0)(z to 2.0)
+  val r = t(x to 1.0)(z to 2.0)(y to 3.0) // Full currying
+
+  val o = x + z + 0.0
+  //val k = o(y to 4.0) // Does not compile
+  val s = (o(x to 1.0) + y)(z to 4.0)(y to 3.0)
+
+  val p = x + y * z + 0.0
+  val totalApp2 = p(x to 1.0, y to 2.0, z to 3.0)
+  println("Should be 7: $totalApp2")
+  val d = x + z * x
+  println("Should be 15: " + d(x to 3.0, z to 4.0))
+  println("Should be 30: " + (2.0 * d)(x to 3.0, z to 4.0))
 }

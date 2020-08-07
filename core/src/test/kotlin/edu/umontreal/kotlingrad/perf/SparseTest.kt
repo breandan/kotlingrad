@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
-import org.tensorflow.ndarray.*
-import org.tensorflow.ndarray.buffer.DataBuffers
+//import org.tensorflow.ndarray.*
+//import org.tensorflow.ndarray.buffer.DataBuffers
 import scientifik.kmath.linear.*
 import scientifik.kmath.structures.*
 import scientifik.kmath.structures.Matrix
@@ -89,7 +89,7 @@ class SparseTest {
   fun Tensor.toKotlinArray() = mapper(this[0].length(), this[1].length()) { i, j -> Get(i, j).number().toDouble() }
   fun Mat<DReal, *, *>.toKotlinArray() = mapper(numRows, numCols) { i, j -> this[i, j]().toDouble() }
   fun INDArray.toKotlinArray() = mapper(rows(), columns()) { i, j -> getDouble(i, j) }
-  fun DoubleNdArray.toKotlinArray() = mapper(shape().size(0).toInt(), shape().size(1).toInt()) { i, j -> getDouble(i.toLong(), j.toLong()) }
+//  fun DoubleNdArray.toKotlinArray() = mapper(shape().size(0).toInt(), shape().size(1).toInt()) { i, j -> getDouble(i.toLong(), j.toLong()) }
 
   fun Array<DoubleArray>.toEJMLSparse() = DMatrixSparseCSC(size, size, sumBy { it.count { it == 0.0 } })
     .also { s -> for (i in 0 until size) for (j in 0 until size) this[i][j].let { if (0 < it) s[i, j] = it } }
@@ -100,8 +100,8 @@ class SparseTest {
   fun Array<DoubleArray>.toKTGrad() = DoublePrecision.Mat(D100, D100) { a, b -> this@toKTGrad[a][b] }
   fun Array<DoubleArray>.toTensor() = Tensors.matrixDouble(this)
   fun Array<DoubleArray>.toNd4j() = Nd4j.create(this)
-  fun Array<DoubleArray>.toTf4j() = NdArrays.ofDoubles(Shape.of(size.toLong(), size.toLong()))
-    .also { it.write(DataBuffers.of(*flatMap { it.toList() }.toDoubleArray())) }
+//  fun Array<DoubleArray>.toTf4j() = NdArrays.ofDoubles(Shape.of(size.toLong(), size.toLong()))
+//    .also { it.write(DataBuffers.of(*flatMap { it.toList() }.toDoubleArray())) }
 
   fun Array<DoubleArray>.round(precision: Int = 3) =
     map { it.map { it.round(precision) }.toDoubleArray() }.toTypedArray()
