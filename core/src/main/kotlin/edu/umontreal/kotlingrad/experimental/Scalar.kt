@@ -33,8 +33,8 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   val bindings: Bindings<X>
   fun opCode() = javaClass.simpleName
 
-  fun isConstant() = bindings.allVars.isEmpty()
-  fun wrap(number: Number) = SConst<X>(number.toDouble())
+  fun isConstant(): Boolean = bindings.allVars.isEmpty()
+  fun wrap(number: Number): SConst<X> = SConst<X>(number.toDouble())
 
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
   operator fun invoke(vararg numbers: Number): Fun<X>
@@ -240,9 +240,10 @@ class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X> = Bindings(
 class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
 class VSumAll<X: SFun<X>, E: D1>(override val input: VFun<X, E>): SFun<X>(input), UnFun<X>
 
-class SVar<X: SFun<X>>constructor(
-  override val proto: X, 
-  override val name: String = ""): Variable<X>, SFun<X>() {
+class SVar<X: SFun<X>>(
+  override val proto: X,
+  override val name: String = ""
+): Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()

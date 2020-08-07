@@ -1,738 +1,206 @@
-@file:Suppress("UNCHECKED_CAST", "UNUSED_VARIABLE")
-
 package edu.umontreal.kotlingrad.experimental
 
+import kotlin.reflect.KProperty
+
 fun main() {
-  with(DoubleContext) {
-    val q = X + Y + Z + Y + 0.0
-    println("q = $q") // Should print above expression
-    val totalApp = q(X to 1.0, Y to 2.0, Z to 3.0) // Name resolution
-    println("Should be 8: $totalApp")
-    val partialApp = q(X to 1.0, Y to 1.0)(Z to 1.0) // Currying is possible
-    println("Should be 4: $partialApp")
-    val partialApp2 = q(X to 1.0)(Y to 1.0, Z to 1.0) // Any arity is possible
-    println("Should be 4: $partialApp2")
-    val partialApp3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
-    println("Should be 4: $partialApp3")
+  val xyz: Ex<XX, XX, XX> by x + (y + z) * 2; println(xyz)
+  val x_z: Ex<XX, OO, XX> by xyz(y to 1); println(x_z)
+  val out: Int = xyz(x to 1, z to 3)(y to 2).also { println("out = $it") }
+  
+  val f by x + y + z * 3; println(f)
+  val f1 by f(x to 1)(y to 2); println(f1)
+  val j: Int = f1(z to 3); println("j = $j")
 
-    val t = (X + Z) / (Z + Y + 0.0)
-    val v = t(Y to 4.0)
-    val l = t(X to 1.0)(Z to 2.0)
-    val r = t(X to 1.0)(Z to 2.0)(Y to 3.0) // Full currying
+  val q by x + y + z + y + 0.0; println(q)
+  val totalApp = q(x to 1.0, y to 2.0, z to 3.0) // Name resolution
+  println("Should be 8: $totalApp")
+  val partialApp = q(x to 1.0, y to 1.0)(z to 1.0) // Currying is possible
+  println("Should be 4: $partialApp")
+  val partialApp2 = q(x to 1.0)(y to 1.0, z to 1.0) // Any arity is possible
+  println("Should be 4: $partialApp2")
+  val partialApp3 = q(z to 1.0)(x to 1.0, y to 1.0) // Any order is possible
+  println("Should be 4: $partialApp3")
 
-    val o = X + Z + 0.0
-    //val k = o(Y to 4.0) // Does not compile
-    val s = (o(X to 1.0) + Y)(Z to 4.0)(Y to 3.0)
+  val t = (x + z) / (z + y + 0.0)
+  val v = t(y to 4.0)
+  val l = t(x to 1.0)(z to 2.0)
+  val r = t(x to 1.0)(z to 2.0)(y to 3.0) // Full currying
 
-    val p = X + Y * Z + 0.0
-    val totalApp2 = p(X to 1.0, Y to 2.0, Z to 3.0)
-    println("Should be 7: $totalApp2")
-    val d = X + Z * X
-    println("Should be 15: " + d(X to 3.0, Z to 4.0))
-    println("Should be 30: " + (2.0 * d)(X to 3.0, Z to 4.0))
-  }
+  val o = x + z + 0.0
+  //val k = o(y to 4.0) // Does not compile
+  val s = (o(x to 1.0) + y)(z to 4.0)(y to 3.0)
+
+  val p = x + y * z + 0.0
+  val totalApp2 = p(x to 1.0, y to 2.0, z to 3.0)
+  println("Should be 7: $totalApp2")
+  val d = x + z * x
+  println("Should be 15: " + d(x to 3.0, z to 4.0))
+  println("Should be 30: " + (2.0 * d)(x to 3.0, z to 4.0))
 }
 
-/**
- * This follow code is a type-level encoding of the 3-element graded poset.
- *
- * For combination, i.e. any arithmetical operation:
- *
- *                |  x      y      z      xy      xz      yz      xyz
- *            -------------------------------------------------------
- *            x   |  x      xy     xz     xy      xz      xyz     xyz
- *            y   |  xy     y      yz     xy      xyz     yz      xyz
- *            z   |  xz     yz     z      xyz     xz      yz      xyz
- *            xy  |  xy     xy     xyz    xy      xyz     xyz     xyz
- *            xz  |  xz     xyz    xz     xyz     xz      xyz     xyz
- *            yz  |  xyz    yz     yz     xyz     xyz     yz      xyz
- *            xyz |  xyz    xyz    xyz    xyz     xyz     xyz     xyz
- *
- * Can be viewed as a Hasse Diagram: https://en.wikipedia.org/wiki/Hasse_diagram
- *
- * For application/invocation, where P is a constant:
- *
- *                |  x      y      z      xy      xz      yz      xyz
- *            -------------------------------------------------------
- *            x   |  P                    y       z               yz
- *            y   |         P             x               z       xz
- *            z   |                P              x       y       xy
- *            xy  |                       P                       z
- *            xz  |                               P               y
- *            yz  |                                       P       x
- *            xyz |                                               P
- */
+sealed class XO
+abstract class XX: XO() // Present
+abstract class OO: XO() // Absent
 
-open class X<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                     override val right: BiFn<*>,
-                                     override val op: Op<P>): BiFn<P>(left, right, op) {
-  constructor(c: Const<P, in Number>): this(c, c, First())
+enum class OP(val op: String) { ADD("+"), SUB("-"), MUL("*"), DIV("/") }
 
-  operator fun plus(that: P): X<P> = X(this, that, add)
-  operator fun times(that: P): X<P> = X(this, that, mul)
-  operator fun minus(that: P): X<P> = X(this, that, sub)
-  operator fun div(that: P): X<P> = X(this, that, div)
+open class Ex<V1: XO, V2: XO, V3: XO>
+constructor(
+  vararg val exs: Ex<*, *, *>,
+  val op: OP? = null,
+  open val name: String? = null
+) {
+  fun <N: Number> call(vararg vrb: VrB<N>): N = (inv<N, V1, V2, V3>(*vrb) as Nt<N>).value
+  open fun <T: Number, V1: XO, V2: XO, V3: XO> inv(vararg bnds: VrB<T>): Ex<V1, V2, V3> =
+    if (exs.isEmpty()) this as Ex<V1, V2, V3>
+    else exs.map { it.inv<T, V1, V2, V3>(*bnds) }
+      .reduce { it, acc -> apply(acc, it) as Ex<V1, V2, V3> }
 
-  operator fun minus(that: X<P>): X<P> = X(this, that, sub)
-  operator fun minus(that: Y<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: Z<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: XY<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: XZ<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: X<P>): X<P> = X(this, that, div)
-  operator fun div(that: Y<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: Z<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: XY<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: XZ<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
+  private fun apply(me: Ex<*, *, *>, that: Ex<*, *, *>) =
+    if(op == null) that else if (me is Nt<*> && that is Nt<*>)
+      when (op) {
+        OP.ADD -> Nt(me.value.toDouble() + that.value.toDouble())
+        OP.SUB -> Nt(me.value.toDouble() - that.value.toDouble())
+        OP.MUL -> Nt(me.value.toDouble() * that.value.toDouble())
+        OP.DIV -> Nt(me.value.toDouble() / that.value.toDouble())
+      } else Ex<V1, V2, V3>(me, that, op = op)
 
-  operator fun plus(that: X<P>): X<P> = X(this, that, add)
-  operator fun plus(that: Y<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: Z<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: XY<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: XZ<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: YZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: X<P>): X<P> = X(this, that, mul)
-  operator fun times(that: Y<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: Z<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: XY<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: XZ<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: YZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
+  /**
+   * This follow code is a type-level encoding of the 3-element graded poset.
+   *
+   * For combination, i.e. any arithmetical operation:
+   *
+   *                |  x      y      z      xy      xz      yz      xyz
+   *            -------------------------------------------------------
+   *            x   |  x      xy     xz     xy      xz      xyz     xyz
+   *            y   |  xy     y      yz     xy      xyz     yz      xyz
+   *            z   |  xz     yz     z      xyz     xz      yz      xyz
+   *            xy  |  xy     xy     xyz    xy      xyz     xyz     xyz
+   *            xz  |  xz     xyz    xz     xyz     xz      xyz     xyz
+   *            yz  |  xyz    yz     yz     xyz     xyz     yz      xyz
+   *            xyz |  xyz    xyz    xyz    xyz     xyz     xyz     xyz
+   *
+   * Can be viewed as a Hasse Diagram: https://en.wikipedia.org/wiki/Hasse_diagram
+   *
+   * For application/invocation, where P is a constant:
+   *
+   *                |  x      y      z      xy      xz      yz      xyz
+   *            -------------------------------------------------------
+   *            x   |  P                    y       z               yz
+   *            y   |         P             x               z       xz
+   *            z   |                P              x       y       xy
+   *            xy  |                       P                       z
+   *            xz  |                               P               y
+   *            yz  |                                       P       x
+   *            xyz |                                               P
+   */
 
-  open operator fun invoke(X: XBnd<P>): P =
-    op(left(X), right(X))
+  @JvmName("p:___") operator fun plus(e: Ex<OO, OO, OO>) = Ex<V1, V2, V3>(this, e, op = OP.ADD)
+  @JvmName("p:t__") operator fun plus(e: Ex<XX, OO, OO>) = Ex<XX, V2, V3>(this, e, op = OP.ADD)
+  @JvmName("p:_t_") operator fun plus(e: Ex<OO, XX, OO>) = Ex<V1, XX, V3>(this, e, op = OP.ADD)
+  @JvmName("p:__t") operator fun plus(e: Ex<OO, OO, XX>) = Ex<V1, V2, XX>(this, e, op = OP.ADD)
+  @JvmName("p:tt_") operator fun plus(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = OP.ADD)
+  @JvmName("p:_tt") operator fun plus(e: Ex<OO, XX, XX>) = Ex<V1, XX, XX>(this, e, op = OP.ADD)
+  @JvmName("p:t_t") operator fun plus(e: Ex<XX, OO, XX>) = Ex<XX, V2, XX>(this, e, op = OP.ADD)
+  @JvmName("p:ttt") operator fun plus(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = OP.ADD)
 
-  private operator fun BiFn<*>.invoke(X: XBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is X<*> -> (this as X<P>)(X)
-      else -> throw IllegalStateException(toString())
-    }
+  @JvmName("m:___") operator fun minus(e: Ex<OO, OO, OO>) = Ex<V1, V2, V3>(this, e, op = OP.SUB)
+  @JvmName("m:t__") operator fun minus(e: Ex<XX, OO, OO>) = Ex<XX, V2, V3>(this, e, op = OP.SUB)
+  @JvmName("m:_t_") operator fun minus(e: Ex<OO, XX, OO>) = Ex<V1, XX, V3>(this, e, op = OP.SUB)
+  @JvmName("m:__t") operator fun minus(e: Ex<OO, OO, XX>) = Ex<V1, V2, XX>(this, e, op = OP.SUB)
+  @JvmName("m:tt_") operator fun minus(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = OP.SUB)
+  @JvmName("m:_tt") operator fun minus(e: Ex<OO, XX, XX>) = Ex<V1, XX, XX>(this, e, op = OP.SUB)
+  @JvmName("m:t_t") operator fun minus(e: Ex<XX, OO, XX>) = Ex<XX, V2, XX>(this, e, op = OP.SUB)
+  @JvmName("m:ttt") operator fun minus(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = OP.SUB)
+
+  @JvmName("t:___") operator fun times(e: Ex<OO, OO, OO>) = Ex<V1, V2, V3>(this, e, op = OP.MUL)
+  @JvmName("t:t__") operator fun times(e: Ex<XX, OO, OO>) = Ex<XX, V2, V3>(this, e, op = OP.MUL)
+  @JvmName("t:_t_") operator fun times(e: Ex<OO, XX, OO>) = Ex<V1, XX, V3>(this, e, op = OP.MUL)
+  @JvmName("t:__t") operator fun times(e: Ex<OO, OO, XX>) = Ex<V1, V2, XX>(this, e, op = OP.MUL)
+  @JvmName("t:tt_") operator fun times(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = OP.MUL)
+  @JvmName("t:_tt") operator fun times(e: Ex<OO, XX, XX>) = Ex<V1, XX, XX>(this, e, op = OP.MUL)
+  @JvmName("t:t_t") operator fun times(e: Ex<XX, OO, XX>) = Ex<XX, V2, XX>(this, e, op = OP.MUL)
+  @JvmName("t:ttt") operator fun times(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = OP.MUL)
+
+  @JvmName("d:___") operator fun div(e: Ex<OO, OO, OO>) = Ex<V1, V2, V3>(this, e, op = OP.DIV)
+  @JvmName("d:t__") operator fun div(e: Ex<XX, OO, OO>) = Ex<XX, V2, V3>(this, e, op = OP.DIV)
+  @JvmName("d:_t_") operator fun div(e: Ex<OO, XX, OO>) = Ex<V1, XX, V3>(this, e, op = OP.DIV)
+  @JvmName("d:__t") operator fun div(e: Ex<OO, OO, XX>) = Ex<V1, V2, XX>(this, e, op = OP.DIV)
+  @JvmName("d:tt_") operator fun div(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = OP.DIV)
+  @JvmName("d:_tt") operator fun div(e: Ex<OO, XX, XX>) = Ex<V1, XX, XX>(this, e, op = OP.DIV)
+  @JvmName("d:t_t") operator fun div(e: Ex<XX, OO, XX>) = Ex<XX, V2, XX>(this, e, op = OP.DIV)
+  @JvmName("d:ttt") operator fun div(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = OP.DIV)
+
+  operator fun <N: Number> plus(n: N) = Ex<V1, V2, V3>(this, Nt(n), op = OP.ADD)
+  operator fun <N: Number> minus(n: N) = Ex<V1, V2, V3>(this, Nt(n), op = OP.SUB)
+  operator fun <N: Number> times(n: N) = Ex<V1, V2, V3>(this, Nt(n), op = OP.MUL)
+  operator fun <N: Number> div(n: N) = Ex<V1, V2, V3>(this, Nt(n), op = OP.DIV)
+
+  open operator fun getValue(nothing: Nothing?, property: KProperty<*>) =
+    Ex<V1, V2, V3>(exs = *exs, op = op, name = property.name)
+
+  override fun toString() = exs
+    .map { if (op in arrayOf(OP.MUL, OP.DIV) && it.op in arrayOf(OP.ADD, OP.SUB)) "($it)" else "$it" }
+    .joinToString(op?.op ?: " _ ").let { name?.run { "$name = $it" } ?: it }
 }
 
-open class Y<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                     override val right: BiFn<*>,
-                                     override val op: Op<P>): BiFn<P>(left, right, op) {
-  constructor(c: Const<P, in Number>): this(c, c, First())
+open class Nt<T: Number>(val value: T): Ex<OO, OO, OO>() { override fun toString() = value.toString() }
 
-  operator fun plus(that: P): Y<P> = Y(this, that, add)
-  operator fun times(that: P): Y<P> = Y(this, that, mul)
-  operator fun minus(that: P): Y<P> = Y(this, that, sub)
-  operator fun div(that: P): Y<P> = Y(this, that, div)
+operator fun <N: Number, V1: XO, V2: XO, V3: XO> N.plus(e: Ex<V1, V2, V3>) = Ex<V1, V2, V3>(Nt(this), e, op = OP.ADD)
+operator fun <N: Number, V1: XO, V2: XO, V3: XO> N.minus(e: Ex<V1, V2, V3>) = Ex<V1, V2, V3>(Nt(this), e, op = OP.SUB)
+operator fun <N: Number, V1: XO, V2: XO, V3: XO> N.times(e: Ex<V1, V2, V3>) = Ex<V1, V2, V3>(Nt(this), e, op = OP.MUL)
+operator fun <N: Number, V1: XO, V2: XO, V3: XO> N.div(e: Ex<V1, V2, V3>) = Ex<V1, V2, V3>(Nt(this), e, op = OP.DIV)
 
-  operator fun minus(that: Y<P>): Y<P> = Y(this, that, sub)
-  operator fun minus(that: X<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: Z<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: XY<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: YZ<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: Y<P>): Y<P> = Y(this, that, div)
-  operator fun div(that: X<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: Z<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: XY<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: YZ<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
+//                                            V1, V2, V3
+@JvmName("i:t__") operator fun <N: Number> Ex<XX, OO, OO>.invoke(n: N) = call(V1() to n)
+@JvmName("i:_t_") operator fun <N: Number> Ex<OO, XX, OO>.invoke(n: N) = call(V2() to n)
+@JvmName("i:__t") operator fun <N: Number> Ex<OO, OO, XX>.invoke(n: N) = call(V3() to n)
+@JvmName("i:t__") operator fun <N: Number> Ex<XX, OO, OO>.invoke(v1: V1Bnd<N>) = call(v1)
+@JvmName("i:_t_") operator fun <N: Number> Ex<OO, XX, OO>.invoke(v2: V2Bnd<N>) = call(v2)
+@JvmName("i:__t") operator fun <N: Number> Ex<OO, OO, XX>.invoke(v3: V3Bnd<N>) = call(v3)
+@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v2)
+@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v3)
+@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v2, v3)
+@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, OO, XX>(v1)
+@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v3)
+@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>, v2: V3Bnd<N>) = call(v1, v2)
+@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, OO>(v1)
+@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, OO>(v2)
+@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call(v1, v2)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, XX>(v1)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, XX>(v2)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, XX, OO>(v3)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v1, v3)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v1, v2)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v2, v3)
+@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v1, v2, v3)
 
-  operator fun plus(that: Y<P>): Y<P> = Y(this, that, add)
-  operator fun plus(that: X<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: Z<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: XY<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: XZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: YZ<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: Y<P>): Y<P> = Y(this, that, mul)
-  operator fun times(that: X<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: Z<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: XY<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: XZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: YZ<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
-
-  open operator fun invoke(Y: YBnd<P>): P =
-    op(left(Y), right(Y))
-
-  private operator fun BiFn<*>.invoke(Y: YBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is Y<*> -> (this as Y<P>)(Y)
-      else -> throw IllegalStateException(toString())
-    }
+val x by V1(); val y by V2(); val z by V3()
+open class V1 internal constructor(name: String = "v1"): Vr<XX, OO, OO>(name) {
+  override operator fun getValue(nothing: Nothing?, property: KProperty<*>) = V1(property.name)
 }
 
-open class Z<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                     override val right: BiFn<*>,
-                                     override val op: Op<P>): BiFn<P>(left, right, op) {
-  constructor(c: Const<P, in Number>): this(c, c, First())
-
-  operator fun plus(that: P): Z<P> = Z(this, that, add)
-  operator fun times(that: P): Z<P> = Z(this, that, mul)
-  operator fun minus(that: P): Z<P> = Z(this, that, sub)
-  operator fun div(that: P): Z<P> = Z(this, that, div)
-
-  operator fun minus(that: Z<P>): Z<P> = Z(this, that, sub)
-  operator fun minus(that: Y<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: X<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XZ<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: YZ<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: Z<P>): Z<P> = Z(this, that, div)
-  operator fun div(that: Y<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: X<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XZ<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: YZ<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
-
-  operator fun plus(that: Z<P>): Z<P> = Z(this, that, add)
-  operator fun plus(that: Y<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: X<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: XY<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XZ<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: YZ<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: Z<P>): Z<P> = Z(this, that, mul)
-  operator fun times(that: Y<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: X<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: XY<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XZ<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: YZ<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
-
-  open operator fun invoke(Z: ZBnd<P>): P = op(left(Z), right(Z))
-
-  private operator fun BiFn<*>.invoke(Z: ZBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is Z<*> -> (this as Z<P>)(Z)
-      else -> throw IllegalStateException(toString())
-    }
+open class V2 internal constructor(name: String = "v2"): Vr<OO, XX, OO>(name) {
+  override operator fun getValue(nothing: Nothing?, property: KProperty<*>) = V2(property.name)
 }
 
-class XY<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                 override val right: BiFn<*>,
-                                 override val op: Op<P>): BiFn<P>(left, right, op) {
-  constructor(f: BiFn<*>): this(f, f, First())
-
-  operator fun plus(that: P): XY<P> = XY(this, that, add)
-  operator fun times(that: P): XY<P> = XY(this, that, mul)
-  operator fun minus(that: P): XY<P> = XY(this, that, sub)
-  operator fun div(that: P): XY<P> = XY(this, that, div)
-
-  operator fun minus(that: X<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: Y<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: Z<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XY<P>): XY<P> = XY(this, that, sub)
-  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: X<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: Y<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: Z<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XY<P>): XY<P> = XY(this, that, div)
-  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
-
-  operator fun plus(that: X<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: Y<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: Z<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XY<P>): XY<P> = XY(this, that, add)
-  operator fun plus(that: XZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: YZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: X<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: Y<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: Z<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XY<P>): XY<P> = XY(this, that, mul)
-  operator fun times(that: XZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: YZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>, Y: YBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is XY<*> -> (this as XY<P>)(X, Y)
-      is X<*> -> (this as X<P>)(X)
-      is Y<*> -> (this as Y<P>)(Y)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>, Y: YBnd<P>): P = op(left(X, Y), right(X, Y))
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>): Y<P> =
-    when (this@invoke) {
-      is Const<*, *> -> Y(this as P)
-      is XY<*> -> (this as XY<P>)(X)
-      is X<*> -> Y((this as X<P>)(X))
-      is Y<*> -> this as Y<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  private operator fun BiFn<*>.invoke(Y: YBnd<P>): X<P> =
-    when (this@invoke) {
-      is Const<*, *> -> X(this as P)
-      is XY<*> -> (this as XY<P>)(Y)
-      is Y<*> -> X((this as Y<P>)(Y))
-      is X<*> -> this as X<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>): Y<P> = Y(left(X), right(X), op)
-  operator fun invoke(Y: YBnd<P>): X<P> = X(left(Y), right(Y), op)
+open class V3 internal constructor(name: String = "v3"): Vr<OO, OO, XX>(name) {
+  override operator fun getValue(nothing: Nothing?, property: KProperty<*>) = V3(property.name)
 }
 
-class XZ<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                 override val right: BiFn<*>,
-                                 override val op: Op<P>): BiFn<P>(left, right, op) {
-  constructor(f: BiFn<*>): this(f, f, First())
+class V1Bnd<N: Number> internal constructor(vr: V1, value: N): VrB<N>(vr, value)
+class V2Bnd<N: Number> internal constructor(vr: V2, value: N): VrB<N>(vr, value)
+class V3Bnd<N: Number> internal constructor(vr: V3, value: N): VrB<N>(vr, value)
 
-  operator fun plus(that: P): XZ<P> = XZ(this, that, add)
-  operator fun times(that: P): XZ<P> = XZ(this, that, mul)
-  operator fun minus(that: P): XZ<P> = XZ(this, that, sub)
-  operator fun div(that: P): XZ<P> = XZ(this, that, div)
+infix fun <N: Number> V1.to(n: N) = V1Bnd(this, n)
+infix fun <N: Number> V2.to(n: N) = V2Bnd(this, n)
+infix fun <N: Number> V3.to(n: N) = V3Bnd(this, n)
 
-  operator fun minus(that: X<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: Y<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: Z<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XZ<P>): XZ<P> = XZ(this, that, sub)
-  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: X<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: Y<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: Z<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XZ<P>): XZ<P> = XZ(this, that, div)
-  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
+open class VrB<N: Number>(open val vr: Vr<*, *, *>, val value: N)
+sealed class Vr<R: XO, S: XO, T: XO>(override val name: String): Ex<R, S, T>() {
+  override fun <T: Number, M: XO, N: XO, O: XO> inv(vararg bnds: VrB<T>): Ex<M, N, O> =
+    bnds.map { it.vr::class to it.value }.toMap()
+      .let { it[this::class]?.let { Nt(it) } ?: this } as Ex<M, N, O>
 
-  operator fun plus(that: X<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: Y<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: Z<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: XY<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XZ<P>): XZ<P> = XZ(this, that, add)
-  operator fun plus(that: YZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: X<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: Y<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: Z<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: XY<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XZ<P>): XZ<P> = XZ(this, that, mul)
-  operator fun times(that: YZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>, Z: ZBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is XZ<*> -> (this as XZ<P>)(X, Z)
-      is X<*> -> (this as X<P>)(X)
-      is Z<*> -> (this as Z<P>)(Z)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>, Z: ZBnd<P>): P = op(left(X, Z), right(X, Z))
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>): Z<P> =
-    when (this@invoke) {
-      is Const<*, *> -> Z(this as P)
-      is XZ<*> -> (this as XZ<P>)(X)
-      is X<*> -> Z((this as X<P>)(X))
-      is Z<*> -> this as Z<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  private operator fun BiFn<*>.invoke(Z: ZBnd<P>): X<P> =
-    when (this@invoke) {
-      is Const<*, *> -> X(this as P)
-      is XZ<*> -> (this as XZ<P>)(Z)
-      is Z<*> -> X((this as Z<P>)(Z))
-      is X<*> -> this as X<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>): Z<P> = Z(left(X), right(X), op)
-  operator fun invoke(Z: ZBnd<P>): X<P> = X(left(Z), right(Z), op)
+  override fun toString() = name
 }
-
-class YZ<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                 override val right: BiFn<*>,
-                                 override val op: Op<P>): BiFn<P>(left, right, op) {
-  constructor(f: BiFn<*>): this(f, f, First())
-
-  operator fun plus(that: P): YZ<P> = YZ(this, that, add)
-  operator fun times(that: P): YZ<P> = YZ(this, that, mul)
-  operator fun minus(that: P): YZ<P> = YZ(this, that, sub)
-  operator fun div(that: P): YZ<P> = YZ(this, that, div)
-
-  operator fun minus(that: X<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: Z<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: Y<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: YZ<P>): YZ<P> = YZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: X<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: Z<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: Y<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: YZ<P>): YZ<P> = YZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
-
-  operator fun plus(that: X<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: Z<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: Y<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: XY<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: YZ<P>): YZ<P> = YZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: X<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: Z<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: Y<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: XY<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: YZ<P>): YZ<P> = YZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
-
-  private operator fun BiFn<*>.invoke(Y: YBnd<P>, Z: ZBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is YZ<*> -> (this as YZ<P>)(Y, Z)
-      is Y<*> -> (this as Y<P>)(Y)
-      is Z<*> -> (this as Z<P>)(Z)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(Y: YBnd<P>, Z: ZBnd<P>): P =
-    op(left(Y, Z), right(Y, Z))
-
-  private operator fun BiFn<*>.invoke(Y: YBnd<P>): Z<P> =
-    when (this@invoke) {
-      is Const<*, *> -> Z(this as P)
-      is YZ<*> -> (this as YZ<P>)(Y)
-      is Y<*> -> Z((this as Y<P>)(Y))
-      is Z<*> -> this as Z<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  private operator fun BiFn<*>.invoke(Z: ZBnd<P>): Y<P> =
-    when (this@invoke) {
-      is Const<*, *> -> Y(this as P)
-      is YZ<*> -> (this as YZ<P>)(Z)
-      is Z<*> -> Y((this as Z<P>)(Z))
-      is Y<*> -> this as Y<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(Y: YBnd<P>): Z<P> = Z(left(Y), right(Y), op)
-  operator fun invoke(Z: ZBnd<P>): Y<P> = Y(left(Z), right(Z), op)
-}
-
-class XYZ<P: Const<P, in Number>>(override val left: BiFn<*>,
-                                  override val right: BiFn<*>,
-                                  override val op: Op<P>): BiFn<P>(left, right, op) {
-  operator fun plus(that: P): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: P): XYZ<P> = XYZ(this, that, mul)
-  operator fun minus(that: P): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: P): XYZ<P> = XYZ(this, that, div)
-
-  operator fun minus(that: X<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: Y<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: Z<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XY<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: YZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun minus(that: XYZ<P>): XYZ<P> = XYZ(this, that, sub)
-  operator fun div(that: X<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: Y<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: Z<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XY<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: YZ<P>): XYZ<P> = XYZ(this, that, div)
-  operator fun div(that: XYZ<P>): XYZ<P> = XYZ(this, that, div)
-
-  operator fun plus(that: X<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: Y<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: Z<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XY<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: YZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun plus(that: XYZ<P>): XYZ<P> = XYZ(this, that, add)
-  operator fun times(that: X<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: Y<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: Z<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XY<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: YZ<P>): XYZ<P> = XYZ(this, that, mul)
-  operator fun times(that: XYZ<P>): XYZ<P> = XYZ(this, that, mul)
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>, Y: YBnd<P>, Z: ZBnd<P>): P =
-    when (this@invoke) {
-      is Const<*, *> -> this as P
-      is XYZ<*> -> (this as XYZ<P>)(X, Y, Z)
-      is XY<*> -> (this as XY<P>)(X, Y)
-      is XZ<*> -> (this as XZ<P>)(X, Z)
-      is YZ<*> -> (this as YZ<P>)(Y, Z)
-      is X<*> -> (this as X<P>)(X)
-      is Y<*> -> (this as Y<P>)(Y)
-      is Z<*> -> (this as Z<P>)(Z)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>, Y: YBnd<P>, Z: ZBnd<P>): P =
-    op(left(X, Y, Z), right(X, Y, Z))
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>, Z: ZBnd<P>): Y<P> =
-    when (this@invoke) {
-      is Const<*, *> -> Y(this as P)
-      is XYZ<*> -> (this as XYZ<P>)(X, Z)
-      is XY<*> -> (this as XY<P>)(X)
-      is XZ<*> -> Y((this as XZ<P>)(X, Z))
-      is YZ<*> -> (this as YZ<P>)(Z)
-      is X<*> -> Y((this as X<P>)(X))
-      is Y<*> -> this as Y<P>
-      is Z<*> -> Y((this as Z<P>)(Z))
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>, Z: ZBnd<P>): Y<P> =
-    Y(left(X, Z), right(X, Z), op)
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>, Y: YBnd<P>): Z<P> =
-    when (this@invoke) {
-      is Const<*, *> -> Z(this as P)
-      is XYZ<*> -> (this as XYZ<P>)(X, Y)
-      is XY<*> -> Z((this as XY<P>)(X, Y))
-      is XZ<*> -> (this as XZ<P>)(X)
-      is YZ<*> -> (this as YZ<P>)(Y)
-      is X<*> -> Z((this as X<P>)(X))
-      is Y<*> -> Z((this as Y<P>)(Y))
-      is Z<*> -> this as Z<P>
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>, Y: YBnd<P>): Z<P> =
-    Z(left(X, Y), right(X, Y), op)
-
-  private operator fun BiFn<*>.invoke(Y: YBnd<P>, Z: ZBnd<P>): X<P> =
-    when (this@invoke) {
-      is Const<*, *> -> X(this as P)
-      is XYZ<*> -> (this as XYZ<P>)(Y, Z)
-      is XY<*> -> (this as XY<P>)(Y)
-      is XZ<*> -> (this as XZ<P>)(Z)
-      is YZ<*> -> X((this as YZ<P>)(Y, Z))
-      is X<*> -> this as X<P>
-      is Y<*> -> X((this as Y<P>)(Y))
-      is Z<*> -> X((this as Z<P>)(Z))
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(Y: YBnd<P>, Z: ZBnd<P>): X<P> =
-    X(left(Y, Z), right(Y, Z), op)
-
-  private operator fun BiFn<*>.invoke(X: XBnd<P>): YZ<P> =
-    when (this@invoke) {
-      is Const<*, *> -> YZ(this as P)
-      is XYZ<*> -> (this as XYZ<P>)(X)
-      is XY<*> -> YZ((this as XY<P>)(X))
-      is XZ<*> -> YZ((this as XZ<P>)(X))
-      is YZ<*> -> this as YZ<P>
-      is X<*> -> YZ(X.const)
-      is Y<*> -> YZ(this as Y<P>)
-      is Z<*> -> YZ(this as Z<P>)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(X: XBnd<P>): YZ<P> = YZ(left(X), right(X), op)
-
-  private operator fun BiFn<*>.invoke(Y: YBnd<P>): XZ<P> =
-    when (this@invoke) {
-      is Const<*, *> -> XZ(this as P)
-      is XYZ<*> -> (this as XYZ<P>)(Y)
-      is XY<*> -> XZ((this as XY<P>)(Y))
-      is XZ<*> -> this as XZ<P>
-      is YZ<*> -> XZ((this as YZ<P>)(Y))
-      is X<*> -> XZ(this as X<P>)
-      is Y<*> -> XZ(Y.const)
-      is Z<*> -> XZ(this as Z<P>)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(Y: YBnd<P>): XZ<P> = XZ(left(Y), right(Y), op)
-
-  private operator fun BiFn<*>.invoke(Z: ZBnd<P>): XY<P> =
-    when (this@invoke) {
-      is Const<*, *> -> XY(this as P)
-      is XYZ<*> -> (this as XYZ<P>)(Z)
-      is XY<*> -> this as XY<P>
-      is XZ<*> -> XY((this as XZ<P>)(Z))
-      is YZ<*> -> XY((this as YZ<P>)(Z))
-      is X<*> -> XY(this as X<P>)
-      is Y<*> -> XY(this as Y<P>)
-      is Z<*> -> XY(Z.const)
-      else -> throw IllegalStateException(toString())
-    }
-
-  operator fun invoke(Z: ZBnd<P>): XY<P> = XY(left(Z), right(Z), op)
-}
-
-abstract class BiFn<T: Const<T, Number>>(open val left: BiFn<*>? = null,
-                                         open val right: BiFn<*>? = null,
-                                         open val op: Op<*>? = null) {
-  val add: Add<T> by lazy { Add() }
-  val mul: Mul<T> by lazy { Mul() }
-  val sub: Sub<T> by lazy { Sub() }
-  val div: Div<T> by lazy { Div() }
-
-  override fun toString() = "$left $op $right"
-}
-
-abstract class Const<T: Const<T, Number>, Y: Number>(internal open val c: Y): BiFn<T>() {
-  override fun toString() = c.toString()
-  abstract operator fun plus(that: T): T
-  abstract operator fun times(that: T): T
-  abstract operator fun minus(that: T): T
-  abstract operator fun div(that: T): T
-}
-
-class DConst(override val c: Double): Const<DConst, Number>(c) {
-  override fun plus(that: DConst) = DConst(this.c + that.c)
-  override fun times(that: DConst) = DConst(this.c * that.c)
-  override fun minus(that: DConst) = DConst(this.c - that.c)
-  override fun div(that: DConst) = DConst(this.c / that.c)
-}
-
-class IConst(override val c: Int): Const<IConst, Number>(c) {
-  override fun plus(that: IConst) = IConst(this.c + that.c)
-  override fun times(that: IConst) = IConst(this.c * that.c)
-  override fun minus(that: IConst) = IConst(this.c - that.c)
-  override fun div(that: IConst) = IConst(this.c / that.c)
-}
-
-abstract class Op<T: Const<T, in Number>>(val string: String): (T, T) -> T {
-  override fun toString() = string
-}
-
-class Add<T: Const<T, in Number>>: Op<T>("+") {
-  override fun invoke(l: T, r: T): T = l + r
-}
-
-class Mul<T: Const<T, in Number>>: Op<T>("*") {
-  override fun invoke(l: T, r: T): T = l * r
-}
-
-class Sub<T: Const<T, in Number>>: Op<T>("-") {
-  override fun invoke(l: T, r: T): T = l - r
-}
-
-class Div<T: Const<T, in Number>>: Op<T>("/") {
-  override fun invoke(l: T, r: T): T = l / r
-}
-
-class First<T: Const<T, in Number>>: Op<T>("") {
-  override fun invoke(l: T, r: T): T = l
-}
-
-@Suppress("PropertyName")
-sealed class Proto<T: Const<T, in Number>, Q: Number> {
-  abstract fun wrap(default: Number): T
-
-  abstract val X: X<T>
-  abstract val Y: Y<T>
-  abstract val Z: Z<T>
-
-  operator fun X<T>.plus(c: Q): X<T> = this + wrap(c)
-  operator fun Y<T>.plus(c: Q): Y<T> = this + wrap(c)
-  operator fun Z<T>.plus(c: Q): Z<T> = this + wrap(c)
-  operator fun XY<T>.plus(c: Q): XY<T> = this + wrap(c)
-  operator fun XZ<T>.plus(c: Q): XZ<T> = this + wrap(c)
-  operator fun YZ<T>.plus(c: Q): YZ<T> = this + wrap(c)
-  operator fun XYZ<T>.plus(c: Q): XYZ<T> = this + wrap(c)
-
-  operator fun X<T>.times(c: Q): X<T> = this * wrap(c)
-  operator fun Y<T>.times(c: Q): Y<T> = this * wrap(c)
-  operator fun Z<T>.times(c: Q): Z<T> = this * wrap(c)
-  operator fun XY<T>.times(c: Q): XY<T> = this * wrap(c)
-  operator fun XZ<T>.times(c: Q): XZ<T> = this * wrap(c)
-  operator fun YZ<T>.times(c: Q): YZ<T> = this * wrap(c)
-  operator fun XYZ<T>.times(c: Q): XYZ<T> = this * wrap(c)
-
-  // TODO: Make these order-preserving to support non-commutative algebras
-  operator fun Q.plus(c: X<T>): X<T> = c + wrap(this)
-  operator fun Q.plus(c: Y<T>): Y<T> = c + wrap(this)
-  operator fun Q.plus(c: Z<T>): Z<T> = c + wrap(this)
-  operator fun Q.plus(c: XY<T>): XY<T> = c + wrap(this)
-  operator fun Q.plus(c: XZ<T>): XZ<T> = c + wrap(this)
-  operator fun Q.plus(c: YZ<T>): YZ<T> = c + wrap(this)
-  operator fun Q.plus(c: XYZ<T>): XYZ<T> = c + wrap(this)
-
-  operator fun Q.times(c: X<T>): X<T> = c * wrap(this)
-  operator fun Q.times(c: Y<T>): Y<T> = c * wrap(this)
-  operator fun Q.times(c: Z<T>): Z<T> = c * wrap(this)
-  operator fun Q.times(c: XY<T>): XY<T> = c * wrap(this)
-  operator fun Q.times(c: XZ<T>): XZ<T> = c * wrap(this)
-  operator fun Q.times(c: YZ<T>): YZ<T> = c * wrap(this)
-  operator fun Q.times(c: XYZ<T>): XYZ<T> = c * wrap(this)
-
-  abstract infix fun X<T>.to(c: Q): XBnd<T>
-  abstract infix fun Y<T>.to(c: Q): YBnd<T>
-  abstract infix fun Z<T>.to(c: Q): ZBnd<T>
-  abstract val Const<T, Number>.value: Q
-}
-
-object DoubleContext: Proto<DConst, Double>() {
-  override val Const<DConst, Number>.value: Double
-    get() = c.toDouble()
-
-  override fun wrap(default: Number): DConst = DConst(default.toDouble())
-  override val X: X<DConst> = object: X<DConst>(DConst(0.0), DConst(0.0), First()) {
-    override fun invoke(X: XBnd<DConst>): DConst = X.const
-    override fun toString() = "X"
-  }
-  override val Y: Y<DConst> = object: Y<DConst>(DConst(0.0), DConst(0.0), First()) {
-    override fun invoke(Y: YBnd<DConst>): DConst = Y.const
-    override fun toString() = "Y"
-  }
-  override val Z: Z<DConst> = object: Z<DConst>(DConst(0.0), DConst(0.0), First()) {
-    override fun invoke(Z: ZBnd<DConst>): DConst = Z.const
-    override fun toString() = "Z"
-  }
-
-  override infix fun X<DConst>.to(c: Double) = XBnd(DConst(c))
-  override infix fun Y<DConst>.to(c: Double) = YBnd(DConst(c))
-  override infix fun Z<DConst>.to(c: Double) = ZBnd(DConst(c))
-}
-
-object IntegerContext: Proto<IConst, Int>() {
-  override val Const<IConst, Number>.value: Int
-    get() = c.toInt()
-
-  override fun wrap(default: Number): IConst = IConst(default.toInt())
-  override val X: X<IConst> = object: X<IConst>(IConst(0), IConst(0), First()) {
-    override fun invoke(X: XBnd<IConst>): IConst = X.const
-    override fun toString() = "X"
-  }
-  override val Y: Y<IConst> = object: Y<IConst>(IConst(0), IConst(0), First()) {
-    override fun invoke(Y: YBnd<IConst>): IConst = Y.const
-    override fun toString() = "Y"
-  }
-  override val Z: Z<IConst> = object: Z<IConst>(IConst(0), IConst(0), First()) {
-    override fun invoke(Z: ZBnd<IConst>): IConst = Z.const
-    override fun toString() = "Z"
-  }
-
-  override infix fun X<IConst>.to(c: Int) = XBnd(IConst(c))
-  override infix fun Y<IConst>.to(c: Int) = YBnd(IConst(c))
-  override infix fun Z<IConst>.to(c: Int) = ZBnd(IConst(c))
-}
-
-class XBnd<T: Const<T, in Number>>(val const: T)
-class YBnd<T: Const<T, in Number>>(val const: T)
-class ZBnd<T: Const<T, in Number>>(val const: T)
