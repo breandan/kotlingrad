@@ -46,10 +46,6 @@ val fatJar by tasks.creating(Jar::class) {
   with(tasks.jar.get() as CopySpec)
 }
 
-val submoduleUpdate by tasks.creating(Exec::class) {
-  commandLine("git", "submodule", "update", "--init")
-}
-
 publishing {
   publications.create<MavenPublication>("default") {
     artifact(fatJar)
