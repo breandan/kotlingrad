@@ -58,14 +58,14 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   override fun toString() = when (this) {
     is MNegative -> "-($input)"
     is MTranspose -> "($input).T"
-    is BiFun<*> -> "$left ${opCode()} $right"
-    is UnFun<*> -> "${opCode()} $input"
     is MConst -> "${javaClass.name}()"
     is Mat -> "Mat(${rows.joinToString(", ")})"
     is MDerivative -> "d($mFun) / d($sVar)"
     is MVar -> "MVar($name)"
     is MComposition -> "MComp($mFun)$bindings"
     is Jacobian -> "Jacobian($vVar)$bindings"
+    is BiFun<*> -> "($left) $op ($right)"
+    is UnFun<*> -> "$op($input)"
     else -> javaClass.simpleName
   }
 

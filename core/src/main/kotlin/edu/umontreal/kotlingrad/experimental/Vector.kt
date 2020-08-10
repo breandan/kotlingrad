@@ -64,12 +64,12 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
     is VDerivative -> "d($vFun) / d($sVar)"
-    is BiFun<*> -> "($left) ${opCode()} ($right)"
-    is UnFun<*> -> "${opCode()}($input)"
     is Gradient -> "($fn).d($vVar)"
     is VMap -> "$input.map { $ssMap }"
     is VVar -> "VVar($name)"
     is VComposition -> "($input)$bindings"
+    is BiFun<*> -> "($left) $op ($right)"
+    is UnFun<*> -> "$op($input)"
     else -> javaClass.simpleName
   }
 
