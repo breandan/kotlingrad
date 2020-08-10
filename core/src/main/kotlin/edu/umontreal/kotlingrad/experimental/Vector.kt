@@ -1,12 +1,8 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 package edu.umontreal.kotlingrad.experimental
 
+import edu.mcgill.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.utils.matmul
-import guru.nidi.graphviz.attribute.Color.BLUE
-import guru.nidi.graphviz.attribute.Color.RED
-import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.model.Factory.mutNode
-import guru.nidi.graphviz.model.MutableNode
 import org.jetbrains.bio.viktor.F64Array
 import kotlin.reflect.KProperty
 
@@ -65,22 +61,6 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   fun magnitude() = (this ʘ this).sum().sqrt()
   open fun sum(): SFun<X> = VSumAll(this)
 
-
-
-  override fun toGraph(): MutableNode = mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
-    when (this@VFun) {
-      is VVar -> "$name-Vec$length"
-      is Gradient -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Gradient")) }
-      is VDerivative -> { vFun.toGraph() - this; mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("VDerivative")) }
-      is Vec -> { contents.map { it.toGraph() - this }; add(Label.of("Vec")) }
-      is VMap<*, *> -> { (input.toGraph() - this).add(BLUE); (ssMap.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      is VComposition -> { vFun.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("VComp")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      else -> TODO(this@VFun.javaClass.toString())
-    }
-  }
-
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
     is VDerivative -> "d($vFun) / d($sVar)"
@@ -89,7 +69,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
     is Gradient -> "($fn).d($vVar)"
     is VMap -> "$input.map { $ssMap }"
     is VVar -> "VVar($name)"
-    is VComposition -> "($vFun)$bindings"
+    is VComposition -> "($input)$bindings"
     else -> javaClass.simpleName
   }
 
@@ -98,22 +78,59 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> = invoke(ps.toList().bind())
 }
 
-class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
+abstract class UnVFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): VFun<X, E>(bindings), UnFun<X> {
+  constructor(f: Fun<X>): this(Bindings(f))
+  override val op: Op = when(this) {
+    is VNegative<*, *> -> Monad.`-`
+    is VMap<*, *> -> Polyad.map
+    is MSumRows<*, *, *> -> Polyad.Σ
+    else -> TODO(toString())
+  }
+}
+
+abstract class BiVFun<X: SFun<X>, E: D1>(
+  override val left: Fun<X>,
+  override val right: Fun<X>
+): VFun<X, E>(left, right), BiFun<X> {
+  override val op: Op = when (this) {
+    is VVProd<*, *> -> Dyad.`*`
+    is SVProd<*, *> -> Dyad.`*`
+    is VSProd<*, *> -> Dyad.`*`
+    is MVProd<*, *, *> -> Dyad.dot
+    is VMProd<*, *, *> -> Dyad.dot
+    else -> TODO(toString())
+  }
+}
+
+abstract class PolyVFun<X: SFun<X>, E: D1>(
+  override val bindings: Bindings<X>,
+  override vararg val inputs: Fun<X>
+): VFun<X, E>(bindings), PolyFun<X> {
+  constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
+  override val op: Op = when (this) {
+    is MSumRows<*, *, *> -> Polyad.Σ
+    is VSumAll<*, *> -> Polyad.Σ
+    else -> TODO(toString())
+  }
+}
+
+class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): UnVFun<X, E>(input)
+
 class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: SFun<X>, placeholder: SVar<X>):
-  VFun<X, E>(input.bindings + ssMap.bindings - placeholder), UnFun<X>
-class VVMap<X: SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, val svMap: VFun<X, C>, placeholder: SVar<X>):
-  MFun<X, R, C>(input.bindings + svMap.bindings - placeholder), UnFun<X>
+  UnVFun<X, E>(input.bindings + ssMap.bindings - placeholder)
+class VVMap<X: SFun<X>, R: D1, C: D1>(val input: VFun<X, R>, val svMap: VFun<X, C>, placeholder: SVar<X>):
+  PolyMFun<X, R, C>(input.bindings + svMap.bindings - placeholder, input)
 
-class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
+class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): BiVFun<X, E>(left, right)
 
-class VVProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
-class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
-class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): VFun<X, E>(left, right), BiFun<X>
-class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): VFun<X, R>(left, right), BiFun<X>
-class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, R>(left, right), BiFun<X>
-class MSumRows<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): VFun<X, C>(input), UnFun<X>
+class VVProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): BiVFun<X, E>(left, right)
+class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: VFun<X, E>): BiVFun<X, E>(left, right)
+class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): BiVFun<X, E>(left, right)
+class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): BiVFun<X, R>(left, right)
+class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): BiVFun<X, R>(left, right)
+class MSumRows<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>): PolyVFun<X, C>(input)
 
-class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) : VFun<X, E>(vFun) {
+class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) : BiVFun<X, E>(vFun, sVar) {
   fun df() = vFun.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VVar -> sVars.map { it.d(sVar) }
@@ -138,7 +155,7 @@ class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) :
   }
 }
 
-class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): VFun<X, E>(fn) {
+class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): BiVFun<X, E>(fn, vVar) {
   fun df() = fn.df()
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
     is SVar -> vVar.sVars.map { if(this@df == it) One() else Zero() }
@@ -172,7 +189,10 @@ open class VVar<X: SFun<X>, E: D1> constructor(
     VVar(proto, if (name.isEmpty()) property.name else name, length, sVars)
 }
 
-class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, inputs: Bindings<X> = Bindings(vFun.proto)): VFun<X, E>(vFun.bindings + inputs) {
+class VComposition<X: SFun<X>, E: D1>(
+  val input: VFun<X, E>,
+  inputs: Bindings<X> = Bindings(input.proto)
+): PolyVFun<X, E>(input.bindings + inputs, input) {
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -190,8 +210,9 @@ class VComposition<X: SFun<X>, E: D1>(val vFun: VFun<X, E>, inputs: Bindings<X> 
       is MVProd<X, *, *> -> left(bnds) as MFun<X, E, E> * (right as VFun<X, E>).bind(bnds)
       is VMProd<X, *, *> -> (left as VFun<X, E>).bind(bnds) * (right as MFun<X, E, E>)(bnds)
       is VMap<X, E> -> input.bind(bnds).map { ssMap(mapInput to it)(bnds) }
-      is VComposition -> vFun.bind(bnds)
+      is VComposition -> input.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
+      else -> TODO("${this@bind}")
     }.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 

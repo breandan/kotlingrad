@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.experimental
 
+import edu.mcgill.kaliningraph.*
 import edu.mcgill.kaliningraph.show
 import guru.nidi.graphviz.*
 import guru.nidi.graphviz.attribute.*
@@ -13,7 +14,7 @@ import java.io.File
 val DARKMODE = false
 val THICKNESS = 2
 
-inline fun render(format: Format = SVG, crossinline op: () -> MutableNode) =
+inline fun render(format: Format = SVG, crossinline op: () -> MutableGraph) =
   graph(directed = true) {
     val color = if (DARKMODE) WHITE else BLACK
 
@@ -28,14 +29,14 @@ inline fun render(format: Format = SVG, crossinline op: () -> MutableNode) =
 
 fun SFun<*>.saveToFile(filename: String) =
   Format.valueOf(filename.split(".").last().toUpperCase())
-    .let { format -> render(format) { toGraph() }.saveToFile(filename) }
-fun SFun<*>.render(format: Format = SVG) = render(format) { toGraph() }
+    .let { format -> render(format) { toDotGraph() }.saveToFile(filename) }
+fun SFun<*>.render(format: Format = SVG) = render(format) { toDotGraph() }
 fun Renderer.saveToFile(filename: String) = File(filename).writeText(toString().replace("]", "];"))
 
-fun SFun<*>.show() = toKGraph().graph.show()
-fun Fun<*>.show(name: String = "temp") = render { toGraph() }.show(name)
+fun Fun<*>.toDotGraph(): MutableGraph = toGraph().graph.toGraphviz()
+fun Fun<*>.show(name: String = "temp") = render { toDotGraph() }.show(name)
 
-fun Fun<*>.html() = render { toGraph() }.toString()
+fun Fun<*>.html() = render { toDotGraph() }.toString()
 fun Renderer.show(name: String) = toFile(File.createTempFile(name, ".svg")).show()
 fun File.show() = ProcessBuilder("x-www-browser", path).start()
 
