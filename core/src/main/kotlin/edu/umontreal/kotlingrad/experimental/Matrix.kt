@@ -2,12 +2,14 @@
 
 package edu.umontreal.kotlingrad.experimental
 
+import edu.mcgill.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.utils.*
 import guru.nidi.graphviz.attribute.Color.BLUE
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
 import guru.nidi.graphviz.model.Factory.mutNode
 import guru.nidi.graphviz.model.MutableNode
+import org.apache.commons.math3.optimization.fitting.PolynomialFitter
 import org.jetbrains.bio.viktor.F64Array
 import kotlin.reflect.KProperty
 
@@ -53,21 +55,6 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
 
   open fun sum(): VFun<X, C> = MSumRows(this)
 
-  override fun toGraph(): MutableNode = mutNode(if (this is MVar) "MVar($name)" else "${hashCode()}").apply {
-    when (this@MFun) {
-      is MVar -> "$name-MVar$r$c"
-      is MGradient -> { sFun.toGraph() - this; mutNode("$this").apply { add(Label.of(mVar.toString())) } - this; add(Label.of("grad")) }
-      is Mat -> { rows.map { it.toGraph() - this }; add(Label.of("Mat")) }
-      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      is MComposition -> { mFun.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("MComp")) }
-      is Jacobian -> { vfn.toGraph() - this; mutNode("$this").apply { add(Label.of(vVar.toString())) } - this; add(Label.of("Jacobian")) }
-      is MDerivative -> { mFun.toGraph() - this; mutNode("$this").apply { add(Label.of(sVar.toString())) } - this; add(Label.of("MDerivative")) }
-      is VVMap<*, *, *> -> { (input.toGraph() - this).add(BLUE); (svMap.toGraph() - this).add(RED); add(Label.of(opCode())) }
-      else -> TODO(this@MFun.javaClass.toString())
-    }
-  }
-
   override fun toString() = when (this) {
     is MNegative -> "-($input)"
     is MTranspose -> "($input).T"
@@ -87,17 +74,54 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> = invoke(ps.toList().bind())
 }
 
-class MMap<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):
-  MFun<X, R, C>(input.bindings + ssMap.bindings - placeholder), UnFun<X>
-class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
-class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
-class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
-class MMProd<X: SFun<X>, R: D1, C1: D1, C2: D1>(override val left: MFun<X, R, C1>, override val right: MFun<X, C1, C2>): MFun<X, R, C2>(left, right), BiFun<X>
-class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
-class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): MFun<X, R, C>(left), BiFun<X>
-class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): MFun<X, R, C>(right), BiFun<X>
+abstract class UnMFun<X: SFun<X>, R: D1, C: D1>(
+  override val bindings: Bindings<X>
+): MFun<X, R, C>(bindings), UnFun<X> {
+  constructor(f: Fun<X>): this(Bindings(f))
+  override val op: Op = when(this) {
+    is MNegative -> Monad.`-`
+    is MTranspose -> Monad.ᵀ
+    else -> TODO(toString())
+  }
+}
 
-class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X> = Bindings(mFun.proto)): MFun<X, R, C>(mFun.bindings + inputs) {
+abstract class BiMFun<X: SFun<X>, R: D1, C: D1>(
+  override val left: Fun<X>,
+  override val right: Fun<X>
+): MFun<X, R, C>(left, right), BiFun<X> {
+  override val op: Op = when (this) {
+    is HProd<*, *, *> -> Dyad.`⊙`
+    is MMProd<*, *, *, *> -> Dyad.`*`
+    is MSum<*, *, *> -> Dyad.`+`
+    is SMProd<*, *, *> -> Dyad.dot
+    else -> TODO(toString())
+  }
+}
+
+abstract class PolyMFun<X: SFun<X>, R: D1, C: D1>(
+  override val bindings: Bindings<X>,
+  override vararg val inputs: Fun<X>
+): MFun<X, R, C>(bindings), PolyFun<X> {
+  constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
+  override val op: Op = when (this) {
+    is MComposition<*, *, *> -> Polyad.λ
+    is VVMap<*, *, *> -> Polyad.map
+    is MMap<*, *, *> -> Polyad.map
+    else -> TODO(toString())
+  }
+}
+
+class MMap<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):
+  PolyMFun<X, R, C>(input.bindings + ssMap.bindings - placeholder, input)
+class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): UnMFun<X, R, C>(input)
+class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): UnMFun<X, C, R>(input)
+class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): BiMFun<X, R, C>(left, right)
+class MMProd<X: SFun<X>, R: D1, C1: D1, C2: D1>(override val left: MFun<X, R, C1>, override val right: MFun<X, C1, C2>): BiMFun<X, R, C2>(left, right)
+class HProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): BiMFun<X, R, C>(left, right)
+class MSProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: SFun<X>): BiMFun<X, R, C>(left, right)
+class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val right: MFun<X, R, C>): BiMFun<X, R, C>(right, right)
+
+class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bindings<X> = Bindings(mFun.proto)): PolyMFun<X, R, C>(mFun.bindings + inputs, mFun) {
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -125,7 +149,7 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
-class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: SVar<X>): MFun<X, R, C>(mFun) {
+class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: SVar<X>): BiMFun<X, R, C>(mFun, sVar) {
   fun df() = mFun.df()
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
     is MVar -> map { it.d(sVar) }
@@ -149,7 +173,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: S
   }
 }
 
-class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, R, C>): MFun<X, R, C>(sFun) {
+class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, R, C>): BiMFun<X, R, C>(sFun, mVar) {
   fun df() = sFun.df()
   fun SFun<X>.df(): MFun<X, R, C> = when (this@df) {
     is SVar -> mVar.vMat.map { if (it == this@df) One() else Zero() }
@@ -170,7 +194,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
   }
 }
 
-class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X, C>): MFun<X, R, C>(vfn) {
+class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X, C>): BiMFun<X, R, C>(vfn, vVar) {
   fun df() = vfn.df()
 
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
