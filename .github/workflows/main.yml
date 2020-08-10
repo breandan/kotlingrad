@@ -17,5 +17,7 @@ jobs:
         uses: DeLaGuardo/setup-graalvm@2.0
         with:
           graalvm-version: '19.3.0.2.java11'
+      - name: Checkout submodules
+        uses: textbook/git-checkout-submodule-action@master
       - name: Build with Gradle
-        run: git submodule update --init --recursive && ./gradlew test --stacktrace
+        run: ./gradlew test --stacktrace
