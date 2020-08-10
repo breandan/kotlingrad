@@ -108,8 +108,8 @@ abstract class PolyVFun<X: SFun<X>, E: D1>(
 ): VFun<X, E>(bindings), PolyFun<X> {
   constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
   override val op: Op = when (this) {
+    is VComposition<*, *> -> Polyad.λ
     is MSumRows<*, *, *> -> Polyad.Σ
-    is VSumAll<*, *> -> Polyad.Σ
     else -> TODO(toString())
   }
 }
