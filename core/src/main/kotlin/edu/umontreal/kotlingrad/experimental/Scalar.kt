@@ -130,10 +130,8 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   infix fun pow(exp: Number): SFun<X> = this pow wrap(exp)
 
   override fun toString(): String = when (this) {
-    is Log -> "ln($left)"
-    is Negative -> "- ($input)"
-    is Power -> "($left).pow($right)"
     is SVar -> name
+    is Log -> "($left).log($right)"
     is Derivative -> "d($fn) / d($vrb)"
     is SComposition -> "($input)$bindings"
     is BiFun<*> -> "($left) $op ($right)"
