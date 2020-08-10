@@ -93,6 +93,9 @@ abstract class BiVFun<X: SFun<X>, E: D1>(
   override val right: Fun<X>
 ): VFun<X, E>(left, right), BiFun<X> {
   override val op: Op = when (this) {
+    is VSum<*, *> -> Dyad.`+`
+    is Gradient<*, *> -> Dyad.d
+    is VDerivative<*, *> -> Dyad.d
     is VVProd<*, *> -> Dyad.`*`
     is SVProd<*, *> -> Dyad.`*`
     is VSProd<*, *> -> Dyad.`*`
