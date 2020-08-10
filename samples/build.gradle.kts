@@ -37,10 +37,10 @@ dependencies {
 
 tasks {
   listOf(
-    "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG",
-    "physics.SinglePendulum", "VariableCapture", "LetsPlot", "ScalarDemo",
-    "VectorDemo", "MatrixDemo", "MLP", "LinearRegression", "PolynomialRegression",
-    "PolynomialAttack", "ReadSeff", "physics.DoublePendulum"
+    "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG", "VariableCapture",
+    "LetsPlot", "ScalarDemo", "VectorDemo", "MatrixDemo",
+    "MLP", "LinearRegression", "PolynomialRegression",
+    "PolynomialAttack", "ReadSeff"
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
       main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
@@ -49,6 +49,6 @@ tasks {
   }
 
   test {
-    dependsOn("MatrixDemo", "VectorDemo", "VariableCapture")
+    dependsOn("ScalarDemo", "MatrixDemo", "VectorDemo", "VariableCapture")
   }
 }

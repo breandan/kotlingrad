@@ -1,6 +1,11 @@
 //import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
 
 include("core", "samples")
+includeBuild("kaliningraph") {
+  dependencySubstitution {
+    substitute(module("com.github.breandan:kaliningraph")).with(project(":"))
+  }
+}
 
 pluginManagement.repositories {
   mavenCentral()

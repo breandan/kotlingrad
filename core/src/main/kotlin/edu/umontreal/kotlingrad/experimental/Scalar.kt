@@ -2,11 +2,12 @@
 
 package edu.umontreal.kotlingrad.experimental
 
+import edu.mcgill.kaliningraph.circuits.*
 import guru.nidi.graphviz.attribute.Color.BLUE
 import guru.nidi.graphviz.attribute.Color.RED
 import guru.nidi.graphviz.attribute.Label
+import guru.nidi.graphviz.model.*
 import guru.nidi.graphviz.model.Factory.mutNode
-import guru.nidi.graphviz.model.MutableNode
 import java.io.Serializable
 import kotlin.math.*
 import kotlin.reflect.KProperty
@@ -37,9 +38,9 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   fun wrap(number: Number): SConst<X> = SConst<X>(number.toDouble())
 
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
-  operator fun invoke(vararg numbers: Number): Fun<X>
-  operator fun invoke(vararg funs: Fun<X>): Fun<X>
-  operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X>
+  operator fun invoke(vararg numbers: Number): Fun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
+  operator fun invoke(vararg funs: Fun<X>): Fun<X> = invoke(bindings.zip(funs.toList()))
+  operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> = invoke(ps.toList().bind())
 
   fun toGraph(): MutableNode
 
@@ -68,7 +69,7 @@ interface Constant<X: SFun<X>>: Fun<X>
  * Scalar function.
  */
 
-sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
+sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>, val op: Op = Monad.id): Fun<X>, Field<SFun<X>> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
   override val proto by lazy { bindings.proto }
   val ZERO: Special<X> by lazy { Zero() }
@@ -145,28 +146,28 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     else -> javaClass.simpleName
   }
 
-//  fun toKGraph() = when (this@SFun) {
-//      is SVar -> Gate(name)
-//      is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
-//      is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
-//      is Special -> add(Label.of(this@SFun.toString()))
-//      is SComposition -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("SComp")) }
-//      is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) } // add(Label.of("{{<In0>|<In1>}|${opCode()}|{<Out0>}}")) }
-//      is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-//      is SConst<*> -> add(Label.of(this@SFun.toString()))
-//      else -> TODO(this@SFun.javaClass.toString())
-//    }
+  fun toKGraph(): Gate = when (this) {
+    is SVar<*> -> Var(name)
+    is Sum<*> -> left.toKGraph() + right.toKGraph()
+    is Prod<*> -> left.toKGraph() * right.toKGraph()
+    is Power<*> -> left.toKGraph() pow right.toKGraph()
+    is Negative<*> -> -input.toKGraph()
+    is Sine<*> -> input.toKGraph().sin()
+    is Cosine<*> -> input.toKGraph().cos()
+    is Tangent<*> -> input.toKGraph().tan()
+    is Derivative<*> -> fn.toKGraph().d(vrb.toKGraph())
+    else -> Gate.wrap(this)
+  }
 
   override fun toGraph(): MutableNode = mutNode(if (this is SVar) "$this" else "${hashCode()}").apply {
     when (this@SFun) {
       is SVar -> name
       is Derivative -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(vrb.toString())) } - this; add(Label.of("d")) }
-      is RealNumber<*, *> -> add(Label.of(value.toString().take(5)))
+      is SConst<*> -> add(Label.of(value.toString().take(5)))
       is Special -> add(Label.of(this@SFun.toString()))
       is SComposition -> { fn.toGraph() - this; mutNode("$this").apply { add(Label.of(bindings.allFreeVariables.keys.toString())) } - this; add(Label.of("SComp")) }
       is BiFun<*> -> { (left.toGraph() - this).add(BLUE); (right.toGraph() - this).add(RED); add(Label.of(opCode())) } // add(Label.of("{{<In0>|<In1>}|${opCode()}|{<Out0>}}")) }
       is UnFun<*> -> { input.toGraph() - this; add(Label.of(opCode())) }
-      is SConst<*> -> add(Label.of(this@SFun.toString()))
       else -> TODO(this@SFun.javaClass.toString())
     }
   }
@@ -234,7 +235,7 @@ class SComposition<X : SFun<X>>(val fn: SFun<X>, inputs: Bindings<X> = Bindings(
       is DProd -> left(bnds) as VFun<X, D1> dot right(bnds) as VFun<X, D1>
       is SComposition -> fn.bind(bnds + bindings)
       is VSumAll<X, *> -> input(bnds).sum()
-    }.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
+    }//.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
 class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
