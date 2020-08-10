@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.experimental
 
+import edu.mcgill.kaliningraph.show
 import guru.nidi.graphviz.*
 import guru.nidi.graphviz.attribute.*
 import guru.nidi.graphviz.attribute.Color.*
@@ -30,7 +31,10 @@ fun SFun<*>.saveToFile(filename: String) =
     .let { format -> render(format) { toGraph() }.saveToFile(filename) }
 fun SFun<*>.render(format: Format = SVG) = render(format) { toGraph() }
 fun Renderer.saveToFile(filename: String) = File(filename).writeText(toString().replace("]", "];"))
+
+fun SFun<*>.show() = toKGraph().graph.show()
 fun Fun<*>.show(name: String = "temp") = render { toGraph() }.show(name)
+
 fun Fun<*>.html() = render { toGraph() }.toString()
 fun Renderer.show(name: String) = toFile(File.createTempFile(name, ".svg")).show()
 fun File.show() = ProcessBuilder("x-www-browser", path).start()

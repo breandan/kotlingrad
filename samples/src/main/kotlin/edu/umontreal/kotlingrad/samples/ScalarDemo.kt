@@ -1,5 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
+import edu.umontreal.kotlingrad.experimental.sin
+
 @Suppress("DuplicatedCode")
 fun main() {
   val f = x pow 3

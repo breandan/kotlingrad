@@ -65,6 +65,8 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   fun magnitude() = (this ʘ this).sum().sqrt()
   open fun sum(): SFun<X> = VSumAll(this)
 
+
+
   override fun toGraph(): MutableNode = mutNode(if (this is VVar) "VVar($name)" else "${hashCode()}").apply {
     when (this@VFun) {
       is VVar -> "$name-Vec$length"

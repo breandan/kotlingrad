@@ -27,7 +27,7 @@ dependencies {
 //  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
   implementation("org.jetbrains.bio:viktor:1.0.1")
-  implementation("com.github.breandan:kaliningraph:0.0.3")
+  implementation("com.github.breandan:kaliningraph:0.0.7")
 
   // Property-based testing
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
