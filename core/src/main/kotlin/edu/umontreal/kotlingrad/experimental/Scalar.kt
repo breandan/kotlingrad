@@ -135,24 +135,9 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     is Power -> "($left).pow($right)"
     is SVar -> name
     is Derivative -> "d($fn) / d($vrb)"
-    is Special -> javaClass.simpleName
-    is BiFun<*> -> "($left) ${opCode()} ($right)"
-    is UnFun<*> -> "${opCode()}($input)"
     is SComposition -> "($input)$bindings"
-    else -> super.toString()
-  }
-
-  override fun opCode() = when (this) {
-    is Log -> "ln"
-    is Negative -> "-"
-    is Power -> "pow"
-    is Prod -> "*"
-    is Sum -> "+"
-    is Derivative -> "d"
-    is Sine -> "sin"
-    is Cosine -> "cos"
-    is Tangent -> "tan"
-    is DProd -> "dot"
+    is BiFun<*> -> "($left) $op ($right)"
+    is UnFun<*> -> "$op($input)"
     else -> javaClass.simpleName
   }
 
