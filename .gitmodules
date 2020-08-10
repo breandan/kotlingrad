@@ -1,3 +1,3 @@
 [submodule "kaliningraph"]
 	path = kaliningraph
-	url = git@github.com:breandan/kaliningraph.git
+	url = https://github.com/breandan/kaliningraph
