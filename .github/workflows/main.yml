@@ -18,4 +18,4 @@ jobs:
         with:
           graalvm-version: '19.3.0.2.java11'
       - name: Build with Gradle
-        run: ./gradlew test --stacktrace
+        run: ./gradlew submoduleUpdate test --stacktrace

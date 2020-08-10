@@ -1,6 +1,3 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-
 plugins {
   `maven-publish`
 }
@@ -47,6 +44,10 @@ val fatJar by tasks.creating(Jar::class) {
   }
   from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
   with(tasks.jar.get() as CopySpec)
+}
+
+val submoduleUpdate by tasks.creating(Exec::class) {
+  commandLine("git", "submodule", "update", "--init")
 }
 
 publishing {
