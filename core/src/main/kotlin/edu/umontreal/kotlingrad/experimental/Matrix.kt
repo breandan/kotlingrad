@@ -4,12 +4,6 @@ package edu.umontreal.kotlingrad.experimental
 
 import edu.mcgill.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.utils.*
-import guru.nidi.graphviz.attribute.Color.BLUE
-import guru.nidi.graphviz.attribute.Color.RED
-import guru.nidi.graphviz.attribute.Label
-import guru.nidi.graphviz.model.Factory.mutNode
-import guru.nidi.graphviz.model.MutableNode
-import org.apache.commons.math3.optimization.fitting.PolynomialFitter
 import org.jetbrains.bio.viktor.F64Array
 import kotlin.reflect.KProperty
 
@@ -19,7 +13,6 @@ import kotlin.reflect.KProperty
 
 open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  override val proto by lazy { bindings.proto }
 
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
@@ -60,13 +53,24 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
     is MTranspose -> "($input).T"
     is MConst -> "${javaClass.name}()"
     is Mat -> "Mat(${rows.joinToString(", ")})"
-    is MDerivative -> "d($mFun) / d($sVar)"
+    is MDerivative -> "d($input) / d($vrb)"
     is MVar -> "MVar($name)"
     is MComposition -> "MComp($mFun)$bindings"
-    is Jacobian -> "Jacobian($vVar)$bindings"
-    is BiFun<*> -> "($left) $op ($right)"
-    is UnFun<*> -> "$op($input)"
-    else -> javaClass.simpleName
+    is Jacobian -> "Jacobian($vrb)$bindings"
+    else -> asString()
+  }
+
+  override val op: Op = when (this) {
+    is MNegative -> Monad.`-`
+    is MTranspose -> Monad.ᵀ
+    is HProd<X, *, *> -> Dyad.`⊙`
+    is MMProd<X, *, *, *> -> Dyad.`*`
+    is MSum<X, *, *> -> Dyad.`+`
+    is SMProd<X, *, *> -> Dyad.dot
+    is MComposition<X, *, *> -> Polyad.λ
+    is VVMap<X, *, *> -> Polyad.map
+    is MMap<X, *, *> -> Polyad.map
+    else -> Monad.id
   }
 
   override operator fun invoke(vararg numbers: Number): MFun<X, R, C> = invoke(bindings.zip(numbers.map { wrap(it) }))
@@ -78,38 +82,17 @@ abstract class UnMFun<X: SFun<X>, R: D1, C: D1>(
   override val bindings: Bindings<X>
 ): MFun<X, R, C>(bindings), UnFun<X> {
   constructor(f: Fun<X>): this(Bindings(f))
-  override val op: Op = when(this) {
-    is MNegative -> Monad.`-`
-    is MTranspose -> Monad.ᵀ
-    else -> TODO(toString())
-  }
 }
 
 abstract class BiMFun<X: SFun<X>, R: D1, C: D1>(
   override val left: Fun<X>,
   override val right: Fun<X>
-): MFun<X, R, C>(left, right), BiFun<X> {
-  override val op: Op = when (this) {
-    is HProd<*, *, *> -> Dyad.`⊙`
-    is MMProd<*, *, *, *> -> Dyad.`*`
-    is MSum<*, *, *> -> Dyad.`+`
-    is SMProd<*, *, *> -> Dyad.dot
-    else -> TODO(toString())
-  }
-}
+): MFun<X, R, C>(left, right), BiFun<X>
 
 abstract class PolyMFun<X: SFun<X>, R: D1, C: D1>(
   override val bindings: Bindings<X>,
   override vararg val inputs: Fun<X>
-): MFun<X, R, C>(bindings), PolyFun<X> {
-  constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
-  override val op: Op = when (this) {
-    is MComposition<*, *, *> -> Polyad.λ
-    is VVMap<*, *, *> -> Polyad.map
-    is MMap<*, *, *> -> Polyad.map
-    else -> TODO(toString())
-  }
-}
+): MFun<X, R, C>(bindings), PolyFun<X>
 
 class MMap<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):
   PolyMFun<X, R, C>(input.bindings + ssMap.bindings - placeholder, input)
@@ -149,11 +132,11 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, inputs: Bi
 
 // TODO: Generalize tensor derivatives? https://en.wikipedia.org/wiki/Tensor_derivative_(continuum_mechanics)
 @Suppress("UNCHECKED_CAST")
-class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: SVar<X>): BiMFun<X, R, C>(mFun, sVar) {
-  fun df() = mFun.df()
+class MDerivative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, override val vrb: SVar<X>): BiMFun<X, R, C>(input, vrb), Grad<X> {
+  fun df() = input.df()
   fun MFun<X, R, C>.df(): MFun<X, R, C> = when (this@df) {
-    is MVar -> map { it.d(sVar) }
-    is Mat -> map { it.d(sVar) }
+    is MVar -> map { it.d(vrb) }
+    is Mat -> map { it.d(vrb) }
     is MConst -> map { Zero() }
     is MNegative -> -input.df()
     is MTranspose -> (input as MFun<X, R, C>).df().ᵀ as MFun<X, R, C>
@@ -162,22 +145,22 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(val mFun: MFun<X, R, C>, val sVar: S
     is MMProd<X, R, *, C> ->
       (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) +
       left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
-    is MSProd -> left.df() * right + left * right.d(sVar)
-    is SMProd -> left.d(sVar) * right + left * right.df()
+    is MSProd -> left.df() * right + left * right.d(vrb)
+    is SMProd -> left.d(vrb) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
-    is MMap -> input.df().map { it * ssMap.d(sVar) } // Chain rule
-    is VVMap -> input.d(sVar).vMap { it * svMap(mapInput to it).d(sVar) }
-    is MDerivative -> mFun.df()
+    is MMap -> input.df().map { it * ssMap.d(vrb) } // Chain rule
+    is VVMap -> input.d(vrb).vMap { it * svMap(mapInput to it).d(vrb) }
+    is MDerivative -> input.df()
     is MComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
 }
 
-class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, R, C>): BiMFun<X, R, C>(sFun, mVar) {
-  fun df() = sFun.df()
+class MGradient<X : SFun<X>, R: D1, C: D1>(override val input: SFun<X>, override val vrb: MVar<X, R, C>): BiMFun<X, R, C>(input, vrb), Grad<X> {
+  fun df() = input.df()
   fun SFun<X>.df(): MFun<X, R, C> = when (this@df) {
-    is SVar -> mVar.vMat.map { if (it == this@df) One() else Zero() }
-    is SConst -> mVar.vMat.map { Zero() }
+    is SVar -> vrb.vMat.map { if (it == this@df) One() else Zero() }
+    is SConst -> vrb.vMat.map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
@@ -185,7 +168,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
-    is DProd -> invoke().d(mVar)
+    is DProd -> invoke().d(vrb)
 //      mVar.vMap { vVar ->
 //      (left.d(vVar) as MFun<X, C, C> * (right as VFun<X, C>) +
 //        left as VFun<X, C> * right.d(vVar)) }
@@ -194,13 +177,13 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(val sFun: SFun<X>, val mVar: MVar<X, 
   }
 }
 
-class Jacobian<X : SFun<X>, R: D1, C: D1>(val vfn: VFun<X, R>, val vVar: VVar<X, C>): BiMFun<X, R, C>(vfn, vVar) {
-  fun df() = vfn.df()
+class Jacobian<X : SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, override val vrb: VVar<X, C>): BiMFun<X, R, C>(input, vrb), Grad<X> {
+  fun df() = input.df()
 
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
     is VSum -> left.df() + right.df()
     is VNegative -> -input.df()
-    else -> vfn().vMap { it.d(vVar) }
+    else -> input().vMap { it.d(vrb) }
   }
 }
 
