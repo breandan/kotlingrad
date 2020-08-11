@@ -12,7 +12,6 @@ import kotlin.reflect.KProperty
 
 sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  override val proto by lazy { bindings.proto }
 
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
@@ -63,14 +62,26 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
-    is VDerivative -> "d($vFun) / d($sVar)"
-    is Gradient -> "($fn).d($vVar)"
     is VMap -> "$input.map { $ssMap }"
     is VVar -> "VVar($name)"
     is VComposition -> "($input)$bindings"
-    is BiFun<*> -> "($left) $op ($right)"
-    is UnFun<*> -> "$op($input)"
-    else -> javaClass.simpleName
+    else -> asString()
+  }
+
+  override val op: Op = when(this) {
+    is VNegative<X, *> -> Monad.`-`
+    is VMap<X, *> -> Polyad.map
+    is VSum<X, *> -> Dyad.`+`
+    is Gradient<X, *> -> Dyad.d
+    is VDerivative<X, *> -> Dyad.d
+    is VVProd<X, *> -> Dyad.`*`
+    is SVProd<X, *> -> Dyad.`*`
+    is VSProd<X, *> -> Dyad.`*`
+    is MVProd<X, *, *> -> Dyad.dot
+    is VMProd<X, *, *> -> Dyad.dot
+    is VComposition<X, *> -> Polyad.λ
+    is MSumRows<X, *, *> -> Polyad.Σ
+    else -> Monad.id
   }
 
   override operator fun invoke(vararg numbers: Number): VFun<X, E> = invoke(bindings.zip(numbers.map { wrap(it) }))
@@ -80,41 +91,18 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 
 abstract class UnVFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): VFun<X, E>(bindings), UnFun<X> {
   constructor(f: Fun<X>): this(Bindings(f))
-  override val op: Op = when(this) {
-    is VNegative<*, *> -> Monad.`-`
-    is VMap<*, *> -> Polyad.map
-    is MSumRows<*, *, *> -> Polyad.Σ
-    else -> TODO(toString())
-  }
 }
 
 abstract class BiVFun<X: SFun<X>, E: D1>(
   override val left: Fun<X>,
   override val right: Fun<X>
-): VFun<X, E>(left, right), BiFun<X> {
-  override val op: Op = when (this) {
-    is VSum<*, *> -> Dyad.`+`
-    is Gradient<*, *> -> Dyad.d
-    is VDerivative<*, *> -> Dyad.d
-    is VVProd<*, *> -> Dyad.`*`
-    is SVProd<*, *> -> Dyad.`*`
-    is VSProd<*, *> -> Dyad.`*`
-    is MVProd<*, *, *> -> Dyad.dot
-    is VMProd<*, *, *> -> Dyad.dot
-    else -> TODO(toString())
-  }
-}
+): VFun<X, E>(left, right), BiFun<X>
 
 abstract class PolyVFun<X: SFun<X>, E: D1>(
   override val bindings: Bindings<X>,
   override vararg val inputs: Fun<X>
 ): VFun<X, E>(bindings), PolyFun<X> {
   constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
-  override val op: Op = when (this) {
-    is VComposition<*, *> -> Polyad.λ
-    is MSumRows<*, *, *> -> Polyad.Σ
-    else -> TODO(toString())
-  }
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): UnVFun<X, E>(input)
@@ -133,36 +121,36 @@ class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, overrid
 class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): BiVFun<X, R>(left, right)
 class MSumRows<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>): PolyVFun<X, C>(input)
 
-class VDerivative<X : SFun<X>, E: D1>(val vFun: VFun<X, E>, val sVar: SVar<X>) : BiVFun<X, E>(vFun, sVar) {
-  fun df() = vFun.df()
+class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override val vrb: SVar<X>) : BiVFun<X, E>(input, vrb), Grad<X> {
+  fun df() = input.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
-    is VVar -> sVars.map { it.d(sVar) }
+    is VVar -> sVars.map { it.d(vrb) }
     is VConst<X, E> -> map { Zero() }
     is VSum -> left.df() + right.df()
     is VVProd -> left.df() ʘ right + left ʘ right.df()
-    is SVProd -> left.d(sVar) * right + left * right.df()
-    is VSProd -> left.df() * right + left * right.d(sVar)
+    is SVProd -> left.d(vrb) * right + left * right.df()
+    is VSProd -> left.df() * right + left * right.d(vrb)
     is VNegative -> -input.df()
-    is VDerivative -> vFun.df()
-    is Vec -> Vec(contents.map { it.d(sVar) })
+    is VDerivative -> input.df()
+    is Vec -> Vec(contents.map { it.d(vrb) })
     is MVProd<X, *, *> ->
-      (left.d(sVar) as MFun<X, E, E>) * right as VFun<X, E> +
-      (left as MFun<X, E, E> * right.d(sVar))
+      (left.d(vrb) as MFun<X, E, E>) * right as VFun<X, E> +
+      (left as MFun<X, E, E> * right.d(vrb))
     is VMProd<X, *, *> ->
-      (left.d(sVar) as VFun<X, E> * right as MFun<X, E, E>) +
-      (left as VFun<X, E> * right.d(sVar))
+      (left.d(vrb) as VFun<X, E> * right as MFun<X, E, E>) +
+      (left as VFun<X, E> * right.d(vrb))
     is Gradient -> invoke().df() // map { it.d(sVar) }
-    is VMap -> input.df().map { it * ssMap(mapInput to it).d(sVar) } // Chain rule
+    is VMap -> input.df().map { it * ssMap(mapInput to it).d(vrb) } // Chain rule
     is VComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
 }
 
-class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): BiVFun<X, E>(fn, vVar) {
-  fun df() = fn.df()
+class Gradient<X : SFun<X>, E: D1>(override val input: SFun<X>, override val vrb: VVar<X, E>): BiVFun<X, E>(input, vrb), Grad<X> {
+  fun df() = input.df()
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
-    is SVar -> vVar.sVars.map { if(this@df == it) One() else Zero() }
-    is SConst -> vVar.sVars.map { Zero() }
+    is SVar -> vrb.sVars.map { if(this@df == it) One() else Zero() }
+    is SConst -> vrb.sVars.map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
@@ -171,10 +159,10 @@ class Gradient<X : SFun<X>, E: D1>(val fn: SFun<X>, val vVar: VVar<X, E>): BiVFu
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
     is DProd ->
-      (left.d(vVar) as MFun<X, E, E> * right as VFun<X, E>) +
-      (left as VFun<X, E> * right.d(vVar))
+      (left.d(vrb) as MFun<X, E, E> * right as VFun<X, E>) +
+      (left as VFun<X, E> * right.d(vrb))
     is SComposition -> evaluate.df()
-    is VSumAll<*, *> -> (input as VFun<X, E>).d(vVar).sum()
+    is VSumAll<X, *> -> (input as VFun<X, E>).d(vrb).sum()
     else -> TODO(this@df.javaClass.name)
   }
 }
@@ -262,8 +250,6 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
   constructor(len: Nat<E>, gen: (Int) -> SFun<X>): this(List(len.i) { gen(it) })
   override val proto by lazy { contents.first().proto }
   val size = contents.size
-
-  override fun toString() = contents.joinToString(", ", "[", "]")
 
   operator fun get(index: Int) = contents[index]
 

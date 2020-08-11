@@ -27,10 +27,13 @@ interface Field<X: Field<X>>: Group<X> {
 
 interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   val bindings: Bindings<X>
-  fun opCode() = javaClass.simpleName
+  val op: Op
+
+  val proto: X
+    get() = bindings.proto
 
   fun isConstant(): Boolean = bindings.allVars.isEmpty()
-  fun wrap(number: Number): SConst<X> = SConst<X>(number.toDouble())
+  fun wrap(number: Number): SConst<X> = SConst(number.toDouble())
 
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
   operator fun invoke(vararg numbers: Number): Fun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
@@ -38,40 +41,50 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> = invoke(ps.toList().bind())
 
   fun toGraph(): Gate = when (this) {
-    is UnFun<*> -> Gate(op, input.toGraph())
-    is BiFun<*> -> Gate(op, left.toGraph(), right.toGraph())
-    is PolyFun<*> -> Gate(op, *inputs.map { it.toGraph() }.toTypedArray())
+    is UnFun -> Gate(op, input.toGraph())
+    is BiFun -> Gate(op, left.toGraph(), right.toGraph())
+    is PolyFun -> Gate(op, *inputs.map { it.toGraph() }.toTypedArray())
     else -> Gate.wrap(this)
   }
 
-  val proto: X
-
-  fun List<Pair<Fun<X>, Any>>.bind() =
-    Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+  fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
     is Number -> wrap(any)
     else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
   }
+
+  fun asString() = when (this) {
+    is Constant -> "$this"
+    is Variable -> "Var($name)"
+    is Grad -> "d($input) / d($vrb)"
+    is SComposition -> "($input)$bindings"
+    is BiFun<*> -> "($left) $op ($right)"
+    is UnFun<*> -> "$op($input)"
+    is PolyFun<*> -> "$op$inputs"
+    else -> javaClass.simpleName
+  }
 }
 
-interface BiFun<X: SFun<X>>: Fun<X> {
+interface BiFun<X: SFun<X>>: PolyFun<X> {
   val left: Fun<X>
   val right: Fun<X>
-  val op: Op
+  override val inputs: Array<out Fun<X>>
+    get() = arrayOf(left, right)
 }
 
-interface UnFun<X: SFun<X>>: Fun<X> {
+interface UnFun<X: SFun<X>>: PolyFun<X> {
   val input: Fun<X>
-  val op: Op
+  override val inputs: Array<out Fun<X>>
+    get() = arrayOf(input)
 }
 
 interface PolyFun<X: SFun<X>>: Fun<X> {
   val inputs: Array<out Fun<X>>
-  val op: Op
 }
 
+interface Grad<X: SFun<X>>: BiFun<X> { val input: Fun<X>; val vrb: Variable<X> } // TODO: Maybe extend BiFun?
 interface Variable<X: SFun<X>>: Fun<X> { val name: String; override val proto: X }
 interface Constant<X: SFun<X>>: Fun<X>
 
@@ -81,7 +94,6 @@ interface Constant<X: SFun<X>>: Fun<X>
 
 sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
   constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-  override val proto by lazy { bindings.proto }
   val ZERO: Special<X> by lazy { Zero() }
   val ONE: Special<X> by lazy { One() }
   val TWO: Special<X> by lazy { Two() }
@@ -101,7 +113,7 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
     SComposition(this, newBindings)
       .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
-  operator fun invoke() = SComposition(this).evaluate
+  operator fun invoke(): SFun<X> = SComposition(this).evaluate
 
   open fun d(v1: SVar<X>): SFun<X> = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
   open fun d(v1: SVar<X>, v2: SVar<X>): Vec<X, D2> = Vec(d(v1), d(v2))
@@ -129,14 +141,28 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   operator fun times(multiplicand: Number): SFun<X> = this * wrap(multiplicand)
   infix fun pow(exp: Number): SFun<X> = this pow wrap(exp)
 
-  override fun toString(): String = when (this) {
+  override fun toString() =  when(this) {
     is SVar -> name
-    is Log -> "($left).log($right)"
-    is Derivative -> "d($fn) / d($vrb)"
     is SComposition -> "($input)$bindings"
-    is BiFun<*> -> "($left) $op ($right)"
-    is UnFun<*> -> "$op($input)"
-    else -> javaClass.simpleName
+    else -> asString()
+  }
+
+  override val op: Op = when (this) {
+    is Sine -> Monad.sin
+    is Cosine -> Monad.cos
+    is Tangent -> Monad.tan
+    is Negative -> Monad.`-`
+
+    is Sum -> Dyad.`+`
+    is Prod -> Dyad.`*`
+    is Power -> Dyad.pow
+    is Log -> Dyad.log
+    is Derivative -> Dyad.d
+    is DProd -> Dyad.dot
+
+    is SComposition -> Polyad.λ
+    is VSumAll<X, *> -> Polyad.Σ
+    else -> Monad.id
   }
 
   override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
@@ -146,36 +172,15 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
 
 abstract class UnSFun<X: SFun<X>>(override val bindings: Bindings<X>): SFun<X>(bindings), UnFun<X> {
   constructor(f: Fun<X>): this(Bindings(f))
-  override val op: Op = when(this) {
-    is Sine -> Monad.sin
-    is Cosine -> Monad.cos
-    is Tangent -> Monad.tan
-    is Negative -> Monad.`-`
-    else -> TODO(toString())
-  }
 }
 
-abstract class BiSFun<X: SFun<X>>(override val left: Fun<X>, override val right: Fun<X>): SFun<X>(left, right), BiFun<X> {
-  override val op: Op = when (this) {
-    is Sum -> Dyad.`+`
-    is Prod -> Dyad.`*`
-    is Power -> Dyad.pow
-    is Log -> Dyad.log
-    is Derivative -> Dyad.d
-    else -> TODO(toString())
-  }
-}
+abstract class BiSFun<X: SFun<X>>(override val left: Fun<X>, override val right: Fun<X>): SFun<X>(left, right), BiFun<X>
 
 abstract class PolySFun<X: SFun<X>>(
   override val bindings: Bindings<X>,
   override vararg val inputs: Fun<X>
 ): SFun<X>(bindings), PolyFun<X> {
   constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
-  override val op: Op = when (this) {
-    is SComposition<*> -> Polyad.λ
-    is VSumAll<*, *> -> Polyad.Σ
-    else -> TODO(toString())
-  }
 }
 
 /**
@@ -191,8 +196,8 @@ class Prod<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>):
 class Power<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): BiSFun<X>(left, right)
 class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E()): BiSFun<X>(left, right)
 
-class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): BiSFun<X>(fn, vrb) {
-  fun df() = fn.df()
+class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar<X>): BiSFun<X>(input, vrb), Grad<X> {
+  fun df() = input.df()
   fun SFun<X>.df(): SFun<X> = when (this@df) {
     is SVar -> if (this == vrb) ONE else ZERO
     is SConst -> ZERO
@@ -206,7 +211,7 @@ class Derivative<X: SFun<X>>(val fn: SFun<X>, val vrb: SVar<X>): BiSFun<X>(fn, v
     is Sine -> input.cos() * input.df()
     is Cosine -> -input.sin() * input.df()
     is Tangent -> (input.cos() pow -TWO) * input.df()
-    is Derivative -> fn.df()
+    is Derivative -> input.df()
     is DProd -> (left.d(vrb) as VFun<X, D1> dot right as VFun<X, D1>) + (left as VFun<X, D1> dot right.d(vrb))
     is SComposition -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()
@@ -244,21 +249,11 @@ class SComposition<X : SFun<X>>(
     }//.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
-class DProd<X: SFun<X>>(
-  override val left: VFun<X, *>,
-  override val right: VFun<X, *>,
-  override val op: Op = Dyad.dot
-): SFun<X>(left, right), BiFun<X>
+class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): BiSFun<X>(left, right)
 
-class VSumAll<X: SFun<X>, E: D1>(
-  val input: VFun<X, E>,
-  override val op: Op = Polyad.Σ
-): PolySFun<X>(input)
+class VSumAll<X: SFun<X>, E: D1>(val input: VFun<X, E>): PolySFun<X>(input)
 
-class SVar<X: SFun<X>>(
-  override val proto: X,
-  override val name: String = ""
-): Variable<X>, SFun<X>() {
+class SVar<X: SFun<X>>(override val proto: X, override val name: String = ""): Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()
@@ -267,7 +262,7 @@ class SVar<X: SFun<X>>(
 }
 
 open class SConst<X: SFun<X>> constructor(open val value: Number? = null): SFun<X>(), Constant<X> {
-  override fun toString() = doubleValue.toString()
+  override fun toString() = value.toString()
   open val doubleValue: Double = value?.toDouble() ?: when (this) {
     is Zero -> 0.0
     is One -> 1.0
@@ -322,10 +317,10 @@ sealed class Special<X: SFun<X>>: SConst<X>() {
     if (this === other) true else javaClass == other?.javaClass
 
   override fun hashCode(): Int = when (this) {
-    is Zero<*> -> 0
-    is One<*> -> 1
-    is Two<*> -> 2
-    is E<*> -> 3
+    is Zero -> 0
+    is One -> 1
+    is Two -> 2
+    is E -> 3
   }
 }
 
