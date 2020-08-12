@@ -1,6 +1,6 @@
 {
   "properties": {
-    "kotlingradVersion": "0.3.0"
+    "kotlingradVersion": "0.3.1"
   },
   "link": "https://github.com/breandan/kotlingrad",
   "repositories": [
