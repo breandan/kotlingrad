@@ -10,9 +10,9 @@ dependencies {
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
   val kmathVersion by extra { "0.1.4-dev-8" }
-  implementation("scientifik:kmath-core:$kmathVersion")
-  implementation("scientifik:kmath-ast:$kmathVersion")
-  implementation("scientifik:kmath-prob:$kmathVersion")
+  testImplementation("scientifik:kmath-core:$kmathVersion")
+  testImplementation("scientifik:kmath-ast:$kmathVersion")
+  testImplementation("scientifik:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
   testImplementation("org.ejml:ejml-kotlin:0.39")
