@@ -105,13 +105,13 @@ dependencies {
 
 #### Jupyter Notebook
 
-[First install](https://github.com/breandan/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then copy the library descriptor into the local settings directory:
+[First install](https://github.com/breandan/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the `jupyterInstall` task to install the library descriptor:
 
 ```
-mkdir -p ~/.jupyter_kotlin/libraries && cp kotlingrad.json ~/.jupyter_kotlin/libraries/
+./gradlew jupyterInstall [-Path=~/.jupyter_kotlin/libraries]
 ```
 
-Then import Kotlin∇ using the following line magic:
+To access Kotlin∇'s notebook support, use the following line magic:
 
 ```
 %use kotlingrad
