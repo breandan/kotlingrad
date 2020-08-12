@@ -88,4 +88,4 @@ publishing {
       from(components["java"])
     }
   }
-}
+ }

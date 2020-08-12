@@ -89,39 +89,26 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> = invoke(ps.toList().bind())
 }
 
-abstract class UnVFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): VFun<X, E>(bindings), UnFun<X> {
-  constructor(f: Fun<X>): this(Bindings(f))
-}
-
-abstract class BiVFun<X: SFun<X>, E: D1>(
-  override val left: Fun<X>,
-  override val right: Fun<X>
-): VFun<X, E>(left, right), BiFun<X>
-
-abstract class PolyVFun<X: SFun<X>, E: D1>(
-  override val bindings: Bindings<X>,
-  override vararg val inputs: Fun<X>
-): VFun<X, E>(bindings), PolyFun<X> {
-  constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
-}
-
-class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): UnVFun<X, E>(input)
-
+class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
 class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: SFun<X>, placeholder: SVar<X>):
-  UnVFun<X, E>(input.bindings + ssMap.bindings - placeholder)
+  VFun<X, E>(input.bindings + ssMap.bindings - placeholder), UnFun<X>
 class VVMap<X: SFun<X>, R: D1, C: D1>(val input: VFun<X, R>, val svMap: VFun<X, C>, placeholder: SVar<X>):
-  PolyMFun<X, R, C>(input.bindings + svMap.bindings - placeholder, input)
+  MFun<X, R, C>(input.bindings + svMap.bindings - placeholder), PolyFun<X> {
+  override val inputs: Array<out Fun<X>> = arrayOf(input, svMap)
+}
 
-class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): BiVFun<X, E>(left, right)
+class VSum<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
 
-class VVProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): BiVFun<X, E>(left, right)
-class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: VFun<X, E>): BiVFun<X, E>(left, right)
-class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): BiVFun<X, E>(left, right)
-class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): BiVFun<X, R>(left, right)
-class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): BiVFun<X, R>(left, right)
-class MSumRows<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>): PolyVFun<X, C>(input)
+class VVProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
+class SVProd<X: SFun<X>, E: D1>(override val left: SFun<X>, override val right: VFun<X, E>): VFun<X, E>(left, right), BiFun<X>
+class VSProd<X: SFun<X>, E: D1>(override val left: VFun<X, E>, override val right: SFun<X>): VFun<X, E>(left, right), BiFun<X>
+class MVProd<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: VFun<X, C>): VFun<X, R>(left, right), BiFun<X>
+class VMProd<X: SFun<X>, R: D1, C: D1>(override val left: VFun<X, C>, override val right: MFun<X, R, C>): VFun<X, R>(left, right), BiFun<X>
+class MSumRows<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>): VFun<X, C>(input), PolyFun<X> {
+  override val inputs: Array<out Fun<X>> = arrayOf(input)
+}
 
-class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override val vrb: SVar<X>) : BiVFun<X, E>(input, vrb), Grad<X> {
+class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override val vrb: SVar<X>) : VFun<X, E>(input, vrb), Grad<X> {
   fun df() = input.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VVar -> sVars.map { it.d(vrb) }
@@ -146,7 +133,7 @@ class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override v
   }
 }
 
-class Gradient<X : SFun<X>, E: D1>(override val input: SFun<X>, override val vrb: VVar<X, E>): BiVFun<X, E>(input, vrb), Grad<X> {
+class Gradient<X : SFun<X>, E: D1>(override val input: SFun<X>, override val vrb: VVar<X, E>): VFun<X, E>(input, vrb), Grad<X> {
   fun df() = input.df()
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
     is SVar -> vrb.sVars.map { if(this@df == it) One() else Zero() }
@@ -181,9 +168,9 @@ open class VVar<X: SFun<X>, E: D1> constructor(
 }
 
 class VComposition<X: SFun<X>, E: D1>(
-  val input: VFun<X, E>,
+  override val input: VFun<X, E>,
   inputs: Bindings<X> = Bindings(input.proto)
-): PolyVFun<X, E>(input.bindings + inputs, input) {
+): VFun<X, E>(input.bindings + inputs), UnFun<X> {
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -203,7 +190,6 @@ class VComposition<X: SFun<X>, E: D1>(
       is VMap<X, E> -> input.bind(bnds).map { ssMap(mapInput to it)(bnds) }
       is VComposition -> input.bind(bnds)
       is MSumRows<X, *, *> -> input(bnds).sum() as VFun<X, E>
-      else -> TODO("${this@bind}")
     }.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
