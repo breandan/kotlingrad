@@ -84,8 +84,16 @@ interface PolyFun<X: SFun<X>>: Fun<X> {
   val inputs: Array<out Fun<X>>
 }
 
-interface Grad<X: SFun<X>>: BiFun<X> { val input: Fun<X>; val vrb: Variable<X> } // TODO: Maybe extend BiFun?
-interface Variable<X: SFun<X>>: Fun<X> { val name: String; override val proto: X }
+interface Grad<X : SFun<X>> : BiFun<X> {
+  val input: Fun<X>
+  val vrb: Variable<X>
+  override val left: Fun<X>
+    get() = input
+  override val right: Fun<X>
+    get() = vrb
+}
+
+interface Variable<X : SFun<X>> : Fun<X> { val name: String; override val proto: X }
 interface Constant<X: SFun<X>>: Fun<X>
 
 /**
@@ -170,33 +178,20 @@ sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind())
 }
 
-abstract class UnSFun<X: SFun<X>>(override val bindings: Bindings<X>): SFun<X>(bindings), UnFun<X> {
-  constructor(f: Fun<X>): this(Bindings(f))
-}
-
-abstract class BiSFun<X: SFun<X>>(override val left: Fun<X>, override val right: Fun<X>): SFun<X>(left, right), BiFun<X>
-
-abstract class PolySFun<X: SFun<X>>(
-  override val bindings: Bindings<X>,
-  override vararg val inputs: Fun<X>
-): SFun<X>(bindings), PolyFun<X> {
-  constructor(vararg inputs: Fun<X>): this(Bindings(*inputs), *inputs)
-}
-
 /**
  * Symbolic operators.
  */
 
-class Sine<X: SFun<X>>(override val input: SFun<X>): UnSFun<X>(input)
-class Cosine<X: SFun<X>>(override val input: SFun<X>): UnSFun<X>(input)
-class Tangent<X: SFun<X>>(override val input: SFun<X>): UnSFun<X>(input)
-class Negative<X: SFun<X>>(override val input: SFun<X>): UnSFun<X>(input)
-class Sum<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): BiSFun<X>(left, right)
-class Prod<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): BiSFun<X>(left, right)
-class Power<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): BiSFun<X>(left, right)
-class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E()): BiSFun<X>(left, right)
+class Sine<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
+class Cosine<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
+class Tangent<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
+class Negative<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
+class Sum<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
+class Prod<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
+class Power<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
+class Log<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X> = E()): SFun<X>(left, right), BiFun<X>
 
-class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar<X>): BiSFun<X>(input, vrb), Grad<X> {
+class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar<X>): SFun<X>(input, vrb), Grad<X> {
   fun df() = input.df()
   fun SFun<X>.df(): SFun<X> = when (this@df) {
     is SVar -> if (this == vrb) ONE else ZERO
@@ -204,8 +199,10 @@ class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
     is Power ->
-      if (right.isConstant()) right * left.pow(right - ONE) * left.df() //https://en.wikipedia.org/wiki/Differentiation_rules#The_polynomial_or_elementary_power_rule
-      else this * (left.df() * right / left + right.df() * left.ln()) //https://en.wikipedia.org/wiki/Differentiation_rules#Generalized_power_rule
+      //https://en.wikipedia.org/wiki/Differentiation_rules#The_polynomial_or_elementary_power_rule
+      if (right.isConstant()) right * left.pow(right - ONE) * left.df()
+      //https://en.wikipedia.org/wiki/Differentiation_rules#Generalized_power_rule
+      else this * (left.df() * right / left + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -ONE) * left.df()
     is Sine -> input.cos() * input.df()
@@ -216,15 +213,14 @@ class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar
     is SComposition -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()
 //    is Custom<X> -> fn.df()
-    else -> TODO()
   }
 }
 
 // TODO: Unit test this data structure
 class SComposition<X : SFun<X>>(
-  val input: SFun<X>,
+  override val input: SFun<X>,
   inputs: Bindings<X> = Bindings(input.proto)
-) : PolySFun<X>(input.bindings + inputs, input) {
+) : SFun<X>(input.bindings + inputs), UnFun<X> {
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -245,13 +241,14 @@ class SComposition<X : SFun<X>>(
       is DProd -> left(bnds) as VFun<X, D1> dot right(bnds) as VFun<X, D1>
       is SComposition -> input.bind(bnds + bindings)
       is VSumAll<X, *> -> input(bnds).sum()
-      else -> TODO()
     }//.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
 }
 
-class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): BiSFun<X>(left, right)
+class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
 
-class VSumAll<X: SFun<X>, E: D1>(val input: VFun<X, E>): PolySFun<X>(input)
+class VSumAll<X: SFun<X>, E: D1>(val input: VFun<X, E>): SFun<X>(input), PolyFun<X>{
+  override val inputs: Array<out Fun<X>> = arrayOf(input)
+}
 
 class SVar<X: SFun<X>>(override val proto: X, override val name: String = ""): Variable<X>, SFun<X>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
