@@ -24,6 +24,7 @@ interface Field<X: Field<X>>: Group<X> {
   fun ln(): X
 }
 
+
 interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   val inputs: Array<out Fun<X>>
   val bindings: Bindings<X>
@@ -75,7 +76,6 @@ interface BiFun<X: SFun<X>>: PolyFun<X> {
 
 interface UnFun<X: SFun<X>>: PolyFun<X> {
   val input: Fun<X>
-    get() = inputs[0]
 }
 
 interface PolyFun<X: SFun<X>>: Fun<X> {
@@ -96,6 +96,8 @@ interface Constant<X: SFun<X>>: Fun<X>
 
 /**
  * Scalar function.
+ *
+ * TODO: Implement proper monad like [java.util.function.Function] or [Function]
  */
 
 sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
@@ -113,6 +115,22 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
   override fun div(divisor: SFun<X>): SFun<X> = this * divisor.pow(-ONE)
   open operator fun <E: D1> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
   open operator fun <R: D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
+
+  // TODO: Paramaterize OP instead of using subtyping
+  class AOP<X: SFun<X>>(val op: Op, val of: (Fun<X>) -> SFun<X>)
+  // TODO: Implement proper curry
+  fun apply(op: Op): (SFun<X>) -> SFun<X> = when(op) {
+    Dyad.`+` -> { it: SFun<X> -> this + it }
+    Dyad.`*` -> { it: SFun<X> -> this * it }
+    else -> TODO()
+  }
+
+  fun apply(vararg xs: X) = when(op) {
+    Monad.`-` -> -xs[0]
+    Dyad.`+` -> xs[0] + xs[1]
+    Dyad.`*` -> xs[0] * xs[1]
+    else -> TODO()
+  }
 
   override fun invoke(newBindings: Bindings<X>): SFun<X> =
     SComposition(this, newBindings)
@@ -214,7 +232,10 @@ class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar
 }
 
 // TODO: Unit test this data structure
-class SComposition<X : SFun<X>>(override val input: SFun<X>, arguments: Bindings<X> = Bindings(input.proto)) : SFun<X>(input), UnFun<X> {
+class SComposition<X : SFun<X>>(
+  override val input: SFun<X>,
+  arguments: Bindings<X> = Bindings(input.proto)
+) : SFun<X>(input), UnFun<X> {
   override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
