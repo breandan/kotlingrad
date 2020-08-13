@@ -105,7 +105,7 @@ dependencies {
 
 #### Jupyter Notebook
 
-[First install](https://github.com/breandan/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the `jupyterInstall` task to install the library descriptor:
+[First install](https://github.com/kotlin/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the `jupyterInstall` task to install the library descriptor:
 
 ```
 ./gradlew jupyterInstall [-Path=~/.jupyter_kotlin/libraries]
