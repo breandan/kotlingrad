@@ -12,9 +12,7 @@ import kotlin.reflect.KProperty
  * Matrix function.
  */
 
-open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): Fun<X> {
-  constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-
+open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): Fun<X> {
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
@@ -79,8 +77,12 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override val bindings: Bindings<X>): F
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> = invoke(ps.toList().bind())
 }
 
-class MMap<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>, val ssMap: SFun<X>, placeholder: SVar<X>):
-  MFun<X, R, C>(input.bindings + ssMap.bindings - placeholder), PolyFun<X> {
+class MMap<X: SFun<X>, R: D1, C: D1>(
+  val input: MFun<X, R, C>,
+  val ssMap: SFun<X>,
+  placeholder: SVar<X>
+): MFun<X, R, C>(input, ssMap), PolyFun<X> {
+  override val bindings: Bindings<X> = input.bindings + ssMap.bindings - placeholder
   override val inputs: Array<out Fun<X>> = arrayOf(input, ssMap)
 }
 class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
@@ -93,8 +95,9 @@ class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val 
 
 class MComposition<X: SFun<X>, R: D1, C: D1>(
   override val input: MFun<X, R, C>,
-  inputs: Bindings<X> = Bindings(input.proto)
-): MFun<X, R, C>(input.bindings + inputs), UnFun<X> {
+  arguments: Bindings<X> = Bindings(input.proto)
+): MFun<X, R, C>(input), UnFun<X> {
+  override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
