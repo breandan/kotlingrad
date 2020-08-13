@@ -20,13 +20,14 @@ interface Group<X: Group<X>> {
 interface Field<X: Field<X>>: Group<X> {
   operator fun div(divisor: X): X
   operator fun times(multiplicand: X): X
-
   infix fun pow(exponent: X): X
   fun ln(): X
 }
 
 interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
+  val inputs: Array<out Fun<X>>
   val bindings: Bindings<X>
+    get() = Bindings(*inputs)
   val op: Op
 
   val proto: X
@@ -70,18 +71,15 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
 interface BiFun<X: SFun<X>>: PolyFun<X> {
   val left: Fun<X>
   val right: Fun<X>
-  override val inputs: Array<out Fun<X>>
-    get() = arrayOf(left, right)
 }
 
 interface UnFun<X: SFun<X>>: PolyFun<X> {
   val input: Fun<X>
-  override val inputs: Array<out Fun<X>>
-    get() = arrayOf(input)
+    get() = inputs[0]
 }
 
 interface PolyFun<X: SFun<X>>: Fun<X> {
-  val inputs: Array<out Fun<X>>
+  override val inputs: Array<out Fun<X>>
 }
 
 interface Grad<X : SFun<X>> : BiFun<X> {
@@ -100,8 +98,7 @@ interface Constant<X: SFun<X>>: Fun<X>
  * Scalar function.
  */
 
-sealed class SFun<X: SFun<X>>(override val bindings: Bindings<X>): Fun<X>, Field<SFun<X>> {
-  constructor(vararg funs: Fun<X>): this(Bindings(*funs))
+sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   val ZERO: Special<X> by lazy { Zero() }
   val ONE: Special<X> by lazy { One() }
   val TWO: Special<X> by lazy { Two() }
@@ -217,10 +214,8 @@ class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar
 }
 
 // TODO: Unit test this data structure
-class SComposition<X : SFun<X>>(
-  override val input: SFun<X>,
-  inputs: Bindings<X> = Bindings(input.proto)
-) : SFun<X>(input.bindings + inputs), UnFun<X> {
+class SComposition<X : SFun<X>>(override val input: SFun<X>, arguments: Bindings<X> = Bindings(input.proto)) : SFun<X>(input), UnFun<X> {
+  override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")

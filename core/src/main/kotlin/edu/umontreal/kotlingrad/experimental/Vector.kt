@@ -10,9 +10,7 @@ import kotlin.reflect.KProperty
  * Vector function.
  */
 
-sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X> {
-  constructor(vararg funs: Fun<X>): this(Bindings(*funs))
-
+sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X> {
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
     VComposition(this, newBindings)
@@ -90,10 +88,18 @@ sealed class VFun<X: SFun<X>, E: D1>(override val bindings: Bindings<X>): Fun<X>
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
-class VMap<X: SFun<X>, E: D1>(override val input: VFun<X, E>, val ssMap: SFun<X>, placeholder: SVar<X>):
-  VFun<X, E>(input.bindings + ssMap.bindings - placeholder), UnFun<X>
-class VVMap<X: SFun<X>, R: D1, C: D1>(val input: VFun<X, R>, val svMap: VFun<X, C>, placeholder: SVar<X>):
-  MFun<X, R, C>(input.bindings + svMap.bindings - placeholder), PolyFun<X> {
+class VMap<X: SFun<X>, E: D1>(
+  override val input: VFun<X, E>,
+  val ssMap: SFun<X>, placeholder: SVar<X>
+): VFun<X, E>(input, ssMap), UnFun<X> {
+  override val bindings: Bindings<X> = input.bindings + ssMap.bindings - placeholder
+}
+class VVMap<X: SFun<X>, R: D1, C: D1>(
+  val input: VFun<X, R>,
+  val svMap: VFun<X, C>,
+  placeholder: SVar<X>
+): MFun<X, R, C>(input, svMap), PolyFun<X> {
+  override val bindings: Bindings<X> = input.bindings + svMap.bindings - placeholder
   override val inputs: Array<out Fun<X>> = arrayOf(input, svMap)
 }
 
@@ -167,10 +173,8 @@ open class VVar<X: SFun<X>, E: D1> constructor(
     VVar(proto, if (name.isEmpty()) property.name else name, length, sVars)
 }
 
-class VComposition<X: SFun<X>, E: D1>(
-  override val input: VFun<X, E>,
-  inputs: Bindings<X> = Bindings(input.proto)
-): VFun<X, E>(input.bindings + inputs), UnFun<X> {
+class VComposition<X: SFun<X>, E: D1>(override val input: VFun<X, E>, arguments: Bindings<X> = Bindings(input.proto)): VFun<X, E>(input), UnFun<X> {
+  override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: VFun<X, E> by lazy { bind(bindings) }
 
   @Suppress("UNCHECKED_CAST")
@@ -341,7 +345,3 @@ sealed class D29(override val i: Int = 29): D28(i) { companion object: D29(), Na
 sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Nat<D30> }
 sealed class D50(override val i: Int = 50): D30(i) { companion object: D50(), Nat<D50> }
 sealed class D100(override val i: Int = 100): D50(i) { companion object: D100(), Nat<D100> }
-
-fun main() {
-
-}
