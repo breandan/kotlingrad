@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.dependent.codegen
+package edu.umontreal.kotlingrad.utils.codegen
 
 const val maxInt = 100
 

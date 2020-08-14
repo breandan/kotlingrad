@@ -27,7 +27,7 @@ idea.module {
 
 subprojects {
   group = "edu.umontreal"
-  version = "0.3.1"
+  version = "0.3.2"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
@@ -53,14 +53,4 @@ subprojects {
       }
     }
   }
-}
-
-val installPathLocal = "${System.getProperty("user.home")}/.jupyter_kotlin/libraries"
-
-tasks.register<Copy>("jupyterInstall") {
-  val installPath = findProperty("ath") ?: installPathLocal
-  doFirst { mkdir(installPath) }
-  from(file("kotlingrad.json"))
-  into(installPath)
-  doLast { logger.info("Kotlin∇ notebook was installed in: $installPath") }
 }

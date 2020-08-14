@@ -24,7 +24,7 @@ dependencies {
 //  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
   implementation("org.jetbrains.bio:viktor:1.0.1")
-  implementation("com.github.breandan:kaliningraph:0.0.7")
+  api("com.github.breandan:kaliningraph:0.0.7")
 
   // Property-based testing
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
@@ -36,56 +36,21 @@ dependencies {
   implementation("guru.nidi:graphviz-kotlin:0.17.0")
 }
 
-val fatJar by tasks.creating(Jar::class) {
-  archiveBaseName.set("${project.name}-fat")
-  manifest {
-    attributes["Implementation-Title"] = "kotlingrad"
-    attributes["Implementation-Version"] = archiveVersion
+tasks {
+  val genNotebookJSON by creating(JavaExec::class) {
+    main = "edu.umontreal.kotlingrad.utils.codegen.NotebookGenKt"
+    classpath = sourceSets["main"].runtimeClasspath
+    args = listOf(projectDir.path, project.version.toString())
   }
-  from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-  with(tasks.jar.get() as CopySpec)
-}
 
-publishing {
-  publications.create<MavenPublication>("default") {
-    artifact(fatJar)
-    pom {
-      description.set("Kotlin∇: Differentiable Functional Programming with Algebraic Data Types")
-      name.set("Kotlin∇")
-      url.set("https://github.com/breandan/kotlingrad")
-      licenses {
-        license {
-          name.set("The Apache Software License, Version 2.0")
-          url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-          distribution.set("repo")
-        }
-      }
-      developers {
-        developer {
-          id.set("Breandan Considine")
-          name.set("Breandan Considine")
-          email.set("bre@ndan.co")
-          organization.set("Université de Montréal")
-        }
-      }
-      scm {
-        url.set("https://github.com/breandan/kotlingrad")
-      }
-    }
+  val installPathLocal = "${System.getProperty("user.home")}/.jupyter_kotlin/libraries"
+
+  val jupyterInstall by registering(Copy::class) {
+    dependsOn(genNotebookJSON)
+    val installPath = findProperty("ath") ?: installPathLocal
+    doFirst { mkdir(installPath) }
+    from(file("kotlingrad.json"))
+    into(installPath)
+    doLast { logger.info("Kotlin∇ notebook was installed in: $installPath") }
   }
-  repositories {
-    maven {
-      name = "GitHubPackages"
-      setUrl("https://maven.pkg.github.com/breandan/kotlingrad")
-      credentials {
-        username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USER")
-        password = project.findProperty("gpr.key") as String? ?: System.getenv("GPR_API_KEY")
-      }
-    }
-  }
-  publications {
-    register("gpr", MavenPublication::class) {
-      from(components["java"])
-    }
-  }
- }
+}

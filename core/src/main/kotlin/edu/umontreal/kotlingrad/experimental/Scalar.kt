@@ -21,7 +21,7 @@ interface Field<X: Field<X>>: Group<X> {
   operator fun div(divisor: X): X
   operator fun times(multiplicand: X): X
   infix fun pow(exponent: X): X
-  fun ln(): X
+  fun log(base: X): X
 }
 
 
@@ -72,6 +72,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
 interface BiFun<X: SFun<X>>: PolyFun<X> {
   val left: Fun<X>
   val right: Fun<X>
+//  val fn: (Fun<X>, Fun<X>) -> Fun<X>
 }
 
 interface UnFun<X: SFun<X>>: PolyFun<X> {
@@ -125,10 +126,16 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
     else -> TODO()
   }
 
-  fun apply(vararg xs: X) = when(op) {
+  fun forwardApply(vararg xs: SFun<X>): SFun<X> = when(op) {
+    Monad.id -> xs[0]
+    Monad.sin -> xs[0].sin()
+    Monad.cos -> xs[0].cos()
+    Monad.tan -> xs[0].tan()
     Monad.`-` -> -xs[0]
     Dyad.`+` -> xs[0] + xs[1]
     Dyad.`*` -> xs[0] * xs[1]
+    Dyad.pow  -> xs[0] pow xs[1]
+    Dyad.log  -> xs[0].log(xs[1])
     else -> TODO()
   }
 
@@ -153,7 +160,8 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
 
   open fun grad(): Map<SVar<X>, SFun<X>> = bindings.sVars.map { it to Derivative(this, it) }.toMap()
 
-  override fun ln(): SFun<X> = Log(this)
+  fun ln() = log(E)
+  override fun log(base: SFun<X>): SFun<X> = Log(this, base)
   override fun pow(exponent: SFun<X>): SFun<X> = Power(this, exponent)
   override fun unaryMinus(): SFun<X> = Negative(this)
   open fun sqrt(): SFun<X> = this pow (ONE / TWO)
@@ -252,12 +260,13 @@ class SComposition<X : SFun<X>>(
       is Sine -> input.bind(bnds).sin()
       is Cosine -> input.bind(bnds).cos()
       is Tangent -> input.bind(bnds).tan()
-      is Log -> left.bind(bnds).ln()
+      is Log -> left.bind(bnds).log(right.bind(bnds))
       is Derivative -> df().bind(bnds)
       is DProd -> left(bnds) as VFun<X, D1> dot right(bnds) as VFun<X, D1>
       is SComposition -> input.bind(bnds + bindings)
       is VSumAll<X, *> -> input(bnds).sum()
-    }//.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
+    } //.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
+    //appl(*inputs.map { it.bind(bnds) }.toTypedArray())) as SFun<X>
 }
 
 class DProd<X: SFun<X>>(override val left: VFun<X, *>, override val right: VFun<X, *>): SFun<X>(left, right), BiFun<X>
@@ -302,11 +311,15 @@ open class SConst<X: SFun<X>> constructor(open val value: Number? = null): SFun<
   override fun tan() = wrap(tan(doubleValue))
   override fun sqrt() = wrap(sqrt(doubleValue))
   override fun unaryMinus() = wrap(-doubleValue)
-  override fun ln() = wrap(ln(doubleValue))
 
   /**
    * Constant propagation.
    */
+
+  override fun log(base: SFun<X>) = when (base) {
+    is SConst<X> -> wrap(log(doubleValue, base.doubleValue))
+    else -> super.log(base)
+  }
 
   override fun plus(addend: SFun<X>) = when (addend) {
     is SConst<X> -> wrap(doubleValue + addend.doubleValue)
