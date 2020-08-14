@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   idea
-  kotlin("jvm") version "1.3.72" // Keep in sync with README
+  kotlin("jvm") version "1.4.0" // Keep in sync with README
 }
 
 allprojects {
@@ -12,7 +12,6 @@ allprojects {
     mavenCentral()
     jcenter()
     maven("https://jitpack.io")
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
     maven("https://dl.bintray.com/mipt-npm/dev")
     maven("https://dl.bintray.com/hotkeytlt/maven")
 //    maven("https://oss.sonatype.org/content/repositories/snapshots")
