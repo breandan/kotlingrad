@@ -1,0 +1,46 @@
+{
+  "link": "https://github.com/breandan/kotlingrad",
+  "repositories": [
+    "https://jitpack.io"
+  ],
+  "dependencies": [
+    "com.github.breandan:kotlingrad:0.3.2"
+  ],
+  "imports": [
+    "edu.umontreal.kotlingrad.experimental.*",
+    "edu.mcgill.kaliningraph.*"
+  ],
+  "renderers": {
+    "edu.umontreal.kotlingrad.experimental.Sine" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Cosine" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Tangent" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Negative" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Sum" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Prod" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Power" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Log" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Derivative" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.SComposition" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.DProd" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VSumAll" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.SVar" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.SConst" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.SFun" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VNegative" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VMap" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VSum" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VVProd" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.SVProd" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VSProd" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.MVProd" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VMProd" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.MSumRows" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VDerivative" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Gradient" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VVar" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VComposition" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.Vec" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.VFun" : "HTML($it.html())",
+    "edu.umontreal.kotlingrad.experimental.MFun" : "HTML($it.html())"
+  }
+}

@@ -20,9 +20,13 @@ open class BDReal(number: Number, val sigFigs: Int = 30): RealNumber<BDReal, Big
   override fun sin() = BDReal(BigDecimalMath.sin(value, mc))
   override fun cos() = BDReal(BigDecimalMath.cos(value, mc))
   override fun tan() = BDReal(BigDecimalMath.tan(value, mc))
-  override fun ln() = BDReal(BigDecimalMath.log(value, mc))
   override fun sqrt() = BDReal(BigDecimalMath.sqrt(value, mc))
   override fun unaryMinus() = BDReal(-value)
+
+  override fun log(base: SFun<BDReal>) = when (base) {
+    is BDReal -> BDReal(BigDecimalMath.log(value, mc) / BigDecimalMath.log(base.value, mc))
+    else -> super.log(base)
+  }
 
   override fun plus(addend: SFun<BDReal>) = when (addend) {
     is BDReal -> BDReal(value + addend.value)
