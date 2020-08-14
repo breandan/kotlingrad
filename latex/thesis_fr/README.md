@@ -1,25 +1,25 @@
-# [Master's Thesis](thesis.pdf)
+# [Thèse de maîtrise](thesis.pdf)
 
-## Abstract
+## Résumé
 
-Programming tools are computer programs which help humans program computers. Tools come in all shapes and forms, from editors and compilers to debuggers and profilers. Each of these tools facilitates a core task in the programming workflow which consumes cognitive resources when performed manually. In this thesis, we explore several tools that facilitate the process of building intelligent systems, and which reduce the cognitive effort required to design, develop, test and deploy intelligent software systems. First, we introduce an integrated development environment (IDE) for programming Robot Operating System (ROS) applications, called Hatchery. Second, we describe Kotlin∇, a language and type system for differentiable programming, an emerging paradigm in machine learning. Third, we propose a new algorithm for automatically testing differentiable programs, drawing inspiration from techniques in adversarial and metamorphic testing, and demonstrate its empirical efficiency in the regression setting. Fourth, we explore a container infrastructure based on Docker, which enables reproducible deployment of ROS applications on the Duckietown platform. Finally, we reflect on the current state of programming tools for these applications and speculate what intelligent systems programming might look like in the future.
+Les outils de programmation sont des programmes informatiques qui aident les humains à programmer des ordinateurs. Les outils sont de toutes formes et tailles, par exemple les éditeurs, les compilateurs, les débogueurs et les profileurs. Chacun de ces outils facilite une tâche principale dans le flux de travail de programmation qui consomme des ressources cognitives lorsqu'il est effectué manuellement. Dans cette thèse, nous explorons plusieurs outils qui facilitent le processus de construction de systèmes intelligents et qui réduisent l'effort cognitif requis pour concevoir, développer, tester et déployer des systèmes logiciels intelligents. Tout d'abord, nous introduisons un environnement de développement intégré (EDI) pour la programmation d'applications Robot Operating System (ROS), appelé Hatchery. Deuxièmement, nous décrivons Kotlin$\nabla$, un système de langage et de type pour la programmation différentiable, un paradigme émergent dans l'apprentissage automatique. Troisièmement, nous proposons un nouvel algorithme pour tester automatiquement les programmes différentiables, en nous inspirant des techniques de tests contradictoires et métamorphiques, et démontrons son efficacité empirique dans le cadre de la régression. Quatrièmement, nous explorons une infrastructure de conteneurs basée sur Docker, qui permet un déploiement reproductible des applications ROS sur la plate-forme Duckietown. Enfin, nous réfléchissons à l'état actuel des outils de programmation pour ces applications et spéculons à quoi pourrait ressembler la programmation de systèmes intelligents à l'avenir.
 
-## Building
+## Construire
 
-To build this thesis, a [TeX Live](https://www.latex-project.org/get/) distribution is required.
-Run the following command from the parent directory:
+Pour construire cette thèse, une distribution [TeX Live](https://www.latex-project.org/get/) est nécessaire.
+Exécutez la commande suivante à partir du répertoire parent:
 
 ```
 xelatex -file-line-error -interaction=nonstopmode -synctex=1 --shell-escape -output-directory=$(pwd) thesis
 ```
 
-### Teletype Font
+### Police de télétype
 
-A custom typeface, [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono#installation) is needed to render source code listings and inline code tokens.
+Une police de caractères personnalisée, [JetBrains Mono](https://github.com/JetBrains/JetBrainsMono#installation) est nécessaire pour rendre les listes de code source et les jetons de code en ligne.
 
-### Rail diagrams
+### Diagrammes de rail
 
-Parts of this document were built with a non-standard package called [rail](https://ctan.org/pkg/rail). To modify the rail diagrams, install the package like so:
+Certaines parties de ce document ont été construites avec un package non standard appelé [rail](https://ctan.org/pkg/rail). Pour modifier les schémas de rails, installez le package comme ceci:
 
 ```
 $ curl -L https://github.com/Holzhaus/latex-rail/archive/v1.2.1.tar.gz | tar xzvf -
@@ -41,8 +41,8 @@ $ sudo make PREFIX=/usr install
 $ sudo mktexlsr
 ```
 
-When the rail has been installed, the following steps will regenerate the diagram.
+Une fois le rail installé, les étapes suivantes régénéreront le diagramme.
 
-1. Run `xelatex ... thesis`, which will create `thesis.rai`.
-2. Run `rail thesis` to generate `thesis.rao` from `thesis.rai`.
-3. Run `xelatex ... thesis` to generate the final document.
+1. Lancez `xelatex ... thesis`, qui créera` thesis.rai`.
+2. Exécutez `rail thesis` pour générer` thesis.rao` à partir de `thesis.rai`.
+3. Exécutez `xelatex ... thesis` pour générer le document final.

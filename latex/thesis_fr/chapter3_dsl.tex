@@ -437,8 +437,8 @@ val manualDx = y * (cos(x * y) * y - 1) // Dérivé manuel
 
 "dz/dx devrait être y * (cos(x * y) * y - 1)" {
     NumericalGenerator.assertAll { x0, y0 ->
-    // Evaluer les résultats à une graine donnée
-    val autoEval = dz_dx(x to x0, y to y0)
+        // Evaluer les résultats à une graine donnée
+        val autoEval = dz_dx(x to x0, y to y0)
         val manualEval = manualDx(x to x0, y to y0)
         autoEval shouldBeApproximately manualEval // Fails iff eps < |adEval - manualEval|
     }
@@ -455,9 +455,9 @@ val fd_dx = (sin(x + dx) - sin(x)) / dx
 
 "d(sin x)/dx devrait être (sin(x + dx) - sin(x)) / dx" {
     NumericalGenerator.assertAll { x0 ->
-    val autoEval = df_dx(x0)
+        val autoEval = df_dx(x0)
         val fdEval = fd_dx(x0)
-        autoEval shouldBeApproximately fdEval // Fails iff eps < |adEval - fdEval|
+        autoEval shouldBeApproximately fdEval // échoue ssi eps < |adEval - fdEval|
     }
 }
 \end{kotlinlisting}
