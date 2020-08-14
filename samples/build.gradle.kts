@@ -24,11 +24,7 @@ dependencies {
   implementation("guru.nidi:graphviz-kotlin:0.17.0")
   implementation("org.jzy3d:jzy3d-api:1.0.2")
 
-  // Lets-Plot dependencies: https://github.com/JetBrains/lets-plot-kotlin/issues/5
-  implementation("org.jetbrains.lets-plot:lets-plot-jfx:1.4.2")
-  implementation("org.jetbrains.lets-plot:lets-plot-common:1.4.2")
-  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:0.0.23-SNAPSHOT")
-  implementation("org.jetbrains.lets-plot:kotlin-frontend-api:0.0.8-SNAPSHOT")
+  implementation("org.jetbrains.lets-plot-kotlin:lets-plot-kotlin-api:1.0.0")
 
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
