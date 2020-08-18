@@ -34,6 +34,7 @@ subprojects {
     val jvmTarget = VERSION_1_8.toString()
     compileKotlin {
       kotlinOptions.jvmTarget = jvmTarget
+//      kotlinOptions.useIR = true
     }
     compileTestKotlin {
       kotlinOptions.jvmTarget = jvmTarget

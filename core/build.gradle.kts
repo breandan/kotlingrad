@@ -5,7 +5,7 @@ plugins {
 dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk8"))
-//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
+//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
@@ -31,7 +31,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter:5.6.2")
 
   // Symbolic fuzzing interpreter
-  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223-embeddable:1.3.72")
+  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223:1.4.0")
   // Graphical libraries
   implementation("guru.nidi:graphviz-kotlin:0.17.0")
 }
