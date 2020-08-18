@@ -34,7 +34,6 @@ subprojects {
     val jvmTarget = VERSION_1_8.toString()
     compileKotlin {
       kotlinOptions.jvmTarget = jvmTarget
-      kotlinOptions.freeCompilerArgs += "-XXLanguage:+NewInference"
     }
     compileTestKotlin {
       kotlinOptions.jvmTarget = jvmTarget
