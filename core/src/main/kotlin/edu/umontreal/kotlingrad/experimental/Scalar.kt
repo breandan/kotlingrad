@@ -43,10 +43,11 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> = invoke(ps.toList().bind())
 
   fun toGate(): Gate = when (this) {
+    is NilFun -> Gate.wrap(this)
     is UnFun -> Gate(op, input.toGate())
     is BiFun -> Gate(op, left.toGate(), right.toGate())
     is PolyFun -> Gate(op, *inputs.map { it.toGate() }.toTypedArray())
-    else -> Gate.wrap(this)
+    else -> TODO()
   }
 
   fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
@@ -75,6 +76,8 @@ interface BiFun<X: SFun<X>>: PolyFun<X> {
 //  val fn: (Fun<X>, Fun<X>) -> Fun<X>
 }
 
+interface NilFun<X: SFun<X>>: Fun<X>
+
 interface UnFun<X: SFun<X>>: PolyFun<X> {
   val input: Fun<X>
 }
@@ -92,8 +95,8 @@ interface Grad<X : SFun<X>> : BiFun<X> {
     get() = vrb
 }
 
-interface Variable<X : SFun<X>> : Fun<X> { val name: String; override val proto: X }
-interface Constant<X: SFun<X>>: Fun<X>
+interface Variable<X : SFun<X>> : Fun<X>, NilFun<X> { val name: String; override val proto: X }
+interface Constant<X: SFun<X>>: Fun<X>, NilFun<X>
 
 /**
  * Scalar function.
