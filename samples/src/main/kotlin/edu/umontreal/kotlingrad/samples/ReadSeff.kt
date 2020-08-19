@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 fun List<Double>.standardError() = standardDeviation() / sqrt(size.toDouble())
 
 fun main() {
-  File("seff.log").readLines().filter { it.contains(",") && it.contains("0") }
+  File("seff.log").readLines().filter { "," in it && "0" in it }
     .map { it.split(", ").let { Triple(it[0].toDouble(), it[1].toDouble(), it[2].toDouble()) } }
     .groupBy { it.first }.mapValues {
       listOf(it.key,
