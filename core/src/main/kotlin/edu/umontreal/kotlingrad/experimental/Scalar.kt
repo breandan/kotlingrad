@@ -42,10 +42,10 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   operator fun invoke(vararg funs: Fun<X>): Fun<X> = invoke(bindings.zip(funs.toList()))
   operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> = invoke(ps.toList().bind())
 
-  fun toGraph(): Gate = when (this) {
-    is UnFun -> Gate(op, input.toGraph())
-    is BiFun -> Gate(op, left.toGraph(), right.toGraph())
-    is PolyFun -> Gate(op, *inputs.map { it.toGraph() }.toTypedArray())
+  fun toGate(): Gate = when (this) {
+    is UnFun -> Gate(op, input.toGate())
+    is BiFun -> Gate(op, left.toGate(), right.toGate())
+    is PolyFun -> Gate(op, *inputs.map { it.toGate() }.toTypedArray())
     else -> Gate.wrap(this)
   }
 
