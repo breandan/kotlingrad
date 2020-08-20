@@ -25,7 +25,7 @@ class TestSymbolic : StringSpec({
 
   with(DoublePrecision) {
     "test symbolic evaluation" {
-      ExpressionGenerator(DoublePrecision).assertAll(20) { f: SFun<DReal> ->
+      TestExpressionGenerator(DoublePrecision).assertAll(20) { f: SFun<DReal> ->
         DoubleGenerator.assertAll(20) { ẋ, ẏ, ż ->
           f(x to ẋ, y to ẏ, z to ż) shouldBeAbout ktf(f, x to ẋ, y to ẏ, z to ż)
         }
