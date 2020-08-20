@@ -8,7 +8,7 @@ import kotlin.math.absoluteValue
 
 fun main() {
   for (i in 0..9) {
-    val bt = ExpressionGenerator.scaledRandomBiTree(4)
+    val bt = PolyGenerator.scaledRandomBiTree(4)
     plotOracle("oracle$i.svg", 1.0) { bt(it).toDouble() }
     File("btree_rand$i.tex").writeText(bt.render(DOT).toString().lines().drop(1)
       .joinToString("\n").let { "\\digraph[scale=0.2]{btree$i} {\n$it" })
@@ -16,18 +16,13 @@ fun main() {
   }
 }
 
-object ExpressionGenerator: Protocol<DReal>(DReal) {
-  val sum = { left: SFun<DReal>, right: SFun<DReal> -> left + right }
-  val mul = { left: SFun<DReal>, right: SFun<DReal> -> left * right }
-
-  val operators = listOf(sum, mul)
+object PolyGenerator : ExpressionGenerator<DReal>(DoublePrecision, rand,
+  operators = listOf(
+    { left: SFun<DReal>, right: SFun<DReal> -> left + right },
+    { left: SFun<DReal>, right: SFun<DReal> -> left * right }
+  )
+) {
   override val variables = listOf(x)
-
-  infix fun SFun<DReal>.wildOp(that: SFun<DReal>) = operators.random(rand)(this, that)
-
-  fun randomBiTree(height: Int = 5): SFun<DReal> =
-    if (height == 0) (listOf(wrap(rand.nextDouble(-1.0, 1.0))) + variables).random(rand)
-    else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 
   fun scaledRandomBiTree(height: Int = 4, maxX: Double = 1.0, maxY: Double = 1.0) =
     randomBiTree(height).let { it - it(0.0) }.let {

@@ -9,7 +9,7 @@ fun main() {
   with(DoublePrecision) {
       (0..200).toList().parallelStream().map {
         val startTime = System.currentTimeMillis()
-        val oracle = ExpressionGenerator.scaledRandomBiTree(5, maxX, maxY)
+        val oracle = PolyGenerator.scaledRandomBiTree(5, maxX, maxY)
         val (model, history) = learnExpression(oracle)
 //        println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
         Triple(oracle, model, history)

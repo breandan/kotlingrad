@@ -70,6 +70,8 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   }
 }
 
+// https://arxiv.org/pdf/2001.02209.pdf
+
 interface BiFun<X: SFun<X>>: PolyFun<X> {
   val left: Fun<X>
   val right: Fun<X>
