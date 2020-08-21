@@ -14,6 +14,7 @@ graal {
 repositories {
   maven("https://maven.jzy3d.org/releases")
   maven("https://jetbrains.bintray.com/lets-plot-maven")
+  maven("https://dl.bintray.com/egor-bogomolov/astminer/")
 }
 
 dependencies {
@@ -23,6 +24,9 @@ dependencies {
   // Graphical libraries
   implementation("guru.nidi:graphviz-kotlin:0.17.0")
   implementation("org.jzy3d:jzy3d-api:1.0.2")
+
+  implementation("com.github.lejon.T-SNE-Java:tsne:v2.5.0")
+  implementation("io.github.vovak.astminer:astminer:0.5")
 
   implementation("org.jetbrains.lets-plot-kotlin:lets-plot-kotlin-api:1.0.0")
 
@@ -36,7 +40,7 @@ tasks {
     "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG", "VariableCapture",
     "LetsPlot", "ScalarDemo", "VectorDemo", "MatrixDemo",
     "MLP", "LinearRegression", "PolynomialRegression",
-    "PolynomialAttack", "ReadSeff"
+    "PolynomialAttack", "ReadSeff", "Code2Vec"
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
       main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
