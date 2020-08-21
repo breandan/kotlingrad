@@ -28,6 +28,9 @@ dependencies {
   implementation("com.github.lejon.T-SNE-Java:tsne:v2.5.0")
   implementation("io.github.vovak.astminer:astminer:0.5")
 
+  val ejmlVersion = "0.39"
+  implementation("org.ejml:ejml-kotlin:$ejmlVersion")
+  implementation("org.ejml:ejml-all:$ejmlVersion")
   implementation("org.jetbrains.lets-plot-kotlin:lets-plot-kotlin-api:1.0.0")
 
   implementation("org.nield:kotlin-statistics:1.2.1")

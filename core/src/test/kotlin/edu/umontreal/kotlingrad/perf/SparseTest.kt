@@ -1,6 +1,8 @@
 package edu.umontreal.kotlingrad.perf
 
 import ch.ethz.idsc.tensor.*
+import edu.mcgill.kaliningraph.toEJMLDense
+import edu.mcgill.kaliningraph.toEJMLSparse
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.round
 import edu.umontreal.kotlingrad.utils.*
@@ -91,9 +93,6 @@ class SparseTest {
   fun INDArray.toKotlinArray() = mapper(rows(), columns()) { i, j -> getDouble(i, j) }
 //  fun DoubleNdArray.toKotlinArray() = mapper(shape().size(0).toInt(), shape().size(1).toInt()) { i, j -> getDouble(i.toLong(), j.toLong()) }
 
-  fun Array<DoubleArray>.toEJMLSparse() = DMatrixSparseCSC(size, size, sumBy { it.count { it == 0.0 } })
-    .also { s -> for (i in 0 until size) for (j in 0 until size) this[i][j].let { if (0 < it) s[i, j] = it } }
-  fun Array<DoubleArray>.toEJMLDense() = DMatrixRMaj(this)
   fun Array<DoubleArray>.toApacheCommons() = MatrixUtils.createRealMatrix(this)
   fun Array<DoubleArray>.toViktor() = F64Array(size, size) { i, j -> this[i][j] }
   fun Array<DoubleArray>.toKMath() = VirtualMatrix(size, size) { i, j -> this[i][j] } as Matrix<Double>
