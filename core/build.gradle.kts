@@ -15,8 +15,10 @@ dependencies {
   testImplementation("scientifik:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
-  testImplementation("org.ejml:ejml-kotlin:0.39")
-  testImplementation("org.ejml:ejml-core:0.39")
+
+  val ejmlVersion = "0.39"
+  implementation("org.ejml:ejml-kotlin:$ejmlVersion")
+  implementation("org.ejml:ejml-all:$ejmlVersion")
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 
 //  val tfVersion by extra { "-SNAPSHOT" }
