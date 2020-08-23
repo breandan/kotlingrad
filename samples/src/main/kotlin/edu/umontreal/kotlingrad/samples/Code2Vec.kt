@@ -6,21 +6,22 @@ import edu.mcgill.kaliningraph.*
 import edu.umontreal.kotlingrad.experimental.*
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.geom_point
-import jetbrains.letsPlot.ggsize
 import jetbrains.letsPlot.intern.toSpec
-import jetbrains.letsPlot.lets_plot
+import org.ejml.UtilEjml
 import org.ejml.kotlin.times
 import java.io.File
 import kotlin.random.Random
 
 fun main() {
-//  val X = MatrixUtils.simpleRead2DMatrix(File("samples/src/main/resources/datasets/mnist250_X.txt"), "   ")
-  val graphs = generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(5) }.take(100).toList() +
-    generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(4) }.take(100).toList() +
-    generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(3) }.take(100).toList()
+  val graphs =
+    generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(5) }.take(50).toList() +
+    generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(4) }.take(50).toList() +
+    generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(3) }.take(50).toList() +
+    generateSequence { ExpressionGenerator(DoublePrecision).randomBiTree(2) }.take(50).toList()
 
-  val X = graphs.map { it.toGate().graph.A.nz_values }.toList().toTypedArray()
+  val X = graphs.map { it.toGate().graph.mpnn().nz_values }.toList().toTypedArray()
 
   val initialDims = X.first().size
   val perplexity = 20.0
@@ -37,5 +38,7 @@ fun main() {
   val svg = PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)
 
   File.createTempFile("test", ".svg").apply { writeText(svg); println(this.path) }
-  File.createTempFile("randomGraph", ".svg").apply { writeText(graphs.random().toGate().graph.html()); println(this.path) }
+  File.createTempFile("randomGraph0", ".svg").apply { writeText(graphs.random().toGate().graph.html()); println(this.path) }
+  File.createTempFile("randomGraph1", ".svg").apply { writeText(graphs.random().toGate().graph.html()); println(this.path) }
+  File.createTempFile("randomGraph2", ".svg").apply { writeText(graphs.random().toGate().graph.html()); println(this.path) }
 }
