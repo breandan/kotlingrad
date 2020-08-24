@@ -6,6 +6,7 @@ plugins {
 val entrypoint = "edu.umontreal.kotlingrad.samples.HelloKotlingradKt"
 
 application.mainClassName = entrypoint
+
 graal {
   mainClass(entrypoint)
   outputName("hello-kotlingrad")
@@ -35,8 +36,6 @@ dependencies {
 
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
-
-//javafx.modules("javafx.controls", "javafx.swing")
 
 tasks {
   listOf(
