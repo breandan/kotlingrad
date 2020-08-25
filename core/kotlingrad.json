@@ -4,7 +4,7 @@
     "https://jitpack.io"
   ],
   "dependencies": [
-    "com.github.breandan:kotlingrad:0.3.3"
+    "com.github.breandan:kotlingrad:0.3.4"
   ],
   "imports": [
     "edu.umontreal.kotlingrad.experimental.*",
