@@ -12,12 +12,6 @@ graal {
   outputName("hello-kotlingrad")
 }
 
-repositories {
-  maven("https://maven.jzy3d.org/releases")
-  maven("https://jetbrains.bintray.com/lets-plot-maven")
-  maven("https://dl.bintray.com/egor-bogomolov/astminer/")
-}
-
 dependencies {
   implementation(project(":core"))
   implementation(kotlin("stdlib-jdk8"))
