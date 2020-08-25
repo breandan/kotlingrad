@@ -7,8 +7,6 @@ dependencies {
   implementation(kotlin("stdlib-jdk8"))
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
   api("com.github.breandan:kaliningraph:0.0.7")
-  // Graphical libraries
-  implementation("guru.nidi:graphviz-kotlin:0.17.0")
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
