@@ -4,16 +4,17 @@ import astminer.common.model.Parser
 import astminer.parse.antlr.SimpleNode
 import astminer.parse.antlr.python.PythonParser
 import com.jujutsu.tsne.TSne
-import com.jujutsu.tsne.barneshut.*
-import com.jujutsu.utils.*
+import com.jujutsu.tsne.barneshut.ParallelBHTsne
+import com.jujutsu.utils.TSneUtils
 import edu.mcgill.kaliningraph.*
 import edu.mcgill.kaliningraph.circuits.ComputationGraph
 import edu.umontreal.kotlingrad.experimental.*
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.*
-import jetbrains.letsPlot.geom.*
+import jetbrains.letsPlot.geom.geom_point
 import jetbrains.letsPlot.intern.toSpec
+import jetbrains.letsPlot.label.ggtitle
 import java.io.File
 import kotlin.random.Random
 
@@ -33,7 +34,7 @@ fun main() {
   println("Max graph size is $maxDim")
 
   val padded = X.map { cur ->
-    DoubleArray(maxDim) { if(it < cur.size) cur[it] else 0.0 }
+    DoubleArray(maxDim) { if (it < cur.size) cur[it] else 0.0 }
   }.toTypedArray()
 
   val embeddings = embedGraph(padded)
@@ -49,8 +50,9 @@ private fun plot(embeddings: Array<out DoubleArray>, names: List<String>): Strin
     "x" to embeddings.map { it[0] },
     "y" to embeddings.map { it[1] }
   )
-  val plot = lets_plot(data) { x = "x"; y = "y"; color="cond" } +
-    ggsize(300, 250) + geom_point(shape = "cond", size = 6)
+  val plot = lets_plot(data) { x = "x"; y = "y"; color = "cond" } +
+    ggsize(300, 250) + geom_point(shape = "cond", size = 6) +
+    ggtitle("Graph Types by Structural Similarity")
   return PlotSvgExport.buildSvgImageFromRawSpecs(
     plotSpec = plot.toSpec(), plotSize = DoubleVector(1000.0, 500.0)
   )
