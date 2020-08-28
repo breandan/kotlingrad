@@ -1,8 +1,7 @@
 package edu.umontreal.kotlingrad.perf
 
 import ch.ethz.idsc.tensor.*
-import edu.mcgill.kaliningraph.toEJMLDense
-import edu.mcgill.kaliningraph.toEJMLSparse
+import edu.mcgill.kaliningraph.*
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.round
 import edu.umontreal.kotlingrad.utils.*
@@ -19,12 +18,13 @@ import org.nd4j.linalg.factory.Nd4j
 import scientifik.kmath.linear.*
 import scientifik.kmath.structures.*
 import scientifik.kmath.structures.Matrix
+import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 class SparseTest {
   val m = 100
   val sparsity = 0.1
-  val fill = { if (Math.random() < sparsity) Math.random() else 0.0 }
+  val fill = { if (DEFAULT_RANDOM.nextDouble() < sparsity) DEFAULT_RANDOM.nextDouble() else 0.0 }
   val contents = Array(m) { Array(m) { fill() }.toDoubleArray() }
   /**
    * Benchmarking 100x100 sparse matrix powering on a Xeon E3-1575M:
