@@ -18,6 +18,5 @@ fun Fun<*>.toGraphviz(): Graphviz = toGate().graph.render().toGraphviz()
 fun Fun<*>.show(name: String = "temp") = render().toFile(File.createTempFile(name, ".svg")).show()
 
 fun Fun<*>.html() = render(SVG).toString()
-fun File.show() = ProcessBuilder(browserCmd, path).start()
 
 var EAGER = false
