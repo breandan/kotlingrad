@@ -4,8 +4,8 @@ import astminer.common.model.Parser
 import astminer.parse.antlr.SimpleNode
 import astminer.parse.antlr.python.PythonParser
 import com.jujutsu.tsne.TSne
-import com.jujutsu.tsne.barneshut.*
-import com.jujutsu.utils.*
+import com.jujutsu.tsne.barneshut.ParallelBHTsne
+import com.jujutsu.utils.TSneUtils
 import edu.mcgill.kaliningraph.*
 import edu.mcgill.kaliningraph.circuits.ComputationGraph
 import edu.umontreal.kotlingrad.experimental.*
@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.intern.toSpec
+import jetbrains.letsPlot.label.ggtitle
 import java.io.File
 import kotlin.random.Random
 
@@ -34,7 +35,7 @@ fun main() {
   println("Max graph size is $maxDim")
 
   val padded = X.map { cur ->
-    DoubleArray(maxDim) { if(it < cur.size) cur[it] else 0.0 }
+    DoubleArray(maxDim) { if (it < cur.size) cur[it] else 0.0 }
   }.toTypedArray()
 
   val embeddings = embedGraph(padded)
@@ -55,7 +56,8 @@ private fun plot(graphs: List<LabeledGraph>,
     "y" to embeddings.map { it[1] }
   )
   var plot = lets_plot(data) { x = "x"; y = "y"; color="sizes" } +
-    ggsize(300, 250) + geom_point(shape = "names", size = 6)
+    ggsize(300, 250) + geom_point(shape = "names", size = 6) +
+    ggtitle("Graph Types by Structural Similarity")
   plot = names.foldIndexed(plot) { i, plt, f -> plt +
     geom_text(x = embeddings[i][0] + 5, y = embeddings[i][1] + 5, label = f, color= BLACK)
   }
