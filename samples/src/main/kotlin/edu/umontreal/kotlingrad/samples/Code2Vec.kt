@@ -20,47 +20,53 @@ import java.io.File
 import kotlin.random.Random
 
 fun main() {
-  println("Generating ASTS")
 //  val (files, graphs) = generateASTs()
   val (files, graphs) = mineASTs()
 
-  for (i in 0..2)
-    File.createTempFile("randomGraph$i", ".svg")
-      .apply { writeText(graphs.random().html()); println(this.path) }
+//  for (i in 0..2)
+//    File.createTempFile("randomGraph$i", ".svg")
+//      .apply { writeText(graphs.random().html()); println(this.path) }
 
-  val X = graphs.map { it.gnn().nz_values }.toList().toTypedArray()
+  for(rounds in listOf(1, 2, 5, 10)) {
+    val X = graphs.map { it.gnn(t = rounds).nz_values }.padded()
+    val embeddings = embedGraph(X)
+    val clusters = plot(rounds, graphs, embeddings, files)
 
-  val maxDim = X.map { it.size }.maxOrNull()!!
-
-  println("Max graph size is $maxDim")
-
-  val padded = X.map { cur ->
-    DoubleArray(maxDim) { if (it < cur.size) cur[it] else 0.0 }
-  }.toTypedArray()
-
-  val embeddings = embedGraph(padded)
-  val clusters = plot(graphs, embeddings, files)
-
-  File.createTempFile("clusters", ".svg")
-    .apply { writeText(clusters) }
-    .show()
+    File.createTempFile("clusters", ".html")
+      .apply { writeText("<html>$clusters</html>") }
+      .show()
+  }
 }
 
-private fun plot(graphs: List<LabeledGraph>,
-                 embeddings: Array<out DoubleArray>,
-                 names: List<String>): String {
+private fun List<DoubleArray>.padded(): Array<DoubleArray> =
+  map { it.size }.maxOrNull()!!.let { maxDim ->
+    map { cur ->
+      DoubleArray(maxDim) { if (it < cur.size) cur[it] else 0.0 }
+    }.toTypedArray()
+  }
+
+private fun plot(
+  messagePassingRounds: Int,
+  graphs: List<LabeledGraph>,
+  embeddings: Array<out DoubleArray>,
+  names: List<String>
+): String {
   val data = mapOf(
     "names" to names,
-    "sizes" to graphs.map { (it.size / 10).toString() },
+    "order" to graphs.map { (it.size / 10).toString() },
     "x" to embeddings.map { it[0] },
     "y" to embeddings.map { it[1] }
   )
-  var plot = lets_plot(data) { x = "x"; y = "y"; color="sizes" } +
-    ggsize(300, 250) + geom_point(shape = "names", size = 6) +
-    ggtitle("Graph Types by Structural Similarity")
-  plot = names.foldIndexed(plot) { i, plt, f -> plt +
-    geom_text(x = embeddings[i][0] + 5, y = embeddings[i][1] + 5, label = f, color= BLACK)
-  }
+  var plot = lets_plot(data) { x = "x"; y = "y"; color="order" } +
+    ggsize(300, 250) + geom_point(shape = "order", size = 6) +
+    ggtitle("Graph Types by Structural Similarity (t = $messagePassingRounds)") +
+    theme().axisLineX_blank().axisLineY_blank()
+      .axisTitleX_blank().axisTitleY_blank()
+      .axisTicksX_blank().axisTicksY_blank()
+      .axisTextX_blank().axisTextY_blank()
+//  plot = names.foldIndexed(plot) { i, plt, f -> plt +
+//    geom_text(x = embeddings[i][0] + 5, y = embeddings[i][1] + 5, label = f, color= BLACK)
+//  }
   return PlotSvgExport.buildSvgImageFromRawSpecs(
     plotSpec = plot.toSpec(), plotSize = DoubleVector(1000.0, 500.0)
   )
@@ -89,6 +95,7 @@ fun generateASTs(
 ): Pair<List<String>, List<ComputationGraph>> =
   heights.flatMap { height ->
     (0..numExps).map {
-      height.toString() to ExpressionGenerator(DoublePrecision, rand = Random(it)).randomBiTree(height).also { println(it.toString()) }
+      height.toString() to ExpressionGenerator(DoublePrecision, rand = Random(it))
+        .randomBiTree(height).also { println(it.toString()) }
     }.map { it.first to it.second.toGate().graph }.take(numExps).toList()
   }.unzip()
