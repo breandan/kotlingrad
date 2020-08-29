@@ -10,7 +10,6 @@ import edu.mcgill.kaliningraph.*
 import edu.mcgill.kaliningraph.circuits.ComputationGraph
 import edu.umontreal.kotlingrad.experimental.*
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color.Companion.BLACK
 import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.*
@@ -23,21 +22,17 @@ fun main() {
 //  val (files, graphs) = generateASTs()
   val (files, graphs) = mineASTs()
 
-//  for (i in 0..2)
-//    File.createTempFile("randomGraph$i", ".svg")
-//      .apply { writeText(graphs.random().html()); println(this.path) }
-
-  for(rounds in listOf(1, 2, 5, 10)) {
+  for (rounds in listOf(1, 2, 5, 10)) {
     val X = graphs.map { it.gnn(t = rounds).nz_values }.padded()
     val embeddings = embedGraph(X)
     val clusters = plot(rounds, graphs, embeddings, files)
 
     File.createTempFile("clusters", ".html")
-      .apply { writeText("<html>$clusters</html>") }
-      .show()
+      .apply { writeText("<html>$clusters</html>") }.show()
   }
 }
 
+// Pad length to a common vector length for TNSE
 private fun List<DoubleArray>.padded(): Array<DoubleArray> =
   map { it.size }.maxOrNull()!!.let { maxDim ->
     map { cur ->
@@ -57,13 +52,10 @@ private fun plot(
     "x" to embeddings.map { it[0] },
     "y" to embeddings.map { it[1] }
   )
-  var plot = lets_plot(data) { x = "x"; y = "y"; color="order" } +
+  var plot = lets_plot(data) { x = "x"; y = "y"; color = "order" } +
     ggsize(300, 250) + geom_point(shape = "order", size = 6) +
     ggtitle("Graph Types by Structural Similarity (t = $messagePassingRounds)") +
-    theme().axisLineX_blank().axisLineY_blank()
-      .axisTitleX_blank().axisTitleY_blank()
-      .axisTicksX_blank().axisTicksY_blank()
-      .axisTextX_blank().axisTextY_blank()
+    theme().axisLine_blank().axisTitle_blank().axisTicks_blank().axisText_blank()
 //  plot = names.foldIndexed(plot) { i, plt, f -> plt +
 //    geom_text(x = embeddings[i][0] + 5, y = embeddings[i][1] + 5, label = f, color= BLACK)
 //  }
@@ -78,7 +70,7 @@ private fun embedGraph(
   perplexity: Double = 10.0,
   tSne: TSne = ParallelBHTsne()
 ): Array<out DoubleArray> =
-  tSne.tsne(TSneUtils.buildConfig(X, outputDims, X.size - 1, perplexity, 1000))
+  tSne.tsne(TSneUtils.buildConfig(X, outputDims, X.size - 1, perplexity, 5000))
 
 fun mineASTs(
   dataDir: String = {}.javaClass.getResource("/datasets/python").path,
