@@ -35,13 +35,14 @@ Below we provide a partial reduction semantics for Kotlin∇.
 ```ebnf
                  v = a | ... | z | vv
                  c = 1 | ... | 9 | cc | c.c
-                 e = v | c | e ⊕ e | e ⊙ e | (e) | (e).d(v)
+                 e = v | c | e ⊕ e | e ⊙ e | (e) | (e).d(v) | e(e = e)
                  
-            e.d(v) = d(e) / d(v) | Derivative(e, v)
-           e₁ ⊕ e₂ = Plus(e₁, e₂)
-           e₁ ⊙ e₂ = Times(e₁, e₂)
+       d(e) / d(v) = e.d(v)
+      Plus(e₁, e₂) = e₁ ⊕ e₂
+     Times(e₁, e₂) = e₁ ⊙ e₂
            c₁ ⊕ c₂ = c₁ + c₂
            c₁ ⊙ c₂ = c₁ * c₂
+       e₁(e₂ = e₃) = e₁[e₂ → e₃]
            
     (e₁ ⊕ e₂).d(v) =    e₁.d(v)   ⊕   e₂.d(v)
     (e₁ ⊙ e₂).d(v) = e₁.d(v) ⊙ e₂ ⊕ e₁ ⊙ e₂.d(v)
