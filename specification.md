@@ -49,8 +49,8 @@ Below we provide a partial reduction semantics for Kotlin∇.
           v₁.d(v₂) = 0
             c.d(v) = 0
             
-(e₁ ⊕ e₂)[e₃ → e₄] = e₁.d(v)[e₃ → e₄] ⊕ e₂.d(v)[e₃ → e₄]
-(e₁ ⊙ e₂)[e₃ → e₄] = e₁.d(v)[e₃ → e₄] ⊕ e₂.d(v)[e₃ → e₄]
+(e₁ ⊕ e₂)[e₃ → e₄] = e₁[e₃ → e₄] ⊕ e₂[e₃ → e₄]
+(e₁ ⊙ e₂)[e₃ → e₄] = e₁[e₃ → e₄] ⊙ e₂[e₃ → e₄]
        e₁[e₁ → e₂] = e₂
        e₁[e₂ → e₃] = e₁
 ```
@@ -60,3 +60,4 @@ If we have two nonterminals with matching subscripts within in the same
 production, i.e. `eₘ`, `eₙ` where `m = n`, then `eₘ = eₙ` *must* be true.
 If we have two nonterminals with different subscripts in one production,
 i.e. `eₘ`, `eₙ` where `m ≠ n`, either `eₘ = eₙ` or `eₘ ≠ eₙ` may be true.
+Subscripts have no meaning across multiple productions.
