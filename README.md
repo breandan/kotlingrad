@@ -741,33 +741,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ## Grammar
 
-Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subject to change without notice.
-
-```ebnf
-       type = "Double" | "Float" | "Int" | "BigInteger" | "BigDouble";
-        nat = "1" | ... | "99";
-     output = "Fun<" type "Real>" | "VFun<" type "Real," nat ">" | "MFun<" type "Real," nat "," nat ">";
-        int = "0" | nat int;
-      float = int "." int;
-        num = type "(" int ")" | type "(" float ")";
-        var = "x" | "y" | "z" | "ONE" | "ZERO" | "E" | "Var()";
-     signOp = "+" | "-";
-      binOp = signOp | "*" | "/" | "pow";
-     trigOp = "sin" | "cos" | "tan" | "asin" | "acos" | "atan" | "asinh" | "acosh" | "atanh";
-    unaryOp = signOp | trigOp | "sqrt" | "log" | "ln" | "exp";
-        exp = var | num | unaryOp exp | var binOp exp | "(" exp ")";
-    expList = exp | exp "," expList;
-      linOp = signOp | "*" | " dot ";
-        vec = "Vec(" expList ")" | "Vec" nat "(" expList ")";
-     vecExp = vec | signOp vecExp | exp "*" vecExp | vec linOp vecExp | vecExp ".norm(" int ")";
-        mat = "Mat" nat "x" nat "(" expList ")";
-     matExp = mat | signOp matExp | exp linOp matExp | vecExp linOp matExp | mat linOp matExp;
-     anyExp = exp | vecExp | matExp | derivative | invocation;
-   bindings = exp " to " exp | exp " to " exp "," bindings;
- invocation = anyExp "(" bindings ")";
- derivative = "d(" anyExp ") / d(" exp ")" | anyExp ".d(" exp ")" | anyExp ".d(" expList ")";
-   gradient = exp ".grad()";
-```
+For a detailed grammar and reduction semantics, please see [the specification](specification.md).
 
 ## UML Diagram
 
