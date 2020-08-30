@@ -19,13 +19,15 @@ import java.io.File
 import kotlin.random.Random
 
 fun main() {
-//  val (files, graphs) = generateASTs()
-  val (files, graphs) = mineASTs()
+//  val (labels, graphs) = generateASTs()
+//  val (labels, graphs) = mineASTs()
+  val (labels, graphs) = generateDigraphs()
 
-  for (rounds in listOf(1, 2, 5, 10)) {
-    val X = graphs.map { it.gnn(t = rounds).nz_values }.padded()
+  val rounds = listOf(1)//, 2, 5, 10)
+  for (round in rounds) {
+    val X = graphs.map { it.gnn(t = round * 10).nz_values }.padded()
     val embeddings = embedGraph(X)
-    val clusters = plot(rounds, graphs, embeddings, files)
+    val clusters = plot(round, graphs, embeddings, labels)
 
     File.createTempFile("clusters", ".html")
       .apply { writeText("<html>$clusters</html>") }.show()
@@ -44,16 +46,15 @@ private fun plot(
   messagePassingRounds: Int,
   graphs: List<LabeledGraph>,
   embeddings: Array<out DoubleArray>,
-  names: List<String>
+  labels: List<String>
 ): String {
   val data = mapOf(
-    "names" to names,
-    "order" to graphs.map { (it.size / 10).toString() },
+    "labels" to labels,
     "x" to embeddings.map { it[0] },
     "y" to embeddings.map { it[1] }
   )
-  var plot = lets_plot(data) { x = "x"; y = "y"; color = "order" } +
-    ggsize(300, 250) + geom_point(shape = "order", size = 6) +
+  var plot = lets_plot(data) { x = "x"; y = "y"; color = "labels" } +
+    ggsize(300, 250) + geom_point(size = 6) +
     ggtitle("Graph Types by Structural Similarity (t = $messagePassingRounds)") +
     theme().axisLine_blank().axisTitle_blank().axisTicks_blank().axisText_blank()
 //  plot = names.foldIndexed(plot) { i, plt, f -> plt +
@@ -78,7 +79,7 @@ fun mineASTs(
 ): Pair<List<String>, List<LabeledGraph>> =
   File(dataDir).walk().filter { it.extension == "py" }
     .map { parser.parse(it.inputStream())!!.apply { setToken(it.nameWithoutExtension) } }
-    .map { it.getToken() to it.toKGraph() }
+    .map { it.toKGraph().let { (it.size / 10).toString() to it } }
     .toList().unzip()
 
 fun generateASTs(
@@ -87,7 +88,22 @@ fun generateASTs(
 ): Pair<List<String>, List<ComputationGraph>> =
   heights.flatMap { height ->
     (0..numExps).map {
-      height.toString() to ExpressionGenerator(DoublePrecision, rand = Random(it))
-        .randomBiTree(height).also { println(it.toString()) }
+      height.toString() to ExpressionGenerator(DoublePrecision, rand = Random(it)).randomBiTree(height)
     }.map { it.first to it.second.toGate().graph }.take(numExps).toList()
+  }.unzip()
+
+
+fun generateDigraphs(
+  heights: IntRange = 4..7,
+  degrees: IntRange = 2..5,
+  numExps: Int = 50,
+): Pair<List<String>, List<LabeledGraph>> =
+  heights.flatMap { height ->
+    degrees.flatMap { degree ->
+      (0..numExps).map { i ->
+        val graph: LabeledGraph = (1..height)
+          .fold(LabeledGraph(LGVertex("0"))) { it, _ -> it.attachRandomT(degree) }
+        "$degree / $height" to graph
+      }
+    }
   }.unzip()
