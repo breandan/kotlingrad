@@ -15,6 +15,7 @@ import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.label.ggtitle
+import org.ejml.kotlin.*
 import java.io.File
 import kotlin.random.Random
 
@@ -23,11 +24,11 @@ fun main() {
 //  val (labels, graphs) = mineASTs()
   val (labels, graphs) = generateDigraphs()
 
-  val rounds = listOf(1)//, 2, 5, 10)
+  val rounds = listOf(100)//, 2, 5, 10)
   for (round in rounds) {
-    val X = graphs.map { it.gnn(t = round * 10).nz_values }.padded()
+    val X = graphs.map { it.gnn(t = round) }.permute()
     val embeddings = embedGraph(X)
-    val clusters = plot(round, graphs, embeddings, labels)
+    val clusters = plot(round, embeddings, labels)
 
     File.createTempFile("clusters", ".html")
       .apply { writeText("<html>$clusters</html>") }.show()
@@ -35,16 +36,17 @@ fun main() {
 }
 
 // Pad length to a common vector length for TNSE
-private fun List<DoubleArray>.padded(): Array<DoubleArray> =
-  map { it.size }.maxOrNull()!!.let { maxDim ->
+private fun List<SpsMat>.permute(): Array<DoubleArray> =
+  map { it.nz_length }.maxOrNull()!!.let { maxDim ->
     map { cur ->
-      DoubleArray(maxDim) { if (it < cur.size) cur[it] else 0.0 }
+      val data = cur.toFDRM().getData()
+      val padded = DoubleArray(maxDim) { if (it < data.size) data[it] else 0.0 }
+      padded//.apply { shuffle(Random(0)) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString(",")) }
     }.toTypedArray()
   }
 
 private fun plot(
   messagePassingRounds: Int,
-  graphs: List<LabeledGraph>,
   embeddings: Array<out DoubleArray>,
   labels: List<String>
 ): String {
