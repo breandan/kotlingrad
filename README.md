@@ -745,7 +745,7 @@ For a detailed grammar and reduction semantics, please see [the specification](s
 
 ## UML Diagram
 
-![](samples/src/main/resources/uml_diagram.svg)
+[![](samples/src/main/resources/uml_diagram.svg)](https://raw.githubusercontent.com/breandan/kotlingrad/master/samples/src/main/resources/uml_diagram.svg)
 
 ## Comparison
 
