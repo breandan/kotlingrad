@@ -108,7 +108,7 @@ dependencies {
 [First install](https://github.com/kotlin/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the `jupyterInstall` task to install the library descriptor:
 
 ```
-./gradlew jupyterInstall [-Path=~/.jupyter_kotlin/libraries]
+./gradlew jupyterRun
 ```
 
 To access Kotlin∇'s notebook support, use the following line magic:

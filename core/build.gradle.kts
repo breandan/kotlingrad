@@ -6,7 +6,7 @@ dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("stdlib-jdk8"))
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("com.github.breandan:kaliningraph:0.1.0")
+  api("com.github.breandan:kaliningraph")
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
@@ -48,6 +48,7 @@ tasks {
 
   val jupyterInstall by registering(Copy::class) {
     dependsOn(genNotebookJSON)
+    dependsOn("publishToMavenLocal")
     val installPath = findProperty("ath") ?: installPathLocal
     doFirst { mkdir(installPath) }
     from(file("kotlingrad.json"))
@@ -62,6 +63,7 @@ val fatJar by tasks.creating(Jar::class) {
     attributes["Implementation-Title"] = "kotlingrad"
     attributes["Implementation-Version"] = archiveVersion
   }
+  setExcludes(listOf("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA"))
   from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
   with(tasks.jar.get() as CopySpec)
 }

@@ -8,6 +8,7 @@ fun main(args: Array<String>) =
   """{
   "link": "https://github.com/breandan/kotlingrad",
   "repositories": [
+    "*mavenLocal",
     "https://jitpack.io"
   ],
   "dependencies": [

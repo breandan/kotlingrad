@@ -1,5 +1,3 @@
-//import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
-
 include("core", "samples")
 includeBuild("kaliningraph") {
   dependencySubstitution {
@@ -7,14 +5,9 @@ includeBuild("kaliningraph") {
   }
 }
 
+project(":core").name = "kotlingrad"
+
 pluginManagement.repositories {
   mavenCentral()
   gradlePluginPortal()
 }
-
-//buildscript {
-//    repositories { gradlePluginPortal() }
-//    dependencies.classpath("de.fayard:dependencies:0.5.8")
-//}
-//
-//bootstrapRefreshVersionsAndDependencies()
