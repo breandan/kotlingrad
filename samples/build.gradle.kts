@@ -13,7 +13,7 @@ graal {
 }
 
 dependencies {
-  implementation(project(":core"))
+  implementation(project(":kotlingrad"))
   implementation(kotlin("stdlib-jdk8"))
 
   // Graphical libraries
@@ -34,6 +34,12 @@ tasks {
       main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
       classpath = sourceSets["main"].runtimeClasspath
     }
+  }
+
+  val jupyterRun by creating(Exec::class) {
+    dependsOn(":kotlingrad:jupyterInstall")
+    dependsOn(gradle.includedBuild("kaliningraph").task(":jupyterInstall"))
+    commandLine("jupyter", "notebook", "--notebook-dir=notebooks")
   }
 
   test {
