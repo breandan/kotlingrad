@@ -12,10 +12,10 @@ dependencies {
   implementation("ch.obermuhlner:big-math:2.3.0")
   implementation("org.jetbrains.bio:viktor:1.0.1")
 
-  val kmathVersion by extra { "0.1.4-dev-8" }
-  testImplementation("scientifik:kmath-core:$kmathVersion")
-  testImplementation("scientifik:kmath-ast:$kmathVersion")
-  testImplementation("scientifik:kmath-prob:$kmathVersion")
+  val kmathVersion by extra { "0.1.4" }
+  testImplementation("kscience.kmath:kmath-core:$kmathVersion")
+  testImplementation("kscience.kmath:kmath-ast:$kmathVersion")
+  testImplementation("kscience.kmath:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
 

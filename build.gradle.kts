@@ -13,7 +13,7 @@ allprojects {
     mavenCentral()
     jcenter()
     maven("https://jitpack.io")
-    maven("https://dl.bintray.com/mipt-npm/dev")
+    maven("https://dl.bintray.com/mipt-npm/scientifik")
     maven("https://dl.bintray.com/hotkeytlt/maven")
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
     maven("https://maven.jzy3d.org/releases")
