@@ -34,6 +34,10 @@ subprojects {
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
+  dependencies {
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+  }
+
   tasks {
     val jvmTarget = VERSION_1_8.toString()
     compileKotlin {
