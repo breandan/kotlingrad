@@ -4,7 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   idea
-  id("com.github.ben-manes.versions") version "0.31.0"
+  id("com.github.ben-manes.versions") version "0.33.0"
   kotlin("jvm") version "1.4.10" // Keep in sync with README
 }
 
