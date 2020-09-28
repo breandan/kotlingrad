@@ -12,7 +12,7 @@ dependencies {
   implementation("ch.obermuhlner:big-math:2.3.0")
   implementation("org.jetbrains.bio:viktor:1.0.1")
 
-  val kmathVersion by extra { "0.1.4" }
+  val kmathVersion by extra { "0.2.0-dev-2" }
   testImplementation("kscience.kmath:kmath-core:$kmathVersion")
   testImplementation("kscience.kmath:kmath-ast:$kmathVersion")
   testImplementation("kscience.kmath:kmath-prob:$kmathVersion")

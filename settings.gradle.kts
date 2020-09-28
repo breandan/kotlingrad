@@ -10,4 +10,5 @@ project(":core").name = "kotlingrad"
 pluginManagement.repositories {
   mavenCentral()
   gradlePluginPortal()
+  maven ("https://dl.bintray.com/kotlin/kotlin-eap")
 }
