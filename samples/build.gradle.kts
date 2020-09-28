@@ -1,11 +1,11 @@
 plugins {
   application
-  id("com.palantir.graal") version "0.6.0-74-g5306dc5"
+  id("com.palantir.graal") version "0.7.1-20-g113a84d"
 }
 
 val entrypoint = "edu.umontreal.kotlingrad.samples.HelloKotlingradKt"
 
-application.mainClassName = entrypoint
+application.mainClass.set(entrypoint)
 
 graal {
   mainClass(entrypoint)

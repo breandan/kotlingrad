@@ -5,7 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.33.0"
-  kotlin("jvm") version "1.4.10" // Keep in sync with README
+  kotlin("jvm") version "1.4.20-M1" // Keep in sync with README
 }
 
 allprojects {
@@ -13,12 +13,14 @@ allprojects {
     mavenCentral()
     jcenter()
     maven("https://jitpack.io")
-    maven("https://dl.bintray.com/mipt-npm/scientifik")
+    maven("https://dl.bintray.com/mipt-npm/dev")
     maven("https://dl.bintray.com/hotkeytlt/maven")
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
     maven("https://maven.jzy3d.org/releases")
     maven("https://jetbrains.bintray.com/lets-plot-maven")
 //    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    //Kotlin EAP
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
   }
 }
 

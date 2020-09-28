@@ -15,9 +15,9 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 //import org.tensorflow.ndarray.*
 //import org.tensorflow.ndarray.buffer.DataBuffers
-import scientifik.kmath.linear.*
-import scientifik.kmath.structures.*
-import scientifik.kmath.structures.Matrix
+import kscience.kmath.linear.*
+import kscience.kmath.structures.*
+import kscience.kmath.structures.Matrix
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
