@@ -8,7 +8,7 @@
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 
-Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) framework in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference in the language, most types may be safely omitted by the end user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) framework in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
 ## Table of contents
 
@@ -34,6 +34,7 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
   * [Algebraic data types](#algebraic-data-types)
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
+  * [Intermediate representation](#intermediate-representation)
   * [Property Delegation](#property-delegation)
   * [Coroutines](#coroutines)
 * [Formal grammar](#grammar)
@@ -171,7 +172,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 [hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
 [laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
 
-ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuous functions on ℝ.
+ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuously differentiable functions on ℝ.
 
 <sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var()`) or expressions (e.g. `x + 1`, `2 * x + y`).
 
@@ -419,7 +420,13 @@ PBT will search the input space for two numerical values `ẋ` and `ẏ`, which 
 
 ![](samples/src/main/resources/comparison.svg)
 
-Above, we [compare numerical errors](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/ADSDComparison.kt) for three types of computational differentiation: (1) finite precision automatic differentiation (AD), (2) finite precision symbolic differentiation (SD) and (3) finite precision finite differences (FD) against infinite precision symbolic differentiation (IP). AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. As expected, FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating point division.
+Above, we [compare numerical errors](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/ADSDComparison.kt) for three types of computational differentiation against infinite precision symbolic differentiation (IP):
+
+1. Finite precision automatic differentiation (AD)
+2. Finite precision symbolic differentiation (SD)
+3. Finite precision finite differences (FD)
+
+AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. As expected, FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating point division.
 
 There are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
@@ -687,6 +694,10 @@ val lm = l * m
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
 &lowast; Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
+
+#### Intermediate representation
+
+Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computaionally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic rootfinding, and supports features for visualization and debugging, e.g. in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
 
 #### Property Delegation
 
