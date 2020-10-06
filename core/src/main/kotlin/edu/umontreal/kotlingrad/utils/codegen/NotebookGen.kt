@@ -20,7 +20,7 @@ fun main(args: Array<String>) =
   ],
   "renderers": {
 ${allRecursiveSubclasses(SFun::class, VFun::class, MFun::class)
-    .map { "    \"${it.qualifiedName}\" : \"HTML(\$it.html())\"" }.joinToString(",\n")}
+    .joinToString(",\n") { "    \"${it.qualifiedName}\" : \"HTML(\$it.html())\"" }}
   }
 }
 """.let { File("${args[0]}/kotlingrad.json").writeText(it) }

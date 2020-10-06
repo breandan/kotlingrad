@@ -12,9 +12,7 @@ open class AdversarialGenerator(vararg val inputs: DoubleReal, val function: Fun
 
   //  override fun constants() = listOf(0.0) - excluding
   override fun random(): Sequence<DoubleReal> =
-    with(DoublePrecision) {
-      generateSequence(inputs[0], { it /*- alpha * function.grad().entries.first().value(it)*/ })
-    }
+    generateSequence(inputs[0], { it /*- alpha * function.grad().entries.first().value(it)*/ })
 
 //  override fun shrinker() = DoubleShrinker
 }

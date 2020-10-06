@@ -121,7 +121,7 @@ fun main() = with(DoublePrecision) {
   plotVsOracle(oracle, trainedMLP, x)
 }
 
-private fun DoublePrecision.plotVsOracle(oracle: (Double) -> Double, mlp: SFun<DReal>, x: SFun<DReal>) {
+private fun plotVsOracle(oracle: (Double) -> Double, mlp: SFun<DReal>, x: SFun<DReal>) {
   val t = ((-10.0..10.0) step 0.01).toList()
   mapOf(
     "x" to t,
@@ -130,7 +130,7 @@ private fun DoublePrecision.plotVsOracle(oracle: (Double) -> Double, mlp: SFun<D
   ).plot2D("Oracle vs. Model", "compare_outputs.svg")
 }
 
-fun DoublePrecision.validate(drawSample: () -> Pair<Double, Double>, mlp: SFun<DReal>, x: SFun<DReal>) {
+fun validate(drawSample: () -> Pair<Double, Double>, mlp: SFun<DReal>, x: SFun<DReal>) {
   val preds = mutableListOf<Double>()
   repeat(10) {
     val (X, Y) = drawSample()
