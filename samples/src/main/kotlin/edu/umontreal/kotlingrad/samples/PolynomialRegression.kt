@@ -138,7 +138,7 @@ private fun plotLoss(lossHistory: MutableList<Triple<Int, Double, Double>>) {
   ).plot2D("Loss", "polynomial_regression_loss.svg")
 }
 
-private fun DoublePrecision.plotVsOracle(oracle: SFun<DReal>, model: SFun<DReal>) {
+private fun plotVsOracle(oracle: SFun<DReal>, model: SFun<DReal>) {
   val t = ((-1.0..1.0) step 0.01).toList()
   mapOf("x" to t,
     "y" to t.map { oracle(it).toDouble() },

@@ -67,7 +67,7 @@ fun reify(n: Int): (State) -> Match = { state ->
 }
 
 fun reifyMatching(state: State): Match =
-  0.until(state.vars).map { state.walk(Term.Variable(it)).toMatch() }.filterNotNull()
+  0.until(state.vars).mapNotNull { state.walk(Term.Variable(it)).toMatch() }
 
 fun take(n: Int? = null, goal: Goal): List<State> {
   val states = goal(emptyState)

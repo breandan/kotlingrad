@@ -8,6 +8,12 @@ plugins {
   kotlin("jvm") version "1.4.20-M1" // Keep in sync with README
 }
 
+idea.module {
+  excludeDirs.add(file("latex"))
+  isDownloadJavadoc = true
+  isDownloadSources = true
+}
+
 allprojects {
   repositories {
     mavenCentral()
@@ -21,16 +27,9 @@ allprojects {
 //    maven("https://oss.sonatype.org/content/repositories/snapshots")
     //Kotlin EAP
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
+    maven("http://logicrunch.research.it.uu.se/maven/")
   }
-}
 
-idea.module {
-  excludeDirs.add(file("latex"))
-  isDownloadJavadoc = true
-  isDownloadSources = true
-}
-
-subprojects {
   group = "com.github.breandan"
   version = "0.3.5"
 
