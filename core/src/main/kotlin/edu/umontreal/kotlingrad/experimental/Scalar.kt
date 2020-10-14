@@ -13,6 +13,7 @@ import kotlin.reflect.KProperty
 
 interface Group<X: Group<X>> {
   operator fun unaryMinus(): X
+  operator fun unaryPlus(): X
   operator fun plus(addend: X): X
   operator fun minus(subtrahend: X): X = this + -subtrahend
 }
@@ -137,6 +138,7 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
     Monad.cos -> xs[0].cos()
     Monad.tan -> xs[0].tan()
     Monad.`-` -> -xs[0]
+    Monad.`+` -> xs[0]
     Dyad.`+` -> xs[0] + xs[1]
     Dyad.`*` -> xs[0] * xs[1]
     Dyad.pow  -> xs[0] pow xs[1]
@@ -169,6 +171,7 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
   override fun log(base: SFun<X>): SFun<X> = Log(this, base)
   override fun pow(exponent: SFun<X>): SFun<X> = Power(this, exponent)
   override fun unaryMinus(): SFun<X> = Negative(this)
+  override fun unaryPlus(): SFun<X> = this
   open fun sqrt(): SFun<X> = this pow (ONE / TWO)
 
   operator fun div(divisor: Number): SFun<X> = this / wrap(divisor)
