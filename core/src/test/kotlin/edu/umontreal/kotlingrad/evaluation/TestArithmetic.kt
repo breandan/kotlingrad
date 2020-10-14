@@ -32,6 +32,14 @@ class TestArithmetic: StringSpec({
   "test unary minus" {
     DoubleGenerator.assertAll { ẋ, ẏ ->
       (-y + x)(x to ẋ, y to ẏ) shouldBeAbout ẋ - ẏ
+      (y + -x)(x to ẋ, y to ẏ) shouldBeAbout ẏ - ẋ
+    }
+  }
+
+  "test unary plus" {
+    DoubleGenerator.assertAll { ẋ, ẏ ->
+      (+y + x)(x to ẋ, y to ẏ) shouldBeAbout ẋ + ẏ
+      (y + +x)(x to ẋ, y to ẏ) shouldBeAbout ẋ + ẏ
     }
   }
 
