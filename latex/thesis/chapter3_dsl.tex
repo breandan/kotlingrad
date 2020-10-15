@@ -479,7 +479,7 @@ Here, we specify a recursive type bound using a method known as F-bounded polymo
 %
 \begin{kotlinlisting}
 fun <T: Group<T>> cubed(t: T): T = t * t * t
-fun <X: Fun<X>> twiceExprCubed(e: X): X = cubed(e) + cubed(e)
+fun <T: Group<T>> twiceCubed(t: T): T = cubed(t) + cubed(t)
 \end{kotlinlisting}
 %
 Like \href{https://docs.python.org/3/reference/datamodel.html#special-method-names}{Python}, Kotlin supports overloading a limited set of operators, which are evaluated using a \href{https://kotlinlang.org/docs/reference/grammar.html#precedence}{fixed precedence}. In the current version of Kotlin$\nabla$, operators do not perform any computation, they simply construct a directed acyclic graph (\autoref{lst:edsl}) representing the symbolic expression. Expressions are only evaluated when invoked as a function.

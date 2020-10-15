@@ -479,7 +479,7 @@ Ici, nous spécifions un type récursif lié en utilisant une méthode connue so
 %
 \begin{kotlinlisting}
 fun <T: Group<T>> cubed(t: T): T = t * t * t
-fun <X: Fun<X>> twiceExprCubed(e: X): X = cubed(e) + cubed(e)
+fun <T: Group<T>> twiceCubed(t: T): T = cubed(t) + cubed(t)
 \end{kotlinlisting}
 %
 Comme \href{https://docs.python.org/3/reference/datamodel.html#special-method-names}{Python}, Kotlin supporte la surcharge d'un ensemble limité d'opérateurs, qui sont évalués en utilisant un \href{https://kotlinlang.org/docs/reference/grammar.html#precedence}{précédent fixe}. Dans la version actuelle de Kotlin$\nabla$, les opérateurs n'effectuent aucun calcul, ils construisent simplement un graphe acyclique dirigé (\autoref{lst:edsl}) représentant l'expression symbolique. Les expressions ne sont évaluées que lorsqu'elles sont invoquées sous forme de fonction.
