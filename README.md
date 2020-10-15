@@ -455,7 +455,7 @@ Here, we specify a recursive type bound using a method known as [F-bounded quant
 ```kotlin
 fun <T: Group<T>> cubed(t: T): T = t * t * t
 
-fun <E: Fun<E>> twiceFunCubed(e: E): E = cubed(e) + cubed(e)
+fun <T: Group<T>> twiceCubed(t: T): T = cubed(t) + cubed(t)
 ```
 
 Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin supports overloading a [limited set of operators](https://kotlinlang.org/docs/reference/operator-overloading.html), which are evaluated using a [fixed precedence](https://kotlinlang.org/docs/reference/grammar.html#precedence). In the current version of Kotlin∇, operators do not perform any computation, they simply construct a directed acyclic graph representing the symbolic expression. Expressions are only evaluated when invoked as a function.
