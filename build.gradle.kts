@@ -16,6 +16,7 @@ idea.module {
 
 allprojects {
   repositories {
+    maven("https://dl.bintray.com/kotlin/kotlin-eap")
     mavenCentral()
     jcenter()
     maven("https://jitpack.io")
@@ -24,10 +25,11 @@ allprojects {
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
     maven("https://maven.jzy3d.org/releases")
     maven("https://jetbrains.bintray.com/lets-plot-maven")
-//    maven("https://oss.sonatype.org/content/repositories/snapshots")
-    //Kotlin EAP
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
+
+    // Needed for Gradle Composite Build
+    // https://github.com/gradle/gradle/issues/947
     maven("http://logicrunch.research.it.uu.se/maven/")
+    maven("https://clojars.org/repo")
   }
 
   group = "com.github.breandan"

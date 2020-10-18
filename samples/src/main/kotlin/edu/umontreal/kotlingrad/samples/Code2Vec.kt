@@ -21,8 +21,8 @@ import kotlin.random.Random
 
 fun main() {
 //  val (labels, graphs) = generateASTs()
-//  val (labels, graphs) = mineASTs()
-  val (labels, graphs) = generateDigraphs()
+  val (labels, graphs) = mineASTs()
+//  val (labels, graphs) = generateDigraphs()
 
   val rounds = listOf(100)//, 2, 5, 10)
   for (round in rounds) {
@@ -80,8 +80,8 @@ fun mineASTs(
   parser: Parser<SimpleNode> = PythonParser()
 ): Pair<List<String>, List<LabeledGraph>> =
   File(dataDir).walk().filter { it.extension == "py" }
-    .map { parser.parse(it.inputStream())!!.apply { setToken(it.nameWithoutExtension) } }
-    .map { it.toKGraph().let { (it.size / 10).toString() to it } }
+    .map { parser.parseFile(it).root!!.apply { setToken(it.nameWithoutExtension) } }
+    .map { it.toKGraph().let { kgraph -> (kgraph.size / 10).toString() to kgraph } }
     .toList().unzip()
 
 fun generateASTs(
