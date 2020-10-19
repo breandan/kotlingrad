@@ -388,94 +388,36 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-abstract class Protocol<X: RealNumber<X, *>>(val prototype: X) {
-  val x = prototype.x
-  val y = prototype.y
-  val z = prototype.z
-  open val variables = listOf(x, y, z)
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y) = VConst<X, D1>(wrap(y0))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y) = VConst<X, D2>(wrap(y0), wrap(y1))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y) = VConst<X, D3>(wrap(y0), wrap(y1), wrap(y2))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y) = VConst<X, D4>(wrap(y0), wrap(y1), wrap(y2), wrap(y3))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y) = VConst<X, D5>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = VConst<X, D6>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y) = VConst<X, D7>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y) = VConst<X, D8>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7))
+fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = VConst<X, D9>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7), wrap(y8))
 
-  fun wrap(number: Number): SConst<X> = prototype.wrap(number)
-
-  fun <Y: Number> Vec(y0: Y) = VConst<X, D1>(wrap(y0))
-  fun <Y: Number> Vec(y0: Y, y1: Y) = VConst<X, D2>(wrap(y0), wrap(y1))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y) = VConst<X, D3>(wrap(y0), wrap(y1), wrap(y2))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y) = VConst<X, D4>(wrap(y0), wrap(y1), wrap(y2), wrap(y3))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y) = VConst<X, D5>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = VConst<X, D6>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y) = VConst<X, D7>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y) = VConst<X, D8>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7))
-  fun <Y: Number> Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = VConst<X, D9>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7), wrap(y8))
-
-  fun <Y: Number> Mat1x1(y0: Y) = MConst<X, D1, D1>(Vec(y0))
-  fun <Y: Number> Mat1x2(y0: Y, y1: Y) = MConst<X, D1, D2>(Vec(y0, y1))
-  fun <Y: Number> Mat1x3(y0: Y, y1: Y, y2: Y) = MConst<X, D1, D3>(Vec(y0, y1, y2))
-  fun <Y: Number> Mat2x1(y0: Y, y1: Y) = MConst<X, D2, D1>(Vec(y0), Vec(y1))
-  fun <Y: Number> Mat2x2(y0: Y, y1: Y, y2: Y, y3: Y) = MConst<X, D2, D2>(Vec(y0, y1), Vec(y2, y3))
-  fun <Y: Number> Mat2x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D2, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5))
-  fun <Y: Number> Mat3x1(y0: Y, y1: Y, y2: Y) = MConst<X, D3, D1>(Vec(y0), Vec(y1), Vec(y2))
-  fun <Y: Number> Mat3x2(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
-  fun <Y: Number> Mat3x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
-
-  inline fun <R: D1, C: D1, Y: Number> Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): MConst<X, R, C> =
-//    Mat(List(r.i) { row -> Vec(List(c.i) { col -> wrap(gen(row, col)) }) })
-    (0 until r.i).map { i -> (0 until c.i).map { j -> wrap(gen(i, j)) } }
-      .map { VConst<X, C>(*it.toTypedArray()) }.toTypedArray().let { MConst(*it) }
-
-  inline fun <reified E: D1> Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> =
-    Vec(List(e.i) { prototype.wrapOrError(gen(it)) as SFun<X> })
-
-  fun Var(name: String = "") = SVar(prototype, name)
-  fun Var2(name: String = "") = VVar<X, D2>(prototype,   D2 , name )
-  fun Var3(name: String = "") = VVar<X, D3>(prototype,   D3 , name )
-  fun Var4(name: String = "") = VVar<X, D4>(prototype,   D4 , name )
-  fun Var5(name: String = "") = VVar<X, D5>(prototype,   D5 , name )
-  fun Var6(name: String = "") = VVar<X, D6>(prototype,   D6 , name )
-  fun Var7(name: String = "") = VVar<X, D7>(prototype,   D7 , name )
-  fun Var8(name: String = "") = VVar<X, D8>(prototype,   D8 , name )
-  fun Var9(name: String = "") = VVar<X, D9>(prototype,   D9 , name )
-  fun Var10(name: String = "") = VVar<X, D10>(prototype, D10, name)
-  fun Var11(name: String = "") = VVar<X, D11>(prototype, D11, name)
-  fun Var12(name: String = "") = VVar<X, D12>(prototype, D12, name)
-  fun Var13(name: String = "") = VVar<X, D13>(prototype, D13, name)
-  fun Var14(name: String = "") = VVar<X, D14>(prototype, D14, name)
-  fun Var15(name: String = "") = VVar<X, D15>(prototype, D15, name)
-  fun Var16(name: String = "") = VVar<X, D16>(prototype, D16, name)
-  fun Var17(name: String = "") = VVar<X, D17>(prototype, D17, name)
-  fun Var18(name: String = "") = VVar<X, D18>(prototype, D18, name)
-  fun Var19(name: String = "") = VVar<X, D19>(prototype, D19, name)
-  fun Var20(name: String = "") = VVar<X, D20>(prototype, D20, name)
-  fun Var21(name: String = "") = VVar<X, D21>(prototype, D21, name)
-  fun Var22(name: String = "") = VVar<X, D22>(prototype, D22, name)
-  fun Var23(name: String = "") = VVar<X, D23>(prototype, D23, name)
-  fun Var24(name: String = "") = VVar<X, D24>(prototype, D24, name)
-  fun Var25(name: String = "") = VVar<X, D25>(prototype, D25, name)
-  fun Var26(name: String = "") = VVar<X, D26>(prototype, D26, name)
-  fun Var27(name: String = "") = VVar<X, D27>(prototype, D27, name)
-  fun Var28(name: String = "") = VVar<X, D28>(prototype, D28, name)
-  fun Var29(name: String = "") = VVar<X, D29>(prototype, D29, name)
-  fun Var30(name: String = "") = VVar<X, D30>(prototype, D30, name)
-
-  fun Var2x1(name: String = "") = MVar<X, D2, D1>(prototype, D2, D1, name)
-  fun Var2x2(name: String = "") = MVar<X, D2, D2>(prototype, D2, D2, name)
-  fun Var2x3(name: String = "") = MVar<X, D2, D3>(prototype, D2, D3, name)
-  fun Var3x1(name: String = "") = MVar<X, D3, D1>(prototype, D3, D1, name)
-  fun Var3x2(name: String = "") = MVar<X, D3, D2>(prototype, D3, D2, name)
-  fun Var3x3(name: String = "") = MVar<X, D3, D3>(prototype, D3, D3, name)
-  fun Var5x5(name: String = "") = MVar<X, D5, D5>(prototype, D5, D5, name)
-  fun Var9x9(name: String = "") = MVar<X, D9, D9>(prototype, D9, D9, name)
-}
+fun <X: RealNumber<X, *>, Y: Number> X.Mat1x1(y0: Y) = MConst<X, D1, D1>(Vec(y0))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat1x2(y0: Y, y1: Y) = MConst<X, D1, D2>(Vec(y0, y1))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat1x3(y0: Y, y1: Y, y2: Y) = MConst<X, D1, D3>(Vec(y0, y1, y2))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat2x1(y0: Y, y1: Y) = MConst<X, D2, D1>(Vec(y0), Vec(y1))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat2x2(y0: Y, y1: Y, y2: Y, y3: Y) = MConst<X, D2, D2>(Vec(y0, y1), Vec(y2, y3))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat2x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D2, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat3x1(y0: Y, y1: Y, y2: Y) = MConst<X, D3, D1>(Vec(y0), Vec(y1), Vec(y2))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat3x2(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
+fun <X: RealNumber<X, *>, Y: Number> X.Mat3x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
 
 fun <X: RealNumber<X, *>> X.Var(): SVar<X> = SVar(this)
 fun <E: D1, X: RealNumber<X, *>> X.Var(e: Nat<E>): VVar<X, E> = VVar(this, e)
 fun <R: D1, C: D1, X: RealNumber<X, *>> X.Var(r: Nat<R>, c: Nat<C>): MVar<X, R, C> = MVar(this, r, c)
 
-fun <R: D1, C: D1, Y: Number, X: RealNumber<X, *>> X.Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Y): Mat<X, R, C> =
+fun <R: D1, C: D1, X: RealNumber<X, *>> X.Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Any): Mat<X, R, C> =
   (0 until r.i).map { i -> (0 until c.i).map { j -> wrapOrError(gen(i, j)) as SFun<X> } }
     .map { Vec<X, C>(it) }.let { Mat(it) }
 
-fun <E: D1, Y: Number, X: RealNumber<X, *>> X.Vec(e: Nat<E>, gen: (Int) -> Y): Vec<X, E> =
-  List(e.i) { wrapOrError(gen(it)) as SFun<X> }.let{ Vec(it) }
-
+fun <E: D1, X: RealNumber<X, *>> X.Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> =
+  List(e.i) { wrapOrError(gen(it)) as SFun<X> }.let { Vec(it) }
 
 operator fun <X: RealNumber<X, *>> Number.times(multiplicand: SFun<X>) = multiplicand.wrap(this) * multiplicand
 operator fun <X: RealNumber<X, *>, E: D1> Number.times(multiplicand: VFun<X, E>): VFun<X, E> = multiplicand.wrap(this) * multiplicand
@@ -512,6 +454,3 @@ fun <T: SFun<T>> exp(exponent: SFun<T>) = exponent.exp()
 fun <T: SFun<T>> sqrt(radicand: SFun<T>) = radicand.sqrt()
 
 operator fun Number.invoke(n: Number) = this
-
-object DoublePrecision: Protocol<DReal>(DReal)
-object BigDecimalPrecision: Protocol<BDReal>(BDReal)

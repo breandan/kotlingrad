@@ -11,16 +11,14 @@ fun main() {
 //  val xs = (-1.0..1.0 step 0.0037).toList().toDoubleArray()
 
   // Arbitrary precision (defaults to 30 significant figures)
-  val bdvals = with(BigDecimalPrecision) {
-    val y = sin(x * cos(x * sin(x * cos(x))))
-    val `dy∕dx` = d(y) / d(x)
+  var y = sin(x * cos(x * sin(x * cos(x))))
+  var `dy∕dx` = d(y) / d(x)
 
-    xs.map { BigDecimal(it) }.run {
-      val f = map { y(x to it).toDouble() }
-      val df = map { `dy∕dx`(x to it).toDouble() }
-      arrayOf(f, df)
-    }.map { it.toDoubleArray() }.toTypedArray()
-  }
+  val bdvals =  xs.map { BigDecimal(it) }.run {
+    val f = map { y(x to it).toDouble() }
+    val df = map { `dy∕dx`(x to it).toDouble() }
+    arrayOf(f, df)
+  }.map { it.toDoubleArray() }.toTypedArray()
 
   // Automatic differentiation
   val advals = xs.run {
@@ -34,26 +32,23 @@ fun main() {
   }
 
   // Symbolic differentiation
-  val sdvals = with(DoublePrecision) {
-    val y = sin(x * cos(x * sin(x * cos(x))))
-    val `dy∕dx` = d(y) / d(x)
+
+  y = sin(x * cos(x * sin(x * cos(x))))
+  `dy∕dx` = d(y) / d(x)
 
 //    println("""
 //      y=$y
 //      dy/dx=$`dy∕dx`
 //      """.trimIndent())
 
-    xs.run { arrayOf(map { y(x to it).toDouble() }, map { `dy∕dx`(x to it).toDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
-  }
+  val sdvals =   xs.run { arrayOf(map { y(x to it).toDouble() }, map { `dy∕dx`(x to it).toDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
 
   // Numerical differentiation using centered differences
-  val fdvals = with(DoublePrecision) {
-    val y = sin(x * cos(x * sin(x * cos(x))))
-    val h = 7E-13
-    val `dy∕dx` = (y(x to x + h) - y(x to x - h)) / (2.0 * h)
+  y = sin(x * cos(x * sin(x * cos(x))))
+  val h = 7E-13
+  `dy∕dx` = (y(x to x + h) - y(x to x - h)) / (2.0 * h)
 
-    xs.run { arrayOf(map { y(x to it).toDouble() }, map { `dy∕dx`(x to it).toDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
-  }
+  val fdvals =  xs.run { arrayOf(map { y(x to it).toDouble() }, map { `dy∕dx`(x to it).toDouble() }) }.map { it.toDoubleArray() }.toTypedArray()
 
   val t = { i: Double, d: Double -> log10(abs(i - d)).let { if (it < -20) -20.0 else it } }
 
@@ -73,6 +68,6 @@ fun main() {
 
   val title = "f(x) = sin(sin(sin(x)))) / x + sin(x) * x + cos(x) + x"
   val labels = arrayOf("Δ(SD, IP), Δ(AD, IP)", "Δ(AD, SD)", "Δ(FD, IP)")
-   val data = (labels.zip(errors) + ("x" to xs)).toMap()
-   data.plot2D(title, "comparison.svg", 0.2)
+  val data = (labels.zip(errors) + ("x" to xs)).toMap()
+  data.plot2D(title, "comparison.svg", 0.2)
 }

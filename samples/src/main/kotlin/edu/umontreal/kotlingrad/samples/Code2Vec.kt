@@ -90,7 +90,7 @@ fun generateASTs(
 ): Pair<List<String>, List<ComputationGraph>> =
   heights.flatMap { height ->
     (0..numExps).map {
-      height.toString() to ExpressionGenerator(DoublePrecision, rand = Random(it)).randomBiTree(height)
+      height.toString() to ExpressionGenerator(DReal, rand = Random(it)).randomBiTree(height)
     }.map { it.first to it.second.toGate().graph }.take(numExps).toList()
   }.unzip()
 

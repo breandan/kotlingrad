@@ -5,7 +5,7 @@ import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow
 
-class TestExpressionGenerator<X : RealNumber<X, *>>(proto: Protocol<X>) :
+class TestExpressionGenerator<X : RealNumber<X, *>>(proto: X) :
   ExpressionGenerator<X>(proto, seededRandom), Gen<SFun<X>> {
   val constants = List(100) { proto.wrap(rand.nextDouble() * 10.0.pow(rand.nextInt(5))) }
 

@@ -2,7 +2,7 @@ package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
 
-fun main() = with(DoublePrecision) {
+fun main() {
   val f = x pow 2
   println(f(x to 3.0))
   println("f(x) = $f")

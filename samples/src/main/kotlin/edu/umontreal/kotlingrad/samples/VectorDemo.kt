@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.experimental.*
 
 @Suppress("DuplicatedCode")
-fun main() = with(DoublePrecision) {
+fun main() {
   val f = x pow 2
   println(f(x to 3.0))
   println("f(x) = $f")
@@ -20,14 +20,14 @@ fun main() = with(DoublePrecision) {
   val dh_dx = h.d(x)
   println("h'(x) = $dh_dx")
 
-  val vf0 = Vec(0, 0)
+  val vf0 = DReal.Vec(0, 0)
   println(vf0(1, 2))
   val vf1 = Vec(y + x, y * 2)
   println(vf1)
-  val bh = x * vf1 + Vec(1.0, 3.0)
+  val bh = x * vf1 + DReal.Vec(1.0, 3.0)
   println(bh.invoke(y to 2.0, x to 4.0))
   val vf2 = Vec(x, y)
-  val q = vf1 + vf2 + Vec(0.0, 0.0)
+  val q = vf1 + vf2 + DReal.Vec(0.0, 0.0)
   val z = q(x to 1.0).magnitude()(y to 2.0)
   println(z)
 

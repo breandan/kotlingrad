@@ -11,6 +11,10 @@ import javax.script.ScriptContext.ENGINE_SCOPE
 class TestSymbolic : StringSpec({
   val engine = ScriptEngineManager().getEngineByExtension("kts")
 
+  val x by SVar(DReal)
+  val y by SVar(DReal)
+  val z by SVar(DReal)
+
   fun ktf(f: SFun<DReal>, vararg kgBnds: Pair<SVar<DReal>, Number>) =
     engine.run {
       try {
@@ -23,12 +27,10 @@ class TestSymbolic : StringSpec({
       }
     }
 
-  with(DoublePrecision) {
-    "test symbolic evaluation" {
-      TestExpressionGenerator(DoublePrecision).assertAll(20) { f: SFun<DReal> ->
-        DoubleGenerator.assertAll(20) { ẋ, ẏ, ż ->
-          f(x to ẋ, y to ẏ, z to ż) shouldBeAbout ktf(f, x to ẋ, y to ẏ, z to ż)
-        }
+  "test symbolic evaluation" {
+    TestExpressionGenerator(DReal).assertAll(20) { f: SFun<DReal> ->
+      DoubleGenerator.assertAll(20) { ẋ, ẏ, ż ->
+        f(x to ẋ, y to ẏ, z to ż) shouldBeAbout ktf(f, x to ẋ, y to ẏ, z to ż)
       }
     }
   }
