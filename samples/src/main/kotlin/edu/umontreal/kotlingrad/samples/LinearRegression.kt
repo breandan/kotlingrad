@@ -27,7 +27,7 @@ fun main() = with(DoublePrecision) {
   var weightMap: Array<Pair<Fun<DReal>, Any>>
   val totalEpochs = 100
 
-  loss.saveToFile("test.dot")
+  loss.saveToFile("lossFun.dot")
 
   for(epochs in 1..(epochSize * totalEpochs)) {
     totalTime += System.nanoTime()
@@ -35,7 +35,7 @@ fun main() = with(DoublePrecision) {
     val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val targets = (batch * hiddenWeights).map { it + hiddenBias } + noise
 
-    val batchInputs: Array<Pair<Fun<DReal>, Any>> = arrayOf(input to batch, label to targets())
+    val batchInputs = arrayOf(input to batch, label to targets())
     val batchLoss = loss(*batchInputs)
 
     weightMap = arrayOf(theta to weightsNow, bias to biasNow)
