@@ -28,7 +28,7 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
     .flatMap { (k, v) -> k.vVars.zip((v as Mat<X, *, *>).rows) }.toMap() +
     vFunMap.filterKeys { it is VVar<X, *> } as Map<VVar<X, *>, VFun<X, *>>
   val sVarMap = (vVarMap.filterValues { it is Vec<X, *> }
-    .flatMap { (k, v) -> k.sVars.zip((v as Vec<X, *>).contents) }.toMap() +
+    .flatMap { (k, v) -> k.sVars.contents.zip((v as Vec<X, *>).contents) }.toMap() +
     sFunMap.filterKeys { it is SVar<X> && it.name != KG_IT }) as Map<SVar<X>, SFun<X>>
 
   val allVarMap = mVarMap + vVarMap + sVarMap

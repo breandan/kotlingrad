@@ -182,8 +182,9 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, overri
 
 open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
   override val proto: X,
-  override val name: String = "", val r: R, val c: C,
-  val vVars: List<VVar<X, C>> = List(r.i) { VVar(proto, "$name[$it]", c) },
+  val r: Nat<R>, val c: Nat<C>,
+  override val name: String = "",
+  val vVars: List<VVar<X, C>> = List(r.i) { VVar(proto, c, "$name[$it]") },
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
 ): Variable<X>, MFun<X, R, C>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to vMat))
@@ -191,7 +192,7 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
   override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    MVar(proto, name.ifEmpty { property.name }, r, c)
+    MVar(proto, r, c, name.ifEmpty { property.name })
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
@@ -218,8 +219,15 @@ open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): M
 }
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
-  MFun<X, R, C>(*rows.toTypedArray()), Iterable<VFun<X, C>> by rows, NilFun<X> {
+  MFun<X, R, C>(*rows.toTypedArray()), NilFun<X> {
   constructor(vararg rows: Vec<X, C>): this(rows.asList())
+//  constructor(prototype: X, r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Any): this(
+//    (0 until r.i).map { i ->
+//      (0 until c.i).map { j ->
+//        prototype.wrapOrError(gen(i, j)) as SFun<X>
+//      }
+//    }.map { Vec<X, C>(it) }
+//  )
 
   fun materialize() = rows.map { it.invoke() }.also { rows ->
     rows.indices.zip(rows).filter { it.second.size != numCols }.run {
@@ -233,7 +241,7 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
   val indices: List<Int> = rows.indices.toList()
   val cols: List<VFun<X, R>> by lazy { (0 until numCols).map { i -> Vec(materialize().map { it[i] }) } }
 
-  override fun sum() = reduce { acc, it -> acc + it }
+  override fun sum() = rows.reduce { acc, it -> acc + it }
 
   override val ᵀ: Mat<X, C, R> by lazy { Mat(cols) }
 
@@ -244,7 +252,7 @@ open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
 
   override fun plus(addend: MFun<X, R, C>): MFun<X, R, C> =
     when (addend) {
-      is Mat -> Mat(mapIndexed { i, r -> r + addend[i] })
+      is Mat -> Mat(rows.mapIndexed { i, r -> r + addend[i] })
       else -> super.plus(addend)
     }
 
