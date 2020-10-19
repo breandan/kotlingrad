@@ -4,17 +4,25 @@ import kotlin.random.Random
 
 // https://arxiv.org/pdf/1912.01412.pdf#appendix.C
 open class ExpressionGenerator<X: RealNumber<X, *>>(
-  proto: Protocol<X>, val rand: Random = Random(0),
+  val proto: X,
+  val rand: Random = Random(0),
   val operators: List<(SFun<X>, SFun<X>) -> SFun<X>> = listOf(
     { x: SFun<X>, y: SFun<X> -> x + y },
     { x: SFun<X>, y: SFun<X> -> x - y },
     { x: SFun<X>, y: SFun<X> -> x * y },
     { x: SFun<X>, y: SFun<X> -> x / y },
   )
-): Protocol<X>(proto.prototype) {
+) {
+  val x = proto.x
+  val y = proto.y
+  val z = proto.z
+  open val variables = listOf(x, y, z)
+
   infix fun SFun<X>.wildOp(that: SFun<X>) = operators.random(rand)(this, that)
 
+  fun randomConst(): SFun<X> = proto.wrap(rand.nextDouble(-1.0, 1.0))
+
   fun randomBiTree(height: Int = 5): SFun<X> =
-    if (height == 0) (listOf(wrap(rand.nextDouble(-1.0, 1.0))) + variables).random(rand)
+    if (height == 0) (variables + randomConst()).random()
     else randomBiTree(height - 1) wildOp randomBiTree(height - 1)
 }

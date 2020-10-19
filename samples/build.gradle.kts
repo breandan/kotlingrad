@@ -42,9 +42,6 @@ tasks {
   }
 
   test {
-    dependsOn(
-      "ScalarDemo", "MatrixDemo", "VectorDemo", "VariableCapture",
-      "LinearRegression"
-    )
+    dependsOn("ScalarDemo", "MatrixDemo", "VectorDemo", "VariableCapture")
   }
 }

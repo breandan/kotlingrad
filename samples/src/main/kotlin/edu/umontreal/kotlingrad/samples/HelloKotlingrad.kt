@@ -2,9 +2,9 @@ package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
 
-val x by SVar(DReal)
-val y by SVar(DReal)
-val z by SVar(DReal)
+val x by DReal.Var()
+val y by DReal.Var()
+val z by DReal.Var()
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 fun main() {

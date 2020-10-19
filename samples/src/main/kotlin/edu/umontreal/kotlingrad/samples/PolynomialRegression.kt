@@ -7,27 +7,25 @@ import kotlin.random.Random
 import kotlin.streams.toList
 
 fun main() {
-  with(DoublePrecision) {
-    (0..200).toList().parallelStream().map {
-      val startTime = System.currentTimeMillis()
-      val oracle = PolyGenerator.scaledRandomBiTree(5, maxX, maxY)
-      val (model, history) = learnExpression(oracle)
-      println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
-      Triple(oracle, model, history)
-    }.toList().also {
-      val lossHistoryCumulative = it.map { it.third }
-      lossHistoryCumulative.flatten().groupBy { it.first }.mapValues {
-        listOf(it.key,
-          it.value.map { it.second }.average(),
-          it.value.map { it.second }.standardError(),
-          it.value.map { it.third }.average(),
-          it.value.map { it.third }.standardError()
-        )
-      }.forEach { println(it.value.joinToString(", ")) }
-      val models = it.map { it.first to it.second }
-      ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
-      ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
-    }
+  (0..200).toList().parallelStream().map {
+    val startTime = System.currentTimeMillis()
+    val oracle = PolyGenerator.scaledRandomBiTree(5, maxX, maxY)
+    val (model, history) = learnExpression(oracle)
+    println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
+    Triple(oracle, model, history)
+  }.toList().also {
+    val lossHistoryCumulative = it.map { it.third }
+    lossHistoryCumulative.flatten().groupBy { it.first }.mapValues {
+      listOf(it.key,
+        it.value.map { it.second }.average(),
+        it.value.map { it.second }.standardError(),
+        it.value.map { it.third }.average(),
+        it.value.map { it.third }.standardError()
+      )
+    }.forEach { println(it.value.joinToString(", ")) }
+    val models = it.map { it.first to it.second }
+    ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
+    ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
   }
 }
 
@@ -41,10 +39,10 @@ const val epochSize = 5
 const val testSplit = 0.2 // Hold out test
 val batchSize = D30
 val paramSize = D30
-val theta by DoublePrecision.Var30()
-val xBatchIn by DoublePrecision.Var30()
-val label by DoublePrecision.Var30()
-val encodedInput = xBatchIn.sVars.vMap { row -> DoublePrecision.Vec(paramSize) { col -> row pow (col + 1) } }
+val theta by DReal.Var(D30)
+val xBatchIn by DReal.Var(D30)
+val label by DReal.Var(D30)
+val encodedInput = xBatchIn.sVars.vMap { row -> DReal.Vec(paramSize) { col -> row pow (col + 1) } }
 val pred = encodedInput * theta
 val squaredLoss = (pred - label).magnitude()
 val interval: Double = (maxX - maxX * testSplit) / batchSize.i
@@ -68,16 +66,16 @@ fun sampleTestInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
  * |__ __|   |__                     __| |__ __|
  */
 
-fun DoublePrecision.decodePolynomial(weights: Vec<DReal, D30>) =
+fun decodePolynomial(weights: Vec<DReal, D30>) =
   Vec(paramSize) { x pow (it + 1) } dot weights
 
-fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>, List<Triple<Int, Double, Double>>> {
-  var weightsNow = Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
+fun learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>, List<Triple<Int, Double, Double>>> {
+  var weightsNow = DReal.Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
 
   var totalTrainLoss = 0.0
   var totalTestLoss = 0.0
   var totalTime = 0L
-  var momentum = Vec(paramSize) { 0.0 }
+  var momentum = DReal.Vec(paramSize) { 0.0 }
   val lossHistory = mutableListOf<Triple<Int, Double, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
   var initialTrainLoss = 0.0
@@ -85,9 +83,9 @@ fun DoublePrecision.learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>
 
   for (epochs in 1..(epochSize * totalEpochs)) {
     totalTime += System.nanoTime()
-    val xTrainInputs = Vec(batchSize, ::sampleInputs)
+    val xTrainInputs = DReal.Vec(batchSize, ::sampleInputs)
     val trainTargets = xTrainInputs.map { targetEq(it) }
-    val xTestInputs = Vec(batchSize, ::sampleTestInputs)
+    val xTestInputs = DReal.Vec(batchSize, ::sampleTestInputs)
     val testTargets = xTestInputs.map { targetEq(it) }
 
     val trainInputs = arrayOf(xBatchIn to xTrainInputs, label to trainTargets())

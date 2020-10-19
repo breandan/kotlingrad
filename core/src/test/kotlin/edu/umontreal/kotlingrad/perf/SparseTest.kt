@@ -50,7 +50,7 @@ class SparseTest {
         "ND4J/N" to powBench(toNd4j()) { a, b -> a.mmul(b) },
         "APACHE" to powBench(toApacheCommons()) { a, b -> a.multiply(b) },
         "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b }.also { baseline = it },
-        "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as MConst<DReal, D100, D100> },
+        "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as Mat<DReal, D100, D100> },
         "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
           .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
         "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
@@ -73,7 +73,7 @@ class SparseTest {
         toApacheCommons().power(10) { a, b -> a.multiply(b) }.toKotlinArray().round(),
         toNd4j().power(10) { a, b -> a.mmul(b) }.toKotlinArray().round(),
         toViktor().power(10) { a, b -> a matmul b }.toKotlinArray().round(),
-        toKTGrad().power(10) { a, b -> (a * b) as MConst<DReal, D100, D100> }.toKotlinArray().round(),
+        toKTGrad().power(10) { a, b -> (a * b) as Mat<DReal, D100, D100> }.toKotlinArray().round(),
         toKMath().power(10) { a, b -> a.dot(b) }.toKotlinArray().round(),
         toTensor().power(10) { a, b -> a.dot(b) }.toKotlinArray().round()
       )
@@ -96,7 +96,7 @@ class SparseTest {
   fun Array<DoubleArray>.toApacheCommons() = MatrixUtils.createRealMatrix(this)
   fun Array<DoubleArray>.toViktor() = F64Array(size, size) { i, j -> this[i][j] }
   fun Array<DoubleArray>.toKMath() = VirtualMatrix(size, size) { i, j -> this[i][j] } as Matrix<Double>
-  fun Array<DoubleArray>.toKTGrad() = DoublePrecision.Mat(D100, D100) { a, b -> this@toKTGrad[a][b] }
+  fun Array<DoubleArray>.toKTGrad() = DReal.Mat(D100, D100) { a, b -> this@toKTGrad[a][b] }
   fun Array<DoubleArray>.toTensor() = Tensors.matrixDouble(this)
   fun Array<DoubleArray>.toNd4j() = Nd4j.create(this)
 //  fun Array<DoubleArray>.toTf4j() = NdArrays.ofDoubles(Shape.of(size.toLong(), size.toLong()))

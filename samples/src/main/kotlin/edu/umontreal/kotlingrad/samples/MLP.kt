@@ -26,27 +26,27 @@ fun <T: SFun<T>> mlp(
 fun Double.clip(maxUnsignedVal: Double = 3.0) =
   if (maxUnsignedVal < log10(absoluteValue).absoluteValue) sign * 10.0.pow(log10(absoluteValue)) else this
 
-fun main() = with(DoublePrecision) {
-  val x by Var()
-  val y by Var()
-  val p1v by Var5()
-  val p2v by Var5x5()
-  val p3v by Var5x5()
-  val p4v by Var5()
-  val b1 by Var5()
-  val b2 by Var5()
-  val b3 by Var5()
-  val b4 by Var5()
+fun main() {
+  val x by DReal.Var()
+  val y by DReal.Var()
+  val p1v by DReal.Var(D5)
+  val p2v by DReal.Var(D5, D5)
+  val p3v by DReal.Var(D5, D5)
+  val p4v by DReal.Var(D5)
+  val b1 by DReal.Var(D5)
+  val b2 by DReal.Var(D5)
+  val b3 by DReal.Var(D5)
+  val b4 by DReal.Var(D5)
 
   val rand = Random(1)
-  var w1: VFun<DReal, D5> = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
-  var w2: MFun<DReal, D5, D5> = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w3: MFun<DReal, D5, D5> = Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
-  var w4: VFun<DReal, D5> = Vec(D5) { rand.nextDouble(-0.6, 0.6) }
-  var v1: VFun<DReal, D5> = Vec(D5) { 0 }
-  var v2: VFun<DReal, D5> = Vec(D5) { 0 }
-  var v3: VFun<DReal, D5> = Vec(D5) { 0 }
-  var v4: VFun<DReal, D5> = Vec(D5) { 0 }
+  var w1: VFun<DReal, D5> = DReal.Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var w2: MFun<DReal, D5, D5> = DReal.Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w3: MFun<DReal, D5, D5> = DReal.Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
+  var w4: VFun<DReal, D5> = DReal.Vec(D5) { rand.nextDouble(-0.6, 0.6) }
+  var v1: VFun<DReal, D5> = DReal.Vec(D5) { 0 }
+  var v2: VFun<DReal, D5> = DReal.Vec(D5) { 0 }
+  var v3: VFun<DReal, D5> = DReal.Vec(D5) { 0 }
+  var v4: VFun<DReal, D5> = DReal.Vec(D5) { 0 }
 
   val oracle = { it: Double -> -(it / 10).pow(3) }//kotlin.math.sin(it/2.0) }//(it / 10).pow(2) }//-it / 10 + 1 }
   val drawSample = { rand.nextDouble(0.0, 10.0).let { it to oracle(it) } }
@@ -54,7 +54,7 @@ fun main() = with(DoublePrecision) {
 
   var epochs = 0
   val batchSize = 10
-  val α = wrap(0.01)
+  val α = DReal(0.01)
   val lossHistory = mutableListOf<Pair<Int, Double>>()
 
   mlp.show()
@@ -69,7 +69,7 @@ fun main() = with(DoublePrecision) {
 
     measureTimeMillis {
       var evalCount = 0
-      var batchLoss: SFun<DReal> = wrap(0)
+      var batchLoss: SFun<DReal> = DReal(0)
       do {
         val (X, Y) = drawSample()
         val sampleLoss = pow(mlp - Y, 2)

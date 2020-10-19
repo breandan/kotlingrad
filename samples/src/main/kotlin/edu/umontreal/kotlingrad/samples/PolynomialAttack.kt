@@ -6,16 +6,14 @@ import java.util.stream.Stream
 import kotlin.streams.toList
 
 fun main() {
-  with(DoublePrecision) {
-      (0..200).toList().parallelStream().map {
-        val startTime = System.currentTimeMillis()
-        val oracle = PolyGenerator.scaledRandomBiTree(5, maxX, maxY)
-        val (model, history) = learnExpression(oracle)
-//        println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
-        Triple(oracle, model, history)
-        testPolynomial(model, oracle)
-      }.toList()
-  }
+  (0..200).toList().parallelStream().map {
+    val startTime = System.currentTimeMillis()
+    val oracle = PolyGenerator.scaledRandomBiTree(5, maxX, maxY)
+    val (model, history) = learnExpression(oracle)
+//  println("Finished $it in ${(startTime - System.currentTimeMillis()) / 60000.0}s")
+    Triple(oracle, model, history)
+    testPolynomial(model, oracle)
+  }.toList()
 
   // TODO: Fun is not serializable?
 //  ObjectInputStream(FileInputStream("models.hist")).use {
@@ -30,7 +28,7 @@ val numSteps = 100
 val budget = batchSize.i * 100
 val testPoints = List(budget) { rand.nextDouble(-maxX, maxX) }.sorted()
 
-fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
+fun testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val trueErrors = testPoints.map { it to trueError(it).toDouble() }.toMap()
@@ -39,7 +37,7 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }
 
   val batches: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>> = trueErrors.entries.chunked(batchSize.i)
-    .map { chunk -> Vec(batchSize) { chunk[it].key } to Vec(batchSize) { targetEq(chunk[it].key).toDouble() } }
+    .map { chunk -> DReal.Vec(batchSize) { chunk[it].key } to DReal.Vec(batchSize) { targetEq(chunk[it].key).toDouble() } }
   val (newModel, surrogateLoss) = attack(weights, batches)
 
 //  println("Oracle vs. Model")
@@ -63,14 +61,14 @@ fun DoublePrecision.testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DRea
   }
 }
 
-private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>): Stream<Double> {
-  var particles = Vec(paramSize) { rand.nextDouble(-maxX, maxX) }
-  var momentum = Vec(paramSize) { 0.0 }
+private fun sampleAndAscend(surrogateLoss: SFun<DReal>): Stream<Double> {
+  var particles = DReal.Vec(paramSize) { rand.nextDouble(-maxX, maxX) }
+  var momentum = DReal.Vec(paramSize) { 0.0 }
   val dx = surrogateLoss.d(x).d(x)
 
   for (step in 0..1000) {
 //    particles.forEachIndexed { i, p -> println("step_$step, particle_$i, $p, ${surrogateLoss(p).toDouble()}") }
-    val dxs = particles.map { wrap(dx(it).toDouble()) }
+    val dxs = particles.map { DReal(dx(it).toDouble()) }
     momentum = (beta * momentum + (1 - beta) * dxs)()
     particles = (particles + 0.1 * momentum)()
   }
@@ -81,12 +79,12 @@ private fun DoublePrecision.sampleAndAscend(surrogateLoss: SFun<DReal>): Stream<
   return particles.contents.map { it.toDouble() }.stream()
 }
 
-private fun DoublePrecision.attack(
+private fun attack(
   weights: Vec<DReal, D30>, batches: List<Pair<Vec<DReal, D30>, Vec<DReal, D30>>>
 ): Pair<SFun<DReal>, SFun<DReal>> {
   val model = decodePolynomial(weights)
   var newWeights = weights
-  var update = Vec(paramSize) { 0.0 }
+  var update = DReal.Vec(paramSize) { 0.0 }
 
   batches.forEachIndexed { i, batch ->
     val batchInputs = arrayOf(xBatchIn to batch.first, label to batch.second)
