@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-  implementation(kotlin("stdlib"))
-  implementation(kotlin("stdlib-jdk8"))
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
   api("com.github.breandan:kaliningraph")
 

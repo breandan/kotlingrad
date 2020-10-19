@@ -30,7 +30,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
       }
     }
 
-  val mapInput by lazy { SVar(bindings.proto, "mapInput") }
+  val mapInput by lazy { SVar(bindings.proto, KG_IT) }
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
 
   open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
@@ -53,7 +53,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
     is MConst -> "${javaClass.name}()"
     is Mat -> "Mat(${rows.joinToString(", ")})"
     is MDerivative<X, *, *> -> "d($input) / d($vrb)"
-    is MVar -> "MVar($name)"
+    is MVar -> "$name: Var${r}x${c}"
     is MComposition -> "MComp($input)$bindings"
     is Jacobian -> "Jacobian($vrb)$bindings"
     else -> asString()
@@ -191,7 +191,7 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
   override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    MVar(proto, if (name.isEmpty()) property.name else name, r, c, vVars, vMat)
+    MVar(proto, name.ifEmpty { property.name }, r, c)
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
@@ -218,7 +218,7 @@ open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): M
 }
 
 open class Mat<X: SFun<X>, R: D1, C: D1>(open val rows: List<VFun<X, C>>):
-  MFun<X, R, C>(*rows.toTypedArray()), Iterable<VFun<X, C>> by rows {
+  MFun<X, R, C>(*rows.toTypedArray()), Iterable<VFun<X, C>> by rows, NilFun<X> {
   constructor(vararg rows: Vec<X, C>): this(rows.asList())
 
   fun materialize() = rows.map { it.invoke() }.also { rows ->

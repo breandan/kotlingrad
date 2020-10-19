@@ -10,6 +10,8 @@ import kotlin.reflect.KProperty
  * Vector function.
  */
 
+val KG_IT = "it"
+
 sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X> {
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
@@ -27,7 +29,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
       }
     }
 
-  val mapInput by lazy { SVar(proto, "mapInput") }
+  val mapInput by lazy { SVar(proto, KG_IT) }
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput), mapInput)
   open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput), mapInput)
 
@@ -61,7 +63,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
   override fun toString() = when (this) {
     is Vec -> contents.joinToString(", ", "[", "]")
     is VMap -> "$input.map { $ssMap }"
-    is VVar -> "VVar($name)"
+    is VVar -> "$name: Var$length"
     is VComposition -> "($input)$bindings"
     else -> asString()
   }
@@ -88,12 +90,16 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
+
 class VMap<X: SFun<X>, E: D1>(
-  override val input: VFun<X, E>,
+  val input: VFun<X, E>,
   val ssMap: SFun<X>, placeholder: SVar<X>
-): VFun<X, E>(input, ssMap), UnFun<X> {
+): VFun<X, E>(input, ssMap), BiFun<X> {
+  override val left = input
+  override val right = ssMap
   override val bindings: Bindings<X> = input.bindings + ssMap.bindings - placeholder
 }
+
 class VVMap<X: SFun<X>, R: D1, C: D1>(
   val input: VFun<X, R>,
   val svMap: VFun<X, C>,
@@ -170,7 +176,7 @@ open class VVar<X: SFun<X>, E: D1> constructor(
   override fun equals(other: Any?) = other is VVar<*, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    VVar(proto, if (name.isEmpty()) property.name else name, length, sVars)
+    VVar(proto, name.ifEmpty { property.name }, length)
 }
 
 class VComposition<X: SFun<X>, E: D1>(override val input: VFun<X, E>, arguments: Bindings<X> = Bindings(input.proto)): VFun<X, E>(input), UnFun<X> {
@@ -236,10 +242,11 @@ open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): 
 }
 
 open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
-  VFun<X, E>(*contents.toTypedArray()), Iterable<SFun<X>> by contents {
+  VFun<X, E>(*contents.toTypedArray()), Iterable<SFun<X>> by contents, PolyFun<X> {
   constructor(len: Nat<E>, gen: (Int) -> SFun<X>): this(List(len.i) { gen(it) })
   override val proto by lazy { contents.first().proto }
   val size = contents.size
+  override val inputs: Array<out Fun<X>> = contents.toTypedArray()
 
   operator fun get(index: Int) = contents[index]
 

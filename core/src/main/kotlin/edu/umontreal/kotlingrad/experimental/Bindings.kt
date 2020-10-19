@@ -15,7 +15,8 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
   fun zip(fns: List<Fun<X>>): Bindings<X> =
     (sVars.zip(fns.filterIsInstance<SFun<X>>()) +
       vVars.zip(fns.filterIsInstance<VFun<X, *>>()) +
-      mVars.zip(fns.filterIsInstance<MFun<X, *, *>>())).let { Bindings(*it.toTypedArray()) }
+      mVars.zip(fns.filterIsInstance<MFun<X, *, *>>()))
+      .let { Bindings(*it.toTypedArray()) }
 
   // Scalar, vector, and matrix "views" on untyped function map
   val sFunMap = filterInstancesOf<SFun<X>>()
@@ -28,7 +29,7 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
     vFunMap.filterKeys { it is VVar<X, *> } as Map<VVar<X, *>, VFun<X, *>>
   val sVarMap = (vVarMap.filterValues { it is Vec<X, *> }
     .flatMap { (k, v) -> k.sVars.zip((v as Vec<X, *>).contents) }.toMap() +
-    sFunMap.filterKeys { it is SVar<X> && it.name != "mapInput"}) as Map<SVar<X>, SFun<X>>
+    sFunMap.filterKeys { it is SVar<X> && it.name != KG_IT }) as Map<SVar<X>, SFun<X>>
 
   val allVarMap = mVarMap + vVarMap + sVarMap
 

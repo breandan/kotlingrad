@@ -48,7 +48,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
     is UnFun -> Gate(op, input.toGate())
     is BiFun -> Gate(op, left.toGate(), right.toGate())
     is PolyFun -> Gate(op, *inputs.map { it.toGate() }.toTypedArray())
-    else -> TODO()
+    else -> TODO(javaClass.name)
   }
 
   fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
@@ -73,16 +73,18 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
 
 // https://arxiv.org/pdf/2001.02209.pdf
 
-interface BiFun<X: SFun<X>>: PolyFun<X> {
-  val left: Fun<X>
-  val right: Fun<X>
-//  val fn: (Fun<X>, Fun<X>) -> Fun<X>
-}
+// Describes the arity of the operator
 
 interface NilFun<X: SFun<X>>: Fun<X>
 
 interface UnFun<X: SFun<X>>: PolyFun<X> {
   val input: Fun<X>
+}
+
+interface BiFun<X: SFun<X>>: PolyFun<X> {
+  val left: Fun<X>
+  val right: Fun<X>
+//  val fn: (Fun<X>, Fun<X>) -> Fun<X>
 }
 
 interface PolyFun<X: SFun<X>>: Fun<X> {
@@ -129,7 +131,7 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
   fun apply(op: Op): (SFun<X>) -> SFun<X> = when(op) {
     Dyad.`+` -> { it: SFun<X> -> this + it }
     Dyad.`*` -> { it: SFun<X> -> this * it }
-    else -> TODO()
+    else -> TODO(op.javaClass.name)
   }
 
   fun forwardApply(vararg xs: SFun<X>): SFun<X> = when(op) {
@@ -143,7 +145,7 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
     Dyad.`*` -> xs[0] * xs[1]
     Dyad.pow  -> xs[0] pow xs[1]
     Dyad.log  -> xs[0].log(xs[1])
-    else -> TODO()
+    else -> TODO(op.javaClass.name)
   }
 
   override fun invoke(newBindings: Bindings<X>): SFun<X> =

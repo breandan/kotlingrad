@@ -14,7 +14,6 @@ graal {
 
 dependencies {
   implementation(project(":kotlingrad"))
-  implementation(kotlin("stdlib-jdk8"))
 
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.2")
