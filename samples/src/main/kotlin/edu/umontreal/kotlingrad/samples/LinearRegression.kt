@@ -3,19 +3,19 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.experimental.*
 import java.util.*
 
-fun main() = with(DoublePrecision) {
+fun main() {
   val rand = Random(1)
-  val theta by Var2()
-  val input by Var3x2()
-  val bias by Var()
-  val label by Var3()
+  val theta by DReal.Var(D2)
+  val input by DReal.Var(D3, D2)
+  val bias by DReal.Var()
+  val label by DReal.Var(D3)
 
   val loss = ((input * theta).map { it + bias } - label).magnitude()
 
-  var weightsNow = Vec(D2) { rand.nextDouble() * 10 }
+  var weightsNow = DReal.Vec(D2) { rand.nextDouble() * 10 }
   var biasNow = rand.nextDouble() * 10
   println("Initial weights are: $weightsNow")
-  val hiddenWeights = Vec(D2) { rand.nextDouble() * 10 }
+  val hiddenWeights = DReal.Vec(D2) { rand.nextDouble() * 10 }
   val hiddenBias = rand.nextDouble() * 10
   println("Target coefficients: $hiddenWeights")
 
@@ -29,10 +29,10 @@ fun main() = with(DoublePrecision) {
 
   loss.saveToFile("lossFun.dot")
 
-  for(epochs in 1..(epochSize * totalEpochs)) {
+  for (epochs in 1..(epochSize * totalEpochs)) {
     totalTime += System.nanoTime()
-    val noise = Vec(D3) { rand.nextDouble() - 0.5 }
-    val batch = Mat(D3, D2) { _, _ -> rand.nextDouble() }
+    val noise = DReal.Vec(D3) { rand.nextDouble() - 0.5 }
+    val batch = DReal.Mat(D3, D2) { _, _ -> rand.nextDouble() }
     val targets = (batch * hiddenWeights).map { it + hiddenBias } + noise
 
     val batchInputs = arrayOf(input to batch, label to targets())
