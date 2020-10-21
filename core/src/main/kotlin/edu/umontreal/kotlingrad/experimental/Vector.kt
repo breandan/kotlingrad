@@ -10,9 +10,9 @@ import kotlin.reflect.KProperty
  * Vector function.
  */
 
-val KG_IT = "it"
 
-sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X> {
+sealed class VFun<X: SFun<X>, E: D1>
+constructor(override vararg val inputs: Fun<X>): Fun<X> {
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
     VComposition(this, newBindings)
@@ -29,6 +29,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
       }
     }
 
+  companion object { val KG_IT = "it" }
   val mapInput by lazy { SVar(proto, KG_IT) }
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput), mapInput)
   open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput), mapInput)
@@ -44,6 +45,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>) = Jacobian(this, VVar(bindings.proto, D7, "j7", Vec(v1, v2, v3, v4, v5, v6, v7)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>) = Jacobian(this, VVar(bindings.proto, D8, "j8", Vec(v1, v2, v3, v4, v5, v6, v7, v8)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>, v9: SVar<X>) = Jacobian(this, VVar(bindings.proto, D9, "j9", Vec(v1, v2, v3, v4, v5, v6, v7, v8, v9)))
+
   fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> = vars.map { it to d(it) }.toMap()
   fun grad(): Map<SVar<X>, VFun<X, E>> = bindings.sVars.map { it to d(it) }.toMap()
 
@@ -314,42 +316,41 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
  */
 
 interface Nat<T: D0> { val i: Int }
-sealed class INat<T: D0>: SConst<INat<T>>() {
-  abstract val i: Int
-
+sealed class INat<T: D0>(open val i: Int): SConst<INat<T>>(i) {
   override fun toString() = "$i"
 }
 
-sealed class D0(override val i: Int = 0):INat<D0>(){ companion object:  D0(), Nat<D0> }
-sealed class D1(override val i: Int = 1):    D0(i) { companion object:  D1(), Nat<D1> }
-sealed class D2(override val i: Int = 2):    D1(i) { companion object:  D2(), Nat<D2> }
-sealed class D3(override val i: Int = 3):    D2(i) { companion object:  D3(), Nat<D3> }
-sealed class D4(override val i: Int = 4):    D3(i) { companion object:  D4(), Nat<D4> }
-sealed class D5(override val i: Int = 5):    D4(i) { companion object:  D5(), Nat<D5> }
-sealed class D6(override val i: Int = 6):    D5(i) { companion object:  D6(), Nat<D6> }
-sealed class D7(override val i: Int = 7):    D6(i) { companion object:  D7(), Nat<D7> }
-sealed class D8(override val i: Int = 8):    D7(i) { companion object:  D8(), Nat<D8> }
-sealed class D9(override val i: Int = 9):    D8(i) { companion object:  D9(), Nat<D9> }
-sealed class D10(override val i: Int = 10):  D9(i) { companion object: D10(), Nat<D10> }
-sealed class D11(override val i: Int = 11): D10(i) { companion object: D11(), Nat<D11> }
-sealed class D12(override val i: Int = 12): D11(i) { companion object: D12(), Nat<D12> }
-sealed class D13(override val i: Int = 13): D12(i) { companion object: D13(), Nat<D13> }
-sealed class D14(override val i: Int = 14): D13(i) { companion object: D14(), Nat<D14> }
-sealed class D15(override val i: Int = 15): D14(i) { companion object: D15(), Nat<D15> }
-sealed class D16(override val i: Int = 16): D15(i) { companion object: D16(), Nat<D16> }
-sealed class D17(override val i: Int = 17): D16(i) { companion object: D17(), Nat<D17> }
-sealed class D18(override val i: Int = 18): D17(i) { companion object: D18(), Nat<D18> }
-sealed class D19(override val i: Int = 19): D18(i) { companion object: D19(), Nat<D19> }
-sealed class D20(override val i: Int = 20): D19(i) { companion object: D20(), Nat<D20> }
-sealed class D21(override val i: Int = 21): D20(i) { companion object: D21(), Nat<D21> }
-sealed class D22(override val i: Int = 22): D21(i) { companion object: D22(), Nat<D22> }
-sealed class D23(override val i: Int = 23): D22(i) { companion object: D23(), Nat<D23> }
-sealed class D24(override val i: Int = 24): D23(i) { companion object: D24(), Nat<D24> }
-sealed class D25(override val i: Int = 25): D24(i) { companion object: D25(), Nat<D25> }
-sealed class D26(override val i: Int = 26): D25(i) { companion object: D26(), Nat<D26> }
-sealed class D27(override val i: Int = 27): D26(i) { companion object: D27(), Nat<D27> }
-sealed class D28(override val i: Int = 28): D27(i) { companion object: D28(), Nat<D28> }
-sealed class D29(override val i: Int = 29): D28(i) { companion object: D29(), Nat<D29> }
-sealed class D30(override val i: Int = 30): D29(i) { companion object: D30(), Nat<D30> }
-sealed class D50(override val i: Int = 50): D30(i) { companion object: D50(), Nat<D50> }
+// TODO: Add type level wildcard?
+sealed class D0(override val i: Int = 0):INat<D0>(i) { companion object:  D0(), Nat<D0> }
+sealed class D1(override val i: Int = 1):      D0(i) { companion object:  D1(), Nat<D1> }
+sealed class D2(override val i: Int = 2):      D1(i) { companion object:  D2(), Nat<D2> }
+sealed class D3(override val i: Int = 3):      D2(i) { companion object:  D3(), Nat<D3> }
+sealed class D4(override val i: Int = 4):      D3(i) { companion object:  D4(), Nat<D4> }
+sealed class D5(override val i: Int = 5):      D4(i) { companion object:  D5(), Nat<D5> }
+sealed class D6(override val i: Int = 6):      D5(i) { companion object:  D6(), Nat<D6> }
+sealed class D7(override val i: Int = 7):      D6(i) { companion object:  D7(), Nat<D7> }
+sealed class D8(override val i: Int = 8):      D7(i) { companion object:  D8(), Nat<D8> }
+sealed class D9(override val i: Int = 9):      D8(i) { companion object:  D9(), Nat<D9> }
+sealed class D10(override val i: Int = 10):    D9(i) { companion object: D10(), Nat<D10> }
+sealed class D11(override val i: Int = 11):   D10(i) { companion object: D11(), Nat<D11> }
+sealed class D12(override val i: Int = 12):   D11(i) { companion object: D12(), Nat<D12> }
+sealed class D13(override val i: Int = 13):   D12(i) { companion object: D13(), Nat<D13> }
+sealed class D14(override val i: Int = 14):   D13(i) { companion object: D14(), Nat<D14> }
+sealed class D15(override val i: Int = 15):   D14(i) { companion object: D15(), Nat<D15> }
+sealed class D16(override val i: Int = 16):   D15(i) { companion object: D16(), Nat<D16> }
+sealed class D17(override val i: Int = 17):   D16(i) { companion object: D17(), Nat<D17> }
+sealed class D18(override val i: Int = 18):   D17(i) { companion object: D18(), Nat<D18> }
+sealed class D19(override val i: Int = 19):   D18(i) { companion object: D19(), Nat<D19> }
+sealed class D20(override val i: Int = 20):   D19(i) { companion object: D20(), Nat<D20> }
+sealed class D21(override val i: Int = 21):   D20(i) { companion object: D21(), Nat<D21> }
+sealed class D22(override val i: Int = 22):   D21(i) { companion object: D22(), Nat<D22> }
+sealed class D23(override val i: Int = 23):   D22(i) { companion object: D23(), Nat<D23> }
+sealed class D24(override val i: Int = 24):   D23(i) { companion object: D24(), Nat<D24> }
+sealed class D25(override val i: Int = 25):   D24(i) { companion object: D25(), Nat<D25> }
+sealed class D26(override val i: Int = 26):   D25(i) { companion object: D26(), Nat<D26> }
+sealed class D27(override val i: Int = 27):   D26(i) { companion object: D27(), Nat<D27> }
+sealed class D28(override val i: Int = 28):   D27(i) { companion object: D28(), Nat<D28> }
+sealed class D29(override val i: Int = 29):   D28(i) { companion object: D29(), Nat<D29> }
+sealed class D30(override val i: Int = 30):   D29(i) { companion object: D30(), Nat<D30> }
+sealed class D50(override val i: Int = 50):   D30(i) { companion object: D50(), Nat<D50> }
 sealed class D100(override val i: Int = 100): D50(i) { companion object: D100(), Nat<D100> }

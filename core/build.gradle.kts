@@ -28,6 +28,9 @@ dependencies {
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
 
   // Property-based testing
+//  testImplementation("io.kotest:kotest-runner-junit5:4.3.0")
+//  testImplementation("io.kotest:kotest-assertions-core:4.3.0")
+//  testImplementation("io.kotest:kotest-property:4.3.0")
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
   testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
 

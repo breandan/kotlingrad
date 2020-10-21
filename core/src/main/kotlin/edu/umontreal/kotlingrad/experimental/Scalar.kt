@@ -109,11 +109,12 @@ interface Constant<X: SFun<X>>: Fun<X>, NilFun<X>
  * TODO: Implement proper monad like [java.util.function.Function] or [Function]
  */
 
-sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
+sealed class SFun<X: SFun<X>>
+constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   val ZERO: Special<X> by lazy { Zero() }
-  val ONE: Special<X> by lazy { One() }
-  val TWO: Special<X> by lazy { Two() }
-  val E: Special<X> by lazy { E<X>() }
+  val ONE : Special<X> by lazy { One()  }
+  val TWO : Special<X> by lazy { Two()  }
+  val E   : Special<X> by lazy { E<X>() }
 
   val x by lazy { SVar(proto, "x") }
   val y by lazy { SVar(proto, "y") }
@@ -125,8 +126,12 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
   open operator fun <E: D1> times(multiplicand: VFun<X, E>): VFun<X, E> = SVProd(this, multiplicand)
   open operator fun <R: D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
-  // TODO: Paramaterize OP instead of using subtyping
+  /**
+   * TODO: Paramaterize operator instead of using subtyping, see [Gate]
+   */
+
   class AOP<X: SFun<X>>(val op: Op, val of: (Fun<X>) -> SFun<X>)
+
   // TODO: Implement proper curry
   fun apply(op: Op): (SFun<X>) -> SFun<X> = when(op) {
     Dyad.`+` -> { it: SFun<X> -> this + it }
@@ -149,8 +154,9 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
   }
 
   override fun invoke(newBindings: Bindings<X>): SFun<X> =
-    SComposition(this, newBindings)
-      .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
+    SComposition(this, newBindings).run {
+      if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this
+    }
 
   operator fun invoke(): SFun<X> = SComposition(this).evaluate
 
@@ -182,11 +188,14 @@ sealed class SFun<X: SFun<X>> constructor(override vararg val inputs: Fun<X>): P
   operator fun times(multiplicand: Number): SFun<X> = this * wrap(multiplicand)
   infix fun pow(exp: Number): SFun<X> = this pow wrap(exp)
 
-  override fun toString() =  when(this) {
+  override fun toString() = when (this) {
     is SVar -> name
     is SComposition -> "($input)$bindings"
     else -> asString()
   }
+
+  // TODO: Implement symbolic dis/unification
+  override fun equals(other: Any?) = super.equals(other)
 
   override val op: Op = when (this) {
     is Sine -> Monad.sin
@@ -249,7 +258,6 @@ class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar
   }
 }
 
-// TODO: Unit test this data structure
 class SComposition<X : SFun<X>>(
   override val input: SFun<X>,
   arguments: Bindings<X> = Bindings(input.proto)
@@ -293,15 +301,13 @@ class SVar<X: SFun<X>>(override val proto: X, override val name: String = ""): V
     SVar(proto, if (name.isEmpty()) property.name else name)
 }
 
-open class SConst<X: SFun<X>> constructor(open val value: Number? = null): SFun<X>(), Constant<X> {
+open class SConst<X: SFun<X>> constructor(open val value: Number): SFun<X>(), Constant<X> {
   override fun toString() = value.toString()
-  open val doubleValue: Double = value?.toDouble() ?: when (this) {
-    is Zero -> 0.0
-    is One -> 1.0
-    is Two -> 2.0
-    is E -> kotlin.math.E
-    else -> Double.NaN
-  }
+  override fun equals(other: Any?) =
+    if (other is SConst<*>) value == other.value else super.equals(other)
+  override fun hashCode() = value.hashCode()
+
+  open val doubleValue: Double by lazy { value.toDouble() }
 
   override fun <E: D1> times(multiplicand: VFun<X, E>): VFun<X, E> =
     when (multiplicand) {
@@ -316,10 +322,13 @@ open class SConst<X: SFun<X>> constructor(open val value: Number? = null): SFun<
       else -> super.times(multiplicand)
     }
 
+  // TODO: Think more carefully about how to do this for other number systems.
+  // Might need to push down to implementation when trigonometry is undefined.
   override fun sin() = wrap(sin(doubleValue))
   override fun cos() = wrap(cos(doubleValue))
   override fun tan() = wrap(tan(doubleValue))
   override fun sqrt() = wrap(sqrt(doubleValue))
+
   override fun unaryMinus() = wrap(-doubleValue)
 
   /**
@@ -347,27 +356,38 @@ open class SConst<X: SFun<X>> constructor(open val value: Number? = null): SFun<
   }
 }
 
-sealed class Special<X: SFun<X>>: SConst<X>() {
+sealed class Special<X: SFun<X>>(override val value: Number): SConst<X>(value) {
   override fun toString() = javaClass.simpleName
-  override fun equals(other: Any?) =
-    if (this === other) true else javaClass == other?.javaClass
-
-  override fun hashCode(): Int = when (this) {
-    is Zero -> 0
-    is One -> 1
-    is Two -> 2
-    is E -> 3
-  }
 }
 
-class Zero<X: SFun<X>>: Special<X>()
-class One<X: SFun<X>>: Special<X>()
-class Two<X: SFun<X>>: Special<X>()
-class E<X: SFun<X>>: Special<X>()
+class Zero<X: SFun<X>>: Special<X>(0.0)
+class One<X: SFun<X>>: Special<X>(1.0)
+class Two<X: SFun<X>>: Special<X>(2.0)
+class E<X: SFun<X>>: Special<X>(E)
 
-abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y): SConst<X>() {
-  override fun toString() = value.toString()// "${javaClass.name.substringAfterLast(".").substringBefore("$")}($value)"
+abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y): SConst<X>(value) {
+  override fun toString() = value.toString()
   abstract override fun wrap(number: Number): SConst<X>
+
+  fun <Z: Number> Vec(y0: Z) = VConst<X, D1>(wrap(y0))
+  fun <Z: Number> Vec(y0: Z, y1: Z) = VConst<X, D2>(wrap(y0), wrap(y1))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z) = VConst<X, D3>(wrap(y0), wrap(y1), wrap(y2))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z) = VConst<X, D4>(wrap(y0), wrap(y1), wrap(y2), wrap(y3))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z) = VConst<X, D5>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z) = VConst<X, D6>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z) = VConst<X, D7>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z, y7: Z) = VConst<X, D8>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7))
+  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z, y7: Z, y8: Z) = VConst<X, D9>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7), wrap(y8))
+
+  fun <Z: Number> Mat1x1(y0: Z) = MConst<X, D1, D1>(Vec(y0))
+  fun <Z: Number> Mat1x2(y0: Z, y1: Z) = MConst<X, D1, D2>(Vec(y0, y1))
+  fun <Z: Number> Mat1x3(y0: Z, y1: Z, y2: Z) = MConst<X, D1, D3>(Vec(y0, y1, y2))
+  fun <Z: Number> Mat2x1(y0: Z, y1: Z) = MConst<X, D2, D1>(Vec(y0), Vec(y1))
+  fun <Z: Number> Mat2x2(y0: Z, y1: Z, y2: Z, y3: Z) = MConst<X, D2, D2>(Vec(y0, y1), Vec(y2, y3))
+  fun <Z: Number> Mat2x3(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z) = MConst<X, D2, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5))
+  fun <Z: Number> Mat3x1(y0: Z, y1: Z, y2: Z) = MConst<X, D3, D1>(Vec(y0), Vec(y1), Vec(y2))
+  fun <Z: Number> Mat3x2(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
+  fun <Z: Number> Mat3x3(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z, y7: Z, y8: Z) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
 
   override val doubleValue: Double by lazy {
     when (this) {
@@ -388,26 +408,6 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y) = VConst<X, D1>(wrap(y0))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y) = VConst<X, D2>(wrap(y0), wrap(y1))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y) = VConst<X, D3>(wrap(y0), wrap(y1), wrap(y2))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y) = VConst<X, D4>(wrap(y0), wrap(y1), wrap(y2), wrap(y3))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y) = VConst<X, D5>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = VConst<X, D6>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y) = VConst<X, D7>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y) = VConst<X, D8>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7))
-fun <X: RealNumber<X, *>, Y: Number> X.Vec(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = VConst<X, D9>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7), wrap(y8))
-
-fun <X: RealNumber<X, *>, Y: Number> X.Mat1x1(y0: Y) = MConst<X, D1, D1>(Vec(y0))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat1x2(y0: Y, y1: Y) = MConst<X, D1, D2>(Vec(y0, y1))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat1x3(y0: Y, y1: Y, y2: Y) = MConst<X, D1, D3>(Vec(y0, y1, y2))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat2x1(y0: Y, y1: Y) = MConst<X, D2, D1>(Vec(y0), Vec(y1))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat2x2(y0: Y, y1: Y, y2: Y, y3: Y) = MConst<X, D2, D2>(Vec(y0, y1), Vec(y2, y3))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat2x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D2, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat3x1(y0: Y, y1: Y, y2: Y) = MConst<X, D3, D1>(Vec(y0), Vec(y1), Vec(y2))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat3x2(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
-fun <X: RealNumber<X, *>, Y: Number> X.Mat3x3(y0: Y, y1: Y, y2: Y, y3: Y, y4: Y, y5: Y, y6: Y, y7: Y, y8: Y) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
-
 fun <X: RealNumber<X, *>> X.Var(): SVar<X> = SVar(this)
 fun <E: D1, X: RealNumber<X, *>> X.Var(e: Nat<E>): VVar<X, E> = VVar(this, e)
 fun <R: D1, C: D1, X: RealNumber<X, *>> X.Var(r: Nat<R>, c: Nat<C>): MVar<X, R, C> = MVar(this, r, c)
@@ -427,8 +427,7 @@ operator fun <X: RealNumber<X, *>> Number.plus(addend: SFun<X>) = addend.wrap(th
 operator fun <X: RealNumber<X, *>> Number.minus(subtrahend: SFun<X>) = subtrahend.wrap(this) - subtrahend
 
 fun <X: RealNumber<X, *>> Number.pow(exp: SFun<X>) = exp.wrap(this) pow exp
-@JvmName("prefixPowNum") fun <X: RealNumber<X, *>> pow(base: SFun<X>, exp: Number) = base pow base.wrap(exp)
-@JvmName("prefixPowFun") fun <X: RealNumber<X, *>> pow(base: Number, exp: SFun<X>) = exp.wrap(base) pow exp
+fun <X: RealNumber<X, *>> pow(base: SFun<X>, exp: Number) = base pow base.wrap(exp)
 
 fun <X: RealNumber<X, *>> SFun<X>.toDouble() =
   try {
