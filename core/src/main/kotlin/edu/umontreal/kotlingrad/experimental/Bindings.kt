@@ -1,5 +1,7 @@
 package edu.umontreal.kotlingrad.experimental
 
+import edu.umontreal.kotlingrad.experimental.VFun.Companion.KG_IT
+
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
 data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
@@ -51,9 +53,9 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
   operator fun minus(func: Fun<X>) = Bindings(fMap.filterNot { it.key == func })
 
   // Scalar, vector, and matrix variables
-  val sVars: Set<SVar<X>> = sVarMap.keys
-  val vVars: Set<VVar<X, *>> = vVarMap.keys
-  val mVars: Set<MVar<X, *, *>> = mVarMap.keys
+  val sVars: Set<SVar<X>> = sVarMap.keys.toSortedSet { v1, v2 -> v1.name.compareTo(v2.name) }
+  val vVars: Set<VVar<X, *>> = vVarMap.keys.toSortedSet { v1, v2 -> v1.name.compareTo(v2.name) }
+  val mVars: Set<MVar<X, *, *>> = mVarMap.keys.toSortedSet { v1, v2 -> v1.name.compareTo(v2.name) }
   val allVars: Set<Variable<X>> = sVars + vVars + mVars
   val allFreeVariables by lazy { allVarMap.filterValues { containsFreeVariable(it) } }
   val allBoundVariables: Map<Variable<X>, Fun<X>> by lazy { allVarMap.filterValues { !containsFreeVariable(it) } }
