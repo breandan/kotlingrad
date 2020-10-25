@@ -2,6 +2,25 @@
 
 Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subject to change without notice.
 
+## Numerical types:
+
+```ebnf
+  𝔹 = "True | "False"
+  𝔻 = "1" | ... | "9"
+  ℕ = 𝔻 | 𝔻"0"  | ℕ𝔻
+  ℤ = "0" | ℕ   | -ℕ
+  ℚ = ℕ | ℤ"/"ℕ
+  ℝ = ℕ | ℕ"."ℕ | "-"ℝ
+  ℂ = ℝ + ℝi
+  ℍ = ℝ + ℝi + ℝj + ℝk
+  T = 𝔹 | ℕ | ℤ | ℚ | ℝ | ℂ | ℍ
+  n = ℕ < 99
+vec = [Tⁿ]
+mat = [[Tⁿ]ⁿ]
+```
+
+## DSL
+
 ```ebnf
        type = "Double" | "Float" | "Int" | "BigInteger" | "BigDouble";
         nat = "1" | ... | "99";

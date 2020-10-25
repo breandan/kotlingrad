@@ -4,6 +4,7 @@ package edu.umontreal.kotlingrad.experimental
 
 import edu.mcgill.kaliningraph.circuits.*
 import java.io.Serializable
+import kotlin.Double.Companion.NaN
 import kotlin.math.*
 import kotlin.reflect.KProperty
 
@@ -28,7 +29,6 @@ interface Field<X: Field<X>>: Group<X> {
   fun log(base: X): X
 }
 
-
 interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   val inputs: Array<out Fun<X>>
   val bindings: Bindings<X>
@@ -42,9 +42,13 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   fun wrap(number: Number): SConst<X> = SConst(number.toDouble())
 
   override operator fun invoke(newBindings: Bindings<X>): Fun<X>
-  operator fun invoke(vararg numbers: Number): Fun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
-  operator fun invoke(vararg funs: Fun<X>): Fun<X> = invoke(bindings.zip(funs.toList()))
-  operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> = invoke(ps.toList().bind())
+  operator fun invoke(): Fun<X>
+  operator fun invoke(vararg numbers: Number): Fun<X> =
+    invoke(bindings.zip(numbers.map { wrap(it) }))
+  operator fun invoke(vararg funs: Fun<X>): Fun<X> =
+    invoke(bindings.zip(funs.toList()))
+  operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> =
+    invoke(ps.toList().bind())
 
   fun toGate(): Gate = when (this) {
     is NilFun -> Gate.wrap(this)
@@ -56,7 +60,8 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
 
   fun toGraph() = toGate().graph
 
-  fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+  fun List<Pair<Fun<X>, Any>>.bind() =
+    Bindings(map { it.first to wrapOrError(it.second) }.toMap())
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
@@ -132,7 +137,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   open operator fun <R: D1, C: D1> times(multiplicand: MFun<X, R, C>): MFun<X, R, C> = SMProd(this, multiplicand)
 
   /**
-   * TODO: Paramaterize operator instead of using subtyping, see [Gate]
+   * TODO: Parameterize operator instead of using subtyping, see [Gate]
    */
 
   class AOP<X: SFun<X>>(val op: Op, val of: (Fun<X>) -> SFun<X>)
@@ -163,7 +168,10 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
       if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this
     }
 
-  operator fun invoke(): SFun<X> = SComposition(this).evaluate
+  override operator fun invoke(): SFun<X> = SComposition(this).evaluate
+  override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): SFun<X> = invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind())
 
   open fun d(v1: SVar<X>): SFun<X> = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
   open fun d(v1: SVar<X>, v2: SVar<X>): Vec<X, D2> = Vec(d(v1), d(v2))
@@ -220,9 +228,6 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     else -> Monad.id
   }
 
-  override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
-  override operator fun invoke(vararg funs: Fun<X>): SFun<X> = invoke(bindings.zip(funs.toList()))
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind())
 }
 
 /**
@@ -270,12 +275,11 @@ class SComposition<X : SFun<X>>(
   override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: SFun<X> by lazy { bind(bindings) }
 
-  @Suppress("UNCHECKED_CAST")
-  // TODO: Make this tail recursive so that we don't blow the stack
-  // TODO: Look into deep recursion
-  // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deep-recursive-function/
+  // TODO: Look into deep recursion so that we don't blow the stack
+  // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deep-recursive-function
   // https://medium.com/@elizarov/deep-recursion-with-coroutines-7c53e15993e3
 
+  @Suppress("UNCHECKED_CAST")
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
       is SVar -> this
@@ -369,11 +373,13 @@ sealed class Special<X: SFun<X>>(override val value: Number): SConst<X>(value) {
   override fun toString() = javaClass.simpleName
 }
 
+class It<X: SFun<X>>: Special<X>(NaN)
 class Zero<X: SFun<X>>: Special<X>(0.0)
 class One<X: SFun<X>>: Special<X>(1.0)
 class Two<X: SFun<X>>: Special<X>(2.0)
 class E<X: SFun<X>>: Special<X>(E)
 
+// TODO: RationalNumber, ComplexNumber, Quaternion
 abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y): SConst<X>(value) {
   override fun toString() = value.toString()
   abstract override fun wrap(number: Number): SConst<X>
@@ -409,7 +415,7 @@ abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y)
 
 open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
   override fun wrap(number: Number) = DReal(number.toDouble())
-  companion object: DReal(Double.NaN)
+  companion object: DReal(NaN)
   override val proto by lazy { this }
 }
 

@@ -21,7 +21,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
       .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   // Materializes the concrete matrix from the dataflow graph
-  operator fun invoke(): Mat<X, R, C> =
+  override operator fun invoke(): Mat<X, R, C> =
     MComposition(this).evaluate.let {
       try {
         it as Mat<X, R, C>
@@ -30,6 +30,13 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
         throw NumberFormatException("Matrix function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }
+
+  override operator fun invoke(vararg numbers: Number): MFun<X, R, C> =
+    invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> =
+    invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> =
+    invoke(ps.toList().bind())
 
   val mapInput by lazy { SVar(bindings.proto, KG_IT) }
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
@@ -72,10 +79,6 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
     is MMap<X, *, *> -> Polyad.map
     else -> Monad.id
   }
-
-  override operator fun invoke(vararg numbers: Number): MFun<X, R, C> = invoke(bindings.zip(numbers.map { wrap(it) }))
-  override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> = invoke(bindings.zip(funs.toList()))
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> = invoke(ps.toList().bind())
 }
 
 class MMap<X: SFun<X>, R: D1, C: D1>(
