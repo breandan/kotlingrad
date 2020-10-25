@@ -10,7 +10,6 @@ import kotlin.reflect.KProperty
  * Vector function.
  */
 
-
 sealed class VFun<X: SFun<X>, E: D1>
 constructor(override vararg val inputs: Fun<X>): Fun<X> {
   @Suppress("UNCHECKED_CAST")
@@ -19,7 +18,7 @@ constructor(override vararg val inputs: Fun<X>): Fun<X> {
       .run { if (bindings.complete || newBindings.readyToBind || EAGER) evaluate else this }
 
   // Materializes the concrete vector from the dataflow graph
-  operator fun invoke(): Vec<X, E> =
+  override operator fun invoke(): Vec<X, E> =
     VComposition(this).evaluate.let {
       try {
         it as Vec<X, E>
@@ -29,10 +28,19 @@ constructor(override vararg val inputs: Fun<X>): Fun<X> {
       }
     }
 
+  override operator fun invoke(vararg numbers: Number): VFun<X, E> =
+    invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> =
+    invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> =
+    invoke(ps.toList().bind())
+
   companion object { val KG_IT = "it" }
   val mapInput by lazy { SVar(proto, KG_IT) }
-  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> = VMap(this, ef(mapInput), mapInput)
-  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> = VVMap(this, ef(mapInput), mapInput)
+  open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> =
+    VMap(this, ef(mapInput), mapInput)
+  open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> =
+    VVMap(this, ef(mapInput), mapInput)
 
   fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1)
 
@@ -46,8 +54,10 @@ constructor(override vararg val inputs: Fun<X>): Fun<X> {
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>) = Jacobian(this, VVar(bindings.proto, D8, "j8", Vec(v1, v2, v3, v4, v5, v6, v7, v8)))
   fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>, v9: SVar<X>) = Jacobian(this, VVar(bindings.proto, D9, "j9", Vec(v1, v2, v3, v4, v5, v6, v7, v8, v9)))
 
-  fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> = vars.map { it to d(it) }.toMap()
-  fun grad(): Map<SVar<X>, VFun<X, E>> = bindings.sVars.map { it to d(it) }.toMap()
+  fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> =
+    vars.map { it to d(it) }.toMap()
+  fun grad(): Map<SVar<X>, VFun<X, E>> =
+    bindings.sVars.map { it to d(it) }.toMap()
 
   open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)
@@ -85,10 +95,6 @@ constructor(override vararg val inputs: Fun<X>): Fun<X> {
     is MSumRows<X, *, *> -> Polyad.Σ
     else -> Monad.id
   }
-
-  override operator fun invoke(vararg numbers: Number): VFun<X, E> = invoke(bindings.zip(numbers.map { wrap(it) }))
-  override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> = invoke(bindings.zip(funs.toList()))
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> = invoke(ps.toList().bind())
 }
 
 class VNegative<X: SFun<X>, E: D1>(override val input: VFun<X, E>): VFun<X, E>(input), UnFun<X>
@@ -280,9 +286,11 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.times(multiplicand)
   }
 
-  override fun map(ef: (SFun<X>) -> SFun<X>) = Vec<X, E>(contents.map { ef(it)(mapInput to it) })
+  override fun map(ef: (SFun<X>) -> SFun<X>) =
+    Vec<X, E>(contents.map { ef(it) })
 
-  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>) = Mat<X, E, C>(contents.map { ef(it)(mapInput to it) })
+  override fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>) =
+    Mat<X, E, C>(contents.map { ef(it)(mapInput to it) })
 
   override fun unaryMinus() = map { -it }
 
@@ -312,7 +320,7 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
 }
 
 /**
- * Type level integers.
+ * Type level natural numbers.
  */
 
 interface Nat<T: D0> { val i: Int }

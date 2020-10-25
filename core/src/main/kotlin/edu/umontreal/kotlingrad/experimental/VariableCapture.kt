@@ -101,7 +101,7 @@ constructor(
   operator fun <N: Number> div(n: N) = Ex<V1, V2, V3>(this, Nt(n), op = OP.DIV)
 
   open operator fun getValue(nothing: Nothing?, property: KProperty<*>) =
-    Ex<V1, V2, V3>(exs = *exs, op = op, name = property.name)
+    Ex<V1, V2, V3>(exs = exs, op = op, name = property.name)
 
   override fun toString() = exs
     .map { if (op in arrayOf(OP.MUL, OP.DIV) && it.op in arrayOf(OP.ADD, OP.SUB)) "($it)" else "$it" }
