@@ -35,9 +35,6 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
     get() = Bindings(*inputs)
   val op: Op
 
-  val proto: X
-    get() = bindings.proto
-
   fun isConstant(): Boolean = bindings.allVars.isEmpty()
   fun wrap(number: Number): SConst<X> = SConst(number.toDouble())
 
@@ -110,7 +107,7 @@ interface Grad<X : SFun<X>> : BiFun<X> {
     get() = vrb
 }
 
-interface Variable<X : SFun<X>> : Fun<X>, NilFun<X> { val name: String; override val proto: X }
+interface Variable<X : SFun<X>> : Fun<X>, NilFun<X> { val name: String }
 interface Constant<X: SFun<X>>: Fun<X>, NilFun<X>
 
 /**
@@ -126,9 +123,9 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   val TWO : Special<X> by lazy { Two()  }
   val E   : Special<X> by lazy { E<X>() }
 
-  val x by lazy { SVar(proto, "x") }
-  val y by lazy { SVar(proto, "y") }
-  val z by lazy { SVar(proto, "z") }
+  val x by lazy { SVar<X>() }
+  val y by lazy { SVar<X>() }
+  val z by lazy { SVar<X>() }
 
   override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
   override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
@@ -270,7 +267,7 @@ class Derivative<X: SFun<X>>(override val input: SFun<X>, override val vrb: SVar
 
 class SComposition<X : SFun<X>>(
   override val input: SFun<X>,
-  arguments: Bindings<X> = Bindings(input.proto)
+  arguments: Bindings<X> = Bindings(input)
 ) : SFun<X>(input), UnFun<X> {
   override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: SFun<X> by lazy { bind(bindings) }
@@ -306,12 +303,13 @@ class VSumAll<X: SFun<X>, E: D1>(val input: VFun<X, E>): SFun<X>(input), PolyFun
   override val inputs: Array<out Fun<X>> = arrayOf(input)
 }
 
-class SVar<X: SFun<X>>(override val proto: X, override val name: String = ""): Variable<X>, SFun<X>() {
+class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
+  constructor(x: X, name: String = ""): this(name)
   override val bindings: Bindings<X> = Bindings(mapOf(this to this))
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    SVar(proto, if (name.isEmpty()) property.name else name)
+    SVar<X>(if (name.isEmpty()) property.name else name)
 }
 
 open class SConst<X: SFun<X>> constructor(open val value: Number): SFun<X>(), Constant<X> {
@@ -416,16 +414,15 @@ abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y)
 open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
   override fun wrap(number: Number) = DReal(number.toDouble())
   companion object: DReal(NaN)
-  override val proto by lazy { this }
 }
 
 /**
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-fun <X: RealNumber<X, *>> X.Var(): SVar<X> = SVar(this)
-fun <E: D1, X: RealNumber<X, *>> X.Var(e: Nat<E>): VVar<X, E> = VVar(this, e)
-fun <R: D1, C: D1, X: RealNumber<X, *>> X.Var(r: Nat<R>, c: Nat<C>): MVar<X, R, C> = MVar(this, r, c)
+fun <X: RealNumber<X, *>> X.Var(): SVar<X> = SVar<X>()
+fun <E: D1, X: RealNumber<X, *>> X.Var(e: Nat<E>): VVar<X, E> = VVar(e)
+fun <R: D1, C: D1, X: RealNumber<X, *>> X.Var(r: Nat<R>, c: Nat<C>): MVar<X, R, C> = MVar(r, c)
 
 fun <R: D1, C: D1, X: RealNumber<X, *>> X.Mat(r: Nat<R>, c: Nat<C>, gen: (Int, Int) -> Any): Mat<X, R, C> =
   (0 until r.i).map { i -> (0 until c.i).map { j -> wrapOrError(gen(i, j)) as SFun<X> } }

@@ -11,8 +11,6 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
   constructor(vararg funs: Fun<X>): this(funs.map { it.bindings })
   constructor(vararg pairs: Pair<Fun<X>, Fun<X>>): this(pairs.toMap())
 
-  val proto: X by lazy { fMap.keys.first().proto }
-
   // TODO: Take shape into consideration when binding variables
   fun zip(fns: List<Fun<X>>): Bindings<X> =
     (sVars.zip(fns.filterIsInstance<SFun<X>>()) +

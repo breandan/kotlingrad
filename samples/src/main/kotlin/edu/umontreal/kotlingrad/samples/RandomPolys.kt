@@ -16,7 +16,7 @@ fun main() {
   }
 }
 
-object PolyGenerator : ExpressionGenerator<DReal>(DReal, rand,
+object PolyGenerator : ExpressionGenerator<DReal>(rand,
   operators = listOf(
     { left: SFun<DReal>, right: SFun<DReal> -> left + right },
     { left: SFun<DReal>, right: SFun<DReal> -> left * right }
@@ -26,7 +26,7 @@ object PolyGenerator : ExpressionGenerator<DReal>(DReal, rand,
 
   fun scaledRandomBiTree(height: Int = 4, maxX: Double = 1.0, maxY: Double = 1.0) =
     randomBiTree(height).let { it - it(0.0) }.let {
-      it * proto.wrap(maxY) / ((-maxX..maxX) step 0.01).toList()
+      it * DReal.wrap(maxY) / ((-maxX..maxX) step 0.01).toList()
         .map { num -> it(num).toDouble().absoluteValue }.max()!!
     }
 }
