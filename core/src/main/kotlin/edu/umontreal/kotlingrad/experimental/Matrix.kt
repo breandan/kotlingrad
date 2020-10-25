@@ -38,7 +38,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> =
     invoke(ps.toList().bind())
 
-  val mapInput by lazy { SVar(bindings.proto, KG_IT) }
+  val mapInput = SVar<X>(KG_IT)
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
 
   open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
@@ -99,7 +99,7 @@ class SMProd<X: SFun<X>, R: D1, C: D1>(override val left: SFun<X>, override val 
 
 class MComposition<X: SFun<X>, R: D1, C: D1>(
   override val input: MFun<X, R, C>,
-  arguments: Bindings<X> = Bindings(input.proto)
+  arguments: Bindings<X> = Bindings(input)
 ): MFun<X, R, C>(input), UnFun<X> {
   override val bindings: Bindings<X> = input.bindings + arguments
   val evaluate: MFun<X, R, C> by lazy { bind(bindings) }
@@ -185,10 +185,9 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, overri
 }
 
 open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
-  override val proto: X,
   val r: Nat<R>, val c: Nat<C>,
   override val name: String = "",
-  val vVars: List<VVar<X, C>> = List(r.i) { VVar(proto, c, "$name[$it]") },
+  val vVars: List<VVar<X, C>> = List(r.i) { VVar(c, "$name[$it]") },
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
 ): Variable<X>, MFun<X, R, C>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to vMat))
@@ -196,17 +195,16 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
   override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    MVar(proto, r, c, name.ifEmpty { property.name })
+    MVar<X, R, C>(r, c, name.ifEmpty { property.name })
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
-  constructor(proto: X, fVec: F64Array): this(*fVec.toKotlinArray().map { VConst<X, C>(proto, *it.toTypedArray()) }.toTypedArray())
+  constructor(fVec: F64Array): this(*fVec.toKotlinArray().map { VConst<X, C>(*it.toTypedArray()) }.toTypedArray())
   val simdVec by lazy { F64Array(numRows, numCols) { row, col -> (vConsts[row][col] as SConst<X>).doubleValue } }
-  override val proto by lazy { vConsts[0].proto }
 
   override fun times(multiplicand: SFun<X>): Mat<X, R, C> =
     when(multiplicand) {
-      is SConst -> MConst(proto, simdVec.times(multiplicand.doubleValue))
+      is SConst -> MConst(simdVec.times(multiplicand.doubleValue))
       else -> super.times(multiplicand)
     }
 
@@ -217,7 +215,7 @@ open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): M
     }
 
   override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = when (multiplicand) {
-    is MConst -> MConst(proto, simdVec matmul multiplicand.simdVec)
+    is MConst -> MConst(simdVec matmul multiplicand.simdVec)
     else -> super.times(multiplicand)
   }
 }

@@ -14,7 +14,6 @@ class BigDecimalReal(number: Number, sigFigs: Int = 30): RealNumber<BigDecimalRe
     -1E30 > number.toDouble() -> BigDecimal(1E30)
     else -> BigDecimal(number.toDouble() + 0.0)
   }) {
-  override val proto = this
   override val zero by lazy { BigDecimalReal(ZERO) }
   override val one by lazy { BigDecimalReal(ONE) }
   override val two by lazy { BigDecimalReal(ONE + ONE) }
