@@ -51,6 +51,8 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
     else -> TODO(javaClass.name)
   }
 
+  fun toGraph() = toGate().graph
+
   fun List<Pair<Fun<X>, Any>>.bind() = Bindings(map { it.first to wrapOrError(it.second) }.toMap())
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
@@ -267,6 +269,10 @@ class SComposition<X : SFun<X>>(
 
   @Suppress("UNCHECKED_CAST")
   // TODO: Make this tail recursive so that we don't blow the stack
+  // TODO: Look into deep recursion
+  // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deep-recursive-function/
+  // https://medium.com/@elizarov/deep-recursion-with-coroutines-7c53e15993e3
+
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
       is SVar -> this
