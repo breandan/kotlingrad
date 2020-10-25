@@ -7,8 +7,11 @@ import java.io.Serializable
 import kotlin.math.*
 import kotlin.reflect.KProperty
 
-/**
+/*
  * Algebraic primitives.
+ *
+ * https://core.ac.uk/download/pdf/200977628.pdf#page=12
+ * https://github.com/tysonzero/algebraic-structures
  */
 
 interface Group<X: Group<X>> {
