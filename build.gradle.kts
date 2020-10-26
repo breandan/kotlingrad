@@ -5,7 +5,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.33.0"
-  kotlin("jvm") version "1.4.20-M1" // Keep in sync with README
+  kotlin("jvm") version "1.4.20-M2" // Keep in sync with README
 }
 
 idea.module {
@@ -33,7 +33,7 @@ allprojects {
   }
 
   group = "com.github.breandan"
-  version = "0.3.5"
+  version = "0.3.6"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
