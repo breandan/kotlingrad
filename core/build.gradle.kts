@@ -10,6 +10,9 @@ dependencies {
   implementation("ch.obermuhlner:big-math:2.3.0")
   implementation("org.jetbrains.bio:viktor:1.0.1")
 
+  // Needed for codegen
+  implementation("org.jetbrains.kotlin:kotlin-reflect")
+
   val kmathVersion by extra { "0.2.0-dev-2" }
   testImplementation("kscience.kmath:kmath-core:$kmathVersion")
   testImplementation("kscience.kmath:kmath-ast:$kmathVersion")
@@ -56,6 +59,13 @@ tasks {
     from(file("kotlingrad.json"))
     into(installPath)
     doLast { logger.info("Kotlin∇ notebook was installed in: $installPath") }
+  }
+
+  listOf("MatGen", "VecGen", "DimGen").forEach { fileName ->
+    register(fileName, JavaExec::class) {
+      main = "edu.umontreal.kotlingrad.utils.codegen.${fileName}Kt"
+      classpath = sourceSets["main"].runtimeClasspath
+    }
   }
 
   val sourcesJar by registering(Jar::class) {
