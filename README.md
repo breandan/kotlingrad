@@ -81,7 +81,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.breandan:kotlingrad:0.3.2")
+    implementation("com.github.breandan:kotlingrad:0.3.7")
 }
 ```
 
@@ -99,7 +99,7 @@ dependencies {
   <dependency>
     <groupId>com.github.breandan</groupId>
     <artifactId>kotlingrad</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.7</version>
   </dependency>
 </project>
 ```
