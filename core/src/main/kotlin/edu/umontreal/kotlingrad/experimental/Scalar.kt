@@ -29,6 +29,12 @@ interface Field<X: Field<X>>: Group<X> {
   fun log(base: X): X
 }
 
+/**
+ * Interface representing a generic mathematical function.
+ *
+ * TODO: Implement proper monad like [java.util.function.Function] or [Function]
+ */
+
 interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   val inputs: Array<out Fun<X>>
   val bindings: Bindings<X>
@@ -112,8 +118,6 @@ interface Constant<X: SFun<X>>: Fun<X>, NilFun<X>
 
 /**
  * Scalar function.
- *
- * TODO: Implement proper monad like [java.util.function.Function] or [Function]
  */
 
 sealed class SFun<X: SFun<X>>
@@ -122,10 +126,6 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   val ONE : Special<X> by lazy { One()  }
   val TWO : Special<X> by lazy { Two()  }
   val E   : Special<X> by lazy { E<X>() }
-
-  val x by lazy { SVar<X>() }
-  val y by lazy { SVar<X>() }
-  val z by lazy { SVar<X>() }
 
   override fun plus(addend: SFun<X>): SFun<X> = Sum(this, addend)
   override fun times(multiplicand: SFun<X>): SFun<X> = Prod(this, multiplicand)
@@ -166,9 +166,12 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     }
 
   override operator fun invoke(): SFun<X> = SComposition(this).evaluate
-  override operator fun invoke(vararg numbers: Number): SFun<X> = invoke(bindings.zip(numbers.map { wrap(it) }))
-  override operator fun invoke(vararg funs: Fun<X>): SFun<X> = invoke(bindings.zip(funs.toList()))
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> = invoke(ps.toList().bind())
+  override operator fun invoke(vararg numbers: Number): SFun<X> =
+    invoke(bindings.zip(numbers.map { wrap(it) }))
+  override operator fun invoke(vararg funs: Fun<X>): SFun<X> =
+    invoke(bindings.zip(funs.toList()))
+  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> =
+    invoke(ps.toList().bind())
 
   open fun d(v1: SVar<X>): SFun<X> = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
   open fun d(v1: SVar<X>, v2: SVar<X>): Vec<X, D2> = Vec(d(v1), d(v2))
@@ -420,7 +423,7 @@ open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
  * Numerical context. Converts numerical types from host language to eDSL.
  */
 
-fun <X: RealNumber<X, *>> X.Var(): SVar<X> = SVar<X>()
+fun <X: RealNumber<X, *>> X.Var(): SVar<X> = SVar()
 fun <E: D1, X: RealNumber<X, *>> X.Var(e: Nat<E>): VVar<X, E> = VVar(e)
 fun <R: D1, C: D1, X: RealNumber<X, *>> X.Var(r: Nat<R>, c: Nat<C>): MVar<X, R, C> = MVar(r, c)
 
@@ -447,7 +450,7 @@ fun <X: RealNumber<X, *>> SFun<X>.toDouble() =
   } catch(e: ClassCastException) {
     show("before")
     e.printStackTrace()
-    throw NumberFormatException("Scalar function ${javaClass.simpleName} has unbound free variables: ${bindings.allFreeVariables.keys}")
+    throw NumberFormatException("Scalar function ${javaClass.simpleName} has unbound free variables: ${bindings.allFreeVariables.keys}: $this")
   }
 
 fun <X: SFun<X>> d(fn: SFun<X>) = Differential(fn)
