@@ -77,9 +77,17 @@ Kotlin∇ is hosted on [JitPack](https://jitpack.io/#breandan/kotlingrad).
 
 ```kotlin
 repositories {
+    mavenCentral()
+    jcenter()
     maven("https://jitpack.io")
+    maven("https://dl.bintray.com/mipt-npm/dev")
+    maven("https://dl.bintray.com/hotkeytlt/maven")
     maven("https://dl.bintray.com/kotlin/kotlin-eap")
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
+    maven("https://maven.jzy3d.org/releases")
+    maven("https://jetbrains.bintray.com/lets-plot-maven")
+    maven("http://logicrunch.research.it.uu.se/maven/")
+    maven("https://clojars.org/repo")
 }
 
 dependencies {
