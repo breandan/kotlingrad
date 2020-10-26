@@ -45,7 +45,8 @@ tasks {
     args = listOf(projectDir.path, project.version.toString())
   }
 
-  val installPathLocal = "${System.getProperty("user.home")}/.jupyter_kotlin/libraries"
+  val installPathLocal =
+    "${System.getProperty("user.home")}/.jupyter_kotlin/libraries"
 
   val jupyterInstall by registering(Copy::class) {
     dependsOn(genNotebookJSON)
@@ -56,10 +57,18 @@ tasks {
     into(installPath)
     doLast { logger.info("Kotlin∇ notebook was installed in: $installPath") }
   }
+
+  val sourcesJar by registering(Jar::class) {
+    classifier = "sources"
+    from(sourceSets.main.get().allSource)
+  }
 }
 
 publishing {
   publications.create<MavenPublication>("default") {
+    from(components["java"])
+    artifact(tasks["sourcesJar"])
+
     pom {
       description.set("Kotlin∇: Differentiable Functional Programming with Algebraic Data Types")
       name.set("Kotlin∇")
