@@ -1,10 +1,8 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
-import java.util.*
 
 fun main() {
-  val rand = Random(1)
   val theta by DReal.Var(D2)
   val input by DReal.Var(D3, D2)
   val bias by DReal.Var()
@@ -20,12 +18,12 @@ fun main() {
   println("Target coefficients: $hiddenWeights")
 
   var totalLoss = 0.0
-  val epochSize = 1000
+  val epochSize = 500
   var totalTime = 0L
   val alpha = 0.001
   val lossHistory = mutableListOf<Pair<Int, Double>>()
   var weightMap: Array<Pair<Fun<DReal>, Any>>
-  val totalEpochs = 100
+  val totalEpochs = 30
 
   loss.saveToFile("lossFun.dot")
 

@@ -22,15 +22,15 @@ fun main() {
   // https://en.wikipedia.org/wiki/Hermite_polynomials
   val y0 = exp(-x * x / 2)
 
-  val hermite = y0.plot2D(X_RANGE, *derivatives(y0, x))
+  val hermite = plot2D(X_RANGE, *derivatives(y0, x))
 
   val y1 = sin(sin(sin(x))) / x + sin(x) * x + cos(x) + x
 
-  val sinusoid = y0.plot2D(X_RANGE, *derivatives(y1, x))
+  val sinusoid = plot2D(X_RANGE, *derivatives(y1, x))
 
   val y2 = sigmoid(x)
 
-  val sigmoid = y0.plot2D(X_RANGE, *derivatives(y2, x))
+  val sigmoid = plot2D(X_RANGE, *derivatives(y2, x))
 
   hermite.saveAs("hermite.svg").show()
   sinusoid.saveAs("plot.svg").show()
@@ -53,8 +53,10 @@ private fun derivatives(y: SFun<DReal>, x: SVar<DReal>): Array<SFun<DReal>> {
     return arrayOf(y, `dy∕dx`, `d²y∕dx²`, `d³y∕dx³`, `d⁴y∕dx⁴`, `d⁵y∕dx⁵`)
   }
 
-private fun SFun<DReal>.plot2D(range: ClosedFloatingPointRange<Double>,
-                               vararg funs: SFun<DReal>): String {
+private fun plot2D(
+  range: ClosedFloatingPointRange<Double>,
+  vararg funs: SFun<DReal>
+): String {
   val labels = arrayOf("y", "dy/dx", "d²y/x²", "d³y/dx³", "d⁴y/dx⁴", "d⁵y/dx⁵")
   val xs = (range step 0.0087).toList()
   val ys = funs.map { xs.map { xv -> it(x to xv).toDouble() } }
