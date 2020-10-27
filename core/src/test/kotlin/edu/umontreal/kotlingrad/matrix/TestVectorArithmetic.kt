@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.matrix
 
 import edu.umontreal.kotlingrad.*
+import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.experimental.*
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec

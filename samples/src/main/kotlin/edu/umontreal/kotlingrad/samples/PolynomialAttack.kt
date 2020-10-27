@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.shapes.*
 import org.nield.kotlinstatistics.standardDeviation
 import java.util.stream.Stream
 import kotlin.streams.toList

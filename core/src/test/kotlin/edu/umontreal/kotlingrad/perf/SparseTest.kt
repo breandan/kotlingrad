@@ -2,6 +2,7 @@ package edu.umontreal.kotlingrad.perf
 
 import ch.ethz.idsc.tensor.*
 import edu.mcgill.kaliningraph.*
+import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.round
 import edu.umontreal.kotlingrad.utils.*
@@ -15,9 +16,9 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 //import org.tensorflow.ndarray.*
 //import org.tensorflow.ndarray.buffer.DataBuffers
-import kscience.kmath.linear.*
-import kscience.kmath.structures.*
-import kscience.kmath.structures.Matrix
+//import kscience.kmath.linear.*
+//import kscience.kmath.structures.*
+//import kscience.kmath.structures.Matrix
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
@@ -51,8 +52,8 @@ class SparseTest {
         "APACHE" to powBench(toApacheCommons()) { a, b -> a.multiply(b) },
         "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b }.also { baseline = it },
         "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as Mat<DReal, D100, D100> },
-        "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
-          .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
+//        "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
+//          .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
         "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
 //        "TF4J/N" to powBench(toTf4j()) { a, b ->
 //          EagerSession.create().use {
@@ -74,7 +75,7 @@ class SparseTest {
         toNd4j().power(10) { a, b -> a.mmul(b) }.toKotlinArray().round(),
         toViktor().power(10) { a, b -> a matmul b }.toKotlinArray().round(),
         toKTGrad().power(10) { a, b -> (a * b) as Mat<DReal, D100, D100> }.toKotlinArray().round(),
-        toKMath().power(10) { a, b -> a.dot(b) }.toKotlinArray().round(),
+//        toKMath().power(10) { a, b -> a.dot(b) }.toKotlinArray().round(),
         toTensor().power(10) { a, b -> a.dot(b) }.toKotlinArray().round()
       )
     }
@@ -87,7 +88,7 @@ class SparseTest {
 
   fun RealMatrix.toKotlinArray() = data
   fun DMatrix.toKotlinArray() = mapper(numRows, numCols) { i, j -> this[i, j] }
-  fun Structure2D<out Number>.toKotlinArray() = mapper(rowNum, colNum) { i, j -> this[i, j].toDouble() }
+//  fun Structure2D<out Number>.toKotlinArray() = mapper(rowNum, colNum) { i, j -> this[i, j].toDouble() }
   fun Tensor.toKotlinArray() = mapper(this[0].length(), this[1].length()) { i, j -> Get(i, j).number().toDouble() }
   fun Mat<DReal, *, *>.toKotlinArray() = mapper(numRows, numCols) { i, j -> this[i, j]().toDouble() }
   fun INDArray.toKotlinArray() = mapper(rows(), columns()) { i, j -> getDouble(i, j) }
@@ -95,7 +96,7 @@ class SparseTest {
 
   fun Array<DoubleArray>.toApacheCommons() = MatrixUtils.createRealMatrix(this)
   fun Array<DoubleArray>.toViktor() = F64Array(size, size) { i, j -> this[i][j] }
-  fun Array<DoubleArray>.toKMath() = VirtualMatrix(size, size) { i, j -> this[i][j] } as Matrix<Double>
+//  fun Array<DoubleArray>.toKMath() = VirtualMatrix(size, size) { i, j -> this[i][j] } as Matrix<Double>
   fun Array<DoubleArray>.toKTGrad() = DReal.Mat(D100, D100) { a, b -> this@toKTGrad[a][b] }
   fun Array<DoubleArray>.toTensor() = Tensors.matrixDouble(this)
   fun Array<DoubleArray>.toNd4j() = Nd4j.create(this)

@@ -3,6 +3,7 @@
 package edu.umontreal.kotlingrad.experimental
 
 import edu.mcgill.kaliningraph.circuits.*
+import edu.umontreal.kotlingrad.shapes.*
 import java.io.Serializable
 import kotlin.Double.Companion.NaN
 import kotlin.math.*
@@ -384,26 +385,6 @@ class E<X: SFun<X>>: Special<X>(E)
 abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>(override val value: Y): SConst<X>(value) {
   override fun toString() = value.toString()
   abstract override fun wrap(number: Number): SConst<X>
-
-  fun <Z: Number> Vec(y0: Z) = VConst<X, D1>(wrap(y0))
-  fun <Z: Number> Vec(y0: Z, y1: Z) = VConst<X, D2>(wrap(y0), wrap(y1))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z) = VConst<X, D3>(wrap(y0), wrap(y1), wrap(y2))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z) = VConst<X, D4>(wrap(y0), wrap(y1), wrap(y2), wrap(y3))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z) = VConst<X, D5>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z) = VConst<X, D6>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z) = VConst<X, D7>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z, y7: Z) = VConst<X, D8>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7))
-  fun <Z: Number> Vec(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z, y7: Z, y8: Z) = VConst<X, D9>(wrap(y0), wrap(y1), wrap(y2), wrap(y3), wrap(y4), wrap(y5), wrap(y6), wrap(y7), wrap(y8))
-
-  fun <Z: Number> Mat1x1(y0: Z) = MConst<X, D1, D1>(Vec(y0))
-  fun <Z: Number> Mat1x2(y0: Z, y1: Z) = MConst<X, D1, D2>(Vec(y0, y1))
-  fun <Z: Number> Mat1x3(y0: Z, y1: Z, y2: Z) = MConst<X, D1, D3>(Vec(y0, y1, y2))
-  fun <Z: Number> Mat2x1(y0: Z, y1: Z) = MConst<X, D2, D1>(Vec(y0), Vec(y1))
-  fun <Z: Number> Mat2x2(y0: Z, y1: Z, y2: Z, y3: Z) = MConst<X, D2, D2>(Vec(y0, y1), Vec(y2, y3))
-  fun <Z: Number> Mat2x3(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z) = MConst<X, D2, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5))
-  fun <Z: Number> Mat3x1(y0: Z, y1: Z, y2: Z) = MConst<X, D3, D1>(Vec(y0), Vec(y1), Vec(y2))
-  fun <Z: Number> Mat3x2(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z) = MConst<X, D3, D2>(Vec(y0, y1), Vec(y2, y3), Vec(y4, y5))
-  fun <Z: Number> Mat3x3(y0: Z, y1: Z, y2: Z, y3: Z, y4: Z, y5: Z, y6: Z, y7: Z, y8: Z) = MConst<X, D3, D3>(Vec(y0, y1, y2), Vec(y3, y4, y5), Vec(y6, y7, y8))
 
   override val doubleValue: Double by lazy {
     when (this) {

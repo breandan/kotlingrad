@@ -1,5 +1,19 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   `maven-publish`
+  id("shipshape")
+  idea
+}
+
+val generatedSourcesPath = file("src/main/kotlin/gen")
+
+kotlin.sourceSets["main"].kotlin.srcDir(generatedSourcesPath)
+
+idea {
+  module {
+    generatedSourceDirs.add(generatedSourcesPath)
+  }
 }
 
 dependencies {
@@ -13,10 +27,10 @@ dependencies {
   // Needed for codegen
   implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-  val kmathVersion by extra { "0.2.0-dev-2" }
-  testImplementation("kscience.kmath:kmath-core:$kmathVersion")
-  testImplementation("kscience.kmath:kmath-ast:$kmathVersion")
-  testImplementation("kscience.kmath:kmath-prob:$kmathVersion")
+//  val kmathVersion by extra { "0.2.0-dev-2" }
+//  testImplementation("kscience.kmath:kmath-core:$kmathVersion")
+//  testImplementation("kscience.kmath:kmath-ast:$kmathVersion")
+//  testImplementation("kscience.kmath:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
 
@@ -42,6 +56,8 @@ dependencies {
 }
 
 tasks {
+  withType<KotlinCompile> { dependsOn("genShapes") }
+
   val genNotebookJSON by creating(JavaExec::class) {
     main = "edu.umontreal.kotlingrad.utils.codegen.NotebookGenKt"
     classpath = sourceSets["main"].runtimeClasspath

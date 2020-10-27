@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.shapes.*
 
 @Suppress("DuplicatedCode")
 fun main() {
@@ -20,7 +21,7 @@ fun main() {
   val dh_dx = h.d(x)
   println("h'(x) = $dh_dx")
 
-  val vf0 = DReal.Vec(0, 0)
+  val vf0 = DReal.Vec(0.0, 0.0)
   println(vf0(1, 2))
   val vf1 = Vec(y + x, y * 2)
   println(vf1)

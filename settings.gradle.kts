@@ -1,4 +1,7 @@
 include("core", "samples")
+
+includeBuild("shipshape")
+
 includeBuild("kaliningraph") {
   dependencySubstitution {
     substitute(module("com.github.breandan:kaliningraph")).with(project(":"))

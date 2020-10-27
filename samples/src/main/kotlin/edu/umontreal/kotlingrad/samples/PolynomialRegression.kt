@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.utils.step
 import java.io.*
 import kotlin.random.Random
