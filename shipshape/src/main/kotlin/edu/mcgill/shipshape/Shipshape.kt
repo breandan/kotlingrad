@@ -29,9 +29,9 @@ open class Shipshape: Plugin<Project> {
   override fun apply(project: Project) {
     project.run {
       tasks.register("genShapes") {
-        // TODO: Parameterize this path
         val shapes = generateShapes()
 
+        // TODO: Parameterize this path
         val outputDir = "$projectDir/src/main/kotlin/gen"
         try {
           File(outputDir).mkdirs()

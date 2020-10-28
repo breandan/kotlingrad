@@ -6,14 +6,12 @@ plugins {
   idea
 }
 
+// TODO: Maybe move this into the plugin somehow?
 val generatedSourcesPath = file("src/main/kotlin/gen")
-
 kotlin.sourceSets["main"].kotlin.srcDir(generatedSourcesPath)
 
-idea {
-  module {
-    generatedSourceDirs.add(generatedSourcesPath)
-  }
+idea.module {
+  generatedSourceDirs.add(generatedSourcesPath)
 }
 
 dependencies {
