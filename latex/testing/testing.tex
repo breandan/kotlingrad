@@ -37,7 +37,7 @@ emph={delegate, filter, firstOrNull, forEach, it, lazy, mapNotNull, println, rep
 numberstyle=\noncopyable,
 emphstyle={\color{olive}},
 identifierstyle=\color{black},
-keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, catch, typealias, val, var, vararg, when, where, while, tailrec, reified},
+keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, infix, interface, internal, is, null, object, open, operator, override, package, private, public, return, sealed, set, super, suspend, this, throw, true, try, catch, typealias, val, var, vararg, when, where, while, tailrec, reified, Repeat},
 keywordstyle={\color{blue}\bfseries},
 morecomment=[s]{/*}{*/},
 morestring=[b]",
@@ -243,7 +243,7 @@ How do we safely and effectively test these systems?
 \end{frame}
 
 \begin{frame}
-\frametitle{Statistical Hypothesis Testing}
+\frametitle{Hypothesis Testing}
 \vspace{-1cm}
 \center\scalebox{.5}{
 \digraph{hypotest}{
@@ -259,7 +259,7 @@ node [fontname = "helvetica" width="2" shape=Mrecord style=filled];
 \end{frame}
 
 \begin{frame}
-\frametitle{Statistical Hypothesis Testing}
+\frametitle{Hypothesis Testing}
 \center\includegraphics[width=0.85\textwidth]{../figures/hypothesis_testing.png}
 \end{frame}
 
@@ -390,7 +390,7 @@ Generates many random inputs and compare outputs with an oracle.
 @Repeat(LARGE_NUMBER)
 fun <I, O> test(program: (I) -> O, // System under test
                 oracle : (I) -> O, // Source of Truth
-                sample : (Random())  -> I) {
+                sample : (Random)  -> I) {
     val input: I = sample(Random())
     assert(program(input) == oracle(input)) {
       "Oracle and program disagree on $input"
@@ -407,7 +407,7 @@ fun <I, O> test(program: (I) -> O, // System under test
 @Repeat(LARGE_NUMBER)
 fun <I, O> test(program: (I) -> O, // System under test
                 oracle : (I) -> O, // Source of Truth
-                sample : (Random())  -> I) {
+                sample : (Random)  -> I) {
   val input: I = sample(Random())
   assert(program(input) == oracle(input)) {
     "Oracle and program disagree on $input"
@@ -538,7 +538,7 @@ Label -> "MR?";
 \end{frame}
 
 \begin{frame}
-\frametitle{Compare and Contrast}
+\frametitle{Hypothesis testing vs. Software testing}
 \begin{multicols}{2}
 \underline{Statistical Testing}
 \begin{itemize}
@@ -547,20 +547,26 @@ Label -> "MR?";
 \item Often assumes IID randomness for accurate results
 \item Deliberately injects noise into sampling process
 \item Results are never exactly the same twice
-\item Needs non-determinism to demonstrate reproducibility
+\item Requires non-determinism to demonstrate reproducibility
 \end{itemize}
 \vfill\null
 \columnbreak
 \underline{Software Testing}
 \begin{itemize}
-\item We often know what the correct behavior is, but need to validate it!
+\item We know what the correct behavior is, need to validate it!
 \item Tries to minimize operational risk, increase test coverage
 \item Uses randomness as a substitute for formal verification
 \item Tries to reduce noise to prevent false alarms
-\item Fully deterministic for reproducibility
+\item Requires determinism for software reproducibility
 \end{itemize}
 \end{multicols}
 \end{frame}
+
+
+% \begin{frame}
+% \frametitle{Statistical vs. Systematic uncertainty}
+%
+% \end{frame}
 
 \begin{frame}
 \frametitle{Further resources}
