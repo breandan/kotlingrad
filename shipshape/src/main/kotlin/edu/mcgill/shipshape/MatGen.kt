@@ -1,19 +1,52 @@
 package edu.mcgill.shipshape
 
-fun genMat(): String {
-  var s = ""
+fun genMat() =
+  genMatOfScalars() +
+    genMatOfSFun() +
+    genMatOfVec()
 
-  for (i in 1 until maxDim)
-    for (j in 1 until maxDim)
-      s += "\nfun <X: RealNumber<X, Y>, Y: Number> RealNumber<X, Y>.Mat${i}x${j}(${
-        (0 until (i * j)).joinToString(", ") { "y$it: Y" }
+private fun genMatOfScalars() =
+  (1..maxDim).map { i -> (1..maxDim).map { j -> i to j } }.flatten()
+    .joinToString("\n", "\n", "\n") { (i, j) ->
+      "fun <X: RealNumber<X, Y>, Y: Number> RealNumber<X, Y>.Mat${i}x${j}(${
+        (1..(i * j)).joinToString(", ") { "y$it: Y" }
       }): MConst<X, D$i, D$j> = MConst(Vec(${
-        (0 until (i * j)).joinToString("") {
+        (1..(i * j)).joinToString("") {
           "y$it${
-            if ((it + 1) == (i * j)) ")" else if ((it + 1) % j == 0) "), Vec(" else ", "
+            when {
+              it == (i * j) -> ")"
+              it % j == 0 -> "), Vec("
+              else -> ", "
+            }
           }"
         }
       })"
+    }
 
-  return s
-}
+private fun genMatOfSFun() =
+  (1..maxDim).map { i -> (1..maxDim).map { j -> i to j } }.flatten()
+    .joinToString("\n", "\n", "\n") { (i, j) ->
+      "fun <X: SFun<X>> Mat${i}x${j}(${
+        (1..(i * j)).joinToString(", ") { "y$it: SFun<X>" }
+      }): Mat<X, D$i, D$j> = Mat(Vec(${
+        (1..(i * j)).joinToString("") {
+          "y$it${
+            when {
+              it == (i * j) -> ")"
+              it % j == 0 -> "), Vec("
+              else -> ", "
+            }
+          }"
+        }
+      })"
+    }
+
+private fun genMatOfVec() =
+  (1..maxDim).map { i -> (1..maxDim).map { j -> i to j } }.flatten()
+    .joinToString("\n", "\n", "\n") { (i, j) ->
+      "fun <X: SFun<X>> Mat${i}x${j}(${
+        (1..i).joinToString(", ") { "y$it: Vec<X, D$j>" }
+      }): Mat<X, D$i, D$j> = Mat(${
+        (1..i).joinToString(", ") { "y$it" }
+      })"
+    }

@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.shapes.*
 
 fun main() {
   val f = x pow 2

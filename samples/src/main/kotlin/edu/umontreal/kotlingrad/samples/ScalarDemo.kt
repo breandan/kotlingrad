@@ -1,6 +1,7 @@
 package edu.umontreal.kotlingrad.samples
 
 import edu.umontreal.kotlingrad.experimental.sin
+import edu.umontreal.kotlingrad.shapes.*
 
 @Suppress("DuplicatedCode")
 fun main() {

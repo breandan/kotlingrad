@@ -175,9 +175,6 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     invoke(ps.toList().bind())
 
   open fun d(v1: SVar<X>): SFun<X> = Derivative(this, v1)//.let { if (EAGER) it.df() else it }
-  open fun d(v1: SVar<X>, v2: SVar<X>): Vec<X, D2> = Vec(d(v1), d(v2))
-  open fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>): Vec<X, D3> = Vec(d(v1), d(v2), d(v3))
-  open fun d(vararg vars: SVar<X>): Map<SVar<X>, SFun<X>> = vars.map { it to d(it) }.toMap()
 
   open fun sin(): SFun<X> = Sine(this)
   open fun cos(): SFun<X> = Cosine(this)
@@ -228,7 +225,6 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     is VSumAll<X, *> -> Polyad.Σ
     else -> Monad.id
   }
-
 }
 
 /**
