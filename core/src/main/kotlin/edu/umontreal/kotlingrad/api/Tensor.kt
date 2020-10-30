@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
 
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 fun main() {
   val v: Vt<Int, N2> = Vt(1, 2) + Vt(1, 3)

@@ -14,54 +14,62 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
   return sequence.asIterable()
 }
 
-fun F64Array.toKotlinArray() = toGenericArray().map { it as DoubleArray }.toTypedArray()
+fun F64Array.toKotlinArray() =
+  toGenericArray().map { it as DoubleArray }.toTypedArray()
+
 infix fun F64Array.matmul(f: F64Array) =
   F64Array(shape[0], shape[1]) { i, j -> view(i) dot f.view(j, 1) }
 
-fun <T> Iterable<T>.repeat(n: Int) = sequence { repeat(n) { yieldAll(this@repeat) } }
+fun <T> Iterable<T>.repeat(n: Int) =
+  sequence { repeat(n) { yieldAll(this@repeat) } }
 
-fun randomDefaultName() = (('a'..'z') - 'q').map { it }.shuffled().subList(0, 4).joinToString("")
+fun randomDefaultName() =
+  (('a'..'z') - 'q').map { it }.shuffled().subList(0, 4).joinToString("")
 
-fun String.superscript() = this
-    .replace(" ", "")
-    .replace(".", "⋅")
-    .replace("-", "⁻")
-    .replace("+", "⁺")
-    .replace("⋅", "˙")
-    .replace("(", "⁽")
-    .replace(")", "⁾")
-    .replace("0", "⁰")
-    .replace("1", "¹")
-    .replace("2", "²")
-    .replace("3", "³")
-    .replace("4", "⁴")
-    .replace("5", "⁵")
-    .replace("6", "⁶")
-    .replace("7", "⁷")
-    .replace("8", "⁸")
-    .replace("9", "⁹")
-    .replace("a", "ᵃ")
-    .replace("b", "ᵇ")
-    .replace("c", "ᶜ")
-    .replace("d", "ᵈ")
-    .replace("e", "ᵉ")
-    .replace("f", "ᶠ")
-    .replace("g", "ᵍ")
-    .replace("h", "ʰ")
-    .replace("i", "ⁱ")
-    .replace("j", "ʲ")
-    .replace("k", "ᵏ")
-    .replace("l", "ˡ")
-    .replace("m", "ᵐ")
-    .replace("n", "ⁿ")
-    .replace("o", "ᵒ")
-    .replace("p", "ᵖ")
-    .replace("r", "ʳ")
-    .replace("s", "ˢ")
-    .replace("t", "ᵗ")
-    .replace("u", "ᵘ")
-    .replace("v", "ᵛ")
-    .replace("w", "ʷ")
-    .replace("x", "ˣ")
-    .replace("y", "ʸ")
-    .replace("z", "ᶻ")
+fun String.superscript() =
+  map {
+    when (it) {
+      '.' -> '⋅'
+      '-' -> '⁻'
+      '+' -> '⁺'
+      '⋅' -> '˙'
+      '(' -> '⁽'
+      ')' -> '⁾'
+      '0' -> '⁰'
+      '1' -> '¹'
+      '2' -> '²'
+      '3' -> '³'
+      '4' -> '⁴'
+      '5' -> '⁵'
+      '6' -> '⁶'
+      '7' -> '⁷'
+      '8' -> '⁸'
+      '9' -> '⁹'
+      'a' -> 'ᵃ'
+      'b' -> 'ᵇ'
+      'c' -> 'ᶜ'
+      'd' -> 'ᵈ'
+      'e' -> 'ᵉ'
+      'f' -> 'ᶠ'
+      'g' -> 'ᵍ'
+      'h' -> 'ʰ'
+      'i' -> 'ⁱ'
+      'j' -> 'ʲ'
+      'k' -> 'ᵏ'
+      'l' -> 'ˡ'
+      'm' -> 'ᵐ'
+      'n' -> 'ⁿ'
+      'o' -> 'ᵒ'
+      'p' -> 'ᵖ'
+      'r' -> 'ʳ'
+      's' -> 'ˢ'
+      't' -> 'ᵗ'
+      'u' -> 'ᵘ'
+      'v' -> 'ᵛ'
+      'w' -> 'ʷ'
+      'x' -> 'ˣ'
+      'y' -> 'ʸ'
+      'z' -> 'ᶻ'
+      else -> it
+    }
+  }.joinToString("").replace(" ", "")

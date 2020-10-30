@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.evaluation
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

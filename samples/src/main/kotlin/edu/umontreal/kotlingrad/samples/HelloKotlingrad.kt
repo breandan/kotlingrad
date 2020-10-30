@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 
 val x by DReal.Var()
 val y by DReal.Var()

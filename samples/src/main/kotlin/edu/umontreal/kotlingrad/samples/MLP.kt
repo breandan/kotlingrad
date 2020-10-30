@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.utils.step
 import kotlin.math.*

@@ -2,10 +2,10 @@
 
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.experimental.x
-import edu.umontreal.kotlingrad.experimental.y
-import edu.umontreal.kotlingrad.experimental.z
+import edu.umontreal.kotlingrad.api.*
+import edu.umontreal.kotlingrad.api.x
+import edu.umontreal.kotlingrad.api.y
+import edu.umontreal.kotlingrad.api.z
 
 fun main() {
   val xyz: Ex<XX, XX, XX> by x + (y + z) * 2; println(xyz)

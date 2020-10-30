@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 tailrec fun <I, O: Comparable<O>> minimize(fn: (I) -> (O), min: I, budget: Int, rand: () -> I): I =
   if (budget <= 0) min

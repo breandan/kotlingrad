@@ -1,9 +1,9 @@
 package edu.umontreal.kotlingrad.evaluation
 
-import edu.umontreal.kotlingrad.experimental.*
-import edu.umontreal.kotlingrad.experimental.DReal.Companion.ONE
-import edu.umontreal.kotlingrad.experimental.DReal.Companion.TWO
-import edu.umontreal.kotlingrad.experimental.DReal.Companion.ZERO
+import edu.umontreal.kotlingrad.api.*
+import edu.umontreal.kotlingrad.api.DReal.Companion.ONE
+import edu.umontreal.kotlingrad.api.DReal.Companion.TWO
+import edu.umontreal.kotlingrad.api.DReal.Companion.ZERO
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

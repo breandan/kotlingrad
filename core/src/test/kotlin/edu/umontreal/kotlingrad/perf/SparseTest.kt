@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.perf
 import ch.ethz.idsc.tensor.*
 import edu.mcgill.kaliningraph.*
 import edu.umontreal.kotlingrad.shapes.*
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.round
 import edu.umontreal.kotlingrad.utils.*
 import org.apache.commons.math3.linear.*
@@ -19,7 +19,6 @@ import org.nd4j.linalg.factory.Nd4j
 //import kscience.kmath.linear.*
 //import kscience.kmath.structures.*
 //import kscience.kmath.structures.Matrix
-import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 class SparseTest {

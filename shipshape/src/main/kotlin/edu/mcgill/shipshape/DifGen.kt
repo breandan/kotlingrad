@@ -5,7 +5,7 @@ fun main() {
 }
 
 fun genDif() =
-  (2..maxDim).joinToString("\n") {
+  (2..maxDim).joinToString("\n", "\n", "\n") {
     "fun <X: SFun<X>> SFun<X>.d(${
       (1..it).joinToString(", ") { "v$it: SVar<X>" }
     }): Vec<X, D$it> = Vec(${

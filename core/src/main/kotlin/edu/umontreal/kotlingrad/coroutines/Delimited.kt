@@ -3,7 +3,9 @@ package edu.umontreal.kotlingrad.coroutines
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-/**
+/*
+ * Taken from: https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef
+ *
  * Implementation for Delimited Continuations `shift`/`reset` primitives via Kotlin Coroutines.
  * See [https://en.wikipedia.org/wiki/Delimited_continuation].
  *

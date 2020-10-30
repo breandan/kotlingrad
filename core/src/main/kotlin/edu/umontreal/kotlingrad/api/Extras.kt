@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 import ch.obermuhlner.math.big.BigDecimalMath
 import java.math.*

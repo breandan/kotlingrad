@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.*
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 import io.kotlintest.properties.assertAll
 import io.kotlintest.specs.StringSpec
 import kotlin.math.*

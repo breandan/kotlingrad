@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.shapes.*
 import io.kotlintest.shouldBe
 import java.math.*

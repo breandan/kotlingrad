@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.Shrinker
 import kotlin.math.pow

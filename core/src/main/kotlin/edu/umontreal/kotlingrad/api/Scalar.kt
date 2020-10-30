@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName", "LocalVariableName", "unused", "UNUSED_VARIABLE")
 
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 import edu.mcgill.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.shapes.*

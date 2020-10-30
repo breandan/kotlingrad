@@ -1,5 +1,5 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 import edu.mcgill.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.shapes.*
@@ -36,7 +36,7 @@ constructor(override vararg val inputs: Fun<X>): Fun<X> {
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> =
     invoke(ps.toList().bind())
 
-  companion object { val KG_IT = "it" }
+  companion object { const val KG_IT = "it" }
   val mapInput = SVar<X>(KG_IT)
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> =
     VMap(this, ef(mapInput), mapInput)

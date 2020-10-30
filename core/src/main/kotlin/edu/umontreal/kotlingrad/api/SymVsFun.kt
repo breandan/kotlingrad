@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 import java.util.function.BiFunction
 import java.util.function.Function

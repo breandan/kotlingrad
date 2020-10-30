@@ -1,6 +1,6 @@
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
-import edu.umontreal.kotlingrad.experimental.VFun.Companion.KG_IT
+import edu.umontreal.kotlingrad.api.VFun.Companion.KG_IT
 
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")

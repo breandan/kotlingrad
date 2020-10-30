@@ -1,10 +1,10 @@
 @file:Suppress("DuplicatedCode", "LocalVariableName", "UNUSED_PARAMETER", "NonAsciiCharacters", "FunctionName", "PropertyName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
 
-package edu.umontreal.kotlingrad.experimental
+package edu.umontreal.kotlingrad.api
 
 import edu.mcgill.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.shapes.*
-import edu.umontreal.kotlingrad.experimental.VFun.Companion.KG_IT
+import edu.umontreal.kotlingrad.api.VFun.Companion.KG_IT
 import edu.umontreal.kotlingrad.utils.matmul
 import edu.umontreal.kotlingrad.utils.toKotlinArray
 import org.jetbrains.bio.viktor.F64Array

@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
+import edu.umontreal.kotlingrad.api.*
 
 fun main() {
   val t = (1 + x * 2 - 3 + y + z / y).d(y).d(x) + z / y * 3 - 2 + sin(x)

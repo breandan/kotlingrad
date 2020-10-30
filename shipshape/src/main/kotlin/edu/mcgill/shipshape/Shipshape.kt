@@ -8,7 +8,7 @@ open class Shipshape: Plugin<Project> {
     
     package edu.umontreal.kotlingrad.shapes
     
-    import edu.umontreal.kotlingrad.experimental.*
+    import edu.umontreal.kotlingrad.api.*
     """.trimIndent()
 
   fun generateShapes() = """

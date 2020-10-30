@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.umontreal.kotlingrad.experimental.*
 import edu.umontreal.kotlingrad.shapes.*
 
 fun main() {
@@ -47,3 +46,308 @@ fun main() {
   println(mf3 * vf1) // 3*2 x 2
 //    println(mf3 * mf3) // 3*2 x 3*2
 }
+
+//{
+//  // Inferred type: Mat<Int, D1, D3>
+//  val a = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D1,
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    1,
+//    2,
+//    3
+//  )
+//  println("a = $a")
+//  // Inferred type: Mat<Int, D3, D1>
+//  val b = a.transpose()
+//  println("b = $b")
+//  // Inferred type: Mat<Int, D1, D1>
+//  val c = a * b
+//  println("c = ab = $c")
+//
+//// Does not compile, inner dimension mismatch
+////  a * a
+////  b * b
+//
+//// Does not compile, incompatible shape
+////  val b_ = Mat(D3, D1, 1, 2)
+////  val c_ = Mat(D3, D1, 1, 2, 3, 4)
+//
+//// Does not compile, incompatible shape
+////  val b_ = Mat(D2, D1, 1)
+//
+//  // Inferred type: Mat<Int, D2, D3>
+//  val d = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D2,
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6
+//  )
+//  println("d = $d")
+//
+//  // Inferred type: Mat<Int, D3, D2>
+//  val e = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    edu.umontreal.kotlingrad.dependent.D2,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6
+//  )
+//  println("e = $e")
+//
+//  // Inferred type: Mat<Int, D2, D2>
+//  val f = d * e
+//  println("f = de = $f")
+//
+//// Does not compile, inner dimension mismatch
+////  e * b
+////  f * b
+//
+//// Does not compile, incompatible size
+////  val d_: Mat<Int, D2, D3> = Mat(D2, D3,
+////    1, 2, 3,
+////    4, 5
+////  )
+//
+//  // Inferred type: Mat<Int, D3, D3>
+//  val g = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9
+//  )
+//  println("g = $g")
+//
+//  // Inferred type: Mat<Int, D3, D3>
+//  val h = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9
+//  )
+//  println("h = $g")
+//
+//  // Inferred type: Mat<Int, D3, D3>
+//  val i = g * h
+//  println("i = gh = $i")
+//  val j = i * i
+//  println("j = ii = $j")
+//  val k = i * b
+//  println("k = ib = $j")
+//
+//// Does not compile, inner dimension mismatch
+////  i * f
+////  i * d
+//
+//  // Inferred type: Mat<Int, D4, D4>
+//  val l = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D4,
+//    edu.umontreal.kotlingrad.dependent.D4,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    0,
+//    0,
+//    0,
+//    9,
+//    0,
+//    0,
+//    0
+//  )
+//  println("l = $l")
+//
+//  // Inferred type: Mat<Int, D4, D3>
+//  val m = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D4,
+//    edu.umontreal.kotlingrad.dependent.D3,
+//    1,
+//    1,
+//    1,
+//    2,
+//    2,
+//    2,
+//    3,
+//    3,
+//    3,
+//    4,
+//    4,
+//    4
+//  )
+//
+//  // Inferred type: Mat<Int, D4, D3>
+//  val lm = l * m
+//  println("lm = $lm")
+//
+//// Does not compile, inner dimension mismatch
+////  lm * f
+////  ln * d
+//
+//  val o = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D9,
+//    edu.umontreal.kotlingrad.dependent.D9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9,
+//    1,
+//    2,
+//    3,
+//    4,
+//    5,
+//    6,
+//    7,
+//    8,
+//    9
+//  )
+//
+//  println(o * o - (o + o))
+//
+//  val p = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D1,
+//    edu.umontreal.kotlingrad.dependent.D100,
+//    0
+//  )
+//  // Type-checked matrix operations are still possible after unsafe construction
+//  val q = p.transpose()
+//  q * p
+//// Does not compile, inner dimension mismatch
+////  q * f
+//
+//  // Functional initializers
+//  val r = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D20,
+//    edu.umontreal.kotlingrad.dependent.D20
+//  ) { y, z -> if (y == z) 1 else 0 }
+//  println("r: $r")
+//  val s = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D11,
+//    edu.umontreal.kotlingrad.dependent.D11,
+//    listOf(
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+//      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+//    )
+//  )
+//
+//  println("s: $s")
+//  val t = edu.umontreal.kotlingrad.dependent.Mat(
+//    edu.umontreal.kotlingrad.dependent.D1,
+//    edu.umontreal.kotlingrad.dependent.D1,
+//    1
+//  )
+//  println("t: $t")
+//
+//  // Unsafe construction with a list of the wrong size it will fail at runtime
+//  try {
+//    edu.umontreal.kotlingrad.dependent.Mat(
+//      edu.umontreal.kotlingrad.dependent.D2,
+//      edu.umontreal.kotlingrad.dependent.D2,
+//      listOf(1, 2, 3)
+//    )
+//    assert(false)
+//  } catch (e: IllegalArgumentException) {
+//    println(e)
+//  }
+//}
