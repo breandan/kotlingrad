@@ -317,7 +317,7 @@ val `∇z` = z.grad()                // Gradient operator
 val values = arrayOf(x to 0, y to 1)
 
 println("z(x, y) \t= $z\n" +
-  "z(${values.map { it.second }.joinToString(",")}) \t\t= ${z(*values)}\n" +
+  "z(${values.map { it.second }.joinToString()}) \t\t= ${z(*values)}\n" +
   "∂z/∂x \t\t= $`∂z∕∂x` \n\t\t= " + `∂z∕∂x`(*values) + "\n" +
   "∂z/∂y \t\t= $`∂z∕∂y` \n\t\t= " + `∂z∕∂y`(*values) + "\n" +
   "∂²z/∂x² \t= $`∂z∕∂y` \n\t\t= " + `∂²z∕∂x²`(*values) + "\n" +

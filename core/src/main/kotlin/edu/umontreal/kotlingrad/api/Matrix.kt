@@ -60,7 +60,7 @@ open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): F
     is MNegative -> "-($input)"
     is MTranspose -> "($input).T"
     is MConst -> "${javaClass.name}()"
-    is Mat -> "Mat(${rows.joinToString(", ")})"
+    is Mat -> "Mat(${rows.joinToString()})"
     is MDerivative<X, *, *> -> "d($input) / d($vrb)"
     is MVar -> "$name: Var${r}x${c}"
     is MComposition -> "MComp($input)$bindings"

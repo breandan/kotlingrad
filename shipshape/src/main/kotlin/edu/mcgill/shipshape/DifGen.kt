@@ -7,8 +7,11 @@ fun main() {
 fun genDif() =
   (2..maxDim).joinToString("\n", "\n", "\n") {
     "fun <X: SFun<X>> SFun<X>.d(${
-      (1..it).joinToString(", ") { "v$it: SVar<X>" }
+      (1..it).joinToString { "v$it: SVar<X>" }
     }): Vec<X, D$it> = Vec(${
-      (1..it).joinToString(", ") { "d(v$it)" }
+      (1..it).joinToString { "d(v$it)" }
     })"
-  } + "\nfun <X: SFun<X>> SFun<X>.d(vararg vars: SVar<X>): Map<SVar<X>, SFun<X>> = vars.map { it to d(it) }.toMap()"
+  } + """
+    fun <X: SFun<X>> SFun<X>.d(vararg vars: SVar<X>): Map<SVar<X>, SFun<X>> =
+      vars.map { it to d(it) }.toMap() 
+  """.trimIndent()

@@ -15,7 +15,7 @@ fun main() {
         it.value.map { it.second }.standardError(),
         it.value.map { it.third }.average(),
         it.value.map { it.third }.standardError())
-    }.forEach { println(it.value.joinToString(", ")) }
+    }.forEach { println(it.value.joinToString()) }
 
   ObjectInputStream(FileInputStream("losses.hist")).use {
     val t = it.readObject()
@@ -26,6 +26,6 @@ fun main() {
         it.value.map { it.third }.average(),
         it.value.map { it.third }.standardError()
       )
-    }.forEach { println(it.value.joinToString(", ")) }
+    }.forEach { println(it.value.joinToString()) }
   }
 }

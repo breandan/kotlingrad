@@ -17,7 +17,7 @@ data class State(val subs: Substitutions = mapOf(), val vars: Int = 0) {
   }
 
   override fun toString(): String =
-    "[" + subs.map { "${it.key} = ${it.value}" }.joinToString(", ") + "]"
+    "[" + subs.map { "${it.key} = ${it.value}" }.joinToString() + "]"
 }
 
 fun State.walk(t: Term): Term {

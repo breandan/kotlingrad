@@ -41,7 +41,7 @@ private fun List<SpsMat>.permute(): Array<DoubleArray> =
     map { cur ->
       val data = cur.toFDRM().getData()
       val padded = DoubleArray(maxDim) { if (it < data.size) data[it] else 0.0 }
-      padded.apply { shuffle(Random(0)) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString(",")) }
+      padded.apply { shuffle(Random(0)) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString()) }
     }.toTypedArray()
   }
 

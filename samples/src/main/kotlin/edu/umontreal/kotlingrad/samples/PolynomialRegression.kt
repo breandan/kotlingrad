@@ -23,7 +23,7 @@ fun main() {
         it.value.map { it.third }.average(),
         it.value.map { it.third }.standardError()
       )
-    }.forEach { println(it.value.joinToString(", ")) }
+    }.forEach { println(it.value.joinToString()) }
     val models = it.map { it.first to it.second }
     ObjectOutputStream(FileOutputStream("losses.hist")).use { it.writeObject(lossHistoryCumulative) }
     ObjectOutputStream(FileOutputStream("models.hist")).use { it.writeObject(models) }
