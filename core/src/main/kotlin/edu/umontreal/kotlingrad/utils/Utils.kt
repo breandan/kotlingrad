@@ -18,7 +18,7 @@ fun F64Array.toKotlinArray() =
   toGenericArray().map { it as DoubleArray }.toTypedArray()
 
 infix fun F64Array.matmul(f: F64Array) =
-  F64Array(shape[0], shape[1]) { i, j -> view(i) dot f.view(j, 1) }
+  F64Array(shape[0], f.shape[1]) { i, j -> view(i) dot f.view(j, 1) }
 
 fun <T> Iterable<T>.repeat(n: Int) =
   sequence { repeat(n) { yieldAll(this@repeat) } }

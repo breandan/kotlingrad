@@ -1,4 +1,4 @@
-package edu.umontreal.kotlingrad.api
+package edu.umontreal.kotlingrad.typelevel
 
 import kotlin.reflect.KProperty
 
