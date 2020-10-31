@@ -25,5 +25,3 @@ infix fun Number.shouldBeAbout(d: Number) = this.toDouble() shouldBe d.toDouble(
 infix fun Number.shouldBeAbout(d: Double) = this.toDouble() shouldBeAbout d
 
 infix fun Double.shouldBeAbout(d: Number) = this shouldBeAbout d.toDouble()
-
-val seededRandom = Random(4)

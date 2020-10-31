@@ -14,7 +14,9 @@ import kotlin.reflect.KProperty
  * Matrix function.
  */
 
-open class MFun<X: SFun<X>, R: D1, C: D1>(override vararg val inputs: Fun<X>): Fun<X> {
+open class MFun<X, R, C>(override vararg val inputs: Fun<X>): Fun<X>
+where X: SFun<X>, R: D1, C: D1
+{
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =

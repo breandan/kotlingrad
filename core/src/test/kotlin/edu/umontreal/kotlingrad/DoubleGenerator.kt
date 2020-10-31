@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad
 
+import edu.mcgill.kaliningraph.DEFAULT_RANDOM
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.shrinking.*
 import kotlin.math.pow
@@ -16,7 +17,7 @@ open class DoubleGenerator(
   override fun constants() = listOf(0.0) - excluding
   override fun random(): Sequence<Double> =
     generateSequence {
-      val r = seededRandom.nextDouble()
+      val r = DEFAULT_RANDOM.nextDouble()
       val e = 10.0.pow(expRange.random().toDouble())
       if (positive) r * e else -e + 2 * e * r
     } - excluding

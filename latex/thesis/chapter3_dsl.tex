@@ -356,7 +356,7 @@ fun someMatFun(m: Mat<Double, D2, D2>) = ...
 \end{kotlinlisting}
 %
 Shape safety is currently supported up to rank-2 tensors, i.e.\ matrices. To perform dimension checking in our type system, first we enumerate a list of integer type literals as a chain of subtypes, $C <: C - 1 <: C - 2 <: \dots <: 1 <: 0$, where $C$ is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
-%
+% TODO: Update this.
 \begin{kotlinlisting}[caption={Shape safe tensor addition for rank-1 tensors, $\forall C\leq2.$}]
 interface Nat<T: D0> { val i: Int }
 // Integer literals have reified Int values should we need to compare them at runtime
@@ -368,7 +368,7 @@ sealed class D99(override val i: Int = 99): D98(i) { companion object: D99(), Na
 \end{kotlinlisting}
 %
 Next, we overload the call operator to emulate instantiating a collection literal, using arity to infer its dimensionality. Consider the rank-1 case for length inference on vector literals:
-%
+% TODO: Update this.
 \begin{kotlinlisting}
 open class Vec<E, Len: D1> constructor(val contents: List<E>) {
     companion object {

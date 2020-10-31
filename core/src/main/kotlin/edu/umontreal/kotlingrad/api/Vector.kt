@@ -11,8 +11,7 @@ import kotlin.reflect.KProperty
  * Vector function.
  */
 
-sealed class VFun<X: SFun<X>, E: D1>
-constructor(override vararg val inputs: Fun<X>): Fun<X> {
+sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X> {
   @Suppress("UNCHECKED_CAST")
   override fun invoke(newBindings: Bindings<X>): VFun<X, E> =
     VComposition(this, newBindings)

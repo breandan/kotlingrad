@@ -41,7 +41,7 @@ private fun List<SpsMat>.permute(): Array<DoubleArray> =
     map { cur ->
       val data = cur.toFDRM().getData()
       val padded = DoubleArray(maxDim) { if (it < data.size) data[it] else 0.0 }
-      padded.apply { shuffle(Random(0)) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString()) }
+      padded.apply { shuffle(DEFAULT_RANDOM) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString()) }
     }.toTypedArray()
   }
 
@@ -90,7 +90,7 @@ fun generateASTs(
 ): Pair<List<String>, List<ComputationGraph>> =
   heights.flatMap { height ->
     (0..numExps).map {
-      height.toString() to ExpressionGenerator<DReal>(rand = Random(it)).randomBiTree(height)
+      height.toString() to ExpressionGenerator<DReal>().randomBiTree(height)
     }.map { it.first to it.second.toGate().graph }.take(numExps).toList()
   }.unzip()
 

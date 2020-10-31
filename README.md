@@ -645,27 +645,24 @@ sealed class D3(override val i: Int = 3): D2(i) { companion object: D3(), Nat<D3
 Next, we overload the call operator to emulate instantiating a collection literal, using arity to infer its dimensionality. Consider the rank-1 case for length inference on vector literals:
 
 ```kotlin
-open class Vec<E, Len: D1> constructor(val contents: List<E>) {
-    companion object {
-        operator fun <T> invoke(t: T): Vec<T, D1> = Vec(listOf(t))
-        operator fun <T> invoke(t0: T, t1: T): Vec<T, D2> = Vec(listOf(t0, t1))
-        operator fun <T> invoke(t0: T, t1: T, t2: T): Vec<T, D3> = Vec(listOf(t0, t1, t2))
-    }
-}
+open class Vec<E, Len: D1>(val contents: List<E>)
+fun <T> Vec(t1: T): Vec<T, D1> = Vec(listOf(t1))
+fun <T> Vec(t1: T, t2: T): Vec<T, D2> = Vec(listOf(t1, t2))
+fun <T> Vec(t1: T, t2: T, t3: T): Vec<T, D3> = Vec(listOf(t1, t2, t3))
 ```
 
 Finally, we encode length as a parameter of the operand type. Since integer literals are a chain of subtypes, we only need to define one operator using the highest literal, and can rely on [Liskov substitution](https://en.wikipedia.org/wiki/Liskov_substitution_principle) to preserve shape safety for all subtypes.
 
 ```kotlin
-@JvmName("floatVecPlus") infix operator fun <C: D1, V: Vec<Float, C>> V.plus(v: V): Vec<Float, C> = 
-  Vec(length, contents.zip(v.contents).map { it.first + it.second })
+infix operator fun <C: D1, V: Vec<Int, C>> V.plus(v: V): Vec<Int, C> =
+  Vec(contents.zip(v.contents).map { it.first + it.second })
 ```
 
 The operator `+` can now be used like so. Incompatible operands will cause a type error:
 
 ```kotlin
 val one = Vec(1, 2, 3) + Vec(1, 2, 3)          // Always runs safely
-val add = Vec(1, 2, 3) + Vec(D3, listOf(...))  // May fail at runtime
+val add = Vec(1, 2, 3) + Vec(listOf(...))      // May fail at runtime
 val sum = Vec(1, 2) + add                      // Does not compile
 ```
 

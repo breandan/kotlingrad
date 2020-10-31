@@ -1,10 +1,11 @@
 package edu.umontreal.kotlingrad.api
 
+import edu.mcgill.kaliningraph.DEFAULT_RANDOM
 import kotlin.random.Random
 
 // https://arxiv.org/pdf/1912.01412.pdf#appendix.C
 open class ExpressionGenerator<X: RealNumber<X, *>>(
-  val rand: Random = Random(0),
+  val rand: Random = DEFAULT_RANDOM,
   val operators: List<(SFun<X>, SFun<X>) -> SFun<X>> = listOf(
     { x: SFun<X>, y: SFun<X> -> x + y },
     { x: SFun<X>, y: SFun<X> -> x - y },
