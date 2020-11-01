@@ -861,27 +861,27 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 
 ### Calculus
 
-* [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html)
-* [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf)
+* [The Matrix Calculus You Need For Deep Learning](https://explained.ai/matrix-calculus/index.html), Parr and Howard (2018)
+* [Backpropagation in matrix notation](https://arxiv.org/pdf/1707.02746.pdf), Mishachev (2017)
 * [Matrix derivatives](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#derivatives), from the Matrix Cookbook
-* [Div, Grad, Curl and All That](https://archive.org/details/H.M.ScheyDivGradCurlAndAllThat)
-* [Matrix Differentiation (and some other stuff)](https://atmos.washington.edu/~dennis/MatrixCalculus.pdf)
-* [Symbolic Matrix Derivatives](https://www.jstor.org/stable/2236019)
+* [Div, Grad, Curl and All That](https://archive.org/details/H.M.ScheyDivGradCurlAndAllThat), Petersen and Pedersen (2012)
+* [Matrix Differentiation (and some other stuff)](https://atmos.washington.edu/~dennis/MatrixCalculus.pdf), Barnes (2006)
+* [Symbolic Matrix Derivatives](https://www.jstor.org/stable/2236019), Dwyer and Macphail (1948)
 
 ### Computer Algebra
 
-* [miniKanren as a Tool for Symbolic Computation in Python](https://arxiv.org/pdf/2005.11644.pdf)
-* [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf)
-* [On Using Generics for Implementing Algebraic Structures](https://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf)
-* [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf)
-* [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf)
-* [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf)
-* [Einstein Summation in Numpy](https://obilaniu6266h16.wordpress.com/2016/02/04/einstein-summation-in-numpy/)
-* [Issues in Computer Algebra](https://www.cs.rit.edu/~anh/comp_alg.html)
-* [Term Rewriting and All That](https://www21.in.tum.de/~nipkow/TRaAT/)
-* [Describing the syntax of programming languages using conjunctive and
-Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf)
-* [Formal languages over GF(2)](https://users.math-cs.spbu.ru/~okhotin/papers/formal_languages_gf2.pdf)
+* [Towards an API for the real numbers](https://doi.org/10.1145/3395658), Boehm (2020)
+* [miniKanren as a Tool for Symbolic Computation in Python](https://arxiv.org/pdf/2005.11644.pdf), Willard (2020)
+* [A Design Proposal for an Object Oriented Algebraic Library](https://pdfs.semanticscholar.org/6fd2/88960ef83469c898a3d8ed8f0950e7839625.pdf), Niculescu (2003)
+* [On Using Generics for Implementing Algebraic Structures](https://www.cs.ubbcluj.ro/~studia-i/contents/2011-4/02-Niculescu.pdf), Niculescu (2011)
+* [How to turn a scripting language into a domain-specific language for computer algebra](https://arxiv.org/pdf/0811.1061.pdf), Jolly and Kredel (2008)
+* [Evaluation of a Java Computer Algebra System](https://pdfs.semanticscholar.org/ce81/39a9008bdc7d23be0ff05ef5a16d512b352c.pdf), Kredel (2007)
+* [Typesafe Abstractions for Tensor Operations](https://arxiv.org/pdf/1710.06892.pdf), Chen (2017)
+* [Einstein Summation in Numpy](https://obilaniu6266h16.wordpress.com/2016/02/04/einstein-summation-in-numpy/), Bilaniuk (2016)
+* [Issues in Computer Algebra](https://www.cs.rit.edu/~anh/comp_alg.html), Nunes-Harwitt
+* [Term Rewriting and All That](https://www21.in.tum.de/~nipkow/TRaAT/), Baader and Nipkow (1998)
+* [Describing the syntax of programming languages using conjunctive and Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf), Okhotin (2016)
+* [Formal languages over GF(2)](https://users.math-cs.spbu.ru/~okhotin/papers/formal_languages_gf2.pdf), Okhotin (2019)
 
 ### Symbolic Mathematics
 
@@ -899,38 +899,38 @@ Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf)
 
 ### Neural Networks
 
-* [Hacker's Guide to Neural Networks](https://karpathy.github.io/neuralnets/)
-* [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf)
-* [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html)
-* [A guide to convolutional arithmetic for deep learning](https://arxiv.org/pdf/1603.07285.pdf)
+* [Hacker's Guide to Neural Networks](https://karpathy.github.io/neuralnets/), Karpathy (2014)
+* [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf), Baydin et al. (2016)
+* [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html), Le (2016)
+* [A guide to convolutional arithmetic for deep learning](https://arxiv.org/pdf/1603.07285.pdf), Dumoulin and Visin (2018)
 
 ### Type Systems
 
-* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf)
-* [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf)
-* [Dimension Types](https://link.springer.com/content/pdf/10.1007%2F3-540-57880-3_23.pdf)
-* [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145)
+* [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf), Kennedy and Russo (2005)
+* [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf), Grigore (2016)
+* [Dimension Types](https://link.springer.com/content/pdf/10.1007%2F3-540-57880-3_23.pdf), Kennedy (2004)
+* [An algebraic view of dimension types](https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-391.pdf#page=145), Kennedy (1996)
 * [Type Inference and Unification](https://www.cs.cornell.edu/courses/cs3110/2011sp/Lectures/lec26-type-inference/type-inference.htm)
-* [Constructive mathematics and computer programming](https://royalsocietypublishing.org/doi/pdf/10.1098/rsta.1984.0073)
-* [Programming in Martin-Löf's Type Theory](http://www.cse.chalmers.se/research/group/logic/book/book.pdf#page=23)
+* [Constructive mathematics and computer programming](https://royalsocietypublishing.org/doi/pdf/10.1098/rsta.1984.0073), Martin-Lof (1984)
+* [Programming in Martin-Löf's Type Theory](http://www.cse.chalmers.se/research/group/logic/book/book.pdf#page=23), Nordstrom et al. (1990)
 
 ### Domain-Specific Languages
 
-* [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf)
-* [Implicit Staging of EDSL Expressions: A Bridge between Shallow and Deep Embedding](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf)
-* [DSL Implementation Using Staging and Monads](https://dl.acm.org/doi/pdf/10.1145/331963.331975)
-* [Deeply Reifying Running Code for Constructing a Domain-Specific Language](https://dl.acm.org/doi/pdf/10.1145/2972206.2972219)
-* [Staged Abstract Interpreters](https://www.cs.purdue.edu/homes/rompf/papers/wei-oopsla19.pdf)
-* [Generating Fluent Embedded Domain-Specific Languages with Subchaining](https://static.csg.ci.i.u-tokyo.ac.jp/papers/19/nakamaru-jcl50.pdf)
-* [Generating a Generic Fluent API in Java](https://arxiv.org/pdf/2002.06179.pdf)
-* [Fling – A Fluent API Generator](https://drops.dagstuhl.de/opus/volltexte/2019/10805/pdf/LIPIcs-ECOOP-2019-13.pdf)
-* [Scripting an IDE for EDSL awareness](https://ilyasergey.net/papers/groovy-dsl.pdf)
+* [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf), Elliott et al. (2003)
+* [Implicit Staging of EDSL Expressions: A Bridge between Shallow and Deep Embedding](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf), Scherr and Chiba (2014)
+* [DSL Implementation Using Staging and Monads](https://dl.acm.org/doi/pdf/10.1145/331963.331975) Sheard et al. (1999)
+* [Deeply Reifying Running Code for Constructing a Domain-Specific Language](https://dl.acm.org/doi/pdf/10.1145/2972206.2972219), Chiba et al. (2016)
+* [Staged Abstract Interpreters](https://www.cs.purdue.edu/homes/rompf/papers/wei-oopsla19.pdf), Wei et al. (2019)
+* [Generating Fluent Embedded Domain-Specific Languages with Subchaining](https://static.csg.ci.i.u-tokyo.ac.jp/papers/19/nakamaru-jcl50.pdf), Nakamaru et al. (2019)
+* [Generating a Generic Fluent API in Java](https://arxiv.org/pdf/2002.06179.pdf), Nakamarua and Chiba (2020)
+* [Fling – A Fluent API Generator](https://drops.dagstuhl.de/opus/volltexte/2019/10805/pdf/LIPIcs-ECOOP-2019-13.pdf), Gil and Roth (2019)
+* [Scripting an IDE for EDSL awareness](https://ilyasergey.net/papers/groovy-dsl.pdf), Sergey et al. (2011)
 
 ### Automated Testing
 
-* [DeepTest: Automated Testing of Deep-Neural-Network-driven Autonomous Cars](https://arxiv.org/pdf/1708.08559.pdf)
-* [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf)
-* [Learning to Discover Efficient Mathematical Identities](https://papers.nips.cc/paper/5350-learning-to-discover-efficient-mathematical-identities.pdf)
+* [DeepTest: Automated Testing of Deep-Neural-Network-driven Autonomous Cars](https://arxiv.org/pdf/1708.08559.pdf), Tian et al. (2018)
+* [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf), Claessen and Hughes (2000)
+* [Learning to Discover Efficient Mathematical Identities](https://papers.nips.cc/paper/5350-learning-to-discover-efficient-mathematical-identities.pdf), Zaremba et al. (2014)
 
 ### AD Libraries
 
