@@ -70,6 +70,12 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
     is Number -> wrap(any)
+    is List<*> -> when {
+      any.isEmpty() -> throw Exception("Empty collection")
+      any.first() is Number -> Vec<X, D1>(any.map { wrap(it as Number) })
+      else -> TODO() // else if(any.first() is List<*>) Mat<X, D1, D1>()
+    }
+    is Array<*> -> wrapOrError(any.toList())
     else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
   }
 

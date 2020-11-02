@@ -3,6 +3,7 @@
 package edu.umontreal.kotlingrad.api
 
 import edu.mcgill.kaliningraph.circuits.*
+import edu.mcgill.kaliningraph.elwise
 import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.api.VFun.Companion.KG_IT
 import edu.umontreal.kotlingrad.utils.matmul
@@ -168,10 +169,8 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(override val input: SFun<X>, override
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
-    is DProd -> invoke().d(vrb)
-//      mVar.vMap { vVar ->
-//      (left.d(vVar) as MFun<X, C, C> * (right as VFun<X, C>) +
-//        left as VFun<X, C> * right.d(vVar)) }
+    is DProd -> vrb.map { q -> invoke().d(q as SVar<X>) }
+    is VSumAll<*, *> -> vrb.map { q -> invoke().d(q as SVar<X>) }
     is SComposition -> evaluate.df()
     else -> TODO(this@df.javaClass.name)
   }
@@ -183,7 +182,7 @@ class Jacobian<X : SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, overri
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
     is VSum -> left.df() + right.df()
     is VNegative -> -input.df()
-    else -> input().vMap { it.d(vrb) }
+    else -> input.vMap { it.d(vrb) }
   }
 }
 
@@ -194,7 +193,6 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
   val vMat: Mat<X, R, C> = Mat(List(r.i) { row -> vVars[row].sVars })
 ): Variable<X>, MFun<X, R, C>() {
   override val bindings: Bindings<X> = Bindings(mapOf(this to vMat))
-  fun vMap(ef: (VVar<X, C>) -> VFun<X, C>) = Mat<X, R, C>(vVars.map { ef(it) })
   override fun equals(other: Any?) = other is MVar<*, *, *> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
