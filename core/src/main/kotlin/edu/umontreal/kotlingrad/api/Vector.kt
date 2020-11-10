@@ -45,17 +45,10 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
   fun <Q: D1> d(v1: VVar<X, Q>): MFun<X, E, Q> = Jacobian(this, v1)
 
   fun d(v1: SVar<X>) = VDerivative(this, v1)
-  fun d(v1: SVar<X>, v2: SVar<X>) = Jacobian(this, VVar(D2, "j2", Vec(v1, v2)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>) = Jacobian(this, VVar(D3, "j3", Vec(v1, v2, v3)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>) = Jacobian(this, VVar(D4, "j4", Vec(v1, v2, v3, v4)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>) = Jacobian(this, VVar(D5, "j5", Vec(v1, v2, v3, v4, v5)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>) = Jacobian(this, VVar(D6, "j6", Vec(v1, v2, v3, v4, v5, v6)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>) = Jacobian(this, VVar(D7, "j7", Vec(v1, v2, v3, v4, v5, v6, v7)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>) = Jacobian(this, VVar(D8, "j8", Vec(v1, v2, v3, v4, v5, v6, v7, v8)))
-  fun d(v1: SVar<X>, v2: SVar<X>, v3: SVar<X>, v4: SVar<X>, v5: SVar<X>, v6: SVar<X>, v7: SVar<X>, v8: SVar<X>, v9: SVar<X>) = Jacobian(this, VVar(D9, "j9", Vec(v1, v2, v3, v4, v5, v6, v7, v8, v9)))
 
   fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> =
     vars.map { it to d(it) }.toMap()
+
   fun grad(): Map<SVar<X>, VFun<X, E>> =
     bindings.sVars.map { it to d(it) }.toMap()
 
