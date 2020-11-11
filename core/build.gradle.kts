@@ -75,13 +75,6 @@ tasks {
     doLast { logger.info("Kotlin∇ notebook was installed in: $installPath") }
   }
 
-  listOf("MatGen", "VecGen", "DimGen").forEach { fileName ->
-    register(fileName, JavaExec::class) {
-      main = "edu.umontreal.kotlingrad.utils.codegen.${fileName}Kt"
-      classpath = sourceSets["main"].runtimeClasspath
-    }
-  }
-
   val sourcesJar by registering(Jar::class) {
     classifier = "sources"
     from(sourceSets.main.get().allSource)
