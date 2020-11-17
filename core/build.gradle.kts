@@ -37,7 +37,7 @@ dependencies {
 //  val tfVersion by extra { "-SNAPSHOT" }
 //  testImplementation("com.github.tensorflow:java:$tfVersion")
 //  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
-  val ejmlVersion = "0.39"
+  val ejmlVersion = "0.4.0"
   testImplementation("org.ejml:ejml-kotlin:$ejmlVersion")
   testImplementation("org.ejml:ejml-all:$ejmlVersion")
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
