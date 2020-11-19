@@ -49,7 +49,7 @@ mat = [[Tⁿ]ⁿ]
 
 # Semantics
 
-Below we provide a partial reduction semantics for Kotlin∇.
+Below we provide an operational semantics for Kotlin∇.
 
 ```ebnf
                  v = a | ... | z | vv
@@ -68,16 +68,15 @@ Below we provide a partial reduction semantics for Kotlin∇.
           v₁.d(v₁) = 1
           v₁.d(v₂) = 0
             c.d(v) = 0
-            
+
+     e.d(v₁).d(v₂) = e.d(v₂).d(v₁) †
+
 (e₁ ⊕ e₂)[e₃ → e₄] = e₁[e₃ → e₄] ⊕ e₂[e₃ → e₄]
 (e₁ ⊙ e₂)[e₃ → e₄] = e₁[e₃ → e₄] ⊙ e₂[e₃ → e₄]
        e₁[e₁ → e₂] = e₂
        e₁[e₂ → e₃] = e₁
 ```
 
-In the notation above, we use subscripts to denote conditional inequality.
-If we have two nonterminals with matching subscripts within in the same
-production, i.e. `eₘ`, `eₙ` where `m = n`, then `eₘ = eₙ` *must* be true.
-If we have two nonterminals with different subscripts in one production,
-i.e. `eₘ`, `eₙ` where `m ≠ n`, either `eₘ = eₙ` or `eₘ ≠ eₙ` may be true.
-Subscripts have no meaning across multiple productions.
+In the notation above, we use subscripts to denote conditional inequality. If we have two nonterminals with matching subscripts within in the same production, i.e. `eₘ`, `eₙ` where `m = n`, then `eₘ = eₙ` *must* be true. If we have two nonterminals with different subscripts in one production, i.e. `eₘ`, `eₙ` where `m ≠ n`, either `eₘ = eₙ` or `eₘ ≠ eₙ` may be true. Subscripts have no meaning across multiple productions.
+
+<sup>&dagger;</sup> Under some weak assumptions, the derivative operator is commutative. This result (see [Clairaut-Schwarz](https://en.wikipedia.org/wiki/Symmetry_of_second_derivatives)) holds for all twice-differentiable functions, however it is possible to have a continuously differentiable function whose partials are defined everywhere, but the permuted partials are unequal ∂F²/∂x∂y ≠ ∂F²/∂y∂x. For some examples of continuously differentiable functions whose partials do not commute, see Tolstov ([1949](http://www.mathnet.ru/links/c5537a9da2ecaa5e1eafbafda3f15a1e/sm5966.pdf), [1949](http://www.mathnet.ru/links/a8dfdc976cf22fdce373cdcba2eeda2b/im3207.pdf)).

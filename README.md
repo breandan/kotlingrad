@@ -529,7 +529,7 @@ In the following section, we describe how evaluation works.
 
 #### Algebraic data types
 
-[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) facilitate a limited form of pattern matching over a closed set of subclasses. When matching against subclasses of a sealed class, the compiler forces the author to provide an exhaustive control flow over all concrete subtypes of an abstract class. Consider the following classes:
+[Algebraic data types](https://en.wikipedia.org/wiki/Algebraic_data_type) (ADTs) in the form of [sealed classes](https://kotlinlang.org/docs/reference/sealed-classes.html) (a.k.a. sum types) facilitate a limited form of pattern matching over a closed set of subclasses. By using these, the compiler forces us to provide an exhaustive control flow when type checking a sealed class. Consider the following classes:
 
 ```kotlin
 class Const<T: Fun<T>>(val number: Number) : Fun<T>()
@@ -540,7 +540,7 @@ class Zero<T: Fun<T>>: Const<T>(0.0)
 class One<T: Fun<T>>: Const<T>(1.0)
 ```
 
-When branching on the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of `Fun`, a sealed class which defines the behavior of function invocation and differentiation, using a restricted form of pattern matching. It can be constructed with a set of `Var`s, and can be invoked with a numerical value:
+When checking the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of the superclass `Fun`, which defines the behavior invocation and differentiation, using a restricted form of pattern matching:
 
 ```kotlin
 sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
@@ -568,7 +568,11 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
 }
 ```
 
-This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
+Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, one for differentiation and one for evaluation. Differentiation constitutes a top-down substitution process on the computation graph and evaluation propagates the values from the bottom, up.
+
+![](latex/figures/kotlingrad_diagram.png)
+
+Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a `Bindings` instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the invoke operator, then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
 
 Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
