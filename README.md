@@ -8,7 +8,7 @@
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 
-Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) framework in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) framework in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end-user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
 ## Table of contents
 
@@ -18,8 +18,8 @@ Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wi
   * [Installation](#installation)
   * [Notation](#notation)
   * [Shape safety](#shape-safety)
-  * [Higher rank](#higher-rank-derivatives)
-  * [Higher order](#higher-order-derivatives)
+  * [Higher-rank](#higher-rank-derivatives)
+  * [Higher-order](#higher-order-derivatives)
   * [Example](#example)
 * [Visualization](#visualization-tools)
   * [Dataflow graphs](#dataflow-graphs)
@@ -192,11 +192,11 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly, or do so at runtime.
+<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
 
 <sup>τ, λ, π, ω</sup> Arbitrary products.
 
-### Higher Rank Derivatives
+### Higher-Rank Derivatives
 
 Kotlin∇ supports derivatives between tensors of up to rank 2. The shape of a tensor derivative depends on (1) the shape of the function under differentiation and (2) the shape of the variable with respect to which we are differentiating.
 
@@ -208,9 +208,9 @@ Kotlin∇ supports derivatives between tensors of up to rank 2. The shape of a t
 
 Matrix-by-vector, vector-by-matrix, and matrix-by-matrix derivatives require rank 3+ tensors and are currently unsupported.
 
-### Higher Order Derivatives
+### Higher-Order Derivatives
 
-Kotlin∇ supports arbitrary order derivatives on scalar functions, and up to 2nd order derivatives on vector functions. Higher order derivatives on matrix functions are unsupported.
+Kotlin∇ supports arbitrary order derivatives on scalar functions, and up to 2nd order derivatives on vector functions. Higher-order derivatives on matrix functions are unsupported.
 
 ### Shape Safety
 
@@ -310,8 +310,8 @@ The following example shows how to derive higher-order partials of a function `z
 val z = x * (-sin(x * y) + y) * 4  // Infix notation
 val `∂z∕∂x` = d(z) / d(x)          // Leibniz notation [Christianson, 2012]
 val `∂z∕∂y` = d(z) / d(y)          // Partial derivatives
-val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher order derivatives
-val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher order partials
+val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)  // Higher-order derivatives
+val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y) // Higher-order partials
 val `∇z` = z.grad()                // Gradient operator
 
 val values = arrayOf(x to 0, y to 1)
@@ -436,7 +436,7 @@ Above, we [compare numerical errors](samples/src/main/kotlin/edu/umontreal/kotli
 2. Finite precision symbolic differentiation (SD)
 3. Finite precision finite differences (FD)
 
-AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. As expected, FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating point division.
+AD and SD both exhibit relative errors (i.e. with respect to each other) several orders of magnitude lower than their absolute errors (i.e. with respect to IP), which roughly agree to within numerical precision. As expected, FD exhibits numerical error significantly higher than AD and SD due to the inaccuracy of floating-point division.
 
 There are many other ways to independently verify the numerical gradient, such as [dual numbers](https://en.wikipedia.org/wiki/Dual_number#Differentiation) or the [complex step derivative](https://timvieira.github.io/blog/post/2014/08/07/complex-step-derivative/). Another method is to compare the numerical output against a well-known implementation, such as [TensorFlow](https://github.com/JetBrains/kotlin-native/tree/master/samples/tensorflow). We plan to conduct a more thorough comparison of numerical accuracy and performance.
 
@@ -578,7 +578,7 @@ Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#sm
 
 #### Extension Functions
 
-[Extension functions](https://kotlinlang.org/docs/reference/extensions.html) allow us to convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. Via [context oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), Kotlin∇ can expose its custom extensions (e.g. in [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) to [consumers](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlingrad.kt) without requiring subclasses or inheritance.
+By using [extension functions](https://kotlinlang.org/docs/reference/extensions.html), users can convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. [Context-oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), allows users to define custom extensions (e.g. [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Fun()
@@ -602,7 +602,7 @@ Now, we can use the context to define another extension, `Fun.multiplyByTwo`, wh
 fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` operator in DoubleContext
 ```
 
-Extensions can also be defined in another file or context and imported on demand.
+Extensions can also be defined in another file or context and imported on demand. For example, Kotlin∇ also uses extensions to define [shape-safe](#shape-safe-tensor-operations) constructors and operators for vector and matrix arithmetic.
 
 #### Multiple Dispatch
 
@@ -643,7 +643,7 @@ sealed class D0(open val i: Int = 0) { companion object: D0(), Nat<D0> }
 sealed class D1(override val i: Int = 1): D0(i) { companion object: D1(), Nat<D1> }
 sealed class D2(override val i: Int = 2): D1(i) { companion object: D2(), Nat<D2> }
 sealed class D3(override val i: Int = 3): D2(i) { companion object: D3(), Nat<D3> }
-//...
+//... † Automatically generated
 ```
 
 Next, we overload the call operator to emulate instantiating a collection literal, using arity to infer its dimensionality. Consider the rank-1 case for length inference on vector literals:
@@ -653,6 +653,7 @@ open class Vec<E, Len: D1>(val contents: List<E>)
 fun <T> Vec(t1: T): Vec<T, D1> = Vec(listOf(t1))
 fun <T> Vec(t1: T, t2: T): Vec<T, D2> = Vec(listOf(t1, t2))
 fun <T> Vec(t1: T, t2: T, t3: T): Vec<T, D3> = Vec(listOf(t1, t2, t3))
+//... † Automatically generated
 ```
 
 Finally, we encode length as a parameter of the operand type. Since integer literals are a chain of subtypes, we only need to define one operator using the highest literal, and can rely on [Liskov substitution](https://en.wikipedia.org/wiki/Liskov_substitution_principle) to preserve shape safety for all subtypes.
@@ -676,7 +677,7 @@ A similar syntax is available for [matrices](core/src/main/kotlin/edu/umontreal/
 open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
 fun <X> Mat1x2(d0: X, d1: X): Mat<X, D1, D2> = Mat(Vec(d0, d1))
 fun <X> Mat2x1(d0: X, d1: X): Mat<X, D2, D1> = Mat(Vec(d0), Vec(d1))
-// ...
+//... † Automatically generated
 operator fun <Q: D1, R: D1, S: D1> Mat<Int, Q, R>.times(m: Mat<Int, R, S>): Mat<Int, Q, S> = TODO()
 
 // Inferred type: Mat<Int, D4, D4>
@@ -704,11 +705,13 @@ val lm = l * m
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
-&lowast; Many less powerful type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
+<sup>&lowast;</sup> Many type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
+
+<sup>&dagger;</sup> Statically generated code, shipped within the library. To regenerate these methods (e.g. using larger dimensions), a code generator is [provided](shipshape/src/main/kotlin/edu/mcgill/shipshape).
 
 #### Intermediate representation
 
-Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computaionally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic rootfinding, and supports features for visualization and debugging, e.g. in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
+Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computationally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic root-finding, and supports features for visualization and debugging, e.g. in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
 
 #### Property Delegation
 
@@ -798,7 +801,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 
 ² Automatic differentiation
 
-³ Higher order differentiation
+³ Higher-order differentiation
 
 ⁴ Differentiable programming
 
@@ -967,3 +970,4 @@ The following individuals have helped shape this project through their enthusias
 * [Kiran Gopinathan](https://scholar.google.com/citations?user=IcuGXgcAAAAJ&hl=en)
 * [Jacob Miller](https://scholar.google.ca/citations?user=xG3VWpEAAAAJ)
 * [Adam Pocock](http://www.adampocock.com/)
+* [Torsten Scholak](https://tscholak.github.io/)
