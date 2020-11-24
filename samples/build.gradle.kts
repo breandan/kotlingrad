@@ -18,7 +18,7 @@ dependencies {
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.2")
   implementation("com.github.lejon.T-SNE-Java:tsne:master-SNAPSHOT")
-  implementation("org.jetbrains.lets-plot-kotlin:lets-plot-kotlin-api:1.0.0")
+  implementation("org.jetbrains.lets-plot-kotlin:lets-plot-kotlin-api:1.1.0")
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
 

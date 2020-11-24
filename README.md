@@ -701,7 +701,7 @@ val lm = l * m
 // m * m // Compile error: Expected Mat<3, *>, found Mat<4, 3>
 ```
 
-[Further examples](core/src/main/kotlin/edu/umontreal/kotlingrad/api/Matrix.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+[Further examples](samples/src/main/kotlin/edu/umontreal/kotlingrad/api/MatrixDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
@@ -822,7 +822,7 @@ If you would like to cite Kotlin∇, please use the following `bibtex` entry:
 ```
 @misc{considine2019kotlingrad,
   authors = {Considine, Breandan and Famelis, Michalis and Paull, Liam},
-  title = {Kotlin{\nabla}: A Shape-Safe e{DSL} for Differentiable Programming},
+  title = {Kotlin$\nabla$: A Shape-Safe e{DSL} for Differentiable Programming},
   year = {2019},
   publisher = {GitHub},
   journal = {GitHub repository},
