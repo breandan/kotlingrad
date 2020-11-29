@@ -16,14 +16,14 @@ idea.module {
 
 dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("com.github.breandan:kaliningraph")
+  implementation("com.github.breandan:kaliningraph")
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
   implementation("org.jetbrains.bio:viktor:1.0.1")
 
   // Needed for codegen
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
+//  implementation("org.jetbrains.kotlin:kotlin-reflect")
 
 //  val kmathVersion by extra { "0.2.0-dev-2" }
 //  testImplementation("kscience.kmath:kmath-core:$kmathVersion")

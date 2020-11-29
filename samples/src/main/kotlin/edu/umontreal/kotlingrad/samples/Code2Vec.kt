@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
+import astminer.common.model.Node
 import astminer.common.model.Parser
 import astminer.parse.antlr.SimpleNode
 import astminer.parse.antlr.python.PythonParser
@@ -34,6 +35,19 @@ fun main() {
       .apply { writeText("<html>$clusters</html>") }.show()
   }
 }
+
+fun Node.toKGraph() =
+  LabeledGraphBuilder {
+    closure(
+      toVisit = setOf(this@toKGraph),
+      successors = { flatMap { setOfNotNull(it.getParent()) + it.getChildren() }.toSet() }
+    ).forEach { parent ->
+      getChildren().forEach { child ->
+        LGVertex(parent.getToken()) - LGVertex(child.getToken())
+        LGVertex(child.getToken()) - LGVertex(parent.getToken())
+      }
+    }
+  }
 
 // Pad length to a common vector length for TNSE
 private fun List<SpsMat>.permute(): Array<DoubleArray> =
@@ -93,7 +107,6 @@ fun generateASTs(
       height.toString() to ExpressionGenerator<DReal>().randomBiTree(height)
     }.map { it.first to it.second.toGate().graph }.take(numExps).toList()
   }.unzip()
-
 
 fun generateDigraphs(
   heights: IntRange = 4..7,
