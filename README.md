@@ -77,14 +77,12 @@ Kotlin∇ is hosted on [JitPack](https://jitpack.io/#breandan/kotlingrad).
 
 ```kotlin
 repositories {
-    mavenCentral()
     jcenter()
     maven("https://jitpack.io")
-    maven("https://dl.bintray.com/egor-bogomolov/astminer")
 }
 
 dependencies {
-    implementation("com.github.breandan:kotlingrad:0.3.7")
+    implementation("com.github.breandan:kotlingrad:0.4.0")
 }
 ```
 
@@ -102,7 +100,7 @@ dependencies {
   <dependency>
     <groupId>com.github.breandan</groupId>
     <artifactId>kotlingrad</artifactId>
-    <version>0.3.7</version>
+    <version>0.4.0</version>
   </dependency>
 </project>
 ```

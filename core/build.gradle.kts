@@ -16,7 +16,7 @@ idea.module {
 
 dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  implementation("com.github.breandan:kaliningraph")
+  api("com.github.breandan:kaliningraph")
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
