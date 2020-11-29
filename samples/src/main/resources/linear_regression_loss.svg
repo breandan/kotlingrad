@@ -1,14 +1,22 @@
-<svg class="plt-container" width="1000.0" height="500.0" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="1000.0" height="500.0">
   <style type="text/css">
   .plt-container {
 	font-family: "Lucida Grande", sans-serif;
+	cursor: crosshair;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+.plt-backdrop {
+   fill: white;
+}
+.plt-transparent .plt-backdrop {
+   visibility: hidden;
 }
 text {
 	font-size: 12px;
 	fill: #3d3d3d;
-}
-.plt-glass-pane {
-	cursor: crosshair;
 }
 .plt-data-tooltip text {
 	font-size: 12px;
@@ -19,10 +27,6 @@ text {
 .plt-axis line {
 	shape-rendering: crispedges;
 }
-.highlight {
-	fill-opacity: 0.75;
-}
-
 .plt-plot-title {
 
   font-size: 16.0px;
@@ -51,15 +55,17 @@ text {
 }
 
   </style>
+  <rect class="plt-backdrop" width="100%" height="100%">
+  </rect>
   <g class="plt-plot">
     <g class="plt-plot-title" transform="translate(500.0 12.0 ) ">
       <text text-anchor="middle" dy="0.35em">
-      Loss over time
+      Training Loss
       </text>
     </g>
     <g transform="translate(20.0 34.0 ) ">
       <g transform="translate(29.1 427.0 ) " class="plt-axis">
-        <g class="tick" transform="translate(38.448163452708904 0.0 ) ">
+        <g class="tick" transform="translate(13.27288401253919 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
@@ -68,7 +74,88 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(124.84853076216712 0.0 ) ">
+        <g class="tick" transform="translate(72.26347962382445 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            2
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(131.25407523510972 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            4
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(190.24467084639497 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            6
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(249.23526645768024 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            8
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(308.2258620689655 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            10
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(367.21645768025076 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            12
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(426.20705329153606 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            14
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(485.1976489028213 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            16
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(544.1882445141066 0.0 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
+          </line>
+          <g transform="translate(0.0 9.0 ) ">
+            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
+            18
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(603.1788401253918 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
@@ -77,84 +164,48 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(211.24889807162535 0.0 ) ">
+        <g class="tick" transform="translate(662.1694357366771 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
             <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            40
+            22
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(297.6492653810836 0.0 ) ">
+        <g class="tick" transform="translate(721.1600313479623 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
             <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            60
+            24
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(384.0496326905418 0.0 ) ">
+        <g class="tick" transform="translate(780.1506269592476 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
             <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            80
+            26
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(470.45 0.0 ) ">
+        <g class="tick" transform="translate(839.1412225705329 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
             <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            100
+            28
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(556.8503673094582 0.0 ) ">
+        <g class="tick" transform="translate(898.1318181818182 0.0 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
           </line>
           <g transform="translate(0.0 9.0 ) ">
             <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            120
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(643.2507346189163 0.0 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
-          </line>
-          <g transform="translate(0.0 9.0 ) ">
-            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            140
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(729.6511019283746 0.0 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
-          </line>
-          <g transform="translate(0.0 9.0 ) ">
-            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            160
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(816.0514692378327 0.0 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
-          </line>
-          <g transform="translate(0.0 9.0 ) ">
-            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            180
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(902.451836547291 0.0 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="0.0" y2="6.0">
-          </line>
-          <g transform="translate(0.0 9.0 ) ">
-            <text style="fill:#000000;" text-anchor="middle" dy="0.7em">
-            200
+            30
             </text>
           </g>
         </g>
@@ -162,16 +213,16 @@ text {
         </line>
       </g>
       <g transform="translate(29.1 0.0 ) " class="plt-axis">
-        <g class="tick" transform="translate(0.0 402.3626612289861 ) ">
+        <g class="tick" transform="translate(0.0 422.35473839755196 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            0.5
+            0.8
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 342.22292091051514 ) ">
+        <g class="tick" transform="translate(0.0 389.8803042540572 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
@@ -180,16 +231,43 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 282.0831805920442 ) ">
+        <g class="tick" transform="translate(0.0 357.40587011056243 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            1.5
+            1.2
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 221.9434402735733 ) ">
+        <g class="tick" transform="translate(0.0 324.9314359670677 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            1.4
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 292.4570018235729 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            1.6
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 259.9825676800782 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            1.8
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 227.50813353658344 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
@@ -198,16 +276,43 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 161.8036999551024 ) ">
+        <g class="tick" transform="translate(0.0 195.03369939308868 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            2.5
+            2.2
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 101.66395963663143 ) ">
+        <g class="tick" transform="translate(0.0 162.55926524959386 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            2.4
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 130.0848311060991 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            2.6
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 97.61039696260428 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            2.8
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 65.13596281910952 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
@@ -216,27 +321,36 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 41.524219318160476 ) ">
+        <g class="tick" transform="translate(0.0 32.661528675614704 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            3.5
+            3.2
+            </text>
+          </g>
+        </g>
+        <g class="tick" transform="translate(0.0 0.18709453211988603 ) ">
+          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
+          </line>
+          <g transform="translate(-9.0 0.0 ) ">
+            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
+            3.4
             </text>
           </g>
         </g>
         <line x1="0.0" y1="0.0" x2="0.0" y2="427.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         </line>
       </g>
-      <g transform="translate(29.1 0.0 ) " clip-path="url(#lplt-clip0)" clip-bounds-jfx="[rect (0.0, 0.0), (940.9, 427.0)]">
+      <g transform="translate(29.1 0.0 ) " clip-path="url(#FENxsj)" clip-bounds-jfx="[rect (0.0, 0.0), (940.9, 427.0)]">
         <defs>
-          <clipPath id="lplt-clip0">
+          <clipPath id="FENxsj">
             <rect x="0.0" y="0.0" width="940.9" height="427.0">
             </rect>
           </clipPath>
         </defs>
         <g>
-          <path d="M42.768181818181816 33.97897315379362 L42.768181818181816 33.97897315379362 L47.08820018365473 19.409090909090935 L51.40821854912764 39.67992942887872 L55.728236914600544 52.79039575087933 L60.04825528007346 74.17651761792513 L64.36827364554637 92.15672798066788 L68.68829201101929 103.41670333087131 L73.00831037649219 147.94601202077564 L77.3283287419651 147.6203909818061 L81.64834710743801 153.3714359410415 L85.96836547291093 177.69413101013276 L90.28838383838382 181.50785805533405 L94.60840220385674 185.2676504768324 L98.92842056932966 219.75915866954006 L103.24843893480258 196.76840005553487 L107.56845730027547 220.7433797789839 L111.88847566574839 258.17509217660086 L116.2084940312213 241.58944135192965 L120.5285123966942 258.03063976302155 L124.84853076216712 264.93243569103197 L129.16854912764003 262.7184253332937 L133.48856749311295 286.4556925261887 L137.80858585858584 286.2047609213447 L142.12860422405876 292.61834841511575 L146.44862258953168 298.2459216814508 L150.76864095500457 301.16017610699373 L155.0886593204775 311.651826969959 L159.4086776859504 306.97805987352206 L163.72869605142333 308.28706799345105 L168.04871441689625 315.76430148662246 L172.36873278236914 321.35025606453746 L176.68875114784205 331.79984936015524 L181.00876951331497 332.1961467272919 L185.32878787878786 333.0502244889708 L189.64880624426078 324.3360994210922 L193.9688246097337 328.8304581118715 L198.28884297520662 339.1741825776432 L202.6088613406795 336.7340862852275 L206.92887970615243 339.88207294507936 L211.24889807162535 339.85119221060836 L215.56891643709824 339.375044917428 L219.88893480257116 344.9188396816113 L224.20895316804408 349.0321135965627 L228.528971533517 343.5407620741323 L232.84898989898988 362.0530454126084 L237.1690082644628 355.93137202442483 L241.48902662993572 352.47617036615276 L245.8090449954086 360.231884223015 L250.12906336088153 359.49514582572556 L254.44908172635445 359.70649905063266 L258.76910009182734 364.8516989082978 L263.08911845730023 373.62200461491454 L267.4091368227732 365.6522173329094 L271.72915518824607 373.74217382290976 L276.049173553719 369.09932868340024 L280.3691919191919 375.4970377466649 L284.6892102846648 373.7957657269236 L289.00922865013774 374.63861225828236 L293.32924701561063 375.92779591949034 L297.6492653810836 380.6877733516451 L301.96928374655647 381.93197870709105 L306.28930211202936 385.47800810636477 L310.6093204775023 382.2541996894093 L314.9293388429752 385.187952224137 L319.2493572084481 385.1948669941498 L323.56937557392104 391.44708514456516 L327.8893939393939 384.4964887481142 L332.2094123048668 388.2332052332821 L336.52943067033976 390.7607542301543 L340.84944903581265 389.03487148346176 L345.1694674012856 390.4970320037611 L349.4894857667585 390.74745001374833 L353.8095041322314 395.2041737577737 L358.12952249770433 396.19533625156487 L362.4495408631772 396.17972943383774 L366.7695592286501 396.7217049394992 L371.08957759412306 401.29674096150336 L375.40959595959595 397.6590064587343 L379.72961432506884 402.41344930984627 L384.0496326905418 402.00153699930456 L388.3696510560147 397.9652590394994 L392.68966942148757 397.32016823152674 L397.0096877869605 398.92239995127323 L401.3297061524334 397.3344406146029 L405.64972451790635 397.61530138129564 L409.96974288337924 398.51565990064637 L414.28976124885213 403.2578608533478 L418.6097796143251 396.552195015001 L422.92979797979797 403.68702923139375 L427.24981634527086 398.25640417151897 L431.5698347107438 400.15677797004025 L435.8898530762167 402.7056344186786 L440.2098714416896 396.90523638843104 L444.52988980716253 397.47824331313916 L448.8499081726354 399.3709329766379 L453.1699265381083 400.90755567794486 L457.48994490358126 400.2700511342341 L461.80996326905415 405.63093189551483 L466.1299816345271 401.23663215398506 L470.45 403.7886857085387 L474.7700183654729 404.76691154227575 L479.0900367309458 403.4385409108872 L483.4100550964187 403.6282908604514 L487.7300734618916 403.75547681041166 L492.05009182736455 401.18132404256465 L496.37011019283744 403.99519359758716 L500.69012855831033 405.11984415734184 L505.0101469237833 405.44782259461215 L509.3301652892562 401.4442920125033 L513.6501836547291 402.0676656996915 L517.970202020202 402.1804753334754 L522.2902203856748 405.73069830474634 L526.6102387511478 405.7461740836004 L530.9302571166207 404.9223482792332 L535.2502754820936 404.3425448155373 L539.5702938475665 403.46319680680534 L543.8903122130395 405.36159126341744 L548.2103305785123 402.93787525150253 L552.5303489439852 400.1674795875626 L556.8503673094582 404.34811108567004 L561.170385674931 403.61302709398876 L565.490404040404 403.73075782991054 L569.8104224058769 404.685367270463 L574.1304407713498 403.753249521141 L578.4504591368227 401.28475632904315 L582.7704775022956 405.3970784227846 L587.0904958677685 402.6192661823438 L591.4105142332414 402.7776398155702 L595.7305325987144 404.1822054594058 L600.0505509641872 406.97549739472777 L604.3705693296602 405.94991227221243 L608.6905876951331 405.09419400834236 L613.0106060606059 403.91233855105577 L617.3306244260789 405.66667343920375 L621.6506427915518 404.7775614015182 L625.9706611570247 405.59439070252205 L630.2906795224976 406.68244265430855 L634.6106978879706 404.39030503260375 L638.9307162534434 404.14871719209145 L643.2507346189163 402.9252924120635 L647.5707529843893 405.9130825451325 L651.8907713498622 400.9437724497275 L656.2107897153351 406.4689901928423 L660.530808080808 402.9545070299531 L664.850826446281 403.9043414129876 L669.1708448117538 405.6012924491201 L673.4908631772267 405.04119704076317 L677.8108815426997 407.5909090909091 L682.1308999081725 405.14870550224083 L686.4509182736455 402.5121287739444 L690.7709366391184 402.78679560753847 L695.0909550045913 403.6472557511095 L699.4109733700642 403.93466257005593 L703.7309917355371 405.1171807399607 L708.05101010101 403.60384860998147 L712.3710284664829 403.04938397516315 L716.6910468319559 406.4076185484945 L721.0110651974287 404.5143374517995 L725.3310835629017 403.82364056485636 L729.6511019283746 407.49370620523587 L733.9711202938474 404.7011752925811 L738.2911386593204 406.5258097008982 L742.6111570247933 404.73166661444975 L746.9311753902662 402.4434521189089 L751.2511937557391 404.41987465254715 L755.571212121212 404.65448418614886 L759.891230486685 405.08425424396637 L764.2112488521578 402.6152946656825 L768.5312672176308 405.8033802775533 L772.8512855831037 406.4542548284525 L777.1713039485766 403.34864867202054 L781.4913223140495 406.6132477512258 L785.8113406795225 404.2197252481095 L790.1313590449953 402.7858218102874 L794.4513774104682 404.01869148416574 L798.7713957759412 406.83856666140264 L803.091414141414 405.6058812358956 L807.411432506887 406.35010228456224 L811.7314508723599 407.2609386093302 L816.0514692378327 405.9543808112461 L820.3714876033057 401.22468641768785 L824.6915059687786 406.9862361537918 L829.0115243342515 405.77008663716936 L833.3315426997244 405.91207449782894 L837.6515610651974 405.2784793458767 L841.9715794306702 406.47814921501686 L846.2915977961432 402.63518297285106 L850.6116161616161 404.4332841473827 L854.9316345270889 406.1728326669145 L859.2516528925619 403.99989473693864 L863.5716712580348 406.3041806215968 L867.8916896235077 404.04871654774973 L872.2117079889806 402.1340221142716 L876.5317263544536 406.4621042569471 L880.8517447199265 404.6230325485771 L885.1717630853993 406.10833951649545 L889.4917814508723 403.2339796680334 L893.8117998163452 404.1695209533587 L898.1318181818181 402.4277150237812 " fill="none" stroke-width="2.0" stroke="rgb(255,0,0)" stroke-opacity="1.0">
+          <path d="M42.76818181818182 19.409090909090878 L42.76818181818182 19.409090909090878 L72.26347962382445 93.38757538599623 L101.75877742946709 165.81847761281637 L131.25407523510972 200.77662472174137 L160.74937304075235 243.62494453250275 L190.24467084639497 260.3005225061891 L219.73996865203762 271.35553127156334 L249.23526645768024 286.46061810786216 L278.7305642633229 291.5171034743711 L308.2258620689655 293.0774396405416 L337.72115987460813 305.5835601332649 L367.21645768025076 308.65828268567327 L396.7117554858934 310.0851571939986 L426.20705329153606 325.6055607340842 L455.7023510971787 317.35956656404176 L485.1976489028213 325.7358193635281 L514.692946708464 339.80145027779406 L544.1882445141066 345.91354419377154 L573.6835423197492 346.6039296112316 L603.1788401253918 350.8499871515937 L632.6741379310345 358.2091718757 L662.1694357366771 364.65090016358863 L691.6647335423197 369.4894628714245 L721.1600313479623 373.7943561981721 L750.655329153605 379.2121275795746 L780.1506269592476 388.74587298946 L809.6459247648903 391.10303239749726 L839.1412225705329 399.8832176003998 L868.6365203761756 407.5909090909091 L898.1318181818182 407.04198732490715 " fill="none" stroke-width="2.0" stroke="rgb(255,0,0)" stroke-opacity="1.0">
           </path>
         </g>
       </g>
@@ -256,10 +370,4 @@ text {
       </g>
     </g>
   </g>
-  <g>
-    <g>
-    </g>
-  </g>
-  <rect class="plt-glass-pane" opacity="0.0" width="1000.0" height="500.0">
-  </rect>
 </svg>

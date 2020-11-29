@@ -25,15 +25,10 @@ allprojects {
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
     maven("https://maven.jzy3d.org/releases")
     maven("https://jetbrains.bintray.com/lets-plot-maven")
-
-    // Needed for Gradle Composite Build
-    // https://github.com/gradle/gradle/issues/947
-    maven("http://logicrunch.research.it.uu.se/maven/")
-    maven("https://clojars.org/repo")
   }
 
   group = "com.github.breandan"
-  version = "0.3.7"
+  version = "0.3.8"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
