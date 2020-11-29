@@ -28,7 +28,7 @@ allprojects {
   }
 
   group = "com.github.breandan"
-  version = "0.3.8"
+  version = "0.3.9"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
