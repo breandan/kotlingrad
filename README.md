@@ -8,7 +8,7 @@
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 
-Kotlin∇ is a type-safe [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation) framework in [Kotlin](https://kotl.in). It allows users to express differentiable programs with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end-user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/masters_thesis.pdf#1a) framework in [Kotlin](https://kotl.in). It allows users to express [differentiable programs](http://breandan.net/public/masters_thesis.pdf#1b) with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end-user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
 
 ## Table of contents
 
@@ -375,10 +375,10 @@ To train the model, execute `./gradlew MLP` from within the parent directory.
 
 To run [the tests](core/src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
 
-Kotlin∇ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called property-based testing (PBT), closely related to [metamorphic testing](https://en.wikipedia.org/wiki/Metamorphic_testing). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin∇ uses two such equivalences to validate its AD implementation:
+Kotlin∇ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called [property-based testing](http://breandan.net/public/masters_thesis.pdf#33) (PBT), closely related to [metamorphic testing](http://breandan.net/public/masters_thesis.pdf#34). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [KotlinTest](https://github.com/kotlintest/kotlintest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin∇ uses two such equivalences to validate its AD implementation:
 
 * [Analytic differentiation](https://en.wikipedia.org/wiki/Differentiation_rules): manually differentiate and compare the values returned on a subset of the domain with AD.
-* [Finite difference approximation](https://en.wikipedia.org/wiki/Finite_difference_method): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
+* [Finite difference approximation](http://breandan.net/public/masters_thesis.pdf#5a): sample space of symbolic (differentiable) functions, comparing results of AD to FD.
 
 For example, consider the following test, which checks whether the analytical derivative and the automatic derivative, when evaluated at a given point, are equal to each other within the limits of numerical precision:
 
@@ -439,7 +439,7 @@ This project relies on a few Kotlin-specific language features, which together e
 
 #### Operator overloading
  
-[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. `Group`, `Ring`, and `Field`. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](http://breandan.net/public/masters_thesis.pdf#page=58), e.g. `Group`, `Ring`, and `Field`. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
 For example, suppose we have an interface `Group`, which overloads the operators `+` and `*`, and is defined like so:
 
@@ -561,7 +561,7 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
 
 Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, one for differentiation and one for evaluation. Differentiation constitutes a top-down substitution process on the computation graph and evaluation propagates the values from the bottom, up.
 
-![](latex/figures/kotlingrad_diagram.png)
+[![](latex/figures/kotlingrad_diagram.png)](http://breandan.net/public/masters_thesis.pdf#page=58)
 
 Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a `Bindings` instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the invoke operator, then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
 
@@ -765,7 +765,7 @@ For a detailed grammar and reduction semantics, please see [the specification](s
 
 ## Comparison
 
-Unlike certain frameworks which simply wrap an existing AD library in a type-safe DSL, Kotlin∇ contains a fully shape-safe implementation of algorithmic differentiation, written in pure Kotlin. By doing so, it can leverage Kotlin language features such as typed functional programming, as well as interoperability with other languages on the JVM platform. Furthermore, it implements symbolic differentiation, which unlike Wengert tape or dual-number based ADs, allows it to calculate derivatives of arbitrarily high order with zero extra engineering required. Further details can be found below.
+Unlike certain frameworks which simply wrap an existing AD library in a type-safe DSL, Kotlin∇ contains a fully shape-safe implementation of algorithmic differentiation, written in pure Kotlin. By doing so, it can leverage Kotlin language features such as typed functional programming, as well as interoperability with other languages on the JVM platform. Furthermore, it implements [symbolic differentiation](http://breandan.net/public/masters_thesis.pdf#2a), which unlike Wengert tape or dual-number based ADs, allows it to calculate derivatives of arbitrarily high order with zero extra engineering required. Further details can be found below.
 
 |                                    Framework                                     | Language |        SD¹         |        AD²         |        HD³         |        DP⁴         |        FP⁵         |        TS⁶         |        SS⁷         |        DT⁸         |      MP⁹       |
 |:--------------------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
