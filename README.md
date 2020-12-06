@@ -439,7 +439,7 @@ This project relies on a few Kotlin-specific language features, which together e
 
 #### Operator overloading
  
-[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. [`Group`](core/src/main/kotlin/edu/umontreal/kotlingrad/algebra/Group.kt), [`Ring`](core/src/main/kotlin/edu/umontreal/kotlingrad/algebra/Ring.kt), and [`Field`](core/src/main/kotlin/edu/umontreal/kotlingrad/algebra/Field.kt). These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](https://en.wikipedia.org/wiki/Algebraic_structure), e.g. `Group`, `Ring`, and `Field`. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
 For example, suppose we have an interface `Group`, which overloads the operators `+` and `*`, and is defined like so:
 
@@ -569,7 +569,7 @@ Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#sm
 
 #### Extension Functions
 
-By using [extension functions](https://kotlinlang.org/docs/reference/extensions.html), users can convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. [Context-oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), allows users to define custom extensions (e.g. [DoublePrecision](core/src/main/kotlin/edu/umontreal/kotlingrad/numerical/Protocol.kt)) without requiring subclasses or inheritance.
+By using [extension functions](https://kotlinlang.org/docs/reference/extensions.html), users can convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. [Context-oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), allows users to define custom extensions without requiring subclasses or inheritance.
 
 ```kotlin
 data class Const<T: Group<T>>(val number: Double) : Fun()
@@ -692,7 +692,7 @@ val lm = l * m
 // m * m // Compile error: Expected Mat<3, *>, found Mat<4, 3>
 ```
 
-[Further examples](samples/src/main/kotlin/edu/umontreal/kotlingrad/api/MatrixDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+[Further examples](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/MatrixDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
@@ -731,7 +731,7 @@ Without property delegation, users would need to repeat the property name in the
 
 The current API is stable, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
-When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](core/src/main/kotlin/edu/umontreal/kotlingrad/dependent) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
+When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/edu/mcgill/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
 Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
