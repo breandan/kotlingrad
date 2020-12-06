@@ -14,10 +14,12 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
   ℂ = ℝ + ℝi
   ℍ = ℝ + ℝi + ℝj + ℝk
   T = 𝔹 | ℕ | ℤ | ℚ | ℝ | ℂ | ℍ
-  n = ℕ < 99
+  n = ℕ < 100*
 vec = [Tⁿ]
 mat = [[Tⁿ]ⁿ]
 ```
+
+<sup>&lowast;</sup> To increase `n`, see [`DimGen.kt`](shipshape/src/main/kotlin/edu/mcgill/shipshape/DimGen.kt).
 
 ## DSL
 
