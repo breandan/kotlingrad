@@ -563,7 +563,7 @@ Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, on
 
 [![](latex/figures/kotlingrad_diagram.png)](http://breandan.net/public/masters_thesis.pdf#page=58)
 
-Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a `Bindings` instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the invoke operator, then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This structure is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
+Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a [`Bindings`](/core/src/main/kotlin/edu/umontreal/kotlingrad/api/Bindings.kt) instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the [`invoke` operator](https://kotlinlang.org/docs/reference/operator-overloading.html#invoke), then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
 
 Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
