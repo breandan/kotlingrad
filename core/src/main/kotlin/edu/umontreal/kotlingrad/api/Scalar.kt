@@ -307,7 +307,9 @@ class SComposition<X : SFun<X>> constructor(
       is Derivative    -> df().bind(bnds)
       // TODO: should we really be merging bindings for nested composition?
       is SComposition  -> input.bind(bnds + bindings)
-      else             -> apply(*inputs.map { it(bnds) }.toTypedArray())
+      else -> apply(*inputs.map {
+        if (it is SFun<X>) it.bind(bnds) else it(bnds)
+      }.toTypedArray())
     } //.also { result -> bnds.checkForUnpropagatedVariables(this@bind, result) }
     //appl(*inputs.map { it.bind(bnds) }.toTypedArray())) as SFun<X>
 }
