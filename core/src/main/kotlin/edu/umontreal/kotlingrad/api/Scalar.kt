@@ -159,6 +159,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
    * TODO: Figure out how to avoid casting. Once stable, port to [VFun], [MFun].
    */
 
+  @Suppress("UNCHECKED_CAST")
   fun apply(vararg xs: Fun<X>): SFun<X> = when(op) {
     Monad.id  -> this
     Monad.sin -> (xs[0] as SFun<X>).sin()
@@ -171,9 +172,9 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     Dyad.`*`  -> (xs[0] as SFun<X>) * xs[1] as SFun<X>
     Dyad.pow  -> (xs[0] as SFun<X>) pow xs[1] as SFun<X>
     Dyad.log  -> (xs[0] as SFun<X>).log(xs[1] as SFun<X>)
-    Dyad.dot  -> (xs[0] as VFun<X, D1>) dot xs[1] as VFun<X, D1>
+    Dyad.dot  -> (xs[0] as VFun<X, DN>) dot xs[1] as VFun<X, DN>
 
-    Polyad.Σ  -> (xs[0] as VFun<X, D1>).sum()
+    Polyad.Σ  -> (xs[0] as VFun<X, DN>).sum()
     Polyad.λ  -> TODO()
     else      -> TODO(op.javaClass.name)
   }
@@ -267,6 +268,8 @@ class Derivative<X: SFun<X>> constructor(
   override val vrb: SVar<X>
 ): SFun<X>(input, vrb), Grad<X> {
   fun df() = input.df()
+
+  @Suppress("UNCHECKED_CAST")
   fun SFun<X>.df(): SFun<X> = when (this@df) {
     is SVar          -> if (this == vrb) ONE else ZERO
     is SConst        -> ZERO
@@ -283,7 +286,7 @@ class Derivative<X: SFun<X>> constructor(
     is Cosine        -> -input.sin() * input.df()
     is Tangent       -> (input.cos() pow -TWO) * input.df()
     is Derivative    -> input.df()
-    is DProd         -> (left.d(vrb) as VFun<X, D1> dot right as VFun<X, D1>) + (left as VFun<X, D1> dot right.d(vrb))
+    is DProd         -> (left.d(vrb) as VFun<X, DN> dot right as VFun<X, DN>) + (left as VFun<X, DN> dot right.d(vrb))
     is SComposition  -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()
 //    is Custom<X> -> fn.df()
@@ -301,7 +304,6 @@ class SComposition<X : SFun<X>> constructor(
   // https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-deep-recursive-function
   // https://medium.com/@elizarov/deep-recursion-with-coroutines-7c53e15993e3
 
-  @Suppress("UNCHECKED_CAST")
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
       is Derivative    -> df().bind(bnds)

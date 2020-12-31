@@ -117,7 +117,7 @@ class MComposition<X: SFun<X>, R: D1, C: D1>(
       is MNegative -> -input.bind(bnds)
       is MTranspose -> input.ᵀ.bind(bnds)
       is MSum -> left.bind(bnds) + right.bind(bnds)
-      is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, D1> * right(bnds) as MFun<X, D1, C>
+      is MMProd<X, R, *, C> -> left(bnds) as MFun<X, R, DN> * right(bnds) as MFun<X, DN, C>
       is HProd -> left.bind(bnds) ʘ right.bind(bnds)
       is MSProd -> left.bind(bnds) * right(bnds)
       is SMProd -> left(bnds) * right.bind(bnds)
