@@ -29,3 +29,4 @@ out
 *.rai
 *.rao
 **/.ipynb_checkpoints/
+*.run
