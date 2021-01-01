@@ -9,7 +9,8 @@ fun main(args: Array<String>) =
   "link": "https://github.com/breandan/kotlingrad",
   "description": "A shape-safe symbolic differentiation framework for Kotlin",
   "dependencies": [
-    "com.github.breandan:kotlingrad:${args[1]}"
+    "com.github.breandan:kotlingrad:${args[1]}",
+    "com.github.breandan:kaliningraph:0.1.4"
   ],
   "imports": [
     "edu.umontreal.kotlingrad.experimental.*",
