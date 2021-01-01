@@ -104,8 +104,6 @@ interface UnFun<X: SFun<X>>: PolyFun<X> {
 interface BiFun<X: SFun<X>>: PolyFun<X> {
   val left: Fun<X>
   val right: Fun<X>
-  val apply: (Fun<X>, Fun<X>) -> Fun<X>
-    get() = { l: Fun<X>, r: Fun<X> -> apply(l, r) }
 }
 
 interface PolyFun<X: SFun<X>>: Fun<X> {

@@ -7,10 +7,7 @@ import kotlin.reflect.KClass
 fun main(args: Array<String>) =
   """{
   "link": "https://github.com/breandan/kotlingrad",
-  "repositories": [
-    "*mavenLocal",
-    "https://jitpack.io"
-  ],
+  "description": "A shape-safe symbolic differentiation framework for Kotlin",
   "dependencies": [
     "com.github.breandan:kotlingrad:${args[1]}"
   ],

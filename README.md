@@ -107,16 +107,10 @@ dependencies {
 
 #### Jupyter Notebook
 
-[First install](https://github.com/kotlin/kotlin-jupyter#installation) the Kotlin Jupyter kernel, then run the `jupyterInstall` task to install the library descriptor:
-
-```
-./gradlew jupyterRun
-```
-
 To access Kotlin∇'s notebook support, use the following line magic:
 
 ```
-%use kotlingrad
+%use @https://raw.githubusercontent.com/breandan/kotlingrad/master/core/kotlingrad.json
 ```
 
 For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.ipynb).
