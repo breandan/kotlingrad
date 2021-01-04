@@ -4,7 +4,7 @@ import java.math.BigInteger.*
 import kotlin.system.measureTimeMillis
 
 fun main() {
-  Semiring(
+  Ring(
     nil = ZERO,
     one = ONE,
     plus = { a, b -> a + b },
@@ -16,7 +16,7 @@ fun main() {
     }.also { ms -> println("Took ${ms}ms") }
   }
 
-  Semiring(
+  Ring(
     nil = ZERO,
     one = ONE,
     plus = { a, b -> a + b }
@@ -36,7 +36,17 @@ fun main() {
       printPrimes(valueOf(20))
     }.also { ms -> println("Took ${ms}ms") }
   }
+
+  Ring(
+    nil = GaussianInteger(0, 0),
+    one = GaussianInteger(1, 1), // http://www.math.ucsd.edu/~alina/oldcourses/2012/104b/zi.pdf
+    plus = { a, b -> GaussianInteger(a.a + b.a, a.b + b.b) },
+    times = { a, b -> GaussianInteger(a.a * b.a - a.b * b.b, a.a * b.b + a.b * b.a) },
+  )
 }
+
+// TODO
+data class GaussianInteger(val a: Int, val b: Int)
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
 tailrec fun <T> Nat<T>.printFibNum(
@@ -115,12 +125,12 @@ interface Nat<T> {
   }
 }
 
-interface Semiring<T>: Nat<T> {
+interface Ring<T>: Nat<T> {
   override fun succ(t: T): T = t + one
 
   companion object {
-    operator fun <T> invoke(nil: T, one: T, plus: (T, T) -> T): Semiring<T> =
-      object: Semiring<T> {
+    operator fun <T> invoke(nil: T, one: T, plus: (T, T) -> T): Ring<T> =
+      object: Ring<T> {
         override fun T.plus(t: T) = plus(this, t)
         override val nil: T = nil
         override val one: T = one
@@ -130,8 +140,8 @@ interface Semiring<T>: Nat<T> {
       nil: T, one: T,
       plus: (T, T) -> T,
       times: (T, T) -> T
-    ): Semiring<T> =
-      object: Semiring<T> {
+    ): Ring<T> =
+      object: Ring<T> {
         override fun T.plus(t: T) = plus(this, t)
         override fun T.times(t: T) = times(this, t)
         override val nil: T = nil
