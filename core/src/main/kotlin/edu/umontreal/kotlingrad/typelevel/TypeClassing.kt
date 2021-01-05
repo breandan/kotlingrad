@@ -53,9 +53,9 @@ fun main() {
   ).run {
     measureTimeMillis {
       println(sum(seq(to = Rational(1000))))
-//      fibonacci(Rational(5))
-//      printFibNum(Rational(4, 1))
-//      printPrimes(Rational(20, 1))
+      // TODO: fix infinite loop, maybe with comparator?
+      // fibonacci(Rational(4, 1))
+      // primes(Rational(20, 1))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 }
