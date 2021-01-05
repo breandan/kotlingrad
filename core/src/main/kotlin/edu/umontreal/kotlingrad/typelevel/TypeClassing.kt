@@ -60,48 +60,6 @@ fun main() {
   }
 }
 
-// http://www.math.ucsd.edu/~alina/oldcourses/2012/104b/zi.pdf
-data class GaussInt(val a: Int, val b: Int) {
-  operator fun plus(o: GaussInt): GaussInt = GaussInt(a + o.a, b + o.b)
-  operator fun times(o: GaussInt): GaussInt =
-    GaussInt(a * o.a - b * o.b, a * o.b + b * o.a)
-}
-
-class Rational(i: Int, j: Int = 1) {
-  private val canonicalRatio = reduce(i, j)
-  val a = canonicalRatio.first
-  val b = canonicalRatio.second
-
-  operator fun times(that: Rational) = Rational(a * that.a, b * that.b)
-
-  operator fun plus(that: Rational) =
-    Rational(a * that.b + that.a * b, b * that.b)
-
-  operator fun minus(that: Rational) =
-    Rational(a * that.b - that.a * b, b * that.b)
-
-  operator fun div(that: Rational) = Rational(a * that.b, b * that.a)
-
-  override fun toString() = "$a/$b"
-  override fun equals(other: Any?) =
-    (other as? Rational).let { a == it!!.a && b == it.b }
-
-  override fun hashCode() = toString().hashCode()
-
-  companion object {
-    fun reduce(a: Int, b: Int) = Pair(
-      (a.toFloat() / a.gcd(b).toFloat()).roundToInt(),
-      (b.toFloat() / a.gcd(b).toFloat()).roundToInt()
-    )
-
-    tailrec fun Int.gcd(that: Int): Int = when {
-      this == that -> if (that == 0) 1 else this
-      this > that -> (this - that).gcd(that)
-      else -> gcd(that - this)
-    }
-  }
-}
-
 /** Corecursive Fibonacci sequence of [Nat]s **/
 tailrec fun <T> Nat<T>.fibonacci(
   n: T,
@@ -237,5 +195,47 @@ interface Field<T>: Ring<T> {
         override val nil: T = nil
         override val one: T = one
       }
+  }
+}
+
+// http://www.math.ucsd.edu/~alina/oldcourses/2012/104b/zi.pdf
+data class GaussInt(val a: Int, val b: Int) {
+  operator fun plus(o: GaussInt): GaussInt = GaussInt(a + o.a, b + o.b)
+  operator fun times(o: GaussInt): GaussInt =
+    GaussInt(a * o.a - b * o.b, a * o.b + b * o.a)
+}
+
+class Rational(i: Int, j: Int = 1) {
+  private val canonicalRatio = reduce(i, j)
+  val a = canonicalRatio.first
+  val b = canonicalRatio.second
+
+  operator fun times(that: Rational) = Rational(a * that.a, b * that.b)
+
+  operator fun plus(that: Rational) =
+    Rational(a * that.b + that.a * b, b * that.b)
+
+  operator fun minus(that: Rational) =
+    Rational(a * that.b - that.a * b, b * that.b)
+
+  operator fun div(that: Rational) = Rational(a * that.b, b * that.a)
+
+  override fun toString() = "$a/$b"
+  override fun equals(other: Any?) =
+    (other as? Rational).let { a == it!!.a && b == it.b }
+
+  override fun hashCode() = toString().hashCode()
+
+  companion object {
+    fun reduce(a: Int, b: Int) = Pair(
+      (a.toFloat() / a.gcd(b).toFloat()).roundToInt(),
+      (b.toFloat() / a.gcd(b).toFloat()).roundToInt()
+    )
+
+    tailrec fun Int.gcd(that: Int): Int = when {
+      this == that -> if (that == 0) 1 else this
+      this > that -> (this - that).gcd(that)
+      else -> gcd(that - this)
+    }
   }
 }
