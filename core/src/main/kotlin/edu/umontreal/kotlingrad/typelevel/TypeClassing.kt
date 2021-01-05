@@ -15,7 +15,7 @@ fun main() {
       fibonacci(valueOf(20))
       primes(valueOf(20))
       factorial(valueOf(10))
-    }.also { ms -> println("Took ${ms}ms") }
+    }.also { ms -> println("\nTook ${ms}ms") }
   }
 
   Ring(
@@ -27,7 +27,7 @@ fun main() {
       fibonacci(valueOf(20))
       primes(valueOf(20))
       factorial(valueOf(10))
-    }.also { ms -> println("Took ${ms}ms") }
+    }.also { ms -> println("\nTook ${ms}ms") }
   }
 
   Ring(
@@ -40,7 +40,7 @@ fun main() {
       fibonacci(valueOf(20))
       primes(valueOf(20))
       factorial(valueOf(10))
-    }.also { ms -> println("Took ${ms}ms") }
+    }.also { ms -> println("\nTook ${ms}ms") }
   }
 
   Field(
@@ -52,11 +52,11 @@ fun main() {
     minus = { a, b -> a - b },
   ).run {
     measureTimeMillis {
-      println(sum(seq(to = Rational(100))))
+      println(sum(seq(to = Rational(1000))))
 //      fibonacci(Rational(5))
 //      printFibNum(Rational(4, 1))
 //      printPrimes(Rational(20, 1))
-    }.also { ms -> println("Took ${ms}ms") }
+    }.also { ms -> println("\nTook ${ms}ms") }
   }
 }
 
@@ -112,7 +112,7 @@ tailrec fun <T> Nat<T>.fibonacci(
   if (i == n) fib(seed).first
   else fibonacci(
     n = n,
-    seed = fib(seed),
+    seed = fib(seed).also { print("${it.first}, ") },
     i = i.next()
   )
 
@@ -145,7 +145,7 @@ tailrec fun <T> Nat<T>.primes(
   when {
     i == t -> Unit
     isPrime(c) -> {
-      primes(t, i.next(), c.next(), kps + c)
+      print("$c, "); primes(t, i.next(), c.next(), kps + c)
     }
     else -> primes(t, i, c.next(), kps)
   }
