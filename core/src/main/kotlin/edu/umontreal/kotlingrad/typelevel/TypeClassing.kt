@@ -88,8 +88,7 @@ tailrec fun <T> Nat<T>.seq(
 /** Returns whether an [Nat] is prime **/
 fun <T> Nat<T>.isPrime(t: T, kps: Set<T> = emptySet()): Boolean =
   // Take Cartesian product, filter distinct pairs due to commutativity
-  (if (kps.isNotEmpty()) kps * kps
-  else seq(to = t) * seq(to = t))
+  (if (kps.isNotEmpty()) kps * kps else seq(to = t) * seq(to = t))
     .distinctBy { (l, r) -> setOf(l, r) }
     .all { (i, j) -> if (i == one || j == one) true else i * j != t }
 
@@ -210,15 +209,13 @@ class Rational(i: Int, j: Int = 1) {
   val a = canonicalRatio.first
   val b = canonicalRatio.second
 
-  operator fun times(that: Rational) = Rational(a * that.a, b * that.b)
+  operator fun times(r: Rational) = Rational(a * r.a, b * r.b)
 
-  operator fun plus(that: Rational) =
-    Rational(a * that.b + that.a * b, b * that.b)
+  operator fun plus(r: Rational) = Rational(a * r.b + r.a * b, b * r.b)
 
-  operator fun minus(that: Rational) =
-    Rational(a * that.b - that.a * b, b * that.b)
+  operator fun minus(r: Rational) = Rational(a * r.b - r.a * b, b * r.b)
 
-  operator fun div(that: Rational) = Rational(a * that.b, b * that.a)
+  operator fun div(r: Rational) = Rational(a * r.b, b * r.a)
 
   override fun toString() = "$a/$b"
   override fun equals(other: Any?) =
@@ -232,7 +229,7 @@ class Rational(i: Int, j: Int = 1) {
       (b.toFloat() / a.gcd(b).toFloat()).roundToInt()
     )
 
-    tailrec fun Int.gcd(that: Int): Int = when {
+    private tailrec fun Int.gcd(that: Int): Int = when {
       this == that -> if (that == 0) 1 else this
       this > that -> (this - that).gcd(that)
       else -> gcd(that - this)
