@@ -1,0 +1,9 @@
+\data expr
+  | plus expr expr
+  | times expr expr
+
+\func deriv(f : expr) : expr
+  | times expr1 expr2 => plus times expr1 deriv(expr2) times deriv(expr1) expr2
+  | plus expr1 expr2 => plus deriv(expr1) deriv(expr2)
+
+\func test(x : Nat) => x
