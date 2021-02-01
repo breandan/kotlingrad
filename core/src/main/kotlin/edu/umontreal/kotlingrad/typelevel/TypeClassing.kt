@@ -2,44 +2,45 @@
 
 package edu.umontreal.kotlingrad.typelevel
 
-import java.math.BigInteger.*
+import java.math.BigDecimal as bd
+import java.math.BigInteger as bi
 import kotlin.math.roundToInt
 import kotlin.system.measureTimeMillis
 
 fun main() {
   Nat(
-    nil = ZERO,
-    next = { this + ONE }
+    nil = bi.ZERO,
+    next = { this + bi.ONE }
   ).run {
     measureTimeMillis {
-      fibonacci(valueOf(20))
-      primes(valueOf(20))
-      factorial(valueOf(10))
+      fibonacci(bi.valueOf(20))
+      primes(bi.valueOf(20))
+      factorial(bi.valueOf(10))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
   Ring(
-    nil = ZERO,
-    one = ONE,
+    nil = bi.ZERO,
+    one = bi.ONE,
     plus = { a, b -> a + b }
   ).run {
     measureTimeMillis {
-      fibonacci(valueOf(20))
-      primes(valueOf(20))
-      factorial(valueOf(10))
+      fibonacci(bi.valueOf(20))
+      primes(bi.valueOf(20))
+      factorial(bi.valueOf(10))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
   Ring(
-    nil = ZERO,
-    one = ONE,
+    nil = bi.ZERO,
+    one = bi.ONE,
     plus = { a, b -> a + b },
     times = { a, b -> a * b }
   ).run {
     measureTimeMillis {
-      fibonacci(valueOf(20))
-      primes(valueOf(20))
-      factorial(valueOf(10))
+      fibonacci(bi.valueOf(20))
+      primes(bi.valueOf(20))
+      factorial(bi.valueOf(10))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
@@ -50,13 +51,28 @@ fun main() {
     times = { a, b -> a * b },
     div = { a, b -> a / b },
     minus = { a, b -> a - b },
-  ).run {
+  ).apply {
     measureTimeMillis {
       println(sum(seq(to = Rational(1000))))
       // TODO: fix infinite loop, maybe with comparator?
       // fibonacci(Rational(4, 1))
       // primes(Rational(20, 1))
     }.also { ms -> println("\nTook ${ms}ms") }
+  }
+
+  Field(
+    nil = bd.ZERO,
+    one = bd.ONE,
+    plus = { a, b -> a + b },
+    times = { a, b -> a * b },
+    div = { a, b -> a / b },
+    minus = { a, b -> a - b },
+  ).let { field ->
+    println("Vec: " +
+      VectorField(field).run {
+        bd.ONE dot Vector(bd.ZERO, bd.ONE)
+      }
+    )
   }
 }
 
@@ -194,6 +210,39 @@ interface Field<T>: Ring<T> {
         override val nil: T = nil
         override val one: T = one
       }
+  }
+}
+
+interface Vector<T>: Nat<T> {
+  val ts: Array<T>
+  override val nil: T
+    get() = ts.first()
+
+  override fun T.next(): T =
+    ts.indexOf(this).let { c ->
+      if (ts.size <= c + 1) this else ts[c + 1]
+    }
+
+  companion object {
+    operator fun <T> invoke(vararg tz: T): Vector<T> =
+      object: Vector<T> {
+        override val ts: Array<T> = tz as Array<T>
+        override fun toString() = ts.joinToString(",", "[", "]")
+      }
+  }
+}
+
+interface VectorField<T, F: Field<T>> {
+  infix fun T.dot(p: Vector<T>): Vector<T>
+
+  companion object {
+    inline operator fun <reified T, reified F: Field<T>>
+      invoke(field: F): VectorField<T, F> = field.run {
+      object: VectorField<T, F> {
+        override fun T.dot(p: Vector<T>): Vector<T> =
+          Vector(*p.ts.map { times(this, it) }.toTypedArray())
+      }
+    }
   }
 }
 
