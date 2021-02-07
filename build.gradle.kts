@@ -1,11 +1,12 @@
 import org.gradle.api.JavaVersion.VERSION_1_8
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.36.0"
-  kotlin("jvm") version "1.4.30-M1" // Keep in sync with README
+  kotlin("jvm") version "1.4.30" // Keep in sync with README
 }
 
 idea.module {
@@ -16,7 +17,6 @@ idea.module {
 
 allprojects {
   repositories {
-    maven("https://dl.bintray.com/kotlin/kotlin-eap")
     mavenCentral()
     jcenter()
     maven("https://jitpack.io")
@@ -38,14 +38,14 @@ allprojects {
   }
 
   tasks {
-    val jvmTarget = VERSION_1_8.toString()
-    compileKotlin {
-      kotlinOptions.jvmTarget = jvmTarget
-//      kotlinOptions.useIR = true
+    withType<KotlinCompile> {
+      kotlinOptions {
+//        languageVersion = "1.5"
+//        apiVersion = "1.5"
+        jvmTarget = VERSION_1_8.toString()
+      }
     }
-    compileTestKotlin {
-      kotlinOptions.jvmTarget = jvmTarget
-    }
+
     test {
       minHeapSize = "1024m"
       maxHeapSize = "4096m"
