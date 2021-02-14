@@ -13,5 +13,5 @@ fun genDif() =
     })"
   } + """
     fun <X: SFun<X>> SFun<X>.d(vararg vars: SVar<X>): Map<SVar<X>, SFun<X>> =
-      vars.map { it to d(it) }.toMap() 
+      vars.associateWith { d(it) }
   """.trimIndent()

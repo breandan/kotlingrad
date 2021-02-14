@@ -47,10 +47,10 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
   fun d(v1: SVar<X>) = VDerivative(this, v1)
 
   fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> =
-    vars.map { it to d(it) }.toMap()
+    vars.associate { it to d(it) }
 
   fun grad(): Map<SVar<X>, VFun<X, E>> =
-    bindings.sVars.map { it to d(it) }.toMap()
+    bindings.sVars.associateWith { d(it) }
 
   open operator fun unaryMinus(): VFun<X, E> = VNegative(this)
   open operator fun plus(addend: VFun<X, E>): VFun<X, E> = VSum(this, addend)

@@ -64,7 +64,7 @@ infix fun <N: Number> V3.to(n: N) = V3Bnd(this, n)
 open class VrB<N: Number>(open val vr: Vr<*, *, *>, val value: N)
 sealed class Vr<R: XO, S: XO, T: XO>(override val name: String): Ex<R, S, T>() {
   override fun <T: Number, M: XO, N: XO, O: XO> inv(vararg bnds: VrB<T>): Ex<M, N, O> =
-    bnds.map { it.vr::class to it.value }.toMap()
+    bnds.associate { it.vr::class to it.value }
       .let { it[this::class]?.let { Nt(it) } ?: this } as Ex<M, N, O>
 
   override fun toString() = name

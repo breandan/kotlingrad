@@ -32,7 +32,7 @@ val testPoints = List(budget) { rand.nextDouble(-maxX, maxX) }.sorted()
 fun testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
-  val trueErrors = testPoints.map { it to trueError(it).toDouble() }.toMap()
+  val trueErrors = testPoints.associateWith { trueError(it).toDouble() }
   val maxError = trueErrors.entries.maxBy { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }

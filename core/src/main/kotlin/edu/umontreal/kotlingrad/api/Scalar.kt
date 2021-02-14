@@ -65,7 +65,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
   fun toGraph() = toGate().graph
 
   fun List<Pair<Fun<X>, Any>>.bind() =
-    Bindings(map { it.first to wrapOrError(it.second) }.toMap())
+    Bindings(associate { it.first to wrapOrError(it.second) })
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
@@ -223,7 +223,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     MGradient(this, mVar)//.let { if(EAGER) it.df() else it }
 
   open fun grad(): Map<SVar<X>, SFun<X>> =
-    bindings.sVars.map { it to Derivative(this, it) }.toMap()
+    bindings.sVars.associateWith { Derivative(this, it) }
 
   fun ln() = log(E)
   override fun log(base: SFun<X>): SFun<X> = Log(this, base)

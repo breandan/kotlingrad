@@ -18,7 +18,7 @@ class TestSymbolic : StringSpec({
   fun ktf(f: SFun<DReal>, vararg kgBnds: Pair<SVar<DReal>, Number>) =
     engine.run {
       try {
-        val bnds = kgBnds.map { it.first.name to it.second.toDouble() }.toMap()
+        val bnds = kgBnds.associate { it.first.name to it.second.toDouble() }
         setBindings(SimpleBindings(bnds), ENGINE_SCOPE)
         eval("import kotlin.math.*; $f")
       } catch (e: Exception) {
