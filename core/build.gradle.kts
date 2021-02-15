@@ -56,6 +56,13 @@ dependencies {
 tasks {
   withType<KotlinCompile> { dependsOn("genShapes") }
 
+  listOf("TypeClassing").forEach { fileName ->
+    register(fileName, JavaExec::class) {
+      main = "edu.umontreal.kotlingrad.typelevel.${fileName}Kt"
+      classpath = sourceSets["main"].runtimeClasspath
+    }
+  }
+
   val genNotebookJSON by creating(JavaExec::class) {
     main = "edu.umontreal.kotlingrad.utils.codegen.NotebookGenKt"
     classpath = sourceSets["main"].runtimeClasspath

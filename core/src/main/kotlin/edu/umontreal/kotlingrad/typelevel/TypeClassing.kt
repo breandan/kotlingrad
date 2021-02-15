@@ -50,7 +50,7 @@ fun main() {
     plus = { a, b -> a + b },
     times = { a, b -> a * b },
     div = { a, b -> a / b },
-    minus = { a, b -> a - b },
+    minus = { a, b -> a - b }
   ).apply {
     measureTimeMillis {
       println(sum(seq(to = Rational(1000))))
@@ -60,19 +60,16 @@ fun main() {
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
-  Field(
+  VectorField(f = Field(
     nil = bd.ZERO,
     one = bd.ONE,
     plus = { a, b -> a + b },
     times = { a, b -> a * b },
     div = { a, b -> a / b },
-    minus = { a, b -> a - b },
-  ).let { field ->
-    println("Vec: " +
-      VectorField(field).run {
-        bd.ONE dot Vector(bd.ZERO, bd.ONE)
-      }
-    )
+    minus = { a, b -> a - b }
+  )).run {
+    println((bd.ONE dot Vector(bd.ZERO, bd.ONE)))
+    println((Vector(bd.ZERO, bd.ONE) + Vector(bd.ONE, bd.ONE)))
   }
 }
 
@@ -141,8 +138,7 @@ fun <T> Nat<T>.prod(list: Iterable<T>): T = list.reduce { acc, t -> acc * t }
 
 interface Nat<T> {
   val nil: T
-  val one: T
-    get() = nil.next()
+  val one: T get() = nil.next()
 
   fun T.next(): T
   operator fun T.plus(t: T) = plus(this, t)
@@ -213,36 +209,39 @@ interface Field<T>: Ring<T> {
   }
 }
 
-interface Vector<T>: Nat<T> {
-  val ts: Array<T>
-  override val nil: T
-    get() = ts.first()
+interface Vector<T> {
+  val ts: List<T>
 
-  override fun T.next(): T =
-    ts.indexOf(this).let { c ->
-      if (ts.size <= c + 1) this else ts[c + 1]
-    }
+  fun vmap(map: (T) -> T) = Vector(ts.map { map(it) })
+
+  fun zip(other: Vector<T>, merge: (T, T) -> T) =
+    Vector(ts.zip(other.ts).map { (a, b) -> merge(a, b) })
 
   companion object {
-    operator fun <T> invoke(vararg tz: T): Vector<T> =
-      object: Vector<T> {
-        override val ts: Array<T> = tz as Array<T>
-        override fun toString() = ts.joinToString(",", "[", "]")
-      }
+    operator fun <T> invoke(vararg ts: T): Vector<T> = invoke(ts.toList())
+    operator fun <T> invoke(ts: List<T>): Vector<T> = object: Vector<T> {
+      override val ts: List<T> = ts
+      override fun toString() =
+        ts.joinToString(",", "${ts.javaClass.simpleName}[", "]")
+    }
   }
 }
 
-interface VectorField<T, F: Field<T>> {
-  infix fun T.dot(p: Vector<T>): Vector<T>
+interface VectorField<T, V: Vector<T>, F: Field<T>> {
+  val v: V
+  val f: F
+
+  operator fun Vector<T>.plus(vec: Vector<T>): Vector<T> =
+    zip(vec) { a, b -> f.plus(a, b) }
+
+  infix fun T.dot(p: Vector<T>): Vector<T> = p.vmap { f.times(it, this) }
 
   companion object {
-    inline operator fun <reified T, reified F: Field<T>>
-      invoke(field: F): VectorField<T, F> = field.run {
-      object: VectorField<T, F> {
-        override fun T.dot(p: Vector<T>): Vector<T> =
-          Vector(*p.ts.map { times(this, it) }.toTypedArray())
+    operator fun <T, F: Field<T>> invoke(v: Vector<T> = Vector(), f: F) =
+      object: VectorField<T, Vector<T>, F> {
+        override val v: Vector<T> get() = v
+        override val f: F get() = f
       }
-    }
   }
 }
 
