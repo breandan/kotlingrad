@@ -68,8 +68,8 @@ fun main() {
     div = { a, b -> a / b },
     minus = { a, b -> a - b }
   )).run {
-    println((bd.ONE dot Vector(bd.ZERO, bd.ONE)))
-    println((Vector(bd.ZERO, bd.ONE) + Vector(bd.ONE, bd.ONE)))
+    println(bd.ONE dot Vector(bd.ZERO, bd.ONE))
+    println(Vector(bd.ZERO, bd.ONE) + Vector(bd.ONE, bd.ONE))
   }
 }
 
