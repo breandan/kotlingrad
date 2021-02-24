@@ -20,7 +20,7 @@ dependencies {
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
-  implementation("com.github.JetBrains-Research:viktor:1.0.2")
+  implementation("com.github.JetBrains-Research:viktor:1.1.0")
 
   // Needed for codegen
 //  implementation("org.jetbrains.kotlin:kotlin-reflect")

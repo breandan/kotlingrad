@@ -20,7 +20,7 @@ repositories {
   mavenCentral()
 }
 
-  dependencies {
+dependencies {
   implementation(kotlin("compiler-embeddable"))
   implementation("com.squareup:kotlinpoet:1.7.2")
 }
