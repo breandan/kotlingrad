@@ -25,10 +25,10 @@ dependencies {
   // Needed for codegen
 //  implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-//  val kmathVersion by extra { "0.2.0-dev-2" }
-//  testImplementation("kscience.kmath:kmath-core:$kmathVersion")
-//  testImplementation("kscience.kmath:kmath-ast:$kmathVersion")
-//  testImplementation("kscience.kmath:kmath-prob:$kmathVersion")
+//  val kmathVersion by extra { "0.2.0" }
+//  testImplementation("space.kscience:kmath-core:$kmathVersion")
+//  testImplementation("space.kscience:kmath-ast:$kmathVersion")
+//  testImplementation("space.kscience:kmath-prob:$kmathVersion")
 //  implementation("com.ionspin.kotlin:bignum:0.1.0")
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
 

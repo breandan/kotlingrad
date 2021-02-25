@@ -18,12 +18,10 @@ idea.module {
 allprojects {
   repositories {
     mavenCentral()
-    jcenter()
     maven("https://jitpack.io")
-    maven("https://dl.bintray.com/mipt-npm/dev")
-    maven("https://dl.bintray.com/hotkeytlt/maven")
-    maven("https://dl.bintray.com/egor-bogomolov/astminer")
     maven("https://maven.jzy3d.org/releases")
+    // TODO: Remove pending https://github.com/JetBrains-Research/astminer/issues/124
+    maven("https://dl.bintray.com/egor-bogomolov/astminer")
     maven("https://jetbrains.bintray.com/lets-plot-maven")
   }
 
