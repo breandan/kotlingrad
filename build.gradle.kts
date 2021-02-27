@@ -6,7 +6,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.36.0"
-  kotlin("jvm") version "1.4.30" // Keep in sync with README
+  kotlin("jvm") version "1.4.31" // Keep in sync with README
 }
 
 idea.module {

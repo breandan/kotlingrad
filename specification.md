@@ -7,7 +7,7 @@ Below is the approximate BNF grammar for Kotlin∇. This is incomplete and subje
 ```ebnf
   𝔹 = "True" | "False"
   𝔻 = "1" | ...  | "9"
-  ℕ =  𝔻  | 𝔻"0" | ℕ𝔻
+  ℕ =  𝔻  | 𝔻"0" | 𝔻ℕ
   ℤ = "0" | ℕ    | -ℕ
   ℚ = ℕ | ℤ"/"ℕ
   ℝ = ℕ | ℕ"."ℕ | "-"ℝ
