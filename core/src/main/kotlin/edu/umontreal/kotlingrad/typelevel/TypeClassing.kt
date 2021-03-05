@@ -13,9 +13,9 @@ fun main() {
     next = { this + bi.ONE }
   ).run {
     measureTimeMillis {
-      fibonacci(bi.valueOf(20))
-      primes(bi.valueOf(20))
-      factorial(bi.valueOf(10))
+      println(fibonacci(bi.valueOf(10)))
+      primes(bi.valueOf(10))
+      factorial(bi.valueOf(4))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
@@ -25,9 +25,9 @@ fun main() {
     plus = { a, b -> a + b }
   ).run {
     measureTimeMillis {
-      fibonacci(bi.valueOf(20))
-      primes(bi.valueOf(20))
-      factorial(bi.valueOf(10))
+      println(fibonacci(bi.valueOf(10)))
+      primes(bi.valueOf(10))
+      factorial(bi.valueOf(4))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
@@ -38,9 +38,9 @@ fun main() {
     times = { a, b -> a * b }
   ).run {
     measureTimeMillis {
-      fibonacci(bi.valueOf(20))
-      primes(bi.valueOf(20))
-      factorial(bi.valueOf(10))
+      println(fibonacci(bi.valueOf(10)))
+      primes(bi.valueOf(10))
+      factorial(bi.valueOf(4))
     }.also { ms -> println("\nTook ${ms}ms") }
   }
 
@@ -53,7 +53,7 @@ fun main() {
     minus = { a, b -> a - b }
   ).apply {
     measureTimeMillis {
-      println(sum(seq(to = Rational(1000))))
+      println(sum(seq(to = Rational(100))))
       // TODO: fix infinite loop, maybe with comparator?
       // fibonacci(Rational(4, 1))
       // primes(Rational(20, 1))
@@ -81,11 +81,7 @@ tailrec fun <T> Nat<T>.fibonacci(
   i: T = nil,
 ): T =
   if (i == n) fib(seed).first
-  else fibonacci(
-    n = n,
-    seed = fib(seed).also { print("${it.first}, ") },
-    i = i.next()
-  )
+  else fibonacci(n = n, seed = fib(seed), i = i.next())
 
 /** Returns [n]! **/
 fun <T> Nat<T>.factorial(n: T): T = prod(seq(to = n.next()))
