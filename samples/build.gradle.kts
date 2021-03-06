@@ -36,9 +36,18 @@ tasks {
     }
   }
 
+/*
+If overwriting an older version, it is necessary to first run:
+
+rm -rf ~/.m2/repository/com/github/breandan/kaliningraph \
+       ~/.ivy2/cache/com.github.breandan/kaliningraph
+
+To deploy to Maven Local and start the notebook, run:
+
+./gradlew [build publishToMavenLocal] jupyterRun -x test
+*/
+
   val jupyterRun by creating(Exec::class) {
-    dependsOn(":kotlingrad:jupyterInstall")
-    dependsOn(gradle.includedBuild("kaliningraph").task(":jupyterInstall"))
     commandLine("jupyter", "notebook", "--notebook-dir=notebooks")
   }
 

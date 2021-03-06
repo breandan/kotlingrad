@@ -64,25 +64,6 @@ tasks {
     }
   }
 
-  val genNotebookJSON by creating(JavaExec::class) {
-    main = "edu.umontreal.kotlingrad.utils.codegen.NotebookGenKt"
-    classpath = sourceSets["main"].runtimeClasspath
-    args = listOf(projectDir.path, project.version.toString())
-  }
-
-  val installPathLocal =
-    "${System.getProperty("user.home")}/.jupyter_kotlin/libraries"
-
-  val jupyterInstall by registering(Copy::class) {
-    dependsOn(genNotebookJSON)
-    dependsOn("publishToMavenLocal")
-    val installPath = findProperty("ath") ?: installPathLocal
-    doFirst { mkdir(installPath) }
-    from(file("kotlingrad.json"))
-    into(installPath)
-    doLast { logger.info("Kotlin∇ notebook was installed in: $installPath") }
-  }
-
   val sourcesJar by registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)

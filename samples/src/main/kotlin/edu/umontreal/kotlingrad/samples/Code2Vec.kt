@@ -37,7 +37,7 @@ fun main() {
 }
 
 fun Node.toKGraph() =
-  LabeledGraphBuilder {
+  LabeledGraph {
     closure(
       toVisit = setOf(this@toKGraph),
       successors = { flatMap { setOfNotNull(it.getParent()) + it.getChildren() }.toSet() }

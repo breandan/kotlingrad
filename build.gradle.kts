@@ -6,7 +6,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.38.0"
-  kotlin("jvm") version "1.5.0-M1" // Keep in sync with README
+  kotlin("jvm") version "1.4.30" // Keep in sync with README
 }
 
 idea.module {
@@ -26,7 +26,7 @@ allprojects {
   }
 
   group = "com.github.breandan"
-  version = "0.4.0"
+  version = "0.4.1"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
@@ -40,7 +40,7 @@ allprojects {
       kotlinOptions {
         jvmTarget = VERSION_1_8.toString()
         // Remove pending: https://youtrack.jetbrains.com/issue/KT-36853
-        freeCompilerArgs += "-Xdisable-phases=Tailrec"
+//        freeCompilerArgs += "-Xdisable-phases=Tailrec"
       }
     }
 

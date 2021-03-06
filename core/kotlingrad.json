@@ -3,7 +3,7 @@
   "description": "A shape-safe symbolic differentiation framework for Kotlin",
   "dependencies": [
     "com.github.breandan:kotlingrad:0.4.0",
-    "com.github.breandan:kaliningraph:0.1.4"
+    "com.github.breandan:kaliningraph:0.1.5"
   ],
   "imports": [
     "edu.umontreal.kotlingrad.api.*",
