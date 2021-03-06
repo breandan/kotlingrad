@@ -17,7 +17,7 @@ idea.module {
 
 dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("com.github.breandan:kaliningraph")
+  api("com.github.breandan:kaliningraph:0.1.5")
 
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
@@ -38,9 +38,6 @@ dependencies {
 //  val tfVersion by extra { "-SNAPSHOT" }
 //  testImplementation("com.github.tensorflow:java:$tfVersion")
 //  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
-  val ejmlVersion = "0.4.0"
-  testImplementation("org.ejml:ejml-kotlin:$ejmlVersion")
-  testImplementation("org.ejml:ejml-all:$ejmlVersion")
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
 
   // Property-based testing
