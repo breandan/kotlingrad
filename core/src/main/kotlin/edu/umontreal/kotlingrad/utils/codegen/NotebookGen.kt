@@ -13,7 +13,7 @@ fun main(args: Array<String>) =
     "com.github.breandan:kaliningraph:0.1.4"
   ],
   "imports": [
-    "edu.umontreal.kotlingrad.experimental.*",
+    "edu.umontreal.kotlingrad.api.*",
     "edu.mcgill.kaliningraph.*"
   ],
   "renderers": {
