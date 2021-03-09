@@ -81,7 +81,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.breandan:kotlingrad:0.4.1")
+    implementation("com.github.breandan:kotlingrad:0.4.2")
 }
 ```
 
@@ -99,7 +99,7 @@ dependencies {
   <dependency>
     <groupId>com.github.breandan</groupId>
     <artifactId>kotlingrad</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
   </dependency>
 </project>
 ```
@@ -109,7 +109,8 @@ dependencies {
 To access Kotlin∇'s notebook support, use the following line magic:
 
 ```
-%use @https://raw.githubusercontent.com/breandan/kotlingrad/master/core/kotlingrad.json
+@file:Repository("https://jitpack.io")
+@file:DependsOn("com.github.breandan:kotlingrad:0.4.2")
 ```
 
 For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.ipynb).
