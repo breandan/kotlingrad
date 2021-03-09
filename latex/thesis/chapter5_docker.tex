@@ -523,7 +523,7 @@ Alternately, it is possible to build directly on ARM devices by creating a file 
 %
 \subsection{Multi-architecture support}
 
-As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build on x86 machines,\footnote{With the exception of the Mac OS Docker client, which offers \href{https://docs.docker.com/docker-for-mac/multi-arch/}{multi-architecture support}. More recent versions of Docker Desktop for Mac OS and Windows have \href{https://engineering.docker.com/2019/04/multi-arch-images/}{introduced native ARM emulation}.}, and attempting to build one will produce the following error when running \inline{docker build}:
+As of Docker version 18.09.6, ARM-specific \inline{Dockerfile}s will not build on x86 machines\footnote{With the exception of the Mac OS Docker client, which offers \href{https://docs.docker.com/docker-for-mac/multi-arch/}{multi-architecture support}. More recent versions of Docker Desktop for Mac OS and Windows have \href{https://engineering.docker.com/2019/04/multi-arch-images/}{introduced native ARM emulation}.}, and attempting to build one will produce the following error when running \inline{docker build}:
 
 \begin{pclisting}
 standard_init_linux.go:175: exec user process caused "exec format error"

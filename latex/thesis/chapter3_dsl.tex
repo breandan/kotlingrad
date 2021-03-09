@@ -188,7 +188,7 @@ Functional programming lets Kotlin$\nabla$ use the same abstraction for represen
 
 \section{Kotlin}\label{sec:kotlin}
 
-When programming in a statically-typed language, a common question one might ask the compiler is, ``Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?'' (e.g. type checking \inline{x instanceof Y}) In Java, this question turns out to be \href{http://io.livecode.ch/learn/namin/unsound}{ill-posed}~\citep{amin2016java} and undecidable~\citep{grigore2017java} in the general case. It is possible to construct a Java program in which the answer is ``yes'' regardless of \inline{Y}, or for which an answer cannot always be determined in finite time. Undecidability is not necessarily a showstopper, but Java's unsoundness is more critical and unclear how to fix, even though it rarely occurs in practice.
+When programming in a statically-typed language, a common question one might ask the compiler is, ``Given a value, \inline{x}, can \inline{x} be assigned to a variable of type \inline{Y}?'' (e.g. type checking \inline{x instanceof Y}). In Java, this question turns out to be \href{http://io.livecode.ch/learn/namin/unsound}{ill-posed}~\citep{amin2016java} and undecidable~\citep{grigore2017java} in the general case. It is possible to construct a Java program in which the answer is ``yes'' regardless of \inline{Y}, or for which an answer cannot always be determined in finite time. Undecidability is not necessarily a showstopper, but Java's unsoundness is more critical and unclear how to fix, even though it rarely occurs in practice.
 
 Kotlin is a statically-typed language that is well-suited for building cross-platform applications, with compiler support for JVM, JavaScript and native targets. Unlike most programming languages, Kotlin was designed with IDE support from the outset, and has gained some traction in the JVM ecosystem due to its ergonomics. Kotlin's type system~\citep{tate2013mixed} is strictly \href{https://kotlinlang.org/docs/reference/generics.html#variance}{less expressive}, but fully interoperable with Java's. It is unknown whether the same issues which affect Java's type system are present in Kotlin's, but interoperability with Java has broadened its adoption and remains a key usability feature of the language.
 
@@ -229,7 +229,7 @@ with(DoublePrecision) { // Uses double precision numerics for evaluation
   val z = sin(10 * (x * x + pow(y, 2))) / 10 // Lazily evaluated
   val dz_dx = d(z) / d(x) // Supports Leibniz notation(*@~\citep{christianson2012leibniz}@*)
   val d2z_dxdy = d(dz_dx) / d(y) // Mixing higher order partials
-  val d3z_d2xdy = grad(d2z_dxdy)[x] // Equivalent to d(f)/d(x)
+  val d3z_d2xdy = grad(d2z_dxdy)[x] // Equivalent to d(d2z_dxdy)/d(x)
   plot3D(d3z_d2xdy, -1.0, 1.0) // Plot in 3-space (-1 < x, y, z < 1)
 }
 \end{unbreakablekotlin}

@@ -188,7 +188,7 @@ La programmation fonctionnelle permet à Kotlin$\nabla$ d'utiliser la même abst
 
 \section{Kotlin}\label{sec:kotlin}
 
-Lors de la programmation dans un langage à caractères statiques, une question courante que l'on peut poser au compilateur est la suivante : "En donnant une valeur, \inline{x}, peut-on assigner \inline{x} à une variable de type \inline{Y}? (par exemple, vérification du type \inline{x instanceof Y}) En Java, cette question s'avère être \href{http://io.livecode.ch/learn/namin/unsound}{ill-posed}~\citep{amin2016java} et indécidable~\citep{grigore2017java} dans le cas général. Il est possible de construire un programme Java dans lequel la réponse est "oui" indépendamment de \inline{Y}, ou pour lequel une réponse ne peut pas toujours être déterminée en temps fini. L'indécidabilité n'est pas nécessairement un obstacle, mais le manque de solidité de Java est plus critique et la manière de le corriger n'est pas claire, même si cela se produit rarement dans la pratique.
+Lors de la programmation dans un langage à caractères statiques, une question courante que l'on peut poser au compilateur est la suivante : "En donnant une valeur, \inline{x}, peut-on assigner \inline{x} à une variable de type \inline{Y}? (par exemple, vérification du type \inline{x instanceof Y}). En Java, cette question s'avère être \href{http://io.livecode.ch/learn/namin/unsound}{ill-posed}~\citep{amin2016java} et indécidable~\citep{grigore2017java} dans le cas général. Il est possible de construire un programme Java dans lequel la réponse est "oui" indépendamment de \inline{Y}, ou pour lequel une réponse ne peut pas toujours être déterminée en temps fini. L'indécidabilité n'est pas nécessairement un obstacle, mais le manque de solidité de Java est plus critique et la manière de le corriger n'est pas claire, même si cela se produit rarement dans la pratique.
 
 Kotlin est un langage de type statique qui convient bien à la construction d'applications multiplateformes, avec un support de compilation pour JVM, JavaScript et des cibles natives. Contrairement à la plupart des langages de programmation, Kotlin a été conçu dès le départ avec le support de l'IDE, et a gagné une certaine notoriété dans l'écosystème JVM grâce à son ergonomie. Le système de types de Kotlin~\citep{tate2013mixed} est strictement \href{https://kotlinlang.org/docs/reference/generics.html#variance}{moins expressif}, mais totalement interopérable avec celui de Java. On ignore si les mêmes problèmes qui affectent le système de types de Java sont présents dans Kotlin, mais l'interopérabilité avec Java a élargi son adoption et reste un élément clé de la convivialité du langage.
 
@@ -229,7 +229,7 @@ with(DoublePrecision) { // Utilise des chiffres en double précision
   val z = sin(10 * (x * x + pow(y, 2))) / 10 // évaluation paresseuse
   val dz_dx = d(z) / d(x) // Notation Leibniz(*@~\citep{christianson2012leibniz}@*)
   val d2z_dxdy = d(dz_dx) / d(y) // Mélange de partiels d'ordre supérieur
-  val d3z_d2xdy = grad(d2z_dxdy)[x] // Équivalent à d(f)/d(x)
+  val d3z_d2xdy = grad(d2z_dxdy)[x] // Équivalent à d(d2z_dxdy)/d(x)
   plot3D(d3z_d2xdy, -1.0, 1.0) // Tracé en espace 3 (-1 < x, y, z < 1)
 }
 \end{unbreakablekotlin}
