@@ -27,7 +27,7 @@ object PolyGenerator : ExpressionGenerator<DReal>(rand,
   fun scaledRandomBiTree(height: Int = 4, maxX: Double = 1.0, maxY: Double = 1.0) =
     randomBiTree(height).let { it - it(0.0) }.let {
       it * DReal.wrap(maxY) / ((-maxX..maxX) step 0.01).toList()
-        .map { num -> it(num).toDouble().absoluteValue }.max()!!
+        .maxOf { num -> it(num).toDouble().absoluteValue }
     }
 }
 

@@ -33,7 +33,7 @@ fun testPolynomial(weights: Vec<DReal, D30>, targetEq: SFun<DReal>) {
   val model = decodePolynomial(weights)
   val trueError = (model - targetEq) pow 2
   val trueErrors = testPoints.associateWith { trueError(it).toDouble() }
-  val maxError = trueErrors.entries.maxBy { it.value }
+  val maxError = trueErrors.entries.maxByOrNull { it.value }
   val avgError = trueErrors.values.average().also { println("Mean true error: $it") }
   val stdError = trueErrors.values.standardDeviation().also { println("StdDev true error: $it") }
 

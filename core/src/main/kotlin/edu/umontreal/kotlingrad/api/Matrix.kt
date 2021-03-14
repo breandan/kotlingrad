@@ -3,7 +3,6 @@
 package edu.umontreal.kotlingrad.api
 
 import edu.mcgill.kaliningraph.circuits.*
-import edu.mcgill.kaliningraph.elwise
 import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.api.VFun.Companion.KG_IT
 import edu.umontreal.kotlingrad.utils.matmul

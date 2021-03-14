@@ -435,7 +435,7 @@ fun <R: D1, C: D1, X: RealNumber<X, *>> X.Mat(r: Nat<R>, c: Nat<C>, gen: (Int, I
     .map { Vec<X, C>(it) }.let { Mat(it) }
 
 fun <E: D1, X: RealNumber<X, *>> X.Vec(e: Nat<E>, gen: (Int) -> Any): Vec<X, E> =
-  List(e.i) { wrapOrError(gen(it)) as SFun<X> }.let { Vec(it) }
+  Vec(List(e.i) { wrapOrError(gen(it)) as SFun<X> })
 
 operator fun <X: RealNumber<X, *>> Number.times(multiplicand: SFun<X>) = multiplicand.wrap(this) * multiplicand
 operator fun <X: RealNumber<X, *>, E: D1> Number.times(multiplicand: VFun<X, E>): VFun<X, E> = multiplicand.wrap(this) * multiplicand

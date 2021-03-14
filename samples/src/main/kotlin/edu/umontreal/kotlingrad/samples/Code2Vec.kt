@@ -51,11 +51,11 @@ fun Node.toKGraph() =
 
 // Pad length to a common vector length for TNSE
 private fun List<SpsMat>.permute(): Array<DoubleArray> =
-  map { it.nz_length }.maxOrNull()!!.let { maxDim ->
+  maxOf { it.nz_length }.let { maxDim ->
     map { cur ->
       val data = cur.toFDRM().getData()
       val padded = DoubleArray(maxDim) { if (it < data.size) data[it] else 0.0 }
-      padded.apply { shuffle(DEFAULT_RANDOM) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString()) }
+      padded.apply { shuffle(Random.Default) }.take(20).toDoubleArray()//.also { println(it.map { 0.0 < it }.joinToString()) }
     }.toTypedArray()
   }
 
@@ -69,7 +69,7 @@ private fun plot(
     "x" to embeddings.map { it[0] },
     "y" to embeddings.map { it[1] }
   )
-  var plot = lets_plot(data) { x = "x"; y = "y"; color = "labels" } +
+  val plot = lets_plot(data) { x = "x"; y = "y"; color = "labels" } +
     ggsize(300, 250) + geom_point(size = 6) +
     ggtitle("Graph Types by Structural Similarity (t = $messagePassingRounds)") +
     theme().axisLine_blank().axisTitle_blank().axisTicks_blank().axisText_blank()

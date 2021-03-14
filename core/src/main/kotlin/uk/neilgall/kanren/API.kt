@@ -14,13 +14,13 @@ infix fun <T> Term._is_(rhs: List<T>) = this _is_ term(rhs)
 fun conj_(gs: List<Goal>): Goal = when {
   gs.isEmpty() -> { _ -> sequenceOf() }
   gs.size == 1 -> gs.first()
-  else -> { state -> gs.fold(sequenceOf(state), { states, goal -> states.flatMap(zzz(goal)) }) }
+  else -> { state -> gs.fold(sequenceOf(state)) { states, goal -> states.flatMap( zzz(goal) ) } }
 }
 
 fun disj_(gs: List<Goal>): Goal = when {
   gs.isEmpty() -> { _ -> sequenceOf() }
   gs.size == 1 -> gs.first()
-  else -> { state -> gs.fold(sequenceOf(), { states, goal -> states + zzz(goal)(state) }) }
+  else -> { state -> gs.fold(sequenceOf()) { states, goal -> states + zzz(goal)( state ) } }
 }
 
 fun conj(vararg gs: Goal): Goal = conj_(gs.asList())

@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.mcgill.kaliningraph.DEFAULT_RANDOM
 import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.utils.step
@@ -31,7 +30,7 @@ fun main() {
   }
 }
 
-val rand = DEFAULT_RANDOM
+val rand = Random.Default
 const val maxX = 1.0
 const val maxY = 1.0
 const val alpha = 0.01 // Step size

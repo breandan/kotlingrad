@@ -16,7 +16,7 @@ tailrec fun <I, O: Metric<O>> minimizeMetric(
   fn: (I) -> (O), min: I, budget: Int): I =
   if (budget <= 0) min
   else minimizeMetric(fn, wiggle(min).filter { fn(it) < fn(min) }
-    .maxBy { fn(min) - fn(it) } ?: min, budget - 1)
+    .maxByOrNull { fn(min) - fn(it) } ?: min, budget - 1)
 
 fun <I> wiggle(min: I): Sequence<I> = TODO()
 

@@ -1,10 +1,10 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.mcgill.kaliningraph.DEFAULT_RANDOM
 import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.utils.step
 import kotlin.math.*
+import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 fun <T: SFun<T>> sigmoid(x: SFun<T>) = One<T>() / (One<T>() + E<T>().pow(-x))
@@ -37,7 +37,7 @@ fun main() {
   val b3 by DReal.Var(D5)
   val b4 by DReal.Var(D5)
 
-  val rand = DEFAULT_RANDOM
+  val rand = Random.Default
   var w1: VFun<DReal, D5> = DReal.Vec(D5) { rand.nextDouble(-0.6, 0.6) }
   var w2: MFun<DReal, D5, D5> = DReal.Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
   var w3: MFun<DReal, D5, D5> = DReal.Mat(D5, D5) { _, _ -> rand.nextDouble(-0.6, 0.6) }
