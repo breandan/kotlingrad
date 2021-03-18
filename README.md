@@ -771,10 +771,11 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 |           [Hipparchus](https://github.com/Hipparchus-Math/hipparchus)            |   Java   |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
 |                [JAutoDiff](https://github.com/uniker9/JAutoDiff/)                |   Java   | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
 |                   [Eclipse DL4J](https://deeplearning4j.org/)                    |   Java   |        :x:         |   :construction:   |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|           [SICMUtils](https://github.com/sicmutils/sicmutils)                    |  Clojure | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
+|               [SICMUtils](https://github.com/sicmutils/sicmutils)                | Clojure  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
 |                        [Halide](https://halide-lang.org/)                        |   C++    |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
 |              [Tensor Safe](https://github.com/leopiney/tensor-safe)              | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
 |               [HaskTorch](https://github.com/hasktorch/hasktorch)                | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
+|                [Dex](https://github.com/google-research/dex-lang)                | Haskell  |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |   :construction:   |      :x:       |
 |                [Grenade](https://github.com/HuwCampbell/grenade)                 | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
 |           [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)           |  Scheme  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
 |                    [Myia](https://github.com/mila-udem/myia)                     |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :construction: |
@@ -783,23 +784,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 |                   [Tangent](https://github.com/google/tangent)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |      :x:       |
 | [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf#page=39) | Analitik | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
 
-¹ Symbolic differentiation
-
-² Automatic differentiation
-
-³ Higher-order differentiation
-
-⁴ Differentiable programming*
-
-⁵ Functional programming
-
-⁶ Compile-time type safety
-
-⁷ Compile-time shape safety
-
-⁸ Dependently Typed
-
-⁹ Multiplatform
+¹ Symbolic differentiation*, ² Automatic differentiation*, ³ Higher-order/rank differentiation, ⁴ Differentiable programming*, ⁵ Functional programming, ⁶ Compile-time type safety, ⁷ Compile-time shape safety, ⁸ Dependently Typed, ⁹ Multiplatform
 
 <sup>&lowast;</sup> Although we do not distinguish between AD and SD, here we adopt the authors' preferred nomenclature. We do make a distinction between differentiable programming libraries and those which simply construct neural networks. The :construction: symbol indicates work in progress.
 
@@ -808,13 +793,12 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 If you would like to cite Kotlin∇, please use the following `bibtex` entry:
 
 ```
-@misc{considine2019kotlingrad,
-  authors = {Considine, Breandan and Famelis, Michalis and Paull, Liam},
+@software{considine2019kotlingrad,
+  author = {Considine, Breandan and Famelis, Michalis and Paull, Liam},
   title = {Kotlin$\nabla$: A Shape-Safe e{DSL} for Differentiable Programming},
+  url = {https://github.com/breandan/kotlingrad},
+  version = {0.4.2},
   year = {2019},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/breandan/kotlingrad}},
 }
 ```
 
@@ -932,13 +916,15 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp): An eDSL for writing numerical models in F# with support for interactive tensor shape-checking
 * [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
 * [Autograd](https://github.com/hips/autograd) - Efficiently computes derivatives of NumPy code
-* [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
 * [Myia](https://github.com/mila-udem/myia) - SCT based AD, adapted from Pearlmutter & Siskind's "Reverse Mode AD in a functional framework"
+* [JAX](https://github.com/google/jax) - Composable transformations of Python+NumPy programs: differentiate, vectorize, JIT to GPU/TPU, and more
+* [Dex](https://github.com/google-research/dex-lang) -  Research language for array processing in the Haskell/ML family
 * [Nexus](https://github.com/ctongfei/nexus) - Type-safe tensors, deep learning and probabilistic programming in Scala
 * [Tangent](https://github.com/google/tangent) - "Source-to-Source Debuggable Derivatives in Pure Python"
 * [Grenade](https://github.com/HuwCampbell/grenade) - composable, dependently typed, practical, and fast RNNs in Haskell
 * [Lantern](https://feiwang3311.github.io/Lantern/) - a framework in Scala, based on delimited continuations and multi-stage programming
 * [JAutoDiff](https://github.com/uniker9/JAutoDiff) - An Automatic Differentiation Library
+* [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
 * [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf) - Algebraic language for the description of computing processes using analytical transformations
 
 ## Special Thanks
