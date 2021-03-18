@@ -16,9 +16,7 @@ pluginBundle {
   }
 }
 
-repositories {
-  mavenCentral()
-}
+repositories.mavenCentral()
 
 dependencies {
   implementation(kotlin("compiler-embeddable"))
