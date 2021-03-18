@@ -273,7 +273,7 @@ When writing a function, it is mandatory to declare the input type(s), but the r
 
 ### Variable Capture
 
-Kotlin∇ provides a DSL with support for type-safe variable capture with variadic currying. Consider the following example:
+Kotlin∇ provides a DSL for type-safe variable capture with variadic currying. Consider the following example:
 
 ```kotlin
 val q = X + Y * Z + Y + 0.0
@@ -617,7 +617,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices).* When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices). When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system*, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
 Shape safety is currently supported up to rank-2 tensors, i.e. matrices. To perform dimension checking in our type system, first we enumerate a list of integer type literals as a chain of subtypes, `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
 
@@ -641,7 +641,7 @@ fun <T> Vec(t1: T, t2: T, t3: T): Vec<T, D3> = Vec(listOf(t1, t2, t3))
 //... † Automatically generated
 ```
 
-Finally, we encode length as a parameter of the operand type. Since integer literals are a chain of subtypes, we only need to define one operator using the highest literal, and can rely on [Liskov substitution](https://en.wikipedia.org/wiki/Liskov_substitution_principle) to preserve shape safety for all subtypes.
+Finally, we encode length as a parameter of the operand type. Since integer literals are a chain of subtypes, we need only define one operator using the highest literal, and can rely on [Liskov substitution](https://en.wikipedia.org/wiki/Liskov_substitution_principle) to preserve shape safety for all subtypes.
 
 ```kotlin
 infix operator fun <C: D1, V: Vec<Int, C>> V.plus(v: V): Vec<Int, C> =
@@ -723,7 +723,7 @@ Without property delegation, users would need to repeat the property name in the
 
 ## Ideal API (WIP)
 
-The current API is stable, but can be improved in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/edu/mcgill/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
@@ -739,7 +739,7 @@ val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
 
-However inferring arity for arbitrary expressions at compile-time would be difficult in the Kotlin type system. Instead, we can have the user specify it directly.
+However inferring arity for arbitrary expressions at compile-time would be difficult in the Kotlin type system. Instead, we could let the user specify it directly.
 
 ```kotlin
 val x by Var()                                  // x: Variable<Double> inferred type
@@ -788,7 +788,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 
 ³ Higher-order differentiation
 
-⁴ Differentiable programming
+⁴ Differentiable programming*
 
 ⁵ Functional programming
 
@@ -799,6 +799,8 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 ⁸ Dependently Typed
 
 ⁹ Multiplatform
+
+<sup>&lowast;</sup> Although we do not distinguish between AD and SD, here we adopt the authors' preferred nomenclature. We do make a distinction between differentiable programming libraries and those which simply construct neural networks. The :construction: symbol indicates work in progress.
 
 ## Citation
 

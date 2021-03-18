@@ -85,31 +85,33 @@ operator fun <N: Number, V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.div(n: N) = Ex<V
 /**
  * This follow code is a type-level encoding of the 3-element graded poset.
  *
- * For combination, i.e. any arithmetical operation:
+ * For combination, i.e. any arithmetical operation, where P is a constant:
  *
- *                |  x      y      z      xy      xz      yz      xyz
- *            -------------------------------------------------------
- *            x   |  x      xy     xz     xy      xz      xyz     xyz
- *            y   |  xy     y      yz     xy      xyz     yz      xyz
- *            z   |  xz     yz     z      xyz     xz      yz      xyz
- *            xy  |  xy     xy     xyz    xy      xyz     xyz     xyz
- *            xz  |  xz     xyz    xz     xyz     xz      xyz     xyz
- *            yz  |  xyz    yz     yz     xyz     xyz     yz      xyz
- *            xyz |  xyz    xyz    xyz    xyz     xyz     xyz     xyz
+ *        |    P      x      y      z      xy      xz      yz      xyz
+ *    ----------------------------------------------------------------
+ *    P   |    P      x      y      z      xy      xz      yz      xyz
+ *    x   |    x      x      xy     xz     xy      xz      xyz     xyz
+ *    y   |    y      xy     y      yz     xy      xyz     yz      xyz
+ *    z   |    z      xz     yz     z      xyz     xz      yz      xyz
+ *    xy  |    xy     xy     xy     xyz    xy      xyz     xyz     xyz
+ *    xz  |    xz     xz     xyz    xz     xyz     xz      xyz     xyz
+ *    yz  |    yz     xyz    yz     yz     xyz     xyz     yz      xyz
+ *    xyz |    xyz    xyz    xyz    xyz    xyz     xyz     xyz     xyz
  *
  * Can be viewed as a Hasse Diagram: https://en.wikipedia.org/wiki/Hasse_diagram
  *
  * For application/invocation, where P is a constant:
  *
- *                |  x      y      z      xy      xz      yz      xyz
- *            -------------------------------------------------------
- *            x   |  P                    y       z               yz
- *            y   |         P             x               z       xz
- *            z   |                P              x       y       xy
- *            xy  |                       P                       z
- *            xz  |                               P               y
- *            yz  |                                       P       x
- *            xyz |                                               P
+ *       |     P      x      y      z      xy      xz      yz      xyz
+ *   -----------------------------------------------------------------
+ *   P   |     P
+ *   x   |            P                    y       z               yz
+ *   y   |                   P             x               z       xz
+ *   z   |                          P              x       y       xy
+ *   xy  |            y      x             P                       z
+ *   xz  |            z             x              P               y
+ *   yz  |                   z      y                      P       x
+ *   xyz |            yz     xz     xy                             P
  */
 
 @JvmName("p:___") operator fun <V1: XO, V2: XO, V3: XO> Ex<V1, V2, V3>.plus(e: Ex<OO, OO, OO>) = Ex<V1, V2, V3>(this, e, op = `+`)
