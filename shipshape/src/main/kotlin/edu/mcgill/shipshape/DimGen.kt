@@ -10,6 +10,6 @@ fun genDim() = """
   
   sealed class D0(override val i: Int = 0): INat<D0>(i) { companion object: D0(), Nat<D0> }
   sealed class DN(): D1() { companion object: DN(), Nat<DN> }
-""".trimIndent() + (1..maxNat).joinToString("\n", "\n", "\n") {
-  "sealed class D$it(override val i: Int = $it): D${it - 1}(i) { companion object: D$it(), Nat<D$it> }"
+""".trimIndent() + (1..maxNat).joinToString("\n", "\n", "\n") { nat ->
+  "sealed class D$nat(override val i: Int = $nat): D${nat - 1}(i) { companion object: D$nat(), Nat<D$nat> }"
 }

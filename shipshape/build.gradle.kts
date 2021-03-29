@@ -1,6 +1,6 @@
 plugins {
   `java-gradle-plugin`
-  kotlin("jvm") version "1.4.30"
+  kotlin("jvm") version "1.5.0-M2"
   id("com.gradle.plugin-publish") version "0.12.0"
 }
 
@@ -20,7 +20,6 @@ repositories.mavenCentral()
 
 dependencies {
   implementation(kotlin("compiler-embeddable"))
-  implementation("com.squareup:kotlinpoet:1.7.2")
 }
 
 gradlePlugin.plugins.register("shipshape") {

@@ -1,5 +1,7 @@
 package edu.mcgill.shipshape
 
+// Concatenation, slicing
+
 fun genTuple() =
   """
     data class T2<A1, A2>(val t1: A1, val t2: A2)
