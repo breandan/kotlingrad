@@ -22,17 +22,6 @@ dependencies {
   // Mathematical libraries
   implementation("ch.obermuhlner:big-math:2.3.0")
   implementation("com.github.JetBrains-Research:viktor:1.1.0")
-
-  // Needed for codegen
-//  implementation("org.jetbrains.kotlin:kotlin-reflect")
-
-//  val kmathVersion by extra { "0.2.0" }
-//  testImplementation("space.kscience:kmath-core:$kmathVersion")
-//  testImplementation("space.kscience:kmath-ast:$kmathVersion")
-//  testImplementation("space.kscience:kmath-prob:$kmathVersion")
-//  implementation("com.ionspin.kotlin:bignum:0.1.0")
-//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:_")
-
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 
 //  val tfVersion by extra { "-SNAPSHOT" }
@@ -41,10 +30,11 @@ dependencies {
   testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
 
   // Property-based testing
-//  testImplementation("io.kotest:kotest-runner-junit5:4.3.0")
-//  testImplementation("io.kotest:kotest-assertions-core:4.3.0")
-//  testImplementation("io.kotest:kotest-property:4.3.0")
-  testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+
+  val kotestVersion = "4.4.3"
+  testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+  testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+  testImplementation("io.kotest:kotest-property:$kotestVersion")
   testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
 
   // Symbolic fuzzing interpreter

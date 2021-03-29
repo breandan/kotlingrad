@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.api.*
-import io.kotlintest.properties.assertAll
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.property.checkAll
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestGradient: StringSpec({
@@ -15,7 +15,7 @@ class TestGradient: StringSpec({
   val `∇z` = z.grad()
 
   "test ∇z" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ: Double, ẏ: Double ->
       val vals = arrayOf(x to ẋ, y to ẏ)
 
       val `∂z∕∂x` = y * (cos(x * y) * y - 1)

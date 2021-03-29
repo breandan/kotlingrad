@@ -22,6 +22,7 @@ allprojects {
     maven("https://maven.jzy3d.org/releases")
     // TODO: Remove pending https://github.com/JetBrains-Research/astminer/issues/124
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
+    // TODO: https://github.com/JetBrains/lets-plot-kotlin/issues/55
     maven("https://jetbrains.bintray.com/lets-plot-maven")
   }
 
@@ -39,8 +40,8 @@ allprojects {
     withType<KotlinCompile> {
       kotlinOptions {
         jvmTarget = VERSION_1_8.toString()
-        // Remove pending: https://youtrack.jetbrains.com/issue/KT-36853
-//        freeCompilerArgs += "-Xdisable-phases=Tailrec"
+        languageVersion = "1.5"
+        apiVersion = "1.5"
       }
     }
 

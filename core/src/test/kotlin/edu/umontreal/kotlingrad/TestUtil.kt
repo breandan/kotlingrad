@@ -1,10 +1,9 @@
 package edu.umontreal.kotlingrad
 
 import edu.umontreal.kotlingrad.api.*
-import edu.umontreal.kotlingrad.shapes.*
-import io.kotlintest.shouldBe
+import edu.umontreal.kotlingrad.shapes.D1
+import io.kotest.matchers.shouldBe
 import java.math.*
-import kotlin.random.Random
 
 infix fun Double.shouldBeAbout(d: Double) =
   if (isNaN() && d.isNaN() || d.isInfinite() && isInfinite()) Unit

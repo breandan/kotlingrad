@@ -1,13 +1,18 @@
 package edu.umontreal.kotlingrad.perf
 
+//import org.tensorflow.ndarray.*
+//import org.tensorflow.ndarray.buffer.DataBuffers
+//import kscience.kmath.linear.*
+//import kscience.kmath.structures.*
+//import kscience.kmath.structures.Matrix
 import ch.ethz.idsc.tensor.*
 import edu.mcgill.kaliningraph.*
-import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.round
+import edu.umontreal.kotlingrad.shapes.D100
 import edu.umontreal.kotlingrad.utils.*
 import org.apache.commons.math3.linear.*
-import org.ejml.data.*
+import org.ejml.data.DMatrix
 import org.ejml.kotlin.times
 import org.jetbrains.bio.viktor.F64Array
 import org.junit.jupiter.api.Assertions.assertArrayEquals
@@ -15,11 +20,6 @@ import org.junit.jupiter.api.Test
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.factory.Nd4j
 import kotlin.random.Random
-//import org.tensorflow.ndarray.*
-//import org.tensorflow.ndarray.buffer.DataBuffers
-//import kscience.kmath.linear.*
-//import kscience.kmath.structures.*
-//import kscience.kmath.structures.Matrix
 import kotlin.system.measureTimeMillis
 
 class SparseTest {

@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.api.*
-import io.kotlintest.properties.assertAll
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.property.checkAll
 import kotlin.math.*
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
@@ -12,7 +12,7 @@ class TestFiniteDifferences: StringSpec({
   val x by SVar(DReal)
 
   "sin should be (sin(x + dx) - sin(x)) / dx".config(enabled = false) {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f = sin(x)
       val `df∕dx` = d(f) / d(x)
       `df∕dx`(ẋ) shouldBeAbout (sin(ẋ + dx) - sin(ẋ)) / dx
@@ -20,7 +20,7 @@ class TestFiniteDifferences: StringSpec({
   }
 
   "cos should be (cos(x + dx) - cos(x)) / dx".config(enabled = false) {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f = cos(x)
       val `df∕dx` = d(f) / d(x)
       `df∕dx`(ẋ) shouldBeAbout ((cos(ẋ + dx) - cos(ẋ)) / dx)
@@ -28,7 +28,7 @@ class TestFiniteDifferences: StringSpec({
   }
 
   "test composition".config(enabled = false) {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f = sin(pow(x, 2))
       val `df∕dx` = d(f) / d(x)
 

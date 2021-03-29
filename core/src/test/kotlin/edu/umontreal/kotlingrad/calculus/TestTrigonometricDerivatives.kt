@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.api.*
-import io.kotlintest.properties.assertAll
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.property.checkAll
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestTrigonometricDerivatives: StringSpec({
@@ -11,7 +11,7 @@ class TestTrigonometricDerivatives: StringSpec({
   val y by SVar(DReal)
 
   "d(sin(x)) / dx should be cos(x)" {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f = sin(x)
       val `df∕dx` = d(f) / d(x)
       `df∕dx`(ẋ) shouldBeAbout cos(x)(ẋ)
@@ -19,7 +19,7 @@ class TestTrigonometricDerivatives: StringSpec({
   }
 
   "d(cos(x)) / dx should be -sin(x)" {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f = cos(x)
       val `df∕dx` = d(f) / d(x)
       `df∕dx`(ẋ) shouldBeAbout -sin(x)(ẋ)
@@ -33,21 +33,21 @@ class TestTrigonometricDerivatives: StringSpec({
   val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
 
   "z should be y * (sin(x * y) - x)".config(enabled = false) {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val numericalAnswer = ẏ * (kotlin.math.sin(ẋ * ẏ) - ẋ) + 0.0
       z(ẋ, ẏ) shouldBeAbout numericalAnswer
     }
   }
 
   "∂z/∂x should be y * (cos(x * y) * y - 1)" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val manualDerivative = y * (cos(x * y) * y - 1)
       `∂z∕∂x`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
     }
   }
 
   "∂z/∂y should be sin(x * y) - x + y * cos(x * y) * x" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val manualDerivative = sin(x * y) - x + y * cos(x * y) * x
       `∂z∕∂y`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
     }
@@ -56,7 +56,7 @@ class TestTrigonometricDerivatives: StringSpec({
   "∂²z/∂x² should be -y * y * y * sin(x * y)"
     .config(enabled = false) // TODO: Fix
     {
-      DoubleGenerator.assertAll { ẋ, ẏ ->
+      checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
         val manualDerivative = -y.pow(3) * sin(x * y)
         `∂²z∕∂x²`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
       }
@@ -65,7 +65,7 @@ class TestTrigonometricDerivatives: StringSpec({
   "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))"
     .config(enabled = false)  // TODO: Fix
     {
-      DoubleGenerator.assertAll { ẋ, ẏ ->
+      checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
         val manualDerivative =
           cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))
         `∂²z∕∂x∂y`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)

@@ -1,6 +1,6 @@
 package uk.neilgall.kanren
 
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
 
 class ComplexExample: StringSpec({
   "DOG + CAT = BAD" {

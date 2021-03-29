@@ -2,8 +2,8 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.api.*
-import io.kotlintest.properties.assertAll
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.property.checkAll
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPartialDerivatives: StringSpec({
@@ -11,7 +11,7 @@ class TestPartialDerivatives: StringSpec({
   val y by SVar(DReal)
 
   "∂x / ∂y should be 0" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val f = cos(x)
       val `∂f∕∂y` = d(f) / d(y)
       `∂f∕∂y`(ẋ, ẏ) shouldBeAbout 0
@@ -19,7 +19,7 @@ class TestPartialDerivatives: StringSpec({
   }
 
   "∂(x + y) / ∂x should be 1" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val f = x + y
       val `∂f∕∂x` = d(f) / d(x)
       `∂f∕∂x`(ẋ, ẏ) shouldBeAbout 1
@@ -27,7 +27,7 @@ class TestPartialDerivatives: StringSpec({
   }
 
   "∂(x + y + x) / ∂x should be 2" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val f = x + y + x
       val `∂f∕∂x` = d(f) / d(x)
       `∂f∕∂x`(ẋ, ẏ) shouldBeAbout 2
@@ -35,7 +35,7 @@ class TestPartialDerivatives: StringSpec({
   }
 
   "∂(yx) / ∂x should be y" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val f = y * x
       val `∂f∕∂x` = d(f) / d(x)
       `∂f∕∂x`(ẋ, ẏ) shouldBeAbout ẏ
@@ -43,7 +43,7 @@ class TestPartialDerivatives: StringSpec({
   }
 
   "∂(yx + xx + yy) / ∂x should be y + 2x" {
-    DoubleGenerator.assertAll { ẋ, ẏ ->
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val f = y * x + x * x + y * y
       val `∂f∕∂x` = d(f) / d(x)
       `∂f∕∂x`(ẋ, ẏ) shouldBeAbout (y + x * 2)(ẋ, ẏ)

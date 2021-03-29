@@ -1,10 +1,10 @@
 package edu.umontreal.kotlingrad.matrix
 
 import edu.umontreal.kotlingrad.*
-import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.api.*
-import io.kotlintest.properties.assertAll
-import io.kotlintest.specs.StringSpec
+import edu.umontreal.kotlingrad.shapes.*
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.property.checkAll
 import kotlin.math.pow
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
@@ -12,7 +12,7 @@ class TestVectorArithmetic: StringSpec({
   val gen = DoubleGenerator
 
   "a ʘ b" {
-    gen.assertAll { v1: Double, v2: Double, v3: Double, v4: Double ->
+    checkAll(gen, gen, gen, gen) { v1: Double, v2: Double, v3: Double, v4: Double ->
       val a = DReal.Vec(v1, v2)
       val b = DReal.Var(D2)
       val d = DReal.Vec(v3, v4)
@@ -23,7 +23,7 @@ class TestVectorArithmetic: StringSpec({
   }
 
   "a + b" {
-    gen.assertAll { v1: Double, v2: Double, v3: Double, v4: Double ->
+    checkAll(gen, gen, gen, gen) { v1: Double, v2: Double, v3: Double, v4: Double ->
       val a = DReal.Vec(v1, v2)
       val b = DReal.Var(D2)
       val d = DReal.Vec(v3, v4)
@@ -34,7 +34,7 @@ class TestVectorArithmetic: StringSpec({
   }
 
   "sum contents" {
-    gen.assertAll { v1: Double, v2: Double, v3: Double, v4: Double ->
+    checkAll(gen, gen, gen, gen) { v1: Double, v2: Double, v3: Double, v4: Double ->
       val a = DReal.Vec(v1, v2, v3, v4)
       val b = DReal.Var(D4)
       val c = b.sum()
@@ -44,7 +44,7 @@ class TestVectorArithmetic: StringSpec({
   }
 
   "magnitude" {
-    gen.assertAll { v1: Double, v2: Double, v3: Double, v4: Double ->
+    checkAll(gen, gen, gen, gen) { v1: Double, v2: Double, v3: Double, v4: Double ->
       val a = DReal.Vec(v1, v2, v3, v4)
       val b = DReal.Var(D4)
       val c = b * 1

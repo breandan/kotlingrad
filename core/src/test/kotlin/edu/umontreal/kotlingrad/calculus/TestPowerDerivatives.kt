@@ -2,14 +2,14 @@ package edu.umontreal.kotlingrad.calculus
 
 import edu.umontreal.kotlingrad.*
 import edu.umontreal.kotlingrad.api.*
-import io.kotlintest.properties.assertAll
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.property.checkAll
 
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPowerDerivatives: StringSpec({
   val x by SVar(DReal)
   "d(1/x) / dx should be -1/x²" {
-    DoubleGenerator(0).assertAll { ẋ ->
+    checkAll(DoubleGenerator(0)) { ẋ ->
       val f1 = 1 / x
       val f2 = pow(x, -1)
       val manualDeriv = -1 / pow(x, 2)
@@ -22,7 +22,7 @@ class TestPowerDerivatives: StringSpec({
   }
 
   "d(√x) / dx should be 1/(2√x)" {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f1 = sqrt(x)
       val f2 = pow(x, 0.5)
       val manualDeriv = 1 / (2 * sqrt(x))
@@ -35,7 +35,7 @@ class TestPowerDerivatives: StringSpec({
   }
 
   "d(x¹) / dx should be 1".config(enabled = false) {
-    DoubleGenerator.assertAll { ẋ ->
+    checkAll(DoubleGenerator) { ẋ ->
       val f1 = x
       val f2 = pow(x, 1)
       val manualDeriv = 1
@@ -48,7 +48,7 @@ class TestPowerDerivatives: StringSpec({
   }
 
   "d(x⁰) / dx should be 0".config(enabled = false) {
-    DoubleGenerator(0).assertAll { ẋ ->
+    checkAll(DoubleGenerator(0)) { ẋ ->
       val f1 = x / x
       val f2 = pow(x, 0)
       val manualDeriv = 0
