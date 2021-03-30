@@ -12,9 +12,9 @@ open class ExpressionGenerator<X: RealNumber<X, *>>(
     { x: SFun<X>, y: SFun<X> -> x / y },
   )
 ) {
-  val x = SVar<X>()
-  val y = SVar<X>()
-  val z = SVar<X>()
+  val x by SVar<X>()
+  val y by SVar<X>()
+  val z by SVar<X>()
   open val variables = listOf(x, y, z)
 
   infix fun SFun<X>.wildOp(that: SFun<X>) = operators.random(rand)(this, that)

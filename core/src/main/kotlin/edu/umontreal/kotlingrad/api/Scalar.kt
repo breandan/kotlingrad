@@ -84,6 +84,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
     is Variable -> "Var($name)"
     is Grad -> "d($input) / d($vrb)"
     is SComposition -> "($input)$bindings"
+    is Power<*> -> "($left).$op($right)" //TODO: separate asString() and toCode()
     is BiFun<*> -> "($left) $op ($right)"
     is UnFun<*> -> "$op($input)"
     is PolyFun<*> -> "$op$inputs"

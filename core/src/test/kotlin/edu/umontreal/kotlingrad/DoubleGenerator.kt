@@ -20,5 +20,5 @@ open class DoubleGenerator(
       Sample(if (positive) r * e else -e + 2 * e * r)
     } - excluding
 
-  override fun edgecases() = listOf<Double>()
+  override fun edgecases() = emptyList<Double>()
 }
