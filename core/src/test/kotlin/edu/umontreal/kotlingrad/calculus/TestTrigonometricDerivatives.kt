@@ -32,7 +32,7 @@ class TestTrigonometricDerivatives: StringSpec({
   val `∂²z∕∂x²` = d(`∂z∕∂x`) / d(x)
   val `∂²z∕∂x∂y` = d(`∂z∕∂x`) / d(y)
 
-  "z should be y * (sin(x * y) - x)".config(enabled = false) {
+  "z should be y * (sin(x * y) - x)" {
     checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
       val numericalAnswer = ẏ * (kotlin.math.sin(ẋ * ẏ) - ẋ) + 0.0
       z(ẋ, ẏ) shouldBeAbout numericalAnswer
@@ -53,9 +53,7 @@ class TestTrigonometricDerivatives: StringSpec({
     }
   }
 
-  "∂²z/∂x² should be -y * y * y * sin(x * y)"
-    .config(enabled = false) // TODO: Fix
-    {
+  "∂²z/∂x² should be -y * y * y * sin(x * y)" {
       checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
         val manualDerivative = -y.pow(3) * sin(x * y)
         `∂²z∕∂x²`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)

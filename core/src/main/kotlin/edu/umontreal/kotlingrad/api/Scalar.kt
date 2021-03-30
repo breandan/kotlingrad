@@ -283,7 +283,7 @@ class Derivative<X: SFun<X>> constructor(
     is Sine          -> input.cos() * input.df()
     is Cosine        -> -input.sin() * input.df()
     is Tangent       -> (input.cos() pow -TWO) * input.df()
-    is Derivative    -> input.df()
+    is Derivative    -> input.df().df()
     is DProd         -> (left.d(vrb) as VFun<X, DN> dot right as VFun<X, DN>) + (left as VFun<X, DN> dot right.d(vrb))
     is SComposition  -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()

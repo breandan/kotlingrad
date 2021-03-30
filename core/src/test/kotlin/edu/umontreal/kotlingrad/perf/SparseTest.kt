@@ -1,10 +1,5 @@
 package edu.umontreal.kotlingrad.perf
 
-//import org.tensorflow.ndarray.*
-//import org.tensorflow.ndarray.buffer.DataBuffers
-//import kscience.kmath.linear.*
-//import kscience.kmath.structures.*
-//import kscience.kmath.structures.Matrix
 import ch.ethz.idsc.tensor.*
 import edu.mcgill.kaliningraph.*
 import edu.umontreal.kotlingrad.api.*
