@@ -74,7 +74,7 @@ fun main() {
 }
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
-/*tailrec*/ fun <T> Nat<T>.fibonacci(
+tailrec fun <T> Nat<T>.fibonacci(
   n: T,
   seed: Pair<T, T> = nil to one,
   fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },
@@ -87,7 +87,7 @@ fun main() {
 fun <T> Nat<T>.factorial(n: T): T = prod(seq(to = n.next()))
 
 /** Returns a sequence of [Nat]s starting from [from] until [to] **/
-/*tailrec*/ fun <T> Nat<T>.seq(
+tailrec fun <T> Nat<T>.seq(
   from: T = one,
   to: T,
   acc: Set<T> = emptySet()
@@ -102,7 +102,7 @@ fun <T> Nat<T>.isPrime(t: T, kps: Set<T> = emptySet()): Boolean =
     .all { (i, j) -> if (i == one || j == one) true else i * j != t }
 
 /** Prints [t] prime [Nat]s **/
-/*tailrec*/ fun <T> Nat<T>.primes(
+tailrec fun <T> Nat<T>.primes(
   t: T, // number of primes
   i: T = nil, // counter
   c: T = one.next(), // prime candidate
@@ -121,11 +121,11 @@ operator fun <T> Set<T>.times(s: Set<T>) =
   flatMap { l -> s.map { r -> l to r }.toSet() }.toSet()
 
 /** Returns the sum of two [Nat]s **/
-/*tailrec*/ fun <T> Nat<T>.plus(l: T, r: T, acc: T = l, i: T = nil): T =
+tailrec fun <T> Nat<T>.plus(l: T, r: T, acc: T = l, i: T = nil): T =
   if (i == r) acc else plus(l, r, acc.next(), i.next())
 
 /** Returns the product of two [Nat]s **/
-/*tailrec*/ fun <T> Nat<T>.times(l: T, r: T, acc: T = nil, i: T = nil): T =
+tailrec fun <T> Nat<T>.times(l: T, r: T, acc: T = nil, i: T = nil): T =
   if (i == r) acc else times(l, r, acc + l, i.next())
 
 fun <T> Nat<T>.sum(list: Iterable<T>): T = list.reduce { acc, t -> acc + t }
