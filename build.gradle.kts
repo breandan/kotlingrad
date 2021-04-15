@@ -1,5 +1,4 @@
-import org.gradle.api.JavaVersion.VERSION_1_8
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.JavaVersion.VERSION_11
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -37,11 +36,9 @@ allprojects {
   }
 
   tasks {
-    withType<KotlinCompile> {
+    compileKotlin {
       kotlinOptions {
-        jvmTarget = VERSION_1_8.toString()
-        languageVersion = "1.5"
-        apiVersion = "1.5"
+        jvmTarget = VERSION_11.toString()
       }
     }
 

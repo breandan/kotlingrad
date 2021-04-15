@@ -42,7 +42,7 @@ dependencies {
 }
 
 tasks {
-  withType<KotlinCompile> { dependsOn("genShapes") }
+  compileKotlin { dependsOn("genShapes") }
 
   listOf("TypeClassing").forEach { fileName ->
     register(fileName, JavaExec::class) {
