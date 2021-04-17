@@ -7,42 +7,33 @@ import java.math.BigInteger as bi
 import kotlin.math.roundToInt
 import kotlin.system.measureTimeMillis
 
+fun <T> Nat<T>.benchmark(bigInt: T) =
+  measureTimeMillis {
+  println("Fibonacci:" + fibonacci(bigInt))
+  println("Primes:   " + primes(bigInt))
+  println("Factorial:" + factorial(bigInt))
+}.also { ms -> println("\nTook ${ms}ms") }
+
 fun main() {
+  val bigInt = bi.valueOf(10)
+
   Nat(
     nil = bi.ZERO,
     next = { this + bi.ONE }
-  ).run {
-    measureTimeMillis {
-      println(fibonacci(bi.valueOf(10)))
-      primes(bi.valueOf(10))
-      factorial(bi.valueOf(4))
-    }.also { ms -> println("\nTook ${ms}ms") }
-  }
+  ).benchmark(bigInt)
 
   Ring(
     nil = bi.ZERO,
     one = bi.ONE,
     plus = { a, b -> a + b }
-  ).run {
-    measureTimeMillis {
-      println(fibonacci(bi.valueOf(10)))
-      primes(bi.valueOf(10))
-      factorial(bi.valueOf(4))
-    }.also { ms -> println("\nTook ${ms}ms") }
-  }
+  ).benchmark(bigInt)
 
   Ring(
     nil = bi.ZERO,
     one = bi.ONE,
     plus = { a, b -> a + b },
     times = { a, b -> a * b }
-  ).run {
-    measureTimeMillis {
-      println(fibonacci(bi.valueOf(10)))
-      primes(bi.valueOf(10))
-      factorial(bi.valueOf(4))
-    }.also { ms -> println("\nTook ${ms}ms") }
-  }
+  ).benchmark(bigInt)
 
   Field(
     nil = Rational(0, 0),
@@ -74,7 +65,7 @@ fun main() {
 }
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
-tailrec fun <T> Nat<T>.fibonacci(
+fun <T> Nat<T>.fibonacci(
   n: T,
   seed: Pair<T, T> = nil to one,
   fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },
@@ -107,11 +98,11 @@ tailrec fun <T> Nat<T>.primes(
   i: T = nil, // counter
   c: T = one.next(), // prime candidate
   kps: Set<T> = emptySet() // known primes
-): Unit =
+): Set<T> =
   when {
-    i == t -> Unit
+    i == t -> kps
     isPrime(c) -> {
-      print("$c, "); primes(t, i.next(), c.next(), kps + c)
+      primes(t, i.next(), c.next(), kps + c)
     }
     else -> primes(t, i, c.next(), kps)
   }
