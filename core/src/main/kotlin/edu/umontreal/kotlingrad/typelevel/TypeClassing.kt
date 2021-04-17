@@ -9,10 +9,13 @@ import kotlin.system.measureTimeMillis
 
 fun <T> Nat<T>.benchmark(bigInt: T) =
   measureTimeMillis {
-  println("Fibonacci:" + fibonacci(bigInt))
-  println("Primes:   " + primes(bigInt))
-  println("Factorial:" + factorial(bigInt))
-}.also { ms -> println("\nTook ${ms}ms") }
+    println(
+      javaClass.interfaces.first().simpleName + " results\n" +
+        "\tFibonacci: " + fibonacci(bigInt) + "\n" +
+        "\tPrimes:    " + primes(bigInt) + "\n" +
+        "\tFactorial: " + factorial(bigInt)
+    )
+  }.also { ms -> println("Total: ${ms}ms\n") }
 
 fun main() {
   val bigInt = bi.valueOf(10)
