@@ -8,24 +8,25 @@ import kotlin.math.roundToInt
 import kotlin.system.measureTimeMillis
 
 fun main() {
+  val max = 10L
   listOf(
     BaseType(
-      max = BD.valueOf(10), one = BD.ONE, nil = BD.ZERO,
+      max = BD.valueOf(max), one = BD.ONE, nil = BD.ZERO,
       plus = { a, b -> a + b }, minus = { a, b -> a - b },
       times = { a, b -> a * b }, div = { a, b -> a / b },
     ),
     BaseType(
-      max = BI.valueOf(10), one = BI.ONE, nil = BI.ZERO,
+      max = BI.valueOf(max), one = BI.ONE, nil = BI.ZERO,
       plus = { a, b -> a + b }, minus = { a, b -> a - b },
       times = { a, b -> a * b }, div = { a, b -> a / b },
     ),
     BaseType(
-      max = 10L, one = 1L, nil = 0L,
+      max = max, one = 1L, nil = 0L,
       plus = { a, b -> a + b }, minus = { a, b -> a - b },
       times = { a, b -> a * b }, div = { a, b -> a / b },
     ),
     BaseType(
-      max = 10f, one = 1f, nil = 0f,
+      max = max.toFloat(), one = 1f, nil = 0f,
       plus = { a, b -> a + b }, minus = { a, b -> a - b },
       times = { a, b -> a * b }, div = { a, b -> a / b },
     ),
@@ -84,6 +85,7 @@ fun <T> Nat<T>.benchmark(max: Any) =
       javaClass.interfaces.first().simpleName + "<${nil!!::class.java.simpleName}>" + " results\n" +
         "\tFibonacci: " + fibonacci(max as T) + "\n" +
         "\tPrimes:    " + primes(max as T) + "\n" +
+        "\tPower:     " + (one + one).pow(max as T) + "\n" +
         "\tFactorial: " + factorial(max as T)
     )
   }.also { ms -> println("Total: ${ms}ms\n") }
@@ -137,19 +139,19 @@ fun <T> Nat<T>.isPrime(t: T, kps: Set<T> = emptySet()): Boolean =
     .distinctBy { (l, r) -> setOf(l, r) }
     .all { (i, j) -> if (i == one || j == one) true else i * j != t }
 
-/** Prints [t] prime [Nat]s **/
+/** Returns [total] prime [Nat]s **/
 tailrec fun <T> Nat<T>.primes(
-  t: T, // number of primes
+  total: T, // total number of primes
   i: T = nil, // counter
   c: T = one.next(), // prime candidate
   kps: Set<T> = emptySet() // known primes
 ): Set<T> =
   when {
-    i == t -> kps
+    i == total -> kps
     isPrime(c) -> {
-      primes(t, i.next(), c.next(), kps + c)
+      primes(total, i.next(), c.next(), kps + c)
     }
-    else -> primes(t, i, c.next(), kps)
+    else -> primes(total, i, c.next(), kps)
   }
 
 // Returns the Cartesian product of two sets
@@ -164,6 +166,9 @@ tailrec fun <T> Nat<T>.plus(l: T, r: T, acc: T = l, i: T = nil): T =
 tailrec fun <T> Nat<T>.times(l: T, r: T, acc: T = nil, i: T = nil): T =
   if (i == r) acc else times(l, r, acc + l, i.next())
 
+tailrec fun <T> Nat<T>.pow(base: T, exp: T, acc: T = one, i: T = one): T =
+  if (i == exp) acc else pow(base, exp, acc * base, i.next())
+
 fun <T> Nat<T>.sum(list: Iterable<T>): T = list.reduce { acc, t -> acc + t }
 
 fun <T> Nat<T>.prod(list: Iterable<T>): T = list.reduce { acc, t -> (acc * t) }
@@ -175,6 +180,7 @@ interface Nat<T> {
   fun T.next(): T
   operator fun T.plus(t: T) = plus(this, t)
   operator fun T.times(t: T) = times(this, t)
+  infix fun T.pow(t: T) = pow(this, t)
 
   companion object {
     operator fun <T> invoke(nil: T, next: T.() -> T): Nat<T> =
