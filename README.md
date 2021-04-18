@@ -754,7 +754,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ### Church encoding
 
-The main idea behind Church encoding is to define a numerical tower using the λ-calculus. The idea is, we can lower a large subset of mathematics onto a single operator: function composition. Many symbols that appear complicated to implement can be expressed as repeated function application. If we consider the binary operator `^`, we note it can be lowered as follows:
+The main idea behind Church encoding is to redefine out numerical tower using the λ-calculus. Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9) we can lower a large subset of mathematics onto a single operator: function composition. Many symbols that appear complicated to implement can be expressed as repeated function application. If we consider the binary operator `^`, we note it can be lowered as follows:
 
 ```
 a ^ b :=  a * ... * a 
@@ -766,12 +766,13 @@ a * b :=  a + ... + a
 a + b :=  a + 1 + ... + 1
               \_________/
                 b times
-a := next(next(...next(1)...))
+a := next*(next(...next(1)...))
      \________________/
           a times
 ```
+&lowast; `next` is also called `S` in [Peano arithmetic](https://en.wikipedia.org/wiki/Successor_function).
 
-The trouble with numerical towers is they assume all inheritors are under its jurisdiction - what if the end users wants to adapt or "mix-in" types from an external type system? One pattern for doing so is called a [type class](https://en.wikipedia.org/wiki/Type_class), which supports [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism). Although the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces. We can use it as follows:
+The trouble with numerical towers is they assume all inheritors are under its jurisdiction - what if end users want to adapt or "mix-in" types from an external type system? One pattern for doing so is called a [type class](https://en.wikipedia.org/wiki/Type_class), which supports [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism). Although the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces. We can use it as follows:
 
 ```kotlin
 fun BigDecimal.algebras() = listOf(
@@ -791,7 +792,7 @@ fun BigDecimal.algebras() = listOf(
 )
 ```
 
-The base type, `Nat` contains a unitary member, `one`, and a successor function, `next` (also known as `succ` in Peano arithmetic):
+The base type, `Nat` contains a unitary member, `one`, and a successor function:
 
 ```kotlin
 interface Nat<T> {
