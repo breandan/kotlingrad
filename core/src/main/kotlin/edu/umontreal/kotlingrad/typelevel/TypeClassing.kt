@@ -7,13 +7,13 @@ import java.math.BigInteger as bi
 import kotlin.math.roundToInt
 import kotlin.system.measureTimeMillis
 
-fun <T> Nat<T>.benchmark(bigInt: T) =
+fun <T> Nat<T>.benchmark(max: T) =
   measureTimeMillis {
     println(
       javaClass.interfaces.first().simpleName + " results\n" +
-        "\tFibonacci: " + fibonacci(bigInt) + "\n" +
-        "\tPrimes:    " + primes(bigInt) + "\n" +
-        "\tFactorial: " + factorial(bigInt)
+        "\tFibonacci: " + fibonacci(max) + "\n" +
+        "\tPrimes:    " + primes(max) + "\n" +
+        "\tFactorial: " + factorial(max)
     )
   }.also { ms -> println("Total: ${ms}ms\n") }
 

@@ -20,7 +20,6 @@ dependencies {
   api("com.github.breandan:kaliningraph:0.1.5")
 
   // Mathematical libraries
-  implementation("ch.obermuhlner:big-math:2.3.0")
   implementation("com.github.JetBrains-Research:viktor:1.1.0")
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 

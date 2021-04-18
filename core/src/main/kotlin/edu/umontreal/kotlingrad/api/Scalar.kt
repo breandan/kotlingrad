@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty
  * Algebraic primitives.
  *
  * https://core.ac.uk/download/pdf/200977628.pdf#page=12
- * https://github.com/tysonzero/algebraic-structures
+ * https://raw.githubusercontent.com/breandan/algebraic-structures/patch-1/graph.svg
  */
 
 interface Group<X: Group<X>> {
@@ -161,9 +161,9 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   @Suppress("UNCHECKED_CAST")
   fun apply(vararg xs: Fun<X>): SFun<X> = when(op) {
     Monad.id  -> this
-    Monad.sin -> (xs[0] as SFun<X>).sin()
-    Monad.cos -> (xs[0] as SFun<X>).cos()
-    Monad.tan -> (xs[0] as SFun<X>).tan()
+    Monad.sin -> (xs[0] as SFun<DReal>).sin() as SFun<X>
+    Monad.cos -> (xs[0] as SFun<DReal>).cos() as SFun<X>
+    Monad.tan -> (xs[0] as SFun<DReal>).tan() as SFun<X>
     Monad.`-` -> -(xs[0] as SFun<X>)
 
     Dyad.d    -> TODO()
@@ -174,6 +174,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     Dyad.dot  -> (xs[0] as VFun<X, DN>) dot xs[1] as VFun<X, DN>
 
     Polyad.Σ  -> (xs[0] as VFun<X, DN>).sum()
+    Polyad.Π  -> TODO()
     Polyad.λ  -> TODO()
     else      -> TODO(op.javaClass.name)
   }
@@ -213,9 +214,6 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   open fun d(v1: SVar<X>): SFun<X> =
     Derivative(this, v1)//.let { if (EAGER) it.df() else it }
 
-  open fun sin(): SFun<X> = Sine(this)
-  open fun cos(): SFun<X> = Cosine(this)
-  open fun tan(): SFun<X> = Tangent(this)
   fun exp(): SFun<X>      = Power(E, this)
 
   open fun <L: D1> d(vVar: VVar<X, L>): VFun<X, L> =
@@ -253,9 +251,6 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
  * Symbolic operators.
  */
 
-class Sine<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
-class Cosine<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
-class Tangent<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
 class Negative<X: SFun<X>>(override val input: SFun<X>): SFun<X>(input), UnFun<X>
 class Sum<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
 class Prod<X: SFun<X>>(override val left: SFun<X>, override val right: SFun<X>): SFun<X>(left, right), BiFun<X>
@@ -274,21 +269,21 @@ class Derivative<X: SFun<X>> constructor(
     is SConst        -> ZERO
     is Sum           -> left.df() + right.df()
     is Prod          -> left.df() * right + left * right.df()
+
     is Power         ->
       //https://en.wikipedia.org/wiki/Differentiation_rules#The_polynomial_or_elementary_power_rule
       if (right.isConstant()) right * left.pow(right - ONE) * left.df()
       //https://en.wikipedia.org/wiki/Differentiation_rules#Generalized_power_rule
       else this * (left.df() * right / left + right.df() * left.ln())
+
     is Negative      -> -input.df()
     is Log           -> (left pow -ONE) * left.df()
-    is Sine          -> input.cos() * input.df()
-    is Cosine        -> -input.sin() * input.df()
-    is Tangent       -> (input.cos() pow -TWO) * input.df()
+
     is Derivative    -> input.df().df()
     is DProd         -> (left.d(vrb) as VFun<X, DN> dot right as VFun<X, DN>) + (left as VFun<X, DN> dot right.d(vrb))
     is SComposition  -> evaluate.df()
     is VSumAll<X, *> -> input.d(vrb).sum()
-//    is Custom<X> -> fn.df()
+    else -> input.d(vrb)
   }
 }
 
@@ -305,9 +300,9 @@ class SComposition<X : SFun<X>> constructor(
 
   fun SFun<X>.bind(bnds: Bindings<X>): SFun<X> =
     bnds[this@bind] ?: when (this@bind) {
-      is Derivative    -> df().bind(bnds)
+      is Derivative   -> df().bind(bnds)
       // TODO: should we really be merging bindings for nested composition?
-      is SComposition  -> input.bind(bnds + bindings)
+      is SComposition -> input.bind(bnds + bindings)
       else -> apply(*inputs.map {
         if (it is SFun<X>) it.bind(bnds) else it(bnds)
       }.toTypedArray())
@@ -320,9 +315,8 @@ class DProd<X: SFun<X>> constructor(
   override val right: VFun<X, *>
 ): SFun<X>(left, right), BiFun<X>
 
-class VSumAll<X: SFun<X>, E: D1> constructor(
-  val input: VFun<X, E>
-): SFun<X>(input), PolyFun<X> {
+class VSumAll<X: SFun<X>, E: D1>
+constructor(val input: VFun<X, E>): SFun<X>(input), PolyFun<X> {
   override val inputs: Array<out Fun<X>> = arrayOf(input)
 }
 
@@ -332,12 +326,11 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    SVar<X>(if (name.isEmpty()) property.name else name)
+    SVar<X>(name.ifEmpty { property.name })
 }
 
-open class SConst<X: SFun<X>> constructor(
-  open val value: Number
-): SFun<X>(), Constant<X> {
+open class SConst<X: SFun<X>>
+constructor(open val value: Number): SFun<X>(), Constant<X> {
   override fun toString() = value.toString()
   override fun equals(other: Any?) =
     if (other is SConst<*>) value == other.value else super.equals(other)
@@ -358,11 +351,6 @@ open class SConst<X: SFun<X>> constructor(
       else -> super.times(multiplicand)
     }
 
-  // TODO: Think more carefully about how to do this for other number systems.
-  // Might need to push down to implementation when trigonometry is undefined.
-  override fun sin() = wrap(sin(doubleValue))
-  override fun cos() = wrap(cos(doubleValue))
-  override fun tan() = wrap(tan(doubleValue))
   override fun sqrt() = wrap(sqrt(doubleValue))
 
   override fun unaryMinus() = wrap(-doubleValue)
@@ -402,25 +390,23 @@ class One<X: SFun<X>>: Special<X>(1.0)
 class Two<X: SFun<X>>: Special<X>(2.0)
 class E<X: SFun<X>>: Special<X>(E)
 
-// TODO: RationalNumber, ComplexNumber, Quaternion
-abstract class RealNumber<X: RealNumber<X, Y>, Y: Number> constructor(
-  override val value: Y
-): SConst<X>(value) {
+abstract class RationalNumber<X: RationalNumber<X>>: SConst<X>(TODO())
+
+// TODO: ComplexNumber, Quaternion
+abstract class RealNumber<X: RealNumber<X, Y>, Y: Number>
+constructor(override val value: Y): SConst<X>(value) {
   override fun toString() = value.toString()
   abstract override fun wrap(number: Number): SConst<X>
-
-  override val doubleValue: Double by lazy {
-    when (this) {
-      is BDReal -> value.toDouble()
-      is DReal -> value
-      else -> super.doubleValue
-    }
-  }
 }
 
 open class DReal(override val value: Double): RealNumber<DReal, Double>(value) {
   override fun wrap(number: Number) = DReal(number.toDouble())
   companion object: DReal(NaN)
+}
+
+open class FReal(override val value: Float): RealNumber<FReal, Float>(value) {
+  override fun wrap(number: Number) = FReal(number.toFloat())
+  companion object: FReal(Float.NaN)
 }
 
 /**
@@ -465,9 +451,27 @@ class Differential<X: SFun<X>>(private val fx: SFun<X>) {
   infix operator fun div(arg: Differential<X>) = fx.d(arg.fx.bindings.sVars.first())
 }
 
-fun <T: SFun<T>> sin(angle: SFun<T>) = angle.sin()
-fun <T: SFun<T>> cos(angle: SFun<T>) = angle.cos()
-fun <T: SFun<T>> tan(angle: SFun<T>) = angle.tan()
+@JvmName("infxsin") fun sin(angle: SFun<DReal>): SFun<DReal> = angle.sin()
+@JvmName("infxcos") fun cos(angle: SFun<DReal>): SFun<DReal> = angle.cos()
+@JvmName("infxtan") fun tan(angle: SFun<DReal>): SFun<DReal> = angle.tan()
+@JvmName("psfxsin") fun SFun<DReal>.sin(): SFun<DReal> = Sine(this)
+@JvmName("psfxcos") fun SFun<DReal>.cos(): SFun<DReal> = Cosine(this)
+@JvmName("psfxtan") fun SFun<DReal>.tan(): SFun<DReal> = Tangent(this)
+
+sealed class TrigFun
+constructor(override val input: SFun<DReal>):
+  SFun<DReal>(input), UnFun<DReal> {
+  override fun d(v: SVar<DReal>) = when (this) {
+    is Sine -> input.cos() * input.d(v)
+    is Cosine -> -input.sin() * input.d(v)
+    is Tangent -> (input.cos() pow -TWO) * input.d(v)
+  }
+}
+
+class Sine(override val input: SFun<DReal>): TrigFun(input)
+class Cosine(override val input: SFun<DReal>): TrigFun(input)
+class Tangent(override val input: SFun<DReal>): TrigFun(input)
+
 fun <T: SFun<T>> exp(exponent: SFun<T>) = exponent.exp()
 fun <T: SFun<T>> sqrt(radicand: SFun<T>) = radicand.sqrt()
 
