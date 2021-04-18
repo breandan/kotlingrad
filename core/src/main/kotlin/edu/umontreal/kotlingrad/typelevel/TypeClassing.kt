@@ -73,8 +73,8 @@ data class BaseType<T>(
   val div: (T, T) -> T,
 ) {
   operator fun T.plus(that: T) = plus(this, that)
-  operator fun T.times(that: T) = minus(this, that)
-  operator fun T.minus(that: T) = times(this, that)
+  operator fun T.times(that: T) = times(this, that)
+  operator fun T.minus(that: T) = minus(this, that)
   operator fun T.div(that: T) = div(this, that)
 }
 
@@ -88,26 +88,31 @@ fun <T> Nat<T>.benchmark(max: Any) =
     )
   }.also { ms -> println("Total: ${ms}ms\n") }
 
-fun <T> BaseType<T>.algebras() = listOf(
+fun <T> BaseType<T>.algebras(): List<Nat<T>> = listOf(
   Nat(
     nil = nil,
     next = { this + one }
   ),
-  Ring(
-    nil = nil,
-    one = one,
+  Group(
+    nil = nil, one = one,
     plus = { a, b -> a + b }
   ),
   Ring(
-    nil = nil,
-    one = one,
+    nil = nil, one = one,
     plus = { a, b -> a + b },
     times = { a, b -> a * b }
   ),
+  Field(
+    nil = nil, one = one,
+    plus = { a, b -> a + b },
+    times = { a, b -> a * b },
+    div = { a, b -> a / b },
+    minus = { a, b -> a - b }
+  )
 )
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
-fun <T> Nat<T>.fibonacci(
+/*tailrec*/ fun <T> Nat<T>.fibonacci(
   n: T,
   seed: Pair<T, T> = nil to one,
   fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },
@@ -121,11 +126,9 @@ fun <T> Nat<T>.factorial(n: T): T = prod(seq(to = n.next()))
 
 /** Returns a sequence of [Nat]s starting from [from] until [to] **/
 tailrec fun <T> Nat<T>.seq(
-  from: T = one,
-  to: T,
+  from: T = one, to: T,
   acc: Set<T> = emptySet()
-): Set<T> =
-  if (from == to) acc else seq(from.next(), to, acc + from)
+): Set<T> = if (from == to) acc else seq(from.next(), to, acc + from)
 
 /** Returns whether an [Nat] is prime **/
 fun <T> Nat<T>.isPrime(t: T, kps: Set<T> = emptySet()): Boolean =
@@ -163,7 +166,7 @@ tailrec fun <T> Nat<T>.times(l: T, r: T, acc: T = nil, i: T = nil): T =
 
 fun <T> Nat<T>.sum(list: Iterable<T>): T = list.reduce { acc, t -> acc + t }
 
-fun <T> Nat<T>.prod(list: Iterable<T>): T = list.reduce { acc, t -> acc * t }
+fun <T> Nat<T>.prod(list: Iterable<T>): T = list.reduce { acc, t -> (acc * t) }
 
 interface Nat<T> {
   val nil: T
@@ -182,17 +185,25 @@ interface Nat<T> {
   }
 }
 
-interface Ring<T>: Nat<T> {
+interface Group<T>: Nat<T> {
   override fun T.next(): T = this + one
+  override fun T.plus(t: T): T
 
   companion object {
-    operator fun <T> invoke(nil: T, one: T, plus: (T, T) -> T): Ring<T> =
-      object: Ring<T> {
+    operator fun <T> invoke(nil: T, one: T, plus: (T, T) -> T): Group<T> =
+      object: Group<T> {
         override fun T.plus(t: T) = plus(this, t)
         override val nil: T = nil
         override val one: T = one
       }
+  }
+}
 
+interface Ring<T>: Group<T> {
+  override fun T.plus(t: T): T
+  override fun T.times(t: T): T
+
+  companion object {
     operator fun <T> invoke(
       nil: T, one: T,
       plus: (T, T) -> T,
