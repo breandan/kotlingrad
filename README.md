@@ -37,6 +37,9 @@ Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/
   * [Intermediate representation](#intermediate-representation)
   * [Property Delegation](#property-delegation)
   * [Coroutines](#coroutines)
+* [Experimental ideas](#experimental-ideas)
+  * [Arity inference](#arity-inference)
+  * [Church encoding](#church-encoding)
 * [Formal grammar](#grammar)
 * [UML diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
@@ -721,7 +724,7 @@ Without property delegation, users would need to repeat the property name in the
 
 [Coroutines](https://kotlinlang.org/docs/reference/coroutines/basics.html) are a generalization of subroutines for non-preemptive multitasking, typically implemented using [continuations](https://en.wikipedia.org/wiki/Continuation). One form of continuation, known as shift-reset a.k.a. delimited continuations, are sufficient for implementing reverse mode AD with operator overloading alone (without any additional data structures) as described by Wang et al. in *[Shift/Reset the Penultimate Backpropagator](https://arxiv.org/pdf/1803.10228.pdf)* and later in *[Backpropagation with Continuation Callbacks](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)*. While Kotlin callbacks are [single-shot by default](https://medium.com/@elizarov/callbacks-and-kotlin-flows-2b53aa2525cf), [delimited continuations](https://gist.github.com/elizarov/5bbbe5a3b88985ae577d8ec3706e85ef) and reentrant or "multi-shot" delimited continuations [can also be implemented](https://gist.github.com/elizarov/ddee47f927dda500dc493e945128d661) using Kotlin coroutines and would be an interesting extension to this work. Please stay tuned!
 
-## Ideal API (WIP)
+## Experimental ideas
 
 The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
@@ -729,7 +732,7 @@ When the shape of an N-dimensional array is known at compile-time, we can use [t
 
 Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
-### Scalar functions
+### Arity inference
 
 A function's type would ideally encode arity, based on the number of unique variables:
 
@@ -748,6 +751,103 @@ val f = Fun(D2) { x * y + sin(2 * x + 3 * y) }  // f: BinaryFunction<Double> "
 val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
 val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
 ```
+
+### Church encoding
+
+The main idea behind Church encoding is to define a numerical tower using the λ-calculus. The idea is, we can lower a large subset of mathematics onto a single operator: function composition. Many symbols that appear complicated to implement can be expressed as repeated function application. If we consider the binary operator `^`, we note it can be lowered as follows:
+
+```
+a ^ b :=  a * ... * a 
+          \_________/
+            b times
+a * b :=  a + ... + a 
+          \_________/
+            b times
+a + b :=  a + 1 + ... + 1
+              \_________/
+                b times
+a := next(next(...next(1)...))
+     \________________/
+          a times
+```
+
+The trouble with numerical towers is they assume all inheritors are under its jurisdiction - what if the end users wants to adapt or "mix-in" types from an external type system? One pattern for doing so is called a [type class](https://en.wikipedia.org/wiki/Type_class), which supports [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism). Although the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces. We can use it as follows:
+
+```kotlin
+fun BigDecimal.algebras() = listOf(
+  Nat(
+    one = ONE,
+    next = { this + one }
+  ),
+  Group(
+    one = ONE,
+    plus = { a, b -> a + b }
+  ),
+  Ring(
+    one = ONE,
+    plus = { a, b -> a + b },
+    times = { a, b -> a * b }
+  )
+)
+```
+
+The base type, `Nat` contains a unitary member, `one`, and a successor function, `next` (also known as `succ` in Peano arithmetic):
+
+```kotlin
+interface Nat<T> {
+  val one: T
+  fun T.next(): T
+  
+  companion object {
+    operator fun <T> invoke(one: T, next: T.() -> T): Nat<T> =
+      object: Nat<T> {
+        override val one: T = one
+        override fun T.next(): T = next()
+      }
+  }
+}
+```
+
+Although the `Nat` interface is very expressive (we can already define `+` and `*` with this interface), arithmetic using `Nat`s is computationally expensive. We can make `Nat` more efficient by introducing the following subtype, which requires implementors to define a native addition operator:
+
+```kotlin
+interface Group<T>: Nat<T> {
+  override fun T.next(): T = this + one
+  fun T.plus(t: T): T
+
+  companion object {
+    operator fun <T> invoke(one: T, plus: (T, T) -> T): Group<T> =
+      object: Group<T> {
+        override val one: T = one
+        override fun T.plus(t: T) = plus(this, t)
+      }
+  }
+}
+```
+
+We could further extend this interface by introducing a subtype called `Ring`, which requires implementors to define a native product:
+
+```kotlin
+interface Ring<T>: Group<T> {
+  override fun T.plus(t: T): T
+  fun T.times(t: T): T
+
+  companion object {
+    operator fun <T> invoke(
+      one: T,
+      plus: (T, T) -> T,
+      times: (T, T) -> T
+    ): Ring<T> =
+      object: Ring<T> {
+        override val one: T = one
+        override fun T.plus(t: T) = plus(this, t)
+        override fun T.times(t: T) = times(this, t)
+      }
+  }
+}
+```
+
+Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, with this simple tower, we already have the primitives necessary to build a simple AD system. To see the above example in full, please visit: [`TypeClassing.kt`](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/TypeClassing.kt).
 
 ## Grammar
 
