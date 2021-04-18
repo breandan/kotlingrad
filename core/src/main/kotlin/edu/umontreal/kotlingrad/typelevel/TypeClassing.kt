@@ -2,41 +2,39 @@
 
 package edu.umontreal.kotlingrad.typelevel
 
-import java.math.BigDecimal as bd
-import java.math.BigInteger as bi
+import java.math.BigDecimal as BD
+import java.math.BigInteger as BI
 import kotlin.math.roundToInt
 import kotlin.system.measureTimeMillis
 
-fun <T> Nat<T>.benchmark(max: T) =
-  measureTimeMillis {
-    println(
-      javaClass.interfaces.first().simpleName + " results\n" +
-        "\tFibonacci: " + fibonacci(max) + "\n" +
-        "\tPrimes:    " + primes(max) + "\n" +
-        "\tFactorial: " + factorial(max)
-    )
-  }.also { ms -> println("Total: ${ms}ms\n") }
-
 fun main() {
-  val bigInt = bi.valueOf(10)
-
-  Nat(
-    nil = bi.ZERO,
-    next = { this + bi.ONE }
-  ).benchmark(bigInt)
-
-  Ring(
-    nil = bi.ZERO,
-    one = bi.ONE,
-    plus = { a, b -> a + b }
-  ).benchmark(bigInt)
-
-  Ring(
-    nil = bi.ZERO,
-    one = bi.ONE,
-    plus = { a, b -> a + b },
-    times = { a, b -> a * b }
-  ).benchmark(bigInt)
+  listOf(
+    BaseType(
+      max = BD.valueOf(10), one = BD.ONE, nil = BD.ZERO,
+      plus = { a, b -> a + b }, minus = { a, b -> a - b },
+      times = { a, b -> a * b }, div = { a, b -> a / b },
+    ),
+    BaseType(
+      max = BI.valueOf(10), one = BI.ONE, nil = BI.ZERO,
+      plus = { a, b -> a + b }, minus = { a, b -> a - b },
+      times = { a, b -> a * b }, div = { a, b -> a / b },
+    ),
+    BaseType(
+      max = 10L, one = 1L, nil = 0L,
+      plus = { a, b -> a + b }, minus = { a, b -> a - b },
+      times = { a, b -> a * b }, div = { a, b -> a / b },
+    ),
+    BaseType(
+      max = 10f, one = 1f, nil = 0f,
+      plus = { a, b -> a + b }, minus = { a, b -> a - b },
+      times = { a, b -> a * b }, div = { a, b -> a / b },
+    ),
+  ) // Benchmark all (types x algebras)
+    .forEach { baseType ->
+      baseType.algebras().forEach {
+        it.benchmark(baseType.max)
+      }
+    }
 
   Field(
     nil = Rational(0, 0),
@@ -55,17 +53,58 @@ fun main() {
   }
 
   VectorField(f = Field(
-    nil = bd.ZERO,
-    one = bd.ONE,
+    nil = BI.ZERO,
+    one = BI.ONE,
     plus = { a, b -> a + b },
     times = { a, b -> a * b },
     div = { a, b -> a / b },
     minus = { a, b -> a - b }
   )).run {
-    println(bd.ONE dot Vector(bd.ZERO, bd.ONE))
-    println(Vector(bd.ZERO, bd.ONE) + Vector(bd.ONE, bd.ONE))
+    println(BI.ONE dot Vector(BI.ZERO, BI.ONE))
+    println(Vector(BI.ZERO, BI.ONE) + Vector(BI.ONE, BI.ONE))
   }
 }
+
+data class BaseType<T>(
+  val max: T, val one: T, val nil: T,
+  val plus: (T, T) -> T,
+  val times: (T, T) -> T,
+  val minus: (T, T) -> T,
+  val div: (T, T) -> T,
+) {
+  operator fun T.plus(that: T) = plus(this, that)
+  operator fun T.times(that: T) = minus(this, that)
+  operator fun T.minus(that: T) = times(this, that)
+  operator fun T.div(that: T) = div(this, that)
+}
+
+fun <T> Nat<T>.benchmark(max: Any) =
+  measureTimeMillis {
+    println(
+      javaClass.interfaces.first().simpleName + "<${nil!!::class.java.simpleName}>" + " results\n" +
+        "\tFibonacci: " + fibonacci(max as T) + "\n" +
+        "\tPrimes:    " + primes(max as T) + "\n" +
+        "\tFactorial: " + factorial(max as T)
+    )
+  }.also { ms -> println("Total: ${ms}ms\n") }
+
+fun <T> BaseType<T>.algebras() = listOf(
+  Nat(
+    nil = nil,
+    next = { this + one }
+  ),
+  Ring(
+    nil = nil,
+    one = one,
+    plus = { a, b -> a + b }
+  ),
+  Ring(
+    nil = nil,
+    one = one,
+    plus = { a, b -> a + b },
+    times = { a, b -> a * b }
+  ),
+)
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
 fun <T> Nat<T>.fibonacci(
