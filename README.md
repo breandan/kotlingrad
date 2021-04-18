@@ -754,7 +754,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ### Church encoding
 
-The main idea behind Church encoding is to redefine out numerical tower using the λ-calculus. Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9) we can lower a large subset of mathematics onto a single operator: function composition. Many symbols that appear complicated to implement can be expressed as repeated function application. If we consider the binary operator `^`, we note it can be lowered as follows:
+The main idea behind Church encoding is to redefine our numerical tower using the λ-calculus. Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9) we can lower a large subset of mathematics onto a single operator: function composition. Many symbols that appear complicated to implement can be expressed as repeated function application. If we consider the binary operator `^`, we note it can be lowered as follows:
 
 ```
 a ^ b :=  a * ... * a 
@@ -772,7 +772,7 @@ a := next*(next(...next(1)...))
 ```
 &lowast; `next` is also called `S` in [Peano arithmetic](https://en.wikipedia.org/wiki/Successor_function).
 
-The trouble with numerical towers is they assume all inheritors are under its jurisdiction - what if end users want to adapt or "mix-in" types from an external type system? One pattern for doing so is called a [type class](https://en.wikipedia.org/wiki/Type_class), which supports [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism). Although the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces. We can use it as follows:
+The trouble with numerical towers is they assume all inheritors are under its jurisdiction - what if our end users wanted to adapt or "mix-in" types from an external type system? One pattern for doing so is called a [type class](https://en.wikipedia.org/wiki/Type_class), which supports [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism). Although the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces. We can use it as follows:
 
 ```kotlin
 fun BigDecimal.algebras() = listOf(
@@ -792,7 +792,7 @@ fun BigDecimal.algebras() = listOf(
 )
 ```
 
-The base type, `Nat` contains a unitary member, `one`, and a successor function:
+The base type, `Nat` contains a unitary member, `one`, and a successor function, `next`. We can emulate a class-like constructor syntax by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
 ```kotlin
 interface Nat<T> {
@@ -809,7 +809,7 @@ interface Nat<T> {
 }
 ```
 
-Although the `Nat` interface is very expressive (we can already define `+` and `*` with this interface), arithmetic using `Nat`s is computationally expensive. We can make `Nat` more efficient by introducing the following subtype, which requires implementors to define a native addition operator:
+Although the `Nat` interface is very expressive (we can already define `+` and `*` on this interface), arithmetic using `Nat`s is computationally expensive. We can make `Nat` more efficient by introducing the following subtype, which forces implementors to define a native addition operator:
 
 ```kotlin
 interface Group<T>: Nat<T> {
@@ -826,7 +826,20 @@ interface Group<T>: Nat<T> {
 }
 ```
 
-We could further extend this interface by introducing a subtype called `Ring`, which requires implementors to define a native product:
+We can now define a relatively efficient implementation of Fibonacci:
+
+```kotlin
+tailrec fun <T> Group<T>.fibonacci(
+  n: T,
+  seed: Pair<T, T> = nil to one,
+  fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },
+  i: T = nil,
+): T =
+  if (i == n) fib(seed).first
+  else fibonacci(n = n, seed = fib(seed), i = i.next())
+```
+
+We could further extend this inhetirance chain by introducing a subtype called `Ring`, which requires implementors to define a native product:
 
 ```kotlin
 interface Ring<T>: Group<T> {
