@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   `maven-publish`
@@ -53,6 +55,20 @@ tasks {
   val sourcesJar by registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
+  }
+
+  test {
+    dependsOn("TypeClassing")
+    minHeapSize = "1024m"
+    maxHeapSize = "4096m"
+    useJUnitPlatform()
+    testLogging {
+      events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT)
+      exceptionFormat = FULL
+      showExceptions = true
+      showCauses = true
+      showStackTraces = true
+    }
   }
 }
 
