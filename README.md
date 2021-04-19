@@ -754,7 +754,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ### Church encoding
 
-Computers appear to be very complicated machines. Beneath this complexity lies a remarkably simple idea: many machines that appear complicated can be rewritten in terms of much simpler primitives. Consider the binary operator `^`, which can be lowered as follows:
+Computers appear to be very complicated machines. Beneath this complexity lies a remarkably simple idea: many machines that appear complicated can be rewritten in terms of function composition. Consider the binary operator `^`, which can be lowered as follows:
 
 ```
 a ^ b :=  a * ... * a 
@@ -772,7 +772,7 @@ a := next*(next(...next(1)...))
 ```
 &lowast; `next` is also called `S` in [Peano arithmetic](https://en.wikipedia.org/wiki/Successor_function).
 
-By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large portion of mathematics onto a single operator: function application. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a myriad of cryptic languages. These two ideas, λ-calculus and combinators, are doorways to many wonderful places in mathematics and computer science.
+By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large portion of mathematics onto a single operator: function application. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a host of cryptic languages. These two ideas, λ-calculus and combinators, are keys to unlocking many puzzles in computer science and mathematics.
 
 The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to delegate without modification.
 
