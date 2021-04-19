@@ -754,7 +754,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ### Church encoding
 
-The main idea behind Church encoding is to redefine our numerical tower using the λ-calculus. Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9) we can lower a large subset of mathematics onto a single operator: function composition. Many symbols that appear complicated to implement can be expressed as repeated function application. If we consider the binary operator `^`, we note it can be lowered as follows:
+Computers appear to be very complicated machines. Beneath this complexity lies a remarkably simple idea: many functions that appear very complicated can be expressed as repeated function application. Consider the binary operator `^`, which can be lowered as follows:
 
 ```
 a ^ b :=  a * ... * a 
@@ -772,44 +772,60 @@ a := next*(next(...next(1)...))
 ```
 &lowast; `next` is also called `S` in [Peano arithmetic](https://en.wikipedia.org/wiki/Successor_function).
 
-The trouble with numerical towers is they assume all inheritors are under its jurisdiction - what if our end users wanted to adapt or "mix-in" types from an external type system? One pattern for doing so is called a [type class](https://en.wikipedia.org/wiki/Type_class), which supports [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism). Although the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces. We can use it as follows:
+In fact, all these operators can all be expressed in much simpler terms. By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large fraction of mathematics onto a single operator: function composition. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a myriad of cryptic languages. These two ideas, λ-calculus and combinators, are doorways to many wonderful places in mathematics and computer science.
+
+The main problem with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to wrap external types in our API without modification. Suppose we wanted to wrap a final type such as `Double` inside our tower. We could do so as follows:
 
 ```kotlin
-fun BigDecimal.algebras() = listOf(
+fun Double.algebras() = listOf(
   Nat(
-    one = ONE,
+    one = 1.0,
     next = { this + one }
   ),
   Group(
-    one = ONE,
+    one = 1.0,
     plus = { a, b -> a + b }
   ),
   Ring(
-    one = ONE,
+    one = 1.0,
     plus = { a, b -> a + b },
     times = { a, b -> a * b }
   )
 )
 ```
 
-The base type, `Nat` contains a unitary member, `one`, and a successor function, `next`. We can emulate a class-like constructor syntax by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
+The base type, `Nat` contains a unitary member, `nil`, and its successor function, `next`, representing the [Peano encoding](https://en.wikipedia.org/wiki/Peano_axioms) for natural numbers. To emulate instantiation, we provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
 ```kotlin
 interface Nat<T> {
-  val one: T
+  val nil: T
+  val one: T get() = nil.next()
   fun T.next(): T
   
   companion object {
-    operator fun <T> invoke(one: T, next: T.() -> T): Nat<T> =
+    operator fun <T> invoke(nil: T, next: T.() -> T): Nat<T> =
       object: Nat<T> {
-        override val one: T = one
+        override val nil: T = nil
         override fun T.next(): T = next()
       }
   }
 }
 ```
 
-Although the `Nat` interface is very expressive (we can already define `+` and `*` on this interface), arithmetic using `Nat`s is computationally expensive. We can make `Nat` more efficient by introducing the following subtype, which forces implementors to define a native addition operator:
+Although the `Nat` interface is very expressive, evaluating arithmetic expressions on `Nat`s can be computationally expensive. For instance, we could define the first three [hyperoperations](https://en.wikipedia.org/wiki/Hyperoperation) naïvely as follows:
+
+```
+tailrec fun <T> Nat<T>.plus(l: T, r: T, acc: T = l, i: T = nil): T =
+  if (i == r) acc else plus(l, r, acc.next(), i.next())
+
+tailrec fun <T> Nat<T>.times(l: T, r: T, acc: T = nil, i: T = nil): T =
+  if (i == r) acc else times(l, r, acc + l, i.next())
+
+tailrec fun <T> Nat<T>.pow(base: T, exp: T, acc: T = one, i: T = one): T =
+  if (i == exp) acc else pow(base, exp, acc * base, i.next())
+```
+
+However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑ⁿb) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we need to do better if this encoding is to be usable. We can make `Nat` more efficient by introducing the following subtype, which forces implementors to define a native addition operator:
 
 ```kotlin
 interface Group<T>: Nat<T> {
@@ -826,7 +842,7 @@ interface Group<T>: Nat<T> {
 }
 ```
 
-We can now define a relatively efficient implementation of Fibonacci:
+Given a `Group<T>`, we can now define a relatively efficient implementation of Fibonacci:
 
 ```kotlin
 tailrec fun <T> Group<T>.fibonacci(
@@ -839,7 +855,7 @@ tailrec fun <T> Group<T>.fibonacci(
   else fibonacci(n = n, seed = fib(seed), i = i.next())
 ```
 
-We could further extend this inhetirance chain by introducing a subtype called `Ring`, which requires implementors to define a native product:
+We could further extend this inheritance chain by introducing a subtype called `Ring`, which requires implementors to define a native product:
 
 ```kotlin
 interface Ring<T>: Group<T> {
@@ -861,7 +877,7 @@ interface Ring<T>: Group<T> {
 }
 ```
 
-Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, with this simple tower, we already have the primitives necessary to build a simple AD system. To see the above example in full, please visit: [`TypeClassing.kt`](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/TypeClassing.kt).
+Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, with this simple tower, we already have the primitives necessary to build a simple AD system. To view the above example in full, see [`TypeClassing.kt`](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/TypeClassing.kt).
 
 ## Grammar
 
