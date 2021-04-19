@@ -754,7 +754,7 @@ val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0
 
 ### Church encoding
 
-Computers appear to be very complicated machines. Beneath this complexity lies a remarkably simple idea: many machines that appear complicated can be rewritten in terms of function composition. Consider the binary operator `^`, which can be lowered as follows:
+Computers appear to be very complicated machines. Beneath this complexity lies a remarkably simple idea: many apparently complex routines can be rewritten in terms of function composition. Consider the binary operator `^`, which can be lowered as follows:
 
 ```
 a ^ b :=  a * ... * a 
@@ -867,11 +867,7 @@ interface Ring<T>: Group<T> {
   }
 }
 
-val doubleRing = Ring(
-  one = 1.0,
-  plus = { a, b -> a + b },
-  times = { a, b -> a * b }
-)
+val doubleRing = Ring(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> a * b })
 ```
 
 Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`TypeClassing.kt`](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/TypeClassing.kt).
