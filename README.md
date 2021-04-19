@@ -846,7 +846,7 @@ val doubleGroup = Group(one = 1.0, plus = { a, b -> a + b })
 println(doubleGroup.fibonacci(10.0)) // Prints: 233.0
 ```
 
-We could extend this inheritance chain by introducing a subtype called `Ring`, which requires implementors to define a native product, or `Field`, which introduces their inverses:
+We could further extend this chain by introducing a subtype called `Ring`, which overrides `+` and requires implementors to define a native `*` operator. `Rings` and their relatives are known to have many useful applications in [graph theory](https://github.com/breandan/kaliningraph#algebra) and [statistics](https://github.com/breandan/markovian#algebraic-methods):
 
 ```kotlin
 interface Ring<T>: Group<T> {
