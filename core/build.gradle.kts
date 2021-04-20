@@ -45,20 +45,12 @@ dependencies {
 tasks {
   compileKotlin { dependsOn("genShapes") }
 
-  listOf("TypeClassing").forEach { fileName ->
-    register(fileName, JavaExec::class) {
-      main = "edu.umontreal.kotlingrad.typelevel.${fileName}Kt"
-      classpath = sourceSets["main"].runtimeClasspath
-    }
-  }
-
   val sourcesJar by registering(Jar::class) {
     archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
   }
 
   test {
-    dependsOn("TypeClassing")
     minHeapSize = "1024m"
     maxHeapSize = "4096m"
     useJUnitPlatform()

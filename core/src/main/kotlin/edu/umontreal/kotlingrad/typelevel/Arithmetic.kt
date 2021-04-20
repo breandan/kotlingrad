@@ -33,16 +33,3 @@ class Vec<O: TLNat>(o: O) { val size = o.eval }
 @JvmName("1+1=2") operator fun N1.plus(n: N1): N2 = D2
 @JvmName("2+2=4") operator fun N2.plus(n: N2): N4 = D4
 inline operator fun <reified S1: N1, reified S2: N2> Vec<S1>.plus(other: Vec<S2>): Vec<N3> = Vec(D3)
-
-fun main() {
-  println(D3.eval)
-  val t = Vec(D3)
-  val q = t.takesThree()
-
-  val four: N4 = (D1 + D1) + (D1 + D1)
-  val vec3 = Vec(D1) + Vec(D2)
-
-  val m = Sum<N2, N2>(D2, D2)
-
-//  takesFour(m)
-}
