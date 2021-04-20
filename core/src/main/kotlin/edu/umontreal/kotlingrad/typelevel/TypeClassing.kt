@@ -2,6 +2,7 @@
 
 package edu.umontreal.kotlingrad.typelevel
 
+import java.lang.ArithmeticException
 import java.math.BigDecimal as BD
 import java.math.BigInteger as BI
 import kotlin.math.roundToInt
@@ -30,28 +31,18 @@ fun main() {
       plus = { a, b -> a + b }, minus = { a, b -> a - b },
       times = { a, b -> a * b }, div = { a, b -> a / b },
     ),
+    BaseType(
+      max = Rational(max.toInt()),
+      nil = Rational.ZERO, one = Rational.ONE,
+      plus = { a, b -> a + b }, times = { a, b -> a * b },
+      div = { a, b -> a / b }, minus = { a, b -> a - b }
+    )
   ) // Benchmark all (types x algebras)
     .forEach { baseType ->
       baseType.algebras().forEach {
         it.benchmark(baseType.max)
       }
     }
-
-  Field(
-    nil = Rational(0, 0),
-    one = Rational(1, 1),
-    plus = { a, b -> a + b },
-    times = { a, b -> a * b },
-    div = { a, b -> a / b },
-    minus = { a, b -> a - b }
-  ).apply {
-    measureTimeMillis {
-      println(sum(seq(to = Rational(100))))
-      // TODO: fix infinite loop, maybe with comparator?
-      // fibonacci(Rational(4, 1))
-      // primes(Rational(20, 1))
-    }.also { ms -> println("\nTook ${ms}ms") }
-  }
 
   VectorField(f = Field(
     nil = BI.ZERO,
@@ -114,6 +105,7 @@ fun <T> BaseType<T>.algebras(): List<Nat<T>> = listOf(
 )
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
+// Pending: https://youtrack.jetbrains.com/issue/KT-46189
 /*tailrec*/ fun <T> Nat<T>.fibonacci(
   n: T,
   seed: Pair<T, T> = nil to one,
@@ -298,10 +290,17 @@ data class GaussInt(val a: Int, val b: Int) {
     GaussInt(a * o.a - b * o.b, a * o.b + b * o.a)
 }
 
-class Rational(i: Int, j: Int = 1) {
-  private val canonicalRatio = reduce(i, j)
-  val a = canonicalRatio.first
-  val b = canonicalRatio.second
+class Rational {
+  constructor(i: Int, j: Int = 1) {
+    if (j == 0) throw ArithmeticException("Denominator must not be zero!")
+    canonicalRatio = reduce(i, j)
+    a = canonicalRatio.first
+    b = canonicalRatio.second
+  }
+
+  private val canonicalRatio: Pair<Int, Int>
+  val a: Int
+  val b: Int
 
   operator fun times(r: Rational) = Rational(a * r.a, b * r.b)
 
@@ -318,13 +317,17 @@ class Rational(i: Int, j: Int = 1) {
   override fun hashCode() = toString().hashCode()
 
   companion object {
+    val ZERO = Rational(0, 1)
+    val ONE = Rational(1, 1)
+
     fun reduce(a: Int, b: Int) = Pair(
       (a.toFloat() / a.gcd(b).toFloat()).roundToInt(),
       (b.toFloat() / a.gcd(b).toFloat()).roundToInt()
     )
 
     private tailrec fun Int.gcd(that: Int): Int = when {
-      this == that -> if (that == 0) 1 else this
+      this == that -> this
+      this in 0..1 || that in 0..1 -> 1
       this > that -> (this - that).gcd(that)
       else -> gcd(that - this)
     }

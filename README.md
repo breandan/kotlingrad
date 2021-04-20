@@ -774,7 +774,7 @@ a := next*(next(...next(1)...))
 
 By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large portion of mathematics onto a single operator: function application. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a host of cryptic languages. These two ideas, λ-calculus and combinators, are keys to unlocking many puzzles in computer science and mathematics.
 
-The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to delegate without modification.
+The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface without modification by delegating at runtime.
 
 We define the base type, `Nat` as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Peano encoding](https://en.wikipedia.org/wiki/Peano_axioms) for natural numbers. To emulate instantiation, we provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
@@ -813,7 +813,7 @@ tailrec fun <T> Nat<T>.pow(base: T, exp: T, acc: T = one, i: T = one): T =
   if (i == exp) acc else pow(base, exp, acc * base, i.next())
 ```
 
-However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑↑↑b) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we need to do better if this encoding is to be usable. We can make `Nat` more efficient by introducing the following subtype, which forces implementors to define a native addition operator:
+However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑b) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we must do better if this encoding is to be usable. We can make `Nat` more efficient by introducing the following subtype, which forces implementors to define a native addition operator:
 
 ```kotlin
 interface Group<T>: Nat<T> {
