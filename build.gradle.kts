@@ -34,7 +34,7 @@ allprojects {
   }
 
   tasks {
-    compileKotlin {
+    compileTestKotlin {
       kotlinOptions {
         jvmTarget = VERSION_11.toString()
       }

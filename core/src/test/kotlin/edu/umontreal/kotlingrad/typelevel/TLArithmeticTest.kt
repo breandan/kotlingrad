@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test
 
 class TLArithmeticTest {
   @Test
-
   fun basicTest() {
     println(D3.eval)
     val t = Vec(D3)
