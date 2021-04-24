@@ -1,14 +1,14 @@
 <!--- @file:Suppress("ClassName") --->
 <!--- @file:Suppress("PropertyName") --->
 
-# Kotlin∇: Type-safe Symbolic Differentiation for Kotlin
+# Kotlin∇: Type-safe Symbolic Differentiation for the JVM
 
 [![Kotlin 1.5.0](https://img.shields.io/badge/Kotlin-1.5.0-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
 [![](https://jitpack.io/v/breandan/kotlingrad.svg)](https://jitpack.io/#breandan/kotlingrad)
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 
-Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/masters_thesis.pdf#1a) framework in [Kotlin](https://kotl.in). It allows users to express [differentiable programs](http://breandan.net/public/masters_thesis.pdf#1b) with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end-user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics. It is currently pre-release and offers no stability guarantees at this time.
+Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/masters_thesis.pdf#1a) framework written in [Kotlin](https://kotl.in). It allows users to express [differentiable programs](http://breandan.net/public/masters_thesis.pdf#1b) with higher-dimensional data structures and operators. We attempt to restrict syntactically valid constructions to those which are algebraically valid and can be checked at compile-time. By enforcing these constraints in the type system, it eliminates certain classes of runtime errors that may occur during the execution of a differentiable program. Due to type-inference, most type declarations may be safely omitted by the end-user. Kotlin∇ strives to be expressive, safe, and notationally similar to mathematics.
 
 ## Table of contents
 
