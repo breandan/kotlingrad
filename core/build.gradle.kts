@@ -1,3 +1,4 @@
+import org.gradle.api.JavaVersion.VERSION_11
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
@@ -40,6 +41,10 @@ dependencies {
 
   // Symbolic fuzzing interpreter
   testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
+}
+
+configure<JavaPluginConvention> {
+  sourceCompatibility = VERSION_11
 }
 
 tasks {

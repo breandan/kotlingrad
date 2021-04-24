@@ -22,7 +22,7 @@ allprojects {
   }
 
   group = "com.github.breandan"
-  version = "0.4.3"
+  version = "0.4.4"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
@@ -32,6 +32,12 @@ allprojects {
   }
 
   tasks {
+    compileKotlin {
+      kotlinOptions {
+        jvmTarget = VERSION_11.toString()
+      }
+    }
+
     compileTestKotlin {
       kotlinOptions {
         jvmTarget = VERSION_11.toString()
