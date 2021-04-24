@@ -22,7 +22,7 @@ allprojects {
   }
 
   group = "com.github.breandan"
-  version = "0.4.4"
+  version = "0.4.5"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
