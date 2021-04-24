@@ -19,7 +19,7 @@ idea.module {
 
 dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("com.github.breandan:kaliningraph:0.1.5")
+  api("com.github.breandan:kaliningraph:0.1.6")
 
   // Mathematical libraries
   implementation("com.github.JetBrains-Research:viktor:1.1.0")

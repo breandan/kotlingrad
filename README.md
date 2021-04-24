@@ -84,7 +84,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.github.breandan:kotlingrad:0.4.2")
+    implementation("com.github.breandan:kotlingrad:0.4.3")
 }
 ```
 
@@ -102,7 +102,7 @@ dependencies {
   <dependency>
     <groupId>com.github.breandan</groupId>
     <artifactId>kotlingrad</artifactId>
-    <version>0.4.2</version>
+    <version>0.4.3</version>
   </dependency>
 </project>
 ```
@@ -113,7 +113,7 @@ To access Kotlin∇'s notebook support, use the following line magic:
 
 ```
 @file:Repository("https://jitpack.io")
-@file:DependsOn("com.github.breandan:kotlingrad:0.4.2")
+@file:DependsOn("com.github.breandan:kotlingrad:0.4.3")
 ```
 
 For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.ipynb).
@@ -920,7 +920,7 @@ If you would like to cite Kotlin∇, please use the following `bibtex` entry:
   author = {Considine, Breandan and Famelis, Michalis and Paull, Liam},
   title = {Kotlin$\nabla$: A Shape-Safe e{DSL} for Differentiable Programming},
   url = {https://github.com/breandan/kotlingrad},
-  version = {0.4.2},
+  version = {0.4.3},
   year = {2019},
 }
 ```
