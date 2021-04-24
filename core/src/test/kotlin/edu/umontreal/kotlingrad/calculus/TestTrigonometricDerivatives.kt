@@ -54,11 +54,11 @@ class TestTrigonometricDerivatives: StringSpec({
   }
 
   "∂²z/∂x² should be -y * y * y * sin(x * y)" {
-      checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
-        val manualDerivative = -y.pow(3) * sin(x * y)
-        `∂²z∕∂x²`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
-      }
+    checkAll(DoubleGenerator, DoubleGenerator) { ẋ, ẏ ->
+      val manualDerivative = -y.pow(3) * sin(x * y)
+      `∂²z∕∂x²`(ẋ, ẏ) shouldBeAbout manualDerivative(ẋ, ẏ)
     }
+  }
 
   "∂²z/∂x∂y should be cos(x * y) * y - 1 + y * (cos(x * y) - y * x * sin(x * y))"
     .config(enabled = false)  // TODO: Fix

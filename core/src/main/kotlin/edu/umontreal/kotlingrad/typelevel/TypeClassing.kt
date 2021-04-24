@@ -24,7 +24,7 @@ tailrec fun <T> Nat<T>.seq(
   acc: Set<T> = emptySet()
 ): Set<T> = if (from == to) acc else seq(from.next(), to, acc + from)
 
-/** Returns whether an [Nat] is prime **/
+/** Returns true iff [t] is prime **/
 fun <T> Nat<T>.isPrime(t: T, kps: Set<T> = emptySet()): Boolean =
   // Take Cartesian product, filter distinct pairs due to commutativity
   (if (kps.isNotEmpty()) kps * kps else seq(to = t) * seq(to = t))
