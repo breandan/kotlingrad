@@ -19,8 +19,6 @@ allprojects {
     maven("https://maven.jzy3d.org/releases")
     // TODO: Remove pending https://github.com/JetBrains-Research/astminer/issues/124
     maven("https://dl.bintray.com/egor-bogomolov/astminer")
-    // TODO: https://github.com/JetBrains/lets-plot-kotlin/issues/55
-    maven("https://jetbrains.bintray.com/lets-plot-maven")
   }
 
   group = "com.github.breandan"
