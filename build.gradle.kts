@@ -3,7 +3,7 @@ import org.gradle.api.JavaVersion.VERSION_11
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.38.0"
-  kotlin("jvm") version "1.5.0-RC"
+  kotlin("jvm") version "1.5.0"
 }
 
 idea.module {
