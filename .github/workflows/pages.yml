@@ -1,0 +1,26 @@
+name: Dokka publication
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up GraalVM/Java 11
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm: '21.0.0.2'
+          java: 'java11'
+      - name: Build pages with Gradle
+        run: >
+          git submodule update --init --recursive
+          ./gradlew dokkaHtmlMultiModule --no-daemon --no-parallel --stacktrace -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=2G"
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.0
+        with:
+          branch: gh-pages
+          folder: build/dokka/htmlMultiModule

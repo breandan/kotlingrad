@@ -1,8 +1,10 @@
 import org.gradle.api.JavaVersion.VERSION_11
+import org.jetbrains.dokka.gradle.*
 
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.38.0"
+  id("org.jetbrains.dokka") version "1.4.32"
   kotlin("jvm") version "1.5.0"
 }
 
@@ -42,6 +44,16 @@ allprojects {
       kotlinOptions {
         jvmTarget = VERSION_11.toString()
       }
+    }
+  }
+}
+
+subprojects {
+  apply<DokkaPlugin>()
+
+  tasks.withType<DokkaTaskPartial> {
+    dokkaSourceSets.configureEach {
+     externalDocumentationLink("https://ejml.org/javadoc/")
     }
   }
 }
