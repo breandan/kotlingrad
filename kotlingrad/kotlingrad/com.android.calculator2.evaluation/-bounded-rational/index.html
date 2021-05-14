@@ -1,0 +1,978 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>BoundedRational</title>
+</head><body><link href="../../../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../";</script><script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script><link href="../../../../styles/style.css" rel="Stylesheet"><link href="../../../../styles/logo-styles.css" rel="Stylesheet"><link href="../../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../../styles/main.css" rel="Stylesheet"><script type="text/javascript" src="../../../../scripts/clipboard.js" async></script><script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script><script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script><script type="text/javascript" src="../../../../scripts/main.js" async></script>
+  
+    <div id="container">
+      <div id="leftColumn"><a href="../../../../index.html">
+            <div id="logo"></div>
+          </a>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <script type="text/javascript" src="../../../../scripts/main.js"></script><div id="leftToggler"><span class="icon-toggler"></span></div>
+
+        <div class="main-content" id="content" pageids="kotlingrad::com.android.calculator2.evaluation/BoundedRational///PointingToDeclaration//-1890836775">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../../index.html">kotlingrad</a>/<a href="../index.html">com.android.calculator2.evaluation</a>/<a href="index.html">BoundedRational</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Bounded</span><wbr><span>Rational</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open class <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Rational numbers that may turn to null if they get too big. For many operations, if the length of the nuumerator plus the length of the denominator exceeds a maximum size, we simply return null, and rely on our caller do something else. We currently never return null for a pure integer or for a BoundedRational that has just been constructed. </p><p class="paragraph">We also implement a number of irrational functions. These return a non-null result only when the result is known to be rational.</p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+            <div class="tabs-section-body">
+              <h2 class="tabbedcontent">Constructors</h2>
+              <div class="table" data-togglable="Constructors"><a data-name="1022109632%2FConstructors%2F-1890836775" anchor-label="BoundedRational" id="1022109632%2FConstructors%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-bounded-rational.html">BoundedRational</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1022109632%2FConstructors%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="-bounded-rational.html">BoundedRational</a>(n: <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a>, d: <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1385638919%2FConstructors%2F-1890836775" anchor-label="BoundedRational" id="1385638919%2FConstructors%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-bounded-rational.html">BoundedRational</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1385638919%2FConstructors%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="-bounded-rational.html">BoundedRational</a>(n: <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-2069435584%2FConstructors%2F-1890836775" anchor-label="BoundedRational" id="-2069435584%2FConstructors%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-bounded-rational.html">BoundedRational</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2069435584%2FConstructors%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="-bounded-rational.html">BoundedRational</a>(n: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>, d: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2104815651%2FConstructors%2F-1890836775" anchor-label="BoundedRational" id="2104815651%2FConstructors%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue TabbedContent">
+                    <div class=""><span class="inline-flex"><a href="-bounded-rational.html">BoundedRational</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2104815651%2FConstructors%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="-bounded-rational.html">BoundedRational</a>(n: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>)<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Types</h2>
+              <div class="table" data-togglable="Types"><a data-name="749953283%2FClasslikes%2F-1890836775" anchor-label="ZeroDivisionException" id="749953283%2FClasslikes%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-zero-division-exception/index.html">ZeroDivisionException</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="749953283%2FClasslikes%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open class <a href="-zero-division-exception/index.html">ZeroDivisionException</a> : <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ArithmeticException.html">ArithmeticException</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="785268662%2FFunctions%2F-1890836775" anchor-label="add" id="785268662%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="add.html">add</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="785268662%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="add.html">add</a>(r1: <a href="index.html">BoundedRational</a>, r2: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="892404471%2FFunctions%2F-1890836775" anchor-label="apprLog2Abs" id="892404471%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="appr-log2-abs.html">apprLog2Abs</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="892404471%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="appr-log2-abs.html">apprLog2Abs</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-262362051%2FFunctions%2F-1890836775" anchor-label="asBigInteger" id="-262362051%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="as-big-integer.html">asBigInteger</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-262362051%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="as-big-integer.html">asBigInteger</a>(r: <a href="index.html">BoundedRational</a>): <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-262362051%2FFunctions%2F-1890836775" anchor-label="asBigInteger" id="-262362051%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-262362051%2FFunctions%2F-1890836775" anchor-label="asBigInteger" id="-262362051%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Returns equivalent BigInteger result if it exists, null if not.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-295788457%2FFunctions%2F-1890836775" anchor-label="bitLength" id="-295788457%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="bit-length.html">bitLength</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-295788457%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="bit-length.html">bitLength</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-295788457%2FFunctions%2F-1890836775" anchor-label="bitLength" id="-295788457%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-295788457%2FFunctions%2F-1890836775" anchor-label="bitLength" id="-295788457%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Number of bits in the representation.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1454664103%2FFunctions%2F-1890836775" anchor-label="compareTo" id="1454664103%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="compare-to.html">compareTo</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1454664103%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="compare-to.html">compareTo</a>(r: <a href="index.html">BoundedRational</a>): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-11455542%2FFunctions%2F-1890836775" anchor-label="compareToOne" id="-11455542%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="compare-to-one.html">compareToOne</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-11455542%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="compare-to-one.html">compareToOne</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-11455542%2FFunctions%2F-1890836775" anchor-label="compareToOne" id="-11455542%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-11455542%2FFunctions%2F-1890836775" anchor-label="compareToOne" id="-11455542%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Equivalent to CompareTo(BoundedRational.ONE).</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1974533768%2FFunctions%2F-1890836775" anchor-label="crValue" id="1974533768%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="cr-value.html">crValue</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1974533768%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="cr-value.html">crValue</a>(): <a href="../../com.hp.creals/-c-r/index.html">CR</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-569294936%2FFunctions%2F-1890836775" anchor-label="digitsRequired" id="-569294936%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="digits-required.html">digitsRequired</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-569294936%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="digits-required.html">digitsRequired</a>(r: <a href="index.html">BoundedRational</a>): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-569294936%2FFunctions%2F-1890836775" anchor-label="digitsRequired" id="-569294936%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-569294936%2FFunctions%2F-1890836775" anchor-label="digitsRequired" id="-569294936%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return the number of decimal digits to the right of the decimal point required to represent theargument exactly.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1768290056%2FFunctions%2F-1890836775" anchor-label="divide" id="1768290056%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="divide.html">divide</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1768290056%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="divide.html">divide</a>(r1: <a href="index.html">BoundedRational</a>, r2: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-660953110%2FFunctions%2F-1890836775" anchor-label="doubleValue" id="-660953110%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="double-value.html">doubleValue</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-660953110%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="double-value.html">doubleValue</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-660953110%2FFunctions%2F-1890836775" anchor-label="doubleValue" id="-660953110%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-660953110%2FFunctions%2F-1890836775" anchor-label="doubleValue" id="-660953110%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return a double approximation.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1976663422%2FFunctions%2F-1890836775" anchor-label="equals" id="1976663422%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="equals.html">equals</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1976663422%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="equals.html">equals</a>(r: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1782739664%2FFunctions%2F-1890836775" anchor-label="extractSquareReduced" id="-1782739664%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="extract-square-reduced.html">extractSquareReduced</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1782739664%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="extract-square-reduced.html">extractSquareReduced</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a>&lt;<a href="index.html">BoundedRational</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1782739664%2FFunctions%2F-1890836775" anchor-label="extractSquareReduced" id="-1782739664%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-1782739664%2FFunctions%2F-1890836775" anchor-label="extractSquareReduced" id="-1782739664%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return a pair p, such that p[0]^2 * p[1] = this.We try to maximize p[0]s numerator and denominator, but not very hard.This rational is assumed to be in reduced form.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1863741086%2FFunctions%2F-1890836775" anchor-label="extractSquareWillSucceed" id="1863741086%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="extract-square-will-succeed.html">extractSquareWillSucceed</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1863741086%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="extract-square-will-succeed.html">extractSquareWillSucceed</a>(): <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1863741086%2FFunctions%2F-1890836775" anchor-label="extractSquareWillSucceed" id="1863741086%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="1863741086%2FFunctions%2F-1890836775" anchor-label="extractSquareWillSucceed" id="1863741086%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Will extractSquareReduced guarantee that p[1] is not a perfect square?This rational is assumed to be in reduced form.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1521869630%2FFunctions%2F-1890836775" anchor-label="floor" id="1521869630%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="floor.html">floor</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1521869630%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="floor.html">floor</a>(): <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1521869630%2FFunctions%2F-1890836775" anchor-label="floor" id="1521869630%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="1521869630%2FFunctions%2F-1890836775" anchor-label="floor" id="1521869630%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Returns closest integer no larger than this.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-156311475%2FFunctions%2F-1890836775" anchor-label="getNumDen" id="-156311475%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="get-num-den.html">getNumDen</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-156311475%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="get-num-den.html">getNumDen</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html">Array</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a>&gt;<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-721525035%2FFunctions%2F-1890836775" anchor-label="hashCode" id="-721525035%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="hash-code.html">hashCode</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-721525035%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="hash-code.html">hashCode</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="425321998%2FFunctions%2F-1890836775" anchor-label="intValue" id="425321998%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="int-value.html">intValue</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="425321998%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="int-value.html">intValue</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="118483447%2FFunctions%2F-1890836775" anchor-label="inverse" id="118483447%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="inverse.html">inverse</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="118483447%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="inverse.html">inverse</a>(r: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="118483447%2FFunctions%2F-1890836775" anchor-label="inverse" id="118483447%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="118483447%2FFunctions%2F-1890836775" anchor-label="inverse" id="118483447%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return the reciprocal of r (or null if the argument was null).</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1294598093%2FFunctions%2F-1890836775" anchor-label="multiply" id="-1294598093%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="multiply.html">multiply</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1294598093%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="multiply.html">multiply</a>(r1: <a href="index.html">BoundedRational</a>, r2: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1140683221%2FFunctions%2F-1890836775" anchor-label="negate" id="-1140683221%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="negate.html">negate</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1140683221%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="negate.html">negate</a>(r: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1140683221%2FFunctions%2F-1890836775" anchor-label="negate" id="-1140683221%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-1140683221%2FFunctions%2F-1890836775" anchor-label="negate" id="-1140683221%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return the argument, but with the opposite sign.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="676899287%2FFunctions%2F-1890836775" anchor-label="nthRoot" id="676899287%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="nth-root.html">nthRoot</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="676899287%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="nth-root.html">nthRoot</a>(r: <a href="index.html">BoundedRational</a>, n: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="676899287%2FFunctions%2F-1890836775" anchor-label="nthRoot" id="676899287%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="676899287%2FFunctions%2F-1890836775" anchor-label="nthRoot" id="676899287%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Compute r^(1/n) exactly.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1467865113%2FFunctions%2F-1890836775" anchor-label="pow" id="1467865113%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="pow.html">pow</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1467865113%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="pow.html">pow</a>(exp: <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="410422554%2FFunctions%2F-1890836775" anchor-label="pow" id="410422554%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="410422554%2FFunctions%2F-1890836775" anchor-label="pow" id="410422554%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Compute an integral power of this.</div></div>
+<div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="pow.html">pow</a>(base: <a href="index.html">BoundedRational</a>, exp: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="873243969%2FFunctions%2F-1890836775" anchor-label="rawMultiply" id="873243969%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="raw-multiply.html">rawMultiply</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="873243969%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="raw-multiply.html">rawMultiply</a>(r1: <a href="index.html">BoundedRational</a>, r2: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="873243969%2FFunctions%2F-1890836775" anchor-label="rawMultiply" id="873243969%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="873243969%2FFunctions%2F-1890836775" anchor-label="rawMultiply" id="873243969%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return product of r1 and r2 without reducing the result.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1201196886%2FFunctions%2F-1890836775" anchor-label="reduce" id="-1201196886%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="reduce.html">reduce</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1201196886%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="reduce.html">reduce</a>(): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-1201196886%2FFunctions%2F-1890836775" anchor-label="reduce" id="-1201196886%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-1201196886%2FFunctions%2F-1890836775" anchor-label="reduce" id="-1201196886%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Return an equivalent fraction in lowest terms.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-860297253%2FFunctions%2F-1890836775" anchor-label="signum" id="-860297253%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="signum.html">signum</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-860297253%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="signum.html">signum</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1097014771%2FFunctions%2F-1890836775" anchor-label="sqrt" id="-1097014771%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="sqrt.html">sqrt</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1097014771%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="sqrt.html">sqrt</a>(r: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1980363043%2FFunctions%2F-1890836775" anchor-label="subtract" id="1980363043%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="subtract.html">subtract</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1980363043%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="subtract.html">subtract</a>(r1: <a href="index.html">BoundedRational</a>, r2: <a href="index.html">BoundedRational</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="734345939%2FFunctions%2F-1890836775" anchor-label="toNiceString" id="734345939%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-nice-string.html">toNiceString</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="734345939%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="to-nice-string.html">toNiceString</a>(): <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-794208633%2FFunctions%2F-1890836775" anchor-label="toNiceString" id="-794208633%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-794208633%2FFunctions%2F-1890836775" anchor-label="toNiceString" id="-794208633%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Convert to readable String, as a potentialy improper fraction.</div></div>
+<div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="to-nice-string.html">toNiceString</a>(subsuperscript: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>, mixed: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a>): <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="506393966%2FFunctions%2F-1890836775" anchor-label="toNiceString" id="506393966%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="506393966%2FFunctions%2F-1890836775" anchor-label="toNiceString" id="506393966%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Convert to readable String.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-899691100%2FFunctions%2F-1890836775" anchor-label="toString" id="-899691100%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-string.html">toString</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-899691100%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="to-string.html">toString</a>(): <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-899691100%2FFunctions%2F-1890836775" anchor-label="toString" id="-899691100%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-899691100%2FFunctions%2F-1890836775" anchor-label="toString" id="-899691100%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Convert to String reflecting raw representation.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="655562267%2FFunctions%2F-1890836775" anchor-label="toStringTruncated" id="655562267%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="to-string-truncated.html">toStringTruncated</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="655562267%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="to-string-truncated.html">toStringTruncated</a>(n: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a>): <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="655562267%2FFunctions%2F-1890836775" anchor-label="toStringTruncated" id="655562267%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="655562267%2FFunctions%2F-1890836775" anchor-label="toStringTruncated" id="655562267%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Returns a truncated (rounded towards 0) representation of the result.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="288902753%2FFunctions%2F-1890836775" anchor-label="valueOf" id="288902753%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="value-of.html">valueOf</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="288902753%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="value-of.html">valueOf</a>(x: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-double/index.html">Double</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="1297364145%2FFunctions%2F-1890836775" anchor-label="valueOf" id="1297364145%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="1297364145%2FFunctions%2F-1890836775" anchor-label="valueOf" id="1297364145%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Produce BoundedRational equal to the given double.</div></div>
+<div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="value-of.html">valueOf</a>(x: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-long/index.html">Long</a>): <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-448149018%2FFunctions%2F-1890836775" anchor-label="valueOf" id="-448149018%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-448149018%2FFunctions%2F-1890836775" anchor-label="valueOf" id="-448149018%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Produce BoundedRational equal to the given long.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-225715388%2FFunctions%2F-1890836775" anchor-label="wholeNumberBits" id="-225715388%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="whole-number-bits.html">wholeNumberBits</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-225715388%2FFunctions%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><div class="symbol monospace">open fun <a href="whole-number-bits.html">wholeNumberBits</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="-225715388%2FFunctions%2F-1890836775" anchor-label="wholeNumberBits" id="-225715388%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="brief "><a data-name="-225715388%2FFunctions%2F-1890836775" anchor-label="wholeNumberBits" id="-225715388%2FFunctions%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>Approximate number of bits to left of binary point.Negative indicates leading zeroes to the right of binary point.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Properties</h2>
+              <div class="table" data-togglable="Properties"><a data-name="-1078204356%2FProperties%2F-1890836775" anchor-label="EXTRACT_SQUARE_MAX_OPT" id="-1078204356%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-e-x-t-r-a-c-t_-s-q-u-a-r-e_-m-a-x_-o-p-t.html">EXTRACT_SQUARE_MAX_OPT</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1078204356%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1078204356%2FProperties%2F-1890836775" anchor-label="EXTRACT_SQUARE_MAX_OPT" id="-1078204356%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-e-x-t-r-a-c-t_-s-q-u-a-r-e_-m-a-x_-o-p-t.html">EXTRACT_SQUARE_MAX_OPT</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="680293325%2FProperties%2F-1890836775" anchor-label="FORTY_FIVE" id="680293325%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-f-o-r-t-y_-f-i-v-e.html">FORTY_FIVE</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="680293325%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="680293325%2FProperties%2F-1890836775" anchor-label="FORTY_FIVE" id="680293325%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-f-o-r-t-y_-f-i-v-e.html">FORTY_FIVE</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="813958973%2FProperties%2F-1890836775" anchor-label="HALF" id="813958973%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-h-a-l-f.html">HALF</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="813958973%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="813958973%2FProperties%2F-1890836775" anchor-label="HALF" id="813958973%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-h-a-l-f.html">HALF</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-191312610%2FProperties%2F-1890836775" anchor-label="MINUS_FORTY_FIVE" id="-191312610%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-f-o-r-t-y_-f-i-v-e.html">MINUS_FORTY_FIVE</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-191312610%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-191312610%2FProperties%2F-1890836775" anchor-label="MINUS_FORTY_FIVE" id="-191312610%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-f-o-r-t-y_-f-i-v-e.html">MINUS_FORTY_FIVE</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="769519950%2FProperties%2F-1890836775" anchor-label="MINUS_HALF" id="769519950%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-h-a-l-f.html">MINUS_HALF</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="769519950%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="769519950%2FProperties%2F-1890836775" anchor-label="MINUS_HALF" id="769519950%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-h-a-l-f.html">MINUS_HALF</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1655634358%2FProperties%2F-1890836775" anchor-label="MINUS_NINETY" id="-1655634358%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-n-i-n-e-t-y.html">MINUS_NINETY</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1655634358%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1655634358%2FProperties%2F-1890836775" anchor-label="MINUS_NINETY" id="-1655634358%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-n-i-n-e-t-y.html">MINUS_NINETY</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-425223853%2FProperties%2F-1890836775" anchor-label="MINUS_ONE" id="-425223853%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-o-n-e.html">MINUS_ONE</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-425223853%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-425223853%2FProperties%2F-1890836775" anchor-label="MINUS_ONE" id="-425223853%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-o-n-e.html">MINUS_ONE</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1452665293%2FProperties%2F-1890836775" anchor-label="MINUS_QUARTER" id="1452665293%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-q-u-a-r-t-e-r.html">MINUS_QUARTER</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1452665293%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="1452665293%2FProperties%2F-1890836775" anchor-label="MINUS_QUARTER" id="1452665293%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-q-u-a-r-t-e-r.html">MINUS_QUARTER</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1507864547%2FProperties%2F-1890836775" anchor-label="MINUS_SIXTH" id="1507864547%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-s-i-x-t-h.html">MINUS_SIXTH</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1507864547%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="1507864547%2FProperties%2F-1890836775" anchor-label="MINUS_SIXTH" id="1507864547%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-s-i-x-t-h.html">MINUS_SIXTH</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1695147406%2FProperties%2F-1890836775" anchor-label="MINUS_THIRD" id="-1695147406%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-t-h-i-r-d.html">MINUS_THIRD</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1695147406%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1695147406%2FProperties%2F-1890836775" anchor-label="MINUS_THIRD" id="-1695147406%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-t-h-i-r-d.html">MINUS_THIRD</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-2044267137%2FProperties%2F-1890836775" anchor-label="MINUS_THIRTY" id="-2044267137%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-t-h-i-r-t-y.html">MINUS_THIRTY</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2044267137%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-2044267137%2FProperties%2F-1890836775" anchor-label="MINUS_THIRTY" id="-2044267137%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-t-h-i-r-t-y.html">MINUS_THIRTY</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1324116947%2FProperties%2F-1890836775" anchor-label="MINUS_TWO" id="-1324116947%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-m-i-n-u-s_-t-w-o.html">MINUS_TWO</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1324116947%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1324116947%2FProperties%2F-1890836775" anchor-label="MINUS_TWO" id="-1324116947%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-m-i-n-u-s_-t-w-o.html">MINUS_TWO</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1899406215%2FProperties%2F-1890836775" anchor-label="NINETY" id="-1899406215%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-n-i-n-e-t-y.html">NINETY</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1899406215%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1899406215%2FProperties%2F-1890836775" anchor-label="NINETY" id="-1899406215%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-n-i-n-e-t-y.html">NINETY</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-285243004%2FProperties%2F-1890836775" anchor-label="ONE" id="-285243004%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-o-n-e.html">ONE</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-285243004%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-285243004%2FProperties%2F-1890836775" anchor-label="ONE" id="-285243004%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-o-n-e.html">ONE</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1809294978%2FProperties%2F-1890836775" anchor-label="QUARTER" id="-1809294978%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-q-u-a-r-t-e-r.html">QUARTER</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1809294978%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1809294978%2FProperties%2F-1890836775" anchor-label="QUARTER" id="-1809294978%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-q-u-a-r-t-e-r.html">QUARTER</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1409493036%2FProperties%2F-1890836775" anchor-label="SIXTH" id="-1409493036%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-s-i-x-t-h.html">SIXTH</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1409493036%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1409493036%2FProperties%2F-1890836775" anchor-label="SIXTH" id="-1409493036%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-s-i-x-t-h.html">SIXTH</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1344339027%2FProperties%2F-1890836775" anchor-label="TEN" id="-1344339027%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-t-e-n.html">TEN</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1344339027%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1344339027%2FProperties%2F-1890836775" anchor-label="TEN" id="-1344339027%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-t-e-n.html">TEN</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-317537693%2FProperties%2F-1890836775" anchor-label="THIRD" id="-317537693%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-t-h-i-r-d.html">THIRD</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-317537693%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-317537693%2FProperties%2F-1890836775" anchor-label="THIRD" id="-317537693%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-t-h-i-r-d.html">THIRD</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2006928302%2FProperties%2F-1890836775" anchor-label="THIRTY" id="2006928302%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-t-h-i-r-t-y.html">THIRTY</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2006928302%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="2006928302%2FProperties%2F-1890836775" anchor-label="THIRTY" id="2006928302%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-t-h-i-r-t-y.html">THIRTY</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="2099740172%2FProperties%2F-1890836775" anchor-label="THREE" id="2099740172%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-t-h-r-e-e.html">THREE</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2099740172%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="2099740172%2FProperties%2F-1890836775" anchor-label="THREE" id="2099740172%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-t-h-r-e-e.html">THREE</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-2059452713%2FProperties%2F-1890836775" anchor-label="TWELVE" id="-2059452713%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-t-w-e-l-v-e.html">TWELVE</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2059452713%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-2059452713%2FProperties%2F-1890836775" anchor-label="TWELVE" id="-2059452713%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-t-w-e-l-v-e.html">TWELVE</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="-1184136098%2FProperties%2F-1890836775" anchor-label="TWO" id="-1184136098%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-t-w-o.html">TWO</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1184136098%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="-1184136098%2FProperties%2F-1890836775" anchor-label="TWO" id="-1184136098%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-t-w-o.html">TWO</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="1139836520%2FProperties%2F-1890836775" anchor-label="ZERO" id="1139836520%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a>
+                <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/main" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-z-e-r-o.html">ZERO</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1139836520%2FProperties%2F-1890836775"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/main"><a data-name="1139836520%2FProperties%2F-1890836775" anchor-label="ZERO" id="1139836520%2FProperties%2F-1890836775" data-filterable-set=":kotlingrad:dokkaHtmlPartial/main"></a><div class="symbol monospace">val <a href="-z-e-r-o.html">ZERO</a>: <a href="index.html">BoundedRational</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2021 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  
+</body></html>
+
+

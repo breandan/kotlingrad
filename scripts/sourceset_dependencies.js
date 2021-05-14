@@ -1,0 +1,1 @@
+sourceset_dependencies = '{":kotlingrad:dokkaHtmlPartial/main":[],":samples:dokkaHtmlPartial/main":[]}'
