@@ -331,7 +331,7 @@ class SVar<X: SFun<X>>(override val name: String = ""): Variable<X>, SFun<X>() {
   override fun equals(other: Any?) = other is SVar<*> && name == other.name
   override fun hashCode(): Int = name.hashCode()
   operator fun getValue(thisRef: Any?, property: KProperty<*>) =
-    SVar<X>(if (name.isEmpty()) property.name else name)
+    SVar<X>(name.ifEmpty { property.name })
 }
 
 open class SConst<X: SFun<X>>

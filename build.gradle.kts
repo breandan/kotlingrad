@@ -19,8 +19,7 @@ allprojects {
     mavenCentral()
     maven("https://jitpack.io")
     maven("https://maven.jzy3d.org/releases")
-    // TODO: Remove pending https://github.com/JetBrains-Research/astminer/issues/124
-    maven("https://dl.bintray.com/egor-bogomolov/astminer")
+    maven(url = uri("https://packages.jetbrains.team/maven/p/astminer/astminer"))
   }
 
   group = "com.github.breandan"
