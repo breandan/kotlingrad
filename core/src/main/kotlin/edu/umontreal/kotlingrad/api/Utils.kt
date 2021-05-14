@@ -6,7 +6,7 @@ import guru.nidi.graphviz.engine.Format.SVG
 import java.io.File
 
 fun Fun<*>.saveToFile(filename: String) =
-  filename.split(".").last().toUpperCase().let { ext ->
+  filename.split(".").last().uppercase().let { ext ->
     when (ext) {
       "gv" -> Format.DOT
       else -> Format.valueOf(ext)
