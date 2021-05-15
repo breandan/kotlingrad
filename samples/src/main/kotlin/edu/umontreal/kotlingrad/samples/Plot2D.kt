@@ -7,7 +7,7 @@ import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSvgExport
-import jetbrains.letsPlot.geom.geom_path
+import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.label.ggtitle
@@ -62,7 +62,7 @@ private fun plot2D(
   val ys = funs.map { xs.map { xv -> it(x to xv).toDouble() } }
   val data = (labels.zip(ys) + ("x" to xs)).toMap()
   val colors = listOf("dark_green", "gray", "black", "red", "orange", "dark_blue")
-  val geoms = labels.zip(colors).map { geom_path(size = 2.0, color = it.second) { x = "x"; y = it.first } }
+  val geoms = labels.zip(colors).map { geomPath(size = 2.0, color = it.second) { x = "x"; y = it.first } }
   val plot = geoms.foldRight(ggplot(data)) { it, acc -> acc + it } + ggtitle("Derivatives of y=${funs[0]}")
 
   val plotSpec = plot.toSpec()

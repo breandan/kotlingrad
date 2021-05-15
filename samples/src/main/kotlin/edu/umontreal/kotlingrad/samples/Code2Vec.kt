@@ -69,10 +69,10 @@ private fun plot(
     "x" to embeddings.map { it[0] },
     "y" to embeddings.map { it[1] }
   )
-  val plot = lets_plot(data) { x = "x"; y = "y"; color = "labels" } +
-    ggsize(300, 250) + geom_point(size = 6) +
+  val plot = letsPlot(data) { x = "x"; y = "y"; color = "labels" } +
+    ggsize(300, 250) + geomPoint(size = 6) +
     ggtitle("Graph Types by Structural Similarity (t = $messagePassingRounds)") +
-    theme().axisLine_blank().axisTitle_blank().axisTicks_blank().axisText_blank()
+    theme().axisLineBlank().axisTitleBlank().axisTicksBlank().axisTextBlank()
 //  plot = names.foldIndexed(plot) { i, plt, f -> plt +
 //    geom_text(x = embeddings[i][0] + 5, y = embeddings[i][1] + 5, label = f, color= BLACK)
 //  }

@@ -5,7 +5,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.PlotSvgExport
 import jetbrains.letsPlot.*
-import jetbrains.letsPlot.geom.geom_path
+import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.intern.toSpec
 import jetbrains.letsPlot.label.ggtitle
 import kotlin.math.*
@@ -33,9 +33,9 @@ fun Map<String, Any>.plot2D(
   val xAxis = entries.first().key
   // Create plot specs using Lets-Plot Kotlin API
   val geoms = entries.filter { it.key != xAxis }.zip(Colors.distributeEvenly(entries.size - 1, 1.0))
-    .map { geom_path(size = thickness, color = it.second, showLegend = true) { x = xAxis; y = it.first.key } }
+    .map { geomPath(size = thickness, color = it.second, showLegend = true) { x = xAxis; y = it.first.key } }
 
-  val plot = geoms.fold(ggplot(this)) { acc, it -> acc + it } + ggtitle(title) + theme().legendPosition_right()
+  val plot = geoms.fold(ggplot(this)) { acc, it -> acc + it } + ggtitle(title) + theme().legendPositionRight()
 
   // Create JFXPanel showing the plot.
   val plotSpec = plot.toSpec()
