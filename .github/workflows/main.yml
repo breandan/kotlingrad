@@ -19,4 +19,6 @@ jobs:
           graalvm: '21.0.0.2'
           java: 'java11'
       - name: Build with Gradle
-        run: git submodule update --init --recursive && ./gradlew test --stacktrace
+        run: |
+          git submodule update --init --recursive
+          ./gradlew test --stacktrace

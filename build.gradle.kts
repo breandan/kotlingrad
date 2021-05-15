@@ -1,5 +1,6 @@
 import org.gradle.api.JavaVersion.VERSION_11
 import org.jetbrains.dokka.gradle.*
+import java.net.URL
 
 plugins {
   idea
@@ -52,7 +53,26 @@ subprojects {
 
   tasks.withType<DokkaTaskPartial> {
     dokkaSourceSets.configureEach {
-     externalDocumentationLink("https://ejml.org/javadoc/")
+      jdkVersion.set(11)
+
+      sourceLink {
+        localDirectory.set(file("core/src/main/kotlin"))
+        remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/core/src/main/kotlin"))
+        remoteLineSuffix.set("#L")
+      }
+
+      sourceLink {
+        localDirectory.set(file("samples/src/main/kotlin"))
+        remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/samples/src/main/kotlin"))
+        remoteLineSuffix.set("#L")
+      }
+
+      // This does not seem to work...
+      perPackageOption {
+        matchingRegex.set("edu.umontreal.kotlingrad")
+      }
+
+      externalDocumentationLink("https://ejml.org/javadoc/")
     }
   }
 }
