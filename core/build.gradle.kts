@@ -40,7 +40,7 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter:5.8.0-M1")
 
   // Symbolic fuzzing interpreter
-  testImplementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
+  testImplementation(kotlin("scripting-jsr223"))
 }
 
 configure<JavaPluginConvention> {

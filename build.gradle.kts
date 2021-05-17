@@ -29,8 +29,8 @@ allprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
   dependencies {
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(platform(kotlin("bom")))
+    implementation(kotlin("stdlib"))
   }
 
   tasks {
