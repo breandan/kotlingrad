@@ -67,9 +67,14 @@ subprojects {
         remoteLineSuffix.set("#L")
       }
 
-      // This does not seem to work...
       perPackageOption {
-        matchingRegex.set("edu.umontreal.kotlingrad")
+        matchingRegex.set("(.*?)")
+        suppress.set(true)
+      }
+
+      perPackageOption {
+        matchingRegex.set("edu.umontreal.kotlingrad.*")
+        suppress.set(false)
       }
 
       externalDocumentationLink("https://ejml.org/javadoc/")
