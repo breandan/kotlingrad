@@ -528,7 +528,7 @@ class Zero<T: Fun<T>>: Const<T>(0.0)
 class One<T: Fun<T>>: Const<T>(1.0)
 ```
 
-When checking the type of a sealed class, consumers must explicitly handle every case, since incomplete control flow will not compile rather than fail silently at runtime. Let us now consider a simplified definition of the superclass `Fun`, which defines the behavior invocation and differentiation, using a restricted form of pattern matching:
+When checking the type of a sealed class, consumers must explicitly handle every case, as incomplete control flow will produce a compiler error rather than fail at runtime. Consider a simplified definition of the superclass `Fun`, which defines invocation and differentiation using a restricted form of pattern matching:
 
 ```kotlin
 sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group<Fun<X>> {
@@ -556,7 +556,7 @@ sealed class Fun<X: Fun<X>>(open val variables: Set<Var<X>> = emptySet()): Group
 }
 ```
 
-Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, one for differentiation and one for evaluation. Differentiation constitutes a top-down substitution process on the computation graph and evaluation propagates the values from the bottom, up.
+Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, one for differentiation and one for evaluation. Differentiation constitutes a top-down substitution process on the computation graph and evaluation propagates the values from the bottom, up. This reduction semantics for this procedure are described more precisely in [the specification](https://github.com/breandan/kotlingrad/blob/master/specification.md#reduction-semantics).
 
 [![](latex/figures/kotlingrad_diagram.png)](http://breandan.net/public/masters_thesis.pdf#page=58)
 
@@ -699,7 +699,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 #### Intermediate representation
 
-Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computationally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic root-finding, and supports features for visualization and debugging, e.g. in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
+Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computationally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#operational-semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic root-finding, and supports features for visualization and debugging, e.g. in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
 
 #### Property Delegation
 
@@ -774,9 +774,9 @@ a := next*(next(...next(1)...))
 
 By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large portion of mathematics onto a single operator: function application. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a host of cryptic languages. These two ideas, λ-calculus and combinators, are keys to unlocking many puzzles in computer science and mathematics.
 
-The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface without modification by delegating at runtime.
+The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface via delegation rather than inheritance.
 
-We define the base type, `Nat` as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Peano encoding](https://en.wikipedia.org/wiki/Peano_axioms) for natural numbers. To emulate instantiation, we provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
+Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Peano encoding](https://en.wikipedia.org/wiki/Peano_axioms) for natural numbers. To emulate instantiation, we can provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
 ```kotlin
 interface Nat<T> {
@@ -794,7 +794,7 @@ interface Nat<T> {
 }
 ```
 
-Suppose we wanted to wrap an external type, such as `Double`, inside our tower. We could do so as follows:
+Now, if we wanted to wrap an external type, such as `Double`, inside our tower. We could do so as follows:
 
 ```kotlin
 val doubleNat = Nat(one = 1.0, next = { this + one })
@@ -813,7 +813,7 @@ tailrec fun <T> Nat<T>.pow(base: T, exp: T, acc: T = one, i: T = one): T =
   if (i == exp) acc else pow(base, exp, acc * base, i.next())
 ```
 
-However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑b) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we must do better if this encoding is to be usable. We can make `Nat` more efficient by introducing the following subtype, which forces implementors to define a native addition operator:
+However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑b) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we must do better if this encoding is to be usable. We can make `Nat` more efficient by introducing a subtype, `Group<T>`, which forces implementors to define a native addition operator:
 
 ```kotlin
 interface Group<T>: Nat<T> {
@@ -830,7 +830,7 @@ interface Group<T>: Nat<T> {
 }
 ```
 
-Given a `Group<T>`, we can now define a reasonably efficient implementation of Fibonacci:
+Given a `Group<T>`, we can now define a more efficient implementation of Fibonacci:
 
 ```kotlin
 tailrec fun <T> Group<T>.fibonacci(
@@ -846,7 +846,7 @@ val doubleGroup = Group(one = 1.0, plus = { a, b -> a + b })
 println(doubleGroup.fibonacci(10.0)) // Prints: 233.0
 ```
 
-We could further extend this chain by introducing a subtype called `Ring`, which overrides `+` and requires implementors to define a native `*` operator. `Rings` and their relatives are known to have many useful applications in [graph theory](https://github.com/breandan/kaliningraph#algebra) and [statistics](https://github.com/breandan/markovian#algebraic-methods):
+We could further extend this chain by introducing a subtype called `Ring<T>`, which overrides `+` and requires implementors to define a native `*` operator. `Ring`s and their relatives are known to have many useful applications in [graph theory](https://github.com/breandan/kaliningraph#algebra) and [statistics](https://github.com/breandan/markovian#algebraic-methods):
 
 ```kotlin
 interface Ring<T>: Group<T> {
@@ -874,7 +874,7 @@ Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map
 
 ## Grammar
 
-For a detailed grammar and reduction semantics, please see [the specification](specification.md).
+For a detailed grammar and semantics, please refer to the [the Kotlin∇ specification](specification.md).
 
 ## UML Diagram
 

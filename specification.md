@@ -49,7 +49,7 @@ mat = [[Tⁿ]ⁿ]
    gradient = exp ".grad()";
 ```
 
-# Semantics
+# Operational Semantics
 
 Below we provide an operational semantics for Kotlin∇.
 
@@ -82,3 +82,17 @@ Below we provide an operational semantics for Kotlin∇.
 In the notation above, we use subscripts to denote conditional inequality. If we have two nonterminals with matching subscripts in the same production, i.e. `eₘ`, `eₙ` where `m = n`, then `eₘ = eₙ` *must* be true. If we have two nonterminals with different subscripts in the same production, i.e. `eₘ`, `eₙ` where `m ≠ n`, either `eₘ = eₙ` or `eₘ ≠ eₙ` may be true. Subscripts have no meaning across multiple productions.
 
 <sup>&dagger;</sup> See [Clairaut-Schwarz](https://en.wikipedia.org/wiki/Symmetry_of_second_derivatives). Commutativity holds for twice-differentiable functions, however it is possible to have a continuously differentiable function whose partials are defined everywhere, but whose permuted partials are unequal ∂F²/∂x∂y ≠ ∂F²/∂y∂x. Some examples of continuously differentiable functions whose partials do not commute may be found in Tolstov ([1949](http://www.mathnet.ru/links/c5537a9da2ecaa5e1eafbafda3f15a1e/sm5966.pdf), [1949](http://www.mathnet.ru/links/a8dfdc976cf22fdce373cdcba2eeda2b/im3207.pdf)).
+
+# Reduction semantics
+
+Our reduction semantics can be loosely understood as follows:
+
+![](https://user-images.githubusercontent.com/175716/119237696-21713100-bb0c-11eb-9740-8753362249d0.png)
+
+`Sub` loosely corresponds to η-reduction in the untyped λ-calculus, however f ∉ Ω is disallowed, and we assume all variables are bound by `Inv`. Let us consider what happens under f∶ {a, b, c} ↦ abc, c∶ {a, b, c} ↦ ac under Ω ∶= {(a, 1), (b, 2), (c, 2)}:
+
+![](https://user-images.githubusercontent.com/175716/119237755-7d3bba00-bb0c-11eb-8bea-cd9933d3b716.png)
+
+We can view the above process as acting on a dataflow graph, where `Inv` backpropagates Ω, and `Sub` returns concrete values Y, here depicted on g:
+
+![](https://user-images.githubusercontent.com/175716/119237786-af4d1c00-bb0c-11eb-85e4-7699e05d6c0b.png)
