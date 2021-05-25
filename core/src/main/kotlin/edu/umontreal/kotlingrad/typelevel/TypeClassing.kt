@@ -5,8 +5,7 @@ package edu.umontreal.kotlingrad.typelevel
 import kotlin.math.roundToInt
 
 /** Corecursive Fibonacci sequence of [Nat]s **/
-// Pending: https://youtrack.jetbrains.com/issue/KT-46189
-/*tailrec*/ fun <T> Nat<T>.fibonacci(
+tailrec fun <T> Nat<T>.fibonacci(
   n: T,
   seed: Pair<T, T> = nil to one,
   fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },

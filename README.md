@@ -3,7 +3,7 @@
 
 # Kotlin∇: Type-safe Symbolic Differentiation for the JVM
 
-[![Kotlin 1.5.0](https://img.shields.io/badge/Kotlin-1.5.0-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
+[![Kotlin 1.5.10](https://img.shields.io/badge/Kotlin-1.5.10-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
 [![](https://jitpack.io/v/breandan/kotlingrad.svg)](https://jitpack.io/#breandan/kotlingrad)
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)

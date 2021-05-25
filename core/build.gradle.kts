@@ -7,7 +7,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-13"
+  kotlin("jupyter.api") version "0.10.0-42"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -20,7 +20,7 @@ idea.module {
 
 dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("com.github.breandan:kaliningraph:0.1.6")
+  api("com.github.breandan:kaliningraph:0.1.7")
 
   // Mathematical libraries
   implementation("com.github.JetBrains-Research:viktor:1.1.0")

@@ -19,7 +19,7 @@ dependencies {
   implementation("org.jzy3d:jzy3d-api:1.0.3")
   implementation("com.github.breandan.T-SNE-Java:tsne:master-SNAPSHOT")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-api:2.0.1")
-  implementation("io.github.vovak", "astminer", "0.6.2")
+  implementation("io.github.vovak:astminer:0.6.4")
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
 
