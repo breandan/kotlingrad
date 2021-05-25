@@ -85,11 +85,11 @@ In the notation above, we use subscripts to denote conditional inequality. If we
 
 # Reduction semantics
 
-Our reduction semantics can be loosely understood as follows:
+Our reduction semantics can be described as follows:
 
 ![](https://user-images.githubusercontent.com/175716/119237696-21713100-bb0c-11eb-9740-8753362249d0.png)
 
-`Sub` loosely corresponds to η-reduction in the untyped λ-calculus, however f ∉ Ω is disallowed, and we assume all variables are bound by `Inv`. Let us consider what happens under f∶ {a, b, c} ↦ abc, c∶ {a, b, c} ↦ ac under Ω ∶= {(a, 1), (b, 2), (c, 2)}:
+`Sub` loosely corresponds to η-reduction in the untyped λ-calculus, however f ∉ Ω is disallowed, and we assume all variables are bound by `Inv`. Let us consider what happens under f∶ {a, b, c} ↦ abc, g∶ {a, b, c} ↦ ac under Ω ∶= {(a, 1), (b, 2), (c, 2)}:
 
 ![](https://user-images.githubusercontent.com/175716/119237755-7d3bba00-bb0c-11eb-8bea-cd9933d3b716.png)
 
