@@ -2,7 +2,7 @@ package edu.umontreal.kotlingrad.samples
 
 import astminer.common.model.Node
 import astminer.common.model.Parser
-import astminer.parse.antlr.SimpleNode
+import astminer.parse.antlr.*
 import astminer.parse.antlr.python.PythonParser
 import com.jujutsu.tsne.TSne
 import com.jujutsu.tsne.barneshut.ParallelBHTsne
@@ -40,11 +40,11 @@ fun Node.toKGraph() =
   LabeledGraph {
     closure(
       toVisit = setOf(this@toKGraph),
-      successors = { flatMap { setOfNotNull(it.getParent()) + it.getChildren() }.toSet() }
+      successors = { flatMap { setOfNotNull(it.parent) + it.children }.toSet() }
     ).forEach { parent ->
-      getChildren().forEach { child ->
-        LGVertex(parent.getToken()) - LGVertex(child.getToken())
-        LGVertex(child.getToken()) - LGVertex(parent.getToken())
+      children.forEach { child ->
+        LGVertex(parent.token) - LGVertex(child.token)
+        LGVertex(child.token) - LGVertex(parent.token)
       }
     }
   }
@@ -91,10 +91,10 @@ private fun embedGraph(
 
 fun mineASTs(
   dataDir: String = {}.javaClass.getResource("/datasets/python").path,
-  parser: Parser<SimpleNode> = PythonParser()
+  parser: Parser<AntlrNode> = PythonParser()
 ): Pair<List<String>, List<LabeledGraph>> =
   File(dataDir).walk().filter { it.extension == "py" }
-    .map { parser.parseFile(it).root!!.apply { setToken(it.nameWithoutExtension) } }
+    .map { parser.parseFile(it).root.apply { token = it.nameWithoutExtension } }
     .map { it.toKGraph().let { kgraph -> (kgraph.size / 10).toString() to kgraph } }
     .toList().unzip()
 

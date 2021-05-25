@@ -55,7 +55,7 @@ To deploy to Maven Local and start the notebook, run:
 
   test {
     dependsOn(
-      "ScalarDemo", "MatrixDemo", "VectorDemo",
+      "HelloKotlingrad", "ScalarDemo", "MatrixDemo", "VectorDemo",
       "LinearRegression", "VariableCapture"
     )
   }
