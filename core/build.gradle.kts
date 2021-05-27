@@ -7,7 +7,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-42"
+  kotlin("jupyter.api") version "0.10.0-52"
 }
 
 // TODO: Maybe move this into the plugin somehow?
