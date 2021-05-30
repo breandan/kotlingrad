@@ -1,5 +1,8 @@
 package edu.mcgill.shipshape
 
+import org.intellij.lang.annotations.Language
+
+@Language("kt")
 fun genDif() =
   (2..maxDim).joinToString("\n", "\n", "\n") { dim ->
     "fun <X: SFun<X>> SFun<X>.d(${

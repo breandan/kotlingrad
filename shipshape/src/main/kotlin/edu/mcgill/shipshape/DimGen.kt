@@ -1,9 +1,12 @@
 package edu.mcgill.shipshape
 
+import org.intellij.lang.annotations.Language
+
 // TODO: make this a plugin-configurable setting
 const val maxDim = 10
 const val maxNat = 100
 
+@Language("kt")
 fun genDim() = """
   interface Nat<T: D0> { val i: Int }
   sealed class INat<T: D0>(open val i: Int): SConst<INat<T>>(i) { override fun toString() = "${"\$"}i" }

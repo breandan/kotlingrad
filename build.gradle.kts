@@ -21,6 +21,7 @@ allprojects {
     maven("https://jitpack.io")
     maven("https://maven.jzy3d.org/releases")
     maven(url = uri("https://packages.jetbrains.team/maven/p/astminer/astminer"))
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
 
   group = "com.github.breandan"
