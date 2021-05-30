@@ -1,5 +1,4 @@
 import org.gradle.api.JavaVersion.VERSION_11
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -72,6 +71,7 @@ tasks {
       showExceptions = true
       showCauses = true
       showStackTraces = true
+      showStandardStreams = true
     }
   }
 }
