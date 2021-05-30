@@ -24,6 +24,13 @@ dependencies {
 
   // Mathematical libraries
   implementation("com.github.JetBrains-Research:viktor:1.1.0")
+
+  // Notebook integration test
+  testImplementation(kotlin("reflect"))
+  testImplementation("junit", "junit", "4.13.2")
+  testImplementation(kotlin("scripting-jvm"))
+  testImplementation("org.jetbrains.kotlinx:kotlin-jupyter-kernel:0.10.0-45")
+
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 
 //  val tfVersion by extra { "-SNAPSHOT" }
