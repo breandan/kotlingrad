@@ -13,12 +13,12 @@ open class DoubleGenerator(
 
   companion object: DoubleGenerator()
 
-  override fun values(rs: RandomSource): Sequence<Sample<Double>> =
-    generateSequence {
-      val r = Random.Default.nextDouble()
+  override fun sample(rs: RandomSource) =
+    (generateSequence {
+      val r = rs.random.nextDouble()
       val e = 10.0.pow(expRange.random().toDouble())
       Sample(if (positive) r * e else -e + 2 * e * r)
-    } - excluding
+    } - excluding).first()
 
-  override fun edgecases() = emptyList<Double>()
+  override fun edgecase(rs: RandomSource) = null
 }

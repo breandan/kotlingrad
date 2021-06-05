@@ -42,8 +42,8 @@ class TestSymbolic : StringSpec({
 class TestExpressionGenerator<X : RealNumber<X, *>>(proto: X) : Arb<SFun<X>>() {
   val expGen = ExpressionGenerator<X>()
 
-  override fun values(rs: RandomSource): Sequence<Sample<SFun<X>>> =
-    generateSequence { Sample(expGen.randomBiTree()) }
+  override fun sample(rs: RandomSource): Sample<SFun<X>> =
+    Sample(expGen.randomBiTree())
 
-  override fun edgecases(): List<SFun<X>> = emptyList()
+  override fun edgecase(rs: RandomSource) = null
 }

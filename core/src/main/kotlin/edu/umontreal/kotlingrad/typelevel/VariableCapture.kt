@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package edu.umontreal.kotlingrad.typelevel
 
 import edu.mcgill.kaliningraph.circuits.*

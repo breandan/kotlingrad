@@ -1,6 +1,6 @@
 plugins {
   `java-gradle-plugin`
-  kotlin("jvm") version "1.5.20-M1"
+  kotlin("jvm") version "1.5.30-dev-1676"
   id("com.gradle.plugin-publish") version "0.12.0"
 }
 
@@ -16,7 +16,10 @@ pluginBundle {
   }
 }
 
-repositories.mavenCentral()
+repositories {
+  mavenCentral()
+  maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+}
 
 dependencies {
   implementation(kotlin("compiler-embeddable"))
