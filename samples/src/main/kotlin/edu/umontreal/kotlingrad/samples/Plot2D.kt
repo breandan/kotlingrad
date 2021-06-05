@@ -6,7 +6,7 @@ import edu.mcgill.kaliningraph.show
 import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.ggplot
 import jetbrains.letsPlot.intern.toSpec
@@ -68,7 +68,7 @@ private fun plot2D(
   val plotSpec = plot.toSpec()
   val plotSize = DoubleVector(1000.0, 500.0)
 
-  return PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, plotSize)
+  return PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, plotSize)
 }
 
 fun String.saveAs(filename: String) =

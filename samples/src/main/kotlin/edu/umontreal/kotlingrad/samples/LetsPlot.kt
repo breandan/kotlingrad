@@ -3,7 +3,7 @@ package edu.umontreal.kotlingrad.samples
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.intern.toSpec
@@ -40,6 +40,6 @@ fun Map<String, Any>.plot2D(
   // Create JFXPanel showing the plot.
   val plotSpec = plot.toSpec()
 
-  val component = PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, dimensions)
+  val component = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, dimensions)
   component.saveAs(filename).viewInBrowser()
 }

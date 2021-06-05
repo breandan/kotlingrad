@@ -11,7 +11,7 @@ import edu.mcgill.kaliningraph.*
 import edu.mcgill.kaliningraph.circuits.ComputationGraph
 import edu.umontreal.kotlingrad.api.*
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.PlotSvgExport
+import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.letsPlot.*
 import jetbrains.letsPlot.geom.*
 import jetbrains.letsPlot.intern.toSpec
@@ -76,7 +76,7 @@ private fun plot(
 //  plot = names.foldIndexed(plot) { i, plt, f -> plt +
 //    geom_text(x = embeddings[i][0] + 5, y = embeddings[i][1] + 5, label = f, color= BLACK)
 //  }
-  return PlotSvgExport.buildSvgImageFromRawSpecs(
+  return PlotSvgExportPortable.buildSvgImageFromRawSpecs(
     plotSpec = plot.toSpec(), plotSize = DoubleVector(1000.0, 500.0)
   )
 }
