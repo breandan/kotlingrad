@@ -20,9 +20,8 @@ dependencies {
   implementation("com.github.breandan.T-SNE-Java:tsne:master-SNAPSHOT")
 
   // https://github.com/JetBrains/lets-plot-kotlin/issues/77
-  implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.3")
-  implementation("org.jetbrains.lets-plot:lets-plot-jfx:2.0.3")
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.0.0")
+  implementation("org.jetbrains.lets-plot:lets-plot-common:2.0.3")
 
   implementation("io.github.vovak:astminer:0.6.4")
   implementation("org.nield:kotlin-statistics:1.2.1")
