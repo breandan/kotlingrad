@@ -39,9 +39,7 @@ tailrec fun <T> Nat<T>.primes(
 ): Set<T> =
   when {
     i == total -> kps
-    isPrime(c) -> {
-      primes(total, i.next(), c.next(), kps + c)
-    }
+    isPrime(c) -> primes(total, i.next(), c.next(), kps + c)
     else -> primes(total, i, c.next(), kps)
   }
 
