@@ -19,9 +19,7 @@ dependencies {
   implementation("org.jzy3d:jzy3d-api:1.0.3")
   implementation("com.github.breandan.T-SNE-Java:tsne:master-SNAPSHOT")
 
-  // https://github.com/JetBrains/lets-plot-kotlin/issues/77
-  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.0.0")
-  implementation("org.jetbrains.lets-plot:lets-plot-common:2.0.3")
+  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.0.1")
 
   implementation("io.github.vovak:astminer:0.6.4")
   implementation("org.nield:kotlin-statistics:1.2.1")
@@ -35,7 +33,7 @@ tasks {
     "PolynomialAttack", "ReadSeff", "Code2Vec"
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
-      main = "edu.umontreal.kotlingrad.samples.${fileName}Kt"
+      mainClass.set("edu.umontreal.kotlingrad.samples.${fileName}Kt")
       classpath = sourceSets["main"].runtimeClasspath
     }
   }
