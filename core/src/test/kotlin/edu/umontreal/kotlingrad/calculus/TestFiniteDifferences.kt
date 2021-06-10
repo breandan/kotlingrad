@@ -6,6 +6,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.checkAll
 import kotlin.math.*
 
+@kotlin.time.ExperimentalTime
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestFiniteDifferences: StringSpec({
   val dx = 1E-20

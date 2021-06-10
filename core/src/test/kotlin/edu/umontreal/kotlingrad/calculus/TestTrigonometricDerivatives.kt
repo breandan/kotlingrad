@@ -5,6 +5,7 @@ import edu.umontreal.kotlingrad.api.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.checkAll
 
+@kotlin.time.ExperimentalTime
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestTrigonometricDerivatives: StringSpec({
   val x by SVar(DReal)
