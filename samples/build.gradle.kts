@@ -1,6 +1,6 @@
 plugins {
   application
-  id("com.palantir.graal") version "0.7.2"
+  id("com.palantir.graal") version "0.9.0"
 }
 
 val entrypoint = "edu.umontreal.kotlingrad.samples.HelloKotlingradKt"
