@@ -6,7 +6,7 @@ plugins {
   idea
   id("com.github.ben-manes.versions") version "0.39.0"
   id("org.jetbrains.dokka") version "1.4.32"
-  kotlin("jvm") version "1.5.30-dev-2163"
+  kotlin("jvm") version "1.5.30-dev-2876"
 }
 
 idea.module {
@@ -20,7 +20,7 @@ allprojects {
     mavenCentral()
     maven("https://jitpack.io")
     maven("https://maven.jzy3d.org/releases")
-    maven(url = uri("https://packages.jetbrains.team/maven/p/astminer/astminer"))
+    maven("https://packages.jetbrains.team/maven/p/astminer/astminer")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
 
