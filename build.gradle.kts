@@ -1,12 +1,12 @@
-import org.gradle.api.JavaVersion.VERSION_11
+import org.gradle.api.JavaVersion.VERSION_15
 import org.jetbrains.dokka.gradle.*
 import java.net.URL
 
 plugins {
   idea
   id("com.github.ben-manes.versions") version "0.39.0"
-  id("org.jetbrains.dokka") version "1.4.32"
-  kotlin("jvm") version "1.5.30-dev-2876"
+  id("org.jetbrains.dokka") version "1.5.0"
+  kotlin("jvm") version "1.6.0-dev-806"
 }
 
 idea.module {
@@ -37,13 +37,13 @@ allprojects {
   tasks {
     compileKotlin {
       kotlinOptions {
-        jvmTarget = VERSION_11.toString()
+        jvmTarget = VERSION_15.toString()
       }
     }
 
     compileTestKotlin {
       kotlinOptions {
-        jvmTarget = VERSION_11.toString()
+        jvmTarget = VERSION_15.toString()
       }
     }
   }
@@ -54,7 +54,7 @@ subprojects {
 
   tasks.withType<DokkaTaskPartial> {
     dokkaSourceSets.configureEach {
-      jdkVersion.set(11)
+      jdkVersion.set(15)
 
       sourceLink {
         localDirectory.set(file("core/src/main/kotlin"))

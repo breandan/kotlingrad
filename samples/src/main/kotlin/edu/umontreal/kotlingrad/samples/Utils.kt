@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
+import edu.mcgill.kaliningraph.browserCmd
 import java.io.File
 
 val resourcesPath =
@@ -7,4 +8,4 @@ val resourcesPath =
     .walk(FileWalkDirection.TOP_DOWN)
     .first { it.name == "samples" }.absolutePath + "/src/main/resources"
 
-fun File.viewInBrowser() = ProcessBuilder("x-www-browser", path).start()
+fun File.viewInBrowser() = ProcessBuilder(browserCmd, path).start()

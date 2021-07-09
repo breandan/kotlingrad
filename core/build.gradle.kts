@@ -1,4 +1,4 @@
-import org.gradle.api.JavaVersion.VERSION_11
+import org.gradle.api.JavaVersion.VERSION_15
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -6,7 +6,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-53"
+  kotlin("jupyter.api") version "0.10.0-103"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -29,7 +29,7 @@ dependencies {
   testImplementation(kotlin("reflect"))
   testImplementation("junit", "junit", "4.13.2")
   testImplementation(kotlin("scripting-jvm"))
-  testImplementation("org.jetbrains.kotlinx:kotlin-jupyter-kernel:0.10.0-53")
+  testImplementation("org.jetbrains.kotlinx:kotlin-jupyter-kernel:0.10.0-103")
 
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 
@@ -51,7 +51,7 @@ dependencies {
 }
 
 configure<JavaPluginConvention> {
-  sourceCompatibility = VERSION_11
+  sourceCompatibility = VERSION_15
 }
 
 tasks {
