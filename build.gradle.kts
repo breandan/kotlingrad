@@ -57,7 +57,7 @@ subprojects {
       jdkVersion.set(15)
 
       sourceLink {
-        localDirectory.set(file("core/src/main/kotlin"))
+        localDirectory.set(file("src/main/kotlin"))
         remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/core/src/main/kotlin"))
         remoteLineSuffix.set("#L")
       }
