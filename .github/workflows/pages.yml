@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Set up GraalVM/Java 15
+      - name: Set up GraalVM/Java 11
         uses: DeLaGuardo/setup-graalvm@master
         with:
-          graalvm: '21.0.0.2'
-          java: 'java15'
+          graalvm: '21.1.0'
+          java: 'java11'
       - name: Build pages with Gradle
         run: |
           git submodule update --init --recursive
