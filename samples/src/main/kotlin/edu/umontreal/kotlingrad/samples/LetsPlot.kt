@@ -1,5 +1,6 @@
 package edu.umontreal.kotlingrad.samples
 
+import edu.mcgill.kaliningraph.show
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
@@ -41,5 +42,5 @@ fun Map<String, Any>.plot2D(
   val plotSpec = plot.toSpec()
 
   val component = PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec, dimensions)
-  component.saveAs(filename).viewInBrowser()
+  component.saveAs(filename).show()
 }
