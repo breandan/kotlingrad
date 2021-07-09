@@ -8,10 +8,8 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlinx.jupyter.*
 import org.jetbrains.kotlinx.jupyter.api.*
 import org.jetbrains.kotlinx.jupyter.libraries.EmptyResolutionInfoProvider
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.reflect.KClass
-import kotlin.reflect.full.memberProperties
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 
 
@@ -21,11 +19,6 @@ class RenderingTests: AbstractReplTest() {
     @Language("kts")
     val html = execHtml(
       """
-            @file:Repository("https://jitpack.io")
-            @file:DependsOn("com.github.breandan:kotlingrad:0.4.5")
-
-            import edu.umontreal.kotlingrad.api.*
-
             val x by SVar(DReal)
             val y by SVar(DReal)
             val z by SVar(DReal)
@@ -43,7 +36,7 @@ abstract class AbstractReplTest {
     EmptyResolutionInfoProvider, classpath, isEmbedded = true
   )
 
-  @Before
+  @BeforeEach
   fun initRepl() {
     // Jupyter integration is loaded after some code was executed, so we do it here
     // We also define here a class to retrieve values without rendering
@@ -74,23 +67,6 @@ abstract class AbstractReplTest {
 
     private const val WRAP_VAL = "v"
 
-    private val classpath = run {
-      val scriptArtifacts = setOf(
-        "kotlin-jupyter-lib",
-        "kotlin-jupyter-api",
-        "kotlin-jupyter-shared-compiler",
-        "kotlin-stdlib",
-        "kotlin-reflect",
-        "kotlin-script-runtime",
-      )
-      classpathFromClassloader(DependsOn::class.java.classLoader).orEmpty()
-        .filter { file ->
-          val name = file.name
-          (name == "main" && file.parentFile.name == "kotlin")
-            || (file.extension == "jar" && scriptArtifacts.any {
-            name.startsWith(it)
-          })
-        }
-    }
+    private val classpath = classpathFromClassloader(DependsOn::class.java.classLoader).orEmpty()
   }
 }
