@@ -13,11 +13,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Set up GraalVM/Java 11
+      - name: Set up GraalVM/Java 15
         uses: DeLaGuardo/setup-graalvm@master
         with:
           graalvm: '21.0.0.2'
-          java: 'java11'
+          java: 'java15'
       - name: Build with Gradle
         run: |
           git submodule update --init --recursive
