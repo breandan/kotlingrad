@@ -45,7 +45,6 @@ $dokka.location:edu.umontreal.kotlingrad.samples//theta/#/PointingToDeclaration/
 $dokka.location:edu.umontreal.kotlingrad.samples//toKGraph/astminer.common.model.Node#/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/to-k-graph.html
 $dokka.location:edu.umontreal.kotlingrad.samples//totalEpochs/#/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/total-epochs.html
 $dokka.location:edu.umontreal.kotlingrad.samples//validate/#kotlin.Function0[kotlin.Pair[edu.umontreal.kotlingrad.api.Vec[edu.umontreal.kotlingrad.api.DReal,edu.umontreal.kotlingrad.shapes.D5],edu.umontreal.kotlingrad.api.Vec[edu.umontreal.kotlingrad.api.DReal,edu.umontreal.kotlingrad.shapes.D5]]]#edu.umontreal.kotlingrad.api.VFun[edu.umontreal.kotlingrad.api.DReal,edu.umontreal.kotlingrad.shapes.D5]#edu.umontreal.kotlingrad.api.VVar[edu.umontreal.kotlingrad.api.DReal,edu.umontreal.kotlingrad.shapes.D5]/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/validate.html
-$dokka.location:edu.umontreal.kotlingrad.samples//viewInBrowser/java.io.File#/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/view-in-browser.html
 $dokka.location:edu.umontreal.kotlingrad.samples//x/#/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/x.html
 $dokka.location:edu.umontreal.kotlingrad.samples//xBatchIn/#/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/x-batch-in.html
 $dokka.location:edu.umontreal.kotlingrad.samples//y/#/PointingToDeclaration/samples/edu.umontreal.kotlingrad.samples/y.html
