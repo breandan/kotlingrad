@@ -6,7 +6,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-103"
+  kotlin("jupyter.api") version "0.10.0-106"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -29,7 +29,7 @@ dependencies {
   testImplementation(kotlin("reflect"))
   testImplementation("junit", "junit", "4.13.2")
   testImplementation(kotlin("scripting-jvm"))
-  testImplementation("org.jetbrains.kotlinx:kotlin-jupyter-kernel:0.10.0-103")
+  testImplementation("org.jetbrains.kotlinx:kotlin-jupyter-kernel:0.10.0-106")
 
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 
@@ -40,7 +40,7 @@ dependencies {
 
   // Property-based testing
 
-  val kotestVersion = "4.6.0"
+  val kotestVersion = "4.6.1"
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   testImplementation("io.kotest:kotest-property:$kotestVersion")

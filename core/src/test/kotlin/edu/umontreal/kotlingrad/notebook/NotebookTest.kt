@@ -30,7 +30,6 @@ class RenderingTests: AbstractReplTest() {
   }
 }
 
-// https://github.com/Kotlin/kotlin-jupyter/issues/270
 abstract class AbstractReplTest {
   private val repl: ReplForJupyter = ReplForJupyterImpl(
     EmptyResolutionInfoProvider, classpath, isEmbedded = true
@@ -43,9 +42,7 @@ abstract class AbstractReplTest {
     exec("class $WRAP(val $WRAP_VAL: Any?)")
   }
 
-  fun exec(code: Code): Any? {
-    return repl.eval(code).resultValue
-  }
+  fun exec(code: Code): Any? = repl.eval(code).resultValue
 
   @JvmName("execTyped")
   inline fun <reified T: Any> exec(code: Code): T {

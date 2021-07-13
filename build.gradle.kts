@@ -6,7 +6,7 @@ plugins {
   idea
   id("com.github.ben-manes.versions") version "0.39.0"
   id("org.jetbrains.dokka") version "1.5.0"
-  kotlin("jvm") version "1.6.0-dev-806"
+  kotlin("jvm") version "1.6.0-dev-1004"
 }
 
 idea.module {
