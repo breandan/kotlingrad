@@ -43,7 +43,6 @@ Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/
 * [Formal grammar](#grammar)
 * [UML diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
-* [Citation](#citation)
 * [References](#references)
 * [Acknowledgements](#special-thanks)
 
@@ -910,20 +909,6 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 ¹ Symbolic differentiation*, ² Automatic differentiation*, ³ Higher-order/rank differentiation, ⁴ Differentiable programming*, ⁵ Functional programming, ⁶ Compile-time type safety, ⁷ Compile-time shape safety, ⁸ Dependently Typed, ⁹ Multiplatform
 
 <sup>&lowast;</sup> Although we do not distinguish between AD and SD, here we adopt the authors' preferred nomenclature. We do make a distinction between differentiable programming libraries and those which simply construct neural networks. The :construction: symbol indicates work in progress.
-
-## Citation
-
-If you would like to cite Kotlin∇, please use the following `bibtex` entry:
-
-```
-@software{considine2019kotlingrad,
-  author = {Considine, Breandan and Famelis, Michalis and Paull, Liam},
-  title = {Kotlin$\nabla$: A Shape-Safe e{DSL} for Differentiable Programming},
-  url = {https://github.com/breandan/kotlingrad},
-  version = {0.4.5},
-  year = {2019},
-}
-```
 
 ## References
 
