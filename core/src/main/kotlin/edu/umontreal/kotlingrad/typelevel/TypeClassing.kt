@@ -67,6 +67,8 @@ interface Nat<T> {
   val one: T get() = nil.next()
 
   fun T.next(): T
+  // TODO: implement pred, minus?
+  // https://en.wikipedia.org/wiki/Church_encoding#Derivation_of_predecessor_function
   operator fun T.plus(t: T) = plus(this, t)
   operator fun T.times(t: T) = times(this, t)
   infix fun T.pow(t: T) = pow(this, t)
@@ -196,6 +198,9 @@ class Rational {
   }
 
   private val canonicalRatio: Pair<Int, Int>
+  /**
+   * TODO: Use [Nat] instead?
+   */
   val a: Int
   val b: Int
 
@@ -222,6 +227,7 @@ class Rational {
       (b.toFloat() / a.gcd(b).toFloat()).roundToInt()
     )
 
+    // https://github.com/binkley/kotlin-rational/blob/61be6f7df2d579ad83c6810a5f9426a4478b99a2/src/main/kotlin/hm/binkley/math/math-functions.kt#L93
     private tailrec fun Int.gcd(that: Int): Int = when {
       this == that -> this
       this in 0..1 || that in 0..1 -> 1
