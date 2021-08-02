@@ -7,6 +7,7 @@ import edu.umontreal.kotlingrad.api.VFun.Companion.KG_IT
 data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
   constructor(inputs: List<Bindings<X>>): this(inputs.map { it.fMap }
     .fold(mapOf<Fun<X>, Fun<X>>()) { acc, fMap -> fMap + acc })
+
   constructor(vararg bindings: Bindings<X>): this(bindings.toList())
   constructor(vararg funs: Fun<X>): this(funs.map { it.bindings })
   constructor(vararg pairs: Pair<Fun<X>, Fun<X>>): this(pairs.toMap())

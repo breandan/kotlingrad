@@ -67,6 +67,7 @@ interface Nat<T> {
   val one: T get() = nil.next()
 
   fun T.next(): T
+
   // TODO: implement pred, minus?
   // https://en.wikipedia.org/wiki/Church_encoding#Derivation_of_predecessor_function
   operator fun T.plus(t: T) = plus(this, t)
@@ -198,6 +199,7 @@ class Rational {
   }
 
   private val canonicalRatio: Pair<Int, Int>
+
   /**
    * TODO: Use [Nat] instead?
    */

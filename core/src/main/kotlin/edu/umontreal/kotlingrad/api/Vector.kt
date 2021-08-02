@@ -1,4 +1,5 @@
 @file:Suppress("ClassName", "LocalVariableName", "NonAsciiCharacters", "FunctionName", "MemberVisibilityCanBePrivate", "UNUSED_VARIABLE")
+
 package edu.umontreal.kotlingrad.api
 
 import edu.mcgill.kaliningraph.circuits.*
@@ -30,15 +31,21 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
 
   override operator fun invoke(vararg numbers: Number): VFun<X, E> =
     invoke(bindings.zip(numbers.map { wrap(it) }))
+
   override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> =
     invoke(bindings.zip(funs.toList()))
+
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> =
     invoke(ps.toList().bind())
 
-  companion object { const val KG_IT = "it" }
+  companion object {
+    const val KG_IT = "it"
+  }
+
   val mapInput = SVar<X>(KG_IT)
   open fun map(ef: (SFun<X>) -> SFun<X>): VFun<X, E> =
     VMap(this, ef(mapInput), mapInput)
+
   open fun <C: D1> vMap(ef: (SFun<X>) -> VFun<X, C>): MFun<X, E, C> =
     VVMap(this, ef(mapInput), mapInput)
 
@@ -73,7 +80,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
     else -> asString()
   }
 
-  override val op: Op = when(this) {
+  override val op: Op = when (this) {
     is VNegative<X, *> -> Monad.`-`
     is VMap<X, *> -> Polyad.map
     is VSum<X, *> -> Dyad.`+`
@@ -121,7 +128,7 @@ class MSumRows<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>): VFun<X, C>(i
   override val inputs: Array<out Fun<X>> = arrayOf(input)
 }
 
-class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override val vrb: SVar<X>) : VFun<X, E>(input, vrb), Grad<X> {
+class VDerivative<X: SFun<X>, E: D1>(override val input: VFun<X, E>, override val vrb: SVar<X>): VFun<X, E>(input, vrb), Grad<X> {
   fun df() = input.df()
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VVar -> sVars.map { it.d(vrb) }
@@ -135,10 +142,10 @@ class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override v
     is Vec -> Vec(contents.map { it.d(vrb) })
     is MVProd<X, *, *> ->
       (left.d(vrb) as MFun<X, E, E>) * right as VFun<X, E> +
-      (left as MFun<X, E, E> * right.d(vrb))
+        (left as MFun<X, E, E> * right.d(vrb))
     is VMProd<X, *, *> ->
       (left.d(vrb) as VFun<X, E> * right as MFun<X, E, E>) +
-      (left as VFun<X, E> * right.d(vrb))
+        (left as VFun<X, E> * right.d(vrb))
     is Gradient -> invoke().df() // map { it.d(sVar) }
     is VMap -> input.df().map { it * ssMap(mapInput to it).d(vrb) } // Chain rule
     is VComposition -> evaluate.df()
@@ -146,10 +153,10 @@ class VDerivative<X : SFun<X>, E: D1>(override val input: VFun<X, E>, override v
   }
 }
 
-class Gradient<X : SFun<X>, E: D1>(override val input: SFun<X>, override val vrb: VVar<X, E>): VFun<X, E>(input, vrb), Grad<X> {
+class Gradient<X: SFun<X>, E: D1>(override val input: SFun<X>, override val vrb: VVar<X, E>): VFun<X, E>(input, vrb), Grad<X> {
   fun df() = input.df()
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
-    is SVar -> vrb.sVars.map { if(this@df == it) One() else Zero() }
+    is SVar -> vrb.sVars.map { if (this@df == it) One() else Zero() }
     is SConst -> vrb.sVars.map { Zero() }
     is Sum -> left.df() + right.df()
     is Prod -> left.df() * right + left * right.df()
@@ -160,7 +167,7 @@ class Gradient<X : SFun<X>, E: D1>(override val input: SFun<X>, override val vrb
     is Log -> (left pow -One<X>()) * left.df()
     is DProd ->
       (left.d(vrb) as MFun<X, E, E> * right as VFun<X, E>) +
-      (left as VFun<X, E> * right.d(vrb))
+        (left as VFun<X, E> * right.d(vrb))
     is SComposition -> evaluate.df()
     is VSumAll<X, *> -> (input as VFun<X, E>).d(vrb).sum()
     else -> TODO(this@df.javaClass.name)
@@ -209,22 +216,22 @@ open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): 
 
   val simdVec by lazy { F64Array(consts.size) { consts[it].doubleValue } }
 
-  override fun plus(addend: VFun<X, E>) = when(addend) {
+  override fun plus(addend: VFun<X, E>) = when (addend) {
     is VConst<X, E> -> VConst(simdVec + addend.simdVec)
     else -> super.plus(addend)
   }
 
-  override fun minus(subtrahend: VFun<X, E>) = when(subtrahend) {
+  override fun minus(subtrahend: VFun<X, E>) = when (subtrahend) {
     is VConst<X, E> -> VConst(simdVec - subtrahend.simdVec)
     else -> super.minus(subtrahend)
   }
 
-  override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {
+  override fun ʘ(multiplicand: VFun<X, E>) = when (multiplicand) {
     is VConst<X, E> -> VConst(simdVec * multiplicand.simdVec)
     else -> super.ʘ(multiplicand)
   }
 
-  override fun dot(multiplicand: VFun<X, E>): SFun<X> = when(multiplicand) {
+  override fun dot(multiplicand: VFun<X, E>): SFun<X> = when (multiplicand) {
     is VConst<X, E> -> SConst(simdVec dot multiplicand.simdVec)
     else -> super.dot(multiplicand)
   }
@@ -259,14 +266,15 @@ open class Vec<X: SFun<X>, E: D1>(val contents: List<SFun<X>>):
     else -> super.minus(subtrahend)
   }
 
-  override fun ʘ(multiplicand: VFun<X, E>) = when(multiplicand) {
+  override fun ʘ(multiplicand: VFun<X, E>) = when (multiplicand) {
     is Vec<X, E> -> Vec(contents.mapIndexed { i, v -> v * multiplicand[i] })
     else -> super.ʘ(multiplicand)
   }
 
   override fun times(multiplicand: SFun<X>) = map { it * multiplicand }
 
-  override fun dot(multiplicand: VFun<X, E>) = when(multiplicand) {
+  override fun dot(
+    multiplicand: VFun<X, E>) = when (multiplicand) {
     is Vec<X, E> -> contents.mapIndexed { i, v -> v * multiplicand[i] }.reduce { acc, it -> acc + it }
     else -> super.dot(multiplicand)
   }

@@ -1,4 +1,5 @@
 package edu.umontreal.kotlingrad.api
+
 import kotlin.math.*
 
 /*
@@ -119,7 +120,7 @@ abstract class AD {
 // ---------------------------------------- ENGINE IMPLEMENTATION ----------------------------------------
 
 // Private implementation class
-private class ADImpl : AD() {
+private class ADImpl: AD() {
   // this stack contains pairs of blocks and values to apply them to
   private var stack = arrayOfNulls<Any?>(8)
   private var sp = 0

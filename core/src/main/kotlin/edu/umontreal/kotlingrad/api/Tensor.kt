@@ -11,13 +11,16 @@ open class Vt<E, L: N9> constructor(val contents: List<E>) {
 
   operator fun <T: L> get(t: T): E = contents[t.i - 1]
   fun <T: L> take(t: T): Vt<E, T> = Vt(contents.take(t.i))
-  
+
   fun rev() = Vt<E, L>(contents.asReversed())
 }
 
-@JvmName("vt1ccvt1") infix fun <E> Vt<E, N1>.cc(v: Vt<E, N1>): Vt<E, N2> = TODO()
-@JvmName("vt1ccvt2") infix fun <E> Vt<E, N1>.cc(v: Vt<E, N2>): Vt<E, N3> = TODO()
-@JvmName("vt2ccvt1") infix fun <E> Vt<E, N2>.cc(v: Vt<E, N1>): Vt<E, N3> = TODO()
+@JvmName("vt1ccvt1")
+infix fun <E> Vt<E, N1>.cc(v: Vt<E, N1>): Vt<E, N2> = TODO()
+@JvmName("vt1ccvt2")
+infix fun <E> Vt<E, N1>.cc(v: Vt<E, N2>): Vt<E, N3> = TODO()
+@JvmName("vt2ccvt1")
+infix fun <E> Vt<E, N2>.cc(v: Vt<E, N1>): Vt<E, N3> = TODO()
 
 operator fun <E, C: N9, V: Vt<E, C>> V.plus(v: V): V = TODO()
 
@@ -41,6 +44,7 @@ infix fun <X, M: N9, R: N9, C: N9, C1: N9> Cb<X, M, R, C>.c3(cb: Cb<X, M, C, C1>
 open class N9(open val i: Int = 0) {
   override fun toString() = "$i"
 }
+
 open class N8(override val i: Int = 1): N9(i)
 open class N7(override val i: Int = 2): N8(i)
 open class N6(override val i: Int = 3): N7(i)

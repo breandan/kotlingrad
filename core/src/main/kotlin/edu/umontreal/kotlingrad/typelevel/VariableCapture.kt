@@ -23,7 +23,7 @@ constructor(
       .reduce { it, acc -> apply(acc, it) as Ex<V1, V2, V3> }
 
   private fun apply(me: Ex<*, *, *>, that: Ex<*, *, *>) =
-    if(op == null) that else if (me is Nt<*> && that is Nt<*>)
+    if (op == null) that else if (me is Nt<*> && that is Nt<*>)
       when (op) {
         `+` -> Nt(me.value.toDouble() + that.value.toDouble())
         `-` -> Nt(me.value.toDouble() - that.value.toDouble())
@@ -40,9 +40,14 @@ constructor(
   }.let { name?.run { "$name = $it" } ?: it }
 }
 
-open class Nt<T: Number>(val value: T): Ex<OO, OO, OO>() { override fun toString() = value.toString() }
+open class Nt<T: Number>(val value: T): Ex<OO, OO, OO>() {
+  override fun toString() = value.toString()
+}
 
-val x by V1(); val y by V2(); val z by V3()
+val x by V1();
+val y by V2();
+val z by V3()
+
 open class V1 internal constructor(name: String = "v1"): Vr<XX, OO, OO>(name) {
   override fun getValue(n: Nothing?, property: KProperty<*>) = V1(property.name)
 }
@@ -75,25 +80,47 @@ sealed class Vr<R: XO, S: XO, T: XO>(override val name: String): Ex<R, S, T>() {
 // TODO: Add following code to shipshape codegen
 
 //                                            V1, V2, V3
-@JvmName("i:t__") operator fun <N: Number> Ex<XX, OO, OO>.invoke(n: N) = call(V1() to n)
-@JvmName("i:_t_") operator fun <N: Number> Ex<OO, XX, OO>.invoke(n: N) = call(V2() to n)
-@JvmName("i:__t") operator fun <N: Number> Ex<OO, OO, XX>.invoke(n: N) = call(V3() to n)
-@JvmName("i:t__") operator fun <N: Number> Ex<XX, OO, OO>.invoke(v1: V1Bnd<N>) = call(v1)
-@JvmName("i:_t_") operator fun <N: Number> Ex<OO, XX, OO>.invoke(v2: V2Bnd<N>) = call(v2)
-@JvmName("i:__t") operator fun <N: Number> Ex<OO, OO, XX>.invoke(v3: V3Bnd<N>) = call(v3)
-@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v2)
-@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v3)
-@JvmName("i:_tt") operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v2, v3)
-@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, OO, XX>(v1)
-@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v3)
-@JvmName("i:t_t") operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>, v2: V3Bnd<N>) = call(v1, v2)
-@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, OO>(v1)
-@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, OO>(v2)
-@JvmName("i:tt_") operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call(v1, v2)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, XX>(v1)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, XX>(v2)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, XX, OO>(v3)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v1, v3)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v1, v2)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v2, v3)
-@JvmName("i:ttt") operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v1, v2, v3)
+@JvmName("i:t__")
+operator fun <N: Number> Ex<XX, OO, OO>.invoke(n: N) = call(V1() to n)
+@JvmName("i:_t_")
+operator fun <N: Number> Ex<OO, XX, OO>.invoke(n: N) = call(V2() to n)
+@JvmName("i:__t")
+operator fun <N: Number> Ex<OO, OO, XX>.invoke(n: N) = call(V3() to n)
+@JvmName("i:t__")
+operator fun <N: Number> Ex<XX, OO, OO>.invoke(v1: V1Bnd<N>) = call(v1)
+@JvmName("i:_t_")
+operator fun <N: Number> Ex<OO, XX, OO>.invoke(v2: V2Bnd<N>) = call(v2)
+@JvmName("i:__t")
+operator fun <N: Number> Ex<OO, OO, XX>.invoke(v3: V3Bnd<N>) = call(v3)
+@JvmName("i:_tt")
+operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v2)
+@JvmName("i:_tt")
+operator fun <N: Number> Ex<OO, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v3)
+@JvmName("i:_tt")
+operator fun <N: Number> Ex<OO, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v2, v3)
+@JvmName("i:t_t")
+operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, OO, XX>(v1)
+@JvmName("i:t_t")
+operator fun <N: Number> Ex<XX, OO, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v3)
+@JvmName("i:t_t")
+operator fun <N: Number> Ex<XX, OO, XX>.invoke(v1: V1Bnd<N>, v2: V3Bnd<N>) = call(v1, v2)
+@JvmName("i:tt_")
+operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, OO>(v1)
+@JvmName("i:tt_")
+operator fun <N: Number> Ex<XX, XX, OO>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, OO>(v2)
+@JvmName("i:tt_")
+operator fun <N: Number> Ex<XX, XX, OO>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call(v1, v2)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>) = inv<N, OO, XX, XX>(v1)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>) = inv<N, XX, OO, XX>(v2)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v3: V3Bnd<N>) = inv<N, XX, XX, OO>(v3)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = inv<N, OO, XX, OO>(v1, v3)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = inv<N, OO, OO, XX>(v1, v2)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = inv<N, XX, OO, OO>(v2, v3)
+@JvmName("i:ttt")
+operator fun <N: Number> Ex<XX, XX, XX>.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v1, v2, v3)

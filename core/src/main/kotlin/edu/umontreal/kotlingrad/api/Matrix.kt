@@ -15,8 +15,7 @@ import kotlin.reflect.KProperty
  */
 
 open class MFun<X, R, C>(override vararg val inputs: Fun<X>): Fun<X>
-where X: SFun<X>, R: D1, C: D1
-{
+  where X: SFun<X>, R: D1, C: D1 {
   open val ᵀ: MFun<X, C, R> by lazy { MTranspose(this) }
 
   override fun invoke(newBindings: Bindings<X>): MFun<X, R, C> =
@@ -36,15 +35,17 @@ where X: SFun<X>, R: D1, C: D1
 
   override operator fun invoke(vararg numbers: Number): MFun<X, R, C> =
     invoke(bindings.zip(numbers.map { wrap(it) }))
+
   override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> =
     invoke(bindings.zip(funs.toList()))
+
   override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> =
     invoke(ps.toList().bind())
 
   val mapInput = SVar<X>(KG_IT)
   open fun map(ef: (SFun<X>) -> SFun<X>): MFun<X, R, C> = MMap(this, ef(mapInput), mapInput)
 
-  open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if(EAGER) it.df() else it }
+  open fun d(sVar: SVar<X>): MFun<X, R, C> = MDerivative(this, sVar).let { if (EAGER) it.df() else it }
 
   open operator fun unaryMinus(): MFun<X, R, C> = MNegative(this)
   open operator fun plus(addend: MFun<X, R, C>): MFun<X, R, C> = MSum(this, addend)
@@ -92,6 +93,7 @@ class MMap<X: SFun<X>, R: D1, C: D1>(
   override val bindings: Bindings<X> = input.bindings + ssMap.bindings - placeholder
   override val inputs: Array<out Fun<X>> = arrayOf(input, ssMap)
 }
+
 class MNegative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, R, C>(input), UnFun<X>
 class MTranspose<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>): MFun<X, C, R>(input), UnFun<X>
 class MSum<X: SFun<X>, R: D1, C: D1>(override val left: MFun<X, R, C>, override val right: MFun<X, R, C>): MFun<X, R, C>(left, right), BiFun<X>
@@ -144,7 +146,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, o
     // Casting here is necessary because of type erasure (we loose the inner dimension when MMProd<X, R, C1, C2> is boxed as MFun<X, R, C2>)
     is MMProd<X, R, *, C> ->
       (left as MFun<X, R, C>).df() * (right as MFun<X, C, C>) +
-      left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
+        left * ((right as MFun<X, R, C>).df() as MFun<X, C, C>)
     is MSProd -> left.df() * right + left * right.d(vrb)
     is SMProd -> left.d(vrb) * right + left * right.df()
     is HProd -> left.df() ʘ right + left ʘ right.df()
@@ -156,7 +158,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, o
   }
 }
 
-class MGradient<X : SFun<X>, R: D1, C: D1>(override val input: SFun<X>, override val vrb: MVar<X, R, C>): MFun<X, R, C>(input, vrb), Grad<X> {
+class MGradient<X: SFun<X>, R: D1, C: D1>(override val input: SFun<X>, override val vrb: MVar<X, R, C>): MFun<X, R, C>(input, vrb), Grad<X> {
   fun df() = input.df()
   fun SFun<X>.df(): MFun<X, R, C> = when (this@df) {
     is SVar -> vrb.vMat.map { if (it == this@df) One() else Zero() }
@@ -175,7 +177,7 @@ class MGradient<X : SFun<X>, R: D1, C: D1>(override val input: SFun<X>, override
   }
 }
 
-class Jacobian<X : SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, override val vrb: VVar<X, C>): MFun<X, R, C>(input, vrb), Grad<X> {
+class Jacobian<X: SFun<X>, R: D1, C: D1>(override val input: VFun<X, R>, override val vrb: VVar<X, C>): MFun<X, R, C>(input, vrb), Grad<X> {
   fun df() = input.df()
 
   fun VFun<X, R>.df(): MFun<X, R, C> = when (this@df) {
@@ -200,10 +202,11 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
   constructor(fVec: F64Array): this(*fVec.toKotlinArray().map { VConst<X, C>(*it.toTypedArray()) }.toTypedArray())
+
   val simdVec by lazy { F64Array(numRows, numCols) { row, col -> (vConsts[row][col] as SConst<X>).doubleValue } }
 
   override fun times(multiplicand: SFun<X>): Mat<X, R, C> =
-    when(multiplicand) {
+    when (multiplicand) {
       is SConst -> MConst(simdVec.times(multiplicand.doubleValue))
       else -> super.times(multiplicand)
     }
