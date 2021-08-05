@@ -6,7 +6,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-106"
+  kotlin("jupyter.api") version "0.10.0-182"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -25,11 +25,7 @@ dependencies {
   implementation("com.github.JetBrains-Research:viktor:1.1.0")
 
   implementation(kotlin("reflect"))
-  // Notebook integration test
-  testImplementation(kotlin("reflect"))
-  testImplementation("junit", "junit", "4.13.2")
-  testImplementation(kotlin("scripting-jvm"))
-  testImplementation("org.jetbrains.kotlinx:kotlin-jupyter-kernel:0.10.0-106")
+  implementation("org.jetbrains:annotations:20.1.0")
 
   testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
 

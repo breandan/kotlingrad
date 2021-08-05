@@ -34,6 +34,7 @@ allprojects {
   dependencies {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
+    compileOnly("org.jetbrains:annotations:21.0.1")
   }
 
   tasks {
