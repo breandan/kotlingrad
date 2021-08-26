@@ -216,17 +216,17 @@ open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): 
 
   val simdVec by lazy { F64Array(consts.size) { consts[it].doubleValue } }
 
-  override fun plus(addend: VFun<X, E>) = when (addend) {
+  override fun plus(addend: VFun<X, E>): VFun<X, E> = when (addend) {
     is VConst<X, E> -> VConst(simdVec + addend.simdVec)
     else -> super.plus(addend)
   }
 
-  override fun minus(subtrahend: VFun<X, E>) = when (subtrahend) {
+  override fun minus(subtrahend: VFun<X, E>): VFun<X, E> = when (subtrahend) {
     is VConst<X, E> -> VConst(simdVec - subtrahend.simdVec)
     else -> super.minus(subtrahend)
   }
 
-  override fun ʘ(multiplicand: VFun<X, E>) = when (multiplicand) {
+  override fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = when (multiplicand) {
     is VConst<X, E> -> VConst(simdVec * multiplicand.simdVec)
     else -> super.ʘ(multiplicand)
   }
@@ -236,7 +236,7 @@ open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): 
     else -> super.dot(multiplicand)
   }
 
-  override fun times(multiplicand: SFun<X>) = when (multiplicand) {
+  override fun times(multiplicand: SFun<X>): Vec<X, E> = when (multiplicand) {
     is SConst<X> -> VConst(simdVec * multiplicand.doubleValue)
     else -> super.times(multiplicand)
   }
