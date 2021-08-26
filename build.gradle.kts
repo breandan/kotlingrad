@@ -8,7 +8,7 @@ plugins {
   // https://github.com/Kotlin/dokka/issues/2024
   // id("org.jetbrains.dokka") version "1.5.0"
   id("org.jetbrains.dokka") version "1.4.32"
-  kotlin("jvm") version "1.6.0-dev-1004"
+  kotlin("jvm") version "1.6.20-dev-37"
 }
 
 idea.module {
