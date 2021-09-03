@@ -6,8 +6,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.*
 import javax.script.*
 import javax.script.ScriptContext.ENGINE_SCOPE
-import kotlin.math.pow
-import kotlin.random.Random
 
 @Suppress("NonAsciiCharacters")
 class TestSymbolic : StringSpec({

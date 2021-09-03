@@ -2,7 +2,6 @@ package edu.umontreal.kotlingrad
 
 import io.kotest.property.*
 import kotlin.math.pow
-import kotlin.random.Random
 
 open class DoubleGenerator(
   vararg exclude: Number,

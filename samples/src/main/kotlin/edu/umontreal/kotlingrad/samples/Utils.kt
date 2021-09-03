@@ -1,6 +1,5 @@
 package edu.umontreal.kotlingrad.samples
 
-import edu.mcgill.kaliningraph.browserCmd
 import java.io.File
 
 val resourcesPath =

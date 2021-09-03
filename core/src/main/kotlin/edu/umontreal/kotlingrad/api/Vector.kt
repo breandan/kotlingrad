@@ -53,8 +53,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
 
   fun d(v1: SVar<X>) = VDerivative(this, v1)
 
-  fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> =
-    vars.associate { it to d(it) }
+  fun d(vararg vars: SVar<X>): Map<SVar<X>, VFun<X, E>> = vars.associateWith { d(it) }
 
   fun grad(): Map<SVar<X>, VFun<X, E>> =
     bindings.sVars.associateWith { d(it) }

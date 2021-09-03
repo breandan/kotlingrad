@@ -44,8 +44,8 @@ open class Nt<T: Number>(val value: T): Ex<OO, OO, OO>() {
   override fun toString() = value.toString()
 }
 
-val x by V1();
-val y by V2();
+val x by V1()
+val y by V2()
 val z by V3()
 
 open class V1 internal constructor(name: String = "v1"): Vr<XX, OO, OO>(name) {

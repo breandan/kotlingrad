@@ -8,7 +8,7 @@ plugins {
   // https://github.com/Kotlin/dokka/issues/2024
   // id("org.jetbrains.dokka") version "1.5.0"
   id("org.jetbrains.dokka") version "1.4.32"
-  kotlin("jvm") version "1.6.20-dev-456"
+  kotlin("jvm") version "1.6.20-dev-689"
 }
 
 idea.module {
@@ -34,7 +34,7 @@ allprojects {
   dependencies {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
-    compileOnly("org.jetbrains:annotations:21.0.1")
+    compileOnly("org.jetbrains:annotations:22.0.0")
   }
 
   tasks {
