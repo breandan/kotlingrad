@@ -94,8 +94,7 @@ fun mineASTs(
   parser: Parser<AntlrNode> = PythonParser()
 ): Pair<List<String>, List<LabeledGraph>> =
   File(dataDir).walk().filter { it.extension == "py" }
-    .map { parser.parseFile(it).root.apply { token = it.nameWithoutExtension } }
-    .map { it.toKGraph().let { kgraph -> (kgraph.size / 10).toString() to kgraph } }
+    .map { parser.parseFile(it).toKGraph().let { kgraph -> (kgraph.size / 10).toString() to kgraph } }
     .toList().unzip()
 
 fun generateASTs(
