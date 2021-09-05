@@ -17,6 +17,14 @@ idea.module {
   isDownloadSources = true
 }
 
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(15))
+    vendor.set(JvmVendorSpec.ADOPTOPENJDK)
+    implementation.set(JvmImplementation.J9)
+  }
+}
+
 allprojects {
   repositories {
     mavenCentral()

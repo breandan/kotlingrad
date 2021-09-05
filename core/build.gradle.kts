@@ -1,4 +1,3 @@
-import org.gradle.api.JavaVersion.VERSION_15
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
@@ -44,10 +43,6 @@ dependencies {
 
   // Symbolic fuzzing interpreter
   testImplementation(kotlin("scripting-jsr223"))
-}
-
-configure<JavaPluginExtension> {
-  sourceCompatibility = VERSION_15
 }
 
 tasks {
