@@ -2,7 +2,7 @@
 
 package edu.umontreal.kotlingrad.samples
 
-import edu.mcgill.kaliningraph.show
+import ai.hypergraph.kaliningraph.show
 import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.utils.step
 import jetbrains.datalore.base.geometry.DoubleVector

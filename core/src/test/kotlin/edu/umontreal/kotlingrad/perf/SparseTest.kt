@@ -1,7 +1,7 @@
 package edu.umontreal.kotlingrad.perf
 
 import ch.ethz.idsc.tensor.*
-import edu.mcgill.kaliningraph.*
+import ai.hypergraph.kaliningraph.*
 import edu.umontreal.kotlingrad.api.*
 import edu.umontreal.kotlingrad.round
 import edu.umontreal.kotlingrad.shapes.D100

@@ -2,7 +2,7 @@
 
 package edu.umontreal.kotlingrad.api
 
-import edu.mcgill.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.shapes.*
 import edu.umontreal.kotlingrad.utils.matmul
 import org.jetbrains.bio.viktor.F64Array

@@ -2,7 +2,7 @@
 
 package edu.umontreal.kotlingrad.api
 
-import edu.mcgill.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.circuits.*
 import edu.umontreal.kotlingrad.shapes.*
 import java.io.Serializable
 import kotlin.Double.Companion.NaN

@@ -7,8 +7,8 @@ import astminer.parse.antlr.python.PythonParser
 import com.jujutsu.tsne.TSne
 import com.jujutsu.tsne.barneshut.ParallelBHTsne
 import com.jujutsu.utils.TSneUtils
-import edu.mcgill.kaliningraph.*
-import edu.mcgill.kaliningraph.circuits.ComputationGraph
+import ai.hypergraph.kaliningraph.*
+import ai.hypergraph.kaliningraph.circuits.ComputationGraph
 import edu.umontreal.kotlingrad.api.*
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSvgExport

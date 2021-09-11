@@ -1,6 +1,6 @@
 package edu.umontreal.kotlingrad.api
 
-import edu.mcgill.kaliningraph.*
+import ai.hypergraph.kaliningraph.*
 import guru.nidi.graphviz.engine.*
 import guru.nidi.graphviz.engine.Format.SVG
 import java.io.File

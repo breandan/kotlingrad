@@ -8,7 +8,7 @@ plugins {
   // https://github.com/Kotlin/dokka/issues/2024
   // id("org.jetbrains.dokka") version "1.5.0"
   id("org.jetbrains.dokka") version "1.4.32"
-  kotlin("jvm") version "1.6.20-dev-689"
+  kotlin("jvm") version "1.6.20-dev-1357"
 }
 
 idea.module {
@@ -28,6 +28,7 @@ java {
 allprojects {
   repositories {
     mavenCentral()
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://jitpack.io")
     maven("https://maven.jzy3d.org/releases")
     maven("https://packages.jetbrains.team/maven/p/astminer/astminer")
@@ -89,7 +90,7 @@ subprojects {
         suppress.set(false)
       }
 
-      externalDocumentationLink("https://ejml.org/javadoc/")
+      externalDocumentationLink("https://github.com/breandan/kotlingrad")
     }
   }
 }

@@ -2,8 +2,8 @@
 
 package edu.umontreal.kotlingrad.typelevel
 
-import edu.mcgill.kaliningraph.circuits.*
-import edu.mcgill.kaliningraph.circuits.Dyad.*
+import ai.hypergraph.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.circuits.Dyad.*
 import kotlin.reflect.KProperty
 
 sealed class XO
