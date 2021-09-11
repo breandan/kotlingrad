@@ -2,6 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
+  signing
   `maven-publish`
   id("shipshape")
   idea
@@ -53,6 +54,12 @@ tasks {
     from(sourceSets.main.get().allSource)
   }
 
+  val javadocJar by registering(Jar::class) {
+    dependsOn("dokkaJavadoc")
+    archiveClassifier.set("javadoc")
+    from(javadoc)
+  }
+
   test {
     minHeapSize = "1024m"
     maxHeapSize = "4096m"
@@ -68,14 +75,27 @@ tasks {
   }
 }
 
+val signingKeyId = providers.gradleProperty("signing.gnupg.keyId")
+val signingKeyPassphrase = providers.gradleProperty("signing.gnupg.passphrase")
+signing {
+  useGpgCmd()
+  if (signingKeyId.isPresent && signingKeyPassphrase.isPresent) {
+    useInMemoryPgpKeys(signingKeyId.get(), signingKeyPassphrase.get())
+    sign(extensions.getByType<PublishingExtension>().publications)
+  } else {
+    logger.info("PGP signing key not defined, skipping signing configuration")
+  }
+}
+
 publishing {
   publications.create<MavenPublication>("default") {
     from(components["java"])
     artifact(tasks["sourcesJar"])
+    artifact(tasks["javadocJar"])
 
     pom {
-      description.set("Kotlin∇: Differentiable Functional Programming with Algebraic Data Types")
       name.set("Kotlin∇")
+      description.set("Differentiable Functional Programming with Algebraic Data Types")
       url.set("https://github.com/breandan/kotlingrad")
       licenses {
         license {

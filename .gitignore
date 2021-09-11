@@ -30,3 +30,4 @@ out
 *.rao
 **/.ipynb_checkpoints/
 *.run
+gradle.properties

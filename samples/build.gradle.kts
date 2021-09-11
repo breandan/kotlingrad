@@ -3,7 +3,7 @@ plugins {
   id("com.palantir.graal") version "0.9.0"
 }
 
-val entrypoint = "edu.umontreal.kotlingrad.samples.HelloKotlingradKt"
+val entrypoint = "ai.hypergraph.kotlingrad.samples.HelloKotlingradKt"
 
 application.mainClass.set(entrypoint)
 
@@ -33,7 +33,7 @@ tasks {
     "PolynomialAttack", "ReadSeff", "Code2Vec"
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
-      mainClass.set("edu.umontreal.kotlingrad.samples.${fileName}Kt")
+      mainClass.set("ai.hypergraph.kotlingrad.samples.${fileName}Kt")
       classpath = sourceSets["main"].runtimeClasspath
     }
   }
@@ -41,8 +41,8 @@ tasks {
 /*
 If overwriting an older version, it is necessary to first run:
 
-rm -rf ~/.m2/repository/com/github/breandan/kaliningraph \
-       ~/.ivy2/cache/com.github.breandan/kaliningraph
+rm -rf ~/.m2/repository/ai/hypergraph/kaliningraph \
+       ~/.ivy2/cache/ai.hypergraph/kaliningraph
 
 https://github.com/Kotlin/kotlin-jupyter/issues/121
 

@@ -8,7 +8,7 @@ authors:
 - family-names: "Paull"
   given-names: "Liam"
 title: "Kotlin∇: A Shape-Safe eDSL for Differentiable Programming"
-version: 0.4.5
+version: 0.4.6
 doi: 10.5281/zenodo.3549076
 url: "https://doi.org/10.5281/zenodo.3549076"
 date-released: 2019-11-21

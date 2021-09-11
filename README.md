@@ -3,7 +3,8 @@
 
 # Kotlin∇: Type-safe Symbolic Differentiation for the JVM
 
-[![Kotlin 1.5.20](https://img.shields.io/badge/Kotlin-1.5.20-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
+[![Kotlin 1.6.20](https://img.shields.io/badge/Kotlin-1.6.20-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
+[![Maven Central](https://img.shields.io/maven-central/v/ai.hypergraph/kotlingrad.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22ai.hypergraph%22)
 [![](https://jitpack.io/v/breandan/kotlingrad.svg)](https://jitpack.io/#breandan/kotlingrad)
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
@@ -73,37 +74,24 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
-Kotlin∇ is hosted on [JitPack](https://jitpack.io/#breandan/kotlingrad).
+Kotlin∇ is hosted on [Maven Central](https://s01.oss.sonatype.org/index.html#nexus-search;quick~kotlingrad).
 
 #### Gradle
 
 ```kotlin
-repositories {
-    maven("https://jitpack.io")
-}
-
 dependencies {
-    implementation("com.github.breandan:kotlingrad:0.4.5")
+    implementation("ai.hypergraph:kotlingrad:0.4.6")
 }
 ```
 
 #### Maven
 
 ```xml
-<project>
-  <repositories>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
-  </repositories>
-  
-  <dependency>
-    <groupId>com.github.breandan</groupId>
-    <artifactId>kotlingrad</artifactId>
-    <version>0.4.5</version>
-  </dependency>
-</project>
+<dependency>
+  <groupId>ai.hypergraph</groupId>
+  <artifactId>kotlingrad</artifactId>
+  <version>0.4.6</version>
+</dependency>
 ```
 
 #### Jupyter Notebook
@@ -111,8 +99,7 @@ dependencies {
 To access Kotlin∇'s notebook support, use the following line magic:
 
 ```
-@file:Repository("https://jitpack.io")
-@file:DependsOn("com.github.breandan:kotlingrad:0.4.5")
+@file:DependsOn("ai.hypergraph:kotlingrad:0.4.6")
 ```
 
 For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.ipynb).

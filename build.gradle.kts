@@ -1,14 +1,36 @@
+import io.github.gradlenexus.publishplugin.NexusPublishExtension
 import org.gradle.api.JavaVersion.VERSION_15
 import org.jetbrains.dokka.gradle.*
 import java.net.URL
 
 plugins {
   idea
+  signing
+  `maven-publish`
   id("com.github.ben-manes.versions") version "0.39.0"
   // https://github.com/Kotlin/dokka/issues/2024
   // id("org.jetbrains.dokka") version "1.5.0"
   id("org.jetbrains.dokka") version "1.4.32"
   kotlin("jvm") version "1.6.20-dev-1357"
+  id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+}
+
+val sonatypeApiUser = providers.gradleProperty("sonatypeApiUser")
+val sonatypeApiKey = providers.gradleProperty("sonatypeApiKey")
+if (sonatypeApiUser.isPresent && sonatypeApiKey.isPresent) {
+  configure<NexusPublishExtension> {
+    repositories {
+      sonatype {
+        nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+        snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        username.set(sonatypeApiUser)
+        password.set(sonatypeApiKey)
+        useStaging.set(true)
+      }
+    }
+  }
+} else {
+  logger.info("Sonatype API key not defined, skipping configuration of Maven Central publishing repository")
 }
 
 idea.module {
@@ -35,8 +57,8 @@ allprojects {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
 
-  group = "com.github.breandan"
-  version = "0.4.5"
+  group = "ai.hypergraph"
+  version = "0.4.6"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 
@@ -86,7 +108,7 @@ subprojects {
       }
 
       perPackageOption {
-        matchingRegex.set("edu.umontreal.kotlingrad.*")
+        matchingRegex.set("ai.hypergraph.kotlingrad.*")
         suppress.set(false)
       }
 

@@ -11,7 +11,7 @@ pluginBundle {
   tags = listOf("uri", "types", "codegen", "kotlin")
 
   mavenCoordinates {
-    groupId = "edu.mcgill"
+    groupId = "ai.hypergraph"
     artifactId = "shipshape"
   }
 }
@@ -27,5 +27,5 @@ dependencies {
 
 gradlePlugin.plugins.register("shipshape") {
   id = "shipshape"
-  implementationClass = "edu.mcgill.shipshape.Shipshape"
+  implementationClass = "ai.hypergraph.shipshape.Shipshape"
 }
