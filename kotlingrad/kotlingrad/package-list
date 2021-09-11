@@ -429,7 +429,7 @@ $dokka.location:edu.umontreal.kotlingrad.api/SConst/toString/#/PointingToDeclara
 $dokka.location:edu.umontreal.kotlingrad.api/SConst/unaryMinus/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-const/unary-minus.html
 $dokka.location:edu.umontreal.kotlingrad.api/SConst/value/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-const/value.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun.AOP///PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-a-o-p/index.html
-$dokka.location:edu.umontreal.kotlingrad.api/SFun.AOP/AOP/#edu.mcgill.kaliningraph.circuits.Op#kotlin.Function1[edu.umontreal.kotlingrad.api.Fun[TypeParam(bounds=[edu.umontreal.kotlingrad.api.SFun[^]])],edu.umontreal.kotlingrad.api.SFun[TypeParam(bounds=[edu.umontreal.kotlingrad.api.SFun[^]])]]/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-a-o-p/-a-o-p.html
+$dokka.location:edu.umontreal.kotlingrad.api/SFun.AOP/AOP/#ai.hypergraph.kaliningraph.circuits.Op#kotlin.Function1[edu.umontreal.kotlingrad.api.Fun[TypeParam(bounds=[edu.umontreal.kotlingrad.api.SFun[^]])],edu.umontreal.kotlingrad.api.SFun[TypeParam(bounds=[edu.umontreal.kotlingrad.api.SFun[^]])]]/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-a-o-p/-a-o-p.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun.AOP/of/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-a-o-p/of.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun.AOP/op/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-a-o-p/op.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun///PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/index.html
@@ -437,7 +437,7 @@ $dokka.location:edu.umontreal.kotlingrad.api/SFun/E/#/PointingToDeclaration/kot
 $dokka.location:edu.umontreal.kotlingrad.api/SFun/ONE/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-o-n-e.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun/TWO/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-t-w-o.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun/ZERO/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/-z-e-r-o.html
-$dokka.location:edu.umontreal.kotlingrad.api/SFun/apply/#edu.mcgill.kaliningraph.circuits.Op/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/apply.html
+$dokka.location:edu.umontreal.kotlingrad.api/SFun/apply/#ai.hypergraph.kaliningraph.circuits.Op/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/apply.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun/apply/#kotlin.Array[edu.umontreal.kotlingrad.api.Fun[TypeParam(bounds=[edu.umontreal.kotlingrad.api.SFun[^]])]]/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/apply.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun/cos/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/cos.html
 $dokka.location:edu.umontreal.kotlingrad.api/SFun/d/#edu.umontreal.kotlingrad.api.MVar[TypeParam(bounds=[edu.umontreal.kotlingrad.api.SFun[^]]),TypeParam(bounds=[edu.umontreal.kotlingrad.shapes.D1]),TypeParam(bounds=[edu.umontreal.kotlingrad.shapes.D1])]/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.api/-s-fun/d.html
@@ -1389,7 +1389,7 @@ $dokka.location:edu.umontreal.kotlingrad.typelevel/D7///PointingToDeclaration/k
 $dokka.location:edu.umontreal.kotlingrad.typelevel/D8///PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-d8/index.html
 $dokka.location:edu.umontreal.kotlingrad.typelevel/D9///PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-d9/index.html
 $dokka.location:edu.umontreal.kotlingrad.typelevel/Ex///PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-ex/index.html
-$dokka.location:edu.umontreal.kotlingrad.typelevel/Ex/Ex/#kotlin.Array[edu.umontreal.kotlingrad.typelevel.Ex[*,*,*]]#edu.mcgill.kaliningraph.circuits.Op?#kotlin.String?/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-ex/-ex.html
+$dokka.location:edu.umontreal.kotlingrad.typelevel/Ex/Ex/#kotlin.Array[edu.umontreal.kotlingrad.typelevel.Ex[*,*,*]]#ai.hypergraph.kaliningraph.circuits.Op?#kotlin.String?/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-ex/-ex.html
 $dokka.location:edu.umontreal.kotlingrad.typelevel/Ex/call/#kotlin.Array[edu.umontreal.kotlingrad.typelevel.VrB[TypeParam(bounds=[kotlin.Number])]]/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-ex/call.html
 $dokka.location:edu.umontreal.kotlingrad.typelevel/Ex/exs/#/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-ex/exs.html
 $dokka.location:edu.umontreal.kotlingrad.typelevel/Ex/getValue/#kotlin.Nothing?#kotlin.reflect.KProperty[*]/PointingToDeclaration/kotlingrad/edu.umontreal.kotlingrad.typelevel/-ex/get-value.html
