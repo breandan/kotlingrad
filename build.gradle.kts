@@ -50,7 +50,6 @@ allprojects {
     mavenCentral()
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://maven.jzy3d.org/releases")
-    maven("https://packages.jetbrains.team/maven/p/astminer/astminer")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
 

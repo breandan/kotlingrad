@@ -20,7 +20,6 @@ dependencies {
 
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.0.1")
 
-  implementation("io.github.vovak:astminer:0.7.0")
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
 
