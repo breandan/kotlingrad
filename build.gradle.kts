@@ -11,7 +11,7 @@ plugins {
   // https://github.com/Kotlin/dokka/issues/2024
   // id("org.jetbrains.dokka") version "1.5.0"
   id("org.jetbrains.dokka") version "1.4.32"
-  kotlin("jvm") version "1.6.20-dev-1357"
+  kotlin("jvm") version "1.5.30"
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
@@ -49,13 +49,11 @@ allprojects {
   repositories {
     mavenCentral()
     mavenLocal()
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://maven.jzy3d.org/releases")
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
   }
 
   group = "ai.hypergraph"
-  version = "0.4.6"
+  version = "0.4.7"
 
   apply(plugin = "org.jetbrains.kotlin.jvm")
 

@@ -12,11 +12,6 @@ class RenderingTests: JupyterReplTestCase() {
     @Language("kts")
     val html = execHtml(
       """
-            @file:Repository("*mavenLocal")
-            @file:DependsOn("ai.hypergraph:kotlingrad:0.4.6")
-
-            import ai.hypergraph.kotlingrad.api.*
-
             val x by SVar(DReal)
             val y by SVar(DReal)
             val z by SVar(DReal)

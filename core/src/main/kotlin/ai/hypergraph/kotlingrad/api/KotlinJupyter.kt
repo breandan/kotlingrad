@@ -1,7 +1,7 @@
 package ai.hypergraph.kotlingrad.api
 
-import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.*
+import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.*
 
 @JupyterLibrary
