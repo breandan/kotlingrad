@@ -22,7 +22,7 @@ dependencies {
   api("ai.hypergraph:kaliningraph:0.1.8")
 
   // Mathematical libraries
-  implementation("com.github.JetBrains-Research:viktor:1.1.0")
+   implementation("org.jetbrains.bio:viktor:1.1.0")
 
   implementation(kotlin("reflect"))
 //  implementation("org.jetbrains:annotations:22.0.0")
@@ -32,7 +32,7 @@ dependencies {
 //  val tfVersion by extra { "-SNAPSHOT" }
 //  testImplementation("com.github.tensorflow:java:$tfVersion")
 //  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
-  testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
+//  testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
 
   // Property-based testing
 

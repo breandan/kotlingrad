@@ -39,19 +39,16 @@ idea.module {
   isDownloadSources = true
 }
 
-java {
-  toolchain {
-    languageVersion.set(JavaLanguageVersion.of(15))
-    vendor.set(JvmVendorSpec.ADOPTOPENJDK)
-    implementation.set(JvmImplementation.J9)
-  }
+java.toolchain {
+  languageVersion.set(JavaLanguageVersion.of(15))
+  vendor.set(JvmVendorSpec.ADOPTOPENJDK)
+  implementation.set(JvmImplementation.J9)
 }
 
 allprojects {
   repositories {
     mavenCentral()
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://jitpack.io")
     maven("https://maven.jzy3d.org/releases")
     maven("https://packages.jetbrains.team/maven/p/astminer/astminer")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")

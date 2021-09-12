@@ -1,6 +1,5 @@
 package ai.hypergraph.kotlingrad.perf
 
-import ch.ethz.idsc.tensor.*
 import ai.hypergraph.kaliningraph.*
 import ai.hypergraph.kotlingrad.api.*
 import ai.hypergraph.kotlingrad.round
@@ -49,7 +48,7 @@ class SparseTest {
         "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as Mat<DReal, D100, D100> },
 //        "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
 //          .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
-        "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
+//        "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
 //        "TF4J/N" to powBench(toTf4j()) { a, b ->
 //          EagerSession.create().use {
 //            val tf = Ops.create(it)
@@ -71,7 +70,7 @@ class SparseTest {
         toViktor().power(10) { a, b -> a matmul b }.toKotlinArray().round(),
         toKTGrad().power(10) { a, b -> (a * b) as Mat<DReal, D100, D100> }.toKotlinArray().round(),
 //        toKMath().power(10) { a, b -> a.dot(b) }.toKotlinArray().round(),
-        toTensor().power(10) { a, b -> a.dot(b) }.toKotlinArray().round()
+//        toTensor().power(10) { a, b -> a.dot(b) }.toKotlinArray().round()
       )
     }
 
@@ -84,7 +83,7 @@ class SparseTest {
   fun RealMatrix.toKotlinArray() = data
   fun DMatrix.toKotlinArray() = mapper(numRows, numCols) { i, j -> this[i, j] }
 //  fun Structure2D<out Number>.toKotlinArray() = mapper(rowNum, colNum) { i, j -> this[i, j].toDouble() }
-  fun Tensor.toKotlinArray() = mapper(this[0].length(), this[1].length()) { i, j -> Get(i, j).number().toDouble() }
+//  fun Tensor.toKotlinArray() = mapper(this[0].length(), this[1].length()) { i, j -> Get(i, j).number().toDouble() }
   fun Mat<DReal, *, *>.toKotlinArray() = mapper(numRows, numCols) { i, j -> this[i, j]().toDouble() }
   fun INDArray.toKotlinArray() = mapper(rows(), columns()) { i, j -> getDouble(i, j) }
 //  fun DoubleNdArray.toKotlinArray() = mapper(shape().size(0).toInt(), shape().size(1).toInt()) { i, j -> getDouble(i.toLong(), j.toLong()) }
@@ -93,7 +92,7 @@ class SparseTest {
   fun Array<DoubleArray>.toViktor() = F64Array(size, size) { i, j -> this[i][j] }
 //  fun Array<DoubleArray>.toKMath() = VirtualMatrix(size, size) { i, j -> this[i][j] } as Matrix<Double>
   fun Array<DoubleArray>.toKTGrad() = DReal.Mat(D100, D100) { a, b -> this@toKTGrad[a][b] }
-  fun Array<DoubleArray>.toTensor() = Tensors.matrixDouble(this)
+//  fun Array<DoubleArray>.toTensor() = Tensors.matrixDouble(this)
   fun Array<DoubleArray>.toNd4j() = Nd4j.create(this)
 //  fun Array<DoubleArray>.toTf4j() = NdArrays.ofDoubles(Shape.of(size.toLong(), size.toLong()))
 //    .also { it.write(DataBuffers.of(*flatMap { it.toList() }.toDoubleArray())) }

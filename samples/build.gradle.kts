@@ -17,7 +17,6 @@ dependencies {
 
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.3")
-  implementation("com.github.breandan.T-SNE-Java:tsne:master-SNAPSHOT")
 
   implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.0.1")
 
@@ -30,7 +29,7 @@ tasks {
     "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG", "VariableCapture",
     "LetsPlot", "ScalarDemo", "VectorDemo", "MatrixDemo",
     "MLP", "LinearRegression", "PolynomialRegression",
-    "PolynomialAttack", "ReadSeff", "Code2Vec"
+    "PolynomialAttack", "ReadSeff"
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
       mainClass.set("ai.hypergraph.kotlingrad.samples.${fileName}Kt")
