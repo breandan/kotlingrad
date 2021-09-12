@@ -19,7 +19,7 @@ idea.module {
 
 dependencies {
 //  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("ai.hypergraph:kaliningraph:0.1.8")
+  api("ai.hypergraph:kaliningraph:0.1.9")
 
   // Mathematical libraries
   // TODO: migrate to multik after next release

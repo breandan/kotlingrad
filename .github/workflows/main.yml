@@ -20,4 +20,5 @@ jobs:
       - name: Build with Gradle
         run: |
           git submodule update --init --recursive
-          ./gradlew test --stacktrace
+          cd kaliningraph && gradlew publishToMavenLocal && cd ..
+          gradlew test --stacktrace
