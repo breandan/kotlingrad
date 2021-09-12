@@ -22,7 +22,10 @@ dependencies {
   api("ai.hypergraph:kaliningraph:0.1.8")
 
   // Mathematical libraries
+  // TODO: migrate to multik after next release
    implementation("org.jetbrains.bio:viktor:1.1.0")
+//  implementation("org.jetbrains.kotlinx:multik-api:0.0.2")
+//  implementation("org.jetbrains.kotlinx:multik-default:0.0.2")
 
   implementation(kotlin("reflect"))
 //  implementation("org.jetbrains:annotations:22.0.0")

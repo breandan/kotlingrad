@@ -33,6 +33,8 @@ class SparseTest {
    * KTGRAD: 0.484s
    * KTMATH: 0.824s
    * TENSOR: 0.931s
+   * KTGRAD: 57.542s(!!) TODO
+   * MULTIK: ??????
    */
 
   @Test
@@ -46,15 +48,15 @@ class SparseTest {
         "APACHE" to powBench(toApacheCommons()) { a, b -> a.multiply(b) },
         "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b }.also { baseline = it },
         "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as Mat<DReal, D100, D100> },
-//        "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
-//          .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
-//        "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
-//        "TF4J/N" to powBench(toTf4j()) { a, b ->
-//          EagerSession.create().use {
-//            val tf = Ops.create(it)
-//            tf.math.mul(a, b)
-//          }
+//      "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
+//        .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
+//      "TENSOR" to powBench(toTensor()) { a, b -> a.dot(b) }
+//      "TF4J/N" to powBench(toTf4j()) { a, b ->
+//        EagerSession.create().use {
+//          val tf = Ops.create(it)
+//          tf.math.mul(a, b)
 //        }
+//      }
       ).map { (name, time) -> println("$name: ${time.toDouble() / 1000}s") }
     }
   }
