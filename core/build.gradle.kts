@@ -43,7 +43,7 @@ dependencies {
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   testImplementation("io.kotest:kotest-property:$kotestVersion")
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.0-M1")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
 
   // Symbolic fuzzing interpreter
   testImplementation(kotlin("scripting-jsr223"))
