@@ -20,5 +20,5 @@ jobs:
       - name: Build with Gradle
         run: |
           git submodule update --init --recursive
-          cd kaliningraph && ./gradlew publishToMavenLocal && cd .. && ./gradlew publishToMavenLocal
+          cd kaliningraph && ./gradlew publishToMavenLocal --stacktrace -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=2G" && cd .. && ./gradlew publishToMavenLocal --stacktrace -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=2G"
           ./gradlew test --stacktrace
