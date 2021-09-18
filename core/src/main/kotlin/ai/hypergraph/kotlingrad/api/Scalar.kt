@@ -154,8 +154,8 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
 
   // TODO: Implement a proper curry and lower variadic apply onto it.
   fun apply(op: Op): (SFun<X>) -> SFun<X> = when (op) {
-    Dyad.`+` -> { it: SFun<X> -> this + it }
-    Dyad.`*` -> { it: SFun<X> -> this * it }
+    Ops.`+` -> { it: SFun<X> -> this + it }
+    Ops.`*` -> { it: SFun<X> -> this * it }
     else -> TODO(op.javaClass.name)
   }
 
@@ -165,41 +165,41 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
 
   @Suppress("UNCHECKED_CAST")
   fun apply(vararg xs: Fun<X>): SFun<X> = when (op) {
-    Monad.id -> this
-    Monad.sin -> (xs[0] as SFun<X>).sin()
-    Monad.cos -> (xs[0] as SFun<X>).cos()
-    Monad.tan -> (xs[0] as SFun<X>).tan()
-    Monad.`-` -> -(xs[0] as SFun<X>)
+    Ops.id -> this
+    Ops.sin -> (xs[0] as SFun<X>).sin()
+    Ops.cos -> (xs[0] as SFun<X>).cos()
+    Ops.tan -> (xs[0] as SFun<X>).tan()
+    Ops.`-` -> -(xs[0] as SFun<X>)
 
-    Dyad.d -> TODO()
-    Dyad.`+` -> (xs[0] as SFun<X>) + xs[1] as SFun<X>
-    Dyad.`*` -> (xs[0] as SFun<X>) * xs[1] as SFun<X>
-    Dyad.pow -> (xs[0] as SFun<X>) pow xs[1] as SFun<X>
-    Dyad.log -> (xs[0] as SFun<X>).log(xs[1] as SFun<X>)
-    Dyad.dot -> (xs[0] as VFun<X, DN>) dot xs[1] as VFun<X, DN>
+    Ops.d -> TODO()
+    Ops.`+` -> (xs[0] as SFun<X>) + xs[1] as SFun<X>
+    Ops.`*` -> (xs[0] as SFun<X>) * xs[1] as SFun<X>
+    Ops.pow -> (xs[0] as SFun<X>) pow xs[1] as SFun<X>
+    Ops.log -> (xs[0] as SFun<X>).log(xs[1] as SFun<X>)
+    Ops.dot -> (xs[0] as VFun<X, DN>) dot xs[1] as VFun<X, DN>
 
-    Polyad.Σ -> (xs[0] as VFun<X, DN>).sum()
-    Polyad.λ -> TODO()
+    Ops.Σ -> (xs[0] as VFun<X, DN>).sum()
+    Ops.λ -> TODO()
     else -> TODO(op.javaClass.name)
   }
 
   override val op: Op = when (this) {
-    is SVar -> Monad.id
-    is SConst -> Monad.id
-    is Sine -> Monad.sin
-    is Cosine -> Monad.cos
-    is Tangent -> Monad.tan
-    is Negative -> Monad.`-`
+    is SVar -> Ops.id
+    is SConst -> Ops.id
+    is Sine -> Ops.sin
+    is Cosine -> Ops.cos
+    is Tangent -> Ops.tan
+    is Negative -> Ops.`-`
 
-    is Sum -> Dyad.`+`
-    is Prod -> Dyad.`*`
-    is Power -> Dyad.pow
-    is Log -> Dyad.log
-    is Derivative -> Dyad.d
-    is DProd -> Dyad.dot
+    is Sum -> Ops.`+`
+    is Prod -> Ops.`*`
+    is Power -> Ops.pow
+    is Log -> Ops.log
+    is Derivative -> Ops.d
+    is DProd -> Ops.dot
 
-    is SComposition -> Polyad.λ
-    is VSumAll<X, *> -> Polyad.Σ
+    is SComposition -> Ops.λ
+    is VSumAll<X, *> -> Ops.Σ
   }
 
   override fun invoke(newBindings: Bindings<X>): SFun<X> =

@@ -210,43 +210,16 @@ text {
         </line>
       </g>
       <g transform="translate(29.1 0.0 ) " class="plt-axis">
-        <g class="tick" transform="translate(0.0 408.12899121088 ) ">
+        <g class="tick" transform="translate(0.0 365.9997480295584 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            0.2
+            0.5
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 373.99338557700224 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
-          </line>
-          <g transform="translate(-9.0 0.0 ) ">
-            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            0.4
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(0.0 339.8577799431245 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
-          </line>
-          <g transform="translate(-9.0 0.0 ) ">
-            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            0.6
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(0.0 305.7221743092468 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
-          </line>
-          <g transform="translate(-9.0 0.0 ) ">
-            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            0.8
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(0.0 271.58656867536905 ) ">
+        <g class="tick" transform="translate(0.0 304.4326070134891 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
@@ -255,43 +228,16 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 237.45096304149132 ) ">
+        <g class="tick" transform="translate(0.0 242.86546599741973 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            1.2
+            1.5
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 203.31535740761362 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
-          </line>
-          <g transform="translate(-9.0 0.0 ) ">
-            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            1.4
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(0.0 169.17975177373586 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
-          </line>
-          <g transform="translate(-9.0 0.0 ) ">
-            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            1.6
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(0.0 135.04414613985819 ) ">
-          <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
-          </line>
-          <g transform="translate(-9.0 0.0 ) ">
-            <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            1.8
-            </text>
-          </g>
-        </g>
-        <g class="tick" transform="translate(0.0 100.90854050598045 ) ">
+        <g class="tick" transform="translate(0.0 181.2983249813504 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
@@ -300,36 +246,36 @@ text {
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 66.77293487210272 ) ">
+        <g class="tick" transform="translate(0.0 119.73118396528105 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            2.2
+            2.5
             </text>
           </g>
         </g>
-        <g class="tick" transform="translate(0.0 32.637329238224936 ) ">
+        <g class="tick" transform="translate(0.0 58.164042949211705 ) ">
           <line stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0" x2="-6.0" y2="0.0">
           </line>
           <g transform="translate(-9.0 0.0 ) ">
             <text style="fill:#000000;" text-anchor="end" dy="0.35em">
-            2.4
+            3.0
             </text>
           </g>
         </g>
         <line x1="0.0" y1="0.0" x2="0.0" y2="427.0" stroke-width="1.0" stroke="rgb(0,0,0)" stroke-opacity="1.0">
         </line>
       </g>
-      <g transform="translate(29.1 0.0 ) " clip-path="url(#XUYFd6)" clip-bounds-jfx="[rect (0.0, 0.0), (940.9, 427.0)]">
+      <g transform="translate(29.1 0.0 ) " clip-path="url(#u3Cyfi)" clip-bounds-jfx="[rect (0.0, 0.0), (940.9, 427.0)]">
         <defs>
-          <clipPath id="XUYFd6">
+          <clipPath id="u3Cyfi">
             <rect x="0.0" y="0.0" width="940.9" height="427.0">
             </rect>
           </clipPath>
         </defs>
         <g>
-          <path d="M42.76818181818182 19.409090909090878 L42.76818181818182 19.409090909090878 L72.26347962382445 116.88701934648441 L101.75877742946709 207.07484217101916 L131.25407523510972 252.50227990671087 L160.74937304075235 270.09744340616345 L190.24467084639497 284.9006470274934 L219.73996865203762 291.8113237991413 L249.23526645768024 302.3692444914807 L278.7305642633229 307.8412032454165 L308.2258620689655 309.1694888692575 L337.72115987460813 317.8480140861496 L367.21645768025076 323.9494850473863 L396.7117554858934 329.1501799639974 L426.20705329153606 334.3403292575721 L455.7023510971787 337.03128269589683 L485.1976489028213 341.65334655361215 L514.692946708464 351.38582622213767 L544.1882445141066 357.64801512004715 L573.6835423197492 362.97302498521776 L603.1788401253918 368.52502928681804 L632.6741379310345 371.3667637819759 L662.1694357366771 377.66504655786264 L691.6647335423197 383.74676187965883 L721.1600313479623 387.38472744337815 L750.655329153605 391.38609387058256 L780.1506269592476 395.8745722335335 L809.6459247648903 399.3846310065924 L839.1412225705329 402.52061750768274 L868.6365203761756 405.59732169119167 L898.1318181818182 407.5909090909091 " fill="none" stroke-width="2.0" stroke="rgb(255,0,0)" stroke-opacity="1.0">
+          <path d="M42.76818181818182 19.409090909090935 L42.76818181818182 19.409090909090935 L72.26347962382445 109.11032945910603 L101.75877742946709 199.65607844890536 L131.25407523510972 283.7520981177773 L160.74937304075235 348.39153024842125 L190.24467084639497 370.8770240976204 L219.73996865203762 376.07698112944826 L249.23526645768024 378.27141843890803 L278.7305642633229 381.7382600763924 L308.2258620689655 384.47648710510765 L337.72115987460813 387.0033729256562 L367.21645768025076 389.0128363923776 L396.7117554858934 391.21578117490185 L426.20705329153606 394.5755767527779 L455.7023510971787 395.99082823595285 L485.1976489028213 397.80706787692776 L514.692946708464 399.84350669821424 L544.1882445141066 400.3956303311564 L573.6835423197492 402.2073715365553 L603.1788401253918 403.37290577647934 L632.6741379310345 404.04418994737887 L662.1694357366771 404.30169860436683 L691.6647335423197 405.84862913807905 L721.1600313479623 406.10380325096065 L750.655329153605 406.31915460055683 L780.1506269592476 406.9923940661381 L809.6459247648903 406.91022424658786 L839.1412225705329 407.0901641372813 L868.6365203761756 407.5909090909091 L898.1318181818182 407.317903976348 " fill="none" stroke-width="2.0" stroke="rgb(255,0,0)" stroke-opacity="1.0">
           </path>
         </g>
       </g>

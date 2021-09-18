@@ -72,16 +72,16 @@ open class MFun<X, R, C>(override vararg val inputs: Fun<X>): Fun<X>
   }
 
   override val op: Op = when (this) {
-    is MNegative -> Monad.`-`
-    is MTranspose -> Monad.ᵀ
-    is HProd<X, *, *> -> Dyad.`⊙`
-    is MMProd<X, *, *, *> -> Dyad.`*`
-    is MSum<X, *, *> -> Dyad.`+`
-    is SMProd<X, *, *> -> Dyad.dot
-    is MComposition<X, *, *> -> Polyad.λ
-    is VVMap<X, *, *> -> Polyad.map
-    is MMap<X, *, *> -> Polyad.map
-    else -> Monad.id
+    is MNegative -> Ops.`-`
+    is MTranspose -> Ops.ᵀ
+    is HProd<X, *, *> -> Ops.`⊙`
+    is MMProd<X, *, *, *> -> Ops.`*`
+    is MSum<X, *, *> -> Ops.`+`
+    is SMProd<X, *, *> -> Ops.dot
+    is MComposition<X, *, *> -> Ops.λ
+    is VVMap<X, *, *> -> Ops.map
+    is MMap<X, *, *> -> Ops.map
+    else -> Ops.id
   }
 }
 

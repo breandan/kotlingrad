@@ -9,7 +9,6 @@ fun genTypeLevelVariables() = """
 package ai.hypergraph.kotlingrad.typelevel
 
 import ai.hypergraph.kaliningraph.circuits.*
-import ai.hypergraph.kaliningraph.circuits.Dyad.*
 import ai.hypergraph.kotlingrad.typelevel.*
 
 /**
@@ -67,7 +66,7 @@ private fun genVarOp(op: String, sop: String) =
       genEx(bools.map { if (it) "XX" else "OO" }) +
       ") = " +
       genEx(bools.mapIndexed { i, b -> if (b) "XX" else "V$i" }) +
-      "(this, e, op = `$sop`)"
+      "(this, e, op = Ops.`$sop`)"
   } + genConstOpEx(op, sop) + genExOpConst(op, sop)
 
 private fun genEx(params: List<String> = (0 until numVars).map { "V$it" }) =
@@ -77,13 +76,13 @@ private fun genConstOpEx(op: String, sop: String) =
   "operator fun " +
     (0 until numVars).joinToString(", ", "<N: Number, ", ">") { "V$it: XO" } +
     " N.$op(e:" + genEx().let { "$it) = $it" } +
-    "(Nt(this), e, op = `$sop`)\n"
+    "(Nt(this), e, op = Ops.`$sop`)\n"
 
 private fun genExOpConst(op: String, sop: String) =
   "operator fun " +
     (0 until numVars).joinToString(", ", "<N: Number, ", "> ") { "V$it: XO" } +
     genEx().let { "$it.$op(n: N) = $it" } +
-    "(this, Nt(n), op = `$sop`)\n"
+    "(this, Nt(n), op = Ops.`$sop`)\n"
 
 fun allBinaryArraysOfLen(len: Int) =
   (0 until 2.shl(len - 1)).map { Integer.toBinaryString(it) }

@@ -3,7 +3,6 @@
 package ai.hypergraph.kotlingrad.typelevel
 
 import ai.hypergraph.kaliningraph.circuits.*
-import ai.hypergraph.kaliningraph.circuits.Dyad.*
 import kotlin.reflect.KProperty
 
 sealed class XO
@@ -25,10 +24,10 @@ constructor(
   private fun apply(me: Ex<*, *, *>, that: Ex<*, *, *>) =
     if (op == null) that else if (me is Nt<*> && that is Nt<*>)
       when (op) {
-        `+` -> Nt(me.value.toDouble() + that.value.toDouble())
-        `-` -> Nt(me.value.toDouble() - that.value.toDouble())
-        `*` -> Nt(me.value.toDouble() * that.value.toDouble())
-        `÷` -> Nt(me.value.toDouble() / that.value.toDouble())
+        Ops.`+` -> Nt(me.value.toDouble() + that.value.toDouble())
+        Ops.`-` -> Nt(me.value.toDouble() - that.value.toDouble())
+        Ops.`*` -> Nt(me.value.toDouble() * that.value.toDouble())
+        Ops.`÷` -> Nt(me.value.toDouble() / that.value.toDouble())
         else -> TODO()
       } else Ex<V1, V2, V3>(me, that, op = op)
 
@@ -36,7 +35,7 @@ constructor(
     Ex<V1, V2, V3>(exs = exs, op = op, name = property.name)
 
   override fun toString() = exs.joinToString("$op") {
-    if (op in arrayOf(`*`, `÷`) && it.op in arrayOf(`+`, `-`)) "($it)" else "$it"
+    if (op in arrayOf(Ops.`*`, Ops.`÷`) && it.op in arrayOf(Ops.`+`, Ops.`-`)) "($it)" else "$it"
   }.let { name?.run { "$name = $it" } ?: it }
 }
 
