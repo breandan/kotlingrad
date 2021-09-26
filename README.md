@@ -166,7 +166,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
+<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/main/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
 
 <sup>τ, λ, π, ω</sup> Arbitrary products.
 
@@ -274,7 +274,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-For further details, please refer to [the implementation](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt).
+For further details, please refer to [the implementation](core/src/main/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt).
 
 ### Example
 
@@ -299,7 +299,7 @@ println("z(x, y) \t= $z\n" +
   "∇z \t\t= $`∇z` \n\t\t= [${`∇z`[x]!!(*values)}, ${`∇z`[y]!!(*values)}]ᵀ")
 ```
 
-Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/HelloKotlingrad.kt) via `./gradlew HelloKotlingrad` should produce the following output:
+Any backticks and unicode characters above are simply for readability and have no effect on the behavior. Running [this program](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/HelloKotlingrad.kt) via `./gradlew HelloKotlingrad` should produce the following output:
 
 ```
 z(x, y)         = ((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)
@@ -326,7 +326,7 @@ Kotlin∇ functions are a type of [directed acyclic graph](https://en.wikipedia.
 
 ![](samples/src/main/resources/dataflow.svg)
 
-Red and blue edges indicate the right and left inputs to a binary operator, respectively. Consider the DFG for a batch of stochastic gradients on [linear regression](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/LinearRegression.kt), which can be written in matrix form as <img src="https://render.githubusercontent.com/render/math?math=\nabla_{\Theta}||\mathbf{Y} - \mathbf{X}\Theta||^2">:
+Red and blue edges indicate the right and left inputs to a binary operator, respectively. Consider the DFG for a batch of stochastic gradients on [linear regression](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/LinearRegression.kt), which can be written in matrix form as <img src="https://render.githubusercontent.com/render/math?math=\nabla_{\Theta}||\mathbf{Y} - \mathbf{X}\Theta||^2">:
 
 ![](samples/src/main/resources/lr_batch_loss_graph.svg)
 
@@ -334,12 +334,12 @@ Thetas represent the hidden parameters under differentiation and the constants a
 
 ### Plotting
 
-To generate the [sample 2D plots](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot2D.kt) below, run `./gradlew Plot2D`.
+To generate the [sample 2D plots](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/Plot2D.kt) below, run `./gradlew Plot2D`.
 
 <p align="center"><img src="samples/src/main/resources/plot.svg"></p>
 <p align="center"><img src="samples/src/main/resources/hermite.svg"></p>
 
-Plotting is also possible in higher dimensions, [for example](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew Plot3D`:
+Plotting is also possible in higher dimensions, [for example](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/Plot3D.kt) in 3D via `./gradlew Plot3D`:
 
 ![](samples/src/main/resources/ripple.png)
 ![](samples/src/main/resources/pulsar.png)
@@ -348,7 +348,7 @@ Plotting is also possible in higher dimensions, [for example](samples/src/main/k
 
 ### Loss curves
 
-Gradient descent is one application for Kotlin∇. Below, is a typical loss curve of SGD on [a multilayer perceptron](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/MLP.kt):
+Gradient descent is one application for Kotlin∇. Below, is a typical loss curve of SGD on [a multilayer perceptron](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/MLP.kt):
 
 ![](samples/src/main/resources/mlp_loss.svg)
 
@@ -356,7 +356,7 @@ To train the model, execute `./gradlew MLP` from within the parent directory.
 
 ## Testing
 
-To run [the tests](core/src/test/kotlin/edu/umontreal/kotlingrad), execute: `./gradlew test`
+To run [the tests](core/src/test/kotlin/ai/hypergraph/kotlingrad), execute: `./gradlew test`
 
 Kotlin∇ claims to eliminate certain runtime errors, but how do we know the proposed implementation is not incorrect? One method, borrowed from the Haskell community, is called [property-based testing](http://breandan.net/public/masters_thesis.pdf#33) (PBT), closely related to [metamorphic testing](http://breandan.net/public/masters_thesis.pdf#34). Notable implementations include [QuickCheck](https://github.com/nick8325/quickcheck), [Hypothesis](https://github.com/HypothesisWorks/hypothesis) and [ScalaTest](http://www.scalatest.org/user_guide/property_based_testing) (ported to Kotlin in [Kotest](https://github.com/kotest/kotest)). PBT uses algebraic properties to verify the result of an operation by constructing semantically equivalent but syntactically distinct expressions, which should produce the same answer. Kotlin∇ uses two such equivalences to validate its AD implementation:
 
@@ -404,7 +404,7 @@ PBT will search the input space for two numerical values `ẋ` and `ẏ`, which 
 
 ![](samples/src/main/resources/comparison.svg)
 
-Above, we [compare numerical errors](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/ADSDComparison.kt) for three types of computational differentiation against infinite precision symbolic differentiation (IP):
+Above, we [compare numerical errors](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/ADSDComparison.kt) for three types of computational differentiation against infinite precision symbolic differentiation (IP):
 
 1. Finite precision automatic differentiation (AD)
 2. Finite precision symbolic differentiation (SD)
@@ -416,7 +416,7 @@ There are many other ways to independently verify the numerical gradient, such a
 
 ## How?
 
-To understand the core of Kotlin∇'s AD implementation, please refer to the [scalar example](core/src/main/kotlin/edu/umontreal/kotlingrad/api/Scalar.kt).
+To understand the core of Kotlin∇'s AD implementation, please refer to the [scalar example](core/src/main/kotlin/ai/hypergraph/kotlingrad/api/Scalar.kt).
 
 This project relies on a few Kotlin-specific language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin∇:
 
@@ -546,7 +546,7 @@ Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, on
 
 [![](latex/figures/kotlingrad_diagram.png)](http://breandan.net/public/masters_thesis.pdf#page=58)
 
-Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a [`Bindings`](/core/src/main/kotlin/edu/umontreal/kotlingrad/api/Bindings.kt) instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the [`invoke` operator](https://kotlinlang.org/docs/reference/operator-overloading.html#invoke), then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
+Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a [`Bindings`](/core/src/main/kotlin/ai/hypergraph/kotlingrad/api/Bindings.kt) instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the [`invoke` operator](https://kotlinlang.org/docs/reference/operator-overloading.html#invoke), then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
 
 Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
@@ -580,7 +580,7 @@ Extensions can also be defined in another file or context and imported on demand
 
 #### Multiple Dispatch
 
-In conjunction with ADTs, Kotlin∇ also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/edu/umontreal/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
+In conjunction with ADTs, Kotlin∇ also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/ai/hypergraph/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
 Building on the previous example, a common task in AD is to [simplify a graph](http://deeplearning.net/software/theano/extending/optimization.html). This is useful in order to minimize the total number of calculations required, improving numerical stability. We can eagerly simplify expressions based on algebraic [rules of replacement](https://en.wikipedia.org/wiki/Rule_of_replacement). Smart casting allows us to access members of a class after checking its type, without explicitly casting it:
 
@@ -645,7 +645,7 @@ val add = Vec(1, 2, 3) + Vec(listOf(...))      // May fail at runtime
 val sum = Vec(1, 2) + add                      // Does not compile
 ```
 
-A similar syntax is available for [matrices](core/src/main/kotlin/edu/umontreal/kotlingrad/api/Matrix.kt) and higher-rank [tensors](core/src/main/kotlin/edu/umontreal/kotlingrad/api/Tensor.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is available for [matrices](core/src/main/kotlin/ai/hypergraph/kotlingrad/api/Matrix.kt) and higher-rank [tensors](core/src/main/kotlin/ai/hypergraph/kotlingrad/api/Tensor.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
@@ -675,7 +675,7 @@ val lm = l * m
 // m * m // Compile error: Expected Mat<3, *>, found Mat<4, 3>
 ```
 
-[Further examples](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/MatrixDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
+[Further examples](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/MatrixDemo.kt) are provided for shape-safe matrix operations such as addition, subtraction and transposition.
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
@@ -712,7 +712,7 @@ Without property delegation, users would need to repeat the property name in the
 
 ## Experimental ideas
 
-The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/edu/umontreal/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/edu/mcgill/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
@@ -856,7 +856,7 @@ interface Ring<T>: Group<T> {
 val doubleRing = Ring(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> a * b })
 ```
 
-Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`TypeClassing.kt`](core/src/main/kotlin/edu/umontreal/kotlingrad/typelevel/TypeClassing.kt).
+Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`TypeClassing.kt`](core/src/main/kotlin/ai/hypergraph/kotlingrad/typelevel/TypeClassing.kt).
 
 ## Grammar
 
