@@ -6,7 +6,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.3-22"
+  kotlin("jupyter.api") version "0.10.0-216" // TODO: unresolved dependency after update?
 }
 
 // TODO: Maybe move this into the plugin somehow?
