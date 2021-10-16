@@ -6,7 +6,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-216"
+  kotlin("jupyter.api") version "0.10.3-22"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -39,11 +39,11 @@ dependencies {
 
   // Property-based testing
 
-  val kotestVersion = "5.0.0.M1"
+  val kotestVersion = "5.0.0.M2"
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   testImplementation("io.kotest:kotest-property:$kotestVersion")
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
+  testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
   // Symbolic fuzzing interpreter
   testImplementation(kotlin("scripting-jsr223"))
