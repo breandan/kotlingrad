@@ -19,7 +19,7 @@ vec = [Tⁿ]
 mat = [[Tⁿ]ⁿ]
 ```
 
-<sup>&lowast;</sup> To increase `n`, see [`DimGen.kt`](shipshape/src/main/kotlin/edu/mcgill/shipshape/DimGen.kt).
+<sup>&lowast;</sup> To increase `n`, see [`DimGen.kt`](shipshape/src/main/kotlin/ai/hypergraph/shipshape/DimGen.kt).
 
 ## DSL
 

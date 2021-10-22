@@ -681,7 +681,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 <sup>&lowast;</sup> Many type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
-<sup>&dagger;</sup> Statically generated code, shipped within the library. To regenerate these methods (e.g. using larger dimensions), a code generator is [provided](shipshape/src/main/kotlin/edu/mcgill/shipshape).
+<sup>&dagger;</sup> Statically generated code, shipped within the library. To regenerate these methods (e.g. using larger dimensions), a code generator is [provided](shipshape/src/main/kotlin/ai/hypergraph/shipshape).
 
 #### Intermediate representation
 
@@ -714,7 +714,7 @@ Without property delegation, users would need to repeat the property name in the
 
 The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/main/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
-When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/edu/mcgill/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
+When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/ai/hypergraph/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
 Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
