@@ -6,7 +6,8 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("jupyter.api") version "0.10.0-216" // TODO: unresolved dependency after update?
+  id("com.google.devtools.ksp") version "1.6.0-RC-1.0.1-RC"
+  kotlin("jupyter.api") version "0.10.3-31"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -51,6 +52,10 @@ dependencies {
 
 tasks {
   compileKotlin { dependsOn("genShapes") }
+
+  processJupyterApiResources {
+    libraryProducers = listOf("org.my.lib.Integration")
+  }
 
   val sourcesJar by registering(Jar::class) {
     archiveClassifier.set("sources")

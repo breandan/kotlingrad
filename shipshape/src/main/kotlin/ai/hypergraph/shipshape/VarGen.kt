@@ -51,8 +51,8 @@ val numVars = 3
 private fun genFuns() =
   listOf(
     // TODO: Bind to
-    "plus" to "`+`",
-    "minus" to "`-`",
+    "plus" to "sum",
+    "minus" to "sub",
     "times" to "prod",
     "div" to "ratio"
   ).joinToString("\n") { (op, sop) -> genVarOp(op, sop) }
