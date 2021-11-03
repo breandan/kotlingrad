@@ -154,8 +154,8 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
 
   // TODO: Implement a proper curry and lower variadic apply onto it.
   fun apply(op: Op): (SFun<X>) -> SFun<X> = when (op) {
-    Ops.`+` -> { it: SFun<X> -> this + it }
-    Ops.`*` -> { it: SFun<X> -> this * it }
+    Ops.sum -> { it: SFun<X> -> this + it }
+    Ops.prod -> { it: SFun<X> -> this * it }
     else -> TODO(op.javaClass.name)
   }
 
@@ -169,11 +169,11 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     Ops.sin -> (xs[0] as SFun<X>).sin()
     Ops.cos -> (xs[0] as SFun<X>).cos()
     Ops.tan -> (xs[0] as SFun<X>).tan()
-    Ops.`-` -> -(xs[0] as SFun<X>)
+    Ops.sub -> -(xs[0] as SFun<X>)
 
     Ops.d -> TODO()
-    Ops.`+` -> (xs[0] as SFun<X>) + xs[1] as SFun<X>
-    Ops.`*` -> (xs[0] as SFun<X>) * xs[1] as SFun<X>
+    Ops.sum -> (xs[0] as SFun<X>) + xs[1] as SFun<X>
+    Ops.prod -> (xs[0] as SFun<X>) * xs[1] as SFun<X>
     Ops.pow -> (xs[0] as SFun<X>) pow xs[1] as SFun<X>
     Ops.log -> (xs[0] as SFun<X>).log(xs[1] as SFun<X>)
     Ops.dot -> (xs[0] as VFun<X, DN>) dot xs[1] as VFun<X, DN>
@@ -189,10 +189,10 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
     is Sine -> Ops.sin
     is Cosine -> Ops.cos
     is Tangent -> Ops.tan
-    is Negative -> Ops.`-`
+    is Negative -> Ops.sub
 
-    is Sum -> Ops.`+`
-    is Prod -> Ops.`*`
+    is Sum -> Ops.sum
+    is Prod -> Ops.prod
     is Power -> Ops.pow
     is Log -> Ops.log
     is Derivative -> Ops.d

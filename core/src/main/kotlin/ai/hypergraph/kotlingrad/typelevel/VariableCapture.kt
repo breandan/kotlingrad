@@ -24,10 +24,10 @@ constructor(
   private fun apply(me: Ex<*, *, *>, that: Ex<*, *, *>) =
     if (op == null) that else if (me is Nt<*> && that is Nt<*>)
       when (op) {
-        Ops.`+` -> Nt(me.value.toDouble() + that.value.toDouble())
-        Ops.`-` -> Nt(me.value.toDouble() - that.value.toDouble())
-        Ops.`*` -> Nt(me.value.toDouble() * that.value.toDouble())
-        Ops.`÷` -> Nt(me.value.toDouble() / that.value.toDouble())
+        Ops.sum -> Nt(me.value.toDouble() + that.value.toDouble())
+        Ops.sub -> Nt(me.value.toDouble() - that.value.toDouble())
+        Ops.prod -> Nt(me.value.toDouble() * that.value.toDouble())
+        Ops.ratio -> Nt(me.value.toDouble() / that.value.toDouble())
         else -> TODO()
       } else Ex<V1, V2, V3>(me, that, op = op)
 
@@ -35,7 +35,7 @@ constructor(
     Ex<V1, V2, V3>(exs = exs, op = op, name = property.name)
 
   override fun toString() = exs.joinToString("$op") {
-    if (op in arrayOf(Ops.`*`, Ops.`÷`) && it.op in arrayOf(Ops.`+`, Ops.`-`)) "($it)" else "$it"
+    if (op in arrayOf(Ops.prod, Ops.ratio) && it.op in arrayOf(Ops.sum, Ops.sub)) "($it)" else "$it"
   }.let { name?.run { "$name = $it" } ?: it }
 }
 

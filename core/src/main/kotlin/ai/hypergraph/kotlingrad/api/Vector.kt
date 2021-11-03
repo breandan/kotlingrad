@@ -80,14 +80,14 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
   }
 
   override val op: Op = when (this) {
-    is VNegative<X, *> -> Ops.`-`
+    is VNegative<X, *> -> Ops.sub
     is VMap<X, *> -> Ops.map
-    is VSum<X, *> -> Ops.`+`
+    is VSum<X, *> -> Ops.sum
     is Gradient<X, *> -> Ops.d
     is VDerivative<X, *> -> Ops.d
-    is VVProd<X, *> -> Ops.`*`
-    is SVProd<X, *> -> Ops.`*`
-    is VSProd<X, *> -> Ops.`*`
+    is VVProd<X, *> -> Ops.prod
+    is SVProd<X, *> -> Ops.prod
+    is VSProd<X, *> -> Ops.prod
     is MVProd<X, *, *> -> Ops.dot
     is VMProd<X, *, *> -> Ops.dot
     is VComposition<X, *> -> Ops.λ
