@@ -5,7 +5,6 @@
 
 [![Kotlin 1.6.20](https://img.shields.io/badge/Kotlin-1.6.20-blue.svg?style=flat&logo=kotlin)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/ai.hypergraph/kotlingrad.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22ai.hypergraph%22)
-[![](https://jitpack.io/v/breandan/kotlingrad.svg)](https://jitpack.io/#breandan/kotlingrad)
 [![CI](https://github.com/breandan/kotlingrad/workflows/CI/badge.svg)](https://github.com/breandan/kotlingrad/actions)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3549076.svg)](https://doi.org/10.5281/zenodo.3549076)
 

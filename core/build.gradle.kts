@@ -40,7 +40,7 @@ dependencies {
 
   // Property-based testing
 
-  val kotestVersion = "5.0.0.M2"
+  val kotestVersion = "5.0.0.M3"
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   testImplementation("io.kotest:kotest-property:$kotestVersion")
