@@ -7,7 +7,7 @@ plugins {
   id("shipshape")
   idea
   id("com.google.devtools.ksp") version "1.6.0-RC-1.0.1-RC"
-  kotlin("jupyter.api") version "0.10.3-31"
+  kotlin("jupyter.api") version "0.10.3-33"
 }
 
 // TODO: Maybe move this into the plugin somehow?
@@ -24,7 +24,7 @@ dependencies {
 
   // Mathematical libraries
   // TODO: migrate to multik after next release
-   implementation("org.jetbrains.bio:viktor:1.1.0")
+   implementation("org.jetbrains.bio:viktor:1.2.0")
 //  implementation("org.jetbrains.kotlinx:multik-api:0.0.2")
 //  implementation("org.jetbrains.kotlinx:multik-default:0.0.2")
 

@@ -5,6 +5,16 @@ package ai.hypergraph.kotlingrad.typelevel
 import ai.hypergraph.kaliningraph.circuits.*
 import ai.hypergraph.kotlingrad.typelevel.*
 
+typealias OOO = Ex<OO, OO, OO>
+typealias OOX = Ex<OO, OO, XX>
+typealias OXO = Ex<OO, XX, OO>
+typealias OXX = Ex<OO, XX, XX>
+typealias XOO = Ex<XX, OO, OO>
+typealias XOX = Ex<XX, OO, XX>
+typealias XXO = Ex<XX, XX, OO>
+typealias XXX = Ex<XX, XX, XX>
+
+
 /**
  * The following code is a type-level encoding of the 3-element graded poset.
  *
@@ -37,46 +47,66 @@ import ai.hypergraph.kotlingrad.typelevel.*
  *   xyz |            yz     xz     xy     z       y       x       P
  */
 
-@JvmName("plus:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<OO, OO, OO>) = Ex<V0, V1, V2>(this, e, op = Ops.sum)
-@JvmName("plus:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<OO, OO, XX>) = Ex<V0, V1, XX>(this, e, op = Ops.sum)
-@JvmName("plus:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<OO, XX, OO>) = Ex<V0, XX, V2>(this, e, op = Ops.sum)
-@JvmName("plus:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<OO, XX, XX>) = Ex<V0, XX, XX>(this, e, op = Ops.sum)
-@JvmName("plus:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<XX, OO, OO>) = Ex<XX, V1, V2>(this, e, op = Ops.sum)
-@JvmName("plus:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<XX, OO, XX>) = Ex<XX, V1, XX>(this, e, op = Ops.sum)
-@JvmName("plus:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = Ops.sum)
-@JvmName("plus:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = Ops.sum)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.plus(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Nt(this), e, op = Ops.sum)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(n: N) = Ex<V0, V1, V2>(this, Nt(n), op = Ops.sum)
+@JvmName("plus:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: OOO) = Ex<V0, V1, V2>(Ops.sum, null, this, e)
+@JvmName("plus:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: OOX) = Ex<V0, V1, XX>(Ops.sum, null, this, e)
+@JvmName("plus:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: OXO) = Ex<V0, XX, V2>(Ops.sum, null, this, e)
+@JvmName("plus:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: OXX) = Ex<V0, XX, XX>(Ops.sum, null, this, e)
+@JvmName("plus:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XOO) = Ex<XX, V1, V2>(Ops.sum, null, this, e)
+@JvmName("plus:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XOX) = Ex<XX, V1, XX>(Ops.sum, null, this, e)
+@JvmName("plus:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XXO) = Ex<XX, XX, V2>(Ops.sum, null, this, e)
+@JvmName("plus:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XXX) = Ex<XX, XX, XX>(Ops.sum, null, this, e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.plus(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.sum, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(n: N) = Ex<V0, V1, V2>(Ops.sum, null, this, Nt(n))
 
-@JvmName("minus:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<OO, OO, OO>) = Ex<V0, V1, V2>(this, e, op = Ops.sub)
-@JvmName("minus:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<OO, OO, XX>) = Ex<V0, V1, XX>(this, e, op = Ops.sub)
-@JvmName("minus:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<OO, XX, OO>) = Ex<V0, XX, V2>(this, e, op = Ops.sub)
-@JvmName("minus:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<OO, XX, XX>) = Ex<V0, XX, XX>(this, e, op = Ops.sub)
-@JvmName("minus:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<XX, OO, OO>) = Ex<XX, V1, V2>(this, e, op = Ops.sub)
-@JvmName("minus:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<XX, OO, XX>) = Ex<XX, V1, XX>(this, e, op = Ops.sub)
-@JvmName("minus:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = Ops.sub)
-@JvmName("minus:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = Ops.sub)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.minus(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Nt(this), e, op = Ops.sub)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(n: N) = Ex<V0, V1, V2>(this, Nt(n), op = Ops.sub)
+@JvmName("minus:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: OOO) = Ex<V0, V1, V2>(Ops.sub, null, this, e)
+@JvmName("minus:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: OOX) = Ex<V0, V1, XX>(Ops.sub, null, this, e)
+@JvmName("minus:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: OXO) = Ex<V0, XX, V2>(Ops.sub, null, this, e)
+@JvmName("minus:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: OXX) = Ex<V0, XX, XX>(Ops.sub, null, this, e)
+@JvmName("minus:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XOO) = Ex<XX, V1, V2>(Ops.sub, null, this, e)
+@JvmName("minus:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XOX) = Ex<XX, V1, XX>(Ops.sub, null, this, e)
+@JvmName("minus:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XXO) = Ex<XX, XX, V2>(Ops.sub, null, this, e)
+@JvmName("minus:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XXX) = Ex<XX, XX, XX>(Ops.sub, null, this, e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.minus(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.sub, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(n: N) = Ex<V0, V1, V2>(Ops.sub, null, this, Nt(n))
 
-@JvmName("times:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<OO, OO, OO>) = Ex<V0, V1, V2>(this, e, op = Ops.prod)
-@JvmName("times:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<OO, OO, XX>) = Ex<V0, V1, XX>(this, e, op = Ops.prod)
-@JvmName("times:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<OO, XX, OO>) = Ex<V0, XX, V2>(this, e, op = Ops.prod)
-@JvmName("times:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<OO, XX, XX>) = Ex<V0, XX, XX>(this, e, op = Ops.prod)
-@JvmName("times:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<XX, OO, OO>) = Ex<XX, V1, V2>(this, e, op = Ops.prod)
-@JvmName("times:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<XX, OO, XX>) = Ex<XX, V1, XX>(this, e, op = Ops.prod)
-@JvmName("times:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = Ops.prod)
-@JvmName("times:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = Ops.prod)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.times(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Nt(this), e, op = Ops.prod)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(n: N) = Ex<V0, V1, V2>(this, Nt(n), op = Ops.prod)
+@JvmName("times:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: OOO) = Ex<V0, V1, V2>(Ops.prod, null, this, e)
+@JvmName("times:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: OOX) = Ex<V0, V1, XX>(Ops.prod, null, this, e)
+@JvmName("times:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: OXO) = Ex<V0, XX, V2>(Ops.prod, null, this, e)
+@JvmName("times:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: OXX) = Ex<V0, XX, XX>(Ops.prod, null, this, e)
+@JvmName("times:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XOO) = Ex<XX, V1, V2>(Ops.prod, null, this, e)
+@JvmName("times:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XOX) = Ex<XX, V1, XX>(Ops.prod, null, this, e)
+@JvmName("times:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XXO) = Ex<XX, XX, V2>(Ops.prod, null, this, e)
+@JvmName("times:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XXX) = Ex<XX, XX, XX>(Ops.prod, null, this, e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.times(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.prod, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(n: N) = Ex<V0, V1, V2>(Ops.prod, null, this, Nt(n))
 
-@JvmName("div:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<OO, OO, OO>) = Ex<V0, V1, V2>(this, e, op = Ops.ratio)
-@JvmName("div:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<OO, OO, XX>) = Ex<V0, V1, XX>(this, e, op = Ops.ratio)
-@JvmName("div:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<OO, XX, OO>) = Ex<V0, XX, V2>(this, e, op = Ops.ratio)
-@JvmName("div:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<OO, XX, XX>) = Ex<V0, XX, XX>(this, e, op = Ops.ratio)
-@JvmName("div:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<XX, OO, OO>) = Ex<XX, V1, V2>(this, e, op = Ops.ratio)
-@JvmName("div:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<XX, OO, XX>) = Ex<XX, V1, XX>(this, e, op = Ops.ratio)
-@JvmName("div:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<XX, XX, OO>) = Ex<XX, XX, V2>(this, e, op = Ops.ratio)
-@JvmName("div:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: Ex<XX, XX, XX>) = Ex<XX, XX, XX>(this, e, op = Ops.ratio)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.div(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Nt(this), e, op = Ops.ratio)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(n: N) = Ex<V0, V1, V2>(this, Nt(n), op = Ops.ratio)
+@JvmName("div:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: OOO) = Ex<V0, V1, V2>(Ops.ratio, null, this, e)
+@JvmName("div:__t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: OOX) = Ex<V0, V1, XX>(Ops.ratio, null, this, e)
+@JvmName("div:_t_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: OXO) = Ex<V0, XX, V2>(Ops.ratio, null, this, e)
+@JvmName("div:_tt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: OXX) = Ex<V0, XX, XX>(Ops.ratio, null, this, e)
+@JvmName("div:t__") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XOO) = Ex<XX, V1, V2>(Ops.ratio, null, this, e)
+@JvmName("div:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XOX) = Ex<XX, V1, XX>(Ops.ratio, null, this, e)
+@JvmName("div:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XXO) = Ex<XX, XX, V2>(Ops.ratio, null, this, e)
+@JvmName("div:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XXX) = Ex<XX, XX, XX>(Ops.ratio, null, this, e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.div(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.ratio, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(n: N) = Ex<V0, V1, V2>(Ops.ratio, null, this, Nt(n))
+
+@JvmName("i:__t") operator fun <N: Number> OOX.invoke(v3: V3Bnd<N>) = call<N>(v3)
+@JvmName("i:_t_") operator fun <N: Number> OXO.invoke(v2: V2Bnd<N>) = call<N>(v2)
+@JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v2: V2Bnd<N>) = inv<N, OOX>(v2)
+@JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v3: V3Bnd<N>) = inv<N, OXO>(v3)
+@JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call<N>(v2, v3)
+@JvmName("i:t__") operator fun <N: Number> XOO.invoke(v1: V1Bnd<N>) = call<N>(v1)
+@JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v1: V1Bnd<N>) = inv<N, OOX>(v1)
+@JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v3: V3Bnd<N>) = inv<N, XOO>(v3)
+@JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = call<N>(v1, v3)
+@JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v1: V1Bnd<N>) = inv<N, OXO>(v1)
+@JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v2: V2Bnd<N>) = inv<N, XOO>(v2)
+@JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call<N>(v1, v2)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>) = inv<N, OXX>(v1)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v2: V2Bnd<N>) = inv<N, XOX>(v2)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = inv<N, OOX>(v1, v2)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v3: V3Bnd<N>) = inv<N, XXO>(v3)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = inv<N, OXO>(v1, v3)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = inv<N, XOO>(v2, v3)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call<N>(v1, v2, v3)
