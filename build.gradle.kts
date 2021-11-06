@@ -61,6 +61,12 @@ allprojects {
     implementation(platform(kotlin("bom")))
     implementation(kotlin("stdlib"))
     compileOnly("org.jetbrains:annotations:22.0.0")
+
+    val ejmlVersion = "0.41"
+    implementation("org.ejml:ejml-kotlin:$ejmlVersion")
+    implementation("org.ejml:ejml-all:$ejmlVersion")
+    implementation("org.graalvm.js:js:21.3.0")
+    implementation("guru.nidi:graphviz-kotlin:0.18.1")
   }
 
   tasks {

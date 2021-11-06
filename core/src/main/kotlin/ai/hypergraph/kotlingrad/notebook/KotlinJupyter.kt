@@ -3,25 +3,25 @@ package ai.hypergraph.kotlingrad.notebook
 import ai.hypergraph.kaliningraph.*
 import ai.hypergraph.kaliningraph.typefamily.*
 import ai.hypergraph.kaliningraph.circuits.Gate
-import ai.hypergraph.kaliningraph.matrix.BooleanMatrix
+import ai.hypergraph.kaliningraph.tensor.BooleanMatrix
+import ai.hypergraph.kotlingrad.api.SFun
 import ai.hypergraph.kotlingrad.api.SVar
 import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.annotations.JupyterLibrary
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 
-@JupyterLibrary
 internal class Integration: JupyterIntegration() {
   override fun Builder.onLoaded() {
     listOf(
             "ai.hypergraph.kotlingrad.api.*",
             "ai.hypergraph.kaliningraph.*",
-            "ai.hypergraph.kaliningraph.matrix.*",
+            "ai.hypergraph.kaliningraph.tensor.*",
             "ai.hypergraph.kaliningraph.circuits.*",
             "org.ejml.data.*",
             "org.ejml.kotlin.*"
     ).forEach { import(it) }
 
     render<SVar<*>> { HTML(it.toGate().graph.html()) }
+    render<SFun<*>> { HTML(it.toGate().graph.html()) }
     render<BooleanMatrix> { HTML("<img src=\"${it.matToImg()}\"/>") }
     render<Graph<*, *, *>> { HTML(it.html()) }
     render<Gate> { HTML(it.graph.html()) }

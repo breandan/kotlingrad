@@ -31,8 +31,6 @@ dependencies {
   implementation(kotlin("reflect"))
 //  implementation("org.jetbrains:annotations:22.0.0")
 
-  testImplementation("org.nd4j:nd4j-native-platform:1.0.0-beta7")
-
 //  val tfVersion by extra { "-SNAPSHOT" }
 //  testImplementation("com.github.tensorflow:java:$tfVersion")
 //  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
@@ -54,7 +52,7 @@ tasks {
   compileKotlin { dependsOn("genShapes") }
 
   processJupyterApiResources {
-    libraryProducers = listOf("org.my.lib.Integration")
+    libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
   }
 
   val sourcesJar by registering(Jar::class) {
