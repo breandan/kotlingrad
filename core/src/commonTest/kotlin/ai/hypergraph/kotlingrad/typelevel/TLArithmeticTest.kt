@@ -1,6 +1,6 @@
 package ai.hypergraph.kotlingrad.typelevel
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 
 class TLArithmeticTest {
   @Test
@@ -10,7 +10,7 @@ class TLArithmeticTest {
     val q = t.takesThree()
 
     val four: N4 = (D1 + D1) + (D1 + D1)
-    val vec3 = Vec(D1) + Vec(D2)
+//    val vec3 = Vec(D1) + Vec(D2)
 
     val m = Sum<N2, N2>(D2, D2)
 

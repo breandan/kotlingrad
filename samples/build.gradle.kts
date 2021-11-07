@@ -1,6 +1,7 @@
 plugins {
   application
   id("com.palantir.graal") version "0.10.0"
+  kotlin("jvm") version "1.6.0-RC2"
 }
 
 val entrypoint = "ai.hypergraph.kotlingrad.samples.HelloKotlingradKt"
@@ -13,8 +14,15 @@ graal {
 }
 
 dependencies {
+  implementation(kotlin("stdlib"))
+  compileOnly("org.jetbrains:annotations:22.0.0")
   implementation(project(":kotlingrad"))
 
+  val ejmlVersion = "0.41"
+  implementation("org.ejml:ejml-kotlin:$ejmlVersion")
+  implementation("org.ejml:ejml-all:$ejmlVersion")
+  implementation("org.graalvm.js:js:21.3.0")
+  implementation("guru.nidi:graphviz-kotlin:0.18.1")
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.3")
 

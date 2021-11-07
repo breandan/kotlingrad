@@ -1,5 +1,7 @@
 package ai.hypergraph.kotlingrad.typelevel
 
+import kotlin.jvm.JvmName
+
 interface TLNat {
   val eval: Int
 }

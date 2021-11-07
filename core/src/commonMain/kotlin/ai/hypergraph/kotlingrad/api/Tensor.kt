@@ -2,6 +2,8 @@
 
 package ai.hypergraph.kotlingrad.api
 
+import kotlin.jvm.JvmName
+
 open class Vt<E, L: N9> constructor(val contents: List<E>) {
   companion object {
     operator fun <T> invoke(t: T): Vt<T, N1> = Vt(listOf(t))

@@ -98,28 +98,28 @@ private fun genExOpConst(op: String, sop: String) =
  * Generates all possible p-adic partial applications of an [numVars]-dimensional function, e.g., supports all the following invocations:
  *
  * f_abc := a + b + c
- * f(b = 1) -> f_ab
- * f(a = 1) -> f_bc
- * f(a = 1, b = 2) -> f_c
- * f(a = 1, c = 2) -> f_b
- * f(a = 1, b = 2, c = 3) -> 6
+ * f(b to 1) -> f_ab
+ * f(a to 1) -> f_bc
+ * f(a to 1, b to 2) -> f_c
+ * f(a to 1, c to 2) -> f_b
+ * f(a to 1, b to 2, c to 3) -> 6
  *
  * It is possible to further reduce the space complexity with vanilla currying if we only want to support monadic partial application, i.e.:
  *
- * val g = f(a = 1)
- * val h = g(b = 1)
- * val i = h(c = 1)
+ * val g = f(a to 1)
+ * val h = g(b to 1)
+ * val i = h(c to 1) == f(a to 1)(b to 1)(c to 1)
  */
 fun genInvokes(allFreeVariableConfigurations: Set<List<Boolean>> = allBinaryArraysOfLen(numVars).toSet() - setOf(listOf(false, false, false))) =
-  allFreeVariableConfigurations.joinToString("\n") { bools ->
-    // Generate all subsets of the unbound variables
-    val allFreeVariableSubsets: Set<Set<Int>> = bools.indices.filter { bools[it] }.map { it + 1 }.powerset() - setOf(emptySet())
+  allFreeVariableConfigurations.joinToString("\n") { fvConfig ->
+    // Generate all subsets of the unbound variables in each free variable configuration
+    val allFreeVariableSubsets: Set<Set<Int>> = fvConfig.indices.filter { fvConfig[it] }.map { it + 1 }.powerset() - setOf(emptySet())
     allFreeVariableSubsets.joinToString("\n") { fvs ->
-      "@JvmName(\"i:" + bools.joinToString("") { if (it) "t" else "_" } + "\") operator fun <N: Number> " +
-        bools.joinToString("") { if (it) "X" else "O" } + ".invoke(" +
+      "@JvmName(\"i:" + fvConfig.joinToString("") { if (it) "t" else "_" } + "\") operator fun <N: Number> " +
+        fvConfig.joinToString("") { if (it) "X" else "O" } + ".invoke(" +
         fvs.joinToString(", ") { "v$it: V${it}Bnd<N>" } +
         ") = " +
-        bools.mapIndexed { i, b -> val isBound = (i + 1) in fvs; !(b && isBound || !b) }.joinToString("") { if (it) "X" else "O" }
+        fvConfig.mapIndexed { i, b -> val isBound = (i + 1) in fvs; !(!b || isBound) }.joinToString("") { if (it) "X" else "O" }
           .let { if (it == "OOO") "call<N>" else "inv<N, $it>" } +
         fvs.joinToString(", ", "(", ")") { "v$it" }
     }

@@ -4,31 +4,10 @@ package ai.hypergraph.kotlingrad.api
 
 import ai.hypergraph.kaliningraph.circuits.*
 import ai.hypergraph.kotlingrad.shapes.*
-import java.io.Serializable
 import kotlin.Double.Companion.NaN
 import kotlin.math.*
 import kotlin.reflect.KProperty
 
-/*
- * Algebraic primitives.
- *
- * https://core.ac.uk/download/pdf/200977628.pdf#page=12
- * https://raw.githubusercontent.com/breandan/algebraic-structures/patch-1/graph.svg
- */
-
-interface Group<X: Group<X>> {
-  operator fun unaryMinus(): X
-  operator fun unaryPlus(): X
-  operator fun plus(addend: X): X
-  operator fun minus(subtrahend: X): X = this + -subtrahend
-}
-
-interface Field<X: Field<X>>: Group<X> {
-  operator fun div(divisor: X): X
-  operator fun times(multiplicand: X): X
-  infix fun pow(exponent: X): X
-  fun log(base: X): X
-}
 
 /**
  * Interface representing a generic mathematical function.
@@ -36,7 +15,7 @@ interface Field<X: Field<X>>: Group<X> {
  * TODO: Implement proper monad like [java.util.function.Function] or [Function]
  */
 
-interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X>, Serializable {
+interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   val inputs: Array<out Fun<X>>
   val bindings: Bindings<X>
     get() = Bindings(*inputs)

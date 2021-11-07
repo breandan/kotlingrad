@@ -7,119 +7,157 @@ plugins {
   id("shipshape")
   idea
   id("com.google.devtools.ksp") version "1.6.0-RC-1.0.1-RC"
+  kotlin("multiplatform") version "1.6.0-RC"
   kotlin("jupyter.api") version "0.10.3-33"
 }
 
-// TODO: Maybe move this into the plugin somehow?
-val generatedSourcesPath = file("src/main/kotlin/gen")
-kotlin.sourceSets["main"].kotlin.srcDir(generatedSourcesPath)
-
+val generatedSourcesPath = file("src/commmonMain/kotlin/gen")
 idea.module {
   generatedSourceDirs.add(generatedSourcesPath)
 }
 
-dependencies {
-//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
-  api("ai.hypergraph:kaliningraph:0.1.9")
+kotlin {
+  jvm {
+    tasks {
+      build { dependsOn("genShapes") }
 
-  // Mathematical libraries
-  // TODO: migrate to multik after next release
-   implementation("org.jetbrains.bio:viktor:1.2.0")
-//  implementation("org.jetbrains.kotlinx:multik-api:0.0.2")
-//  implementation("org.jetbrains.kotlinx:multik-default:0.0.2")
+      processJupyterApiResources {
+        libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
+      }
 
-  implementation(kotlin("reflect"))
-//  implementation("org.jetbrains:annotations:22.0.0")
+//      val sourcesJar by registering(Jar::class) {
+//        archiveClassifier.set("sources")
+//        from(sourceSets.named("jvmMain").get().allSource)
+//      }
 
-//  val tfVersion by extra { "-SNAPSHOT" }
-//  testImplementation("com.github.tensorflow:java:$tfVersion")
-//  testImplementation("com.github.tensorflow:tensorflow-core-platform:$tfVersion")
-//  testImplementation("com.github.breandan:tensor:master-SNAPSHOT")
+//      val javadocJar by registering(Jar::class) {
+//        dependsOn("dokkaJavadoc")
+//        archiveClassifier.set("javadoc")
+//        from(javadoc)
+//      }
 
-  // Property-based testing
+      named<Test>("jvmTest") {
+        minHeapSize = "1024m"
+        maxHeapSize = "4096m"
+        useJUnitPlatform()
+        testLogging {
+          events = setOf(
+            FAILED,
+            PASSED,
+            SKIPPED,
+            STANDARD_OUT
+          )
+          exceptionFormat = FULL
+          showExceptions = true
+          showCauses = true
+          showStackTraces = true
+          showStandardStreams = true
+        }
+      }
+    }
 
-  val kotestVersion = "5.0.0.M3"
-  testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-  testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-  testImplementation("io.kotest:kotest-property:$kotestVersion")
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
-  // Symbolic fuzzing interpreter
-  testImplementation(kotlin("scripting-jsr223"))
-}
+    val signingKeyId = providers.gradleProperty("signing.gnupg.keyId")
+    val signingKeyPassphrase = providers.gradleProperty("signing.gnupg.passphrase")
+    signing {
+      useGpgCmd()
+      if (signingKeyId.isPresent && signingKeyPassphrase.isPresent) {
+        useInMemoryPgpKeys(signingKeyId.get(), signingKeyPassphrase.get())
+        sign(extensions.getByType<PublishingExtension>().publications)
+      } else {
+        logger.info("PGP signing key not defined, skipping signing configuration")
+      }
+    }
 
-tasks {
-  compileKotlin { dependsOn("genShapes") }
+    publishing {
+      publications.create<MavenPublication>("default") {
+//        from(components["java"])
+//        artifact(tasks["sourcesJar"])
+//        artifact(tasks["javadocJar"])
 
-  processJupyterApiResources {
-    libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
-  }
-
-  val sourcesJar by registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-  }
-
-  val javadocJar by registering(Jar::class) {
-    dependsOn("dokkaJavadoc")
-    archiveClassifier.set("javadoc")
-    from(javadoc)
-  }
-
-  test {
-    minHeapSize = "1024m"
-    maxHeapSize = "4096m"
-    useJUnitPlatform()
-    testLogging {
-      events = setOf(FAILED, PASSED, SKIPPED, STANDARD_OUT)
-      exceptionFormat = FULL
-      showExceptions = true
-      showCauses = true
-      showStackTraces = true
-      showStandardStreams = true
+        pom {
+          name.set("Kotlin∇")
+          description.set("Differentiable Functional Programming with Algebraic Data Types")
+          url.set("https://github.com/breandan/kotlingrad")
+          licenses {
+            license {
+              name.set("The Apache Software License, Version 1.0")
+              url.set("http://www.apache.org/licenses/LICENSE-3.0.txt")
+              distribution.set("repo")
+            }
+          }
+          developers {
+            developer {
+              id.set("Breandan Considine")
+              name.set("Breandan Considine")
+              email.set("bre@ndan.co")
+              organization.set("Université de Montréal")
+            }
+          }
+          scm {
+            url.set("https://github.com/breandan/kotlingrad")
+          }
+        }
+      }
     }
   }
-}
 
-val signingKeyId = providers.gradleProperty("signing.gnupg.keyId")
-val signingKeyPassphrase = providers.gradleProperty("signing.gnupg.passphrase")
-signing {
-  useGpgCmd()
-  if (signingKeyId.isPresent && signingKeyPassphrase.isPresent) {
-    useInMemoryPgpKeys(signingKeyId.get(), signingKeyPassphrase.get())
-    sign(extensions.getByType<PublishingExtension>().publications)
-  } else {
-    logger.info("PGP signing key not defined, skipping signing configuration")
-  }
-}
-
-publishing {
-  publications.create<MavenPublication>("default") {
-    from(components["java"])
-    artifact(tasks["sourcesJar"])
-    artifact(tasks["javadocJar"])
-
-    pom {
-      name.set("Kotlin∇")
-      description.set("Differentiable Functional Programming with Algebraic Data Types")
-      url.set("https://github.com/breandan/kotlingrad")
-      licenses {
-        license {
-          name.set("The Apache Software License, Version 1.0")
-          url.set("http://www.apache.org/licenses/LICENSE-3.0.txt")
-          distribution.set("repo")
-        }
+  sourceSets {
+    val commonMain by getting {
+      // TODO: Maybe move this into the plugin somehow?
+      kotlin.srcDir(generatedSourcesPath)
+      dependencies {
+        implementation(kotlin("stdlib-common"))
+        implementation(kotlin("reflect"))
       }
-      developers {
-        developer {
-          id.set("Breandan Considine")
-          name.set("Breandan Considine")
-          email.set("bre@ndan.co")
-          organization.set("Université de Montréal")
+    }
+
+    val jvmMain by getting {
+      dependencies {
+        implementation(kotlin("bom"))
+        implementation(kotlin("stdlib"))
+        compileOnly("org.jetbrains:annotations:22.0.0")
+
+//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
+          api("ai.hypergraph:kaliningraph:0.1.9")
+
+          // Mathematical libraries
+          // TODO: migrate to multik after next release
+          implementation("org.jetbrains.bio:viktor:1.2.0")
+      //  implementation("org.jetbrains.kotlinx:multik-api:0.1.0")
+      //  implementation("org.jetbrains.kotlinx:multik-default:0.1.0")
+
+        val ejmlVersion = "0.41"
+        implementation("org.ejml:ejml-kotlin:$ejmlVersion")
+        implementation("org.ejml:ejml-all:$ejmlVersion")
+        implementation("org.graalvm.js:js:21.3.0")
+        implementation("guru.nidi:graphviz-kotlin:0.18.1")
+
+          implementation(kotlin("reflect"))
         }
+    }
+
+    val jvmTest by getting {
+      dependencies {
+
+        // Property-based testing
+
+        val kotestVersion = "5.0.0.M3"
+        implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+        implementation("io.kotest:kotest-assertions-core:$kotestVersion")
+        implementation("io.kotest:kotest-property:$kotestVersion")
+        implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+
+        // Symbolic fuzzing interpreter
+        implementation(kotlin("scripting-jsr223"))
       }
-      scm {
-        url.set("https://github.com/breandan/kotlingrad")
+    }
+
+    val commonTest by getting {
+      dependencies {
+        implementation(kotlin("test"))
+        implementation(kotlin("test-common"))
+        implementation(kotlin("test-annotations-common"))
       }
     }
   }
