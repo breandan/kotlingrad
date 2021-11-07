@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+import org.jetbrains.dokka.Platform.common
 
 plugins {
   signing
@@ -25,16 +26,20 @@ kotlin {
         libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
       }
 
-//      val sourcesJar by registering(Jar::class) {
-//        archiveClassifier.set("sources")
-//        from(sourceSets.named("jvmMain").get().allSource)
-//      }
+      create<Jar>("javadocJar") {
+        dependsOn(dokkaJavadoc)
+        archiveClassifier.set("javadoc")
+        from(dokkaJavadoc.get().outputDirectory)
+      }
 
-//      val javadocJar by registering(Jar::class) {
-//        dependsOn("dokkaJavadoc")
-//        archiveClassifier.set("javadoc")
-//        from(javadoc)
-//      }
+      dokkaJavadoc {
+        dokkaSourceSets {
+          create("commonMain") {
+            displayName.set("common")
+            platform.set(common)
+          }
+        }
+      }
 
       named<Test>("jvmTest") {
         minHeapSize = "1024m"
@@ -56,6 +61,7 @@ kotlin {
       }
     }
 
+    // https://stackoverflow.com/a/66352905/1772342
 
     val signingKeyId = providers.gradleProperty("signing.gnupg.keyId")
     val signingKeyPassphrase = providers.gradleProperty("signing.gnupg.passphrase")
