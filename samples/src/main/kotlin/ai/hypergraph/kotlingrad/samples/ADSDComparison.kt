@@ -1,7 +1,6 @@
  package ai.hypergraph.kotlingrad.samples
 
 import ai.hypergraph.kotlingrad.api.*
-import ai.hypergraph.kotlingrad.utils.step
 import java.math.BigDecimal
 import kotlin.math.*
 

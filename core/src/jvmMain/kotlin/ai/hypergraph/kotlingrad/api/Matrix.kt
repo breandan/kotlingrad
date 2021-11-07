@@ -2,9 +2,12 @@
 
 package ai.hypergraph.kotlingrad.api
 
-import ai.hypergraph.kaliningraph.circuits.*
-import ai.hypergraph.kotlingrad.shapes.*
+import ai.hypergraph.kaliningraph.circuits.Op
+import ai.hypergraph.kaliningraph.circuits.Ops
 import ai.hypergraph.kotlingrad.api.VFun.Companion.KG_IT
+import ai.hypergraph.kotlingrad.shapes.D1
+import ai.hypergraph.kotlingrad.shapes.DN
+import ai.hypergraph.kotlingrad.shapes.Nat
 import ai.hypergraph.kotlingrad.utils.matmul
 import ai.hypergraph.kotlingrad.utils.toKotlinArray
 import org.jetbrains.bio.viktor.F64Array

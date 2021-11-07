@@ -1,7 +1,7 @@
 package ai.hypergraph.kotlingrad.samples
 
 import ai.hypergraph.kaliningraph.show
-import ai.hypergraph.kotlingrad.utils.step
+
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.PlotSvgExport

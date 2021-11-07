@@ -2,7 +2,7 @@ package ai.hypergraph.kotlingrad.samples
 
 import ai.hypergraph.kotlingrad.api.*
 import ai.hypergraph.kotlingrad.shapes.*
-import ai.hypergraph.kotlingrad.utils.step
+
 import java.io.*
 import kotlin.random.Random
 import kotlin.streams.toList
