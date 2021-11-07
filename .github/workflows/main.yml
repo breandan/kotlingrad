@@ -22,4 +22,4 @@ jobs:
           git submodule update --init --recursive
           cd kaliningraph && ./gradlew publishToMavenLocal --stacktrace -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=2G" && cd .. && ./gradlew publishToMavenLocal --stacktrace -Dorg.gradle.jvmargs="-XX:MaxMetaspaceSize=2G"
           cd core && ../gradlew allTests --stacktrace
-          ../gradlew test --stacktrace
+          ./gradlew test --stacktrace

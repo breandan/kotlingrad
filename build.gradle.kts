@@ -6,7 +6,6 @@ import java.net.URL
 plugins {
   idea
   signing
-  `maven-publish`
   id("com.github.ben-manes.versions") version "0.39.0"
   // https://github.com/Kotlin/dokka/issues/2024
   id("org.jetbrains.dokka") version "1.5.31"
