@@ -118,7 +118,6 @@ kotlin {
         implementation(kotlin("stdlib"))
         compileOnly("org.jetbrains:annotations:22.0.0")
 
-//  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.0")
           api("ai.hypergraph:kaliningraph:0.1.9")
 
           // Mathematical libraries
