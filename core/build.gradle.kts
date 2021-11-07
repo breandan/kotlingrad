@@ -11,7 +11,7 @@ plugins {
   kotlin("jupyter.api") version "0.10.3-33"
 }
 
-val generatedSourcesPath = file("src/commmonMain/kotlin/gen")
+val generatedSourcesPath = file("src/jvmMain/kotlin/gen")
 idea.module {
   generatedSourceDirs.add(generatedSourcesPath)
 }
