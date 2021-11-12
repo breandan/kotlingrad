@@ -122,7 +122,7 @@ kotlin {
       dependencies {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
-        compileOnly("org.jetbrains:annotations:22.0.0")
+        compileOnly("org.jetbrains:annotations:23.0.0")
 
           api("ai.hypergraph:kaliningraph:0.1.9")
 
@@ -147,7 +147,7 @@ kotlin {
 
         // Property-based testing
 
-        val kotestVersion = "5.0.0.M3"
+        val kotestVersion = "5.0.0.M4"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")

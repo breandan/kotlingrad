@@ -15,7 +15,7 @@ graal {
 
 dependencies {
   implementation(kotlin("stdlib"))
-  compileOnly("org.jetbrains:annotations:22.0.0")
+  compileOnly("org.jetbrains:annotations:23.0.0")
   implementation(project(":kotlingrad"))
 
   val ejmlVersion = "0.41"
