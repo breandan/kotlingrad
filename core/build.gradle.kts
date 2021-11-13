@@ -122,7 +122,7 @@ kotlin {
       dependencies {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
-        compileOnly("org.jetbrains:annotations:22.0.0")
+        compileOnly("org.jetbrains:annotations:23.0.0")
 
         api("ai.hypergraph:kaliningraph:0.1.9")
 
