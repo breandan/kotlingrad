@@ -1,7 +1,7 @@
 plugins {
   application
   id("com.palantir.graal") version "0.10.0"
-  kotlin("jvm") version "1.6.0-RC2"
+  kotlin("jvm") version "1.6.0-RC"
 }
 
 val entrypoint = "ai.hypergraph.kotlingrad.samples.HelloKotlingradKt"
@@ -15,7 +15,7 @@ graal {
 
 dependencies {
   implementation(kotlin("stdlib"))
-  compileOnly("org.jetbrains:annotations:23.0.0")
+  compileOnly("org.jetbrains:annotations:22.0.0")
   implementation(project(":kotlingrad"))
 
   val ejmlVersion = "0.41"

@@ -122,15 +122,15 @@ kotlin {
       dependencies {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
-        compileOnly("org.jetbrains:annotations:23.0.0")
+        compileOnly("org.jetbrains:annotations:22.0.0")
 
-          api("ai.hypergraph:kaliningraph:0.1.9")
+        api("ai.hypergraph:kaliningraph:0.1.9")
 
-          // Mathematical libraries
-          // TODO: migrate to multik after next release
-          implementation("org.jetbrains.bio:viktor:1.2.0")
-      //  implementation("org.jetbrains.kotlinx:multik-api:0.1.0")
-      //  implementation("org.jetbrains.kotlinx:multik-default:0.1.0")
+        // Mathematical libraries
+        // TODO: migrate to multik after next release
+        implementation("org.jetbrains.bio:viktor:1.2.0")
+        // implementation("org.jetbrains.kotlinx:multik-api:0.1.0")
+        // implementation("org.jetbrains.kotlinx:multik-default:0.1.0")
 
         val ejmlVersion = "0.41"
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
@@ -138,13 +138,12 @@ kotlin {
         implementation("org.graalvm.js:js:21.3.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
-          implementation(kotlin("reflect"))
-        }
+        implementation(kotlin("reflect"))
+      }
     }
 
     val jvmTest by getting {
       dependencies {
-
         // Property-based testing
 
         val kotestVersion = "5.0.0.M4"
