@@ -146,7 +146,7 @@ kotlin {
       dependencies {
         // Property-based testing
 
-        val kotestVersion = "5.0.0.M4"
+        val kotestVersion = "5.0.0.M3"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
