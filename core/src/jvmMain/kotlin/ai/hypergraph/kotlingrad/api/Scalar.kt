@@ -29,11 +29,9 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
   operator fun invoke(vararg numbers: Number): Fun<X> =
     invoke(bindings.zip(numbers.map { wrap(it) }))
 
-  operator fun invoke(vararg funs: Fun<X>): Fun<X> =
-    invoke(bindings.zip(funs.toList()))
+  operator fun invoke(vararg funs: Fun<X>): Fun<X> = invoke(bindings.zip(funs.toList()))
 
-  operator fun invoke(vararg ps: Pair<Fun<X>, Any>): Fun<X> =
-    invoke(ps.toList().bind())
+  operator fun invoke(vararg ps: FunToAny<X>): Fun<X> = invoke(ps.toList().bind())
 
   fun toGate(): Gate = when (this) {
     is NilFun -> Gate.wrap(this)
@@ -45,8 +43,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
 
   fun toGraph() = toGate().graph
 
-  fun List<Pair<Fun<X>, Any>>.bind() =
-    Bindings(associate { it.first to wrapOrError(it.second) })
+  fun List<FunToAny<X>>.bind() = Bindings(associate { it.first to wrapOrError(it.second) })
 
   fun wrapOrError(any: Any): Fun<X> = when (any) {
     is Fun<*> -> any as Fun<X>
@@ -60,7 +57,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
     else -> throw NumberFormatException("Invoke expects a number or function but got: $any")
   }
 
-  fun asString() = when (this) {
+  fun asString(): String = when (this) {
     is Constant -> "$this"
     is Variable -> "Var($name)"
     is Grad -> "d($input) / d($vrb)"
@@ -193,7 +190,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   override operator fun invoke(vararg funs: Fun<X>): SFun<X> =
     invoke(bindings.zip(funs.toList()))
 
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): SFun<X> =
+  override operator fun invoke(vararg ps: FunToAny<X>): SFun<X> =
     invoke(ps.toList().bind())
 
   open fun d(v1: SVar<X>): SFun<X> =

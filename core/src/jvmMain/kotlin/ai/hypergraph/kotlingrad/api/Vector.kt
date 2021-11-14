@@ -35,7 +35,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
   override operator fun invoke(vararg funs: Fun<X>): VFun<X, E> =
     invoke(bindings.zip(funs.toList()))
 
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): VFun<X, E> =
+  override operator fun invoke(vararg ps: FunToAny<X>): VFun<X, E> =
     invoke(ps.toList().bind())
 
   companion object {

@@ -55,7 +55,7 @@ typealias XXX = Ex<XX, XX, XX>
 @JvmName("plus:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XOX) = Ex<XX, V1, XX>(Ops.sum, null, this, e)
 @JvmName("plus:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XXO) = Ex<XX, XX, V2>(Ops.sum, null, this, e)
 @JvmName("plus:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: XXX) = Ex<XX, XX, XX>(Ops.sum, null, this, e)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.plus(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.sum, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.plus(e: Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.sum, null, Nt(this), e)
 operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(n: N) = Ex<V0, V1, V2>(Ops.sum, null, this, Nt(n))
 
 @JvmName("minus:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: OOO) = Ex<V0, V1, V2>(Ops.sub, null, this, e)
@@ -66,7 +66,7 @@ operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(n: N) = Ex<
 @JvmName("minus:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XOX) = Ex<XX, V1, XX>(Ops.sub, null, this, e)
 @JvmName("minus:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XXO) = Ex<XX, XX, V2>(Ops.sub, null, this, e)
 @JvmName("minus:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(e: XXX) = Ex<XX, XX, XX>(Ops.sub, null, this, e)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.minus(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.sub, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.minus(e: Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.sub, null, Nt(this), e)
 operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(n: N) = Ex<V0, V1, V2>(Ops.sub, null, this, Nt(n))
 
 @JvmName("times:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: OOO) = Ex<V0, V1, V2>(Ops.prod, null, this, e)
@@ -77,7 +77,7 @@ operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.minus(n: N) = Ex
 @JvmName("times:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XOX) = Ex<XX, V1, XX>(Ops.prod, null, this, e)
 @JvmName("times:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XXO) = Ex<XX, XX, V2>(Ops.prod, null, this, e)
 @JvmName("times:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(e: XXX) = Ex<XX, XX, XX>(Ops.prod, null, this, e)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.times(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.prod, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.times(e: Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.prod, null, Nt(this), e)
 operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(n: N) = Ex<V0, V1, V2>(Ops.prod, null, this, Nt(n))
 
 @JvmName("div:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: OOO) = Ex<V0, V1, V2>(Ops.ratio, null, this, e)
@@ -88,7 +88,7 @@ operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(n: N) = Ex
 @JvmName("div:t_t") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XOX) = Ex<XX, V1, XX>(Ops.ratio, null, this, e)
 @JvmName("div:tt_") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XXO) = Ex<XX, XX, V2>(Ops.ratio, null, this, e)
 @JvmName("div:ttt") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(e: XXX) = Ex<XX, XX, XX>(Ops.ratio, null, this, e)
-operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.div(e:Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.ratio, null, Nt(this), e)
+operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.div(e: Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.ratio, null, Nt(this), e)
 operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(n: N) = Ex<V0, V1, V2>(Ops.ratio, null, this, Nt(n))
 
 @JvmName("i:__t") operator fun <N: Number> OOX.invoke(v3: V3Bnd<N>) = call<N>(v3)

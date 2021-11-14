@@ -42,7 +42,7 @@ open class MFun<X, R, C>(override vararg val inputs: Fun<X>): Fun<X>
   override operator fun invoke(vararg funs: Fun<X>): MFun<X, R, C> =
     invoke(bindings.zip(funs.toList()))
 
-  override operator fun invoke(vararg ps: Pair<Fun<X>, Any>): MFun<X, R, C> =
+  override operator fun invoke(vararg ps: FunToAny<X>): MFun<X, R, C> =
     invoke(ps.toList().bind())
 
   val mapInput = SVar<X>(KG_IT)

@@ -2,15 +2,31 @@ package ai.hypergraph.kotlingrad.api
 
 import ai.hypergraph.kotlingrad.api.VFun.Companion.KG_IT
 
+// Fun -> Fun
+// Var -> Fun
+// Var -> Var
+// Var -> Const
+
+typealias MapFxF<X> = Map<Fun<X>, Fun<X>>
+typealias FunToFun<X> = Pair<Fun<X>, Fun<X>>
+typealias FunToAny<X> = Pair<Fun<X>, Any> /** Untyped value, must be boxed via [Fun.wrapOrError]*/
+
+typealias MapSFxSF<X> = Map<SFun<X>, SFun<X>>
+typealias MapVFxVF<X> = Map<VFun<X, *>, VFun<X, *>>
+typealias MapMFxMF<X> = Map<MFun<X, *, *>, MFun<X, *, *>>
+typealias MapSVxSF<X> = Map<SVar<X>, SFun<X>>
+typealias MapVVxVF<X> = Map<VVar<X, *>, VFun<X, *>>
+typealias MapMVxMF<X> = Map<MVar<X, *, *>, MFun<X, *, *>>
+
 // Supports arbitrary subgraph reassignment but usually just holds variable-to-value bindings
 @Suppress("UNCHECKED_CAST")
-data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
+data class Bindings<X: SFun<X>> constructor(val fMap: MapFxF<X>) {
   constructor(inputs: List<Bindings<X>>): this(inputs.map { it.fMap }
     .fold(mapOf<Fun<X>, Fun<X>>()) { acc, fMap -> fMap + acc })
 
   constructor(vararg bindings: Bindings<X>): this(bindings.toList())
   constructor(vararg funs: Fun<X>): this(funs.map { it.bindings })
-  constructor(vararg pairs: Pair<Fun<X>, Fun<X>>): this(pairs.toMap())
+  constructor(vararg pairs: FunToFun<X>): this(pairs.toMap())
 
   // TODO: Take shape into consideration when binding variables
   fun zip(fns: List<Fun<X>>): Bindings<X> =
@@ -20,17 +36,17 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
       .let { Bindings(*it.toTypedArray()) }
 
   // Scalar, vector, and matrix "views" on untyped function map
-  val sFunMap = filterInstancesOf<SFun<X>>()
-  val vFunMap = filterInstancesOf<VFun<X, *>>()
-  val mFunMap = filterInstancesOf<MFun<X, *, *>>()
+  val sFunMap: MapSFxSF<X> = filterInstancesOf()
+  val vFunMap: MapVFxVF<X> = filterInstancesOf()
+  val mFunMap: MapMFxMF<X> = filterInstancesOf()
 
-  val mVarMap = mFunMap.filterKeys { it is MVar<X, *, *> } as Map<MVar<X, *, *>, MFun<X, *, *>>
-  val vVarMap = mVarMap.filterValues { it is Mat<X, *, *> }
+  val mVarMap: MapMVxMF<X> = mFunMap.filterKeys { it is MVar<X, *, *> } as MapMVxMF<X>
+  val vVarMap: MapVVxVF<X> = mVarMap.filterValues { it is Mat<X, *, *> }
     .flatMap { (k, v) -> k.vVars.zip((v as Mat<X, *, *>).rows) }.toMap() +
-    vFunMap.filterKeys { it is VVar<X, *> } as Map<VVar<X, *>, VFun<X, *>>
-  val sVarMap = (vVarMap.filterValues { it is Vec<X, *> }
+    vFunMap.filterKeys { it is VVar<X, *> } as MapVVxVF<X>
+  val sVarMap: MapSVxSF<X> = (vVarMap.filterValues { it is Vec<X, *> }
     .flatMap { (k, v) -> k.sVars.contents.zip((v as Vec<X, *>).contents) }.toMap() +
-    sFunMap.filterKeys { it is SVar<X> && it.name != KG_IT }) as Map<SVar<X>, SFun<X>>
+    sFunMap.filterKeys { it is SVar<X> && it.name != KG_IT }) as MapSVxSF<X>
 
   val allVarMap = mVarMap + vVarMap + sVarMap
 
@@ -47,7 +63,7 @@ data class Bindings<X: SFun<X>> constructor(val fMap: Map<Fun<X>, Fun<X>>) {
       other.allVarMap.filterValues { !containsFreeVariable(it) }
     )
 
-  operator fun plus(pair: Pair<Fun<X>, Fun<X>>) = plus(Bindings(pair))
+  operator fun plus(pair: FunToFun<X>) = plus(Bindings(pair))
 
   operator fun minus(func: Fun<X>) = Bindings(fMap.filterNot { it.key == func })
 

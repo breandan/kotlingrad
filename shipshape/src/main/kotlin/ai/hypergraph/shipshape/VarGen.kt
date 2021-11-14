@@ -85,7 +85,7 @@ private fun genEx(params: List<String> = (0 until numVars).map { "V$it" }) =
 private fun genConstOpEx(op: String, sop: String) =
   "operator fun " +
     (0 until numVars).joinToString(", ", "<N: Number, ", ">") { "V$it: XO" } +
-    " N.$op(e:" + genEx().let { "$it) = $it" } +
+    " N.$op(e: " + genEx().let { "$it) = $it" } +
     "(Ops.$sop, null, Nt(this), e)\n"
 
 private fun genExOpConst(op: String, sop: String) =
