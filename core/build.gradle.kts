@@ -7,9 +7,9 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  id("com.google.devtools.ksp") version "1.6.0-RC-1.0.1-RC"
-  kotlin("multiplatform") version "1.6.0-RC"
-  kotlin("jupyter.api") version "0.10.3-33"
+  id("com.google.devtools.ksp") version "1.6.0-1.0.1"
+  kotlin("multiplatform") version "1.6.0"
+  kotlin("jupyter.api") version "0.10.3-36"
 }
 
 val generatedSourcesPath = file("src/jvmMain/kotlin/gen")
