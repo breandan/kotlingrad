@@ -132,9 +132,6 @@ kotlin {
         // implementation("org.jetbrains.kotlinx:multik-api:0.1.0")
         // implementation("org.jetbrains.kotlinx:multik-default:0.1.0")
 
-        val ejmlVersion = "0.41"
-        implementation("org.ejml:ejml-kotlin:$ejmlVersion")
-        implementation("org.ejml:ejml-all:$ejmlVersion")
         implementation("org.graalvm.js:js:21.3.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
@@ -145,6 +142,10 @@ kotlin {
     val jvmTest by getting {
       dependencies {
         // Property-based testing
+
+        val ejmlVersion = "0.41"
+        implementation("org.ejml:ejml-kotlin:$ejmlVersion")
+        implementation("org.ejml:ejml-all:$ejmlVersion")
 
         val kotestVersion = "5.0.0.M3"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")

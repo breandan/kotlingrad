@@ -1,18 +1,21 @@
 package ai.hypergraph.kotlingrad.perf
 
 import ai.hypergraph.kaliningraph.*
+import ai.hypergraph.kaliningraph.tensor.*
 import ai.hypergraph.kotlingrad.api.*
 import ai.hypergraph.kotlingrad.round
 import ai.hypergraph.kotlingrad.shapes.D100
 import ai.hypergraph.kotlingrad.utils.*
 import org.apache.commons.math3.linear.*
-import org.ejml.data.DMatrix
+import org.ejml.data.*
 import org.ejml.kotlin.times
 import org.jetbrains.bio.viktor.F64Array
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 import kotlin.system.measureTimeMillis
+
+typealias SpsMat = DMatrixSparseCSC
 
 class SparseTest {
   val m = 100
@@ -92,6 +95,24 @@ class SparseTest {
 //  fun Array<DoubleArray>.toTensor() = Tensors.matrixDouble(this)
 //  fun Array<DoubleArray>.toTf4j() = NdArrays.ofDoubles(Shape.of(size.toLong(), size.toLong()))
 //    .also { it.write(DataBuffers.of(*flatMap { it.toList() }.toDoubleArray())) }
+
+  fun Array<DoubleArray>.toEJMLSparse() = SpsMat(size, this[0].size, sumOf { it.count { it == 0.0 } })
+    .also { s -> for (i in indices) for (j in this[0].indices) this[i][j].let { if (0.0 < it) s[i, j] = it } }
+
+  fun Array<DoubleArray>.toEJMLDense() = DMatrixRMaj(this)
+  fun DMatrix.toBMat() = BooleanMatrix(numRows, numCols) { i, j -> get(i, j) > 0.5 }
+  fun BMatrixRMaj.toBMat() = BooleanMatrix(numRows, numCols) { i, j -> get(i, j) }
+  operator fun BooleanMatrix.times(mat: SpsMat): SpsMat = toEJMLSparse() * mat
+  operator fun BooleanMatrix.plus(mat: SpsMat): SpsMat = toEJMLSparse() * mat
+
+  fun DoubleMatrix.toEJMLSparse() = SpsMat(numRows, numCols, numRows).also {
+    for ((i, j) in (0 until numRows) * (0 until numCols)) if(get(i, j) != 0.0) it[i, j] = get(i, j)
+  }
+
+  fun BooleanMatrix.toEJMLSparse(): SpsMat = SpsMat(numRows, numCols, numRows).also {
+    for ((i, j) in (0 until numRows) * (0 until numCols))
+      if (this[i, j]) it[i, j] = 1.0
+  }
 
   fun Array<DoubleArray>.round(precision: Int = 3) =
     map { it.map { it.round(precision) }.toDoubleArray() }.toTypedArray()

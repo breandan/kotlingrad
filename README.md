@@ -855,7 +855,7 @@ interface Ring<T>: Group<T> {
 val doubleRing = Ring(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> a * b })
 ```
 
-Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`TypeSystem.kt`](https://github.com/breandan/kaliningraph/blob/master/src/main/kotlin/ai/hypergraph/kaliningraph/types/TypeSystem.kt).
+Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`Types.kt`](https://github.com/breandan/kaliningraph/blob/master/src/commonMain/kotlin/ai/hypergraph/kaliningraph/types/Types.kt).
 
 ## Grammar
 
