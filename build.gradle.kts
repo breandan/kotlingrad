@@ -56,7 +56,7 @@ subprojects {
 
       sourceLink {
         localDirectory.set(file("core/src/jvmMain/kotlin"))
-        remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/core/src/main/kotlin"))
+        remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/core/src/jvmMain/kotlin"))
         remoteLineSuffix.set("#L")
       }
 
