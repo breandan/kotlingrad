@@ -3,7 +3,7 @@ package ai.hypergraph.kotlingrad.notebook
 import ai.hypergraph.kaliningraph.circuits.Gate
 import ai.hypergraph.kaliningraph.html
 import ai.hypergraph.kaliningraph.image.matToBase64Img
-import ai.hypergraph.kaliningraph.tensor.BooleanMatrix
+import ai.hypergraph.kaliningraph.tensor.*
 import ai.hypergraph.kaliningraph.typefamily.*
 import ai.hypergraph.kotlingrad.api.SFun
 import ai.hypergraph.kotlingrad.api.SVar
@@ -21,7 +21,7 @@ internal class Integration: JupyterIntegration() {
 
     render<SVar<*>> { HTML(it.toGate().graph.html()) }
     render<SFun<*>> { HTML(it.toGate().graph.html()) }
-    render<BooleanMatrix> { HTML("<img src=\"${it.matToBase64Img()}\"/>") }
+    render<Matrix<*, *, *>> { HTML("<img src=\"${it.matToBase64Img()}\" height=\"200\" width=\"200\"/>") }
     render<Graph<*, *, *>> { HTML(it.html()) }
     render<Gate> { HTML(it.graph.html()) }
 

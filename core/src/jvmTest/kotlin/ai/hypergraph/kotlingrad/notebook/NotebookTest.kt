@@ -5,7 +5,6 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlinx.jupyter.testkit.JupyterReplTestCase
 import org.junit.jupiter.api.Test
 
-
 class RenderingTests: JupyterReplTestCase() {
   @Test
   fun `circuit is rendered to html`() {
