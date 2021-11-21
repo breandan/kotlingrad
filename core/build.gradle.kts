@@ -9,7 +9,7 @@ plugins {
   idea
   id("com.google.devtools.ksp") version "1.6.0-1.0.1"
   kotlin("multiplatform") version "1.6.0"
-  kotlin("jupyter.api") version "0.10.3-36"
+  kotlin("jupyter.api") version "0.11.0-3"
 }
 
 val generatedSourcesPath = file("src/jvmMain/kotlin/gen")
@@ -147,7 +147,7 @@ kotlin {
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.0.0.M3"
+        val kotestVersion = "5.0.0.RC"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
