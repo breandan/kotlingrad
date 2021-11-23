@@ -5,7 +5,6 @@ import ai.hypergraph.kaliningraph.tensor.*
 import ai.hypergraph.kotlingrad.api.*
 import ai.hypergraph.kotlingrad.round
 import ai.hypergraph.kotlingrad.shapes.D100
-import ai.hypergraph.kotlingrad.utils.*
 import org.apache.commons.math3.linear.*
 import org.ejml.data.*
 import org.ejml.kotlin.times
@@ -46,7 +45,7 @@ class SparseTest {
         "EJML/S" to powBench(toEJMLSparse()) { a, b -> a * b },
         "EJML/D" to powBench(toEJMLDense()) { a, b -> a * b },
         "APACHE" to powBench(toApacheCommons()) { a, b -> a.multiply(b) },
-        "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b }.also { baseline = it },
+//        "VIKTOR" to powBench(toViktor()) { a, b -> a matmul b }.also { baseline = it },
         "KTGRAD" to powBench(toKTGrad()) { a, b -> (a * b) as Mat<DReal, D100, D100> },
 //      "KTMATH" to powBench(toKMath()) { a, b -> a dot b }
 //        .also { assert(it < 20 * baseline) { "Perf regression: $it ms" } },
@@ -68,7 +67,7 @@ class SparseTest {
         toEJMLSparse().power(10) { a, b -> a * b }.toKotlinArray().round(),
         toEJMLDense().power(10) { a, b -> a * b }.toKotlinArray().round(),
         toApacheCommons().power(10) { a, b -> a.multiply(b) }.toKotlinArray().round(),
-        toViktor().power(10) { a, b -> a matmul b }.toKotlinArray().round(),
+//        toViktor().power(10) { a, b -> a matmul b }.toKotlinArray().round(),
         toKTGrad().power(10) { a, b -> (a * b) as Mat<DReal, D100, D100> }.toKotlinArray().round(),
 //        toKMath().power(10) { a, b -> a.dot(b) }.toKotlinArray().round(),
 //        toTensor().power(10) { a, b -> a.dot(b) }.toKotlinArray().round()

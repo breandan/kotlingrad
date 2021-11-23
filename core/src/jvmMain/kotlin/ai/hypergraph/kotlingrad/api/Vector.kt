@@ -4,8 +4,7 @@ package ai.hypergraph.kotlingrad.api
 
 import ai.hypergraph.kaliningraph.circuits.*
 import ai.hypergraph.kotlingrad.shapes.*
-import ai.hypergraph.kotlingrad.utils.matmul
-import org.jetbrains.bio.viktor.F64Array
+import ai.hypergraph.kaliningraph.*
 import kotlin.reflect.KProperty
 
 /**
@@ -210,38 +209,38 @@ class VComposition<X: SFun<X>, E: D1>(override val input: VFun<X, E>, arguments:
 }
 
 open class VConst<X: SFun<X>, E: D1> constructor(vararg val consts: SConst<X>): Vec<X, E>(consts.toList()), Constant<X> {
-  constructor(fVec: F64Array): this(*fVec.toDoubleArray().map { SConst<X>(it) }.toTypedArray())
+  constructor(fVec: List<Double>): this(*fVec.map { SConst<X>(it) }.toTypedArray())
   constructor(vararg values: Number): this(*values.map { SConst<X>(it) }.toTypedArray())
 
-  val simdVec by lazy { F64Array(consts.size) { consts[it].doubleValue } }
+  val vec by lazy { List(consts.size) { consts[it].doubleValue } }
 
   override fun plus(addend: VFun<X, E>): VFun<X, E> = when (addend) {
-    is VConst<X, E> -> VConst(simdVec + addend.simdVec)
+    is VConst<X, E> -> VConst(vec + addend.vec)
     else -> super.plus(addend)
   }
 
   override fun minus(subtrahend: VFun<X, E>): VFun<X, E> = when (subtrahend) {
-    is VConst<X, E> -> VConst(simdVec - subtrahend.simdVec)
+    is VConst<X, E> -> VConst(vec.zip(subtrahend.vec).map { (a, b) -> a - b })
     else -> super.minus(subtrahend)
   }
 
   override fun ʘ(multiplicand: VFun<X, E>): VFun<X, E> = when (multiplicand) {
-    is VConst<X, E> -> VConst(simdVec * multiplicand.simdVec)
+    is VConst<X, E> -> VConst(vec.zip(multiplicand.vec).map { (a, b) -> a * b })
     else -> super.ʘ(multiplicand)
   }
 
   override fun dot(multiplicand: VFun<X, E>): SFun<X> = when (multiplicand) {
-    is VConst<X, E> -> SConst(simdVec dot multiplicand.simdVec)
+    is VConst<X, E> -> SConst(vec.zip(multiplicand.vec).sumOf { (a, b) -> a * b })
     else -> super.dot(multiplicand)
   }
 
   override fun times(multiplicand: SFun<X>): Vec<X, E> = when (multiplicand) {
-    is SConst<X> -> VConst(simdVec * multiplicand.doubleValue)
+    is SConst<X> -> VConst(vec.map { it * multiplicand.doubleValue })
     else -> super.times(multiplicand)
   }
 
   override operator fun <Q: D1> times(multiplicand: MFun<X, Q, E>): VFun<X, Q> = when (multiplicand) {
-    is MConst<X, Q, E> -> VConst(simdVec matmul multiplicand.simdVec)
+    is MConst<X, Q, E> -> VConst(vec dot multiplicand.mat)
     else -> super.times(multiplicand)
   }
 }

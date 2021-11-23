@@ -4,13 +4,12 @@ package ai.hypergraph.kotlingrad.api
 
 import ai.hypergraph.kaliningraph.circuits.Op
 import ai.hypergraph.kaliningraph.circuits.Ops
+import ai.hypergraph.kaliningraph.tensor.DoubleMatrix
+import ai.hypergraph.kaliningraph.*
 import ai.hypergraph.kotlingrad.api.VFun.Companion.KG_IT
 import ai.hypergraph.kotlingrad.shapes.D1
 import ai.hypergraph.kotlingrad.shapes.DN
 import ai.hypergraph.kotlingrad.shapes.Nat
-import ai.hypergraph.kotlingrad.utils.matmul
-import ai.hypergraph.kotlingrad.utils.toKotlinArray
-import org.jetbrains.bio.viktor.F64Array
 import kotlin.reflect.KProperty
 
 /**
@@ -204,13 +203,13 @@ open class MVar<X: SFun<X>, R: D1, C: D1> constructor(
 }
 
 open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): Mat<X, R, C>(vConsts.toList()), Constant<X> {
-  constructor(fVec: F64Array): this(*fVec.toKotlinArray().map { VConst<X, C>(*it.toTypedArray()) }.toTypedArray())
+  constructor(fVec: DoubleMatrix): this(*fVec.rows.map { VConst<X, C>(*it.toTypedArray()) }.toTypedArray())
 
-  val simdVec by lazy { F64Array(numRows, numCols) { row, col -> (vConsts[row][col] as SConst<X>).doubleValue } }
+  val mat by lazy { DoubleMatrix(numRows, numCols) { row, col -> (vConsts[row][col] as SConst<X>).doubleValue } }
 
   override fun times(multiplicand: SFun<X>): Mat<X, R, C> =
     when (multiplicand) {
-      is SConst -> MConst(simdVec.times(multiplicand.doubleValue))
+      is SConst -> MConst(mat * multiplicand.doubleValue)
       else -> super.times(multiplicand)
     }
 
@@ -221,7 +220,7 @@ open class MConst<X: SFun<X>, R: D1, C: D1>(vararg val vConsts: VConst<X, C>): M
     }
 
   override operator fun <Q: D1> times(multiplicand: MFun<X, C, Q>): MFun<X, R, Q> = when (multiplicand) {
-    is MConst -> MConst(simdVec matmul multiplicand.simdVec)
+    is MConst -> MConst(mat * multiplicand.mat)
     else -> super.times(multiplicand)
   }
 }

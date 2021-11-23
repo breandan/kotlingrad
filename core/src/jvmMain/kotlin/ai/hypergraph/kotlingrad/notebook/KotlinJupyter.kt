@@ -5,8 +5,7 @@ import ai.hypergraph.kaliningraph.html
 import ai.hypergraph.kaliningraph.image.matToBase64Img
 import ai.hypergraph.kaliningraph.tensor.*
 import ai.hypergraph.kaliningraph.typefamily.*
-import ai.hypergraph.kotlingrad.api.SFun
-import ai.hypergraph.kotlingrad.api.SVar
+import ai.hypergraph.kotlingrad.api.*
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 
@@ -19,6 +18,7 @@ internal class Integration: JupyterIntegration() {
             "ai.hypergraph.kaliningraph.circuits.*",
     ).forEach { import(it) }
 
+    render<Fun<*>> { HTML(it.render().toString()) }
     render<SVar<*>> { HTML(it.toGate().graph.html()) }
     render<SFun<*>> { HTML(it.toGate().graph.html()) }
     render<Matrix<*, *, *>> { HTML("<img src=\"${it.matToBase64Img()}\" height=\"200\" width=\"200\"/>") }

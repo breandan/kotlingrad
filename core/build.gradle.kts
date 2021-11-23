@@ -122,15 +122,8 @@ kotlin {
       dependencies {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
-        compileOnly("org.jetbrains:annotations:23.0.0")
 
         api("ai.hypergraph:kaliningraph:0.1.9")
-
-        // Mathematical libraries
-        // TODO: migrate to multik after next release
-        implementation("org.jetbrains.bio:viktor:1.2.0")
-        // implementation("org.jetbrains.kotlinx:multik-api:0.1.0")
-        // implementation("org.jetbrains.kotlinx:multik-default:0.1.0")
 
         implementation("org.graalvm.js:js:21.3.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
@@ -141,6 +134,8 @@ kotlin {
 
     val jvmTest by getting {
       dependencies {
+        implementation("org.jetbrains.bio:viktor:1.2.0")
+
         // Property-based testing
 
         val ejmlVersion = "0.41"

@@ -8,7 +8,6 @@ import kotlin.Double.Companion.NaN
 import kotlin.math.*
 import kotlin.reflect.KProperty
 
-
 /**
  * Interface representing a generic mathematical function.
  *

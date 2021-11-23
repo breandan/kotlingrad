@@ -36,30 +36,30 @@ fun unitTest(subroutine: (Input) -> Output) {
   val input = Input() // Construct an input
   val expectedOutput = Output() // Construct an output
   val actualOutput = subroutine(input)
-  assert(expectedOutput == actualOutput) { "Expected $expectedOutput, got $actualOutput" }
+  check(expectedOutput == actualOutput) { "Expected $expectedOutput, got $actualOutput" }
 }
 
 fun <I, O> integrationTest(program: (I) -> O, inputs: Set<I>, checkOutput: (O) -> Boolean) =
   inputs.forEach { input: I ->
     try {
       val output = program(input)
-      assert(checkOutput(output)) { "Postcondition failed on $input, $output" }
+      check(checkOutput(output)) { "Postcondition failed on $input, $output" }
     } catch (exception: Exception) {
-      assert(false) { exception }
+      check(false) { exception }
     }
   }
 
 fun <I, O> fuzzTest(program: (I) -> O, oracle: (I) -> O, rand: () -> I) =
   repeat(1000) {
     val input = rand()
-    assert(program(input) == oracle(input)) { "Oracle and program disagree on $input" }
+    check(program(input) == oracle(input)) { "Oracle and program disagree on $input" }
   }
 
 fun <I, O> gen(program: (I) -> O, property: (O) -> Boolean, rand: () -> I) =
   repeat(1000) {
     val randomInput = rand()
 
-    assert(property(program(randomInput))) {
+    check(property(program(randomInput))) {
       val shrunken = shrink(randomInput, program, property)
       "Minimal input counterexample of property: $shrunken"
     }
@@ -79,7 +79,7 @@ fun <I, O> mrTest(program: (I) -> O, mr: (I, O, I, O) -> Boolean, rand: () -> Pa
     val tx: (I) -> I = genTX(program, mr, input, output)
     val txInput: I = tx(input)
     val txOutput: O = program(txInput)
-    assert(mr(input, output, txInput, txOutput)) {
+    check(mr(input, output, txInput, txOutput)) {
       "<$input, $output> not related to <$txInput, $txOutput> by $mr ($tx)"
     }
   }

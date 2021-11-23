@@ -9,6 +9,8 @@ open class Shipshape: Plugin<Project> {
       tasks.register("genShapes") {
         // TODO: Parameterize this path
         val outputDir = "$projectDir/src/jvmMain/kotlin/ai/hypergraph/kotlingrad"
+        // TODO: Switch to commonMain
+//        val outputDir = "$projectDir/src/commonMain/kotlin/ai/hypergraph/kotlingrad"
         try {
           File("$outputDir/shapes").mkdirs()
           File("$outputDir/shapes/Shapes.kt")
