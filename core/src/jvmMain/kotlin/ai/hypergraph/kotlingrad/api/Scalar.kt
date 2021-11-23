@@ -37,7 +37,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
     is UnFun -> Gate(op, input.toGate())
     is BiFun -> Gate(op, left.toGate(), right.toGate())
     is PolyFun -> Gate(op, *inputs.map { it.toGate() }.toTypedArray())
-    else -> TODO(javaClass.name)
+    else -> TODO(this::class.simpleName!!)
   }
 
   fun toGraph() = toGate().graph
@@ -65,7 +65,7 @@ interface Fun<X: SFun<X>>: (Bindings<X>) -> Fun<X> {
     is BiFun<*> -> "($left) $op ($right)"
     is UnFun<*> -> "$op($input)"
     is PolyFun<*> -> "$op$inputs"
-    else -> javaClass.simpleName
+    else -> this::class.simpleName!!
   }
 }
 
@@ -131,7 +131,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
   fun apply(op: Op): (SFun<X>) -> SFun<X> = when (op) {
     Ops.sum -> { it: SFun<X> -> this + it }
     Ops.prod -> { it: SFun<X> -> this * it }
-    else -> TODO(op.javaClass.name)
+    else -> TODO(op::class.simpleName!!)
   }
 
   /**
@@ -155,7 +155,7 @@ constructor(override vararg val inputs: Fun<X>): PolyFun<X>, Field<SFun<X>> {
 
     Ops.Σ -> (xs[0] as VFun<X, DN>).sum()
     Ops.λ -> TODO()
-    else -> TODO(op.javaClass.name)
+    else -> TODO(op::class.simpleName!!)
   }
 
   override val op: Op = when (this) {
@@ -376,7 +376,7 @@ constructor(open val value: Number): SFun<X>(), Constant<X> {
 }
 
 sealed class Special<X: SFun<X>>(override val value: Number): SConst<X>(value) {
-  override fun toString() = javaClass.simpleName
+  override fun toString() = this::class.simpleName!!
 }
 
 class It<X: SFun<X>>: Special<X>(NaN)

@@ -64,7 +64,7 @@ open class MFun<X, R, C>(override vararg val inputs: Fun<X>): Fun<X>
   override fun toString() = when (this) {
     is MNegative -> "-($input)"
     is MTranspose -> "($input).T"
-    is MConst -> "${javaClass.name}()"
+    is MConst -> "${this::class.simpleName}($numRows x $numCols)"
     is Mat -> "Mat(${rows.joinToString()})"
     is MDerivative<X, *, *> -> "d($input) / d($vrb)"
     is MVar -> "$name: Var${r}x${c}"
@@ -156,7 +156,7 @@ class MDerivative<X: SFun<X>, R: D1, C: D1>(override val input: MFun<X, R, C>, o
     is VVMap -> input.d(vrb).vMap { it * svMap(mapInput to it).d(vrb) }
     is MDerivative -> input.df()
     is MComposition -> evaluate.df()
-    else -> TODO(this@df.javaClass.name)
+    else -> TODO(this@df::class.simpleName!!)
   }
 }
 
@@ -175,7 +175,7 @@ class MGradient<X: SFun<X>, R: D1, C: D1>(override val input: SFun<X>, override 
     is DProd -> vrb.map { q -> invoke().d(q as SVar<X>) }
     is VSumAll<*, *> -> vrb.map { q -> invoke().d(q as SVar<X>) }
     is SComposition -> evaluate.df()
-    else -> TODO(this@df.javaClass.name)
+    else -> TODO(this@df::class.simpleName!!)
   }
 }
 

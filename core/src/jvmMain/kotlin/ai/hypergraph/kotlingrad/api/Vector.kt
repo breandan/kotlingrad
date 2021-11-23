@@ -147,7 +147,7 @@ class VDerivative<X: SFun<X>, E: D1>(override val input: VFun<X, E>, override va
     is Gradient -> invoke().df() // map { it.d(sVar) }
     is VMap -> input.df().map { it * ssMap(mapInput to it).d(vrb) } // Chain rule
     is VComposition -> evaluate.df()
-    else -> TODO(this@df.javaClass.name)
+    else -> TODO(this@df::class.simpleName!!)
   }
 }
 
@@ -168,7 +168,7 @@ class Gradient<X: SFun<X>, E: D1>(override val input: SFun<X>, override val vrb:
         (left as VFun<X, E> * right.d(vrb))
     is SComposition -> evaluate.df()
     is VSumAll<X, *> -> (input as VFun<X, E>).d(vrb).sum()
-    else -> TODO(this@df.javaClass.name)
+    else -> TODO(this@df::class.simpleName!!)
   }
 }
 
