@@ -768,21 +768,17 @@ interface Nat<T> {
   val nil: T
   val one: T get() = nil.next()
   fun T.next(): T
-  
-  companion object {
-    operator fun <T> invoke(nil: T, next: T.() -> T): Nat<T> =
-      object: Nat<T> {
-        override val nil: T = nil
-        override fun T.next(): T = next()
-      }
+
+  class of<T>(override val nil: T, val vnext: T.() -> T): Nat<T, Nat.of<T>> {
+    override fun T.next(): T = vnext()
   }
 }
 ```
 
-Now, if we wanted to wrap an external type, such as `Double`, inside our tower. We could do so as follows:
+Now, if we wanted to wrap an external type, such as `Double`, inside our tower, we could do so as follows:
 
 ```kotlin
-val doubleNat = Nat(one = 1.0, next = { this + one })
+val doubleNat = Nat.of(one = 1.0, next = { this + one })
 ```
 
 Although the `Nat` interface is very expressive, evaluating arithmetic expressions on `Nat`s can be computationally expensive. For instance, we could define the first three [hyperoperations](https://en.wikipedia.org/wiki/Hyperoperation) naïvely as follows:
@@ -798,27 +794,26 @@ tailrec fun <T> Nat<T>.pow(base: T, exp: T, acc: T = one, i: T = one): T =
   if (i == exp) acc else pow(base, exp, acc * base, i.next())
 ```
 
-However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑b) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we must do better if this encoding is to be usable. We can make `Nat` more efficient by introducing a subtype, `Group<T>`, which forces implementors to define a native addition operator:
+However, we note that computing `pow(a, b)` using this representation requires 𝓞(a↑b) operations using [Knuth notation](https://en.wikipedia.org/wiki/Knuth%27s_up-arrow_notation). Clearly, we must do better if this encoding is to be usable. We can make `Nat` more efficient by introducing a subtype, `Group`, which forces implementors to define a native addition operator:
 
 ```kotlin
 interface Group<T>: Nat<T> {
   override fun T.next(): T = this + one
-  fun T.plus(t: T): T
+  override fun T.plus(t: T): T
 
-  companion object {
-    operator fun <T> invoke(one: T, plus: (T, T) -> T): Group<T> =
-      object: Group<T> {
-        override val one: T = one
-        override fun T.plus(t: T) = plus(this, t)
-      }
+  class of<T>(
+    override val nil: T, override val one: T,
+    val plus: (T, T) -> T
+  ): Group<T, Group.of<T>> {
+    override fun T.plus(t: T) = plus(this, t)
   }
 }
 ```
 
-Given a `Group<T>`, we can now define a more efficient implementation of Fibonacci:
+Given a `Group`, we can now define a more efficient implementation of Fibonacci. This will use the group-specific addition operator:
 
 ```kotlin
-tailrec fun <T> Group<T>.fibonacci(
+tailrec fun <T> Nat<T>.fibonacci(
   n: T,
   seed: Pair<T, T> = nil to one,
   fib: (Pair<T, T>) -> Pair<T, T> = { (a, b) -> b to a + b },
@@ -826,33 +821,29 @@ tailrec fun <T> Group<T>.fibonacci(
 ): T =
   if (i == n) fib(seed).first
   else fibonacci(n = n, seed = fib(seed), i = i.next())
-  
-val doubleGroup = Group(one = 1.0, plus = { a, b -> a + b })
+
+val doubleGroup = Group.of(one = 1.0, plus = { a, b -> a + b })
 println(doubleGroup.fibonacci(10.0)) // Prints: 233.0
 ```
 
-We could further extend this chain by introducing a subtype called `Ring<T>`, which overrides `+` and requires implementors to define a native `*` operator. `Ring`s and their relatives are known to have many useful applications in [graph theory](https://github.com/breandan/kaliningraph#algebra) and [statistics](https://github.com/breandan/markovian#algebraic-methods):
+We could further extend this chain by introducing a subtype called `Ring`, which overrides `+` and requires implementors to define a native `*` operator. `Ring`s and their relatives are known to have many useful applications in [graph theory](https://github.com/breandan/kaliningraph#algebra) and [statistics](https://github.com/breandan/markovian#algebraic-methods):
 
 ```kotlin
 interface Ring<T>: Group<T> {
   override fun T.plus(t: T): T
-  fun T.times(t: T): T
+  override fun T.times(t: T): T
 
-  companion object {
-    operator fun <T> invoke(
-      one: T,
-      plus: (T, T) -> T,
-      times: (T, T) -> T
-    ): Ring<T> =
-      object: Ring<T> {
-        override val one: T = one
-        override fun T.plus(t: T) = plus(this, t)
-        override fun T.times(t: T) = times(this, t)
-      }
+  class of<T>(
+    override val nil: T, override val one: T,
+    val plus: (T, T) -> T,
+    val times: (T, T) -> T
+  ): Ring<Ting.of<T>> {
+    override fun T.plus(t: T) = plus(this, t)
+    override fun T.times(t: T) = times(this, t)
   }
 }
 
-val doubleRing = Ring(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> a * b })
+val doubleRing = Ring.of(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> a * b })
 ```
 
 Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`Types.kt`](https://github.com/breandan/kaliningraph/blob/master/src/commonMain/kotlin/ai/hypergraph/kaliningraph/types/Types.kt).
