@@ -68,10 +68,10 @@ data class Bindings<X: SFun<X>> constructor(val fMap: MapFxF<X>) {
   operator fun minus(func: Fun<X>) = Bindings(fMap.filterNot { it.key == func })
 
   // Scalar, vector, and matrix variables
-  val sVars: Set<SVar<X>> = sVarMap.keys.toSortedSet { v1, v2 -> v1.name.compareTo(v2.name) }
-  val vVars: Set<VVar<X, *>> = vVarMap.keys.toSortedSet { v1, v2 -> v1.name.compareTo(v2.name) }
-  val mVars: Set<MVar<X, *, *>> = mVarMap.keys.toSortedSet { v1, v2 -> v1.name.compareTo(v2.name) }
-  val allVars: Set<Variable<X>> = sVars + vVars + mVars
+  val sVars: List<SVar<X>> = sVarMap.keys.sortedBy { it.name }
+  val vVars: List<VVar<X, *>> = vVarMap.keys.sortedBy { it.name }
+  val mVars: List<MVar<X, *, *>> = mVarMap.keys.sortedBy { it.name }
+  val allVars: List<Variable<X>> = sVars + vVars + mVars
   val allFreeVariables by lazy { allVarMap.filterValues { containsFreeVariable(it) } }
   val allBoundVariables: Map<Variable<X>, Fun<X>> by lazy { allVarMap.filterValues { !containsFreeVariable(it) } }
 
@@ -95,7 +95,7 @@ data class Bindings<X: SFun<X>> constructor(val fMap: MapFxF<X>) {
     val boundVars = allBoundVariables.keys
     val unpropagated = (freeVars intersect boundVars).map { it to this[it] }
     require(unpropagated.isEmpty()) {
-      before.show("input"); after.show("result")
+      //before.show("input"); after.show("result")
       "Free vars: $freeVars\n" +
         "Bindings were $this\n" +
         "Result included unpropagated variables: $unpropagated"

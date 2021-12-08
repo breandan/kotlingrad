@@ -10,7 +10,7 @@ fun genTypeLevelVariables() = """
 package ai.hypergraph.kotlingrad.typelevel
 
 import ai.hypergraph.kaliningraph.circuits.*
-import ai.hypergraph.kotlingrad.typelevel.*
+import kotlin.jvm.JvmName
 
 ${genTypeAliases()}
 
@@ -120,7 +120,7 @@ fun genInvokes(allFreeVariableConfigurations: Set<List<Boolean>> = allBinaryArra
         fvs.joinToString(", ") { "v$it: V${it}Bnd<N>" } +
         ") = " +
         fvConfig.mapIndexed { i, b -> val isBound = (i + 1) in fvs; !(!b || isBound) }.joinToString("") { if (it) "X" else "O" }
-          .let { if (it == "OOO") "call<N>" else "inv<N, $it>" } +
+          .let { if (it == "OOO") "call" else "inv<N, $it>" } +
         fvs.joinToString(", ", "(", ")") { "v$it" }
     }
   }

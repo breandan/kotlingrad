@@ -3,7 +3,7 @@
 package ai.hypergraph.kotlingrad.typelevel
 
 import ai.hypergraph.kaliningraph.circuits.*
-import ai.hypergraph.kotlingrad.typelevel.*
+import kotlin.jvm.JvmName
 
 typealias OOO = Ex<OO, OO, OO>
 typealias OOX = Ex<OO, OO, XX>
@@ -91,22 +91,22 @@ operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.times(n: N) = Ex
 operator fun <N: Number, V0: XO, V1: XO, V2: XO> N.div(e: Ex<V0, V1, V2>) = Ex<V0, V1, V2>(Ops.ratio, null, Nt(this), e)
 operator fun <N: Number, V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.div(n: N) = Ex<V0, V1, V2>(Ops.ratio, null, this, Nt(n))
 
-@JvmName("i:__t") operator fun <N: Number> OOX.invoke(v3: V3Bnd<N>) = call<N>(v3)
-@JvmName("i:_t_") operator fun <N: Number> OXO.invoke(v2: V2Bnd<N>) = call<N>(v2)
+@JvmName("i:__t") operator fun <N: Number> OOX.invoke(v3: V3Bnd<N>) = call(v3)
+@JvmName("i:_t_") operator fun <N: Number> OXO.invoke(v2: V2Bnd<N>) = call(v2)
 @JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v2: V2Bnd<N>) = inv<N, OOX>(v2)
 @JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v3: V3Bnd<N>) = inv<N, OXO>(v3)
-@JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call<N>(v2, v3)
-@JvmName("i:t__") operator fun <N: Number> XOO.invoke(v1: V1Bnd<N>) = call<N>(v1)
+@JvmName("i:_tt") operator fun <N: Number> OXX.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v2, v3)
+@JvmName("i:t__") operator fun <N: Number> XOO.invoke(v1: V1Bnd<N>) = call(v1)
 @JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v1: V1Bnd<N>) = inv<N, OOX>(v1)
 @JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v3: V3Bnd<N>) = inv<N, XOO>(v3)
-@JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = call<N>(v1, v3)
+@JvmName("i:t_t") operator fun <N: Number> XOX.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = call(v1, v3)
 @JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v1: V1Bnd<N>) = inv<N, OXO>(v1)
 @JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v2: V2Bnd<N>) = inv<N, XOO>(v2)
-@JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call<N>(v1, v2)
+@JvmName("i:tt_") operator fun <N: Number> XXO.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = call(v1, v2)
 @JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>) = inv<N, OXX>(v1)
 @JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v2: V2Bnd<N>) = inv<N, XOX>(v2)
 @JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>) = inv<N, OOX>(v1, v2)
 @JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v3: V3Bnd<N>) = inv<N, XXO>(v3)
 @JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v3: V3Bnd<N>) = inv<N, OXO>(v1, v3)
 @JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v2: V2Bnd<N>, v3: V3Bnd<N>) = inv<N, XOO>(v2, v3)
-@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call<N>(v1, v2, v3)
+@JvmName("i:ttt") operator fun <N: Number> XXX.invoke(v1: V1Bnd<N>, v2: V2Bnd<N>, v3: V3Bnd<N>) = call(v1, v2, v3)

@@ -53,3 +53,5 @@ fun String.superscript() =
 
 fun <T> Iterable<T>.repeat(n: Int) =
   sequence { repeat(n) { yieldAll(this@repeat) } }
+
+var EAGER = false

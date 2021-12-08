@@ -3,8 +3,9 @@
 package ai.hypergraph.kotlingrad.api
 
 import ai.hypergraph.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.dot
 import ai.hypergraph.kotlingrad.shapes.*
-import ai.hypergraph.kaliningraph.*
+import ai.hypergraph.kotlingrad.EAGER
 import kotlin.reflect.KProperty
 
 /**
@@ -23,7 +24,7 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
       try {
         it as Vec<X, E>
       } catch (e: ClassCastException) {
-        show("before"); it.show("after")
+        //show("before"); it.show("after")
         throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }

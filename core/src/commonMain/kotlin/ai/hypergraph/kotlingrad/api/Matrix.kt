@@ -6,6 +6,7 @@ import ai.hypergraph.kaliningraph.circuits.Op
 import ai.hypergraph.kaliningraph.circuits.Ops
 import ai.hypergraph.kaliningraph.tensor.DoubleMatrix
 import ai.hypergraph.kaliningraph.*
+import ai.hypergraph.kotlingrad.EAGER
 import ai.hypergraph.kotlingrad.api.VFun.Companion.KG_IT
 import ai.hypergraph.kotlingrad.shapes.D1
 import ai.hypergraph.kotlingrad.shapes.DN
@@ -30,7 +31,7 @@ open class MFun<X, R, C>(override vararg val inputs: Fun<X>): Fun<X>
       try {
         it as Mat<X, R, C>
       } catch (e: ClassCastException) {
-        show("before"); it.show("after")
+        //show("before"); it.show("after")
         throw NumberFormatException("Matrix function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }

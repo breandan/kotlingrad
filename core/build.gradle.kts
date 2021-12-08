@@ -115,6 +115,7 @@ kotlin {
       dependencies {
         implementation(kotlin("stdlib-common"))
         implementation(kotlin("reflect"))
+        api("ai.hypergraph:kaliningraph:0.1.9")
       }
     }
 
@@ -122,8 +123,6 @@ kotlin {
       dependencies {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
-
-        api("ai.hypergraph:kaliningraph:0.1.9")
 
         implementation("org.graalvm.js:js:21.3.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")

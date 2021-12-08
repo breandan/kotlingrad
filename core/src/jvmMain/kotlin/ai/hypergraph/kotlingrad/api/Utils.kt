@@ -16,5 +16,3 @@ fun Fun<*>.saveToFile(filename: String) =
 fun Fun<*>.render(format: Format = SVG) = toGraph().toGraphviz().render(format)
 
 fun Fun<*>.show(name: String = "temp") = toGraph().show(name)
-
-var EAGER = false

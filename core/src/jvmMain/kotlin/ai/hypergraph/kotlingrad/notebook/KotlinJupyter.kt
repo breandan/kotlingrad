@@ -4,7 +4,7 @@ import ai.hypergraph.kaliningraph.circuits.Gate
 import ai.hypergraph.kaliningraph.html
 import ai.hypergraph.kaliningraph.image.matToBase64Img
 import ai.hypergraph.kaliningraph.tensor.*
-import ai.hypergraph.kaliningraph.typefamily.*
+import ai.hypergraph.kaliningraph.types.Graph
 import ai.hypergraph.kotlingrad.api.*
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
