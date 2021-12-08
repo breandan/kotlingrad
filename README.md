@@ -165,7 +165,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
+<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
 
 <sup>τ, λ, π, ω</sup> Arbitrary products.
 
@@ -273,7 +273,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-For further details, please refer to [the implementation](core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt).
+For further details, please refer to [the implementation](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt).
 
 ### Example
 
@@ -415,7 +415,7 @@ There are many other ways to independently verify the numerical gradient, such a
 
 ## How?
 
-To understand the core of Kotlin∇'s AD implementation, please refer to the [scalar example](core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/api/Scalar.kt).
+To understand the core of Kotlin∇'s AD implementation, please refer to the [scalar example](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/api/Scalar.kt).
 
 This project relies on a few Kotlin-specific language features, which together enable a concise, flexible and type-safe user interface. The following features have proven beneficial to the development of Kotlin∇:
 
@@ -545,7 +545,7 @@ Symbolic differentiation as implemented by Kotlin∇ has two distinct passes, on
 
 [![](latex/figures/kotlingrad_diagram.png)](http://breandan.net/public/masters_thesis.pdf#page=58)
 
-Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a [`Bindings`](/core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/api/Bindings.kt) instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the [`invoke` operator](https://kotlinlang.org/docs/reference/operator-overloading.html#invoke), then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
+Kotlin∇ functions are not only data structures, but Kotlin functions which can be invoked by passing a [`Bindings`](/core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/api/Bindings.kt) instance (effectively, a `Map<Fun<X>, Fun<X>>`). To enable this functionality, we overload the [`invoke` operator](https://kotlinlang.org/docs/reference/operator-overloading.html#invoke), then recurse over the graph, using `Bindings` as a lookup table. If a matching subexpression is found, we propagate the bound value instead of the matching function. This is known as the [interpreter pattern](https://en.wikipedia.org/wiki/Interpreter_pattern).
 
 Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
@@ -644,7 +644,7 @@ val add = Vec(1, 2, 3) + Vec(listOf(...))      // May fail at runtime
 val sum = Vec(1, 2) + add                      // Does not compile
 ```
 
-A similar syntax is available for [matrices](core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/api/Matrix.kt) and higher-rank [tensors](core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/api/Tensor.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
+A similar syntax is available for [matrices](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/api/Matrix.kt) and higher-rank [tensors](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/api/Tensor.kt). For example, Kotlin∇ can infer the shape of multiplying two matrices, and will not compile if their inner dimensions do not match:
 
 ```kotlin
 open class Mat<X, R: D1, C: D1>(vararg val rows: Vec<X, C>)
@@ -711,7 +711,7 @@ Without property delegation, users would need to repeat the property name in the
 
 ## Experimental ideas
 
-The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/ai/hypergraph/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
@@ -860,28 +860,28 @@ For a detailed grammar and semantics, please refer to the [the Kotlin∇ specifi
 
 Unlike certain frameworks which simply wrap an existing AD library in a type-safe DSL, Kotlin∇ contains a fully shape-safe implementation of algorithmic differentiation, written in pure Kotlin. By doing so, it can leverage Kotlin language features such as typed functional programming, as well as interoperability with other languages on the JVM platform. Furthermore, it implements [symbolic differentiation](http://breandan.net/public/masters_thesis.pdf#2a), which unlike Wengert tape or dual-number based ADs, allows it to calculate derivatives of arbitrarily high order with zero extra engineering required. Further details can be found below.
 
-|                                    Framework                                     | Language |        SD¹         |        AD²         |        HD³         |        DP⁴         |        FP⁵         |        TS⁶         |        SS⁷         |        DT⁸         |      MP⁹       |
-|:--------------------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:--------------:|
-|                                     Kotlin∇                                      |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :construction: |
-|               [DiffSharp](https://diffsharp.github.io/DiffSharp/)                |    F#    |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|       [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp)       |    F#    |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
-|                        [Nexus](https://tongfei.me/nexus/)                        |  Scala   |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
-|                [Lantern](https://feiwang3311.github.io/Lantern/)                 |  Scala   |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|           [Hipparchus](https://github.com/Hipparchus-Math/hipparchus)            |   Java   |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|                [JAutoDiff](https://github.com/uniker9/JAutoDiff/)                |   Java   | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|                   [Eclipse DL4J](https://deeplearning4j.org/)                    |   Java   |        :x:         |   :construction:   |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|               [SICMUtils](https://github.com/sicmutils/sicmutils)                | Clojure  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
-|                        [Halide](https://halide-lang.org/)                        |   C++    |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |      :x:       |
-|              [Tensor Safe](https://github.com/leopiney/tensor-safe)              | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |      :x:       |
-|               [HaskTorch](https://github.com/hasktorch/hasktorch)                | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
-|                [Dex](https://github.com/google-research/dex-lang)                | Haskell  |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |   :construction:   |      :x:       |
-|                [Grenade](https://github.com/HuwCampbell/grenade)                 | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |      :x:       |
-|           [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)           |  Scheme  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
-|                    [Myia](https://github.com/mila-udem/myia)                     |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :construction: |
-|                  [Autograd](https://github.com/HIPS/autograd/)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |      :x:       |
-|                       [JAX](https://github.com/google/jax)                       |  Python  |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :construction: |
-|                   [Tangent](https://github.com/google/tangent)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |      :x:       |
-| [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf#page=39) | Analitik | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |      :x:       |
+|                                    Framework                                     | Language |        SD¹         |        AD²         |        HD³         |        DP⁴         |        FP⁵         |        TS⁶         |        SS⁷         |        DT⁸         |        MP⁹         |
+|:--------------------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|
+|                                     Kotlin∇                                      |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |
+|               [DiffSharp](https://diffsharp.github.io/DiffSharp/)                |    F#    |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
+|       [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp)       |    F#    |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |
+|                        [Nexus](https://tongfei.me/nexus/)                        |  Scala   |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |
+|                [Lantern](https://feiwang3311.github.io/Lantern/)                 |  Scala   |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
+|           [Hipparchus](https://github.com/Hipparchus-Math/hipparchus)            |   Java   |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
+|                [JAutoDiff](https://github.com/uniker9/JAutoDiff/)                |   Java   | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
+|                   [Eclipse DL4J](https://deeplearning4j.org/)                    |   Java   |        :x:         |   :construction:   |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
+|               [SICMUtils](https://github.com/sicmutils/sicmutils)                | Clojure  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |
+|                        [Halide](https://halide-lang.org/)                        |   C++    |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
+|              [Tensor Safe](https://github.com/leopiney/tensor-safe)              | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |
+|               [HaskTorch](https://github.com/hasktorch/hasktorch)                | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |
+|                [Dex](https://github.com/google-research/dex-lang)                | Haskell  |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |   :construction:   |        :x:         |
+|                [Grenade](https://github.com/HuwCampbell/grenade)                 | Haskell  |        :x:         |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |
+|           [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)           |  Scheme  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |
+|                    [Myia](https://github.com/mila-udem/myia)                     |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |   :construction:   |
+|                  [Autograd](https://github.com/HIPS/autograd/)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |
+|                       [JAX](https://github.com/google/jax)                       |  Python  |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |   :construction:   |
+|                   [Tangent](https://github.com/google/tangent)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |
+| [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf#page=39) | Analitik | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |
 
 ¹ Symbolic differentiation*, ² Automatic differentiation*, ³ Higher-order/rank differentiation, ⁴ Differentiable programming*, ⁵ Functional programming, ⁶ Compile-time type safety, ⁷ Compile-time shape safety, ⁸ Dependently Typed, ⁹ Multiplatform
 
