@@ -51,14 +51,14 @@ data class T4<A: D, B, C, D>(val e1: A, val e2: B, val e3: C, val e4: D)
 
 //https://youtrack.jetbrains.com/issue/KT-50466
 fun main() {
-  val t: P_I_III = plus(object: I{}, object: III{})
-  val r: Four = apply(t, object: EVAL {})
+  val t = op(object: II{}, object: III{}, object: PLUS{})
+  val r = apply(t, object: EVAL {})
 }
 
-interface I: One, P_I_I, P_I_II, P_I_III, P_I_IV
-interface II: Two, P_I_II, P_II_III, P_II_IV
-interface III: Three, P_I_III, P_II_III
-interface IV: Four, P_I_IV, P_II_IV
+interface I: One, P_I_I, P_I_II, P_I_III, P_I_IV, M_I_I, M_I_II, M_I_III, M_I_IV
+interface II: Two, P_I_II, P_II_III, P_II_IV, M_I_II, M_II_III
+interface III: Three, P_I_III, P_II_III, M_I_III, M_II_III
+interface IV: Four, P_I_IV, P_II_IV, M_I_IV
 interface V: Five
 interface VI: Six
 
@@ -69,6 +69,12 @@ interface Four
 interface Five
 interface Six
 
+interface M_I_I: One
+interface M_I_II: Two
+interface M_I_III: Three
+interface M_I_IV: Four
+interface M_II_III: Six
+
 interface P_I_I: Two
 interface P_I_II: Three
 interface P_I_III: Four
@@ -76,6 +82,8 @@ interface P_I_IV: Five
 interface P_II_III: Five
 interface P_II_IV: Six
 interface EVAL: One, Two, Three, Four, Five, Six
+interface PLUS  : P_I_I, P_I_II, P_I_III, P_I_IV, P_II_III, P_II_IV
+interface TIMES : M_I_I, M_I_II, M_I_III, M_I_IV, M_II_III
 
-fun <X: T, Y: T, T> plus(x: X, y: Y): T = TODO()
+fun <X: T, Y: T, Z: T, T> op(x: X, y: Y, op: Z): T = TODO()
 fun <X:Z, Y: Z, Z> apply(x: X, op: Y): Z = TODO()
