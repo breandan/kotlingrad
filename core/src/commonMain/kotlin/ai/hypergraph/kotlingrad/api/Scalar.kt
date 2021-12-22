@@ -1,7 +1,7 @@
 @file:Suppress("FunctionName", "LocalVariableName", "unused", "UNUSED_VARIABLE")
 package ai.hypergraph.kotlingrad.api
 
-import ai.hypergraph.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.graphs.*
 import ai.hypergraph.kotlingrad.EAGER
 import ai.hypergraph.kotlingrad.shapes.*
 import kotlin.Double.Companion.NaN

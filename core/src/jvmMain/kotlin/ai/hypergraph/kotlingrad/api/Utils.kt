@@ -1,7 +1,7 @@
 package ai.hypergraph.kotlingrad.api
 
-import ai.hypergraph.kaliningraph.*
-import guru.nidi.graphviz.engine.*
+import ai.hypergraph.kaliningraph.visualization.*
+import guru.nidi.graphviz.engine.Format
 import guru.nidi.graphviz.engine.Format.SVG
 import java.io.File
 

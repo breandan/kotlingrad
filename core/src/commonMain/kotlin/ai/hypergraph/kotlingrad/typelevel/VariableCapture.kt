@@ -2,7 +2,7 @@
 
 package ai.hypergraph.kotlingrad.typelevel
 
-import ai.hypergraph.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.graphs.*
 import kotlin.reflect.KProperty
 
 sealed class XO // Represents either a bound or unbound variable

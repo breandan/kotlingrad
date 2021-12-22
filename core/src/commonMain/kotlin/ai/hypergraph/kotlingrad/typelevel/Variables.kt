@@ -2,7 +2,7 @@
 
 package ai.hypergraph.kotlingrad.typelevel
 
-import ai.hypergraph.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.graphs.*
 import kotlin.jvm.JvmName
 
 typealias OOO = Ex<OO, OO, OO>

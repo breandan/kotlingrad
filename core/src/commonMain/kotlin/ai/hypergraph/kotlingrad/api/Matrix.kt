@@ -2,8 +2,7 @@
 
 package ai.hypergraph.kotlingrad.api
 
-import ai.hypergraph.kaliningraph.circuits.Op
-import ai.hypergraph.kaliningraph.circuits.Ops
+import ai.hypergraph.kaliningraph.graphs.*
 import ai.hypergraph.kaliningraph.tensor.DoubleMatrix
 import ai.hypergraph.kaliningraph.*
 import ai.hypergraph.kotlingrad.EAGER

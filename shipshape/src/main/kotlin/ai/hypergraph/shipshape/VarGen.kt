@@ -9,7 +9,7 @@ fun genTypeLevelVariables() = """
 
 package ai.hypergraph.kotlingrad.typelevel
 
-import ai.hypergraph.kaliningraph.circuits.*
+import ai.hypergraph.kaliningraph.graphs.*
 import kotlin.jvm.JvmName
 
 ${genTypeAliases()}

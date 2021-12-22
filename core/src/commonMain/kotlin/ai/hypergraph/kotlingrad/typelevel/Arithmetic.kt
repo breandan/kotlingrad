@@ -43,3 +43,24 @@ operator fun N1.plus(n: N1): N2 = D2
 @JvmName("2+2=4")
 operator fun N2.plus(n: N2): N4 = D4
 inline operator fun <reified S1: N1, reified S2: N2> Vec<S1>.plus(other: Vec<S2>): Vec<N3> = Vec(D3)
+
+// Try to encode arithmetic as a lattice
+data class T1<A>(val e1: A)
+data class T3<A, B, C>(val e1: A, val e2: B, val e3: C)
+data class T4<A: D, B, C, D>(val e1: A, val e2: B, val e3: C, val e4: D)
+
+interface Top { val i: Int get() = 4 }
+interface III: Top { override val i: Int get() = 3; companion object: III }
+interface IPII: III
+interface IPI: II
+interface II: IPII, Top { override val i: Int get() = 2 ; companion object: II }
+interface I: IPI, IPII, Top { override val i: Int get() = 1 ; companion object: I }
+class Bot(override val i: Int = 0): I, II, III
+interface Plus: IPI, IPII, Top { companion object: Plus }
+
+// Kotlin type inference seems able to compute a join/meet
+fun <O: Z, X: Z, Y: Z, Z> op(op: O, e1: X, e2: Y, z: Z = TODO()): Z = TODO()
+
+fun main() {
+  val t: III = op(Plus, I, II)
+}
