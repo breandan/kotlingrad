@@ -2,7 +2,7 @@
 
 package ai.hypergraph.kotlingrad.samples
 
-import ai.hypergraph.kaliningraph.show
+import ai.hypergraph.kaliningraph.visualization.show
 import ai.hypergraph.kotlingrad.api.*
 
 import jetbrains.datalore.base.geometry.DoubleVector

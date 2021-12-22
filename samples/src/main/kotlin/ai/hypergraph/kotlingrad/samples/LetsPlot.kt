@@ -1,6 +1,6 @@
 package ai.hypergraph.kotlingrad.samples
 
-import ai.hypergraph.kaliningraph.show
+import ai.hypergraph.kaliningraph.visualization.show
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors
