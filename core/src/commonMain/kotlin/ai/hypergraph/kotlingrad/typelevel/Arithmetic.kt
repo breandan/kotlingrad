@@ -49,18 +49,33 @@ data class T1<A>(val e1: A)
 data class T3<A, B, C>(val e1: A, val e2: B, val e3: C)
 data class T4<A: D, B, C, D>(val e1: A, val e2: B, val e3: C, val e4: D)
 
-interface Top { val i: Int get() = 4 }
-interface III: Top { override val i: Int get() = 3; companion object: III }
-interface IPII: III
-interface IPI: II
-interface II: IPII, Top { override val i: Int get() = 2 ; companion object: II }
-interface I: IPI, IPII, Top { override val i: Int get() = 1 ; companion object: I }
-class Bot(override val i: Int = 0): I, II, III
-interface Plus: IPI, IPII, Top { companion object: Plus }
-
-// Kotlin type inference seems able to compute a join/meet
-fun <O: Z, X: Z, Y: Z, Z> op(op: O, e1: X, e2: Y, z: Z = TODO()): Z = TODO()
-
+//https://youtrack.jetbrains.com/issue/KT-50466
 fun main() {
-  val t: III = op(Plus, I, II)
+  val t: P_I_III = plus(object: I{}, object: III{})
+  val r: Four = apply(t, object: EVAL {})
 }
+
+interface I: One, P_I_I, P_I_II, P_I_III, P_I_IV
+interface II: Two, P_I_II, P_II_III, P_II_IV
+interface III: Three, P_I_III, P_II_III
+interface IV: Four, P_I_IV, P_II_IV
+interface V: Five
+interface VI: Six
+
+interface One
+interface Two
+interface Three
+interface Four
+interface Five
+interface Six
+
+interface P_I_I: Two
+interface P_I_II: Three
+interface P_I_III: Four
+interface P_I_IV: Five
+interface P_II_III: Five
+interface P_II_IV: Six
+interface EVAL: One, Two, Three, Four, Five, Six
+
+fun <X: T, Y: T, T> plus(x: X, y: Y): T = TODO()
+fun <X:Z, Y: Z, Z> apply(x: X, op: Y): Z = TODO()
