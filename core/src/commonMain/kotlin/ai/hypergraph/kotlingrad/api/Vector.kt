@@ -24,7 +24,6 @@ sealed class VFun<X: SFun<X>, E: D1>(override vararg val inputs: Fun<X>): Fun<X>
       try {
         it as Vec<X, E>
       } catch (e: ClassCastException) {
-        //show("before"); it.show("after")
         throw NumberFormatException("Vector function has unbound free variables: ${bindings.allFreeVariables.keys}")
       }
     }
@@ -164,9 +163,7 @@ class Gradient<X: SFun<X>, E: D1>(override val input: SFun<X>, override val vrb:
       else (left.df() * right * (One<X>() / left) + right.df() * left.ln())
     is Negative -> -input.df()
     is Log -> (left pow -One<X>()) * left.df()
-    is DProd ->
-      (left.d(vrb) as MFun<X, E, E> * right as VFun<X, E>) +
-        (left as VFun<X, E> * right.d(vrb))
+    is DProd -> (left.d(vrb) as MFun<X, E, E> * right as VFun<X, E>) + (left as VFun<X, E> * right.d(vrb))
     is SComposition -> evaluate.df()
     is VSumAll<X, *> -> (input as VFun<X, E>).d(vrb).sum()
     else -> TODO(this@df::class.simpleName!!)

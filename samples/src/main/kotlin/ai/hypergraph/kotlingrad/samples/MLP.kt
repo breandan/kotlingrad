@@ -27,6 +27,8 @@ fun <T: SFun<T>> mlp(
 fun Double.clip(maxUnsignedVal: Double = 3.0) =
   if (maxUnsignedVal < log10(absoluteValue).absoluteValue) sign * 10.0.pow(log10(absoluteValue)) else this
 
+val MAX_EPOCHS = 3 // Increase to train to convergence
+
 fun main() {
   val p1v by DReal.Var(D5)
   val p2v by DReal.Var(D5, D5)
@@ -109,7 +111,7 @@ fun main() {
       plotVsOracle(oracle, trainedMLP, batchIn)
       validate(sample, trainedMLP, batchIn)
     }
-  } while (epochs++ < 100)
+  } while (epochs++ < MAX_EPOCHS)
 
   println("Final weights: w1:$w1\nw2:$w2\nw3:$w3")
 
