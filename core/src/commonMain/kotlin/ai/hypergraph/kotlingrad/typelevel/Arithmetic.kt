@@ -1,6 +1,7 @@
 package ai.hypergraph.kotlingrad.typelevel
 
 import kotlin.jvm.JvmName
+import kotlin.reflect.KClass
 
 interface TLNat {
   val eval: Int
@@ -49,29 +50,45 @@ data class T1<A>(val e1: A)
 data class T3<A, B, C>(val e1: A, val e2: B, val e3: C)
 data class T4<A: D, B, C, D>(val e1: A, val e2: B, val e3: C, val e4: D)
 
-//https://youtrack.jetbrains.com/issue/KT-50466
-fun main() {
-  val t = op(object: PLUS{}, object: II{}, object: III{})
-  // val t: P_II_III = plus(object: I{}, object: III{}) // "Specify type explicitly", it will produce P_II_III
-  // val t: Three = op(object: III{}, object: II{}, object: PLUS{}) // Sensitive to input argument order
-  // If we omit the type for t and "Specify type explicitly" on the following type, it is "Three". With the inferred type above, it is "Five"
-  val r = apply(t, object: EVAL {})
-  // val r: Five = apply(t, object: EVAL {})
+// Idea: encode the result of A OP B as a join, i.e., C := LUB(A, OP, B)
+// Problem: Must be acyclic, i.e., A * 1 = A, A + 0 = A will not work
+// https://kotlinlang.org/spec/type-system.html#least-upper-bound
+sealed class Num {
+  fun supertype() = this::class.toString()
+  val i: Int = when(this) {
+    is I -> 1
+    is II -> 2
+    is III -> 3
+    is IV -> 4
+    is V -> 5
+    is VI -> 6
+  }
+}
+class I   : Num(), One, P_I_II, P_I_III, P_I_IV, P_I_V, M_I_II, M_I_III, M_I_IV
+class II  : Num(), Two, P_I_II, P_II_III, P_II_IV, M_I_II, M_II_III
+class III : Num(), Three, P_I_III, P_II_III, M_I_III, M_II_III
+class IV  : Num(), Four, P_I_IV, P_II_IV, M_I_IV
+class V   : Num(), Five, P_I_V
+class VI  : Num(), Six
+
+sealed interface INum {
+  fun int() = i().i
+  fun i(): Num = when(this) {
+    is One -> I()
+    is Two -> II()
+    is Three -> III()
+    is Four -> IV()
+    is Five -> V()
+    is Six -> VI()
+  }
 }
 
-interface I   : One, P_I_II, P_I_III, P_I_IV, P_I_V, M_I_II, M_I_III, M_I_IV
-interface II  : Two, P_I_II, P_II_III, P_II_IV, M_I_II, M_II_III
-interface III : Three, P_I_III, P_II_III, M_I_III, M_II_III
-interface IV  : Four, P_I_IV, P_II_IV, M_I_IV
-interface V   : Five, P_I_V
-interface VI  : Six
-
-interface One
-interface Two
-interface Three
-interface Four
-interface Five
-interface Six
+interface One  : INum
+interface Two  : INum
+interface Three: INum
+interface Four : INum
+interface Five : INum
+interface Six  : INum
 
 interface M_I_II   : Two
 interface M_I_III  : Three
@@ -89,5 +106,14 @@ interface EVAL     : One, Two, Three, Four, Five, Six
 interface PLUS     : P_I_II, P_I_III, P_I_IV, P_II_III, P_II_IV
 interface TIMES    : M_I_II, M_I_III, M_I_IV, M_II_III
 
-fun <X: T, Y: T, Z: T, T> op(x: X, y: Y, op: Z): T = TODO()
-fun <X:Z, Y: Z, Z> apply(x: X, op: Y): Z = TODO()
+// Computes the least upper bound between two types
+fun join(a1: Any, a2: Any): INum =
+  a1.run {
+    println((a1 as Num).supertype())
+    if(a1 is II && a2 is III) object: P_II_III{}
+    else TODO()
+  }
+
+fun <X: T, Y: T, Z: T, T> op(op: X, x: Y, y: Z): T = join(x!!, y!!) as T
+
+fun <X:Z, Y: Z, Z> apply(x: X, op: Y): Z = x

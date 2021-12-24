@@ -33,7 +33,7 @@ tasks {
     "HelloKotlingrad", "Plot2D", "Plot3D", "VisualizeDFG", "VariableCapture",
     "LetsPlot", "ScalarDemo", "VectorDemo", "MatrixDemo",
     "MLP", "LinearRegression", "PolynomialRegression",
-    "PolynomialAttack", "ReadSeff"
+    "PolynomialAttack", "ReadSeff", "Arithmetic"
   ).forEach { fileName ->
     register(fileName, JavaExec::class) {
       mainClass.set("ai.hypergraph.kotlingrad.samples.${fileName}Kt")
