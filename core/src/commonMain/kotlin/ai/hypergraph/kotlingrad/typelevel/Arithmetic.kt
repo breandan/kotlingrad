@@ -51,7 +51,7 @@ data class T4<A: D, B, C, D>(val e1: A, val e2: B, val e3: C, val e4: D)
 
 //https://youtrack.jetbrains.com/issue/KT-50466
 fun main() {
-  val t = op(object: II{}, object: III{}, object: PLUS{})
+  val t = op(object: PLUS{}, object: II{}, object: III{})
   // val t: P_II_III = plus(object: I{}, object: III{}) // "Specify type explicitly", it will produce P_II_III
   // val t: Three = op(object: III{}, object: II{}, object: PLUS{}) // Sensitive to input argument order
   // If we omit the type for t and "Specify type explicitly" on the following type, it is "Three". With the inferred type above, it is "Five"
