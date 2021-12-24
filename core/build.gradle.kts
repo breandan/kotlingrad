@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.dokka.Platform.common
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   signing
@@ -10,18 +11,34 @@ plugins {
   id("com.google.devtools.ksp") version "1.6.10-1.0.2"
   kotlin("multiplatform") version "1.6.10"
   kotlin("jupyter.api") version "0.11.0-42"
+  id("com.xcporter.metaview") version "0.0.5"
 }
 
-val generatedSourcesPath = file("src/jvmMain/kotlin/gen")
+val generatedSourcesPath = file("src/commonMain/gen")
+
+shipshape {
+  outputDir = "${generatedSourcesPath.path}/ai/hypergraph/kotlingrad"
+}
+
 idea.module {
   generatedSourceDirs.add(generatedSourcesPath)
 }
 
+generateUml {
+  projectDir.resolve("src/commonMain/kotlin/ai/hypergraph/kotlingrad/api/")
+    .listFiles()!!.forEach {
+      classTree {
+        target = it
+        outputFile = it.nameWithoutExtension + ".md"
+      }
+    }
+}
+
+tasks.withType<KotlinCompile> { dependsOn("genShapes") }
+
 kotlin {
   jvm {
     tasks {
-      build { dependsOn("genShapes") }
-
       processJupyterApiResources {
         libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
       }

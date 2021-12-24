@@ -48,7 +48,7 @@ fun main() {
   var v4: VFun<DReal, D5> = DReal.Vec(D5) { 0 }
 
   val oracle = { it: Double -> DReal(-(it / 10).pow(3)) }//kotlin.math.sin(it/2.0) }//(it / 10).pow(2) }//-it / 10 + 1 }
-  val sample =
+  val sample: () -> Pair<Vec<DReal, D5>, Vec<DReal, D5>> =
     {
       (1..5).map {
         rand.nextDouble(0.0, 10.0).let { DReal(it) to oracle(it) }
@@ -109,13 +109,13 @@ fun main() {
       plotVsOracle(oracle, trainedMLP, batchIn)
       validate(sample, trainedMLP, batchIn)
     }
-  } while (epochs++ < 10)
+  } while (epochs++ < 100)
 
   println("Final weights: w1:$w1\nw2:$w2\nw3:$w3")
 
   mapOf("Epochs" to lossHistory.map { it.first },
     "Average Loss" to lossHistory.map { it.second }
-  ).plot2D("Training Loss", "mlp_loss.svg")
+  ).plot2D("Training Loss")
 }
 
 private fun plotVsOracle(oracle: (Double) -> DReal, mlp: VFun<DReal, D5>, x: VVar<DReal, D5>) {
@@ -124,7 +124,7 @@ private fun plotVsOracle(oracle: (Double) -> DReal, mlp: VFun<DReal, D5>, x: VVa
     "x" to t,
     "y" to t.map { oracle(it).toDouble() },
     "z" to t.map { value -> mlp(x to (1..5).map { value })()[0].toDouble() }
-  ).plot2D("Oracle vs. Model", "compare_outputs.svg")
+  ).plot2D("Oracle vs. Model")
 }
 
 fun validate(drawSample: () -> Pair<Vec<DReal, D5>, Vec<DReal, D5>>, mlp: VFun<DReal, D5>, x: VVar<DReal, D5>) {

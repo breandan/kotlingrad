@@ -31,3 +31,4 @@ out
 **/.ipynb_checkpoints/
 *.run
 *.hprof
+temp*.svg

@@ -27,7 +27,7 @@ fun main() {
 
 fun Map<String, Any>.plot2D(
   title: String,
-  filename: String,
+  filename: String = "tempfile_${System.currentTimeMillis()}.svg",
   thickness: Double = 1.0,
   dimensions: DoubleVector = DoubleVector(1000.0, 500.0)
 ) {

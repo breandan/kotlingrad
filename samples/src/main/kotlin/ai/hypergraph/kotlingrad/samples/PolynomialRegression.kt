@@ -67,8 +67,7 @@ fun sampleTestInputs(i: Int) = (if(i % 2 == 0) -1 else 1) *
  * |__ __|   |__                     __| |__ __|
  */
 
-fun decodePolynomial(weights: Vec<DReal, D30>) =
-  Vec(paramSize) { x pow (it + 1) } dot weights
+fun decodePolynomial(weights: Vec<DReal, D30>) = Vec(paramSize) { x pow (it + 1) } dot weights
 
 fun learnExpression(targetEq: SFun<DReal>): Pair<Vec<DReal, D30>, List<Triple<Int, Double, Double>>> {
   var weightsNow = DReal.Vec(paramSize) { rand.nextDouble(-1.0, 1.0) }
@@ -142,5 +141,5 @@ private fun plotVsOracle(oracle: SFun<DReal>, model: SFun<DReal>) {
   mapOf("x" to t,
     "y" to t.map { oracle(it).toDouble() },
     "z" to t.map { model(it).toDouble() }
-  ).plot2D("Oracle vs. Model", "compare_outputs.svg")
+  ).plot2D("Oracle vs. Model")
 }
