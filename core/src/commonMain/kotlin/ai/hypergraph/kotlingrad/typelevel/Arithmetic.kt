@@ -107,12 +107,11 @@ interface PLUS     : P_I_II, P_I_III, P_I_IV, P_II_III, P_II_IV
 interface TIMES    : M_I_II, M_I_III, M_I_IV, M_II_III
 
 // Computes the least upper bound between two types
-fun join(a1: Any, a2: Any): INum =
-  a1.run {
-    println((a1 as Num).supertype())
-    if(a1 is II && a2 is III) object: P_II_III{}
-    else TODO()
-  }
+fun join(a1: Any, a2: Any): INum = a1.run {
+  println((a1 as Num).supertype())
+  if (a1 is II && a2 is III) object : P_II_III {}
+  else TODO()
+}
 
 fun <X: T, Y: T, Z: T, T> op(op: X, x: Y, y: Z): T = join(x!!, y!!) as T
 

@@ -43,11 +43,11 @@ kotlin {
         libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
       }
 
-      create<Jar>("javadocJar") {
-        dependsOn(dokkaJavadoc)
-        archiveClassifier.set("javadoc")
-        from(dokkaJavadoc.get().outputDirectory)
-      }
+//      create<Jar>("javadocJar") {
+//        dependsOn(dokkaJavadoc)
+//        archiveClassifier.set("javadoc")
+//        from(dokkaJavadoc.get().outputDirectory)
+//      }
 
       dokkaJavadoc {
         dokkaSourceSets {
@@ -78,48 +78,71 @@ kotlin {
       }
     }
 
-    // https://stackoverflow.com/a/66352905/1772342
 
-    val signingKeyId = providers.gradleProperty("signing.gnupg.keyId")
-    val signingKeyPassphrase = providers.gradleProperty("signing.gnupg.passphrase")
+    // Stub secrets to let the project sync and build without the publication values set up
+    ext["signing.keyId"] = null
+    ext["signing.password"] = null
+    ext["signing.secretKeyRingFile"] = null
+
+    val keyId = providers.gradleProperty("signing.gnupg.keyId")
+    val password = providers.gradleProperty("signing.gnupg.password")
+    val secretKey = providers.gradleProperty("signing.gnupg.key")
+
+    if (keyId.isPresent && password.isPresent && secretKey.isPresent) {
+      ext["signing.keyId"] = keyId
+      ext["signing.password"] = password
+      ext["signing.key"] = secretKey
+    }
+
+    fun getExtraString(name: String) = ext[name]?.toString()
+
     signing {
       useGpgCmd()
-      if (signingKeyId.isPresent && signingKeyPassphrase.isPresent) {
-        useInMemoryPgpKeys(signingKeyId.get(), signingKeyPassphrase.get())
-        sign(extensions.getByType<PublishingExtension>().publications)
+      if (keyId.isPresent && password.isPresent) {
+        useInMemoryPgpKeys(keyId.get(), secretKey.get(), password.get())
+        sign(publishing.publications)
       } else {
         logger.info("PGP signing key not defined, skipping signing configuration")
       }
     }
 
-    publishing {
-      publications.create<MavenPublication>("default") {
-//        from(components["java"])
-//        artifact(tasks["sourcesJar"])
-//        artifact(tasks["javadocJar"])
+    val javadocJar by tasks.registering(Jar::class) { archiveClassifier.set("javadoc") }
 
-        pom {
-          name.set("Kotlin∇")
-          description.set("Differentiable Functional Programming with Algebraic Data Types")
+    /*
+     * Publishing instructions:
+     *
+     *  (1) ./gradlew publishAllPublicationsToSonatypeRepository
+     *  (2) Visit https://s01.oss.sonatype.org/index.html#stagingRepositories
+     *  (3) Close and check content tab.
+     *  (4) Release.
+     *
+     * Adapted from: https://dev.to/kotlin/how-to-build-and-publish-a-kotlin-multiplatform-library-going-public-4a8k
+     */
+
+    publishing.publications.withType<MavenPublication> {
+      artifact(javadocJar.get())
+
+      pom {
+        name.set("Kotlin∇")
+        description.set("Differentiable Functional Programming with Algebraic Data Types")
+        url.set("https://github.com/breandan/kotlingrad")
+        licenses {
+          license {
+            name.set("The Apache Software License, Version 1.0")
+            url.set("http://www.apache.org/licenses/LICENSE-3.0.txt")
+            distribution.set("repo")
+          }
+        }
+        developers {
+          developer {
+            id.set("Breandan Considine")
+            name.set("Breandan Considine")
+            email.set("bre@ndan.co")
+            organization.set("Université de Montréal")
+          }
+        }
+        scm {
           url.set("https://github.com/breandan/kotlingrad")
-          licenses {
-            license {
-              name.set("The Apache Software License, Version 1.0")
-              url.set("http://www.apache.org/licenses/LICENSE-3.0.txt")
-              distribution.set("repo")
-            }
-          }
-          developers {
-            developer {
-              id.set("Breandan Considine")
-              name.set("Breandan Considine")
-              email.set("bre@ndan.co")
-              organization.set("Université de Montréal")
-            }
-          }
-          scm {
-            url.set("https://github.com/breandan/kotlingrad")
-          }
         }
       }
     }
