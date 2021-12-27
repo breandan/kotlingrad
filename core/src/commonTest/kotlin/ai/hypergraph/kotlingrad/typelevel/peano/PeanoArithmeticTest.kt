@@ -1,9 +1,8 @@
-package ai.hypergraph.kotlingrad.typelevel
+package ai.hypergraph.kotlingrad.typelevel.peano
 
-import ai.hypergraph.kotlingrad.typelevel.peano.*
 import kotlin.test.*
 
-class TLArithmeticTest {
+class PeanoArithmeticTest {
   @Test
   fun basicTest() {
     val four = S2 + S2
