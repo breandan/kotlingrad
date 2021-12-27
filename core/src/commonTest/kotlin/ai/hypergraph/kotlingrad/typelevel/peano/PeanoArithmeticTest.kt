@@ -10,9 +10,11 @@ class PeanoArithmeticTest {
   }
 
   @Test
-  fun shouldBeSixteen() {
-    val sixteen = S4 * S4
-    assertEquals(16, sixteen.toInt())
+  fun shouldBeNine() {
+    var nine = S3 * S3
+    assertEquals(9, nine.toInt())
+    nine = S4 + S4 + S1
+    assertEquals(9, nine.toInt())
   }
 
   @Test
@@ -60,7 +62,7 @@ class PeanoArithmeticTest {
   
   @Test
   fun shouldBeThree() {
-    val three = S2 * S2 * S2 * S2 / S4 * S3 / S6 + S3 - S2
+    val three = S2 * S2 * S2 / S4 + S2 - S1
 
     assertEquals(3, three.toInt())
   }

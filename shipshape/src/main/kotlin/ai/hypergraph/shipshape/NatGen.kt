@@ -26,7 +26,10 @@ ${genArithmetic()}
 
 fun genAliases(): String =
   "val S1 = S(O)\n" +
-  range.joinToString("\n") { "val S$it = S${it-1}.plus1()" }
+  range.joinToString("\n") {
+    val (a, b) = balancedPartition(it)
+    "val S$it = S$a.plus$b()"
+  }
 
 fun genConsts(): String =
   """
@@ -34,10 +37,17 @@ fun genConsts(): String =
     fun <W: S<*>, X: S<W>> X.minus1(): W = x as W
   """.trimIndent() +
   range.joinToString( "\n", "\n" ) {
+    val (a, b) = balancedPartition(it)
     """
-      fun <W: S<*>, X: ${genChurchNat(it, "W")}> W.plus$it(): X = plus${it-1}().plus1()
-      fun <W: S<*>, X: ${genChurchNat(it, "W")}> X.minus$it(): W = minus${it-1}().minus1()
+      fun <W: S<*>, X: ${genChurchNat(it, "W")}> W.plus$it(): X = plus$a().plus$b()
+      fun <W: S<*>, X: ${genChurchNat(it, "W")}> X.minus$it(): W = minus$a().minus$b()
     """.trimIndent()
+  }
+
+fun balancedPartition(i: Int) =
+  (i / 2).let { half ->
+    if (half * 2 == i) half to half
+    else half to half + 1
   }
 
 fun genArithmetic(
