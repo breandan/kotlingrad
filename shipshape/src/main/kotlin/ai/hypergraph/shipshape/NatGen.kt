@@ -45,16 +45,12 @@ fun genConsts(): String =
   }
 
 fun balancedPartition(i: Int) =
-  (i / 2).let { half ->
-    if (half * 2 == i) half to half
-    else half to half + 1
-  }
+  (i / 2).let { half -> half to if (half * 2 == i) half else half + 1 }
 
 fun genArithmetic(
   ops: Map<Pair<String, String>, (Int, Int) -> Int> = mapOf(
     "times" to "*" to { a, b -> a * b },
-//    "minus" to "-" to { a, b -> a - b },
-    "div" to "÷" to { a, b -> a / b },
+    "div" to "÷" to { a, b -> if ((a / b) * b == a) a / b else Int.MIN_VALUE },
   )
 ) = genSpecials() + "\n" + genPlus() + "\n" + genMinus() + "\n" +
   (range * range * ops.entries).filter { (a, b, c) -> c.value(a, b) in range }
