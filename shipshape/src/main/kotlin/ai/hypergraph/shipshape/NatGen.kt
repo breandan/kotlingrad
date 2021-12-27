@@ -2,6 +2,10 @@ package ai.hypergraph.shipshape
 
 import org.intellij.lang.annotations.Language
 
+fun main() {
+  println(genPeanoArithmetic())
+}
+
 val range = 2..16
 
 @Language("kt")
