@@ -74,8 +74,8 @@ fun genMinus() =
     """.trimIndent()
   }
 
-fun genTimes() = TODO()
-fun genDiv() = TODO()
+fun genTimes(): String = TODO()
+fun genDiv(): String = TODO()
 
 operator fun IntRange.times(s: IntRange) =
   flatMap { l -> s.map { r -> l to r }.toSet() }.toSet()
