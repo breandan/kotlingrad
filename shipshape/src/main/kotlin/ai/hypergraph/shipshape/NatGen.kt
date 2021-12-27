@@ -69,13 +69,13 @@ operator fun <T, Y, Z> Set<Pair<T, Y>>.times(s: Set<Z>): Set<Triple<T, Y, Z>> =
 
 fun genSpecials() =
   """
-    @JvmName("n+0") operator fun <W: S<*>, X: S<O>> W.plus(x: X) = this
-    @JvmName("0+n") operator fun <W: S<O>, X: S<*>> W.plus(x: X) = x
+    @JvmName("n+0") operator fun <W: S<*>> W.plus(x: O) = this
+    @JvmName("0+n") operator fun <X: S<*>> O.plus(x: X) = x
     @JvmName("n÷1") operator fun <W: S<*>, X: S<O>> W.div(x: X) = this
     @JvmName("n*1") operator fun <W: S<*>, X: S<O>> W.times(x: X) = this
     @JvmName("1*n") operator fun <W: S<O>, X: S<*>> W.times(x: X) = x
-    @JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = this
-    @JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = x
+    @JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = O
+    @JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = O
   """.trimIndent()
 
 tailrec fun genChurchNat(i: Int, prev: String = "K"): String =

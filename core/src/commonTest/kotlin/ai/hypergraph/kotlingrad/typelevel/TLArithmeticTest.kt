@@ -7,9 +7,29 @@ class TLArithmeticTest {
   @Test
   fun basicTest() {
     val four = S2 + S2
-    assertEquals(four.toInt(), 4)
+    assertEquals(4, four.toInt())
     
     val sixteen = four * four
-    assertEquals(sixteen.toInt(), 16)
+    assertEquals(16, sixteen.toInt())
+
+    val five = O
+      .plus2()
+      .let { it + S3 }
+      .plus4()
+      .minus3()
+      .minus3()
+      .let { it + it }
+      .minus3()
+      .let { it * S2 }
+      .minus4()
+      .let { it * it }
+      .let { it - S2 }
+      .let { it + S3 }
+      .minus3()
+      .let { it * it }
+      .let { it / S2 }
+      .let { it + S3 }
+
+    assertEquals(5, five.toInt())
   }
 }

@@ -59,13 +59,13 @@ fun <W: S<*>, X: S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<W>>>>>>>>>>>>>>>> X.minus15(): W 
 fun <W: S<*>, X: S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<W>>>>>>>>>>>>>>>>> W.plus16(): X = plus15().plus1()
 fun <W: S<*>, X: S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<W>>>>>>>>>>>>>>>>> X.minus16(): W = minus15().minus1()
 
-@JvmName("n+0") operator fun <W: S<*>, X: S<O>> W.plus(x: X) = this
-@JvmName("0+n") operator fun <W: S<O>, X: S<*>> W.plus(x: X) = x
+@JvmName("n+0") operator fun <W: S<*>> W.plus(x: O) = this
+@JvmName("0+n") operator fun <X: S<*>> O.plus(x: X) = x
 @JvmName("n÷1") operator fun <W: S<*>, X: S<O>> W.div(x: X) = this
 @JvmName("n*1") operator fun <W: S<*>, X: S<O>> W.times(x: X) = this
 @JvmName("1*n") operator fun <W: S<O>, X: S<*>> W.times(x: X) = x
-@JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = this
-@JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = x
+@JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = O
+@JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = O
 @JvmName("2+2") operator fun <W: S<S<O>>, X: S<S<O>>> W.plus(x: X) = S4
 @JvmName("2*2") operator fun <W: S<S<O>>, X: S<S<O>>> W.times(x: X) = S4
 @JvmName("2+3") operator fun <W: S<S<O>>, X: S<S<S<O>>>> W.plus(x: X) = S5
