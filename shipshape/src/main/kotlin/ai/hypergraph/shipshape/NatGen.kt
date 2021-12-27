@@ -42,24 +42,40 @@ fun genConsts(): String =
 
 fun genArithmetic(
   ops: Map<Pair<String, String>, (Int, Int) -> Int> = mapOf(
-    "plus" to "+" to { a, b -> a + b },
     "times" to "*" to { a, b -> a * b },
-    "minus" to "-" to { a, b -> a - b },
+//    "minus" to "-" to { a, b -> a - b },
     "div" to "÷" to { a, b -> a / b },
   )
-) =
-  genSpecials() +
-    (range * range * ops.entries).filter { (a, b, c) -> c.value(a, b) in range }
-      .joinToString("\n", "\n") { (a, b, c) ->
-        val sa = genChurchNat(a, "O")
-        val sb = genChurchNat(b, "O")
-        val res = c.value(a, b)
+) = genSpecials() + "\n" + genPlus() + "\n" + genMinus() + "\n" +
+  (range * range * ops.entries).filter { (a, b, c) -> c.value(a, b) in range }
+    .joinToString("\n", "\n") { (a, b, c) ->
+      val sa = genChurchNat(a, "O")
+      val sb = genChurchNat(b, "O")
+      val res = c.value(a, b)
 //        val sres = genChurchNat(res, "O")
-        val op = c.key.second
-        val name = c.key.first
+      val op = c.key.second
+      val name = c.key.first
 //        "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb, Y: $sres> W.$name(x: X): Y = $name$b()"
-        "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb> W.$name(x: X) = S${res}"
-      }
+      "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb> W.$name(x: X) = S${res}"
+    }
+
+fun genPlus() =
+  range.joinToString("\n", "\n") {
+    """
+      @JvmName("n+$it") operator fun <W: ${genChurchNat(it, "O")}, X: S<*>> X.plus(x: W) = plus$it()
+    """.trimIndent()
+  }
+
+// I think this is called a quotient type? https://en.wikipedia.org/wiki/Quotient_type
+fun genMinus() =
+  range.joinToString("\n", "\n") {
+    """
+      @JvmName("n-$it") operator fun <V: ${genChurchNat(it, "O")}, W: S<*>, X: ${genChurchNat(it, "W")}> X.minus(v: V) = minus$it()
+    """.trimIndent()
+  }
+
+fun genTimes() = TODO()
+fun genDiv() = TODO()
 
 operator fun IntRange.times(s: IntRange) =
   flatMap { l -> s.map { r -> l to r }.toSet() }.toSet()
