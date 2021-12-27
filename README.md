@@ -40,6 +40,7 @@ Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/
 * [Experimental ideas](#experimental-ideas)
   * [Arity inference](#arity-inference)
   * [Church encoding](#church-encoding)
+  * [Type classes](#type-classes)
 * [Formal grammar](#grammar)
 * [UML diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
@@ -761,6 +762,8 @@ By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/ch
 
 The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface via delegation rather than inheritance.
 
+### Type classes
+
 Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Peano encoding](https://en.wikipedia.org/wiki/Peano_axioms) for natural numbers. To emulate instantiation, we can provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
 ```kotlin
@@ -846,7 +849,9 @@ interface Ring<T>: Group<T> {
 val doubleRing = Ring.of(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> a * b })
 ```
 
-Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we already have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`Types.kt`](https://github.com/breandan/kaliningraph/blob/master/src/commonMain/kotlin/ai/hypergraph/kaliningraph/types/Types.kt).
+Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we now have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`Types.kt`](https://github.com/breandan/kaliningraph/blob/master/src/commonMain/kotlin/ai/hypergraph/kaliningraph/types/Types.kt).
+
+What benefit does this abstraction provide to the end user? By parameterizing over primitive operators, Kotlin∇ consumers can easily swap out a tensor backend without needing to alter or recompile any upstream dependencies. This feature makes multiplatform development a breeze: wherever a type class operator (e.g., `+` or `*`) with matching signature is encountered across a project, it will be dispatched to the user-supplied lambda delegate for specialized execution on custom hardware. Runtime indirection can be elided with proper compiler inlining for zero-cost abstraction.
 
 ## Grammar
 
@@ -862,7 +867,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 
 |                                    Framework                                     | Language |        SD¹         |        AD²         |        HD³         |        DP⁴         |        FP⁵         |        TS⁶         |        SS⁷         |        DT⁸         |        MP⁹         |
 |:--------------------------------------------------------------------------------:|:--------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|:------------------:|
-|                                     Kotlin∇                                      |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         | :heavy_check_mark: |
+|                                     Kotlin∇                                      |  Kotlin  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |   :construction:   | :heavy_check_mark: |
 |               [DiffSharp](https://diffsharp.github.io/DiffSharp/)                |    F#    |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |
 |       [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp)       |    F#    |        :x:         |        :x:         |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |
 |                        [Nexus](https://tongfei.me/nexus/)                        |  Scala   |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |
