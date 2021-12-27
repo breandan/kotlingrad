@@ -71,6 +71,9 @@ fun genSpecials() =
   """
     @JvmName("n+0") operator fun <W: S<*>> W.plus(x: O) = this
     @JvmName("0+n") operator fun <X: S<*>> O.plus(x: X) = x
+    @JvmName("n+1") operator fun <W: S<*>, X: S<O>> W.plus(x: X) = plus1()
+    @JvmName("1+n") operator fun <W: S<*>, X: S<O>> X.plus(x: W) = x.plus1()
+    @JvmName("n-1") operator fun <W: S<*>, X: S<W>, Y: S<O>> X.minus(y: Y) = minus1()
     @JvmName("n÷1") operator fun <W: S<*>, X: S<O>> W.div(x: X) = this
     @JvmName("n*1") operator fun <W: S<*>, X: S<O>> W.times(x: X) = this
     @JvmName("1*n") operator fun <W: S<O>, X: S<*>> W.times(x: X) = x
