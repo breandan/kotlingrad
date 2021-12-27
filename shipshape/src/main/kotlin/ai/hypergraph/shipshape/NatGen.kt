@@ -38,7 +38,7 @@ fun genAliases(): String =
     "private typealias Q1 = S<*>" +
     range.joinToString("\n", "\n") {
       val (a, b) = balancedPartition(it)
-      "private typealias Q$it = ${genChurchNat(it, "*")}"
+      "private typealias Q$it<T> = ${genChurchNat(it, "T")}"
     }
 
 fun genConsts(): String =
@@ -49,8 +49,8 @@ fun genConsts(): String =
   range.joinToString( "\n", "\n" ) {
     val (a, b) = balancedPartition(it)
     """
-      fun <W: S<*>, X: ${genChurchNat(it, "W")}> W.plus$it(): X = plus$a().plus$b()
-      fun <W: S<*>, X: ${genChurchNat(it, "W")}> X.minus$it(): W = minus$a().minus$b()
+      fun <W: S<*>, X: Q$it<W>> W.plus$it(): X = plus$a().plus$b()
+      fun <W: S<*>, X: Q$it<W>> X.minus$it(): W = minus$a().minus$b()
     """.trimIndent()
   }
 
@@ -84,7 +84,7 @@ fun genPlus() =
 fun genMinus() =
   range.joinToString("\n", "\n") {
     """
-      @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: ${genChurchNat(it, "W")}> X.minus(v: V) = minus$it()
+      @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> X.minus(v: V) = minus$it()
     """.trimIndent()
   }
 
