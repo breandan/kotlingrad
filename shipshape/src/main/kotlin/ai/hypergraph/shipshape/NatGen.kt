@@ -13,7 +13,7 @@ package ai.hypergraph.kotlingrad.typelevel.peano
 
 import kotlin.jvm.JvmName
 
-open class S<X: S<X>>(val x: S<X>?)
+open class S<X>(val x: S<X>?)
 object O: S<O>(null)
 fun S<*>.toInt(i: Int = 0): Int = x?.toInt(i + 1) ?: i
 
@@ -25,11 +25,21 @@ ${genArithmetic()}
 """.trimMargin()
 
 fun genAliases(): String =
-  "val S1 = S(O)\n" +
-  range.joinToString("\n") {
+  "val S1 = S(O)" +
+  range.joinToString("\n", "\n", "\n") {
     val (a, b) = balancedPartition(it)
     "val S$it = S$a.plus$b()"
-  }
+  } +
+    "private typealias L1 = S<O>" +
+    range.joinToString("\n", "\n", "\n") {
+      val (a, b) = balancedPartition(it)
+      "private typealias L$it = ${genChurchNat(it, "O")}"
+    } +
+    "private typealias Q1 = S<*>" +
+    range.joinToString("\n", "\n") {
+      val (a, b) = balancedPartition(it)
+      "private typealias Q$it = ${genChurchNat(it, "*")}"
+    }
 
 fun genConsts(): String =
   """
@@ -55,20 +65,18 @@ fun genArithmetic(
 ) = genSpecials() + "\n" + genPlus() + "\n" + genMinus() + "\n" +
   (range * range * ops.entries).filter { (a, b, c) -> c.value(a, b) in range }
     .joinToString("\n", "\n") { (a, b, c) ->
-      val sa = genChurchNat(a, "O")
-      val sb = genChurchNat(b, "O")
       val res = c.value(a, b)
 //        val sres = genChurchNat(res, "O")
       val op = c.key.second
       val name = c.key.first
 //        "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb, Y: $sres> W.$name(x: X): Y = $name$b()"
-      "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb> W.$name(x: X) = S${res}"
+      "@JvmName(\"$a$op$b\") operator fun <W: L$a, X: L$b> W.$name(x: X) = S${res}"
     }
 
 fun genPlus() =
   range.joinToString("\n", "\n") {
     """
-      @JvmName("n+$it") operator fun <W: ${genChurchNat(it, "O")}, X: S<*>> X.plus(x: W) = plus$it()
+      @JvmName("n+$it") operator fun <W: L$it, X: S<*>> X.plus(x: W) = plus$it()
     """.trimIndent()
   }
 
@@ -76,7 +84,7 @@ fun genPlus() =
 fun genMinus() =
   range.joinToString("\n", "\n") {
     """
-      @JvmName("n-$it") operator fun <V: ${genChurchNat(it, "O")}, W: S<*>, X: ${genChurchNat(it, "W")}> X.minus(v: V) = minus$it()
+      @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: ${genChurchNat(it, "W")}> X.minus(v: V) = minus$it()
     """.trimIndent()
   }
 
@@ -94,11 +102,11 @@ fun genSpecials() =
     @JvmName("n+0") operator fun <W: S<*>> W.plus(x: O) = this
     @JvmName("0+n") operator fun <X: S<*>> O.plus(x: X) = x
     @JvmName("n+1") operator fun <W: S<*>, X: S<O>> W.plus(x: X) = plus1()
-    @JvmName("1+n") operator fun <W: S<*>, X: S<O>> X.plus(x: W) = x.plus1()
+    @JvmName("1+n") operator fun <W: S<*>, X: S<O>> X.plus(w: W) = w.plus1()
     @JvmName("n-1") operator fun <W: S<*>, X: S<W>, Y: S<O>> X.minus(y: Y) = minus1()
     @JvmName("n÷1") operator fun <W: S<*>, X: S<O>> W.div(x: X) = this
     @JvmName("n*1") operator fun <W: S<*>, X: S<O>> W.times(x: X) = this
-    @JvmName("1*n") operator fun <W: S<O>, X: S<*>> W.times(x: X) = x
+    @JvmName("1*n") operator fun <W: S<*>, X: S<O>> X.times(w: W) = w
     @JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = O
     @JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = O
   """.trimIndent()
