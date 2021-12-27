@@ -2,10 +2,10 @@
 
 package ai.hypergraph.kotlingrad.samples
 
-import ai.hypergraph.kotlingrad.typelevel.*
-import ai.hypergraph.kotlingrad.typelevel.x
-import ai.hypergraph.kotlingrad.typelevel.y
-import ai.hypergraph.kotlingrad.typelevel.z
+import ai.hypergraph.kotlingrad.typelevel.arity.*
+import ai.hypergraph.kotlingrad.typelevel.arity.x
+import ai.hypergraph.kotlingrad.typelevel.arity.y
+import ai.hypergraph.kotlingrad.typelevel.arity.z
 
 fun main() {
   val xyz: Ex<XX, XX, XX> by x + (y + z) * 2; println(xyz)

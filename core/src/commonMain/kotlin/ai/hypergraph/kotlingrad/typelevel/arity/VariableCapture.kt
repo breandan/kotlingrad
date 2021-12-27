@@ -1,6 +1,6 @@
 @file:Suppress("UNCHECKED_CAST")
 
-package ai.hypergraph.kotlingrad.typelevel
+package ai.hypergraph.kotlingrad.typelevel.arity
 
 import ai.hypergraph.kaliningraph.graphs.*
 import kotlin.reflect.KProperty
