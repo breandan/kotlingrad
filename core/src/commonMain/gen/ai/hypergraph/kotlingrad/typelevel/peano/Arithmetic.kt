@@ -5,59 +5,59 @@ package ai.hypergraph.kotlingrad.typelevel.peano
 
 import kotlin.jvm.JvmName
 
-open class S<X>(val x: S<X>?)
+open class S<X>(val x: X?)
 object O: S<O>(null)
-fun S<*>.toInt(i: Int = 0): Int = x?.toInt(i + 1) ?: i
+fun S<*>.toInt(i: Int = 0): Int = (x as? S<*>)?.toInt(i + 1) ?: i
 
 val S1 = S(O)
-val S2 = S1.plus1()
-val S3 = S1.plus2()
-val S4 = S2.plus2()
-val S5 = S2.plus3()
-val S6 = S3.plus3()
-val S7 = S3.plus4()
-val S8 = S4.plus4()
-val S9 = S4.plus5()
-val S10 = S5.plus5()
-val S11 = S5.plus6()
-val S12 = S6.plus6()
-val S13 = S6.plus7()
-val S14 = S7.plus7()
-val S15 = S7.plus8()
-val S16 = S8.plus8()
+val S2 = S(S1)
+val S3 = S(S2)
+val S4 = S(S3)
+val S5 = S(S4)
+val S6 = S(S5)
+val S7 = S(S6)
+val S8 = S(S7)
+val S9 = S(S8)
+val S10 = S(S9)
+val S11 = S(S10)
+val S12 = S(S11)
+val S13 = S(S12)
+val S14 = S(S13)
+val S15 = S(S14)
+val S16 = S(S15)
 
-private typealias L1 = S<O>
-private typealias L2 = S<S<O>>
-private typealias L3 = S<S<S<O>>>
-private typealias L4 = S<S<S<S<O>>>>
-private typealias L5 = S<S<S<S<S<O>>>>>
-private typealias L6 = S<S<S<S<S<S<O>>>>>>
-private typealias L7 = S<S<S<S<S<S<S<O>>>>>>>
-private typealias L8 = S<S<S<S<S<S<S<S<O>>>>>>>>
-private typealias L9 = S<S<S<S<S<S<S<S<S<O>>>>>>>>>
-private typealias L10 = S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>
-private typealias L11 = S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>
-private typealias L12 = S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>
-private typealias L13 = S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>
-private typealias L14 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>
-private typealias L15 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>>
-private typealias L16 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>>>
-private typealias Q1<T> = S<T>
-private typealias Q2<T> = S<S<T>>
-private typealias Q3<T> = S<S<S<T>>>
-private typealias Q4<T> = S<S<S<S<T>>>>
-private typealias Q5<T> = S<S<S<S<S<T>>>>>
-private typealias Q6<T> = S<S<S<S<S<S<T>>>>>>
-private typealias Q7<T> = S<S<S<S<S<S<S<T>>>>>>>
-private typealias Q8<T> = S<S<S<S<S<S<S<S<T>>>>>>>>
-private typealias Q9<T> = S<S<S<S<S<S<S<S<S<T>>>>>>>>>
-private typealias Q10<T> = S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>
-private typealias Q11<T> = S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>
-private typealias Q12<T> = S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>
-private typealias Q13<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>
-private typealias Q14<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>>
-private typealias Q15<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>>>
-private typealias Q16<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>>>>
+typealias L1 = S<O>
+typealias L2 = S<S<O>>
+typealias L3 = S<S<S<O>>>
+typealias L4 = S<S<S<S<O>>>>
+typealias L5 = S<S<S<S<S<O>>>>>
+typealias L6 = S<S<S<S<S<S<O>>>>>>
+typealias L7 = S<S<S<S<S<S<S<O>>>>>>>
+typealias L8 = S<S<S<S<S<S<S<S<O>>>>>>>>
+typealias L9 = S<S<S<S<S<S<S<S<S<O>>>>>>>>>
+typealias L10 = S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>
+typealias L11 = S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>
+typealias L12 = S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>
+typealias L13 = S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>
+typealias L14 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>
+typealias L15 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>>
+typealias L16 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>>>
+typealias Q1<T> = S<T>
+typealias Q2<T> = S<S<T>>
+typealias Q3<T> = S<S<S<T>>>
+typealias Q4<T> = S<S<S<S<T>>>>
+typealias Q5<T> = S<S<S<S<S<T>>>>>
+typealias Q6<T> = S<S<S<S<S<S<T>>>>>>
+typealias Q7<T> = S<S<S<S<S<S<S<T>>>>>>>
+typealias Q8<T> = S<S<S<S<S<S<S<S<T>>>>>>>>
+typealias Q9<T> = S<S<S<S<S<S<S<S<S<T>>>>>>>>>
+typealias Q10<T> = S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>
+typealias Q11<T> = S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>
+typealias Q12<T> = S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>
+typealias Q13<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>
+typealias Q14<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>>
+typealias Q15<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>>>
+typealias Q16<T> = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<T>>>>>>>>>>>>>>>>
 
 fun <W: S<*>, X: S<W>> W.plus1(): X = S(this) as X
 fun <W: S<*>, X: S<W>> X.minus1(): W = x as W

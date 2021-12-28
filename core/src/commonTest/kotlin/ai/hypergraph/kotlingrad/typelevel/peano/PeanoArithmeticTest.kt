@@ -55,11 +55,19 @@ class PeanoArithmeticTest {
       .minus2()
       .minus2()
       .plus2()
-    
+
+    fun takes6(six: S<S<S<S<S<S<O>>>>>>): S<S<S<S<S<O>>>>> = six - S1
+    takes6(S2 * S3)
 
     assertEquals(2, two.toInt())
   }
-  
+
+  @Test
+  fun testLiteral() {
+    assertEquals(4, S4.toInt())
+    assertEquals(4, S(S(S(S(O)))).toInt())
+  }
+
   @Test
   fun shouldBeThree() {
     val three = S2 * S2 * S2 / S4 + S2 - S1
