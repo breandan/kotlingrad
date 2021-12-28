@@ -25,6 +25,7 @@ val S13 = S6.plus7()
 val S14 = S7.plus7()
 val S15 = S7.plus8()
 val S16 = S8.plus8()
+
 private typealias L1 = S<O>
 private typealias L2 = S<S<O>>
 private typealias L3 = S<S<S<O>>>
@@ -41,7 +42,7 @@ private typealias L13 = S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>
 private typealias L14 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>
 private typealias L15 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>>
 private typealias L16 = S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<S<O>>>>>>>>>>>>>>>>
-private typealias Q1 = S<*>
+private typealias Q1<T> = S<T>
 private typealias Q2<T> = S<S<T>>
 private typealias Q3<T> = S<S<S<T>>>
 private typealias Q4<T> = S<S<S<S<T>>>>

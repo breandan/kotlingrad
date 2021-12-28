@@ -28,22 +28,16 @@ ${genConsts()}
 ${genArithmetic()}
 """.trimMargin()
 
+tailrec fun genChurchNat(i: Int, prev: String = "K"): String =
+  if (i == 0) prev else genChurchNat(i - 1, "S<$prev>")
+
 fun genAliases(): String =
-  "val S1 = S(O)" +
-  range.joinToString("\n", "\n", "\n") {
-    val (a, b) = balancedPartition(it)
-    "val S$it = S$a.plus$b()"
-  } +
-    "private typealias L1 = S<O>" +
-    range.joinToString("\n", "\n", "\n") {
-      val (a, b) = balancedPartition(it)
-      "private typealias L$it = ${genChurchNat(it, "O")}"
-    } +
-    "private typealias Q1 = S<*>" +
-    range.joinToString("\n", "\n") {
-      val (a, b) = balancedPartition(it)
-      "private typealias Q$it<T> = ${genChurchNat(it, "T")}"
-    }
+  "val S1 = S(O)\n" +
+    range.joinToString("\n") { balancedPartition(it).let { (a, b) -> "val S$it = S$a.plus$b()" } } +
+    "\n\nprivate typealias L1 = S<O>\n" +
+    range.joinToString("\n") { "private typealias L$it = ${genChurchNat(it, "O")}" } +
+    "\nprivate typealias Q1<T> = S<T>\n" +
+    range.joinToString("\n") { "private typealias Q$it<T> = ${genChurchNat(it, "T")}" }
 
 fun genConsts(): String =
   """
@@ -114,6 +108,3 @@ fun genSpecials() =
     @JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = O
     @JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = O
   """.trimIndent()
-
-tailrec fun genChurchNat(i: Int, prev: String = "K"): String =
-  if (i == 0) prev else genChurchNat(i - 1, "S<$prev>")
