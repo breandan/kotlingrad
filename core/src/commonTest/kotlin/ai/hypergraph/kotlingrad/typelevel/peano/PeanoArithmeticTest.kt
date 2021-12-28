@@ -18,30 +18,6 @@ class PeanoArithmeticTest {
   }
 
   @Test
-  fun shouldBeFive() {
-    val five = O
-      .plus2()
-      .let { it + S3 }
-      .plus4()
-      .minus3()
-      .minus3()
-      .let { it + it }
-      .minus3()
-      .let { it * S2 }
-      .minus4()
-      .let { it * it }
-      .let { it - S2 }
-      .let { it + S3 }
-      .minus2()
-      .minus1()
-      .let { it * it }
-      .let { it / S2 }
-      .let { it + S3 }
-
-    assertEquals(5, five.toInt())
-  }
-
-  @Test
   fun shouldBeTwo() {
     val two = S1
       .plus1()
@@ -60,6 +36,7 @@ class PeanoArithmeticTest {
     assertEquals(2, two.toInt())
   }
 
+  fun takes5(five: Q2<L3>): S<S<S<S<O>>>> = five - S1
   @Test
   fun testComposition() {
     fun takes5(five: Q2<L3>): S<S<S<S<O>>>> = five - S1
@@ -79,6 +56,43 @@ class PeanoArithmeticTest {
     val three = S2 * S2 * S2 / S4 + S2 - S1
 
     assertEquals(3, three.toInt())
+  }
+
+
+  @Test
+  fun shouldBeFive() {
+    val five = O
+      .plus2()
+      .let { it + S3 }
+      .plus4()
+      .minus3()
+      .minus3()
+      .let { it + it }
+      .minus3()
+      .let { it * S2 }
+      .minus4()
+      .let { it * it }
+      .let { it - S2 }
+      .let { it + S3 }
+      .minus2()
+      .minus1()
+      .let { it * it }
+      .let { it / S2 }
+      .let { it + S3 }
+      .let { it + S3 }
+      .let { it + S3 }
+      .let { it + S3 }
+      .let { it + S3 }
+      .let { it - S3 }
+      .let { it - S2 }
+      .let { it - S2 }
+      .let { it - S2 }
+      .let { it - S2 }
+      .let { it - S1 }
+
+    takes5(five)
+
+    assertEquals(5, five.toInt())
   }
 
   //@Test

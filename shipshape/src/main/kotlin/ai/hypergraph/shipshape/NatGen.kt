@@ -69,13 +69,13 @@ fun genArithmetic(
       val op = c.key.second
       val name = c.key.first
 //        "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb, Y: $sres> W.$name(x: X): Y = $name$b()"
-      "@JvmName(\"$a$op$b\") operator fun <W: L$a, X: L$b> W.$name(x: X) = S${res}"
+      "@JvmName(\"$a$op$b\") operator fun <W: L$a, X: L$b> W.$name(x: X): L${res} = S${res}"
     }
 
 fun genPlus() =
   range.joinToString("\n", "\n") {
     """
-      @JvmName("n+$it") operator fun <W: L$it, X: S<*>> X.plus(x: W) = plus$it()
+      @JvmName("n+$it") operator fun <W: L$it, X: S<*>> X.plus(x: W): Q$it<X> = plus$it()
     """.trimIndent()
   }
 
@@ -83,7 +83,7 @@ fun genPlus() =
 fun genMinus() =
   range.joinToString("\n", "\n") {
     """
-      @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> X.minus(v: V) = minus$it()
+      @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> X.minus(v: V): W = minus$it()
     """.trimIndent()
   }
 
@@ -98,14 +98,14 @@ operator fun <T, Y, Z> Set<Pair<T, Y>>.times(s: Set<Z>): Set<Triple<T, Y, Z>> =
 
 fun genSpecials() =
   """
-    @JvmName("n+0") operator fun <W: S<*>> W.plus(x: O) = this
-    @JvmName("0+n") operator fun <X: S<*>> O.plus(x: X) = x
-    @JvmName("n+1") operator fun <W: S<*>, X: S<O>> W.plus(x: X) = plus1()
-    @JvmName("1+n") operator fun <W: S<*>, X: S<O>> X.plus(w: W) = w.plus1()
-    @JvmName("n-1") operator fun <W: S<*>, X: S<W>, Y: S<O>> X.minus(y: Y) = minus1()
-    @JvmName("n÷1") operator fun <W: S<*>, X: S<O>> W.div(x: X) = this
-    @JvmName("n*1") operator fun <W: S<*>, X: S<O>> W.times(x: X) = this
-    @JvmName("1*n") operator fun <W: S<*>, X: S<O>> X.times(w: W) = w
-    @JvmName("n*0") operator fun <W: S<*>> W.times(x: O) = O
-    @JvmName("0*n") operator fun <X: S<*>> O.times(x: X) = O
+    @JvmName("n+0") operator fun <W: S<*>> W.plus(x: O): W = this
+    @JvmName("0+n") operator fun <X: S<*>> O.plus(x: X): X = x
+    @JvmName("n+1") operator fun <W: S<*>, X: S<O>> W.plus(x: X): S<W> = plus1()
+    @JvmName("1+n") operator fun <W: S<*>, X: S<O>> X.plus(w: W): S<W> = w.plus1()
+    @JvmName("n-1") operator fun <W: S<*>, X: S<W>, Y: S<O>> X.minus(y: Y): W = minus1()
+    @JvmName("n÷1") operator fun <W: S<*>, X: S<O>> W.div(x: X): W = this
+    @JvmName("n*1") operator fun <W: S<*>, X: S<O>> W.times(x: X): W = this
+    @JvmName("1*n") operator fun <W: S<*>, X: S<O>> X.times(w: W): W = w
+    @JvmName("n*0") operator fun <W: S<*>> W.times(x: O): O = O
+    @JvmName("0*n") operator fun <X: S<*>> O.times(x: X): O = O
   """.trimIndent()
