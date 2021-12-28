@@ -156,9 +156,9 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 [hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
 [laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
 
-ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g. `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuously differentiable functions on ℝ.
+ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g., `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuously differentiable functions on ℝ.
 
-<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g. `0`, `1.0`), variables (e.g. `Var()`) or expressions (e.g. `x + 1`, `2 * x + y`).
+<sup>&dagger;</sup> `a` and `b` are higher-order functions. These may be constants (e.g., `0`, `1.0`), variables (e.g., `Var()`) or expressions (e.g., `x + 1`, `2 * x + y`).
 
 <sup>&Dagger;</sup> For infix notation, `.` is optional. Parentheses are also optional depending on [precedence](https://kotlinlang.org/docs/reference/functions.html#infix-notation).
 
@@ -191,7 +191,7 @@ Kotlin∇ supports arbitrary order derivatives on scalar functions, and up to 2n
 Shape safety is an important concept in Kotlin∇. There are three broad strategies for handling shape errors:
 
 * Hide the error somehow by implicitly reshaping or [broadcasting](https://docs.scipy.org/doc/numpy-1.10.4/user/basics.broadcasting.html) arrays
-* Announce the error at runtime, with a relevant message, e.g. [`InvalidArgumentError`](https://www.tensorflow.org/api_docs/python/tf/errors/InvalidArgumentError)
+* Announce the error at runtime, with a relevant message, e.g., [`InvalidArgumentError`](https://www.tensorflow.org/api_docs/python/tf/errors/InvalidArgumentError)
 * Do not allow programs which can result in a shape error to compile
 
 In Kotlin∇, we use the last strategy to check the shape of tensor operations. Consider the following program:
@@ -422,7 +422,7 @@ This project relies on a few Kotlin-specific language features, which together e
 
 #### Operator overloading
  
-[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](http://breandan.net/public/masters_thesis.pdf#page=58), e.g. `Group`, `Ring`, and `Field`. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
+[Operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html) enables concise notation for arithmetic on abstract types, where the types encode [algebraic structures](http://breandan.net/public/masters_thesis.pdf#page=58), e.g., `Group`, `Ring`, and `Field`. These abstractions are extensible to other kinds of mathematical structures, such as complex numbers and quaternions.
 
 For example, suppose we have an interface `Group`, which overloads the operators `+` and `*`, and is defined like so:
 
@@ -606,7 +606,7 @@ This allows us to put all related control flow on a single abstract class which 
 
 #### Shape-safe Tensor Operations
 
-While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g. when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices). When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system*, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
+While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g., when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices). When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system*, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
 Shape safety is currently supported up to rank-2 tensors, i.e. matrices. To perform dimension checking in our type system, first we enumerate a list of integer type literals as a chain of subtypes, `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
 
@@ -681,11 +681,11 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 <sup>&lowast;</sup> Many type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
 
-<sup>&dagger;</sup> Statically generated code, shipped within the library. To regenerate these methods (e.g. using larger dimensions), a code generator is [provided](shipshape/src/main/kotlin/ai/hypergraph/shipshape).
+<sup>&dagger;</sup> Statically generated code, shipped within the library. To regenerate these methods (e.g., using larger dimensions), a code generator is [provided](shipshape/src/main/kotlin/ai/hypergraph/shipshape).
 
 #### Intermediate representation
 
-Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computationally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#operational-semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic root-finding, and supports features for visualization and debugging, e.g. in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
+Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computationally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#operational-semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic root-finding, and supports features for visualization and debugging, e.g., in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
 
 #### Property Delegation
 
@@ -697,7 +697,7 @@ class Var(val name: String?) {
 }
 ```
 
-This feature allows consumers to instantiate variables e.g. in an embedded DSL without redeclaring their names:
+This feature allows consumers to instantiate variables e.g., in an embedded DSL without redeclaring their names:
 
 ```kotlin
 val x by Var()   // With property delegation
@@ -716,7 +716,7 @@ The current API is stable, but can be [improved](https://github.com/breandan/kot
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/ai/hypergraph/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
-Allowing users to specify a matrix's structure in its type signature, (e.g. `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
+Allowing users to specify a matrix's structure in its type signature, (e.g., `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
 ### Arity inference
 

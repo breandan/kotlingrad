@@ -281,9 +281,9 @@ node [fontname = "helvetica" width="2" shape=Mrecord style=filled];
     "Sees version B"[fillcolor=green];
     "Incoming user U" -> "Sample A/B from prior distribution" -> "Sees version A";
     "Sample A/B from prior distribution" -> "Sees version B";
-    "Sees version A" -> "Measure engagement (e.g. clickthrough)";
-    "Sees version B" -> "Measure engagement (e.g. clickthrough)";
-    "Measure engagement (e.g. clickthrough)" -> "Evidence";
+    "Sees version A" -> "Measure engagement (e.g., clickthrough)";
+    "Sees version B" -> "Measure engagement (e.g., clickthrough)";
+    "Measure engagement (e.g., clickthrough)" -> "Evidence";
     "Evidence" -> "Update priors P(A|U), P(B|U)";
     }
     }
@@ -303,10 +303,10 @@ node [fontname = "helvetica" width="2" shape=Mrecord style=filled];
     "Incoming user U" -> "Sample A/B/C from prior distribution" -> "Sees version A";
     "Sample A/B/C from prior distribution" -> "Sees version B";
     "Sample A/B/C from prior distribution" -> "Sees version C";
-    "Sees version A" -> "Measure engagement (e.g. clickthrough)";
-    "Sees version B" -> "Measure engagement (e.g. clickthrough)";
-    "Sees version C" -> "Measure engagement (e.g. clickthrough)";
-    "Measure engagement (e.g. clickthrough)" -> "Evidence";
+    "Sees version A" -> "Measure engagement (e.g., clickthrough)";
+    "Sees version B" -> "Measure engagement (e.g., clickthrough)";
+    "Sees version C" -> "Measure engagement (e.g., clickthrough)";
+    "Measure engagement (e.g., clickthrough)" -> "Evidence";
     "Evidence" -> "Update priors P(A|U), P(B|U), P(C|U)";
     }
     }
@@ -484,7 +484,7 @@ Random -> Sample -> Input -> Program -> "Property?" -> Shrinker -> Input;
 
 \begin{frame}[fragile]
 \frametitle{Metamorphic Testing}
-Specify a relation (e.g. $\approx$), transform inputs and compare with labels.
+Specify a relation (e.g., $\approx$), transform inputs and compare with labels.
 \begin{kotlinlisting}
 @Repeat(LARGE_NUMBER)
 fun <I, O> test(program: (I)               -> O,

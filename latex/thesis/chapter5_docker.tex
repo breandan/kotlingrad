@@ -57,7 +57,7 @@ To install Docker itself, execute the following command on a POSIX-compliant she
     ~$ curl -sSL https://get.docker.com/ | sh
 \end{pclisting}
 %
-A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g. \inline{daphne/duck} from the default \hyperref[subsec:docker_hub]{Docker Hub} repository:
+A Docker \textit{image} is basically a filesystem snapshot -- a single file that contains everything needed to run a certain Docker container. Docker images are hosted in \textit{registries}, similar to Git repositories or VCS servers. The following command will fetch a Docker image, e.g., \inline{daphne/duck} from the default \hyperref[subsec:docker_hub]{Docker Hub} repository:
 
 \begin{pclisting}
     ~$ docker pull (*@\hl{daphne/duck}@*)
@@ -464,7 +464,7 @@ In addition, we assume the following software dependencies have been installed o
 \item \href{https://get.docker.com}{Docker CE}
 \item POSIX-compliant shell
 \item \inline{dts}, the Duckietown shell\footnote{May be obtained at the following URL: \url{https://github.com/duckietown/duckietown-shell}}
-\item Web browser (e.g. \href{https://www.google.com/chrome/}{Chrome} or \href{https://mozilla.org/firefox/}{Firefox})
+\item Web browser (e.g., \href{https://www.google.com/chrome/}{Chrome} or \href{https://mozilla.org/firefox/}{Firefox})
 \item \inline{wget}/\inline{curl}
 \end{enumerate}
 
@@ -515,7 +515,7 @@ Docker images can be cross-compiled by enclosing the ARM-specific portion of the
 ~$ docker save TAG_NAME | ssh -C duckie@DUCKIEBOT_NAME docker load
 \end{pclisting}
 %
-Alternately, it is possible to build directly on ARM devices by creating a file named, e.g. \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
+Alternately, it is possible to build directly on ARM devices by creating a file named, e.g., \inline{Dockerfile.arm}, adding a base image and build instructions, then running the command:
 
 \begin{rpilisting}
 ~$ docker build --file=FILE_PATH/Dockerfile.arm [--tag TAG_NAME] .
@@ -652,7 +652,7 @@ dt> duckiebot demo --demo_name lane_following --duckiebot_name DUCKIEBOT_NAME
 %
 \section{Retrospective}\label{sec:retrospective}
 
-One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to store source code inside or outside the container (e.g. as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can still load source code in a shared volume and rebuild on container startup. Both approaches can produce reproducible artifacts if properly versioned, but Docker images launch more quickly when images are fully prebuilt and tend to be more inspectable with sources included.
+One problem encountered during the development of Duckietown's Docker infrastructure was the matter of whether to store source code inside or outside the container (e.g., as described in \autoref{subsec:volume_sharing}). If stored externally, a developer can still load source code in a shared volume and rebuild on container startup. Both approaches can produce reproducible artifacts if properly versioned, but Docker images launch more quickly when images are fully prebuilt and tend to be more inspectable with sources included.
 
 Initially, we made the explicit decision to ship user source code directly inside the image. As a consequence, any modifications to the source code would trigger a subsequent rebuild, tying the sources and Docker image together. While including sources enables easier troubleshooting and diagnostics, it also adds some friction during development, which caused users to struggle with environment setup and Docker configuration issues.
 

@@ -286,7 +286,7 @@ The following resources have proven particularly helpful during the development 
 Balena is a very good source of base images for ARM devices. The best part of using Balena images, is that they can be rebuilt on x86 devices, such as a laptop or cloud server. Baked into every Balena image is a shim for the shell that will allow users to run ARM binaries on x86 from inside a container. To use this feature, the following \inline{Dockerfile} template is provided:
 %
 \begin{dockerlisting}
-FROM balena/BASE_IMAGE # e.g. raspberrypi3-python
+FROM balena/BASE_IMAGE # e.g., raspberrypi3-python
 RUN [ "cross-build-start" ]
 # ARM-specific code goes here...
 RUN [ "cross-build-end" ]
@@ -313,7 +313,7 @@ Hypriot, a base OS for RPi and other ARM devices, includes support for Docker st
 
 \subsection{\href{https://www.piwheels.org/}{PiWheels}}
 
-Not all Python packages (especially if they wrap a native library) can be run on all platforms. One might be tempted to build some package from its sources (and in rare cases, they might need to do so). But there is a good chance the package has already been compiled for Raspberry Pi on PiWheels. By using the following command (either in a \inline{Dockerfile} or via the CLI), various Python packages may be installed, e.g. \inline{opencv-python}:
+Not all Python packages (especially if they wrap a native library) can be run on all platforms. One might be tempted to build some package from its sources (and in rare cases, they might need to do so). But there is a good chance the package has already been compiled for Raspberry Pi on PiWheels. By using the following command (either in a \inline{Dockerfile} or via the CLI), various Python packages may be installed, e.g., \inline{opencv-python}:
 %
 \begin{rpilisting}
 ~$ pip install opencv-python --index-url https://www.piwheels.org/simple

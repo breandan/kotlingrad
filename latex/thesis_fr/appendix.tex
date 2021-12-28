@@ -286,7 +286,7 @@ Les ressources suivantes se sont avérées particulièrement utiles lors du dév
 Balena est une très bonne source d'images de base pour les appareils ARM. La meilleure utilisation des images Balena est qu'elles peuvent être reconstruites sur des appareils x86, tels qu'un ordinateur portable ou un serveur en nuage. Chaque image Balena contient une cale pour le shell qui permettra aux utilisateurs d'exécuter des binaires ARM sur x86 depuis l'intérieur d'un conteneur. Pour utiliser cette fonctionnalité, le modèle \inline{Dockerfile} suivant est fourni:
 %
 \begin{dockerlisting}
-FROM balena/BASE_IMAGE # e.g. raspberrypi3-python
+FROM balena/BASE_IMAGE # e.g., raspberrypi3-python
 RUN [ "cross-build-start" ]
 # ARM-specific code goes here...
 RUN [ "cross-build-end" ]
