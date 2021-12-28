@@ -32,7 +32,8 @@ class PeanoArithmeticTest {
       .let { it * it }
       .let { it - S2 }
       .let { it + S3 }
-      .minus3()
+      .minus2()
+      .minus1()
       .let { it * it }
       .let { it / S2 }
       .let { it + S3 }
@@ -56,10 +57,15 @@ class PeanoArithmeticTest {
       .minus2()
       .plus2()
 
-    fun takes6(six: S<S<S<S<S<S<O>>>>>>): S<S<S<S<S<O>>>>> = six - S1
-    takes6(S2 * S3)
-
     assertEquals(2, two.toInt())
+  }
+
+  @Test
+  fun testComposition() {
+    fun takes5(five: Q2<L3>): S<S<S<S<O>>>> = five - S1
+    fun takes6(six: S<L5>): S<S<S<S<S<O>>>>> = six - S1
+    val four = takes5(takes6(S2 * S3))
+    assertEquals(4, four.toInt())
   }
 
   @Test
