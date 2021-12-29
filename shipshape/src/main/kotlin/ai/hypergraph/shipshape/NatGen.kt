@@ -38,7 +38,7 @@ fun genAliases(): String =
     "\n\ntypealias L1 = S<O>\n" +
     range.joinToString("\n") { "typealias L$it = Q$it<O>" } +
     "\ntypealias Q1<T> = S<T>\n" +
-    range.joinToString("\n") { "typealias Q$it<T> = ${genChurchNat(it, "T")}" }
+    range.joinToString("\n") { "typealias Q$it<T> = S<Q${it-1}<T>>" }
 
 fun genConsts(): String =
   """
@@ -65,17 +65,15 @@ fun genArithmetic(
   (range * range * ops.entries).filter { (a, b, c) -> c.value(a, b) in range }
     .joinToString("\n", "\n") { (a, b, c) ->
       val res = c.value(a, b)
-//        val sres = genChurchNat(res, "O")
       val op = c.key.second
       val name = c.key.first
-//        "@JvmName(\"$a$op$b\") operator fun <W: $sa, X: $sb, Y: $sres> W.$name(x: X): Y = $name$b()"
       "@JvmName(\"$a$op$b\") operator fun <W: L$a, X: L$b> W.$name(x: X): L${res} = S${res}"
     }
 
 fun genPlus() =
   range.joinToString("\n", "\n") {
     """
-      @JvmName("n+$it") operator fun <W: L$it, X: S<*>> X.plus(x: W): Q$it<X> = plus$it()
+      @JvmName("n+$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> W.plus(x: V): X = plus$it()
     """.trimIndent()
   }
 
@@ -86,9 +84,6 @@ fun genMinus() =
       @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> X.minus(v: V): W = minus$it()
     """.trimIndent()
   }
-
-fun genTimes(): String = TODO()
-fun genDiv(): String = TODO()
 
 operator fun IntRange.times(s: IntRange) =
   flatMap { l -> s.map { r -> l to r }.toSet() }.toSet()

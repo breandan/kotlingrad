@@ -37,10 +37,10 @@ class PeanoArithmeticTest {
   }
 
   fun takes5(five: Q2<L3>): S<S<S<S<O>>>> = five - S1
+  fun takes6(six: S<L5>): S<S<S<S<S<O>>>>> = six - S1
+
   @Test
   fun testComposition() {
-    fun takes5(five: Q2<L3>): S<S<S<S<O>>>> = five - S1
-    fun takes6(six: S<L5>): S<S<S<S<S<O>>>>> = six - S1
     val four = takes5(takes6(S2 * S3))
     assertEquals(4, four.toInt())
   }

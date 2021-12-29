@@ -41,6 +41,7 @@ Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/
   * [Arity inference](#arity-inference)
   * [Church encoding](#church-encoding)
   * [Type classes](#type-classes)
+  * [Type arithmetic](#type-arithmetic)
 * [Formal grammar](#grammar)
 * [UML diagram](#uml-diagram)
 * [Comparison to other frameworks](#comparison)
@@ -852,6 +853,29 @@ val doubleRing = Ring.of(one = 1.0, plus = { a, b -> a + b }, times = { a, b -> 
 Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map) between function spaces, we now have the primitives necessary to build a fully-generic AD system, and could easily implement the [sum and product rules](https://compcalc.github.io/public/pytorch/ad_pytorch.pdf#page=6). To view the above example in full, see [`Types.kt`](https://github.com/breandan/kaliningraph/blob/master/src/commonMain/kotlin/ai/hypergraph/kaliningraph/types/Types.kt).
 
 What benefit does this abstraction provide to the end user? By parameterizing over primitive operators, Kotlin∇ consumers can easily swap out a tensor backend without needing to alter or recompile any upstream dependencies. This feature makes multiplatform development a breeze: wherever a type class operator (e.g., `+` or `*`) with matching signature is encountered across a project, it will be dispatched to the user-supplied lambda delegate for specialized execution on custom hardware. Runtime indirection can be elided with proper compiler inlining for zero-cost abstraction.
+
+### Type Arithmetic
+
+Kotlin∇ supports bounded typelevel arithmetic on integers between `0..16` by default. The following command will run the [`PeanoArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/peano/PeanoArithmeticTest.kt):
+
+```
+/gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.peano.PeanoArithmeticTest"
+```
+
+To increase the range, edit the file [`NatGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/NatGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/peano/Arithmetic.kt):
+
+```
+./gradlew genShapes
+```
+
+In practice, type checking may struggle when the upper bound is larger than `32`. The Kotlin team has been informed of these issues:
+
+* [KT-30040](https://youtrack.jetbrains.com/issue/KT-30040)
+* [KT-50466](https://youtrack.jetbrains.com/issue/KT-50466)
+* [KT-50533](https://youtrack.jetbrains.com/issue/KT-50533)
+* [KT-50553](https://youtrack.jetbrains.com/issue/KT-50553)
+
+This API is experimental and subject to change without notice. In the future, it will be used to statically type check tensor functions whose output shape is an arithmetic function of the input shapes, e.g., concatenation, splitting and [convolution](https://arxiv.org/pdf/1603.07285.pdf).
 
 ## Grammar
 
