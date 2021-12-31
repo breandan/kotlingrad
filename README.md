@@ -874,6 +874,7 @@ In practice, type checking may struggle when the upper bound is larger than `32`
 * [KT-50466](https://youtrack.jetbrains.com/issue/KT-50466)
 * [KT-50533](https://youtrack.jetbrains.com/issue/KT-50533)
 * [KT-50553](https://youtrack.jetbrains.com/issue/KT-50553)
+* [KT-50617](https://youtrack.jetbrains.com/issue/KT-50617)
 
 This API is experimental and subject to change without notice. In the future, it will be used to statically type check tensor functions whose output shape is an arithmetic function of the input shapes, e.g., concatenation, splitting and [convolution](https://arxiv.org/pdf/1603.07285.pdf).
 
