@@ -128,6 +128,7 @@ class MSumRows<X: SFun<X>, R: D1, C: D1>(val input: MFun<X, R, C>): VFun<X, C>(i
 
 class VDerivative<X: SFun<X>, E: D1>(override val input: VFun<X, E>, override val vrb: SVar<X>): VFun<X, E>(input, vrb), Grad<X> {
   fun df() = input.df()
+  @Suppress("UNCHECKED_CAST")
   private fun VFun<X, E>.df(): VFun<X, E> = when (this@df) {
     is VVar -> sVars.map { it.d(vrb) }
     is VConst<X, E> -> map { Zero() }
@@ -153,6 +154,7 @@ class VDerivative<X: SFun<X>, E: D1>(override val input: VFun<X, E>, override va
 
 class Gradient<X: SFun<X>, E: D1>(override val input: SFun<X>, override val vrb: VVar<X, E>): VFun<X, E>(input, vrb), Grad<X> {
   fun df() = input.df()
+  @Suppress("UNCHECKED_CAST")
   private fun SFun<X>.df(): VFun<X, E> = when (this@df) {
     is SVar -> vrb.sVars.map { if (this@df == it) One() else Zero() }
     is SConst -> vrb.sVars.map { Zero() }

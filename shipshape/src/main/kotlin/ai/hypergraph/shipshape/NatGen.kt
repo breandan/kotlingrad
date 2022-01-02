@@ -21,6 +21,16 @@ open class S<X>(val x: X?)
 object O: S<O>(null)
 fun S<*>.toInt(i: Int = 0): Int = (x as? S<*>)?.toInt(i + 1) ?: i
 
+operator fun Number.plus(s: S<*>): Int = toInt() + s.toInt()
+operator fun Number.minus(s: S<*>): Int = toInt() - s.toInt()
+operator fun Number.times(s: S<*>): Int = toInt() * s.toInt()
+operator fun Number.div(s: S<*>): Int = toInt() / s.toInt()
+
+operator fun S<*>.plus(n: Number): Int = toInt() + n.toInt()
+operator fun S<*>.minus(n: Number): Int = toInt() - n.toInt()
+operator fun S<*>.times(n: Number): Int = toInt() * n.toInt()
+operator fun S<*>.div(n: Number): Int = toInt() / n.toInt()
+
 ${genAliases()}
 
 ${genConsts()}
