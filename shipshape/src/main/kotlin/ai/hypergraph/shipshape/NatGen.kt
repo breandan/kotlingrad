@@ -17,7 +17,10 @@ package ai.hypergraph.kotlingrad.typelevel.peano
 
 import kotlin.jvm.JvmName
 
-open class S<X>(val x: X?)
+open class S<X>(val x: X?) {
+  override fun equals(other: Any?) = if(other is S<*>) if(x == null && other.x == null) true else x == other.x else false
+  override fun hashCode() = x.hashCode().hashCode()
+}
 object O: S<O>(null)
 fun S<*>.toInt(i: Int = 0): Int = (x as? S<*>)?.toInt(i + 1) ?: i
 
