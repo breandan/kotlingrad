@@ -1,8 +1,5 @@
 package ai.hypergraph.kotlingrad
 
-fun randomDefaultName() =
-  (('a'..'z') - 'q').map { it }.shuffled().subList(0, 4).joinToString("")
-
 fun String.superscript() =
   map {
     when (it) {
@@ -50,8 +47,5 @@ fun String.superscript() =
       else -> it
     }
   }.joinToString("").replace(" ", "")
-
-fun <T> Iterable<T>.repeat(n: Int) =
-  sequence { repeat(n) { yieldAll(this@repeat) } }
 
 var EAGER = false
