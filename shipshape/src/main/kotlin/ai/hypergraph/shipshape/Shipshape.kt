@@ -36,6 +36,10 @@ open class GenSources: DefaultTask() {
         .also { it.createNewFile() }
         .writeText(genPeanoArithmetic())
 
+      File("$outputDir/typelevel/array").mkdirs()
+      File("$outputDir/typelevel/array/Arrays.kt")
+        .also { it.createNewFile() }
+        .writeText(genArrays())
     } catch (e: Exception) {
       logger.error(e.toString())
       throw e
