@@ -17,6 +17,8 @@ plugins {
 val generatedSourcesPath = file("src/commonMain/gen")
 
 shipshape {
+  maxVal = 12
+  generatePseudoConstructors = true
   outputDir = "${generatedSourcesPath.path}/ai/hypergraph/kotlingrad"
 }
 

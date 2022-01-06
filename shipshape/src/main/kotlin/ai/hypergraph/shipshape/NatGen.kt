@@ -6,7 +6,7 @@ fun main() {
   println(genPeanoArithmetic())
 }
 
-val range = 2..16
+var twoToMax = 2..maxDim
 
 @Language("kt")
 fun genPeanoArithmetic() = """
@@ -46,19 +46,19 @@ tailrec fun genChurchNat(i: Int, prev: String = "K", lr: Pair<Char, Char> = '<' 
 
 fun genAliases(): String =
   "val S0: L0 = O\n" + "val S1: L1 = S(O)" +
-    range.joinToString("\n", "\n") { "val S$it: L$it = S(S${it - 1})" } +
+    twoToMax.joinToString("\n", "\n") { "val S$it: L$it = S(S${it - 1})" } +
 //    range.joinToString("\n") { balancedPartition(it).let { (a, b) -> "val S$it = S$a.plus$b()" } } +
     "\n\ntypealias L0 = O\ntypealias L1 = S<O>\n" +
-    range.joinToString("\n") { "typealias L$it = Q$it<O>" } +
+    twoToMax.joinToString("\n") { "typealias L$it = Q$it<O>" } +
     "\ntypealias Q1<T> = S<T>\n" +
-    range.joinToString("\n") { "typealias Q$it<T> = S<Q${it-1}<T>>" }
+    twoToMax.joinToString("\n") { "typealias Q$it<T> = S<Q${it-1}<T>>" }
 
 fun genConsts(): String =
   """
     fun <W: S<*>, X: S<W>> W.plus1(): X = S(this) as X
     fun <W: S<*>, X: S<W>> X.minus1(): W = x as W
   """.trimIndent() +
-  range.joinToString( "\n", "\n" ) {
+  twoToMax.joinToString( "\n", "\n" ) {
     val (a, b) = balancedPartition(it)
     """
       fun <W: S<*>, X: Q$it<W>> W.plus$it(): X = plus$a().plus$b()
@@ -75,7 +75,7 @@ fun genArithmetic(
     "div" to "÷" to { a, b -> if ((a / b) * b == a) a / b else Int.MIN_VALUE },
   )
 ) = genSpecials() + "\n" + genPlus() + "\n" + genMinus() + "\n" +
-  (range * range * ops.entries).filter { (a, b, c) -> c.value(a, b) in range }
+  (twoToMax * twoToMax * ops.entries).filter { (a, b, c) -> c.value(a, b) in twoToMax }
     .joinToString("\n", "\n") { (a, b, c) ->
       val res = c.value(a, b)
       val op = c.key.second
@@ -84,7 +84,7 @@ fun genArithmetic(
     }
 
 fun genPlus() =
-  range.joinToString("\n", "\n") {
+  twoToMax.joinToString("\n", "\n") {
     """
       @JvmName("n+$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> W.plus(x: V): X = plus$it()
     """.trimIndent()
@@ -92,7 +92,7 @@ fun genPlus() =
 
 // I think this is called a quotient type? https://en.wikipedia.org/wiki/Quotient_type
 fun genMinus() =
-  range.joinToString("\n", "\n") {
+  twoToMax.joinToString("\n", "\n") {
     """
       @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> X.minus(v: V): W = minus$it()
     """.trimIndent()

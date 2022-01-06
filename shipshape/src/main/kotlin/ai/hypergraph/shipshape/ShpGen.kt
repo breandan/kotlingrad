@@ -17,7 +17,7 @@ fun generateShapes() = """
       |// Vectors ===================================
       |${genVec()}
       |// Matrices ==================================
-      |${genMat()}
+      |${if(generatePseudoConstructors) genMat() else "//Disabled"}
       |// Derivatives ===============================
       |${genDif()}
     """.trimMargin()

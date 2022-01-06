@@ -14,13 +14,21 @@ open class Shipshape : Plugin<Project> {
   }
 }
 
-open class ShipshapeExt(var outputDir: String = "")
+open class ShipshapeExt(
+  var outputDir: String = "",
+  var maxVal: Int = 10,
+  var generatePseudoConstructors: Boolean = false
+)
 
 open class GenSources: DefaultTask() {
   @TaskAction
   fun genShapes() {
     try {
-      val outputDir = project.extensions.getByType(ShipshapeExt::class.java).outputDir
+      val ext = project.extensions.getByType(ShipshapeExt::class.java)
+      val outputDir = ext.outputDir
+      maxDim = ext.maxVal
+      generatePseudoConstructors = ext.generatePseudoConstructors
+
       File("$outputDir/shapes").mkdirs()
       File("$outputDir/shapes/Shapes.kt")
         .also { it.createNewFile() }
