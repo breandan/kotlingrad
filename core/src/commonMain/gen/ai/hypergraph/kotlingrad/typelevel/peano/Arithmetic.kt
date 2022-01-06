@@ -22,6 +22,7 @@ operator fun S<*>.minus(n: Number): Int = toInt() - n.toInt()
 operator fun S<*>.times(n: Number): Int = toInt() * n.toInt()
 operator fun S<*>.div(n: Number): Int = toInt() / n.toInt()
 
+val S0: L0 = O
 val S1: L1 = S(O)
 val S2: L2 = S(S1)
 val S3: L3 = S(S2)
@@ -39,6 +40,7 @@ val S14: L14 = S(S13)
 val S15: L15 = S(S14)
 val S16: L16 = S(S15)
 
+typealias L0 = O
 typealias L1 = S<O>
 typealias L2 = Q2<O>
 typealias L3 = Q3<O>

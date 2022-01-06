@@ -45,10 +45,10 @@ tailrec fun genChurchNat(i: Int, prev: String = "K", lr: Pair<Char, Char> = '<' 
   if (i == 0) prev else genChurchNat(i - 1, "S${lr.first}$prev${lr.second}", lr)
 
 fun genAliases(): String =
-  "val S1: L1 = S(O)" +
+  "val S0: L0 = O\n" + "val S1: L1 = S(O)" +
     range.joinToString("\n", "\n") { "val S$it: L$it = S(S${it - 1})" } +
 //    range.joinToString("\n") { balancedPartition(it).let { (a, b) -> "val S$it = S$a.plus$b()" } } +
-    "\n\ntypealias L1 = S<O>\n" +
+    "\n\ntypealias L0 = O\ntypealias L1 = S<O>\n" +
     range.joinToString("\n") { "typealias L$it = Q$it<O>" } +
     "\ntypealias Q1<T> = S<T>\n" +
     range.joinToString("\n") { "typealias Q$it<T> = S<Q${it-1}<T>>" }
