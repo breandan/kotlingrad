@@ -22,9 +22,7 @@ shipshape {
   outputDir = "${generatedSourcesPath.path}/ai/hypergraph/kotlingrad"
 }
 
-idea.module {
-  generatedSourceDirs.add(generatedSourcesPath)
-}
+idea.module { generatedSourceDirs.add(generatedSourcesPath) }
 
 generateUml {
   projectDir.resolve("src/commonMain/kotlin/ai/hypergraph/kotlingrad/api/")
