@@ -46,10 +46,6 @@ fun <T1: VT<E, L>, E, L: S<*>> T1.prepend(that: E): VT<E, Q1<L>> = VT(this.len +
 @JvmName("cc10") infix fun <T1: VT<E, L>, T2: VT<E, L9>, E, L: S<*>> T1.cc(that: T2): VT<E, Q9<L>> = VT(this.len + that.len, this.a + that.a)
 @JvmName("cc11") infix fun <T1: VT<E, L>, T2: VT<E, L10>, E, L: S<*>> T1.cc(that: T2): VT<E, Q10<L>> = VT(this.len + that.len, this.a + that.a)
 @JvmName("cc12") infix fun <T1: VT<E, L>, T2: VT<E, L11>, E, L: S<*>> T1.cc(that: T2): VT<E, Q11<L>> = VT(this.len + that.len, this.a + that.a)
-@JvmName("cc13") infix fun <T1: VT<E, L>, T2: VT<E, L12>, E, L: S<*>> T1.cc(that: T2): VT<E, Q12<L>> = VT(this.len + that.len, this.a + that.a)
-@JvmName("cc14") infix fun <T1: VT<E, L>, T2: VT<E, L13>, E, L: S<*>> T1.cc(that: T2): VT<E, Q13<L>> = VT(this.len + that.len, this.a + that.a)
-@JvmName("cc15") infix fun <T1: VT<E, L>, T2: VT<E, L14>, E, L: S<*>> T1.cc(that: T2): VT<E, Q14<L>> = VT(this.len + that.len, this.a + that.a)
-@JvmName("cc16") infix fun <T1: VT<E, L>, T2: VT<E, L15>, E, L: S<*>> T1.cc(that: T2): VT<E, Q15<L>> = VT(this.len + that.len, this.a + that.a)
 
 fun <E> VT(v1: E) = VT(S1, v1)
 fun <E> VT(v1: E, v2: E) = VT(S2, v1, v2)
