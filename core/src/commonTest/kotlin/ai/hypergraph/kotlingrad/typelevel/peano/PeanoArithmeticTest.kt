@@ -1,8 +1,8 @@
-package ai.hypergraph.kotlingrad.typelevel.peano
+package ai.hypergraph.kotlingrad.typelevel.church
 
 import kotlin.test.*
 
-class PeanoArithmeticTest {
+class ChurchArithmeticTest {
   @Test
   fun shouldBeFour() {
     val four = S2 + S2

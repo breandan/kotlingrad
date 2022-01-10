@@ -12,7 +12,7 @@ fun genArrays() = """
 package ai.hypergraph.kotlingrad.typelevel.array
  
 import ai.hypergraph.kaliningraph.allPairs
-import ai.hypergraph.kotlingrad.typelevel.peano.*
+import ai.hypergraph.kotlingrad.typelevel.church.*
 import kotlin.jvm.JvmName
 
 // Multi-typed arrays

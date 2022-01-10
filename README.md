@@ -761,7 +761,7 @@ The trouble with numerical towers is that they assume all inheritors are aware o
 
 ### Type classes
 
-Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Peano encoding](https://en.wikipedia.org/wiki/Peano_axioms) for natural numbers. To emulate instantiation, we can provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
+Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Church encoding](https://en.wikipedia.org/wiki/Church_axioms) for natural numbers. To emulate instantiation, we can provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
 ```kotlin
 interface Nat<T> {
@@ -852,13 +852,13 @@ What benefit does this abstraction provide to the end user? By parameterizing ov
 
 ### Type Arithmetic
 
-Kotlin∇ supports bounded typelevel arithmetic on integers between `0..16` by default. The following command will run the [`PeanoArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/peano/PeanoArithmeticTest.kt):
+Kotlin∇ supports bounded typelevel arithmetic on integers between `0..16` by default. The following command will run the [`ChurchArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/church/ChurchArithmeticTest.kt):
 
 ```
-/gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.peano.PeanoArithmeticTest"
+/gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.ChurchArithmeticTest"
 ```
 
-To increase the range, edit the file [`NatGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/NatGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/peano/Arithmetic.kt):
+To increase the range, edit the file [`NatGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/NatGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/church/Arithmetic.kt):
 
 ```
 ./gradlew genShapes

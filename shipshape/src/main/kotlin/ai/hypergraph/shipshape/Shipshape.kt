@@ -39,10 +39,10 @@ open class GenSources: DefaultTask() {
         .also { it.createNewFile() }
         .writeText(genTypeLevelVariables())
 
-      File("$outputDir/typelevel/peano").mkdirs()
-      File("$outputDir/typelevel/peano/Arithmetic.kt")
+      File("$outputDir/typelevel/church").mkdirs()
+      File("$outputDir/typelevel/church/Arithmetic.kt")
         .also { it.createNewFile() }
-        .writeText(genPeanoArithmetic())
+        .writeText(genChurchArithmetic())
 
       File("$outputDir/typelevel/array").mkdirs()
       File("$outputDir/typelevel/array/Arrays.kt")
