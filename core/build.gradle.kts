@@ -10,7 +10,7 @@ plugins {
   idea
   id("com.google.devtools.ksp") version "1.6.10-1.0.2"
   kotlin("multiplatform") version "1.6.10"
-  kotlin("jupyter.api") version "0.11.0-47"
+  kotlin("jupyter.api") version "0.11.0-53"
   id("com.xcporter.metaview") version "0.0.5"
 }
 
@@ -164,7 +164,7 @@ kotlin {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
 
-        implementation("org.graalvm.js:js:21.3.0")
+        implementation("org.graalvm.js:js:22.0.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
         implementation(kotlin("reflect"))
@@ -181,7 +181,7 @@ kotlin {
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.0.3"
+        val kotestVersion = "5.1.0"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
