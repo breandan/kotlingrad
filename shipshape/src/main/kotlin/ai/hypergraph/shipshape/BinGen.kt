@@ -1,9 +1,10 @@
 package ai.hypergraph.shipshape
 
 import org.intellij.lang.annotations.Language
+import kotlin.math.pow
 
 fun main() {
-  println(genBinaryArithmetic())
+  println(genBooleanTypeAliases())
 }
 
 @Language("kt")
@@ -44,48 +45,33 @@ tailrec fun toInt(s: String, sum: Int = 0): Int =
 /**
 *     i │  0  1  …  k-1  k  │  k+1  k+2  …  k+c  │ k+c+1  …  k+c+k 
 *    ───┼───────────────────┼────────────────────┼─────────────────┐ ┐
-*     0 │                   │                    │              __/  │
-*     1 │                   │                    │           __/     │
-*     … │       i ± i       │        c ± i       │        __/        ├ ┐
-*   k-1 │                   │                    │     __/           │ │
-*     k │                   │                    │  __╱	             │ │
-*   ────┼───────────────────┼────────────────────┴─┘                 ┘ │
-*   k+1 │                   │                                          │
-*   k+2 │                   │                                          │
-*     … │       i ± c       │       Runtime                            │
-*     … │                   │     type check                           │ 
-*   k+c │                   │         ...                              │
-*  ─────┼───────────────────┤                                          │
-* k+c+1 │               ___/                                           │
-*     … │           ___/                                               │
-*     … │       ___/                                                   │
-*     … │   ___/                                                       │
-* k+c+k │__/                                                           │
-*                                                                      │
-*       └─────────┬──────────┘                                         │
-*                 └─────────────────────────────────────────  Compile type checked 
+*     0 │                   │                    │              __/X │
+*     1 │                   │                    │           __/XXXX │
+*     … │       i ± i       │        k ± i       │        __/XXXXXXX ├ ┐
+*   k-1 │                   │                    │     __/XXXXXXXXXX │ │
+*     k │                   │                    │  __╱XXXXXXXXXXXXX │ │
+*   ────┼───────────────────┼────────────────────┴─┘XXXXXXXXXXXXXXXX ┘ │
+*   k+1 │                   │XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │
+*   k+2 │                   │XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │
+*     … │       i ± k       │XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │
+*     … │                   │XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │ 
+*   k+c │                   │XXXXXXXXXXXX                XXXXXXXXXXX   │
+*  ─────┼───────────────────┤XXXXXXXXXXXX    Run-time    XXXXXXXXXXX   │
+* k+c+1 │               ___/XXXXXXXXXXXXX  type checked  XXXXXXXXXXX   │
+*     … │           ___/XXXXXXXXXXXXXXXXX                XXXXXXXXXXX   │
+*     … │       ___/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │
+*     … │   ___/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │
+* k+c+k │__/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX   │
+*                                                                      
+*       └─────────┬─────────┘                               Compile-time
+*                 └─────────────────────────────────────    type checked 
 */
 
 // Left padded with 0, B_0N indicates a binary string *0{B_0N}
-typealias B_0<B> = F<B>
-typealias B_1<B> = T<B>
-typealias B_2<B> = F<T<B>>
-typealias B_3<B> = T<B_1<B>>
-typealias B_4<B> = F<B_2<B>>
-typealias B_5<B> = T<F<T<F<B>>>>
-typealias B_6<B> = F<B_3<B>>
-typealias B_7<B> = T<B_3<B>>
-typealias B_8<B> = F<B_4<B>>
-typealias B_9<B> = T<B_4<B>>
-typealias B_10<B> = F<T<B_2<B>>>
-typealias B_13<B> = T<F<B_3<B>>>
-typealias B_14<B> = F<B_7<B>>
-typealias B_15<B> = T<B_7<B>>
-typealias B_16<B> = F<B_8<B>>
-typealias B_17<B> = T<B_8<B>>
-typealias B_18<B> = F<B_9<B>>
-typealias B_30<B> = F<B_15<B>>
-typealias B_31<B> = T<B_15<B>>
+// Enumerate (max(2ⁱ-k, 0), 2ⁱ+k) ∀0≤i≤⌊log₂(k+c+k)⌋
+// i.e.: {0, 1, 2, *(4-k, 4+k), *(8-k, 8+k), *(16-k, 16+k),..., *(2^⌊log₂(k+c+k)⌋-k, 2^⌊log₂(k+c+k)⌋+k)}
+
+${genBooleanTypeAliases()}
 
 @JvmName("bnp1") fun Ø.plus1() = T(Ø)
 @JvmName("b0p1") fun B_0<Ø>.plus1() = T(Ø)
@@ -93,12 +79,22 @@ typealias B_31<B> = T<B_15<B>>
 @JvmName("b3p1") fun B_3<Ø>.plus1() = F(x.plus1())
 @JvmName("b7p1") fun B_7<Ø>.plus1() = F(x.plus1())
 @JvmName("b15p1") fun B_15<Ø>.plus1() = F(x.plus1())
+@JvmName("b?0p1")  fun <K: B<*, *>> B_0<K>.plus1() = T(x)
+@JvmName("b?01p1") fun <K: B<*, *>> B_1<F<K>>.plus1() = F(x.plus1())
+@JvmName("b?03p1") fun <K: B<*, *>> B_3<F<K>>.plus1() = F(x.plus1())
+@JvmName("b?07p1") fun <K: B<*, *>> B_7<F<K>>.plus1() = F(x.plus1())
+@JvmName("b?015p1") fun <K: B<*, *>> B_15<F<K>>.plus1() = F(x.plus1())
 
-@JvmName("b_0p1")  fun <K: B<*, *>> B_0<K>.plus1() = T(x)
-@JvmName("b_01p1") fun <K: B<*, *>> B_1<F<K>>.plus1() = F(x.plus1())
-@JvmName("b_03p1") fun <K: B<*, *>> B_3<F<K>>.plus1() = F(x.plus1())
-@JvmName("b_07p1") fun <K: B<*, *>> B_7<F<K>>.plus1() = F(x.plus1())
-@JvmName("b_015p1") fun <K: B<*, *>> B_15<F<K>>.plus1() = F(x.plus1())
+@JvmName("b1m1") fun B_1<Ø>.minus1() = F(Ø)
+@JvmName("b2m1") fun B_2<Ø>.minus1() = T(Ø)
+@JvmName("b4m1") fun B_4<Ø>.minus1() = T(x.minus1())
+@JvmName("b8m1") fun B_8<Ø>.minus1() = T(x.minus1())
+@JvmName("b16m1") fun B_16<Ø>.minus1() = T(x.minus1())
+@JvmName("b?1m1") fun <K: B<*, *>> B_1<K>.minus1() = F(x)
+@JvmName("b?2m1") fun <K: B<*, *>> B_2<K>.minus1() = T(x.minus1())
+@JvmName("b?4m1") fun <K: B<*, *>> B_4<K>.minus1() = T(x.minus1())
+@JvmName("b?8m1") fun <K: B<*, *>> B_8<K>.minus1() = T(x.minus1())
+@JvmName("b?16m1") fun <K: B<*, *>> B_16<K>.minus1() = T(x.minus1())
 
 @JvmName("b0p2") fun Ø.plus2(): F<T<Ø>> = plus1().plus1()
 @JvmName("b0p2") fun F<Ø>.plus2(): F<T<Ø>> = plus1().plus1()
@@ -119,6 +115,24 @@ typealias B_31<B> = T<B_15<B>>
 @JvmName("b?014p2") fun <K: B<*, *>> B_14<F<K>>.plus2(): F<F<F<F<T<K>>>>> = plus1().plus1()
 @JvmName("b?015p2") fun <K: B<*, *>> B_15<F<K>>.plus2(): T<F<F<F<T<K>>>>> = plus1().plus1()
 
+@JvmName("b2m2") fun B_2<Ø>.minus2() = minus1().minus1()
+@JvmName("b3m2") fun B_3<Ø>.minus2() = minus1().minus1()
+@JvmName("b4m2") fun B_4<Ø>.minus2() = minus1().minus1()
+@JvmName("b5m2") fun B_5<Ø>.minus2() = minus1().minus1()
+@JvmName("b8m2") fun B_8<Ø>.minus2() = minus1().minus1()
+@JvmName("b9m2") fun B_9<Ø>.minus2() = minus1().minus1()
+@JvmName("b16m2") fun B_16<Ø>.minus2() = minus1().minus1()
+@JvmName("b17m2") fun B_17<Ø>.minus2() = minus1().minus1()
+
+@JvmName("b?2m2") fun <K: B<*, *>> B_2<K>.minus2() = minus1().minus1()
+@JvmName("b?3m2") fun <K: B<*, *>> B_3<K>.minus2() = minus1().minus1()
+@JvmName("b?4m2") fun <K: B<*, *>> B_4<K>.minus2() = minus1().minus1()
+@JvmName("b?5m2") fun <K: B<*, *>> B_5<K>.minus2() = minus1().minus1()
+@JvmName("b?8m2") fun <K: B<*, *>> B_8<K>.minus2() = minus1().minus1()
+@JvmName("b?9m2") fun <K: B<*, *>> B_9<K>.minus2() = minus1().minus1()
+@JvmName("b?16m2") fun <K: B<*, *>> B_16<K>.minus2() = minus1().minus1()
+@JvmName("b?17m2") fun <K: B<*, *>> B_17<K>.minus2() = minus1().minus1()
+
 @JvmName("b0p3") fun Ø.plus3(): T<T<Ø>> = plus2().plus1()
 @JvmName("b0p3") fun F<Ø>.plus3(): T<T<Ø>> = plus2().plus1()
 @JvmName("b2p3") fun B_2<Ø>.plus3(): T<F<T<Ø>>> = plus2().plus1()
@@ -131,62 +145,58 @@ typealias B_31<B> = T<B_15<B>>
 @JvmName("b?00p3") fun <K: B<*, *>> B_0<F<K>>.plus3(): T<T<K>> = plus2().plus1()
 @JvmName("b?02p3") fun <K: B<*, *>> B_2<F<K>>.plus3(): T<F<T<K>>> = plus2().plus1()
 @JvmName("b?03p3") fun <K: B<*, *>> B_3<F<K>>.plus3(): F<T<T<K>>> = plus2().plus1()
-@JvmName("b?05p3") fun <K: B<*, *>> B_5<F<K>>.plus3(): F<F<F<T<F<K>>>>> = plus2().plus1()
+@JvmName("b?05p3") fun <K: B<*, *>> B_5<F<K>>.plus3(): F<F<F<T<K>>>> = plus2().plus1()
 @JvmName("b?06p3") fun <K: B<*, *>> B_6<F<K>>.plus3(): T<F<F<T<K>>>> = plus2().plus1()
 @JvmName("b?07p3") fun <K: B<*, *>> B_7<F<K>>.plus3(): F<T<F<T<K>>>> = plus2().plus1()
 @JvmName("b?013p3") fun <K: B<*, *>> B_13<F<K>>.plus3(): F<F<F<F<T<K>>>>> = plus2().plus1()
 @JvmName("b?014p3") fun <K: B<*, *>> B_14<F<K>>.plus3(): T<F<F<F<T<K>>>>> = plus2().plus1()
 @JvmName("b?015p3") fun <K: B<*, *>> B_15<F<K>>.plus3(): F<T<F<F<T<K>>>>> = plus2().plus1()
 
-@JvmName("b_1m1") fun B_1<Ø>.minus1() = F(Ø)
-@JvmName("b_2m1") fun B_2<Ø>.minus1() = T(Ø)
-@JvmName("b_4m1") fun B_4<Ø>.minus1() = T(x.minus1())
-@JvmName("b_8m1") fun B_8<Ø>.minus1() = T(x.minus1())
-@JvmName("b_16m1") fun B_16<Ø>.minus1() = T(x.minus1())
+@JvmName("b3m3") fun B_3<Ø>.minus3() = minus2().minus1()
+@JvmName("b4m3") fun B_4<Ø>.minus3() = minus2().minus1()
+@JvmName("b5m3") fun B_5<Ø>.minus3() = minus2().minus1()
+@JvmName("b6m3") fun B_6<Ø>.minus3() = minus2().minus1()
+@JvmName("b8m3") fun B_8<Ø>.minus3() = minus2().minus1()
+@JvmName("b9m3") fun B_9<Ø>.minus3() = minus2().minus1()
+@JvmName("b10m3") fun B_10<Ø>.minus3() = minus2().minus1()
+@JvmName("b16m3") fun B_16<Ø>.minus3() = minus2().minus1()
+@JvmName("b17m3") fun B_17<Ø>.minus3() = minus2().minus1()
+@JvmName("b18m3") fun B_18<Ø>.minus3() = minus2().minus1()
 
-@JvmName("b_1m1") fun <K: B<*, *>> B_1<K>.minus1() = F(x)
-@JvmName("b_2m1") fun <K: B<*, *>> B_2<K>.minus1() = T(x.minus1())
-@JvmName("b_4m1") fun <K: B<*, *>> B_4<K>.minus1() = T(x.minus1())
-@JvmName("b_8m1") fun <K: B<*, *>> B_8<K>.minus1() = T(x.minus1())
-@JvmName("b_16m1") fun <K: B<*, *>> B_16<K>.minus1() = T(x.minus1())
-
-@JvmName("b2m2") fun B_2<Ø>.minus2() = minus1().minus1()
-@JvmName("b3m2") fun B_3<Ø>.minus2() = minus1().minus1()
-@JvmName("b4m2") fun B_4<Ø>.minus2() = minus1().minus1()
-@JvmName("b5m2") fun B_5<Ø>.minus2() = minus1().minus1()
-@JvmName("b8m2") fun B_8<Ø>.minus2() = minus1().minus1()
-@JvmName("b9m2") fun B_9<Ø>.minus2() = minus1().minus1()
-@JvmName("b16m2") fun B_16<Ø>.minus2() = minus1().minus1()
-@JvmName("b17m2") fun B_17<Ø>.minus2() = minus1().minus1()
-
-@JvmName("b_2m2") fun <K: B<*, *>> B_2<K>.minus2() = minus1().minus1()
-@JvmName("b_3m2") fun <K: B<*, *>> B_3<K>.minus2() = minus1().minus1()
-@JvmName("b_4m2") fun <K: B<*, *>> B_4<K>.minus2() = minus1().minus1()
-@JvmName("b_5m2") fun <K: B<*, *>> B_5<K>.minus2() = minus1().minus1()
-@JvmName("b_8m2") fun <K: B<*, *>> B_8<K>.minus2() = minus1().minus1()
-@JvmName("b_9m2") fun <K: B<*, *>> B_9<K>.minus2() = minus1().minus1()
-@JvmName("b_16m2") fun <K: B<*, *>> B_16<K>.minus2() = minus1().minus1()
-@JvmName("b_17m2") fun <K: B<*, *>> B_17<K>.minus2() = minus1().minus1()
-
-@JvmName("b_3m3") fun B_3<Ø>.minus3() = minus2().minus1()
-@JvmName("b_4m3") fun B_4<Ø>.minus3() = minus2().minus1()
-@JvmName("b_5m3") fun B_5<Ø>.minus3() = minus2().minus1()
-@JvmName("b_6m3") fun B_6<Ø>.minus3() = minus2().minus1()
-@JvmName("b_8m3") fun B_8<Ø>.minus3() = minus2().minus1()
-@JvmName("b_9m3") fun B_9<Ø>.minus3() = minus2().minus1()
-@JvmName("b_10m3") fun B_10<Ø>.minus3() = minus2().minus1()
-@JvmName("b_16m3") fun B_16<Ø>.minus3() = minus2().minus1()
-@JvmName("b_17m3") fun B_17<Ø>.minus3() = minus2().minus1()
-@JvmName("b_18m3") fun B_18<Ø>.minus3() = minus2().minus1()
-
-@JvmName("b_3m3") fun <K: B<*, *>> B_3<K>.minus3() = minus2().minus1()
-@JvmName("b_4m3") fun <K: B<*, *>> B_4<K>.minus3() = minus2().minus1()
-@JvmName("b_5m3") fun <K: B<*, *>> B_5<K>.minus3() = minus2().minus1()
-@JvmName("b_6m3") fun <K: B<*, *>> B_6<K>.minus3() = minus2().minus1()
-@JvmName("b_8m3") fun <K: B<*, *>> B_8<K>.minus3() = minus2().minus1()
-@JvmName("b_9m3") fun <K: B<*, *>> B_9<K>.minus3() = minus2().minus1()
-@JvmName("b_10m3") fun <K: B<*, *>> B_10<K>.minus3() = minus2().minus1()
-@JvmName("b_16m3") fun <K: B<*, *>> B_16<K>.minus3() = minus2().minus1()
-@JvmName("b_17m3") fun <K: B<*, *>> B_17<K>.minus3() = minus2().minus1()
-@JvmName("b_18m3") fun <K: B<*, *>> B_18<K>.minus3() = minus2().minus1()
+@JvmName("b?3m3") fun <K: B<*, *>> B_3<K>.minus3() = minus2().minus1()
+@JvmName("b?4m3") fun <K: B<*, *>> B_4<K>.minus3() = minus2().minus1()
+@JvmName("b?5m3") fun <K: B<*, *>> B_5<K>.minus3() = minus2().minus1()
+@JvmName("b?6m3") fun <K: B<*, *>> B_6<K>.minus3() = minus2().minus1()
+@JvmName("b?8m3") fun <K: B<*, *>> B_8<K>.minus3() = minus2().minus1()
+@JvmName("b?9m3") fun <K: B<*, *>> B_9<K>.minus3() = minus2().minus1()
+@JvmName("b?10m3") fun <K: B<*, *>> B_10<K>.minus3() = minus2().minus1()
+@JvmName("b?16m3") fun <K: B<*, *>> B_16<K>.minus3() = minus2().minus1()
+@JvmName("b?17m3") fun <K: B<*, *>> B_17<K>.minus3() = minus2().minus1()
+@JvmName("b?18m3") fun <K: B<*, *>> B_18<K>.minus3() = minus2().minus1()
 """
+
+fun genBooleanTypeAliases(k: Int = 10): String =
+  (0..10).asSequence().map { 2.0.pow(it).toInt() }
+    .map { (it - k + 1).coerceAtLeast(0) until (it + k) }
+    .flatten().distinct().joinToString("\n") { "typealias B_$it<B> = ${it.toBigEndian()}" }
+
+fun genBooleanPlusMinus(k: Int = 10): String =
+  (1..3).joinToString("\n\n") {
+//    "
+//      @JvmName("b1p1") fun B_1<Ø>.plus1() = F(x.plus1())
+//      @JvmName("b3p1") fun B_3<Ø>.plus1() = F(x.plus1())
+//      @JvmName("b7p1") fun B_7<Ø>.plus1() = F(x.plus1())
+//      @JvmName("b15p1") fun B_15<Ø>.plus1() = F(x.plus1())
+//    """.trimIndent()
+    (0..10).asSequence().map { 2.0.pow(it).toInt() }
+      .map { (it - k + 1).coerceAtLeast(0) until (it + k) }
+      .flatten().distinct().joinToString("\n") { "typealias B_$it<B> = ${it.toBigEndian()}" }
+
+//    (0..10).asSequence().map { 2.0.pow(it).toInt() }.map {
+//
+//    }
+
+  }
+
+fun Int.toBigEndian() =
+  toString(2).fold("B") { a, b -> if(b == '0') "F<$a>" else "T<$a>" }
