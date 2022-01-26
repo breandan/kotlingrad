@@ -78,61 +78,70 @@ fun <K: B<*, *>> K.times2() = F
 fun <K: B<*, *>> K.times4() = F.F
 fun <K: B<*, *>> K.times8() = F.F.F
 fun <K: B<*, *>> K.times16() = F.F.F.F
+fun <K: B<*, *>> F<K>.div2() = x
+fun <K: B<*, *>> F<F<K>>.div4() = x.x
+fun <K: B<*, *>> F<F<F<K>>>.div8() = x.x.x
+fun <K: B<*, *>> F<F<F<F<K>>>>.div16() = x.x.x.x
 
 @JvmName("bnp1") fun Ø.plus1() = T(Ø)
-${genBooleanPlusMinusOne(maxPow = 8)}
+${genBooleanPlusMinusOne(maxPow = 6)}
 
 ${genBooleanPlusMinus()}
 """
 
-fun genBooleanTypeAliases(k: Int = 8): String =
-  (0..8).asSequence().map { 2.0.pow(it).toInt() }
-    .map { (it - k).coerceAtLeast(0) until (it + k) }
+fun genBooleanTypeAliases(pow: Int = 6, const: Int = 6): String =
+  (0..pow).asSequence().map { 2.0.pow(it).toInt() }
+    .map { (it - const).coerceAtLeast(0) until (it + const) }
     .flatten().distinct().joinToString("\n") { "typealias B_$it<B> = ${it.toBigEndian("B")}" }
 
-fun genBooleanPlusMinus(k: Int = 8): String =
-  (2..k).joinToString("\n") { k ->
+fun genBooleanPlusMinus(const: Int = 6): String =
+  (2..const).joinToString("\n") { k ->
     val (p1, p2) = balancedPartition(k)
+    val (v1, v2) = p1.toBigEndianVal() to p2.toBigEndianVal()
 
-    val range = (0..8).asSequence().map { 2.0.pow(it).toInt() }
+    val range = (0..const).asSequence().map { 2.0.pow(it).toInt() }
       .map { ((it - k).coerceAtLeast(0) until it).toList() }
       .flatten().distinct()
     range.joinToString("\n", "\n", "\n") {
       val result = it + k
-      """@JvmName("b${it}p$k") fun B_${it}<Ø>.plus$k(): B_$result<Ø> = plus$p2().plus$p1()"""
+      """@JvmName("bop${it}p$k") operator fun B_${it}<Ø>.plus(r: B_${k}<Ø>): B_$result<Ø> = plus($v2) + $v1"""
     } + range.joinToString("\n", "\n", "\n") {
       val lpad = (it + k).toString(2).length - it.toString(2).length
       val fpad = "F".repeat(lpad).toBigEndian("K")
-      """@JvmName("b?0${it}p$k") fun <K: B<*, *>> B_${it}<$fpad>.plus$k() = plus$p2().plus$p1()"""
+      """@JvmName("bop?0${it}p$k") operator fun <K: B<*, *>> B_${it}<$fpad>.plus(r: B_${k}<Ø>) = plus($v2) + $v1"""
     } + range.map { it + k }.joinToString("\n", "\n", "\n") {
       val result = it - k
-      """@JvmName("b${it}m$k") fun B_${it}<Ø>.minus$k(): B_$result<Ø> = minus$p2().minus$p1()"""
-    } + range.map { it + k }.joinToString("\n", "\n") {
+      """@JvmName("bop${it}m$k") operator fun B_${it}<Ø>.minus(r: B_${k}<Ø>): B_$result<Ø> = minus($v2) - $v1"""
+    } + range.map { it + k }.joinToString("\n", "\n", "\n") {
       val result = it - k
-      """@JvmName("b?${it}m$k") fun <K: B<*, *>> B_${it}<K>.minus$k() = minus$p2().minus$p1()"""
+      """@JvmName("bop?${it}m$k") operator fun <K: B<*, *>> B_${it}<K>.minus(r: B_${k}<Ø>) = minus($v2) - $v1"""
     }
   }
 
 fun genBooleanPlusMinusOne(maxPow: Int, range: Sequence<Int> = (1..maxPow).asSequence().map { 2.0.pow(it).toInt() }) =
-  """@JvmName("b0p1") fun B_0<Ø>.plus1() = T(Ø)""" +
+  """@JvmName("b0p1") fun B_0<Ø>.plus(t: T<Ø>) = T(Ø)""" +
     range.joinToString("\n", "\n") {
       val result = it
-      """@JvmName("b${it - 1}p1") fun B_${it - 1}<Ø>.plus1(): B_$result<Ø> = F(x.plus1())"""
-    } + "\n\n" + """@JvmName("b?0p1") fun <K: B<*, *>> B_0<K>.plus1() = T(x)""" +
+      """@JvmName("b${it - 1}p1") operator fun B_${it - 1}<Ø>.plus(t: T<Ø>): B_$result<Ø> = F(x + T(Ø))"""
+    } + "\n\n" + """@JvmName("b?0p1") operator fun <K: B<*, *>> B_0<K>.plus(t: T<Ø>) = T(x)""" +
     range.joinToString("\n", "\n", "\n\n") {
-      """@JvmName("b?0${it - 1}p1") fun <K: B<*, *>> B_${it - 1}<F<K>>.plus1() = F(x.plus1())"""
+      """@JvmName("b?0${it - 1}p1") operator fun <K: B<*, *>> B_${it - 1}<F<K>>.plus(t: T<Ø>) = F(x + T(Ø))"""
     } + """
-      @JvmName("b1m1") fun B_1<Ø>.minus1(): B_0<Ø> = F(Ø)
-      @JvmName("b2m1") fun B_2<Ø>.minus1(): B_1<Ø> = T(Ø)
+      @JvmName("b1m1") operator fun B_1<Ø>.minus(t: T<Ø>): B_0<Ø> = F(Ø)
+      @JvmName("b2m1") operator fun B_2<Ø>.minus(t: T<Ø>): B_1<Ø> = T(Ø)
       """.trimIndent() +
     range.drop(1).joinToString("\n", "\n", "\n\n") {
       val result = it - 1
-      """@JvmName("b${it}m1") fun B_${it}<Ø>.minus1(): B_$result<Ø> = T(x.minus1())"""
-    } + """@JvmName("b?1p1") fun <K: B<*, *>> B_1<K>.minus1() = F(x)""" +
+      """@JvmName("b${it}m1") operator fun B_${it}<Ø>.minus(t: T<Ø>): B_$result<Ø> = T(x - T(Ø))"""
+    } + """@JvmName("b?1p1") operator fun <K: B<*, *>> B_1<K>.minus(t: T<Ø>) = F(x)""" +
     range.joinToString("\n", "\n") {
       val result = it - 1
-      """@JvmName("b?${it}m1") fun <K: B<*, *>> B_${it}<K>.minus1() = T(x.minus1())"""
+      """@JvmName("b?${it}m1") operator fun <K: B<*, *>> B_${it}<K>.minus(t: T<Ø>) = T(x - T(Ø))"""
     }
+
+fun Int.toBigEndianVal() =
+  toString(2).fold("Ø") { a, b -> if(b == '0') "F($a)" else "T($a)" }
+//  toString(2).fold("") { a, b -> (if(a.isEmpty()) "" else "$a.") + if(b == '0') "F" else "T" }
 
 fun Int.toBigEndian(typeParam: String) =
   toString(2).fold(typeParam) { a, b -> if(b == '0') "F<$a>" else "T<$a>" }

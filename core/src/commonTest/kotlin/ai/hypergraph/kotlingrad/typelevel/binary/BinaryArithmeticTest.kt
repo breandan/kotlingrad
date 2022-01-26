@@ -5,31 +5,17 @@ import kotlin.test.*
 
 class BinaryArithmeticTest {
   @Test
-  fun testBooleanAddition() {
-    val t = T.F.plus2()
-      .plus4()
-      .plus2()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
-      .plus8()
+  fun testBooleanArithmetic() {
+    val t = T.F
+      .let { it + T.F }
+      .let { it + T.F.F }
+      .let { it + T.T }
+      .let { it + T.F }
+      .let { it - T.F }
+      .let { it + T.F }
+      .let { it + T.F }
+      .let { it + T }
 
-    assertEquals(T.F.T.F.T.F.T.F, t)
+    assertEquals(T.F.F.F.F, t)
   }
 }
