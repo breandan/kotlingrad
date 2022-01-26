@@ -83,7 +83,7 @@ fun <K: B<*, *>> F<F<K>>.div4() = x.x
 fun <K: B<*, *>> F<F<F<K>>>.div8() = x.x.x
 fun <K: B<*, *>> F<F<F<F<K>>>>.div16() = x.x.x.x
 
-@JvmName("bnp1") fun Ø.plus1() = T(Ø)
+@JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = T(Ø)
 ${genBooleanPlusMinusOne(maxPow = 6)}
 
 ${genBooleanPlusMinus()}
@@ -119,7 +119,7 @@ fun genBooleanPlusMinus(const: Int = 6): String =
   }
 
 fun genBooleanPlusMinusOne(maxPow: Int, range: Sequence<Int> = (1..maxPow).asSequence().map { 2.0.pow(it).toInt() }) =
-  """@JvmName("b0p1") fun B_0<Ø>.plus(t: T<Ø>) = T(Ø)""" +
+  """@JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = T(Ø)""" +
     range.joinToString("\n", "\n") {
       val result = it
       """@JvmName("b${it - 1}p1") operator fun B_${it - 1}<Ø>.plus(t: T<Ø>): B_$result<Ø> = F(x + T(Ø))"""

@@ -118,8 +118,8 @@ fun <K: B<*, *>> F<F<K>>.div4() = x.x
 fun <K: B<*, *>> F<F<F<K>>>.div8() = x.x.x
 fun <K: B<*, *>> F<F<F<F<K>>>>.div16() = x.x.x.x
 
-@JvmName("bnp1") fun Ø.plus1() = T(Ø)
-@JvmName("b0p1") fun B_0<Ø>.plus(t: T<Ø>) = T(Ø)
+@JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = T(Ø)
+@JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = T(Ø)
 @JvmName("b1p1") operator fun B_1<Ø>.plus(t: T<Ø>): B_2<Ø> = F(x + T(Ø))
 @JvmName("b3p1") operator fun B_3<Ø>.plus(t: T<Ø>): B_4<Ø> = F(x + T(Ø))
 @JvmName("b7p1") operator fun B_7<Ø>.plus(t: T<Ø>): B_8<Ø> = F(x + T(Ø))
