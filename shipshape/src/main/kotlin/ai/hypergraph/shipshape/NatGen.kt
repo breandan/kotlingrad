@@ -57,8 +57,7 @@ fun genConsts(): String =
   """
     fun <W: S<*>, X: S<W>> W.plus1(): X = S(this) as X
     fun <W: S<*>, X: S<W>> X.minus1(): W = x as W
-  """.trimIndent() +
-  twoToMax.joinToString( "\n", "\n" ) {
+  """.trimIndent() + twoToMax.joinToString( "\n", "\n" ) {
     val (a, b) = balancedPartition(it)
     """
       fun <W: S<*>, X: Q$it<W>> W.plus$it(): X = plus$a().plus$b()
@@ -66,7 +65,7 @@ fun genConsts(): String =
     """.trimIndent()
   }
 
-fun balancedPartition(i: Int) =
+fun balancedPartition(i: Int): Pair<Int, Int> =
   (i / 2).let { half -> half to if (half * 2 == i) half else half + 1 }
 
 fun genArithmetic(
