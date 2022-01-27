@@ -2,6 +2,9 @@ package ai.hypergraph.kotlingrad.typelevel.church
 
 import kotlin.test.*
 
+/*
+./gradlew :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.ChurchArithmeticTest"
+*/
 class ChurchArithmeticTest {
   @Test
   fun shouldBeFour() {
