@@ -100,7 +100,10 @@ fun genMinus() =
 operator fun IntRange.times(s: IntRange) =
   flatMap { l -> s.map { r -> l to r }.toSet() }.toSet()
 
-operator fun <T, Y, Z> Set<Pair<T, Y>>.times(s: Set<Z>): Set<Triple<T, Y, Z>> =
+@JvmName("cartProdPair") operator fun <T, Z> Set<T>.times(s: Set<Z>): Set<Pair<T, Z>> =
+  flatMap { l -> s.map { r -> Pair(l, r) }.toSet() }.toSet()
+
+@JvmName("cartProdTriple") operator fun <T, Y, Z> Set<Pair<T, Y>>.times(s: Set<Z>): Set<Triple<T, Y, Z>> =
   flatMap { (l, ll) -> s.map { r -> Triple(l, ll, r) }.toSet() }.toSet()
 
 fun genSpecials() =

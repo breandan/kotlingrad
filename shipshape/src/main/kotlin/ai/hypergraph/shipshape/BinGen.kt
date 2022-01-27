@@ -1,7 +1,7 @@
 package ai.hypergraph.shipshape
 
 import org.intellij.lang.annotations.Language
-import kotlin.math.pow
+import kotlin.math.*
 
 fun main() {
   println(genBooleanTypeAliases())
@@ -75,20 +75,11 @@ ${genBooleanTypeAliases()}
 
 ${genBooleanLiterals()}
 
-fun <K: B<*, *>> K.shl() = F
-fun <K: B<*, *>> K.times2() = F
-fun <K: B<*, *>> K.times4() = F.F
-fun <K: B<*, *>> K.times8() = F.F.F
-fun <K: B<*, *>> K.times16() = F.F.F.F
-fun <K: B<*, *>> F<K>.div2() = x
-fun <K: B<*, *>> F<F<K>>.div4() = x.x
-fun <K: B<*, *>> F<F<F<K>>>.div8() = x.x.x
-fun <K: B<*, *>> F<F<F<F<K>>>>.div16() = x.x.x.x
-
-@JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = B1
 ${genBooleanPlusMinusOne(maxPow = 6)}
 
 ${genBooleanPlusMinus()}
+
+${genMultiplicationTable()}
 """
 
 fun genBooleanTypeAliases(pow: Int = 6, const: Int = 6): String =
@@ -126,10 +117,12 @@ fun genBooleanPlusMinus(const: Int = 6): String =
   }
 
 fun genBooleanPlusMinusOne(maxPow: Int, range: Sequence<Int> = (1..maxPow).asSequence().map { 2.0.pow(it).toInt() }) =
-  """@JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = B1""" +
-    range.joinToString("\n", "\n") {
-      val result = it
-      """@JvmName("b${it - 1}p1") operator fun B_${it - 1}<Ø>.plus(t: T<Ø>): B_$result<Ø> = F(x + B1)"""
+  """
+    @JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = B1
+    @JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = B1
+  """.trimIndent() + range.joinToString("\n", "\n") {
+    val result = it
+    """@JvmName("b${it - 1}p1") operator fun B_${it - 1}<Ø>.plus(t: T<Ø>): B_$result<Ø> = F(x + B1)"""
     } + "\n\n" + """@JvmName("b?0p1") operator fun <K: B<*, *>> B_0<K>.plus(t: T<Ø>) = T(x)""" +
     range.joinToString("\n", "\n", "\n\n") {
       """@JvmName("b?0${it - 1}p1") operator fun <K: B<*, *>> B_${it - 1}<F<K>>.plus(t: T<Ø>) = F(x + B1)"""
@@ -146,12 +139,46 @@ fun genBooleanPlusMinusOne(maxPow: Int, range: Sequence<Int> = (1..maxPow).asSeq
       """@JvmName("b?${it}m1") operator fun <K: B<*, *>> B_${it}<K>.minus(t: T<Ø>) = T(x - B1)"""
     }
 
+fun genMultiplicationTable(
+  range: IntRange = 2..16,
+  easy: Set<Int> = range.filter { log2(it.toFloat()).let { ceil(it) == floor(it) } }.toSet(),
+  hard: Set<Int> = range.filter { log2(it.toFloat()).let { ceil(it) != floor(it) } }.toSet()
+) =
+  """
+    fun <K: B<*, *>> F<K>.div2() = x
+    fun <K: B<*, *>> F<F<K>>.div4() = x.x
+    fun <K: B<*, *>> F<F<F<K>>>.div8() = x.x.x
+    fun <K: B<*, *>> F<F<F<F<K>>>>.div16() = x.x.x.x
+
+    @JvmName("b_t0") operator fun <K: B<*, *>> K.times(t: F<Ø>) = t
+    @JvmName("b0t_") operator fun <K: B<*, *>> F<Ø>.times(t: K) = this
+    @JvmName("b_t1") operator fun <K: B<*, *>> K.times(t: T<Ø>) = this
+    @JvmName("b1t_") operator fun <K: B<*, *>> T<Ø>.times(t: K) = t
+  """.trimIndent() +
+    easy.joinToString("\n","\n","\n") {
+      val num = 2.0.pow(it).toInt()
+      val pow = log2(it.toFloat()).toInt()
+      val padthis = "F".repeat(pow).toBigEndianVal("this")
+      val padarg = "F".repeat(pow).toBigEndianVal("t")
+      """
+        @JvmName("b_t${it}") operator fun <K: B<*, *>> K.times(t: B_$it<Ø>) = $padthis
+        @JvmName("b${it}t_") operator fun <K: B<*, *>> B_$it<Ø>.times(t: K) = $padarg
+      """.trimIndent()
+    } + (hard * hard).joinToString("\n", "\n") { (a, b) ->
+      val result = (a * b).toBigEndian("Ø", "(", ")")
+      """
+      @JvmName("b${a}t${b}") operator fun B_$a<Ø>.times(t: B_$b<Ø>) = $result
+    """.trimIndent()
+    }
+
 fun Int.toBigEndianVal() =
 //  toString(2).fold("Ø") { a, b -> if(b == '0') "F($a)" else "T($a)" }
-toString(2).toCharArray().joinToString(".") { if (it == '1') "T" else "F" }
+  toString(2).toCharArray().joinToString(".") { if (it == '1') "T" else "F" }
 //  toString(2).fold("") { a, b -> (if(a.isEmpty()) "" else "$a.") + if(b == '0') "F" else "T" }
 
 fun Int.toBigEndian(typeParam: String, lp: String = "<", rp: String = ">") =
   toString(2).fold(typeParam) { a, b -> if(b == '0') "F$lp$a$rp" else "T$lp$a$rp" }
 
 fun String.toBigEndian(typeParam: String) = fold(typeParam) { a, b -> "$b<$a>" }
+
+fun String.toBigEndianVal(typeParam: String) = fold(typeParam) { a, b -> "$b($a)" }

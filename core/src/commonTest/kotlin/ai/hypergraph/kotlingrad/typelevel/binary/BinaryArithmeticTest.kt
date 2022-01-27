@@ -21,4 +21,11 @@ class BinaryArithmeticTest {
 
     assertEquals(T.F.F.F.F, t)
   }
+
+  @Test
+  fun testBooleanMultiplication() {
+    val t = T.T.T * T.F.F.T
+
+    assertEquals(T.T.T.T.T.T, t)
+  }
 }
