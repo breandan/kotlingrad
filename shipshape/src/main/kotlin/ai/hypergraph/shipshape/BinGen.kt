@@ -75,7 +75,7 @@ ${genBooleanTypeAliases()}
 
 ${genBooleanLiterals()}
 
-${genBooleanPlusMinusOne(maxPow = 8)}
+${genBooleanPlusMinusOne(maxPow = 7)}
 
 ${genBooleanPlusMinus()}
 
@@ -84,7 +84,7 @@ ${genMultiplicationTable()}
 ${genDivisionTable()}
 """
 
-fun genBooleanTypeAliases(pow: Int = 8, const: Int = 6): String =
+fun genBooleanTypeAliases(pow: Int = 7, const: Int = 6): String =
   (0..pow).asSequence().map { 2.0.pow(it).toInt() }
     .map { (it - const).coerceAtLeast(0) until (it + const) }
     .flatten().distinct().joinToString("\n") { "typealias B_$it<B> = ${it.toBigEndian("B")}" }
@@ -94,7 +94,7 @@ fun genBooleanLiterals(const: Int = 6): String =
   "val B0: B_0<Ø> = F(Ø)\nval B1: B_1<Ø> = T(Ø)\n" +
   (2..const).joinToString("\n") { "val B$it: B_$it<Ø> = ${it.toBigEndianVal()}" }
 
-fun genBooleanPlusMinus(maxPow: Int = 8, const: Int = 6): String =
+fun genBooleanPlusMinus(maxPow: Int = 7, const: Int = 6): String =
   """
     @JvmName("b_p_") operator fun <K> K.plus(k: K) = F(k)
     @JvmName("b_m_") operator fun <K> K.minus(k: K) = F(Ø)
@@ -171,7 +171,7 @@ fun genMultiplicationTable(
     }
 
 fun genDivisionTable(
-  maxPow: Int = 8,
+  maxPow: Int = 7,
   range: IntRange = 1..maxPow,
   easy: Set<Int> = range.map { 2.0.pow(it).toInt() }.toSet(),
   hard: Set<Triple<Int, Int, Int>> =
@@ -184,7 +184,7 @@ fun genDivisionTable(
       val pow = log2(it.toFloat()).toInt()
       val pad = "F".repeat(pow).toBigEndian("K")
       val divisor = "x".repeat(pow).toCharArray().joinToString(".").ifEmpty { "this" }
-      """@JvmName("b_d$it") fun <K: B<*, *>> $pad.div(d: ${it.toBigEndian("Ø")}) = $divisor""".trimIndent()
+      """@JvmName("b_d$it") operator fun <K: B<*, *>> $pad.div(d: ${it.toBigEndian("Ø")}) = $divisor""".trimIndent()
     } + hard.joinToString("\n", "\n", "\n") { (a, b, c) ->
     val dividend = a.toBigEndian("Ø")
     val divisor = b.toBigEndian("Ø")
