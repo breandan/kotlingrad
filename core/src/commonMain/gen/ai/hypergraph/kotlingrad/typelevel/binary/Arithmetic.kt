@@ -181,6 +181,8 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b?128m1") operator fun <K: B<*, *>> B_128<K>.minus(t: T<Ø>) = T(x - B1)
 @JvmName("b?256m1") operator fun <K: B<*, *>> B_256<K>.minus(t: T<Ø>) = T(x - B1)
 
+@JvmName("b_p_") operator fun <K> K.plus(k: K) = F(k)
+@JvmName("b_m_") operator fun <K> K.minus(k: K) = F(Ø)
 
 @JvmName("bop0p2") operator fun B_0<Ø>.plus(r: B_2<Ø>): B_2<Ø> = plus(B1) + B1
 @JvmName("bop1p2") operator fun B_1<Ø>.plus(r: B_2<Ø>): B_3<Ø> = plus(B1) + B1
@@ -891,7 +893,7 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b15t15") operator fun B_15<Ø>.times(t: B_15<Ø>) = T(F(F(F(F(T(T(T(Ø))))))))
 
 @JvmName("b_d1") operator fun <K: B<*, *>> K.div(t: T<Ø>) = this
-//@JvmName("b_d_") operator fun <K: B<*, *>> K.div(t: K) = T(Ø)
+@JvmName("b_d_") operator fun <K> K.div(t: K) = T(Ø)
 @JvmName("b_d2") fun <K: B<*, *>> F<K>.div(d: F<T<Ø>>) = x
 @JvmName("b_d4") fun <K: B<*, *>> F<F<K>>.div(d: F<F<T<Ø>>>) = x.x
 @JvmName("b_d8") fun <K: B<*, *>> F<F<F<K>>>.div(d: F<F<F<T<Ø>>>>) = x.x.x

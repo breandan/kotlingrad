@@ -22,6 +22,14 @@ class BinaryArithmeticTest {
   }
 
   @Test
+  fun testSymmetricOps() {
+    val t = T.F.T.F
+    assertEquals(T.F.T.F.F, t + t)
+    assertEquals(F, t - t)
+    assertEquals(T, t / t)
+  }
+
+  @Test
   fun testBooleanMultiplication() {
     val t = T.T.T * T.F.F.T
 

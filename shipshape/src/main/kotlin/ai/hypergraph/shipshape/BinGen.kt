@@ -95,7 +95,10 @@ fun genBooleanLiterals(const: Int = 6): String =
   (2..const).joinToString("\n") { "val B$it: B_$it<Ø> = ${it.toBigEndianVal()}" }
 
 fun genBooleanPlusMinus(maxPow: Int = 8, const: Int = 6): String =
-  (2..const).joinToString("\n") { k ->
+  """
+    @JvmName("b_p_") operator fun <K> K.plus(k: K) = F(k)
+    @JvmName("b_m_") operator fun <K> K.minus(k: K) = F(Ø)
+  """.trimIndent() + (2..const).joinToString("\n", "\n") { k ->
     val (p1, p2) = balancedPartition(k)
     val (v1, v2) = "B$p1" to "B$p2"
 
@@ -176,7 +179,7 @@ fun genDivisionTable(
 ) =
   """
     @JvmName("b_d1") operator fun <K: B<*, *>> K.div(t: T<Ø>) = this
-    //@JvmName("b_d_") operator fun <K: B<*, *>> K.div(t: K) = T(Ø)
+    @JvmName("b_d_") operator fun <K> K.div(t: K) = T(Ø)
   """.trimIndent() + easy.joinToString("\n", "\n", "\n") {
       val pow = log2(it.toFloat()).toInt()
       val pad = "F".repeat(pow).toBigEndian("K")
