@@ -1,6 +1,5 @@
 package ai.hypergraph.kotlingrad.typelevel.binary
 
-import ai.hypergraph.kotlingrad.typelevel.binary.arithmetic.*
 import kotlin.test.*
 
 /**
@@ -27,5 +26,13 @@ class BinaryArithmeticTest {
     val t = T.T.T * T.F.F.T
 
     assertEquals(T.T.T.T.T.T, t)
+  }
+
+  @Test
+  fun testBooleanDivision() {
+    val t = T.T.T * T.F.F.T
+
+    assertEquals(t / T.F.F.T, T.T.T)
+    assertEquals(t / T.T.T, T.F.F.T)
   }
 }

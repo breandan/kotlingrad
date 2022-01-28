@@ -82,20 +82,18 @@ fun genArithmetic(
       "@JvmName(\"$a$op$b\") operator fun <W: L$a, X: L$b> W.$name(x: X): L${res} = S${res}"
     }
 
-fun genPlus() =
-  twoToMax.joinToString("\n", "\n") {
-    """
+fun genPlus() = twoToMax.joinToString("\n", "\n") {
+  """
       @JvmName("n+$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> W.plus(x: V): X = plus$it()
-    """.trimIndent()
-  }
+  """.trimIndent()
+}
 
 // I think this is called a quotient type? https://en.wikipedia.org/wiki/Quotient_type
-fun genMinus() =
-  twoToMax.joinToString("\n", "\n") {
-    """
+fun genMinus() = twoToMax.joinToString("\n", "\n") {
+  """
       @JvmName("n-$it") operator fun <V: L$it, W: S<*>, X: Q$it<W>> X.minus(v: V): W = minus$it()
-    """.trimIndent()
-  }
+  """.trimIndent()
+}
 
 operator fun IntRange.times(s: IntRange) =
   flatMap { l -> s.map { r -> l to r }.toSet() }.toSet()
