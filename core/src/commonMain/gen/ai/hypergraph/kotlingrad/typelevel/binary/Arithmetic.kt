@@ -9,28 +9,37 @@ import kotlin.jvm.JvmName
 sealed class B<X, P : B<X, P>>(open val x: X? = null) {
   val T: T<P> get() = T(this as P)
   val F: F<P> get() = F(this as P)
+  val U: U get() = U(toInt())
 
   abstract fun flip(): B<X, *>
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + x.hashCode()
   override fun toString() = "" + (x ?: "") + if (this is T) "1" else "0"
+  fun toInt(): Int = toInt(toString())
+  private tailrec fun toInt(s: String, sum: Int = 0): Int =
+    if (s.isEmpty()) sum else toInt(s.substring(1), (sum shl 1) + s[0].digitToInt())
 }
 
 open class T<X>(override val x: X = Ø as X) : B<X, T<X>>(x) {
   companion object: T<Ø>(Ø)
   override fun flip(): F<X> = F(x)
 }
+
 open class F<X>(override val x: X = Ø as X) : B<X, F<X>>(x) {
   companion object: F<Ø>(Ø)
   override fun flip(): T<X> = T(x)
 }
 
+// Unchecked / checked at runtime
+// Unchecked / checked at runtime
+open class U(val i: Int) : B<Any, U>() {
+  override fun flip(): U = TODO()
+  override fun equals(other: Any?) = (other as? U)?.let { i == it.i } ?: false 
+  override fun hashCode() = i
+}
+
 @Suppress("NonAsciiCharacters", "ClassName")
 object Ø: B<Ø, Ø>(null) { override fun flip() = Ø }
-
-fun B<*, *>.toInt(): Int = toInt(toString())
-tailrec fun toInt(s: String, sum: Int = 0): Int =
-  if (s.isEmpty()) sum else toInt(s.substring(1), (sum shl 1) + s[0].digitToInt())
 
 /**
 *     i │  0  1  …  k-1  k  │  k+1  k+2  …  k+c  │  k+c+1  …  k+c+k   
@@ -165,8 +174,7 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b?64m1") operator fun <K: B<*, *>> B_64<K>.minus(t: T<Ø>) = T(x - B1)
 @JvmName("b?128m1") operator fun <K: B<*, *>> B_128<K>.minus(t: T<Ø>) = T(x - B1)
 
-@JvmName("b_p_") operator fun <K> K.plus(k: K) = F(k)
-@JvmName("b_m_") operator fun <K> K.minus(k: K) = F(Ø)
+
 
 @JvmName("bop0p2") operator fun B_0<Ø>.plus(r: B_2<Ø>): B_2<Ø> = plus(B1) + B1
 @JvmName("bop1p2") operator fun B_1<Ø>.plus(r: B_2<Ø>): B_3<Ø> = plus(B1) + B1
@@ -797,7 +805,6 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b15t15") operator fun B_15<Ø>.times(t: B_15<Ø>) = T(F(F(F(F(T(T(T(Ø))))))))
 
 @JvmName("b_d1") operator fun <K: B<*, *>> K.div(t: T<Ø>) = this
-@JvmName("b_d_") operator fun <K> K.div(t: K) = T(Ø)
 @JvmName("b_d2") operator fun <K: B<*, *>> F<K>.div(d: F<T<Ø>>) = x
 @JvmName("b_d4") operator fun <K: B<*, *>> F<F<K>>.div(d: F<F<T<Ø>>>) = x.x
 @JvmName("b_d8") operator fun <K: B<*, *>> F<F<F<K>>>.div(d: F<F<F<T<Ø>>>>) = x.x.x
@@ -1077,3 +1084,12 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b126d42") operator fun F<T<T<T<T<T<T<Ø>>>>>>>.div(d: F<T<F<T<F<T<Ø>>>>>>) = T(T(Ø))
 @JvmName("b126d63") operator fun F<T<T<T<T<T<T<Ø>>>>>>>.div(d: T<T<T<T<T<T<Ø>>>>>>) = F(T(Ø))
 
+
+@JvmName("b_p_") operator fun <K: B<*, *>, Y: B<*, *>> K.plus(y: Y) = U(toInt() + y.toInt())
+@JvmName("b_m_") operator fun <K: B<*, *>, Y: B<*, *>> K.minus(y: Y) = U(toInt() - y.toInt())
+@JvmName("b_t_") operator fun <K: B<*, *>, Y: B<*, *>> K.times(y: Y) = U(toInt() * y.toInt())
+@JvmName("b_d_") operator fun <K: B<*, *>, Y: B<*, *>> K.div(y: Y) = U(toInt() / y.toInt())
+// Would be nice if it worked, but cannot match the same K twice
+// @JvmName("b_d_") operator fun <K: B<*, *>> K.div(t: K) = T(Ø)
+// @JvmName("b_p_") operator fun <K: B<*, *>> K.plus(k: K) = F(k)
+// @JvmName("b_m_") operator fun <K: B<*, *>> K.minus(k: K) = F(Ø)

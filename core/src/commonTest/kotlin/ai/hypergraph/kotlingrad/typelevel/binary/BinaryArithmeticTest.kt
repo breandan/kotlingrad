@@ -22,11 +22,9 @@ class BinaryArithmeticTest {
   }
 
   @Test
-  fun testSymmetricOps() {
+  fun testUnchecked() {
     val t = T.F.T.F
-    assertEquals(T.F.T.F.F, t + t)
-    assertEquals(F, t - t)
-    assertEquals(T, t / t)
+    assertEquals(T.F.T.F.F.U, t + t)
   }
 
   @Test

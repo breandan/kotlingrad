@@ -19,28 +19,37 @@ import kotlin.jvm.JvmName
 sealed class B<X, P : B<X, P>>(open val x: X? = null) {
   val T: T<P> get() = T(this as P)
   val F: F<P> get() = F(this as P)
+  val U: U get() = U(toInt())
 
   abstract fun flip(): B<X, *>
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + x.hashCode()
   override fun toString() = "" + (x ?: "") + if (this is T) "1" else "0"
+  fun toInt(): Int = toInt(toString())
+  private tailrec fun toInt(s: String, sum: Int = 0): Int =
+    if (s.isEmpty()) sum else toInt(s.substring(1), (sum shl 1) + s[0].digitToInt())
 }
 
 open class T<X>(override val x: X = Ø as X) : B<X, T<X>>(x) {
   companion object: T<Ø>(Ø)
   override fun flip(): F<X> = F(x)
 }
+
 open class F<X>(override val x: X = Ø as X) : B<X, F<X>>(x) {
   companion object: F<Ø>(Ø)
   override fun flip(): T<X> = T(x)
 }
 
+// Unchecked / checked at runtime
+// Unchecked / checked at runtime
+open class U(val i: Int) : B<Any, U>() {
+  override fun flip(): U = TODO()
+  override fun equals(other: Any?) = (other as? U)?.let { i == it.i } ?: false 
+  override fun hashCode() = i
+}
+
 @Suppress("NonAsciiCharacters", "ClassName")
 object Ø: B<Ø, Ø>(null) { override fun flip() = Ø }
-
-fun B<*, *>.toInt(): Int = toInt(toString())
-tailrec fun toInt(s: String, sum: Int = 0): Int =
-  if (s.isEmpty()) sum else toInt(s.substring(1), (sum shl 1) + s[0].digitToInt())
 
 /**
 *     i │  0  1  …  k-1  k  │  k+1  k+2  …  k+c  │  k+c+1  …  k+c+k   
@@ -82,23 +91,34 @@ ${genBooleanPlusMinus()}
 ${genMultiplicationTable()}
 
 ${genDivisionTable()}
+
+${genUnchecked()}
 """
+
+@Language("kt")
+fun genUnchecked() =
+  """
+    @JvmName("b_p_") operator fun <K: B<*, *>, Y: B<*, *>> K.plus(y: Y) = U(toInt() + y.toInt())
+    @JvmName("b_m_") operator fun <K: B<*, *>, Y: B<*, *>> K.minus(y: Y) = U(toInt() - y.toInt())
+    @JvmName("b_t_") operator fun <K: B<*, *>, Y: B<*, *>> K.times(y: Y) = U(toInt() * y.toInt())
+    @JvmName("b_d_") operator fun <K: B<*, *>, Y: B<*, *>> K.div(y: Y) = U(toInt() / y.toInt())
+    // Would be nice if it worked, but cannot match the same K twice
+    // @JvmName("b_d_") operator fun <K: B<*, *>> K.div(t: K) = T(Ø)
+    // @JvmName("b_p_") operator fun <K: B<*, *>> K.plus(k: K) = F(k)
+    // @JvmName("b_m_") operator fun <K: B<*, *>> K.minus(k: K) = F(Ø)
+  """.trimIndent()
 
 fun genBooleanTypeAliases(pow: Int = 7, const: Int = 6): String =
   (0..pow).asSequence().map { 2.0.pow(it).toInt() }
     .map { (it - const).coerceAtLeast(0) until (it + const) }
     .flatten().distinct().joinToString("\n") { "typealias B_$it<B> = ${it.toBigEndian("B")}" }
 
-
 fun genBooleanLiterals(const: Int = 6): String =
   "val B0: B_0<Ø> = F(Ø)\nval B1: B_1<Ø> = T(Ø)\n" +
   (2..const).joinToString("\n") { "val B$it: B_$it<Ø> = ${it.toBigEndianVal()}" }
 
 fun genBooleanPlusMinus(maxPow: Int = 7, const: Int = 6): String =
-  """
-    @JvmName("b_p_") operator fun <K> K.plus(k: K) = F(k)
-    @JvmName("b_m_") operator fun <K> K.minus(k: K) = F(Ø)
-  """.trimIndent() + (2..const).joinToString("\n", "\n") { k ->
+  (2..const).joinToString("\n", "\n") { k ->
     val (p1, p2) = balancedPartition(k)
     val (v1, v2) = "B$p1" to "B$p2"
 
@@ -144,6 +164,7 @@ fun genBooleanPlusMinusOne(maxPow: Int, range: Sequence<Int> = (1..maxPow).asSeq
       """@JvmName("b?${it}m1") operator fun <K: B<*, *>> B_${it}<K>.minus(t: T<Ø>) = T(x - B1)"""
     }
 
+@Language("kt")
 fun genMultiplicationTable(
   range: IntRange = 2..16,
   easy: Set<Int> = range.filter { log2(it.toFloat()).let { ceil(it) == floor(it) } }.toSet(),
@@ -174,12 +195,10 @@ fun genDivisionTable(
   maxPow: Int = 7,
   range: IntRange = 1..maxPow,
   easy: Set<Int> = range.map { 2.0.pow(it).toInt() }.toSet(),
-  hard: Set<Triple<Int, Int, Int>> =
-    (2..2.0.pow(maxPow).toInt()).map { it.nontrivialDivisors() }.flatten().toSet()
+  hard: Set<Triple<Int, Int, Int>> = (2..2.0.pow(maxPow).toInt()).map { it.nontrivialDivisors() }.flatten().toSet()
 ) =
   """
     @JvmName("b_d1") operator fun <K: B<*, *>> K.div(t: T<Ø>) = this
-    @JvmName("b_d_") operator fun <K> K.div(t: K) = T(Ø)
   """.trimIndent() + easy.joinToString("\n", "\n", "\n") {
       val pow = log2(it.toFloat()).toInt()
       val pad = "F".repeat(pow).toBigEndian("K")
