@@ -31,7 +31,6 @@ open class F<X>(override val x: X = Ø as X) : B<X, F<X>>(x) {
 }
 
 // Unchecked / checked at runtime
-// Unchecked / checked at runtime
 open class U(val i: Int) : B<Any, U>() {
   override fun flip(): U = TODO()
   override fun equals(other: Any?) = (other as? U)?.let { i == it.i } ?: false 
@@ -139,6 +138,10 @@ val B6: B_6<Ø> = T.T.F
 
 @JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = B1
 @JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = B1
+@JvmName("b1m1") operator fun B_1<Ø>.minus(t: T<Ø>): B_0<Ø> = B0
+@JvmName("b2m1") operator fun B_2<Ø>.minus(t: T<Ø>): B_1<Ø> = B1
+
+
 @JvmName("b1p1") operator fun B_1<Ø>.plus(t: T<Ø>): B_2<Ø> = F(x + B1)
 @JvmName("b3p1") operator fun B_3<Ø>.plus(t: T<Ø>): B_4<Ø> = F(x + B1)
 @JvmName("b7p1") operator fun B_7<Ø>.plus(t: T<Ø>): B_8<Ø> = F(x + B1)
@@ -146,7 +149,6 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b31p1") operator fun B_31<Ø>.plus(t: T<Ø>): B_32<Ø> = F(x + B1)
 @JvmName("b63p1") operator fun B_63<Ø>.plus(t: T<Ø>): B_64<Ø> = F(x + B1)
 @JvmName("b127p1") operator fun B_127<Ø>.plus(t: T<Ø>): B_128<Ø> = F(x + B1)
-
 @JvmName("b?0p1") operator fun <K: B<*, *>> B_0<K>.plus(t: T<Ø>) = T(x)
 @JvmName("b?01p1") operator fun <K: B<*, *>> B_1<F<K>>.plus(t: T<Ø>) = F(x + B1)
 @JvmName("b?03p1") operator fun <K: B<*, *>> B_3<F<K>>.plus(t: T<Ø>) = F(x + B1)
@@ -156,15 +158,13 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b?063p1") operator fun <K: B<*, *>> B_63<F<K>>.plus(t: T<Ø>) = F(x + B1)
 @JvmName("b?0127p1") operator fun <K: B<*, *>> B_127<F<K>>.plus(t: T<Ø>) = F(x + B1)
 
-@JvmName("b1m1") operator fun B_1<Ø>.minus(t: T<Ø>): B_0<Ø> = B0
-@JvmName("b2m1") operator fun B_2<Ø>.minus(t: T<Ø>): B_1<Ø> = B1
+
 @JvmName("b4m1") operator fun B_4<Ø>.minus(t: T<Ø>): B_3<Ø> = T(x - B1)
 @JvmName("b8m1") operator fun B_8<Ø>.minus(t: T<Ø>): B_7<Ø> = T(x - B1)
 @JvmName("b16m1") operator fun B_16<Ø>.minus(t: T<Ø>): B_15<Ø> = T(x - B1)
 @JvmName("b32m1") operator fun B_32<Ø>.minus(t: T<Ø>): B_31<Ø> = T(x - B1)
 @JvmName("b64m1") operator fun B_64<Ø>.minus(t: T<Ø>): B_63<Ø> = T(x - B1)
 @JvmName("b128m1") operator fun B_128<Ø>.minus(t: T<Ø>): B_127<Ø> = T(x - B1)
-
 @JvmName("b?1p1") operator fun <K: B<*, *>> B_1<K>.minus(t: T<Ø>) = F(x)
 @JvmName("b?2m1") operator fun <K: B<*, *>> B_2<K>.minus(t: T<Ø>) = T(x - B1)
 @JvmName("b?4m1") operator fun <K: B<*, *>> B_4<K>.minus(t: T<Ø>) = T(x - B1)
@@ -673,6 +673,7 @@ val B6: B_6<Ø> = T.T.F
 @JvmName("b0t_") operator fun <K: B<*, *>> F<Ø>.times(t: K) = this
 @JvmName("b_t1") operator fun <K: B<*, *>> K.times(t: T<Ø>) = this
 @JvmName("b1t_") operator fun <K: B<*, *>> T<Ø>.times(t: K) = t
+
 @JvmName("b_t2") operator fun <K: B<*, *>> K.times(t: B_2<Ø>) = F(this)
 @JvmName("b2t_") operator fun <K: B<*, *>> B_2<Ø>.times(t: K) = F(t)
 @JvmName("b_t4") operator fun <K: B<*, *>> K.times(t: B_4<Ø>) = F(F(this))

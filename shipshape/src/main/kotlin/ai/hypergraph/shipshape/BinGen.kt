@@ -3,6 +3,9 @@ package ai.hypergraph.shipshape
 import org.intellij.lang.annotations.Language
 import kotlin.math.*
 
+const val CONST = 6 // Constant by which addition and subtraction is always supported when defined, up to 2^POW + 1
+const val POW = 7   // Maximum power
+
 fun main() {
   println(genBooleanTypeAliases())
 }
@@ -40,7 +43,6 @@ open class F<X>(override val x: X = Ø as X) : B<X, F<X>>(x) {
   override fun flip(): T<X> = T(x)
 }
 
-// Unchecked / checked at runtime
 // Unchecked / checked at runtime
 open class U(val i: Int) : B<Any, U>() {
   override fun flip(): U = TODO()
@@ -82,14 +84,26 @@ object Ø: B<Ø, Ø>(null) { override fun flip() = Ø }
 
 ${genBooleanTypeAliases()}
 
+val B0: B_0<Ø> = F(Ø)
+val B1: B_1<Ø> = T(Ø)
 ${genBooleanLiterals()}
 
-${genBooleanPlusMinusOne(maxPow = 7)}
+@JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = B1
+@JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = B1
+@JvmName("b1m1") operator fun B_1<Ø>.minus(t: T<Ø>): B_0<Ø> = B0
+@JvmName("b2m1") operator fun B_2<Ø>.minus(t: T<Ø>): B_1<Ø> = B1
+
+${genBooleanPlusMinusOne(maxPow = POW)}
 
 ${genBooleanPlusMinus()}
 
+@JvmName("b_t0") operator fun <K: B<*, *>> K.times(t: F<Ø>) = t
+@JvmName("b0t_") operator fun <K: B<*, *>> F<Ø>.times(t: K) = this
+@JvmName("b_t1") operator fun <K: B<*, *>> K.times(t: T<Ø>) = this
+@JvmName("b1t_") operator fun <K: B<*, *>> T<Ø>.times(t: K) = t
 ${genMultiplicationTable()}
 
+@JvmName("b_d1") operator fun <K: B<*, *>> K.div(t: T<Ø>) = this
 ${genDivisionTable()}
 
 ${genUnchecked()}
@@ -108,16 +122,15 @@ fun genUnchecked() =
     // @JvmName("b_m_") operator fun <K: B<*, *>> K.minus(k: K) = F(Ø)
   """.trimIndent()
 
-fun genBooleanTypeAliases(pow: Int = 7, const: Int = 6): String =
-  (0..pow).asSequence().map { 2.0.pow(it).toInt() }
+fun genBooleanTypeAliases(maxPow: Int = POW, const: Int = CONST): String =
+  (0..maxPow).asSequence().map { 2.0.pow(it).toInt() }
     .map { (it - const).coerceAtLeast(0) until (it + const) }
     .flatten().distinct().joinToString("\n") { "typealias B_$it<B> = ${it.toBigEndian("B")}" }
 
-fun genBooleanLiterals(const: Int = 6): String =
-  "val B0: B_0<Ø> = F(Ø)\nval B1: B_1<Ø> = T(Ø)\n" +
+fun genBooleanLiterals(const: Int = CONST): String =
   (2..const).joinToString("\n") { "val B$it: B_$it<Ø> = ${it.toBigEndianVal()}" }
 
-fun genBooleanPlusMinus(maxPow: Int = 7, const: Int = 6): String =
+fun genBooleanPlusMinus(maxPow: Int = POW, const: Int = CONST): String =
   (2..const).joinToString("\n", "\n") { k ->
     val (p1, p2) = balancedPartition(k)
     val (v1, v2) = "B$p1" to "B$p2"
@@ -142,20 +155,12 @@ fun genBooleanPlusMinus(maxPow: Int = 7, const: Int = 6): String =
   }
 
 fun genBooleanPlusMinusOne(maxPow: Int, range: Sequence<Int> = (1..maxPow).asSequence().map { 2.0.pow(it).toInt() }) =
-  """
-    @JvmName("bnp1") operator fun Ø.plus(t: T<Ø>) = B1
-    @JvmName("b0p1") operator fun B_0<Ø>.plus(t: T<Ø>) = B1
-  """.trimIndent() + range.joinToString("\n", "\n") {
-    val result = it
-    """@JvmName("b${it - 1}p1") operator fun B_${it - 1}<Ø>.plus(t: T<Ø>): B_$result<Ø> = F(x + B1)"""
-    } + "\n\n" + """@JvmName("b?0p1") operator fun <K: B<*, *>> B_0<K>.plus(t: T<Ø>) = T(x)""" +
+  range.joinToString("\n", "\n", "\n") {
+    """@JvmName("b${it - 1}p1") operator fun B_${it - 1}<Ø>.plus(t: T<Ø>): B_$it<Ø> = F(x + B1)"""
+    } + """@JvmName("b?0p1") operator fun <K: B<*, *>> B_0<K>.plus(t: T<Ø>) = T(x)""" +
     range.joinToString("\n", "\n", "\n\n") {
       """@JvmName("b?0${it - 1}p1") operator fun <K: B<*, *>> B_${it - 1}<F<K>>.plus(t: T<Ø>) = F(x + B1)"""
-    } + """
-      @JvmName("b1m1") operator fun B_1<Ø>.minus(t: T<Ø>): B_0<Ø> = B0
-      @JvmName("b2m1") operator fun B_2<Ø>.minus(t: T<Ø>): B_1<Ø> = B1
-      """.trimIndent() +
-    range.drop(1).joinToString("\n", "\n", "\n\n") {
+    } + range.drop(1).joinToString("\n", "\n", "\n") {
       val result = it - 1
       """@JvmName("b${it}m1") operator fun B_${it}<Ø>.minus(t: T<Ø>): B_$result<Ø> = T(x - B1)"""
     } + """@JvmName("b?1p1") operator fun <K: B<*, *>> B_1<K>.minus(t: T<Ø>) = F(x)""" +
@@ -170,12 +175,6 @@ fun genMultiplicationTable(
   easy: Set<Int> = range.filter { log2(it.toFloat()).let { ceil(it) == floor(it) } }.toSet(),
   hard: Set<Int> = range.filter { log2(it.toFloat()).let { ceil(it) != floor(it) } }.toSet()
 ) =
-  """
-    @JvmName("b_t0") operator fun <K: B<*, *>> K.times(t: F<Ø>) = t
-    @JvmName("b0t_") operator fun <K: B<*, *>> F<Ø>.times(t: K) = this
-    @JvmName("b_t1") operator fun <K: B<*, *>> K.times(t: T<Ø>) = this
-    @JvmName("b1t_") operator fun <K: B<*, *>> T<Ø>.times(t: K) = t
-  """.trimIndent() +
     easy.joinToString("\n","\n","\n") {
       val pow = log2(it.toFloat()).toInt()
       val padthis = "F".repeat(pow).toBigEndianVal("this")
@@ -192,14 +191,12 @@ fun genMultiplicationTable(
     }
 
 fun genDivisionTable(
-  maxPow: Int = 7,
+  maxPow: Int = POW,
   range: IntRange = 1..maxPow,
   easy: Set<Int> = range.map { 2.0.pow(it).toInt() }.toSet(),
   hard: Set<Triple<Int, Int, Int>> = (2..2.0.pow(maxPow).toInt()).map { it.nontrivialDivisors() }.flatten().toSet()
 ) =
-  """
-    @JvmName("b_d1") operator fun <K: B<*, *>> K.div(t: T<Ø>) = this
-  """.trimIndent() + easy.joinToString("\n", "\n", "\n") {
+  easy.joinToString("\n", "", "\n") {
       val pow = log2(it.toFloat()).toInt()
       val pad = "F".repeat(pow).toBigEndian("K")
       val divisor = "x".repeat(pow).toCharArray().joinToString(".").ifEmpty { "this" }
