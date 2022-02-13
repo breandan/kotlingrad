@@ -263,11 +263,11 @@ When writing a function, it is mandatory to declare the input type(s), but the r
 
 ### Variable Capture
 
-Kotlin∇ provides a DSL for type-safe variable capture with variadic currying. Consider the following example:
+Not only does Kotlin∇ track [output shape](#shape-safety), it is also capable of tracking free and bound variables, enabling order-independent name binding with partial application. Fully bound expressions are assigned a concrete value, while those with free variables are assigned a function type. Consider the following example:
 
 ```kotlin
 val q = X + Y * Z + Y + 0.0
-val p0 = q(X to 1.0, Y to 2.0, Z to 3.0) // Name resolution
+val p0 = q(X to 1.0, Y to 2.0, Z to 3.0) // Name binding
 val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0) // Variadic currying
 val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
 val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0) // Proper currying
@@ -275,7 +275,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-For further details, please refer to [the implementation](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt).
+This feature is implemented by generating a type-level [Hasse diagram](https://en.wikipedia.org/wiki/Hasse_diagram) over a set of predefined variable names, with skip-connections for variadic combination and application. Further details may be gleaned from [the implementation](core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/arity/Variables.kt) and [usage example](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt).
 
 ### Example
 
@@ -709,7 +709,7 @@ Without property delegation, users would need to repeat the property name in the
 
 ## Experimental ideas
 
-The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform variable capture over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform [variable capture](#variable-capture) over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/ai/hypergraph/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
@@ -852,19 +852,19 @@ What benefit does this abstraction provide to the end user? By parameterizing ov
 
 ### Type Arithmetic
 
-Kotlin∇ supports bounded typelevel arithmetic on integers between `0..16` by default. The following command will run the [`ChurchArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/church/ChurchArithmeticTest.kt):
+Kotlin∇ supports bounded typelevel arithmetic on integers between `0..128` by default. The following command will run the [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt):
 
 ```
-/gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.ChurchArithmeticTest"
+/gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.BinaryArithmeticTest"
 ```
 
-To increase the range, edit the file [`NatGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/NatGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/church/Arithmetic.kt):
+To increase the range, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
 
 ```
 ./gradlew genShapes
 ```
 
-In practice, type checking may struggle when the upper bound is larger than `32`. The Kotlin team has been informed of these issues:
+In practice, type checking may struggle when the upper bound is larger than `1024`. The Kotlin team has been informed of these issues:
 
 * [KT-30040](https://youtrack.jetbrains.com/issue/KT-30040)
 * [KT-50466](https://youtrack.jetbrains.com/issue/KT-50466)
