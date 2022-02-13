@@ -125,6 +125,9 @@ typealias XXX = Ex<XX, XX, XX>
  *   xz  |            z             x              P               y
  *   yz  |                   z      y                      P       x
  *   xyz |            yz     xz     xy     z       y       x       P
+ *   
+ * TODO: Possible to reduce space complexity via a subtype machine?
+ * https://arxiv.org/pdf/2109.03950.pdf
  */
 
 @JvmName("plus:___") operator fun <V0: XO, V1: XO, V2: XO> Ex<V0, V1, V2>.plus(e: OOO) = Ex<V0, V1, V2>(Ops.sum, null, this, e)

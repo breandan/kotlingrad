@@ -865,7 +865,7 @@ Arithmetic outside this domain is checked at runtime, prior to evaluation.
 The following command will run the [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt):
 
 ```
-/gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.BinaryArithmeticTest"
+./gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.binary.BinaryArithmeticTest"
 ```
 
 To alter the domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
