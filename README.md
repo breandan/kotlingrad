@@ -854,27 +854,27 @@ What benefit does this abstraction provide to the end user? By parameterizing ov
 
 ### Type Arithmetic
 
-By default, Kotlin∇ supports compile-time type arithmetic in the following domain:
+By default, Kotlin∇ supports compile time type arithmetic in the following domain:
 
-* Fully symmetric arithmetic: `{ a ⍟ b ϵ [0..16){+,-,*,/}[0..16) | 0 < a ⍟ b }`
-* Asymmetric arithmetic: `{ a ⍟ b ϵ [0..512){+,-}[0..16) | 0 <= a ⍟ b < 512 }`
+* Fully symmetric arithmetic: `{ a ⍟ b ϵ [0..16){+,-,*}[0..16) | 0 ≤ a ⍟ b }`
+* Asymmetric arithmetic: `{ a ⍟ b ϵ [0..512){+,-}[0..16) | 0 ≤ a ⍟ b < 512 }`
 * Symmetric division: `{ a ⍟ b ϵ [0..128){/}[1..128) | a % b = 0 }`
 
 Arithmetic outside this domain is checked at runtime, prior to evaluation.
 
-The following command will run the [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt):
+Compile time type arithmetic is achieved by generating a type-level representation of the Binary [Church encoding](#church-encoding). A usage example is shown in [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt), which may be run with the following command:
 
 ```
 ./gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.binary.BinaryArithmeticTest"
 ```
 
-To alter the domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
+To alter the domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then use the following command to regenerate [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
 
 ```
 ./gradlew genShapes
 ```
 
-In practice, type checking may struggle when the upper bound is larger than `4096`. The Kotlin team has been informed of these issues:
+In practice, compile time type arithmetic may struggle to compute numbers in excess of `4095`. The Kotlin team has been informed of these issues:
 
 * [KT-30040](https://youtrack.jetbrains.com/issue/KT-30040)
 * [~~KT-50466~~](https://youtrack.jetbrains.com/issue/KT-50466)
