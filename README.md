@@ -263,7 +263,7 @@ When writing a function, it is mandatory to declare the input type(s), but the r
 
 ### Variable Capture
 
-Not only does Kotlin∇ track [output shape](#shape-safety), it is also capable of tracking free and bound variables, enabling order-independent name binding with partial application. Fully bound expressions are assigned a concrete value, while those with free variables are assigned a function type. Consider the following example:
+Not only does Kotlin∇'s type system encode [output shape](#shape-safety), it is also capable of tracking free and bound variables, for order-independent name binding and partial application. Expressions inhabited by free variables are typed as functions until fully bound, at which time they return a concrete value. Consider the following example:
 
 ```kotlin
 val q = X + Y * Z + Y + 0.0
@@ -275,7 +275,7 @@ val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
 val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
 ```
 
-This feature is implemented by generating a type-level [Hasse diagram](https://en.wikipedia.org/wiki/Hasse_diagram) over a set of predefined variable names, with skip-connections for variadic combination and application. Further details may be gleaned from [the implementation](core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/arity/Variables.kt) and [usage example](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt).
+This feature is made possible by encoding a type-level [Hasse diagram](https://en.wikipedia.org/wiki/Hasse_diagram) over a small set of predefined variable names, with skip-connections for variadic combination and partial application. Curious readers may glean further details by referring to [the implementation](core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/arity/Variables.kt) and [usage example](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt).
 
 ### Example
 
@@ -757,9 +757,11 @@ a := next*(next(...next(1)...))
 
 By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large portion of mathematics onto a single operator: function application. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a host of cryptic languages. These two ideas, λ-calculus and combinators, are keys to unlocking many puzzles in computer science and mathematics.
 
-The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface via delegation rather than inheritance.
+Though mathematically elegant, Church numerals are not particularly efficient or pleasant to read. One discovers that trying to encode Church arithmetic in a language without dependent types grows quickly impractical. By selecting a higher radix, however, it is possible to reduce spatial complexity and improve readability, albeit at the cost of increased temporal complexity on certain operations (e.g., `+` and `-`). Kotlin∇ uses a [Binary encoding](#type-arithmetic) by default, however generators for other bases are also provided for convenience.
 
 ### Type classes
+
+The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface via delegation rather than inheritance.
 
 Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Church encoding](https://en.wikipedia.org/wiki/Church_axioms) for natural numbers. To emulate instantiation, we can provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
 
@@ -852,25 +854,33 @@ What benefit does this abstraction provide to the end user? By parameterizing ov
 
 ### Type Arithmetic
 
-Kotlin∇ supports bounded typelevel arithmetic on integers between `0..128` by default. The following command will run the [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt):
+By default, Kotlin∇ supports compile-time type arithmetic in the following domain:
+
+* Fully symmetric arithmetic: `{ a ⍟ b ϵ [0..16){+,-,*,/}[0..16) | 0 < a ⍟ b }`
+* Asymmetric arithmetic: `{ a ⍟ b ϵ [0..512){+,-}[0..16) | 0 <= a ⍟ b < 512 }`
+* Symmetric division: `{ a ⍟ b ϵ [0..128){/}[1..128) | a % b = 0 }`
+
+Arithmetic outside this domain is checked at runtime, prior to evaluation.
+
+The following command will run the [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt):
 
 ```
 /gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.BinaryArithmeticTest"
 ```
 
-To increase the range, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
+To alter the domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then run the following command to regenerate the file [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
 
 ```
 ./gradlew genShapes
 ```
 
-In practice, type checking may struggle when the upper bound is larger than `1024`. The Kotlin team has been informed of these issues:
+In practice, type checking may struggle when the upper bound is larger than `4096`. The Kotlin team has been informed of these issues:
 
 * [KT-30040](https://youtrack.jetbrains.com/issue/KT-30040)
-* [KT-50466](https://youtrack.jetbrains.com/issue/KT-50466)
+* [~~KT-50466~~](https://youtrack.jetbrains.com/issue/KT-50466)
 * [KT-50533](https://youtrack.jetbrains.com/issue/KT-50533)
 * [KT-50553](https://youtrack.jetbrains.com/issue/KT-50553)
-* [KT-50617](https://youtrack.jetbrains.com/issue/KT-50617)
+* [~~KT-50617~~](https://youtrack.jetbrains.com/issue/KT-50617)
 
 This API is experimental and subject to change without notice. In the future, it will be used to statically type check tensor functions whose output shape is an arithmetic function of the input shapes, e.g., concatenation, splitting and [convolution](https://arxiv.org/pdf/1603.07285.pdf).
 
