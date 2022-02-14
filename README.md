@@ -771,7 +771,7 @@ interface Nat<T> {
   val one: T get() = nil.next()
   fun T.next(): T
 
-  class of<T>(override val nil: T, val vnext: T.() -> T): Nat<T, Nat.of<T>> {
+  class of<T>(override val nil: T, val vnext: T.() -> T): Nat<T> {
     override fun T.next(): T = vnext()
   }
 }
@@ -806,7 +806,7 @@ interface Group<T>: Nat<T> {
   class of<T>(
     override val nil: T, override val one: T,
     val plus: (T, T) -> T
-  ): Group<T, Group.of<T>> {
+  ): Group<T> {
     override fun T.plus(t: T) = plus(this, t)
   }
 }
@@ -839,7 +839,7 @@ interface Ring<T>: Group<T> {
     override val nil: T, override val one: T,
     val plus: (T, T) -> T,
     val times: (T, T) -> T
-  ): Ring<Ting.of<T>> {
+  ): Ring<T> {
     override fun T.plus(t: T) = plus(this, t)
     override fun T.times(t: T) = times(this, t)
   }
