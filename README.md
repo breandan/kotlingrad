@@ -21,6 +21,7 @@ Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/
   * [Higher-rank](#higher-rank-derivatives)
   * [Higher-order](#higher-order-derivatives)
   * [Example](#example)
+  * [Variable capture](#variable-capture)
 * [Visualization](#visualization-tools)
   * [Dataflow graphs](#dataflow-graphs)
   * [Plotting functions](#plotting)
@@ -35,10 +36,8 @@ Kotlin∇ is a type-safe [automatic differentiation](http://breandan.net/public/
   * [Multiple dispatch](#multiple-dispatch)
   * [Shape-safe tensor operations](#shape-safe-tensor-operations)
   * [Intermediate representation](#intermediate-representation)
-  * [Property Delegation](#property-delegation)
-  * [Coroutines](#coroutines)
+  * [Property delegation](#property-delegation)
 * [Experimental ideas](#experimental-ideas)
-  * [Arity inference](#arity-inference)
   * [Church encoding](#church-encoding)
   * [Type classes](#type-classes)
   * [Type arithmetic](#type-arithmetic)
@@ -99,7 +98,7 @@ dependencies {
 
 To access Kotlin∇'s notebook support, use the following line magic:
 
-```
+```kotlin
 @file:DependsOn("ai.hypergraph:kotlingrad:0.4.6")
 ```
 
@@ -183,11 +182,11 @@ Kotlin∇ supports derivatives between tensors of up to rank 2. The shape of a t
 
 Matrix-by-vector, vector-by-matrix, and matrix-by-matrix derivatives require rank 3+ tensors and are currently unsupported.
 
-### Higher-Order Derivatives
+### Higher-order derivatives
 
 Kotlin∇ supports arbitrary order derivatives on scalar functions, and up to 2nd order derivatives on vector functions. Higher-order derivatives on matrix functions are unsupported.
 
-### Shape Safety
+### Shape safety
 
 Shape safety is an important concept in Kotlin∇. There are three broad strategies for handling shape errors:
 
@@ -261,22 +260,6 @@ fun someMatFun(m: Mat<Double, D2, D2>) = ...
 
 When writing a function, it is mandatory to declare the input type(s), but the return type [may be omitted](https://kotlinlang.org/docs/reference/functions.html#explicit-return-types). Shape-safety is currently supported up to rank-2 tensors, i.e. matrices.
 
-### Variable Capture
-
-Not only does Kotlin∇'s type system encode [output shape](#shape-safety), it is also capable of tracking free and bound variables, for order-independent name binding and partial application. Expressions inhabited by free variables are typed as functions until fully bound, at which time they return a concrete value. Consider the following example:
-
-```kotlin
-val q = X + Y * Z + Y + 0.0
-val p0 = q(X to 1.0, Y to 2.0, Z to 3.0) // Name binding
-val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0) // Variadic currying
-val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
-val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0) // Proper currying
-val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
-val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
-```
-
-This feature is made possible by encoding a type-level [Hasse diagram](https://en.wikipedia.org/wiki/Hasse_diagram) over a small set of predefined variable names, with skip-connections for variadic combination and partial application. Curious readers may glean further details by referring to [the implementation](core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/arity/Variables.kt) and [usage example](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt).
-
 ### Example
 
 The following example shows how to derive higher-order partials of a function `z` of type ℝ²→ℝ:
@@ -316,6 +299,22 @@ z(0, 1)         = 0.0
 ∇z              = {y=d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(y), x=d(((x) * ((- (sin((x) * (y)))) + (y))) * (4.0)) / d(x)} 
                 = [4.0, 0.0]ᵀ
 ```
+
+### Variable capture
+
+Not only does Kotlin∇'s type system encode [output shape](#shape-safety), it is also capable of tracking free and bound variables, for order-independent name binding and partial application. Expressions inhabited by free variables are typed as functions until fully bound, at which time they return a concrete value. Consider the following example:
+
+```kotlin
+val q = X + Y * Z + Y + 0.0
+val p0 = q(X to 1.0, Y to 2.0, Z to 3.0) // Name binding
+val p1 = q(X to 1.0, Y to 1.0)(Z to 1.0) // Variadic currying
+val p3 = q(Z to 1.0)(X to 1.0, Y to 1.0) // Any order is possible
+val p4 = q(Z to 1.0)(X to 1.0)(Y to 1.0) // Proper currying
+val p5 = q(Z to 1.0)(X to 1.0) // Returns a partially applied function
+val p6 = (X + Z + 0)(Y to 1.0) // Does not compile
+```
+
+This feature is made possible by encoding a type-level [Hasse diagram](https://en.wikipedia.org/wiki/Hasse_diagram) over a small set of predefined variable names, with skip-connections for variadic combination and partial application. Curious readers may glean further details by referring to [the implementation](core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/arity/Variables.kt) and [usage example](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt).
 
 ## Visualization tools
 
@@ -435,7 +434,7 @@ interface Group<T: Group<T>> {
 }
 ```
 
-Here, we specify a recursive type bound using a method known as [F-bounded quantification](http://staff.ustc.edu.cn/~xyfeng/teaching/FOPL/lectureNotes/CookFBound89.pdf) to ensure that operations return the concrete type variable `T`, rather than something more abstract like `Group`. Imagine a class `Fun` which has implemented `Group`. It can be used as follows:
+Here, we specify a recursive type bound using a method known as [F-bounded quantification](http://staff.ustc.edu.cn/~xyfeng/teaching/FOPL/lectureNotes/CookFBound89.pdf) to ensure that operations return the concrete type variable `T`, rather than something more abstract like `Group`. Imagine a class `Fun` that has implemented `Group`. It can be used as follows:
 
 ```kotlin
 fun <T: Group<T>> cubed(t: T): T = t * t * t
@@ -447,7 +446,7 @@ Like [Python](https://docs.python.org/3.4/library/operator.html), Kotlin support
 
 #### First-class functions
 
-With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). A number of [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
+With [higher-order functions and lambdas](https://kotlinlang.org/docs/reference/lambdas.html), Kotlin treats [functions as first-class citizens](https://en.wikipedia.org/wiki/First-class_function). This allows us to represent mathematical functions and programming functions with the same underlying abstractions (typed FP). Several [recent](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf) [papers](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf) have demonstrated the expressiveness of this paradigm for automatic differentiation.
 
 In Kotlin∇, all expressions can be treated as functions. For example:
 
@@ -551,7 +550,7 @@ Kotlin∇ functions are not only data structures, but Kotlin functions which can
 
 Kotlin's [smart casting](https://kotlinlang.org/docs/reference/typecasts.html#smart-casts) is an example of [flow-sensitive type analysis](https://en.wikipedia.org/wiki/Flow-sensitive_typing) where the abstract type `Fun` can be treated as `Sum` after performing an `is Sum` check. Without smart casting, we would need to write `(this as Sum).left` to access the member, `left`, causing a potential `ClassCastException` if the cast were mistaken.
 
-#### Extension Functions
+#### Extension functions
 
 By using [extension functions](https://kotlinlang.org/docs/reference/extensions.html), users can convert between numerical types in the host language and our eDSL, by augmenting classes with additional operators. [Context-oriented programming](https://proandroiddev.com/an-introduction-context-oriented-programming-in-kotlin-2e79d316b0a2), allows users to define custom extensions without requiring subclasses or inheritance.
 
@@ -579,7 +578,7 @@ fun Fun<Double>.multiplyByTwo() = with(DoubleContext) { 2 * this } // Uses `*` o
 
 Extensions can also be defined in another file or context and imported on demand. For example, Kotlin∇ also uses extensions to define [shape-safe](#shape-safe-tensor-operations) constructors and operators for vector and matrix arithmetic.
 
-#### Multiple Dispatch
+#### Multiple dispatch
 
 In conjunction with ADTs, Kotlin∇ also uses [multiple dispatch](https://en.wikipedia.org/wiki/Multiple_dispatch) to instantiate the most specific result type of [applying an operator](https://github.com/breandan/kotlingrad/blob/09f4aaf789238820fb5285706e0f1e22ade59b7c/src/main/kotlin/ai/hypergraph/kotlingrad/functions/Function.kt#L24-L38) based on the type of its operands. While multiple dispatch is not an explicit language feature, it can be emulated using inheritance.
 
@@ -605,11 +604,11 @@ val result = Const(2.0) * Sum(Var(2.0), Const(3.0)) // Sum(Prod(Const(2.0), Var(
 This allows us to put all related control flow on a single abstract class which is inherited by subclasses, simplifying readability, debugging and refactoring.
 
 
-#### Shape-safe Tensor Operations
+#### Shape-safe tensor operations
 
 While first-class [dependent types](https://wiki.haskell.org/Dependent_type) are useful for ensuring arbitrary shape safety (e.g., when concatenating and reshaping matrices), they are unnecessary for simple equality checking (such as when multiplying two matrices). When the shape of a tensor is known at compile-time, it is possible to encode this information using a less powerful type system*, as long as it supports subtyping and parametric polymorphism (a.k.a. generics). In practice, we can implement a shape-checked tensor arithmetic in languages like Java, Kotlin, C++, C# or Typescript, which accept generic type parameters. In Kotlin, whose type system is [less expressive](https://kotlinlang.org/docs/reference/generics.html#variance) than Java, we use the following strategy.
 
-Shape safety is currently supported up to rank-2 tensors, i.e. matrices. To perform dimension checking in our type system, first we enumerate a list of integer type literals as a chain of subtypes, `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
+Shape safety is currently supported up to rank-2 tensors, i.e. matrices. To perform dimension checking in our type system, we first enumerate a list of integer type literals as a chain of subtypes, `C <: C - 1 <: C - 2 <: ... <: 1 <: 0`, where `C` is the largest fixed-length dimension we wish to represent, which can be specified by the user prior to compilation. This guarantees linear space and time complexity for subtype checking, with a constant upper bound.
 
 ```kotlin
 @file:Suppress("ClassName")
@@ -642,7 +641,7 @@ The operator `+` can now be used like so. Incompatible operands will cause a typ
 
 ```kotlin
 val one = Vec(1, 2, 3) + Vec(1, 2, 3)          // Always runs safely
-val add = Vec(1, 2, 3) + Vec(listOf(...))      // May fail at runtime
+val add = Vec(1, 2, 3) + Vec(listOf(/*...*/))  // May fail at runtime
 val sum = Vec(1, 2) + add                      // Does not compile
 ```
 
@@ -688,7 +687,7 @@ A similar technique is possible in Haskell, which is capable of a more powerful 
 
 Kotlin∇ programs are [staged](#multi-stage-programming) into [Kaliningraph](https://github.com/breandan/kaliningraph), an experimental IR for graph computation. As written by the user, many graphs are computationally suboptimal due to expression swell and parameter sharing. To accelerate forward- and backpropagation, it is often advantageous to simplify the graph by applying the [reduction semantics](https://github.com/breandan/kotlingrad/blob/master/specification.md#operational-semantics) in a process known as [graph canonicalization](https://en.wikipedia.org/wiki/Graph_canonization). Kaliningraph enables compiler-like optimizations over the graph such as expression simplification and analytic root-finding, and supports features for visualization and debugging, e.g., in [computational notebooks](https://github.com/breandan/kotlingrad/blob/master/samples/notebooks/hello_kotlingrad.ipynb).
 
-#### Property Delegation
+#### Property delegation
 
 [Property delegation](https://kotlinlang.org/docs/reference/delegated-properties.html) is a reflection feature in the Kotlin language which lets us access properties to which an instance is bound. For example, we can read the property name like so:
 
@@ -709,31 +708,11 @@ Without property delegation, users would need to repeat the property name in the
 
 ## Experimental ideas
 
-The current API is stable, but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform [variable capture](#variable-capture) over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
+The current API is stable but can be [improved](https://github.com/breandan/kotlingrad/issues) in many ways. Currently, Kotlin∇ does not infer a function's input dimensionality (i.e. free variables and their corresponding shape). While it is possible to perform [variable capture](#variable-capture) over a small alphabet using [type safe currying](samples/src/main/kotlin/ai/hypergraph/kotlingrad/samples/VariableCapture.kt), this technique incurs a large source code [overhead](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/VariableCapture.kt). It may be possible to reduce the footprint using [phantom types](https://gist.github.com/breandan/d0d7c21bb7f78ef54c21ce6a6ac49b68) or some form of union type bound (cf. [Kotlin](https://kotlinlang.org/docs/reference/generics.html#upper-bounds), [Java](https://docs.oracle.com/javase/tutorial/java/generics/bounded.html)).
 
 When the shape of an N-dimensional array is known at compile-time, we can use [type-level integers](shipshape/src/main/kotlin/ai/hypergraph/shipshape/DimGen.kt) to ensure shape conforming tensor operations (inspired by [Nexus](https://github.com/ctongfei/nexus) and others).
 
-Allowing users to specify a matrix's structure in its type signature, (e.g., `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allows us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
-
-### Arity inference
-
-A function's type would ideally encode arity, based on the number of unique variables:
-
-```kotlin
-val f = x * y + sin(2 * x + 3 * y)              // f: BinaryFunction<Double> "
-val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
-val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
-```
-
-However inferring arity for arbitrary expressions at compile-time would be difficult in the Kotlin type system. Instead, we could let the user specify it directly.
-
-```kotlin
-val x by Var()                                  // x: Variable<Double> inferred type
-val y by Var()                                  // x: Variable<Double> "
-val f = Fun(D2) { x * y + sin(2 * x + 3 * y) }  // f: BinaryFunction<Double> "
-val g = f(x to -1.0)                            // g: UnaryFunction<Double> == -y + sin(-2 + 3 * y)
-val h = f(x to 0.0, y to 0.0)                   // h: Const<Double> == 0 + sin(0 + 0) == 0
-```
+Allowing users to specify a matrix's structure in its type signature, (e.g., `Singular`, `Symmetric`, `Orthogonal`, `Unitary`, `Hermitian`, `Toeplitz`) would allow us to specialize derivation over such matrices (cf. [section 2.8](https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf#page=14) of The Matrix Cookbook).
 
 ### Church encoding
 
@@ -757,7 +736,7 @@ a := next*(next(...next(1)...))
 
 By using the λ-calculus, Church [tells us](https://compcalc.github.io/public/church/church_calculi_1941.pdf#page=9), we can lower a large portion of mathematics onto a single operator: function application. Curry, by way of [Schönfinkel](https://writings.stephenwolfram.com/data/uploads/2020/12/Schonfinkel-OnTheBuildingBlocksOfMathematicalLogic.pdf), gives us combinatory logic, a kind of Rosetta stone for deciphering and translating between a host of cryptic languages. These two ideas, λ-calculus and combinators, are keys to unlocking many puzzles in computer science and mathematics.
 
-Though mathematically elegant, Church numerals are not particularly efficient or pleasant to read. One discovers that trying to encode Church arithmetic in a language without dependent types grows quickly impractical. By selecting a higher radix, however, it is possible to reduce spatial complexity and improve readability, albeit at the cost of increased temporal complexity on certain operations (e.g., `+` and `-`). Kotlin∇ uses a [Binary encoding](#type-arithmetic) by default, however generators for other bases are also provided for convenience.
+Though mathematically elegant, Church numerals are not particularly efficient or pleasant to read. One discovers that trying to encode Church arithmetic in a language without dependent types grows quickly impractical. By selecting a higher radix, however, it is possible to reduce spatial complexity and improve readability, albeit at the cost of increased temporal complexity on certain operations (e.g., `+` and `-`). Kotlin∇ uses a [binary encoding](#type-arithmetic) by default, however generators for other bases are also provided for convenience.
 
 ### Type classes
 
@@ -771,7 +750,10 @@ interface Nat<T> {
   val one: T get() = nil.next()
   fun T.next(): T
 
-  class of<T>(override val nil: T, val vnext: T.() -> T): Nat<T> {
+  class of<T>(
+    override val nil: T,
+    val vnext: T.() -> T
+  ): Nat<T> {
     override fun T.next(): T = vnext()
   }
 }
@@ -852,7 +834,7 @@ Since differentiation is a [linear map](https://en.wikipedia.org/wiki/Linear_map
 
 What benefit does this abstraction provide to the end user? By parameterizing over primitive operators, Kotlin∇ consumers can easily swap out a tensor backend without needing to alter or recompile any upstream dependencies. This feature makes multiplatform development a breeze: wherever a type class operator (e.g., `+` or `*`) with matching signature is encountered across a project, it will be dispatched to the user-supplied lambda delegate for specialized execution on custom hardware. Runtime indirection can be elided with proper compiler inlining for zero-cost abstraction.
 
-### Type Arithmetic
+### Type arithmetic
 
 By default, Kotlin∇ supports compile time type arithmetic in the following domain:
 
@@ -862,15 +844,15 @@ By default, Kotlin∇ supports compile time type arithmetic in the following dom
 
 Arithmetic outside this domain is checked at runtime, prior to evaluation.
 
-Compile time type arithmetic is achieved by generating a type-level representation of the Binary [Church encoding](#church-encoding). A usage example is shown in [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt), which may be run with the following command:
+Compile time type arithmetic is achieved by generating a type-level representation of the binary [Church encoding](#church-encoding). A usage example is shown in [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt), which may be run with the following command:
 
-```
+```sh
 ./gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.binary.BinaryArithmeticTest"
 ```
 
 To alter the domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then use the following command to regenerate [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
 
-```
+```sh
 ./gradlew genShapes
 ```
 
@@ -886,9 +868,11 @@ This API is experimental and subject to change without notice. In the future, it
 
 ## Grammar
 
-For a detailed grammar and semantics, please refer to the [the Kotlin∇ specification](specification.md).
+For a detailed grammar and semantics, please refer to [the Kotlin∇ specification](specification.md).
 
 ## UML Diagram
+
+The following graph depicts the subtyping relation between classes and interfaces in Kotlin∇.
 
 [![](samples/src/main/resources/uml_diagram.svg)](https://raw.githubusercontent.com/breandan/kotlingrad/master/samples/src/main/resources/uml_diagram.svg)
 
@@ -928,7 +912,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 
 To the author's knowledge, Kotlin∇ is the first AD implementation in native Kotlin. While the particular synthesis of these ideas (i.e. shape-safe, functional AD, using generic types) is unique, it has been influenced by a long list of prior work in AD. Below is a list of projects and publications that helped inspire this work.
 
-### Automatic Differentiation
+### Automatic differentiation
 
 * [The Simple Essence of Automatic Differentiation](http://conal.net/papers/essence-of-ad/essence-of-ad-icfp.pdf)
 * [Reverse-Mode AD in a Functional Framework: Lambda the Ultimate Backpropagator](http://www-bcl.cs.may.ie/~barak/papers/toplas-reverse.pdf)
@@ -948,7 +932,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Lower Bounds on Arithmetic Circuits via Partial Derivatives](https://www.math.ias.edu/~avi/PUBLICATIONS/MYPAPERS/NW96/final.pdf)
 * [Learning Restricted Models of Arithmetic Circuits](https://www.cs.tau.ac.il/~shpilka/publications/KlivansShpilka_Learning_via_partial_derivatives.pdf)
 
-### Differentiable Programming
+### Differentiable programming
 
 * [Neural Networks, Types, and Functional Programming](https://colah.github.io/posts/2015-09-NN-Types-FP/)
 * [Backpropagation with Continuation Callbacks: Foundations for Efficient and Expressive Differentiable Programming](https://papers.nips.cc/paper/8221-backpropagation-with-callbacks-foundations-for-efficient-and-expressive-differentiable-programming.pdf)
@@ -969,7 +953,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Matrix Differentiation (and some other stuff)](https://atmos.washington.edu/~dennis/MatrixCalculus.pdf), Barnes (2006)
 * [Symbolic Matrix Derivatives](https://www.jstor.org/stable/2236019), Dwyer and Macphail (1948)
 
-### Computer Algebra
+### Computer algebra
 
 * [Towards an API for the real numbers](https://doi.org/10.1145/3395658), Boehm (2020)
 * [miniKanren as a Tool for Symbolic Computation in Python](https://arxiv.org/pdf/2005.11644.pdf), Willard (2020)
@@ -984,7 +968,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Describing the syntax of programming languages using conjunctive and Boolean grammars](http://users.utu.fi/aleokh/papers/conj_bool_programming.pdf), Okhotin (2016)
 * [Formal languages over GF(2)](https://users.math-cs.spbu.ru/~okhotin/papers/formal_languages_gf2.pdf), Okhotin (2019)
 
-### Symbolic Mathematics
+### Symbolic mathematics
 
 * [KMath](https://github.com/altavir/kmath) - Kotlin mathematics extensions library
 * [SymJa](https://github.com/axkr/symja_android_library/) - Computer algebra language & symbolic math library for Android
@@ -998,14 +982,14 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [chebfun](https://www.chebfun.org) - Allows representing functions as [Chebyshev polynomials](https://en.wikipedia.org/wiki/Chebyshev_polynomials), for easy symbolic differentiation (or integration)
 * [horeilly1101/deriv](https://github.com/horeilly1101/deriv) - Open source derivative calculator REST API (and Java library)
 
-### Neural Networks
+### Neural networks
 
 * [Hacker's Guide to Neural Networks](https://karpathy.github.io/neuralnets/), Karpathy (2014)
 * [Tricks from Deep Learning](https://arxiv.org/pdf/1611.03777.pdf), Baydin et al. (2016)
 * [Practical Dependent Types in Haskell: Type-Safe Neural Networks](https://blog.jle.im/entry/practical-dependent-types-in-haskell-1.html), Le (2016)
 * [A guide to convolutional arithmetic for deep learning](https://arxiv.org/pdf/1603.07285.pdf), Dumoulin and Visin (2018)
 
-### Type Systems
+### Type systems
 
 * [Generalized Algebraic Data Types and Object-Oriented Programming](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/gadtoop.pdf), Kennedy and Russo (2005)
 * [Java Generics are Turing Complete](https://arxiv.org/pdf/1605.05274.pdf), Grigore (2016)
@@ -1015,7 +999,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Constructive mathematics and computer programming](https://royalsocietypublishing.org/doi/pdf/10.1098/rsta.1984.0073), Martin-Lof (1984)
 * [Programming in Martin-Löf's Type Theory](http://www.cse.chalmers.se/research/group/logic/book/book.pdf#page=23), Nordstrom et al. (1990)
 
-### Domain-Specific Languages
+### Domain-specific languages
 
 * [Compiling Embedded Languages](http://conal.net/papers/jfp-saig/compile-dsel.pdf), Elliott et al. (2003)
 * [Implicit Staging of EDSL Expressions: A Bridge between Shallow and Deep Embedding](https://static.csg.ci.i.u-tokyo.ac.jp/papers/14/scherr-ecoop2014.pdf), Scherr and Chiba (2014)
@@ -1027,13 +1011,13 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [Fling – A Fluent API Generator](https://drops.dagstuhl.de/opus/volltexte/2019/10805/pdf/LIPIcs-ECOOP-2019-13.pdf), Gil and Roth (2019)
 * [Scripting an IDE for EDSL awareness](https://ilyasergey.net/papers/groovy-dsl.pdf), Sergey et al. (2011)
 
-### Automated Testing
+### Automated testing
 
 * [DeepTest: Automated Testing of Deep-Neural-Network-driven Autonomous Cars](https://arxiv.org/pdf/1708.08559.pdf), Tian et al. (2018)
 * [QuickCheck: A Lightweight Tool for Random Testing of Haskell Programs](https://www.eecs.northwestern.edu/~robby/courses/395-495-2009-fall/quick.pdf), Claessen and Hughes (2000)
 * [Learning to Discover Efficient Mathematical Identities](https://papers.nips.cc/paper/5350-learning-to-discover-efficient-mathematical-identities.pdf), Zaremba et al. (2014)
 
-### AD Libraries
+### AD libraries
 
 * [TensorFlow.FSharp](https://github.com/fsprojects/TensorFlow.FSharp): An eDSL for writing numerical models in F# with support for interactive tensor shape-checking
 * [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD), a brutally optimizing compiler for the VLAD language, a pure dialect of Scheme with first-class automatic differentiation operators
@@ -1049,7 +1033,7 @@ To the author's knowledge, Kotlin∇ is the first AD implementation in native Ko
 * [DiffSharp](https://github.com/DiffSharp/DiffSharp), a functional AD library implemented in the F# language
 * [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf) - Algebraic language for the description of computing processes using analytical transformations
 
-## Special Thanks
+## Special thanks
 
 The following individuals have helped shape this project through their enthusiasm and thoughtful feedback. Please check out their work.
 
