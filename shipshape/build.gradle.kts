@@ -1,6 +1,6 @@
 plugins {
   `java-gradle-plugin`
-  kotlin("jvm") version "1.6.10"
+  kotlin("jvm") version "1.6.20-M1"
   id("com.gradle.plugin-publish") version "0.12.0"
 }
 
@@ -18,7 +18,6 @@ pluginBundle {
 
 repositories {
   mavenCentral()
-  maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
 }
 
 dependencies {
