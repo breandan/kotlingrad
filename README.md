@@ -679,7 +679,7 @@ val lm = l * m
 
 A similar technique is possible in Haskell, which is capable of a more powerful form of type-level computation, [type arithmetic](https://wiki.haskell.org/Type_arithmetic). Type arithmetic makes it easy to express [convolutional arithmetic](https://arxiv.org/pdf/1603.07285.pdf) and other arithmetic operations on shape variables (say, splitting a vector in half), which is currently not possible, or would require enumerating every possible combination of type literals.
 
-<sup>&lowast;</sup> Many type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not computationally tractable due to the practical limitations noted by Grigore.
+<sup>&lowast;</sup> Many type systems are still capable of performing arbitrary computation in the type checker. As specified, Java's type system is [known to be Turing Complete](https://arxiv.org/pdf/1605.05274.pdf). It may be possible to emulate a limited form of dependent types in Java by exploiting this property, although this may not be computationally tractable due to the practical limitations noted by Grigore.
 
 <sup>&dagger;</sup> Statically generated code, shipped within the library. To regenerate these methods (e.g., using larger dimensions), a code generator is [provided](shipshape/src/main/kotlin/ai/hypergraph/shipshape).
 
@@ -742,7 +742,7 @@ Though mathematically elegant, Church numerals are not particularly efficient or
 
 The trouble with numerical towers is that they assume all inheritors are aware of the tower. In practice, many types we would like to reuse are entirely oblivious to our DSL. How do we allow users to bring in existing types without needing to modify their source code? This kind of [ad hoc polymorphism](https://en.wikipedia.org/wiki/Ad_hoc_polymorphism) can be achieved using a pattern called the [type class](https://en.wikipedia.org/wiki/Type_class). While the JVM does not allow multiple inheritance on classes, it does support multiple inheritance and [default methods](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html) on interfaces, allowing users to implement an interface via delegation rather than inheritance.
 
-Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Church encoding](https://en.wikipedia.org/wiki/Church_axioms) for natural numbers. To emulate instantiation, we can provide a pseudo-constructor by giving it a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects) equipped with an [invoke operator](https://kotlinlang.org/docs/operator-overloading.html#invoke-operator) as follows:
+Suppose we have a base type, `Nat` defined as an interface with a unitary member, `nil`, and its successor function, `next`, representing the [Church encoding](https://en.wikipedia.org/wiki/Church_axioms) for natural numbers. To emulate instantiation, we can provide a [nested class](https://kotlinlang.org/docs/nested-classes.html) equipped with a constructor overriding `nil` and `next` as follows:
 
 ```kotlin
 interface Nat<T> {
@@ -762,7 +762,7 @@ interface Nat<T> {
 Now, if we wanted to wrap an external type, such as `Double`, inside our tower, we could do so as follows:
 
 ```kotlin
-val doubleNat = Nat.of(one = 1.0, next = { this + one })
+val doubleNat = Nat.of(nil = 0.0) { this + 1.0 }
 ```
 
 Although the `Nat` interface is very expressive, evaluating arithmetic expressions on `Nat`s can be computationally expensive. For instance, we could define the first three [hyperoperations](https://en.wikipedia.org/wiki/Hyperoperation) naïvely as follows:
@@ -900,7 +900,7 @@ Unlike certain frameworks which simply wrap an existing AD library in a type-saf
 |           [Stalin∇](https://github.com/Functional-AutoDiff/STALINGRAD)           |  Scheme  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |
 |                    [Myia](https://github.com/mila-udem/myia)                     |  Python  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |   :construction:   |
 |                  [Autograd](https://github.com/HIPS/autograd/)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |
-|                       [JAX](https://github.com/google/jax)                       |  Python  |        :x:         | :heavy_check_mark: |        :x:         | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |   :construction:   |
+|                       [JAX](https://github.com/google/jax)                       |  Python  |        :x:         | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |   :construction:   |
 |                   [Tangent](https://github.com/google/tangent)                   |  Python  |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |        :x:         |
 | [Analitik](https://link.springer.com/content/pdf/10.1007/BF01070461.pdf#page=39) | Analitik | :heavy_check_mark: |        :x:         |        :x:         |        :x:         | :heavy_check_mark: |        :x:         |        :x:         |        :x:         |        :x:         |
 
