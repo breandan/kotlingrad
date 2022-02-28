@@ -5,7 +5,7 @@ import java.net.URL
 
 plugins {
   idea
-  id("com.github.ben-manes.versions") version "0.41.0"
+  id("com.github.ben-manes.versions") version "0.42.0"
   // https://github.com/Kotlin/dokka/issues/2024
   id("org.jetbrains.dokka") version "1.6.10"
 //  id("org.jetbrains.dokka") version "1.4.32"
