@@ -840,7 +840,7 @@ By default, Kotlin∇ supports compile time type arithmetic in the following dom
 
 * Fully symmetric arithmetic: `{ a ⍟ b ϵ [0..16){+,-,*}[0..16) | 0 ≤ a ⍟ b }`
 * Asymmetric arithmetic: `{ a ⍟ b ϵ [0..512){+,-}[0..16) | 0 ≤ a ⍟ b < 512 }`
-* Symmetric division: `{ a ⍟ b ϵ [0..128){/}[1..128) | a % b = 0 }`
+* Semi-symmetric arithmetic: `{ a / b = c, a = b * c | a, b, c ϵ [0..128) & a % b = 0 }`
 
 Arithmetic outside this domain is checked at runtime, prior to evaluation.
 
