@@ -49,6 +49,11 @@ open class GenSources: DefaultTask() {
         .also { it.createNewFile() }
         .writeText(genBinaryArithmetic())
 
+      File("$outputDir/typelevel/chinese").mkdirs()
+      File("$outputDir/typelevel/chinese/算盘.kt")
+        .also { it.createNewFile() }
+        .writeText(genAbacus())
+
       File("$outputDir/typelevel/array").mkdirs()
       File("$outputDir/typelevel/array/Arrays.kt")
         .also { it.createNewFile() }

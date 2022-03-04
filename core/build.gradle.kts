@@ -8,9 +8,9 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  id("com.google.devtools.ksp") version "1.6.20-M1-1.0.2"
+  id("com.google.devtools.ksp") version "1.6.20-RC-1.0.4"
   kotlin("multiplatform") version "1.6.20-RC"
-  kotlin("jupyter.api") version "0.11.0-61"
+  kotlin("jupyter.api") version "0.11.0-62"
   id("com.xcporter.metaview") version "0.0.5"
 }
 

@@ -1,6 +1,5 @@
 package ai.hypergraph.shipshape
 
-import org.gradle.internal.impldep.org.junit.internal.ComparisonCriteria
 import org.intellij.lang.annotations.Language
 import kotlin.math.*
 
@@ -212,11 +211,11 @@ fun genDivisionTable(
   }
 
 fun Int.nontrivialDivisors(
-  numToTake: Int = 20,
+  maxPerDividend: Int = 20,
   criteria: (Int) -> Boolean = { !it.isPowerOfTwo() && (this % it) == 0 }
 ): List<Triple<Int, Int, Int>> =
-  (1..(this / 2 + 1)).asSequence().filter(criteria)
-    .take(numToTake).map { Triple(this, it, this / it) }.toList()
+  (1..(this / 2 + 1)).filter(criteria).take(maxPerDividend)
+    .map { Triple(this, it, this / it) }.toList()
 
 fun Int.isPowerOfTwo() = log2(toFloat()).let { ceil(it) == floor(it) }
 
