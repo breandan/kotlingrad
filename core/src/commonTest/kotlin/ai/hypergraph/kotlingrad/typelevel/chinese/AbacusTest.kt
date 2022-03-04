@@ -12,24 +12,18 @@ class AbacusTest {
     val 二十一 = 十七 加 四
     assertEquals(21, 二十一.toInt())
 
-    val 四十二 = 十七
-      .let { it 减 九 }
-      .let { it 加 it }
-      .let { it 加 一 }
-      .let { it 加 二 }
-      .let { it 加 一 }
-      .let { it 加 六 }
-      .let { it 减 三 }
-      .let { it 加 四 }
-      .let { it 加 九 }
-      .let { it 加 六 }
-      .let { it 除 六 }
-      .let { it 乘 六 }
-      .let { it 加 五 }
-      .let { it 减 三 }
-      .let { it 减 二 }
-      .let { it 减 二 }
+
+    val 四十二 = (十七 减 九).let { it 加 it }
+      .let { (it 加 八) 加 六 }
+      .let { (it 减 三) 加 九 }
+      .let { (it 加 六) 除 六 }
+      .let { (it 乘 六) 加 五 }
+      .let { (it 减 三) 减 九 }
+      .let { (it 加 五) 加 二 }
+      .also { assertEquals(六 乘 七, it) }
 
     assertEquals(42, 四十二.toInt())
+
+
   }
 }

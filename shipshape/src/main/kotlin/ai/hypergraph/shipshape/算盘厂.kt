@@ -21,6 +21,10 @@ sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null) {
   val 七 get() = 七(this as 己)
   val 八 get() = 八(this as 己)
   val 九 get() = 九(this as 己)
+
+  override fun equals(other: Any?) = toString() == other.toString()
+  override fun hashCode() = this::class.hashCode() + 中.hashCode()
+  override fun toString() = (中 ?: "").toString() + this::class.simpleName
 }
 
 open class 零<丁>(override val 中: 丁? = null) : 数<丁, 零<丁>>(中) { companion object: 零<无>() }
