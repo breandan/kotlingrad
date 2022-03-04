@@ -32,3 +32,4 @@ out
 *.run
 *.hprof
 temp*.svg
+.DS_Store
