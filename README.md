@@ -844,13 +844,43 @@ By default, Kotlin∇ supports compile time type arithmetic in the following dom
 
 Arithmetic outside this domain is checked at runtime, prior to evaluation.
 
-Compile time type arithmetic is achieved by generating a type-level representation of the binary [Church encoding](#church-encoding). A usage example is shown in [`BinaryArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt), which may be run with the following command:
+Compile time type arithmetic is achieved by generating a type-level representation of the [Church encoding](#church-encoding). A usage example is shown in [`ChurchArithmeticTest.kt`](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/church/ChurchArithmeticTest.kt), which may be run with the following command:
 
 ```sh
-./gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.binary.BinaryArithmeticTest"
+./gradlew :kotlingrad:cleanJvmTest :kotlingrad:jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.church.ChurchArithmeticTest"
 ```
 
-To alter the domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt), then use the following command to regenerate [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt):
+Extensions to other bases, including [binary](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/binary/BinaryArithmeticTest.kt) and [decimal](/core/src/commonTest/kotlin/ai/hypergraph/kotlingrad/typelevel/chinese/AbacusTest.kt) are also provided, which may be used as follows:
+
+```kotlin
+// Boolean arithmetic
+val b32 = T.F
+  .let { it + T.F }   // B_4<Ø>
+  .let { it + T.F.F } // B_8<Ø>*/ }
+  .let { it + T.T }   // T<T<F<T<Ø>>>>
+  .let { it + T.F }   // T<F<T<T<Ø>>>>
+  .let { it - T.F }   // T<T<F<T<Ø>>>>
+  .let { it + T.F }   // T<F<T<T<Ø>>>>
+  .let { it + T.F }   // T<T<T<T<Ø>>>>
+  .let { it + T }     // T<F<F<F<Ø>>>>
+
+assertEquals(T.F.F.F.F, b32)
+
+// Chinese arithmetic
+val 四十二 = (十七 减 九)
+  .let { it 加 it }        // 六<一<无>>
+  .let { (it 加 八) 加 六 } // 零<三<无>>
+  .let { (it 减 三) 加 九 } // 六<三<无>>
+  .let { (it 加 六) 除 六 } // 七<无>
+  .let { (it 乘 六) 加 五 } // 七<四<无>>
+  .let { (it 减 三) 减 九 } // 五<三<无>>
+  .let { (it 加 五) 加 二 } // 二<四<无>>
+  .also { assertEquals(六 乘 七, it) }
+
+assertEquals(42, 四十二.toInt())
+```
+
+To alter the arithmetic domain, edit the file [`BinGen.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/BinGen.kt)/[`算盘厂.kt`](/shipshape/src/main/kotlin/ai/hypergraph/shipshape/算盘厂.kt), then use the following command to regenerate [`Arithmetic.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/binary/Arithmetic.kt)/[`算盘.kt`](/core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/chinese/算盘.kt):
 
 ```sh
 ./gradlew genShapes
