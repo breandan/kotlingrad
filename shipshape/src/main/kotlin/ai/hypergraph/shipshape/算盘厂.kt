@@ -102,7 +102,7 @@ data class TLFun(val left: String, val op: String, val right: String, val result
   else "无$left" to "无$result"
 
   val funName = op.a2z().codify()
-  val jvmName: String = (if (l2r.first == "无") "口" else "") + l2r.first.a2z() + funName + right.a2z()
+  val jvmName: String = l2r.first.first() + l2r.first.drop(1).a2z(false) + funName + right.a2z(false)
   val recType = l2r.first.a2z().codify()
   val typeParam = if ("<丁>" in recType) "<丁>" else ""
   val argType = right.a2z().codify("无")
