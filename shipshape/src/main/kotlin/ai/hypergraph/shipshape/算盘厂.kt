@@ -95,10 +95,11 @@ fun genTypeLevelFunctions(
     listOf(TLFun(a, "/", b, c), TLFun(c, "*", b, a))
   }).toSet().sorted().joinToString("\n", "\n", "\n")
 
-data class TLFun(val left: String, val op: String, val right: String, val result: String): Comparable<TLFun> {
-  val l2r = if (op in listOf("/", "*") || left.length != result.length) "无$left" to "无$result"
-  else left.zip(result).mapNotNull { (ai, ci) -> if (ai == ci) null else (ai to ci) }
-    .fold("丁" to "丁") { acc, it -> (acc.first + it.first) to (acc.second + it.second) }
+data class TLFun(val left: String, val op: String, val right: String, val result: String) : Comparable<TLFun> {
+  val l2r = if (left.length == result.length && op in listOf("+", "-"))
+    left.zip(result).dropWhile { (ai, ci) -> ai == ci }
+      .fold("丁" to "丁") { acc, it -> (acc.first + it.first) to (acc.second + it.second) }
+  else "无$left" to "无$result"
 
   val funName = op.a2z().codify()
   val jvmName: String = (if (l2r.first == "无") "口" else "") + l2r.first.a2z() + funName + right.a2z()
@@ -126,9 +127,6 @@ data class TLFun(val left: String, val op: String, val right: String, val result
 }
 
 val z2a: Map<String, String> = mapOf(
-//  "0" to "0", "1" to "1", "2" to "2", "3" to "3", "4" to "4",
-//  "5" to "5", "6" to "6", "7" to "7", "8" to "8", "9" to "9",
-//  "+" to "+", "-" to "-", "/" to "/", "*" to "*",
   "零" to "0", "一" to "1", "二" to "2", "三" to "3", "四" to "4",
   "五" to "5", "六" to "6", "七" to "7", "八" to "8", "九" to "9",
   "十" to "", "百" to "", "千" to "",
