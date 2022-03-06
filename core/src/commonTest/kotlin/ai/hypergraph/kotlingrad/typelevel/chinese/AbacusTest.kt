@@ -26,4 +26,19 @@ class AbacusTest {
 
 
   }
+
+  @Test
+  fun testGradualType() {
+    val 大数: 九<九<九<九<无>>>> = 九.九.九.九
+    assertEquals(9999, 大数.toInt())
+
+    val 大数加小数: 未 = 大数 加 三
+    assertEquals(10002, 大数加小数.toInt())
+
+    val 大数加大数 = 大数加小数
+      .let { it 加 it }
+      .let { it 加 it }
+
+    assertEquals(大数加小数.toInt() * 4, 大数加大数.toInt())
+  }
 }

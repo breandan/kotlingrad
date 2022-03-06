@@ -23,7 +23,10 @@ sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null) {
 
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + 中.hashCode()
-  override fun toString() = (中 ?: "").toString() + this::class.simpleName
+  override fun toString() =
+    if (this is 未) i.toString().toChinese()
+    else (中 ?: "").toString() + this::class.qualifiedName!!.filter { "${'$'}it" in z2a }
+  fun toInt() = toString().toArabic().toInt()
 }
 
 ${genChineseDigits()}
@@ -40,22 +43,19 @@ val z2a: Map<String, String> = mapOf(
   "十" to "", "百" to "", "千" to "", "万" to "",
 )
 
-val a2z = z2a.entries.associate { (k, v) -> v to k }
+val a2z: Map<String, String> = z2a.entries.associate { (k, v) -> v to k }
 
 // TODO: https://cs.github.com/?scopeName=All+repos&scope=&q=%E9%9B%B6+%E4%B8%80+%E4%BA%8C+%E4%B8%89+%E5%9B%9B+%E4%BA%94+%E5%85%AD+%E4%B8%83+%E5%85%AB+%E4%B9%9D+Arabic++language%3AJava
-fun String.toArabic() = map { if (this in z2a) z2a[this]!! else this }.joinToString("")
-fun String.toChinese() = map { if (this in a2z) a2z[this]!! else this }.joinToString("")
-
-tailrec fun 数<*, *>?.toInt(i: Int = 0, j: Int = 1): Int =
-  if (this == null) i else (中 as 数<*, *>?).toInt(i + this::class.simpleName!!.toArabic().toInt() * j, 10 * j)
+fun String.toArabic() = map { it.toString() }.joinToString("") { if (it in z2a) z2a[it]!! else it }
+fun String.toChinese() = map { it.toString() }.joinToString("") { if (it in a2z) a2z[it]!! else it }
 
 ${genTypeLevelFunctions()}
 
 // Gradual types
-// @JvmName("数加数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.加(甲: 右) = 未(toInt() + 甲.toInt())
-// @JvmName("数减数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.减(甲: 右) = 未(toInt() - 甲.toInt())
-// @JvmName("数乘数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.乘(甲: 右) = 未(toInt() * 甲.toInt())
-// @JvmName("数除数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.除(甲: 右) = 未(toInt() / 甲.toInt())
+@JvmName("数加数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.加(甲: 右) = 未(toInt() + 甲.toInt())
+@JvmName("数减数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.减(甲: 右) = 未(toInt() - 甲.toInt())
+@JvmName("数乘数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.乘(甲: 右) = 未(toInt() * 甲.toInt())
+@JvmName("数除数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.除(甲: 右) = 未(toInt() / 甲.toInt())
 """.let { it + "\n// Total lines: ${it.lines().size + 1}" }
 
 fun genChineseDigits() =
