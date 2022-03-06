@@ -12,7 +12,6 @@ class AbacusTest {
     val 二十一 = 十七 加 四
     assertEquals(21, 二十一.toInt())
 
-
     val 四十二 = (十七 减 九).let { it 加 it }
       .let { (it 加 八) 加 六 }
       .let { (it 减 三) 加 九 }
@@ -23,8 +22,6 @@ class AbacusTest {
       .also { assertEquals(六 乘 七, it) }
 
     assertEquals(42, 四十二.toInt())
-
-
   }
 
   @Test
@@ -35,7 +32,7 @@ class AbacusTest {
     val 大数加小数: 未 = 大数 加 三
     assertEquals(10002, 大数加小数.toInt())
 
-    val 大数加大数 = 大数加小数
+    val 大数加大数: 未 = 大数加小数
       .let { it 加 it }
       .let { it 加 it }
 

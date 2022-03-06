@@ -4,7 +4,7 @@ package ai.hypergraph.kotlingrad.typelevel.chinese
 
 import kotlin.jvm.JvmName
 
-sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null) {
+sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null, open val 码: String = "") {
   val 零 get() = 零(this as 己)
   val 一 get() = 一(this as 己)
   val 二 get() = 二(this as 己)
@@ -18,22 +18,20 @@ sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null) {
 
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + 中.hashCode()
-  override fun toString() =
-    if (this is 未) i.toString().toChinese()
-    else (中 ?: "").toString() + this::class.qualifiedName!!.filter { "$it" in z2a }
+  override fun toString() = if (this is 未) i.toString().toChinese() else (中 ?: "").toString() + 码
   fun toInt() = toString().toArabic().toInt()
 }
 
-open class 零<丁>(override val 中: 丁? = null) : 数<丁, 零<丁>>(中) { companion object: 零<无>() }
-open class 一<丁>(override val 中: 丁? = null) : 数<丁, 一<丁>>(中) { companion object: 一<无>() }
-open class 二<丁>(override val 中: 丁? = null) : 数<丁, 二<丁>>(中) { companion object: 二<无>() }
-open class 三<丁>(override val 中: 丁? = null) : 数<丁, 三<丁>>(中) { companion object: 三<无>() }
-open class 四<丁>(override val 中: 丁? = null) : 数<丁, 四<丁>>(中) { companion object: 四<无>() }
-open class 五<丁>(override val 中: 丁? = null) : 数<丁, 五<丁>>(中) { companion object: 五<无>() }
-open class 六<丁>(override val 中: 丁? = null) : 数<丁, 六<丁>>(中) { companion object: 六<无>() }
-open class 七<丁>(override val 中: 丁? = null) : 数<丁, 七<丁>>(中) { companion object: 七<无>() }
-open class 八<丁>(override val 中: 丁? = null) : 数<丁, 八<丁>>(中) { companion object: 八<无>() }
-open class 九<丁>(override val 中: 丁? = null) : 数<丁, 九<丁>>(中) { companion object: 九<无>() }
+open class 零<丁>(override val 中: 丁? = null, override val 码: String = "零"): 数<丁, 零<丁>>(中) { companion object: 零<无>() }
+open class 一<丁>(override val 中: 丁? = null, override val 码: String = "一"): 数<丁, 一<丁>>(中) { companion object: 一<无>() }
+open class 二<丁>(override val 中: 丁? = null, override val 码: String = "二"): 数<丁, 二<丁>>(中) { companion object: 二<无>() }
+open class 三<丁>(override val 中: 丁? = null, override val 码: String = "三"): 数<丁, 三<丁>>(中) { companion object: 三<无>() }
+open class 四<丁>(override val 中: 丁? = null, override val 码: String = "四"): 数<丁, 四<丁>>(中) { companion object: 四<无>() }
+open class 五<丁>(override val 中: 丁? = null, override val 码: String = "五"): 数<丁, 五<丁>>(中) { companion object: 五<无>() }
+open class 六<丁>(override val 中: 丁? = null, override val 码: String = "六"): 数<丁, 六<丁>>(中) { companion object: 六<无>() }
+open class 七<丁>(override val 中: 丁? = null, override val 码: String = "七"): 数<丁, 七<丁>>(中) { companion object: 七<无>() }
+open class 八<丁>(override val 中: 丁? = null, override val 码: String = "八"): 数<丁, 八<丁>>(中) { companion object: 八<无>() }
+open class 九<丁>(override val 中: 丁? = null, override val 码: String = "九"): 数<丁, 九<丁>>(中) { companion object: 九<无>() }
 
 object 无: 数<无, 无>(null)
 open class 未(val i: Int): 数<未, 未>(null)
@@ -1630,4 +1628,4 @@ fun String.toChinese() = map { it.toString() }.joinToString("") { if (it in a2z)
 @JvmName("数乘数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.乘(甲: 右) = 未(toInt() * 甲.toInt())
 @JvmName("数除数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.除(甲: 右) = 未(toInt() / 甲.toInt())
 
-// Total lines: 1633
+// Total lines: 1631

@@ -9,7 +9,7 @@ package ai.hypergraph.kotlingrad.typelevel.chinese
 
 import kotlin.jvm.JvmName
 
-sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null) {
+sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null, open val 码: String = "") {
   val 零 get() = 零(this as 己)
   val 一 get() = 一(this as 己)
   val 二 get() = 二(this as 己)
@@ -23,9 +23,7 @@ sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null) {
 
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + 中.hashCode()
-  override fun toString() =
-    if (this is 未) i.toString().toChinese()
-    else (中 ?: "").toString() + this::class.qualifiedName!!.filter { "${'$'}it" in z2a }
+  override fun toString() = if (this is 未) i.toString().toChinese() else (中 ?: "").toString() + 码
   fun toInt() = toString().toArabic().toInt()
 }
 
@@ -61,7 +59,8 @@ ${genTypeLevelFunctions()}
 fun genChineseDigits() =
   (0..9).map { it.toString() }.joinToString("\n") {
     val digit = it.a2z()
-    "open class $digit<丁>(override val 中: 丁? = null) : 数<丁, $digit<丁>>(中) { companion object: $digit<无>() }"
+    "open class $digit<丁>(override val 中: 丁? = null, override val 码: String = \"$digit\")" +
+      ": 数<丁, $digit<丁>>(中) { companion object: $digit<无>() }"
   }
 
 fun genChineseConsts() =
