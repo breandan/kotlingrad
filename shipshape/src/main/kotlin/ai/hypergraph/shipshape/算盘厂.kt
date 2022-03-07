@@ -23,14 +23,14 @@ sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null, open val �
 
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + 中.hashCode()
-  override fun toString() = if (this is 未) i.toString().toChinese() else (中 ?: "").toString() + 码
+  override fun toString() = (中 ?: "").toString() + 码
   fun toInt() = toString().toArabic().toInt()
 }
 
 ${genChineseDigits()}
 
 object 无: 数<无, 无>(null)
-open class 未(val i: Int): 数<未, 未>(null)
+open class 未(val i: Int, override val 码: String = i.toString().toChinese(false)): 数<未, 未>(null)
 
 ${genChineseTypes()}
 ${genChineseConsts()}
@@ -45,7 +45,19 @@ val a2z: Map<String, String> = z2a.entries.associate { (k, v) -> v to k }
 
 // TODO: https://cs.github.com/?scopeName=All+repos&scope=&q=%E9%9B%B6+%E4%B8%80+%E4%BA%8C+%E4%B8%89+%E5%9B%9B+%E4%BA%94+%E5%85%AD+%E4%B8%83+%E5%85%AB+%E4%B9%9D+Arabic++language%3AJava
 fun String.toArabic() = map { it.toString() }.joinToString("") { if (it in z2a) z2a[it]!! else it }
-fun String.toChinese() = map { it.toString() }.joinToString("") { if (it in a2z) a2z[it]!! else it }
+fun String.toChinese(skipPlaceDigits: Boolean = true) =
+  mapIndexed { i, c ->
+    val s = c.toString()
+    val t = a2z.getOrElse(s) { s }
+    if (skipPlaceDigits) t
+    else when (length - i) {
+      5 -> t + "万"
+      4 -> t + "千"
+      3 -> t + "百"
+      2 -> t + "十".removePrefix("一")
+      else -> t
+    }
+  }.let { if (!skipPlaceDigits) it.filterNot { it == "零" } else it }.joinToString("")
 
 ${genTypeLevelFunctions()}
 
@@ -128,7 +140,7 @@ data class TLFun(val left: String, val op: String, val right: String, val result
 val z2a: Map<String, String> = mapOf(
   "零" to "0", "一" to "1", "二" to "2", "三" to "3", "四" to "4",
   "五" to "5", "六" to "6", "七" to "7", "八" to "8", "九" to "9",
-  "十" to "", "百" to "", "千" to "",
+  "十" to "", "百" to "", "千" to "", "万" to "",
   "加" to "+", "减" to "-", "除" to "/", "乘" to "*"
 )
 
@@ -142,6 +154,7 @@ fun String.zhChars(skipPlaceDigits: Boolean = true) =
     val t = a2z.getOrElse("$c") { "$c" }
     if (skipPlaceDigits) t
     else when (length - i) {
+      5 -> "${t}万"
       4 -> "${t}千"
       3 -> "${t}百"
       2 -> "${t}十".removePrefix("一")

@@ -18,7 +18,7 @@ sealed class 数<丁, 己: 数<丁, 己>>(open val 中: 丁? = null, open val �
 
   override fun equals(other: Any?) = toString() == other.toString()
   override fun hashCode() = this::class.hashCode() + 中.hashCode()
-  override fun toString() = if (this is 未) i.toString().toChinese() else (中 ?: "").toString() + 码
+  override fun toString() = (中 ?: "").toString() + 码
   fun toInt() = toString().toArabic().toInt()
 }
 
@@ -34,7 +34,7 @@ open class 八<丁>(override val 中: 丁? = null, override val 码: String = "�
 open class 九<丁>(override val 中: 丁? = null, override val 码: String = "九"): 数<丁, 九<丁>>(中) { companion object: 九<无>() }
 
 object 无: 数<无, 无>(null)
-open class 未(val i: Int): 数<未, 未>(null)
+open class 未(val i: Int, override val 码: String = i.toString().toChinese(false)): 数<未, 未>(null)
 
 typealias 十型 = 零<一<无>>
 typealias 十一型 = 一<一<无>>
@@ -89,7 +89,19 @@ val a2z: Map<String, String> = z2a.entries.associate { (k, v) -> v to k }
 
 // TODO: https://cs.github.com/?scopeName=All+repos&scope=&q=%E9%9B%B6+%E4%B8%80+%E4%BA%8C+%E4%B8%89+%E5%9B%9B+%E4%BA%94+%E5%85%AD+%E4%B8%83+%E5%85%AB+%E4%B9%9D+Arabic++language%3AJava
 fun String.toArabic() = map { it.toString() }.joinToString("") { if (it in z2a) z2a[it]!! else it }
-fun String.toChinese() = map { it.toString() }.joinToString("") { if (it in a2z) a2z[it]!! else it }
+fun String.toChinese(skipPlaceDigits: Boolean = true) =
+  mapIndexed { i, c ->
+    val s = c.toString()
+    val t = a2z.getOrElse(s) { s }
+    if (skipPlaceDigits) t
+    else when (length - i) {
+      5 -> t + "万"
+      4 -> t + "千"
+      3 -> t + "百"
+      2 -> t + "十".removePrefix("一")
+      else -> t
+    }
+  }.let { if (!skipPlaceDigits) it.filterNot { it == "零" } else it }.joinToString("")
 
 
 @JvmName("无一乘二") infix fun  一<无>.乘(甲: 二<无>): 二<无> = 二()
@@ -1628,4 +1640,4 @@ fun String.toChinese() = map { it.toString() }.joinToString("") { if (it in a2z)
 @JvmName("数乘数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.乘(甲: 右) = 未(toInt() * 甲.toInt())
 @JvmName("数除数") infix fun <左: 数<*, *>, 右: 数<*, *>> 左.除(甲: 右) = 未(toInt() / 甲.toInt())
 
-// Total lines: 1631
+// Total lines: 1643
