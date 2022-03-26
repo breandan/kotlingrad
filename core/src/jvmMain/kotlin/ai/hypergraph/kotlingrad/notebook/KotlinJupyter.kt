@@ -3,7 +3,7 @@ package ai.hypergraph.kotlingrad.notebook
 import ai.hypergraph.kaliningraph.graphs.Gate
 import ai.hypergraph.kaliningraph.image.matToBase64Img
 import ai.hypergraph.kaliningraph.tensor.*
-import ai.hypergraph.kaliningraph.types.Graph
+import ai.hypergraph.kaliningraph.types.*
 import ai.hypergraph.kaliningraph.visualization.html
 import ai.hypergraph.kotlingrad.api.*
 import org.jetbrains.kotlinx.jupyter.api.HTML
@@ -12,10 +12,10 @@ import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 internal class Integration: JupyterIntegration() {
   override fun Builder.onLoaded() {
     listOf(
-            "ai.hypergraph.kotlingrad.api.*",
-            "ai.hypergraph.kaliningraph.*",
-            "ai.hypergraph.kaliningraph.tensor.*",
-            "ai.hypergraph.kaliningraph.graphs.*",
+      "ai.hypergraph.kotlingrad.api.*",
+      "ai.hypergraph.kaliningraph.*",
+      "ai.hypergraph.kaliningraph.tensor.*",
+      "ai.hypergraph.kaliningraph.types.*",
     ).forEach { import(it) }
 
     render<Fun<*>> { HTML(it.render().toString()) }

@@ -856,7 +856,7 @@ Extensions to other bases, including [binary](/core/src/commonTest/kotlin/ai/hyp
 // Boolean arithmetic
 val b32 = T.F
   .let { it + T.F }   // B_4<Ø>
-  .let { it + T.F.F } // B_8<Ø>*/ }
+  .let { it + T.F.F } // B_8<Ø>
   .let { it + T.T }   // T<T<F<T<Ø>>>>
   .let { it + T.F }   // T<F<T<T<Ø>>>>
   .let { it - T.F }   // T<T<F<T<Ø>>>>

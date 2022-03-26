@@ -2,7 +2,9 @@
 package ai.hypergraph.kotlingrad.api
 
 import ai.hypergraph.kaliningraph.graphs.*
+import ai.hypergraph.kaliningraph.types.*
 import ai.hypergraph.kotlingrad.EAGER
+import ai.hypergraph.kotlingrad.shapes.Nat
 import ai.hypergraph.kotlingrad.shapes.*
 import kotlin.Double.Companion.NaN
 import kotlin.math.*

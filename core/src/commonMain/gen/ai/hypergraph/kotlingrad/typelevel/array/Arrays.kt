@@ -3,7 +3,6 @@
 
 package ai.hypergraph.kotlingrad.typelevel.array
  
-import ai.hypergraph.kaliningraph.allPairs
 import ai.hypergraph.kotlingrad.typelevel.church.*
 import kotlin.jvm.JvmName
 
@@ -80,6 +79,9 @@ fun <E, R: S<*>, C: S<*>> Mat(r: R, c: C, vararg es: E): Mat<E, R, C> = Mat(r, c
 fun <E, R: S<*>, C: S<*>> Mat(r: R, c: C, es: List<E>): Mat<E, R, C> = Mat(r, es.chunked(r, c))
 fun <E, R: S<*>, C: S<*>> Mat(r: R, c: C, f: (Int, Int) -> E): Mat<E, R, C> =
   Mat(r, c, allPairs(r.toInt(), c.toInt()).map { (r, c) -> f(r, c) })
+
+operator fun IntRange.times(s: IntRange): Set<V2<Int>> = flatMap { l -> s.map { r -> l cc r }.toSet() }.toSet()
+fun allPairs(numRows: Int, numCols: Int): Set<V2<Int>> = (0 until numRows) * (0 until numCols)
 
 //...Optional pseudoconstructors
 
