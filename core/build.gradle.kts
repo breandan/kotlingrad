@@ -8,8 +8,8 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  id("com.google.devtools.ksp") version "1.6.20-RC2-1.0.4"
-  kotlin("multiplatform") version "1.6.20-RC2"
+  id("com.google.devtools.ksp") version "1.6.20-1.0.4"
+  kotlin("multiplatform") version "1.6.20"
   kotlin("jupyter.api") version "0.11.0-62"
   id("com.xcporter.metaview") version "0.0.5"
 }
@@ -155,7 +155,7 @@ kotlin {
       dependencies {
         implementation(kotlin("stdlib-common"))
         implementation(kotlin("reflect"))
-        api("ai.hypergraph:kaliningraph:0.2.0")
+        api("ai.hypergraph:kaliningraph:0.2.1")
       }
     }
 
@@ -181,7 +181,7 @@ kotlin {
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.2.1"
+        val kotestVersion = "5.2.2"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")

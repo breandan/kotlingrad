@@ -1,7 +1,7 @@
 plugins {
   application
   id("com.palantir.graal") version "0.10.0"
-  kotlin("jvm") version "1.6.20-RC2"
+  kotlin("jvm") version "1.6.20"
 }
 
 val entrypoint = "ai.hypergraph.kotlingrad.samples.HelloKotlingradKt"
@@ -23,7 +23,7 @@ dependencies {
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.3")
 
-  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.1.1")
+  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.2.0")
 
   implementation("org.nield:kotlin-statistics:1.2.1")
 }

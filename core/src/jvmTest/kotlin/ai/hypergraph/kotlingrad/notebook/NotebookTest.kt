@@ -5,6 +5,10 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlinx.jupyter.testkit.JupyterReplTestCase
 import org.junit.jupiter.api.Test
 
+/*
+./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.notebook.RenderingTests"
+*/
+
 class RenderingTests: JupyterReplTestCase() {
   @Test
   fun `circuit is rendered to html`() {
