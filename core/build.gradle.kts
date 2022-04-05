@@ -155,7 +155,7 @@ kotlin {
       dependencies {
         implementation(kotlin("stdlib-common"))
         implementation(kotlin("reflect"))
-        api("ai.hypergraph:kaliningraph:0.2.1")
+        api("ai.hypergraph:kaliningraph")
       }
     }
 
