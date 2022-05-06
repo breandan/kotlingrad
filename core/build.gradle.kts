@@ -8,9 +8,9 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  id("com.google.devtools.ksp") version "1.6.20-1.0.4"
-  kotlin("multiplatform") version "1.6.20"
-  kotlin("jupyter.api") version "0.11.0-62"
+  id("com.google.devtools.ksp") version "1.7.0-Beta-1.0.5"
+  kotlin("multiplatform") version "1.7.0-Beta"
+  kotlin("jupyter.api") version "0.11.0-83"
   id("com.xcporter.metaview") version "0.0.5"
 }
 
@@ -164,7 +164,7 @@ kotlin {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
 
-        implementation("org.graalvm.js:js:22.0.0")
+        implementation("org.graalvm.js:js:22.1.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
         implementation(kotlin("reflect"))
@@ -181,7 +181,7 @@ kotlin {
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.2.2"
+        val kotestVersion = "5.3.0"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")

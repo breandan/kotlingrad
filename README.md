@@ -74,13 +74,13 @@ All of these features are implemented without access to bytecode or special comp
 
 ### Installation
 
-Kotlin∇ is hosted on [Maven Central](https://s01.oss.sonatype.org/index.html#nexus-search;quick~kotlingrad).
+Kotlin∇ is hosted on [Maven Central](https://s01.oss.sonatype.org/index.html#nexus-search;quick~kotlingrad). An example project is provided [here](https://github.com/breandan/kotlingrad-consumer).
 
 #### Gradle
 
 ```kotlin
 dependencies {
-    implementation("ai.hypergraph:kotlingrad:0.4.6")
+  implementation("ai.hypergraph:kotlingrad:0.4.7")
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 <dependency>
   <groupId>ai.hypergraph</groupId>
   <artifactId>kotlingrad</artifactId>
-  <version>0.4.6</version>
+  <version>0.4.7</version>
 </dependency>
 ```
 
@@ -99,7 +99,7 @@ dependencies {
 To access Kotlin∇'s notebook support, use the following line magic:
 
 ```kotlin
-@file:DependsOn("ai.hypergraph:kotlingrad:0.4.6")
+@file:DependsOn("ai.hypergraph:kotlingrad:0.4.7")
 ```
 
 For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.ipynb).
