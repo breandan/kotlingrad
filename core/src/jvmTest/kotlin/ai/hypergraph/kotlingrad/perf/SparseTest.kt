@@ -1,8 +1,9 @@
 package ai.hypergraph.kotlingrad.perf
 
-import ai.hypergraph.kaliningraph.*
 import ai.hypergraph.kaliningraph.tensor.*
+import ai.hypergraph.kaliningraph.types.*
 import ai.hypergraph.kotlingrad.api.*
+import ai.hypergraph.kotlingrad.api.Mat
 import ai.hypergraph.kotlingrad.round
 import ai.hypergraph.kotlingrad.shapes.D100
 import org.apache.commons.math3.linear.*
