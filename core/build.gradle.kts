@@ -78,7 +78,6 @@ kotlin {
       }
     }
 
-
     // Stub secrets to let the project sync and build without the publication values set up
     ext["signing.keyId"] = null
     ext["signing.password"] = null

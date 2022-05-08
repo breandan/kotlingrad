@@ -5,6 +5,10 @@ import ai.hypergraph.kotlingrad.api.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.checkAll
 
+/*
+./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.evaluation.TestArithmetic"
+*/
+
 @Suppress("NonAsciiCharacters")
 class TestArithmetic: StringSpec({
   val x by SVar(DReal)

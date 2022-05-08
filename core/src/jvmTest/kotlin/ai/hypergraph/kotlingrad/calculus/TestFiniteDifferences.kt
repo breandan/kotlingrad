@@ -6,13 +6,16 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.checkAll
 import kotlin.math.*
 
-@kotlin.time.ExperimentalTime
+/*
+./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.calculus.TestFiniteDifferences"
+*/
+
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestFiniteDifferences: StringSpec({
   val dx = 1E-20
   val x by SVar(DReal)
 
-  "sin should be (sin(x + dx) - sin(x)) / dx".config(enabled = false) {
+  "sin should be (sin(x + dx) - sin(x)) / dx" {
     checkAll(DoubleGenerator) { ẋ ->
       val f = sin(x)
       val `df∕dx` = d(f) / d(x)
@@ -20,7 +23,7 @@ class TestFiniteDifferences: StringSpec({
     }
   }
 
-  "cos should be (cos(x + dx) - cos(x)) / dx".config(enabled = false) {
+  "cos should be (cos(x + dx) - cos(x)) / dx" {
     checkAll(DoubleGenerator) { ẋ ->
       val f = cos(x)
       val `df∕dx` = d(f) / d(x)
@@ -28,7 +31,7 @@ class TestFiniteDifferences: StringSpec({
     }
   }
 
-  "test composition".config(enabled = false) {
+  "test composition" {
     checkAll(DoubleGenerator) { ẋ ->
       val f = sin(pow(x, 2))
       val `df∕dx` = d(f) / d(x)

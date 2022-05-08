@@ -5,7 +5,6 @@ import ai.hypergraph.kotlingrad.api.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.checkAll
 
-@kotlin.time.ExperimentalTime
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestPowerDerivatives: StringSpec({
   val x by SVar(DReal)

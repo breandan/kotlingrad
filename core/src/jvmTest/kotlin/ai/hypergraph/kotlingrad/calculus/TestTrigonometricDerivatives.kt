@@ -5,7 +5,10 @@ import ai.hypergraph.kotlingrad.api.*
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.property.checkAll
 
-@kotlin.time.ExperimentalTime
+/*
+./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.calculus.TestTrigonometricDerivatives"
+*/
+
 @Suppress("NonAsciiCharacters", "LocalVariableName")
 class TestTrigonometricDerivatives: StringSpec({
   val x by SVar(DReal)
