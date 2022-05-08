@@ -14,8 +14,11 @@ internal class Integration: JupyterIntegration() {
     listOf(
       "ai.hypergraph.kotlingrad.api.*",
       "ai.hypergraph.kaliningraph.*",
-      "ai.hypergraph.kaliningraph.tensor.*",
+      "ai.hypergraph.kaliningraph.graphs.*",
       "ai.hypergraph.kaliningraph.types.*",
+      "ai.hypergraph.kaliningraph.sampling.*",
+      "ai.hypergraph.kaliningraph.visualization.*",
+      "ai.hypergraph.kaliningraph.tensor.*",
     ).forEach { import(it) }
 
     render<Fun<*>> { HTML(it.render().toString()) }

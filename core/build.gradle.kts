@@ -10,7 +10,7 @@ plugins {
   idea
   id("com.google.devtools.ksp") version "1.7.0-Beta-1.0.5"
   kotlin("multiplatform") version "1.7.0-Beta"
-  kotlin("jupyter.api") version "0.11.0-83"
+  kotlin("jupyter.api") version "0.11.0-84"
   id("com.xcporter.metaview") version "0.0.5"
 }
 
