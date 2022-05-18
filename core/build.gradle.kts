@@ -10,7 +10,7 @@ plugins {
   idea
   id("com.google.devtools.ksp") version "1.7.0-Beta-1.0.5"
   kotlin("multiplatform") version "1.7.0-Beta"
-  kotlin("jupyter.api") version "0.11.0-84"
+  kotlin("jupyter.api") version "0.11.0-93"
   id("com.xcporter.metaview") version "0.0.5"
 }
 
@@ -184,7 +184,7 @@ kotlin {
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
-        implementation("org.junit.jupiter:junit-jupiter:5.8.2")
+        implementation("org.junit.jupiter:junit-jupiter:5.9.0-M1")
 
         // Symbolic fuzzing interpreter
         implementation(kotlin("scripting-jsr223"))
