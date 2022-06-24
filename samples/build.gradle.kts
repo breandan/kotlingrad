@@ -1,6 +1,6 @@
 plugins {
   application
-  id("com.palantir.graal") version "0.10.0"
+  id("com.palantir.graal") version "0.12.0"
   kotlin("jvm") version "1.7.0"
 }
 

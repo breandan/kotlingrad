@@ -7,7 +7,7 @@ plugins {
   idea
   id("com.github.ben-manes.versions") version "0.42.0"
   // https://github.com/Kotlin/dokka/issues/2024
-  id("org.jetbrains.dokka") version "1.6.21"
+  id("org.jetbrains.dokka") version "1.7.0"
 //  id("org.jetbrains.dokka") version "1.4.32"
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
