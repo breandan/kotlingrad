@@ -12,6 +12,7 @@ class TestGradient: StringSpec({
   val y by SVar(DReal)
 
   val z = y * (sin(x * y) - x)
+  println(z)
   val `∇z` = z.grad()
 
   "test ∇z" {
