@@ -1,35 +1,35 @@
-package ai.hypergraph.kotlingrad.typelevel
+package ai.hypergraph.kotlingrad.compiler
 
 import com.tschuchort.compiletesting.*
-import com.tschuchort.compiletesting.KotlinCompilation.ExitCode
+import com.tschuchort.compiletesting.KotlinCompilation.ExitCode.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 /*
-./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.typelevel.CompileTest"
+./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.compiler.CompileTest"
 */
 class CompileTest {
-  class TestEnvClass {}
-
   @Test
   fun testClassVisibleToTestEnv() {
     val kotlinSource = SourceFile.kotlin(
       "KClass.kt", """
+        import ai.hypergraph.kaliningraph.graphs.*
+        
         class KClass {
-            fun foo() {
-                // Classes from the test environment are visible to the compiled sources
-                val testEnvClass = TestEnvClass() 
-            }
+            fun foo() = LabeledGraph { d - e }
         }
     """
     )
 
     val javaSource = SourceFile.java(
       "JClass.java", """
+        import ai.hypergraph.kaliningraph.graphs.*;
+
         public class JClass {
             public void bar() {
                 // compiled Kotlin classes are visible to Java sources
                 KClass kClass = new KClass(); 
+                LabeledGraph lg = kClass.foo();
             }
 	    }
     """)
@@ -41,6 +41,6 @@ class CompileTest {
       messageOutputStream = System.out // see diagnostics in real time
     }.compile()
 
-    assertEquals(result.exitCode, ExitCode.COMPILATION_ERROR)
+    assertEquals(OK, result.exitCode)
   }
 }
