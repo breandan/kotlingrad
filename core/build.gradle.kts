@@ -10,7 +10,7 @@ plugins {
   idea
   id("com.google.devtools.ksp") version "1.7.10-1.0.6"
   kotlin("multiplatform") version "1.7.10"
-  kotlin("jupyter.api") version "0.11.0-117"
+  kotlin("jupyter.api") version "0.11.0-125"
   id("com.xcporter.metaview") version "0.0.5"
 }
 
@@ -180,11 +180,11 @@ kotlin {
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.3.1"
+        val kotestVersion = "5.3.2"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
-        implementation("org.junit.jupiter:junit-jupiter:5.9.0-M1")
+        implementation("org.junit.jupiter:junit-jupiter:5.9.0-RC1")
 
         // Symbolic fuzzing interpreter
         implementation(kotlin("scripting-jsr223"))
