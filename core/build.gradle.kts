@@ -10,8 +10,8 @@ plugins {
   idea
   id("com.google.devtools.ksp") version "1.7.10-1.0.6"
   kotlin("multiplatform") version "1.7.10"
-  kotlin("jupyter.api") version "0.11.0-125"
-  id("com.xcporter.metaview") version "0.0.5"
+  kotlin("jupyter.api") version "0.11.0-133"
+  id("com.xcporter.metaview") version "0.0.6"
 }
 
 val generatedSourcesPath = file("src/commonMain/gen")
@@ -163,7 +163,7 @@ kotlin {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
 
-        implementation("org.graalvm.js:js:22.1.0")
+        implementation("org.graalvm.js:js:22.2.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
         implementation(kotlin("reflect"))
