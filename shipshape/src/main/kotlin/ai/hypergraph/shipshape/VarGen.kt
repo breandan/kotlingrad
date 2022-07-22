@@ -44,14 +44,14 @@ open class Ex<V1: XO, V2: XO, V3: XO> constructor(
   }.let { name?.run { "${'$'}name = ${'$'}it" } ?: it }
 
   override fun apply(me: Ex<*, *, *>, that: Ex<*, *, *>) =
-          if (op == null) that else if (me is Nt<*> && that is Nt<*>)
-            when (op) {
-              Ops.sum -> Nt(me.value.toDouble() + that.value.toDouble())
-              Ops.sub -> Nt(me.value.toDouble() - that.value.toDouble())
-              Ops.prod -> Nt(me.value.toDouble() * that.value.toDouble())
-              Ops.ratio -> Nt(me.value.toDouble() / that.value.toDouble())
-              else -> TODO()
-            } else Ex(op, null, me, that)
+    if (op == null) that else if (me is Nt<*> && that is Nt<*>)
+      when (op) {
+        Ops.sum -> Nt(me.value.toDouble() + that.value.toDouble())
+        Ops.sub -> Nt(me.value.toDouble() - that.value.toDouble())
+        Ops.prod -> Nt(me.value.toDouble() * that.value.toDouble())
+        Ops.ratio -> Nt(me.value.toDouble() / that.value.toDouble())
+        else -> TODO()
+      } else Ex(op, null, me, that)
 }
 
 open class Nt<T: Number>(val value: T): Ex<OO, OO, OO>() {
