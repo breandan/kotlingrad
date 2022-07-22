@@ -1,6 +1,5 @@
 package ai.hypergraph.kotlingrad.typelevel.arity
 
-import ai.hypergraph.kotlingrad.typelevel.binary.*
 import kotlin.test.*
 
 /**
