@@ -8,8 +8,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  id("com.google.devtools.ksp") version "1.7.10-1.0.6"
-  kotlin("multiplatform") version "1.7.10"
+  kotlin("multiplatform") version "1.7.20-Beta"
   kotlin("jupyter.api") version "0.11.0-125"
   id("com.xcporter.metaview") version "0.0.6"
 }
@@ -180,11 +179,11 @@ kotlin {
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.3.2"
+        val kotestVersion = "5.4.0"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
-        implementation("org.junit.jupiter:junit-jupiter:5.9.0-RC1")
+        implementation("org.junit.jupiter:junit-jupiter:5.9.0")
 
         // Symbolic fuzzing interpreter
         implementation(kotlin("scripting-jsr223"))
