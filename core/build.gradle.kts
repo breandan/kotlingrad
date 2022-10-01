@@ -8,7 +8,7 @@ plugins {
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("multiplatform") version "1.7.20-Beta"
+  kotlin("multiplatform") version "1.7.20"
   kotlin("jupyter.api") version "0.11.0-125"
   id("com.xcporter.metaview") version "0.0.6"
 }
