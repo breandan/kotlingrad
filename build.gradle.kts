@@ -1,14 +1,10 @@
 import io.github.gradlenexus.publishplugin.NexusPublishExtension
-import org.gradle.api.JavaVersion.VERSION_15
-import org.jetbrains.dokka.gradle.*
-import java.net.URL
 
 plugins {
   idea
+  kotlin("multiplatform") version "1.7.20" apply false
   id("com.github.ben-manes.versions") version "0.42.0"
-  // https://github.com/Kotlin/dokka/issues/2024
-  id("org.jetbrains.dokka") version "1.7.10"
-//  id("org.jetbrains.dokka") version "1.4.32"
+  id("org.jetbrains.dokka") version "1.7.20"
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
@@ -47,36 +43,12 @@ allprojects {
   version = "0.4.7"
 }
 
+val documentedSubprojects = setOf(
+  "kotlingrad" // :core
+)
+
 subprojects {
-  apply<DokkaPlugin>()
-
-  tasks.withType<DokkaTaskPartial> {
-    dokkaSourceSets.configureEach {
-      jdkVersion.set(15)
-
-      sourceLink {
-        localDirectory.set(file("core/src/jvmMain/kotlin"))
-        remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/core/src/jvmMain/kotlin"))
-        remoteLineSuffix.set("#L")
-      }
-
-      sourceLink {
-        localDirectory.set(file("samples/src/main/kotlin"))
-        remoteUrl.set(URL("https://github.com/breandan/kotlingrad/blob/master/samples/src/main/kotlin"))
-        remoteLineSuffix.set("#L")
-      }
-
-      perPackageOption {
-        matchingRegex.set("(.*?)")
-        suppress.set(true)
-      }
-
-      perPackageOption {
-        matchingRegex.set("ai.hypergraph.kotlingrad.*")
-        suppress.set(false)
-      }
-
-      externalDocumentationLink("https://github.com/breandan/kotlingrad")
-    }
+  if (name in documentedSubprojects) {
+    apply(plugin = "org.jetbrains.dokka")
   }
 }
