@@ -7,10 +7,10 @@ import ai.hypergraph.kotlingrad.api.*
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.PlotSvgExport
-import jetbrains.letsPlot.geom.*
-import jetbrains.letsPlot.ggplot
-import jetbrains.letsPlot.intern.toSpec
-import jetbrains.letsPlot.label.ggtitle
+import org.jetbrains.letsPlot.geom.*
+import org.jetbrains.letsPlot.*
+import org.jetbrains.letsPlot.intern.toSpec
+import org.jetbrains.letsPlot.label.ggtitle
 import java.io.File
 
 val X_RANGE = -10.0..10.0

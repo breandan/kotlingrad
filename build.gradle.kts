@@ -2,8 +2,8 @@ import io.github.gradlenexus.publishplugin.NexusPublishExtension
 
 plugins {
   idea
-  kotlin("multiplatform") version "1.7.20" apply false
-  id("com.github.ben-manes.versions") version "0.42.0"
+  kotlin("multiplatform") version "1.8.0-RC" apply false
+  id("com.github.ben-manes.versions") version "0.44.0"
   id("org.jetbrains.dokka") version "1.7.20"
   id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }

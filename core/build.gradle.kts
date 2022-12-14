@@ -10,7 +10,7 @@ plugins {
   id("shipshape")
   idea
   kotlin("multiplatform")
-  kotlin("jupyter.api") version "0.11.0-125"
+  kotlin("jupyter.api") version "0.11.0-197"
   id("com.xcporter.metaview") version "0.0.6"
   id("org.jetbrains.dokka")
 }
@@ -149,7 +149,7 @@ kotlin {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
 
-        implementation("org.graalvm.js:js:22.2.0")
+        implementation("org.graalvm.js:js:22.3.0")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
         implementation(kotlin("reflect"))
@@ -162,15 +162,15 @@ kotlin {
 
         // Property-based testing
 
-        val ejmlVersion = "0.41"
+        val ejmlVersion = "0.41.1"
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.4.2"
+        val kotestVersion = "5.5.4"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")
-        implementation("org.junit.jupiter:junit-jupiter:5.9.0")
+        implementation("org.junit.jupiter:junit-jupiter:5.9.1")
 
         // Symbolic fuzzing interpreter
         implementation(kotlin("scripting-jsr223"))

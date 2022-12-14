@@ -15,15 +15,15 @@ graal {
 
 dependencies {
   implementation(kotlin("stdlib"))
-  compileOnly("org.jetbrains:annotations:23.0.0")
+  compileOnly("org.jetbrains:annotations:23.1.0")
   implementation(project(":kotlingrad"))
 
-  implementation("org.graalvm.js:js:22.2.0")
+  implementation("org.graalvm.js:js:22.3.0")
   implementation("guru.nidi:graphviz-kotlin:0.18.1")
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.3")
 
-  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:3.2.0")
+  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.1.1")
 
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
