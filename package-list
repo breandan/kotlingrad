@@ -1,0 +1,14 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+
+module:kotlingrad
+ai.hypergraph.kotlingrad
+ai.hypergraph.kotlingrad.api
+ai.hypergraph.kotlingrad.coroutines
+ai.hypergraph.kotlingrad.shapes
+ai.hypergraph.kotlingrad.typelevel
+ai.hypergraph.kotlingrad.typelevel.arity
+ai.hypergraph.kotlingrad.typelevel.array
+ai.hypergraph.kotlingrad.typelevel.binary
+ai.hypergraph.kotlingrad.typelevel.chinese
+ai.hypergraph.kotlingrad.typelevel.church

@@ -1,1 +1,1 @@
-sourceset_dependencies='{}'
+sourceset_dependencies = '{":kotlingrad:dokkaHtmlPartial/commonMain":[],":kotlingrad:dokkaHtmlPartial/jvmMain":[":kotlingrad:dokkaHtmlPartial/commonMain"]}'
