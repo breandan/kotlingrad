@@ -1,16 +1,18 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.*
-import org.jetbrains.dokka.Platform.common
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import java.net.URL
 
 plugins {
   signing
   `maven-publish`
   id("shipshape")
   idea
-  kotlin("multiplatform") version "1.7.20"
+  kotlin("multiplatform")
   kotlin("jupyter.api") version "0.11.0-125"
   id("com.xcporter.metaview") version "0.0.6"
+  id("org.jetbrains.dokka")
 }
 
 val generatedSourcesPath = file("src/commonMain/gen")
@@ -40,21 +42,6 @@ kotlin {
     tasks {
       processJupyterApiResources {
         libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
-      }
-
-//      create<Jar>("javadocJar") {
-//        dependsOn(dokkaJavadoc)
-//        archiveClassifier.set("javadoc")
-//        from(dokkaJavadoc.get().outputDirectory)
-//      }
-
-      dokkaJavadoc {
-        dokkaSourceSets {
-          create("commonMain") {
-            displayName.set("common")
-            platform.set(common)
-          }
-        }
       }
 
       named<Test>("jvmTest") {
@@ -197,6 +184,18 @@ kotlin {
         implementation(kotlin("test-common"))
         implementation(kotlin("test-annotations-common"))
       }
+    }
+  }
+}
+
+tasks.withType<DokkaTaskPartial> {
+  dokkaSourceSets.configureEach {
+    jdkVersion.set(17)
+
+    sourceLink {
+      localDirectory.set(projectDir.resolve("src"))
+      remoteUrl.set(URL("https://github.com/breandan/kotlingrad/tree/master/core/src"))
+      remoteLineSuffix.set("#L")
     }
   }
 }

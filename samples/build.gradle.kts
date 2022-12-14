@@ -1,7 +1,7 @@
 plugins {
   application
   id("com.palantir.graal") version "0.12.0"
-  kotlin("jvm") version "1.7.20-Beta"
+  kotlin("jvm")
 }
 
 val entrypoint = "ai.hypergraph.kotlingrad.samples.HelloKotlingradKt"
