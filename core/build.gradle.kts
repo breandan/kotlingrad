@@ -10,7 +10,7 @@ plugins {
   id("shipshape")
   idea
   kotlin("multiplatform")
-  kotlin("jupyter.api") version "0.11.0-197"
+  kotlin("jupyter.api") version "0.11.0-198"
   id("com.xcporter.metaview") version "0.0.6"
   id("org.jetbrains.dokka")
 }
