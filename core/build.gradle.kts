@@ -174,7 +174,7 @@ kotlin {
 
         // Symbolic fuzzing interpreter
         implementation(kotlin("scripting-jsr223"))
-        implementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
+//        implementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
       }
     }
 

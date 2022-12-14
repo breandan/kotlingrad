@@ -1,11 +1,8 @@
 package ai.hypergraph.kotlingrad.compiler
 
-import com.tschuchort.compiletesting.*
-import com.tschuchort.compiletesting.KotlinCompilation.ExitCode
-import com.tschuchort.compiletesting.KotlinCompilation.ExitCode.*
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
+import javax.script.ScriptEngineManager
 
 /*
 ./gradlew jvmTest --tests "ai.hypergraph.kotlingrad.compiler.CompileTest"
@@ -13,31 +10,30 @@ import kotlin.test.assertEquals
 class CompileTest {
   @Test
   fun testArityError() {
-    testCompile("""val o = x + z + 0.0; val k = o(z to 4.0)(z to 3.0)""", COMPILATION_ERROR)
-    testCompile("""val o = x + z + 0.0; val k = o(z to 4.0)(x to 3.0)""", OK)
+    testCompile("""val o = x + z + 0.0; val k = o(z to 4.0)(z to 3.0)""", false)
+    testCompile("""val o = x + z + 0.0; val k = o(z to 4.0)(x to 3.0)""", true)
   }
 
   @Test
   fun testBinaryArithmetic() {
-    testCompile( """val t: T<T<F<T<T<T<Ø>>>>>> = T.T.T * T.F.F.T""", COMPILATION_ERROR)
-    testCompile( """val t: T<T<T<T<T<T<Ø>>>>>> = T.T.T * T.F.F.T""", OK)
+    testCompile( """val t: T<T<F<T<T<T<Ø>>>>>> = T.T.T * T.F.F.T""", false)
+    testCompile( """val t: T<T<T<T<T<T<Ø>>>>>> = T.T.T * T.F.F.T""", true)
   }
 
-  fun testCompile(@Language("kotlin") contents: String, exitCode: ExitCode) {
-    val kotlinSource = SourceFile.kotlin(
-      "KClass.kt", """
-        import ai.hypergraph.kotlingrad.typelevel.binary.*
-        import ai.hypergraph.kotlingrad.typelevel.arity.*
-        
-        $contents
-    """.trimIndent())
-
-    val result = KotlinCompilation().apply {
-      sources = listOf(kotlinSource)
-      inheritClassPath = true
-      messageOutputStream = System.out // see diagnostics in real time
-    }.compile()
-
-    assertEquals(exitCode, result.exitCode)
+  val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+  fun testCompile(@Language("kotlin") contents: String, shouldCompile: Boolean) {
+    engine.run {
+      try {
+        eval(
+          """
+            import ai.hypergraph.kotlingrad.typelevel.binary.*
+            import ai.hypergraph.kotlingrad.typelevel.arity.*
+            $contents
+          """.trimIndent()
+        )
+      } catch (e: Exception) {
+        if(shouldCompile) throw e else return
+      }
+    }
   }
 }
