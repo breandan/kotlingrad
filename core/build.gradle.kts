@@ -10,7 +10,7 @@ plugins {
   id("shipshape")
   idea
   kotlin("multiplatform")
-  kotlin("jupyter.api") version "0.11.0-198"
+//  kotlin("jupyter.api") version "0.11.0-225"
   id("com.xcporter.metaview") version "0.0.6"
   id("org.jetbrains.dokka")
 }
@@ -40,9 +40,9 @@ tasks.withType<KotlinCompile> { dependsOn("genShapes") }
 kotlin {
   jvm {
     tasks {
-      processJupyterApiResources {
-        libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
-      }
+//      processJupyterApiResources {
+//        libraryProducers = listOf("ai.hypergraph.kotlingrad.notebook.Integration")
+//      }
 
       named<Test>("jvmTest") {
         minHeapSize = "1024m"
