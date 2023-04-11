@@ -108,26 +108,26 @@ For more information, explore the [tutorial](samples/notebooks/hello_kotlingrad.
 
 Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/Higher-order_function), which take at most two inputs and return a single output, all of which are functions with the same numerical type, and whose shape is denoted using superscript in the rightmost column below. 
 
-|                 Math                    |      Infix <sup>&dagger;</sup>  |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
-|:---------------------------------------:|:-------------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
-|      ![][compose]<br>![][circ-compose]  |       `a(b)`<br>`a of b`        |                                  |                                     |       (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)    |
-|              ![][plus-minus]            |       `a + b`<br>`a - b`        | `plus(a, b)`<br>`minus(a, b)`    |                                     |       (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)    |
-|              ![][mul]                   |     `a * b`<br>`a.times(b)`     |          `times(a, b)`           |                                     |      (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>)  |
-|          ![][div]<br>![][inv]           |      `a / b`<br>`a.div(b)`      |           `div(a, b)`            |                                     |      (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>)  |
-|              ![][pos-neg]               |                                 |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                           (`a`: ℝ<sup>τ</sup>→ℝ<sup>π</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>π</sup>)                     |
-|  ![][sin]<br>![][cos]<br>![][tan]       |                                 | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                               (`a`: ℝ→ℝ) → (ℝ→ℝ)                                                 |
-|              ![][ln]                    |                                 |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)                   |
-|              ![][log]                   |           `a.log(b)`            |           `log(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
-|              ![][power]                 |           `a.pow(b)`            |           `pow(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
-|        ![][sqrt]<br>![][cbrt]           |  `a.pow(1.0/2)`<br>`a.root(3)`  |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
-|     ![][leibniz]<br>![][euler]          |  `a.d(b)`<br>`d(a) / d(b)`      |            `grad(a)[b]`          |                                     |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
-|              ![][gradient]              |                                 |            `grad(a)`             |             `a.grad()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
-|              ![][gradient_wrt]          |     `a.d(b)`<br>`a.grad(b)`     |   `grad(a, b)`<br>`grad(a)[b]`   |                                     |   (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>π</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>ω</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>π×ω</sup>)   |
-|              ![][divg]                  |                                 |            `divg(a)`             |             `a.divg()`              |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
-|              ![][curl]                  |                                 |            `curl(a)`             |             `a.curl()`              |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
-|              ![][jacobian]              |                                 |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
-|              ![][hessian]               |                                 |            `hess(a)`             |             `a.hess()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ×τ</sup>)                            |
-|              ![][laplacian]             |                                 |            `lapl(a)`             |             `a.lapl()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
+|               Math                |      Infix <sup>&dagger;</sup>  |              Prefix              |     Postfix<sup>&Dagger;</sup>      |                                            Operator Type Signature                                               |
+|:---------------------------------:|:-------------------------------:|:--------------------------------:|:-----------------------------------:|:----------------------------------------------------------------------------------------------------------------:|
+| ![][compose]<br>![][circ-compose] |       `a(b)`<br>`a of b`        |                                  |                                     |       (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>τ</sup>) → (ℝ<sup>λ</sup>→ℝ<sup>π</sup>)    |
+|          ![][plus-minus]          |       `a + b`<br>`a - b`        | `plus(a, b)`<br>`minus(a, b)`    |                                     |       (`a`:  ℝ<sup>τ</sup>→ℝ<sup>π</sup>, `b`: ℝ<sup>λ</sup> → ℝ<sup>π</sup>) → (ℝ<sup>?</sup>→ℝ<sup>π</sup>)    |
+|             ![][mul]              |     `a * b`<br>`a.times(b)`     |          `times(a, b)`           |                                     |      (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>n×p</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>)  |
+|       ![][div]<br>![][inv]        |      `a / b`<br>`a.div(b)`      |           `div(a, b)`            |                                     |      (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×n</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>p×n</sup>) → (ℝ<sup>?</sup>→ℝ<sup>m×p</sup>)  |
+|           ![][pos-neg]            |                                 |           `-a`<br>`+a`           | `a.unaryMinus()`<br>`a.unaryPlus()` |                           (`a`: ℝ<sup>τ</sup>→ℝ<sup>π</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>π</sup>)                     |
+| ![][sin]<br>![][cos]<br>![][tan]  |                                 | `sin(a)`<br>`cos(a)`<br>`tan(a)` | `a.sin()`<br>`a.cos()`<br>`a.tan()` |                                               (`a`: ℝ→ℝ) → (ℝ→ℝ)                                                 |
+|              ![][ln]              |                                 |       `ln(a)`<br>`log(a)`        |        `a.ln()`<br>`a.log()`        |                         (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)                   |
+|             ![][log]              |           `a.log(b)`            |           `log(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>?</sup>→ℝ)        |
+|            ![][power]             |           `a.pow(b)`            |           `pow(a, b)`            |                                     |              (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>, `b`: ℝ<sup>λ</sup>→ℝ) → (ℝ<sup>?</sup>→ℝ<sup>m×m</sup>)        |
+|      ![][sqrt]<br>![][cbrt]       |  `a.pow(1.0/2)`<br>`a.root(3)`  |      `sqrt(a)`<br>`cbrt(a)`      |      `a.sqrt()`<br>`a.cbrt()`       |                               (`a`: ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>) → (ℝ<sup>τ</sup>→ℝ<sup>m×m</sup>)             |
+|    ![][leibniz]<br>![][euler]     |  `a.d(b)`<br>`d(a) / d(b)`      |            `grad(a)[b]`          |                                     |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)<sup>*</sup>, `b`: C(ℝ<sup>λ</sup>→ℝ)) → (ℝ<sup>?</sup>→ℝ)     |
+|           $$\nabla{a}$$           |                                 |            `grad(a)`             |             `a.grad()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
+|     $$\nabla_{\mathbf{B}}a$$      |     `a.d(b)`<br>`a.grad(b)`     |   `grad(a, b)`<br>`grad(a)[b]`   |                                     |   (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>π</sup>), `b`: C(ℝ<sup>λ</sup>→ℝ<sup>ω</sup>)) → (ℝ<sup>?</sup>→ℝ<sup>π×ω</sup>)   |
+|    $$\nabla\cdot{\mathbf{A}}$$    |                                 |            `divg(a)`             |             `a.divg()`              |                     (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ)                                    |
+|   $$\nabla\times{\mathbf{A}}$$    |                                 |            `curl(a)`             |             `a.curl()`              |                     (`a`: C(ℝ<sup>3</sup>→ℝ<sup>3</sup>)) → (ℝ<sup>3</sup>→ℝ<sup>3</sup>)                        |
+|    $$\mathcal{J}(\mathbf{A})$$    |                                 |            `grad(a)`             |             `a.grad()`              |               (`a`: C(ℝ<sup>τ</sup>→ℝ<sup>m</sup>)) → (ℝ<sup>τ</sup>→ℝ<sup>m×τ</sup>)                            |
+|         $$\mathbf{H}(a)$$         |                                 |            `hess(a)`             |             `a.hess()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ×τ</sup>)                            |
+|     $$\Delta{a},\nabla^{2}a$$     |                                 |            `lapl(a)`             |             `a.lapl()`              |                           (`a`: C(ℝ<sup>τ</sup>→ℝ)) → (ℝ<sup>τ</sup>→ℝ<sup>τ</sup>)                              |
 
 <!-- Equations -->
 
@@ -148,13 +148,11 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 [cbrt]:         https://render.githubusercontent.com/render/math?math=\sqrt[3]{A}
 [leibniz]:      https://render.githubusercontent.com/render/math?math=\frac{da}{db},\frac{\partial{a}}{\partial{b}}
 [euler]:        https://render.githubusercontent.com/render/math?math=D_b{a}
-[gradient]:     https://render.githubusercontent.com/render/math?math=\nabla{a}
-[gradient_wrt]: https://render.githubusercontent.com/render/math?math=\nabla_{\mathbf{B}}a
-[divg]:         https://render.githubusercontent.com/render/math?math=\nabla\cdot{\mathbf{A}}
-[curl]:         https://render.githubusercontent.com/render/math?math=\nabla\times{\mathbf{A}}
-[jacobian]:     https://render.githubusercontent.com/render/math?math=\mathcal{J}(\mathbf{A})
-[hessian]:      https://render.githubusercontent.com/render/math?math=\mathbf{H}(a)
-[laplacian]:    https://render.githubusercontent.com/render/math?math=\Delta{a},\nabla^{2}a
+[gradient]:     https://render.githubusercontent.com/render/math?math=
+[gradient_wrt]: https://render.githubusercontent.com/render/math?math=
+[divg]:         https://render.githubusercontent.com/render/math?math=
+[curl]:         https://render.githubusercontent.com/render/math?math=
+[jacobian]:     https://render.githubusercontent.com/render/math?math=
 
 ℝ can be a `Double`, `Float` or `BigDecimal`. Specialized operators are defined for subsets of ℝ, e.g., `Int`, `Short` or `BigInteger` for subsets of ℤ, however differentiation is [only defined](https://en.wikipedia.org/wiki/Differentiable_function) for continuously differentiable functions on ℝ.
 
@@ -166,7 +164,7 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 <sup>&lowast;</sup> Where C(ℝ<sup>m</sup>) is the space of all continuous functions over ℝ. If the function is not over ℝ, it will fail at compile-time. If the function is over ℝ but not continuous differentiable at the point under consideration, it will fail at runtime.
 
-<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/commonMain/kotlin/ai/hypergraph/kotlingrad/typelevel/Variables.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
+<sup>?</sup> The input shape is tracked at runtime, but not at the type level. While it would be nice to infer a union type bound over the inputs of binary functions, it is likely impossible using the Kotlin type system [without great effort](core/src/commonMain/gen/ai/hypergraph/kotlingrad/typelevel/arity/Variables.kt). If the user desires type checking when invoking higher order functions with literal values, they will need to specify the combined input type explicitly or do so at runtime.
 
 <sup>τ, λ, π, ω</sup> Arbitrary products.
 
