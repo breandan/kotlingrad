@@ -147,11 +147,11 @@ Kotlin∇ operators are [higher-order functions](https://en.wikipedia.org/wiki/H
 
 Kotlin∇ supports derivatives between tensors of up to rank 2. The shape of a tensor derivative depends on (1) the shape of the function under differentiation and (2) the shape of the variable with respect to which we are differentiating.
 
-|              I/O Shape               |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
-|:------------------------------------:|:-----------------------------:|:-----------------------------:|:-----------------------------:|
-|        <b>ℝ<sup>?</sup>→ℝ</b>        |        ℝ<sup>?</sup>→ℝ        |  ℝ<sup>?</sup>→ℝ<sup>m</sup>  | ℝ<sup>?</sup>→ℝ<sup>j×k</sup> |
-|  <b>ℝ<sup>?</sup>→ℝ<sup>n</sup></b>  |  ℝ<sup>?</sup>→ℝ<sup>n</sup>  | ℝ<sup>?</sup>→ℝ<sup>m×n</sup> |              :x:              |
-| <b>ℝ<sup>?</sup>→ℝ<sup>h×i</sup></b> | ℝ<sup>?</sup>→ℝ<sup>h×i</sup> |              :x:              |              :x:              |
+|     I/O Shape     |    $$ℝ^{?}→ℝ$$    |  $$ℝ^{?}→ℝ^{m}$$   | $$ℝ^{?}→ℝ^{j×k}$$ |
+|:-----------------:|:-----------------:|:------------------:|:-----------------:|
+|   $$ℝ^{?}→ℝ$$     |    $$ℝ^{?}→ℝ$$    |  $$ℝ^{?}→ℝ^{m}$$   | $$ℝ^{?}→ℝ^{j×k}$$ |
+|  $$ℝ^{?}→ℝ^{n}$$  |  $$ℝ^{?}→ℝ^{n}$$  | $$ℝ^{?}→ℝ^{m×n}$$  |        :x:        |
+| $$ℝ^{?}→ℝ^{h×i}$$ | $$ℝ^{?}→ℝ^{h×i}$$ |        :x:         |        :x:        |
 
 Matrix-by-vector, vector-by-matrix, and matrix-by-matrix derivatives require rank 3+ tensors and are currently unsupported.
 
