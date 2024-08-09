@@ -141,10 +141,10 @@ class VDerivative<X: SFun<X>, E: D1>(override val input: VFun<X, E>, override va
     is Vec -> Vec(contents.map { it.d(vrb) })
     is MVProd<X, *, *> ->
       (left.d(vrb) as MFun<X, E, E>) * right as VFun<X, E> +
-        (left as MFun<X, E, E> * right.d(vrb))
+        (left as MFun<X, E, E> * right.d(vrb) as VFun<X, E>)
     is VMProd<X, *, *> ->
       (left.d(vrb) as VFun<X, E> * right as MFun<X, E, E>) +
-        (left as VFun<X, E> * right.d(vrb))
+        (left as VFun<X, E> * right.d(vrb) as MFun<X, E, E>)
     is Gradient -> invoke().df() // map { it.d(sVar) }
     is VMap -> input.df().map { it * ssMap(mapInput to it).d(vrb) } // Chain rule
     is VComposition -> evaluate.df()

@@ -3,12 +3,13 @@ package ai.hypergraph.kotlingrad.samples
 import ai.hypergraph.kaliningraph.visualization.show
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.plot.PlotSvgExport
+import org.jetbrains.letsPlot.awt.plot.PlotSvgExport
 import org.jetbrains.letsPlot.geom.*
 import org.jetbrains.letsPlot.*
+import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.intern.toSpec
 import org.jetbrains.letsPlot.label.ggtitle
+import org.jetbrains.letsPlot.themes.theme
 import kotlin.math.*
 
 fun main() {

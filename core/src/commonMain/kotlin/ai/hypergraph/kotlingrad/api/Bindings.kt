@@ -80,7 +80,7 @@ data class Bindings<X: SFun<X>> constructor(val fMap: MapFxF<X>) {
       (it is MFun<X, *, *> && it !is Mat<X, *, *> && it !is MConst<X, *, *>) ||
       (it is Vec<X, *> && it.bindings.allFreeVariables.isNotEmpty()) ||
       (it is VFun<X, *> && it !is Vec<X, *> && it !is VConst<X, *>) ||
-      (it is SFun<X> && it !is Constant)
+      (it is SFun<X> && it !is Constant<*>)
 
   val complete = allFreeVariables.isEmpty()
   val readyToBind = allBoundVariables.isNotEmpty()

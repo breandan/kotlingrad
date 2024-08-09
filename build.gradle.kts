@@ -2,16 +2,16 @@ import io.github.gradlenexus.publishplugin.NexusPublishExtension
 
 plugins {
   idea
-  kotlin("multiplatform") version "1.8.20-Beta" apply false
-  id("com.github.ben-manes.versions") version "0.45.0"
-  id("org.jetbrains.dokka") version "1.7.20"
-  id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+  kotlin("multiplatform") version "2.0.0" apply false
+  id("com.github.ben-manes.versions") version "0.51.0"
+  id("org.jetbrains.dokka") version "1.9.20"
+  id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
 val sonatypeApiUser = providers.gradleProperty("sonatypeApiUser")
 val sonatypeApiKey = providers.gradleProperty("sonatypeApiKey")
 if (sonatypeApiUser.isPresent && sonatypeApiKey.isPresent) {
-  configure<NexusPublishExtension> {
+  nexusPublishing {
     repositories {
       sonatype {
         nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))

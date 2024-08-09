@@ -15,6 +15,26 @@ plugins {
   id("org.jetbrains.dokka")
 }
 
+// Stub secrets to let the project sync and build without the publication values set up
+ext["signing.keyId"] = null
+ext["signing.password"] = null
+ext["signing.secretKeyRingFile"] = null
+ext["ossrhUsername"] = null
+ext["ossrhPassword"] = null
+
+val keyId = providers.gradleProperty("signing.gnupg.keyId")
+val password = providers.gradleProperty("signing.gnupg.password")
+val secretKey = providers.gradleProperty("signing.gnupg.key")
+val sonatypeApiUser = providers.gradleProperty("sonatypeApiUser")
+val sonatypeApiKey = providers.gradleProperty("sonatypeApiKey")
+if (keyId.isPresent && password.isPresent && secretKey.isPresent) {
+  ext["signing.keyId"] = keyId
+  ext["signing.password"] = password
+  ext["signing.key"] = secretKey
+  ext["ossrhUsername"] = sonatypeApiUser
+  ext["ossrhPassword"] = sonatypeApiKey
+}
+
 val generatedSourcesPath = file("src/commonMain/gen")
 
 shipshape {
@@ -64,22 +84,11 @@ kotlin {
       }
     }
 
-    // Stub secrets to let the project sync and build without the publication values set up
-    ext["signing.keyId"] = null
-    ext["signing.password"] = null
-    ext["signing.secretKeyRingFile"] = null
-
     val keyId = providers.gradleProperty("signing.gnupg.keyId")
     val password = providers.gradleProperty("signing.gnupg.password")
     val secretKey = providers.gradleProperty("signing.gnupg.key")
 
-    if (keyId.isPresent && password.isPresent && secretKey.isPresent) {
-      ext["signing.keyId"] = keyId
-      ext["signing.password"] = password
-      ext["signing.key"] = secretKey
-    }
-
-    fun getExtraString(name: String) = ext[name]?.toString()
+//    fun getExtraString(name: String) = ext(name).toString()
 
     signing {
       useGpgCmd()
@@ -149,7 +158,7 @@ kotlin {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
 
-        implementation("org.graalvm.js:js:22.3.0")
+        implementation("org.graalvm.js:js:23.0.5")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
         implementation(kotlin("reflect"))
@@ -162,11 +171,11 @@ kotlin {
 
         // Property-based testing
 
-        val ejmlVersion = "0.41.1"
+        val ejmlVersion = "0.43.1"
         implementation("org.ejml:ejml-kotlin:$ejmlVersion")
         implementation("org.ejml:ejml-all:$ejmlVersion")
 
-        val kotestVersion = "5.5.4"
+        val kotestVersion = "5.9.1"
         implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         implementation("io.kotest:kotest-assertions-core:$kotestVersion")
         implementation("io.kotest:kotest-property:$kotestVersion")

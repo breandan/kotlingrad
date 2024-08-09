@@ -1,19 +1,19 @@
 plugins {
   `java-gradle-plugin`
-  kotlin("jvm") version "1.8.20-Beta"
-  id("com.gradle.plugin-publish") version "0.12.0"
+  kotlin("jvm") version "2.0.0"
+  id("com.gradle.plugin-publish") version "1.2.1"
 }
 
-pluginBundle {
+gradlePlugin {
   website = "https://github.com/breandan/kotlingrad"
   vcsUrl = "https://github.com/breandan/kotlingrad"
   description = "A shape-safe code generator for Kotlin."
-  tags = listOf("uri", "types", "codegen", "kotlin")
+//  tags = listOf("uri", "types", "codegen", "kotlin")
 
-  mavenCoordinates {
-    groupId = "ai.hypergraph"
-    artifactId = "shipshape"
-  }
+//  mavenCoordinates {
+//    groupId = "ai.hypergraph"
+//    artifactId = "shipshape"
+//  }
 }
 
 repositories {
