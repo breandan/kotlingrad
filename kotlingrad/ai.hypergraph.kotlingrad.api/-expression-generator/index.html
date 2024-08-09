@@ -1,9 +1,11 @@
 <!doctype html>
-<html>
+<html class="no-js">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>ExpressionGenerator</title>
-<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
     if (storage == null) {
         const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
         if (osDarkSchemePreferred === true) {
@@ -16,12 +18,13 @@
         }
     }
     </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
 <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
 <link href="../../../styles/style.css" rel="Stylesheet">
-<link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
 <link href="../../../styles/main.css" rel="Stylesheet">
 <link href="../../../styles/prism.css" rel="Stylesheet">
 <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
 <script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
 <script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
@@ -29,218 +32,230 @@
 <script type="text/javascript" src="../../../scripts/prism.js" async></script>
 <script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
 <body>
-<div class="navigation-wrapper" id="navigation-wrapper">
-    <div id="leftToggler"><span class="icon-toggler"></span></div>
-    <div class="library-name">
-<a href="../../../index.html">
-<span>kotlingrad</span>            </a>    </div>
-    <div>0.4.7
-    </div>
-    <div class="pull-right d-flex">
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            kotlingrad
+                    </a>            </div>
+            <div class="library-version">0.4.7
+            </div>
+        </div>
         <div class="filter-section" id="filter-section">
                 <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button>
         </div>
-        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
-        <div id="searchBar"></div>
     </div>
-</div>
-<div id="container">
-    <div id="leftColumn">
-        <div id="sideMenu"></div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
     </div>
-    <div id="main">
-<div class="main-content" id="content" pageids="kotlingrad::ai.hypergraph.kotlingrad.api/ExpressionGenerator///PointingToDeclaration//602417746">
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="kotlingrad::ai.hypergraph.kotlingrad.api/ExpressionGenerator///PointingToDeclaration//602417746">
   <div class="breadcrumbs"><a href="../../index.html">kotlingrad</a><span class="delimiter">/</span><a href="../index.html">ai.hypergraph.kotlingrad.api</a><span class="delimiter">/</span><span class="current">ExpressionGenerator</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Expression</span><wbr><span><span>Generator</span></span></h1>
     <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
       <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">ExpressionGenerator</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator"> : </span><a href="../-real-number/index.html#1678829468%2FExtensions%2F602417746">RealNumber</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>rand<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html">Random</a><span class="token operator"> = </span>Random.Default<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>operators<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><span class="token punctuation">(</span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>listOf(
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="index.html">ExpressionGenerator</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator"> : </span><a href="../-real-number/index.html">RealNumber</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>rand<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html">Random</a><span class="token operator"> = </span>Random.Default<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>operators<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token punctuation">(</span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>listOf(
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x + y },
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x - y },
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x * y },
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x / y },
-  )</span></span><span class="token punctuation">)</span><span class="clearfix"><span class="floating-right">(<a href="https://github.com/breandan/kotlingrad/tree/master/core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/api/ExpressionGenerator.kt#L5">source</a>)</span></span></div></div>    </div>
+  )</span></span><span class="token punctuation">)</span><span class="clearfix"><span class="floating-right">(<a href="https://github.com/breandan/kotlingrad/tree/master/core/src/jvmMain/kotlin/ai/hypergraph/kotlingrad/api/ExpressionGenerator.kt#L6">source</a>)</span></span></div></div>    </div>
   </div>
   <div class="tabbedcontent">
-    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
     <div class="tabs-section-body">
-      <h2 class="tabbedcontent">Constructors</h2>
-      <div class="table" data-togglable="Constructors"><a data-name="-644539410%2FConstructors%2F602417746" anchor-label="ExpressionGenerator" id="-644539410%2FConstructors%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue TabbedContent">
-            <div class=""><span class="inline-flex">
-                <div><a href="-expression-generator.html"><span>Expression</span><wbr><span><span>Generator</span></span></a></div>
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-644539410%2FConstructors%2F602417746" anchor-label="ExpressionGenerator" id="-644539410%2FConstructors%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-expression-generator.html"><span>Expression</span><wbr><span><span>Generator</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-644539410%2FConstructors%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator"> : </span><a href="../-real-number/index.html#1678829468%2FExtensions%2F602417746">RealNumber</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token punctuation">, </span><span class="token operator">*</span><span class="token operator">&gt;</span><span class="token operator">&gt; </span><a href="-expression-generator.html"><span class="token function">ExpressionGenerator</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">rand<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html">Random</a><span class="token operator"> = </span>Random.Default<span class="token punctuation">, </span></span><span class="parameter ">operators<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><span class="token punctuation">(</span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>listOf(
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">rand<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html">Random</a><span class="token operator"> = </span>Random.Default<span class="token punctuation">, </span></span><span class="parameter ">operators<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token punctuation">(</span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span><span class="token operator"> = </span>listOf(
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x + y },
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x - y },
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x * y },
     { x: SFun&lt;X&gt;, y: SFun&lt;X&gt; -&gt; x / y },
-  )</span></span><span class="token punctuation">)</span></div></div>                </div>
+  )</span></span><span class="token punctuation">)</span></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <h2 class="">Functions</h2>
-      <div class="table" data-togglable="Functions"><a data-name="97880081%2FFunctions%2F602417746" anchor-label="randomBiTree" id="97880081%2FFunctions%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="random-bi-tree.html"><span>random</span><wbr><span>Bi</span><wbr><span><span>Tree</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="97880081%2FFunctions%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="random-bi-tree.html"><span class="token function">randomBiTree</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">height<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">5</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="-1363180801%2FFunctions%2F602417746" anchor-label="randomConst" id="-1363180801%2FFunctions%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="random-const.html"><span>random</span><wbr><span><span>Const</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1363180801%2FFunctions%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="random-const.html"><span class="token function">randomConst</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-<a data-name="186427864%2FFunctions%2F602417746" anchor-label="wildOp" id="186427864%2FFunctions%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="wild-op.html"><span>wild</span><wbr><span><span>Op</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="186427864%2FFunctions%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="wild-op.html"><span class="token function">wildOp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">that<span class="token operator">: </span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <h2 class="">Properties</h2>
-      <div class="table" data-togglable="Properties"><a data-name="-2078968208%2FProperties%2F602417746" anchor-label="operators" id="-2078968208%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="operators.html"><span><span>operators</span></span></a></div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-2078968208%2FProperties%2F602417746" anchor-label="operators" id="-2078968208%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="operators.html"><span><span>operators</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2078968208%2FProperties%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted" data-togglable="Properties">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><a data-name="-2078968208%2FProperties%2F602417746" anchor-label="operators" id="-2078968208%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="operators.html">operators</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><span class="token punctuation">(</span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span class="token keyword"></span><a href="../-s-fun/index.html#-1192672457%2FExtensions%2F602417746">SFun</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div></div>                </div>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="operators.html">operators</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token punctuation">(</span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 <a data-name="941110742%2FProperties%2F602417746" anchor-label="rand" id="941110742%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="rand.html"><span><span>rand</span></span></a></div>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="rand.html"><span><span>rand</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="941110742%2FProperties%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted" data-togglable="Properties">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><a data-name="941110742%2FProperties%2F602417746" anchor-label="rand" id="941110742%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="rand.html">rand</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html">Random</a></div></div>                </div>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="rand.html">rand</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.random/-random/index.html">Random</a></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 <a data-name="1533346376%2FProperties%2F602417746" anchor-label="variables" id="1533346376%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="variables.html"><span><span>variables</span></span></a></div>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="variables.html"><span><span>variables</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1533346376%2FProperties%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted" data-togglable="Properties">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><a data-name="1533346376%2FProperties%2F602417746" anchor-label="variables" id="1533346376%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword"></span><span class="token keyword">val </span><a href="variables.html">variables</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../-s-var/index.html#1393145487%2FExtensions%2F602417746">SVar</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div></div>                </div>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="variables.html">variables</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../-s-var/index.html">SVar</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 <a data-name="-360680345%2FProperties%2F602417746" anchor-label="x" id="-360680345%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="x.html"><span><span>x</span></span></a></div>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="x.html"><span><span>x</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-360680345%2FProperties%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted" data-togglable="Properties">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><a data-name="-360680345%2FProperties%2F602417746" anchor-label="x" id="-360680345%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="x.html">x</a><span class="token operator">: </span><a href="../-s-var/index.html#1393145487%2FExtensions%2F602417746">SVar</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                </div>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="x.html">x</a><span class="token operator">: </span><a href="../-s-var/index.html">SVar</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 <a data-name="-329660538%2FProperties%2F602417746" anchor-label="y" id="-329660538%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="y.html"><span><span>y</span></span></a></div>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="y.html"><span><span>y</span></span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-329660538%2FProperties%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted" data-togglable="Properties">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><a data-name="-329660538%2FProperties%2F602417746" anchor-label="y" id="-329660538%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="y.html">y</a><span class="token operator">: </span><a href="../-s-var/index.html#1393145487%2FExtensions%2F602417746">SVar</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                </div>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="y.html">y</a><span class="token operator">: </span><a href="../-s-var/index.html">SVar</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-298640731%2FProperties%2F602417746" anchor-label="z" id="-298640731%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="z.html"><span><span>z</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-298640731%2FProperties%2F602417746"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="z.html">z</a><span class="token operator">: </span><a href="../-s-var/index.html">SVar</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-<a data-name="-298640731%2FProperties%2F602417746" anchor-label="z" id="-298640731%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
-        <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
-          <div class="main-subrow keyValue ">
-            <div class=""><span class="inline-flex">
-                <div><a href="z.html"><span><span>z</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-298640731%2FProperties%2F602417746"></span>
-                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                </span></span></div>
-            <div>
-              <div class="title">
-                <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted" data-togglable="Properties">
-                  <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
-<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><a data-name="-298640731%2FProperties%2F602417746" anchor-label="z" id="-298640731%2FProperties%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="z.html">z</a><span class="token operator">: </span><a href="../-s-var/index.html#1393145487%2FExtensions%2F602417746">SVar</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="97880081%2FFunctions%2F602417746" anchor-label="randomBiTree" id="97880081%2FFunctions%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="random-bi-tree.html"><span>random</span><wbr><span>Bi</span><wbr><span><span>Tree</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="97880081%2FFunctions%2F602417746"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="random-bi-tree.html"><span class="token function">randomBiTree</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">height<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span><span class="token constant">5</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1363180801%2FFunctions%2F602417746" anchor-label="randomConst" id="-1363180801%2FFunctions%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="random-const.html"><span>random</span><wbr><span><span>Const</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1363180801%2FFunctions%2F602417746"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="random-const.html"><span class="token function">randomConst</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="186427864%2FFunctions%2F602417746" anchor-label="wildOp" id="186427864%2FFunctions%2F602417746" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="wild-op.html"><span>wild</span><wbr><span><span>Op</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="186427864%2FFunctions%2F602417746"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":kotlingrad:dokkaHtmlPartial/jvmMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":kotlingrad:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">infix </span><span class="token keyword">fun </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="wild-op.html"><span class="token function">wildOp</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">that<span class="token operator">: </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../-s-fun/index.html">SFun</a><span class="token operator">&lt;</span><a href="index.html">X</a><span class="token operator">&gt;</span></div></div>                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -250,10 +265,11 @@
   </div>
 </div>
       <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2023 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
       </div>
+            </div>
+        </div>
     </div>
-</div>
-
-</body></html>
+</body>
+</html>
 
