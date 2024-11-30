@@ -148,7 +148,7 @@ kotlin {
       kotlin.srcDir(generatedSourcesPath)
       dependencies {
         implementation(kotlin("stdlib-common"))
-        implementation(kotlin("reflect"))
+        implementation(kotlin("reflect:2.1.0"))
         api("ai.hypergraph:kaliningraph:0.2.1")
       }
     }
@@ -158,10 +158,10 @@ kotlin {
         implementation(kotlin("bom"))
         implementation(kotlin("stdlib"))
 
-        implementation("org.graalvm.js:js:23.0.5")
+        implementation("org.graalvm.js:js:24.1.1")
         implementation("guru.nidi:graphviz-kotlin:0.18.1")
 
-        implementation(kotlin("reflect"))
+        implementation(kotlin("reflect:2.1.0"))
       }
     }
 
@@ -199,12 +199,12 @@ kotlin {
 
 tasks.withType<DokkaTaskPartial> {
   dokkaSourceSets.configureEach {
-    jdkVersion.set(17)
+    jdkVersion = 17
 
     sourceLink {
-      localDirectory.set(projectDir.resolve("src"))
-      remoteUrl.set(URL("https://github.com/breandan/kotlingrad/tree/master/core/src"))
-      remoteLineSuffix.set("#L")
+      localDirectory = projectDir.resolve("src")
+      remoteUrl = URL("https://github.com/breandan/kotlingrad/tree/master/core/src")
+      remoteLineSuffix = "#L"
     }
   }
 }
