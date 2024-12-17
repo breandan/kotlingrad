@@ -25,37 +25,69 @@
 <link href="../../styles/prism.css" rel="Stylesheet">
 <link href="../../styles/logo-styles.css" rel="Stylesheet">
 <link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
 <script type="text/javascript" src="../../scripts/clipboard.js" async></script>
 <script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
 <script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
 <script type="text/javascript" src="../../scripts/main.js" defer></script>
 <script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer></script>
 <script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
 <body>
     <div class="root">
-<nav class="navigation" id="navigation-wrapper">
-    <div class="navigation--inner">
-        <div class="navigation-title">
-            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
-            <div class="library-name">
+    <nav class="navigation theme-dark" id="navigation-wrapper">
 <a class="library-name--link" href="../../index.html">
-                            kotlingrad
-                    </a>            </div>
-            <div class="library-version">0.4.7
+                    kotlingrad
+            </a>        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle" type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">0.4.7
+        </div>
+        <div class="navigation-controls">
+        <div class="filter-section filter-section_loading" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlingrad:dokkaHtmlPartial/commonMain">common</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox" data-role="dropdown-toggle" aria-controls="platform-tags-listbox" aria-haspopup="listbox" aria-expanded="false" aria-label="Toggle source sets"></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox">
+                    <div class="dropdown--header"><span>Platform filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close platform filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":kotlingrad:dokkaHtmlPartial/commonMain" data-filter=":kotlingrad:dokkaHtmlPartial/commonMain">
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
             </div>
         </div>
-        <div class="filter-section" id="filter-section">
-                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":kotlingrad:dokkaHtmlPartial/commonMain">common</button>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button" type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
         </div>
-    </div>
-    <div class="navigation-controls">
-        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
-        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
-    </div>
-</nav>
+    </nav>
         <div id="container">
             <div class="sidebar" id="leftColumn">
-                <div class="sidebar--inner" id="sideMenu"></div>
+                <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                    <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list" data-role="dropdown-listbox">
+                        <div class="dropdown--header">
+                            <span>
+                                    kotlingrad
+                            </span>
+                            <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                                <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                            </button>
+                        </div>
+                        <div class="sidebar--inner" id="sideMenu"></div>
+                    </ul>
+                    <div class="dropdown--overlay"></div>
+                </div>
             </div>
             <div id="main">
 <div class="main-content" data-page-type="package" id="content" pageids="kotlingrad::ai.hypergraph.kotlingrad.typelevel.binary////PointingToDeclaration//1226946596">
@@ -87,7 +119,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_0/index.html"><span><span>B_0</span></span></a></div>
+                  <div><a href="-b_0/index.html"><span>B_</span><wbr><span>0</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="344866927%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -102,7 +134,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_1/index.html"><span><span>B_1</span></span></a></div>
+                  <div><a href="-b_1/index.html"><span>B_</span><wbr><span>1</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="375886734%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -117,7 +149,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_10/index.html"><span><span>B_10</span></span></a></div>
+                  <div><a href="-b_10/index.html"><span>B_</span><wbr><span>10</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="903109188%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -132,7 +164,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_11/index.html"><span><span>B_11</span></span></a></div>
+                  <div><a href="-b_11/index.html"><span>B_</span><wbr><span>11</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="934128995%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -147,7 +179,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_12/index.html"><span><span>B_12</span></span></a></div>
+                  <div><a href="-b_12/index.html"><span>B_</span><wbr><span>12</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="965148802%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -162,7 +194,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_122/index.html"><span><span>B_122</span></span></a></div>
+                  <div><a href="-b_122/index.html"><span>B_</span><wbr><span>122</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2052403726%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -177,7 +209,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_123/index.html"><span><span>B_123</span></span></a></div>
+                  <div><a href="-b_123/index.html"><span>B_</span><wbr><span>123</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2083423533%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -192,7 +224,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_124/index.html"><span><span>B_124</span></span></a></div>
+                  <div><a href="-b_124/index.html"><span>B_</span><wbr><span>124</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2114443340%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -207,7 +239,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_125/index.html"><span><span>B_125</span></span></a></div>
+                  <div><a href="-b_125/index.html"><span>B_</span><wbr><span>125</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2145463147%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -222,7 +254,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_126/index.html"><span><span>B_126</span></span></a></div>
+                  <div><a href="-b_126/index.html"><span>B_</span><wbr><span>126</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2118484342%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -237,7 +269,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_127/index.html"><span><span>B_127</span></span></a></div>
+                  <div><a href="-b_127/index.html"><span>B_</span><wbr><span>127</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2087464535%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -252,7 +284,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_128/index.html"><span><span>B_128</span></span></a></div>
+                  <div><a href="-b_128/index.html"><span>B_</span><wbr><span>128</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2056444728%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -267,7 +299,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_129/index.html"><span><span>B_129</span></span></a></div>
+                  <div><a href="-b_129/index.html"><span>B_</span><wbr><span>129</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2025424921%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -282,7 +314,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_13/index.html"><span><span>B_13</span></span></a></div>
+                  <div><a href="-b_13/index.html"><span>B_</span><wbr><span>13</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="996168609%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -297,7 +329,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_130/index.html"><span><span>B_130</span></span></a></div>
+                  <div><a href="-b_130/index.html"><span>B_</span><wbr><span>130</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1342989167%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -312,7 +344,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_131/index.html"><span><span>B_131</span></span></a></div>
+                  <div><a href="-b_131/index.html"><span>B_</span><wbr><span>131</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1311969360%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -327,7 +359,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_132/index.html"><span><span>B_132</span></span></a></div>
+                  <div><a href="-b_132/index.html"><span>B_</span><wbr><span>132</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1280949553%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -342,7 +374,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_133/index.html"><span><span>B_133</span></span></a></div>
+                  <div><a href="-b_133/index.html"><span>B_</span><wbr><span>133</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1249929746%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -357,7 +389,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_14/index.html"><span><span>B_14</span></span></a></div>
+                  <div><a href="-b_14/index.html"><span>B_</span><wbr><span>14</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1027188416%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -372,7 +404,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_15/index.html"><span><span>B_15</span></span></a></div>
+                  <div><a href="-b_15/index.html"><span>B_</span><wbr><span>15</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1058208223%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -387,7 +419,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_16/index.html"><span><span>B_16</span></span></a></div>
+                  <div><a href="-b_16/index.html"><span>B_</span><wbr><span>16</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1089228030%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -402,7 +434,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_17/index.html"><span><span>B_17</span></span></a></div>
+                  <div><a href="-b_17/index.html"><span>B_</span><wbr><span>17</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1120247837%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -417,7 +449,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_18/index.html"><span><span>B_18</span></span></a></div>
+                  <div><a href="-b_18/index.html"><span>B_</span><wbr><span>18</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1151267644%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -432,7 +464,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_19/index.html"><span><span>B_19</span></span></a></div>
+                  <div><a href="-b_19/index.html"><span>B_</span><wbr><span>19</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1182287451%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -447,7 +479,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_2/index.html"><span><span>B_2</span></span></a></div>
+                  <div><a href="-b_2/index.html"><span>B_</span><wbr><span>2</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="406906541%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -462,7 +494,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_20/index.html"><span><span>B_20</span></span></a></div>
+                  <div><a href="-b_20/index.html"><span>B_</span><wbr><span>20</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1864723205%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -477,7 +509,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_21/index.html"><span><span>B_21</span></span></a></div>
+                  <div><a href="-b_21/index.html"><span>B_</span><wbr><span>21</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1895743012%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -492,7 +524,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_26/index.html"><span><span>B_26</span></span></a></div>
+                  <div><a href="-b_26/index.html"><span>B_</span><wbr><span>26</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2050842047%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -507,7 +539,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_27/index.html"><span><span>B_27</span></span></a></div>
+                  <div><a href="-b_27/index.html"><span>B_</span><wbr><span>27</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2081861854%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -522,7 +554,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_28/index.html"><span><span>B_28</span></span></a></div>
+                  <div><a href="-b_28/index.html"><span>B_</span><wbr><span>28</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2112881661%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -537,7 +569,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_29/index.html"><span><span>B_29</span></span></a></div>
+                  <div><a href="-b_29/index.html"><span>B_</span><wbr><span>29</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2143901468%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -552,7 +584,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_3/index.html"><span><span>B_3</span></span></a></div>
+                  <div><a href="-b_3/index.html"><span>B_</span><wbr><span>3</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="437926348%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -567,7 +599,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_30/index.html"><span><span>B_30</span></span></a></div>
+                  <div><a href="-b_30/index.html"><span>B_</span><wbr><span>30</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1468630074%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -582,7 +614,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_31/index.html"><span><span>B_31</span></span></a></div>
+                  <div><a href="-b_31/index.html"><span>B_</span><wbr><span>31</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1437610267%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -597,7 +629,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_32/index.html"><span><span>B_32</span></span></a></div>
+                  <div><a href="-b_32/index.html"><span>B_</span><wbr><span>32</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1406590460%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -612,7 +644,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_33/index.html"><span><span>B_33</span></span></a></div>
+                  <div><a href="-b_33/index.html"><span>B_</span><wbr><span>33</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1375570653%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -627,7 +659,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_34/index.html"><span><span>B_34</span></span></a></div>
+                  <div><a href="-b_34/index.html"><span>B_</span><wbr><span>34</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1344550846%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -642,7 +674,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_35/index.html"><span><span>B_35</span></span></a></div>
+                  <div><a href="-b_35/index.html"><span>B_</span><wbr><span>35</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1313531039%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -657,7 +689,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_36/index.html"><span><span>B_36</span></span></a></div>
+                  <div><a href="-b_36/index.html"><span>B_</span><wbr><span>36</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1282511232%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -672,7 +704,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_37/index.html"><span><span>B_37</span></span></a></div>
+                  <div><a href="-b_37/index.html"><span>B_</span><wbr><span>37</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1251491425%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -687,7 +719,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_4/index.html"><span><span>B_4</span></span></a></div>
+                  <div><a href="-b_4/index.html"><span>B_</span><wbr><span>4</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="468946155%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -702,7 +734,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_5/index.html"><span><span>B_5</span></span></a></div>
+                  <div><a href="-b_5/index.html"><span>B_</span><wbr><span>5</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="499965962%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -717,7 +749,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_58/index.html"><span><span>B_58</span></span></a></div>
+                  <div><a href="-b_58/index.html"><span>B_</span><wbr><span>58</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="702756416%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -732,7 +764,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_59/index.html"><span><span>B_59</span></span></a></div>
+                  <div><a href="-b_59/index.html"><span>B_</span><wbr><span>59</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="733776223%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -747,7 +779,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_6/index.html"><span><span>B_6</span></span></a></div>
+                  <div><a href="-b_6/index.html"><span>B_</span><wbr><span>6</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="530985769%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -762,7 +794,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_60/index.html"><span><span>B_60</span></span></a></div>
+                  <div><a href="-b_60/index.html"><span>B_</span><wbr><span>60</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1416211977%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -777,7 +809,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_61/index.html"><span><span>B_61</span></span></a></div>
+                  <div><a href="-b_61/index.html"><span>B_</span><wbr><span>61</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1447231784%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -792,7 +824,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_62/index.html"><span><span>B_62</span></span></a></div>
+                  <div><a href="-b_62/index.html"><span>B_</span><wbr><span>62</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1478251591%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -807,7 +839,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_63/index.html"><span><span>B_63</span></span></a></div>
+                  <div><a href="-b_63/index.html"><span>B_</span><wbr><span>63</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1509271398%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -822,7 +854,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_64/index.html"><span><span>B_64</span></span></a></div>
+                  <div><a href="-b_64/index.html"><span>B_</span><wbr><span>64</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1540291205%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -837,7 +869,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_65/index.html"><span><span>B_65</span></span></a></div>
+                  <div><a href="-b_65/index.html"><span>B_</span><wbr><span>65</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1571311012%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -852,7 +884,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_66/index.html"><span><span>B_66</span></span></a></div>
+                  <div><a href="-b_66/index.html"><span>B_</span><wbr><span>66</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1602330819%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -867,7 +899,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_67/index.html"><span><span>B_67</span></span></a></div>
+                  <div><a href="-b_67/index.html"><span>B_</span><wbr><span>67</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1633350626%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -882,7 +914,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_68/index.html"><span><span>B_68</span></span></a></div>
+                  <div><a href="-b_68/index.html"><span>B_</span><wbr><span>68</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1664370433%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -897,7 +929,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_69/index.html"><span><span>B_69</span></span></a></div>
+                  <div><a href="-b_69/index.html"><span>B_</span><wbr><span>69</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1695390240%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -912,7 +944,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_7/index.html"><span><span>B_7</span></span></a></div>
+                  <div><a href="-b_7/index.html"><span>B_</span><wbr><span>7</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="562005576%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -927,7 +959,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_8/index.html"><span><span>B_8</span></span></a></div>
+                  <div><a href="-b_8/index.html"><span>B_</span><wbr><span>8</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="593025383%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -942,7 +974,7 @@
           <div class="table-row" data-filterable-current=":kotlingrad:dokkaHtmlPartial/commonMain" data-filterable-set=":kotlingrad:dokkaHtmlPartial/commonMain">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
-                  <div><a href="-b_9/index.html"><span><span>B_9</span></span></a></div>
+                  <div><a href="-b_9/index.html"><span>B_</span><wbr><span>9</span></a></div>
 <span class="anchor-wrapper"><span class="anchor-icon" pointing-to="624045190%2FClasslikes%2F1226946596"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
@@ -993,7 +1025,7 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-u/index.html">U</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>i<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span> : <a href="-b/index.html">B</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span><a href="-u/index.html">U</a><span class="token operator">&gt; </span></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":kotlingrad:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">class </span><a href="-u/index.html">U</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>i<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span> : <a href="-b/index.html">B</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-any/index.html">Any</a><span class="token punctuation">, </span><a href="-u/index.html">U</a><span class="token operator">&gt; </span></div></div></div>
                 </div>
               </div>
             </div>
@@ -1191,12 +1223,18 @@
     </div>
   </div>
 </div>
-      <div class="footer">
-        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2024 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
-      </div>
+    <div class="footer">
+        <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+        <span>© 2024 Copyright</span>
+        <span class="pull-right">
+            <span>Generated by </span>
+            <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                <span>dokka</span>
+            </a>
+        </span>
+    </div>
             </div>
         </div>
     </div>
 </body>
 </html>
-
