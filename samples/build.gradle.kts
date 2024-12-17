@@ -23,8 +23,8 @@ dependencies {
   // Graphical libraries
   implementation("org.jzy3d:jzy3d-api:1.0.3")
 
-  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.9.2")
-  implementation("org.jetbrains.lets-plot:platf-awt-jvm:4.3.3")
+  implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.9.3")
+  implementation("org.jetbrains.lets-plot:platf-awt-jvm:4.5.2")
 
   implementation("org.nield:kotlin-statistics:1.2.1")
 }
